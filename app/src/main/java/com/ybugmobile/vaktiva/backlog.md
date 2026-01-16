@@ -28,7 +28,7 @@ Goal: Ensure the app always has 2 weeks of accurate data, even offline.
 
 Feature 1.1 – Hybrid Data Retrieval
 
-[ ] Primary Source: Integrate Aladhan API for 14-day range fetching.
+[x] Primary Source: Integrate Aladhan API for 14-day range fetching.
 
 [ ] Secondary Source: Implement UmmahAPI as a network fallback.
 
@@ -36,13 +36,13 @@ Feature 1.1 – Hybrid Data Retrieval
 
 Feature 1.2 – 14-Day Room Cache
 
-[ ] Create Room Entity PrayerDay (Fields: Date, Hijri Date string, times for all 5 prayers + Sunrise).
+[x] Create Room Entity PrayerDay (Fields: Date, Hijri Date string, times for all 5 prayers + Sunrise).
 
-[ ] Implement WorkManager to check cache every 24 hours.
+[x] Implement WorkManager to check cache every 24 hours.
 
-[ ] Logic: If local records < 3 days remaining, fetch the next 14-day block.
+[x] Logic: If local records < 3 days remaining, fetch the next 14-day block.
 
-[ ] Configure Room Schema Export location for migration testing.
+[x] Configure Room Schema Export location for migration testing.
 
 Feature 1.3 – Location-Aware Updates
 

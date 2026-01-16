@@ -11,29 +11,59 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.ybugmobile.vaktiva.data.worker.PrayerUpdateWorker
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        schedulePrayerUpdates()
+        
         enableEdgeToEdge()
         setContent {
             VaktivaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
+                        name = "Vaktiva",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
         }
     }
+
+    private fun schedulePrayerUpdates() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val workRequest = PeriodicWorkRequestBuilder<PrayerUpdateWorker>(
+            24, TimeUnit.HOURS
+        )
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "PrayerUpdateWork",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
+    }
 }
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello $name!",
+        text = "Welcome to $name!",
         modifier = modifier
     )
 }
@@ -42,6 +72,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     VaktivaTheme {
-        Greeting("Android")
+        Greeting("Vaktiva")
     }
 }

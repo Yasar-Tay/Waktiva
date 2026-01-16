@@ -3,8 +3,9 @@ package com.ybugmobile.vaktiva.data.local.preferences
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -15,33 +16,43 @@ import javax.inject.Singleton
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
+data class UserSettings(
+    val madhab: Int,
+    val calculationMethod: Int,
+    val latitude: Double,
+    val longitude: Double,
+    val locationName: String
+)
+
 @Singleton
 class SettingsManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     companion object {
-        val MADHAB = stringPreferencesKey("madhab")
-        val CALCULATION_METHOD = stringPreferencesKey("calculation_method")
-        val LAST_KNOWN_LAT = stringPreferencesKey("last_lat")
-        val LAST_KNOWN_LNG = stringPreferencesKey("last_lng")
+        val MADHAB = intPreferencesKey("madhab")
+        val CALCULATION_METHOD = intPreferencesKey("calculation_method")
+        val LAST_KNOWN_LAT = doublePreferencesKey("last_lat")
+        val LAST_KNOWN_LNG = doublePreferencesKey("last_lng")
         val LAST_LOCATION_NAME = stringPreferencesKey("last_location_name")
     }
 
-    val madhab: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[MADHAB] ?: "SHAFI" // Default
+    val settingsFlow: Flow<UserSettings> = context.dataStore.data.map { preferences ->
+        UserSettings(
+            madhab = preferences[MADHAB] ?: 0, // 0: Shafi, 1: Hanafi
+            calculationMethod = preferences[CALCULATION_METHOD] ?: 2, // Default: ISNA
+            latitude = preferences[LAST_KNOWN_LAT] ?: 0.0,
+            longitude = preferences[LAST_KNOWN_LNG] ?: 0.0,
+            locationName = preferences[LAST_LOCATION_NAME] ?: "Unknown"
+        )
     }
 
-    val calculationMethod: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[CALCULATION_METHOD] ?: "MUSLIM_WORLD_LEAGUE" // Default
-    }
-
-    suspend fun updateMadhab(madhab: String) {
+    suspend fun updateMadhab(madhab: Int) {
         context.dataStore.edit { preferences ->
             preferences[MADHAB] = madhab
         }
     }
 
-    suspend fun updateCalculationMethod(method: String) {
+    suspend fun updateCalculationMethod(method: Int) {
         context.dataStore.edit { preferences ->
             preferences[CALCULATION_METHOD] = method
         }
@@ -49,8 +60,8 @@ class SettingsManager @Inject constructor(
 
     suspend fun saveLocation(lat: Double, lng: Double, name: String) {
         context.dataStore.edit { preferences ->
-            preferences[LAST_KNOWN_LAT] = lat.toString()
-            preferences[LAST_KNOWN_LNG] = lng.toString()
+            preferences[LAST_KNOWN_LAT] = lat
+            preferences[LAST_KNOWN_LNG] = lng
             preferences[LAST_LOCATION_NAME] = name
         }
     }
