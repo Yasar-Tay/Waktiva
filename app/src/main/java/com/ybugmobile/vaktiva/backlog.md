@@ -21,7 +21,7 @@ Feature 0.2 – Multi-Module Core Logic
 
 [x] Core-Audio: ExoPlayer implementation for internal file playback.
 
-[ ] Core-UI: Material 3 theme, weather-style design tokens, and English string resources.
+[x] Core-UI: Material 3 theme, weather-style design tokens, and English string resources.
 
 📅 EPIC 1 – Prayer Times & Data Lifecycle
 Goal: Ensure the app always has 2 weeks of accurate data, even offline.
