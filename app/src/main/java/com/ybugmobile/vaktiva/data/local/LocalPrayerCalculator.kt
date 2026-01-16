@@ -67,13 +67,13 @@ class LocalPrayerCalculator @Inject constructor() {
             1 -> CalculationMethod.EGYPTIAN
             2 -> CalculationMethod.KARACHI
             3 -> CalculationMethod.UMM_AL_QURA
-            4 -> CalculationMethod.GULF
+            4 -> CalculationMethod.DUBAI
             5 -> CalculationMethod.MOON_SIGHTING_COMMITTEE
             6 -> CalculationMethod.NORTH_AMERICA
             7 -> CalculationMethod.KUWAIT
             8 -> CalculationMethod.QATAR
             9 -> CalculationMethod.SINGAPORE
-            10 -> CalculationMethod.TURKEY
+            10 -> CalculationMethod.MUSLIM_WORLD_LEAGUE // Turkey is not directly supported in adhan-java 1.1.0, using MWL as fallback
             else -> CalculationMethod.NORTH_AMERICA // Default to ISNA/NA
         }
     }

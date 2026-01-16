@@ -30,7 +30,7 @@ Feature 1.1 – Hybrid Data Retrieval
 
 [x] Primary Source: Integrate Aladhan API for 14-day range fetching.
 
-[ ] Secondary Source: Implement UmmahAPI as a network fallback.
+[x] Secondary Source: Implement UmmahAPI as a network fallback.
 
 [x] Offline Logic: Integrate Adhan-Java library for local coordinate-based calculation if APIs are unreachable.
 
@@ -46,7 +46,7 @@ Feature 1.2 – 14-Day Room Cache
 
 Feature 1.3 – Location-Aware Updates
 
-[ ] Trigger data refresh if the user moves > 50km from the last stored location.
+[x] Trigger data refresh if the user moves > 50km from the last stored location.
 
 [ ] Strategy: Use Foreground Service or "While in Use" check to avoid strict Background Location permission rejection on Play Store.
 

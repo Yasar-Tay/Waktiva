@@ -20,7 +20,7 @@ kotlinxCoroutinesPlayServices = "1.10.1"
 retrofit = "2.11.0"
 okhttp = "4.12.0"
 hiltWork = "1.2.0"
-adhan = "1.2.1"
+adhan = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -69,7 +69,7 @@ retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 
 # Adhan (Offline Calculation)
-adhan = { group = "com.batoulapps", name = "adhan", version.ref = "adhan" }
+adhan = { group = "com.github.batoulapps", name = "adhan-java", version.ref = "adhan" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

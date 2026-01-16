@@ -16,6 +16,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.ybugmobile.vaktiva.data.worker.LocationUpdateWorker
 import com.ybugmobile.vaktiva.data.worker.PrayerUpdateWorker
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +27,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        schedulePrayerUpdates()
+        scheduleWork()
         
         enableEdgeToEdge()
         setContent {
@@ -41,21 +42,37 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun schedulePrayerUpdates() {
+    private fun scheduleWork() {
+        val workManager = WorkManager.getInstance(this)
+        
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        val workRequest = PeriodicWorkRequestBuilder<PrayerUpdateWorker>(
+        // Prayer data refresh (every 24h)
+        val prayerRequest = PeriodicWorkRequestBuilder<PrayerUpdateWorker>(
             24, TimeUnit.HOURS
         )
             .setConstraints(constraints)
             .build()
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+        workManager.enqueueUniquePeriodicWork(
             "PrayerUpdateWork",
             ExistingPeriodicWorkPolicy.KEEP,
-            workRequest
+            prayerRequest
+        )
+
+        // Location check (every 4h) to see if user moved significantly
+        val locationRequest = PeriodicWorkRequestBuilder<LocationUpdateWorker>(
+            4, TimeUnit.HOURS
+        )
+            .setConstraints(constraints)
+            .build()
+
+        workManager.enqueueUniquePeriodicWork(
+            "LocationUpdateWork",
+            ExistingPeriodicWorkPolicy.KEEP,
+            locationRequest
         )
     }
 }
