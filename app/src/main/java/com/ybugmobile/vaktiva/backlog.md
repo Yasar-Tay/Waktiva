@@ -32,7 +32,7 @@ Feature 1.1 – Hybrid Data Retrieval
 
 [ ] Secondary Source: Implement UmmahAPI as a network fallback.
 
-[ ] Offline Logic: Integrate Adhan-Java library for local coordinate-based calculation if APIs are unreachable.
+[x] Offline Logic: Integrate Adhan-Java library for local coordinate-based calculation if APIs are unreachable.
 
 Feature 1.2 – 14-Day Room Cache
 
@@ -63,26 +63,26 @@ Feature 2.1 – Custom Audio Management
 
 Feature 2.2 – Playback Engine
 
-[ ] Integrate ExoPlayer with AudioAttributes for "Alarm" usage.
+[x] Integrate ExoPlayer with AudioAttributes for "Alarm" usage.
 
-[ ] Handle Audio Focus (lower volume of other apps during Adhan).
+[x] Handle Audio Focus (lower volume of other apps during Adhan).
 
 🚨 EPIC 3 – Alarms & Full-Screen Alerts
 Goal: Ensure the user never misses a prayer, regardless of device state.
 
 Feature 3.1 – Exact Alarm Scheduling
 
-[ ] Use AlarmManager.setAlarmClock() for precision.
+[x] Use AlarmManager.setAlarmClock() for precision.
 
-[ ] Register a BroadcastReceiver to reschedule alarms after a device reboot.
+[x] Register a BroadcastReceiver to reschedule alarms after a device reboot.
 
 [ ] Handle SCHEDULE_EXACT_ALARM permission and revocation logic (Android 12+).
 
 Feature 3.2 – Full-Screen Intent (The "Call" Experience)
 
-[ ] Implement a High-Priority Notification Channel.
+[x] Implement a High-Priority Notification Channel.
 
-[ ] Design a Full-Screen Activity that launches on top of the lock screen when the Adhan starts.
+[x] Design a Full-Screen Activity that launches on top of the lock screen when the Adhan starts.
 
 [ ] UI: Beautiful "Weather-style" background, name of the prayer, current time, and a large "Stop" button.
 
@@ -144,6 +144,6 @@ Feature 7.1 – Testing Suite
 
 Feature 7.2 – Localization
 
-[ ] Primary Language: English.
+[x] Primary Language: English.
 
-[ ] Structure the strings.xml to allow easy community translation for Arabic, Turkish, etc., in future updates.
+[x] Structure the strings.xml to allow easy community translation for Arabic, Turkish, etc., in future updates.
