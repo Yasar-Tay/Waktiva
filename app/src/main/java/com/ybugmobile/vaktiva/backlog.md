@@ -55,7 +55,49 @@ Feature 3.1 – Exact Alarm Scheduling
 Feature 3.2 – Full-Screen Intent (The "Call" Experience)
 [x] Implement a High-Priority Notification Channel.
 [x] Design a Full-Screen Activity that launches on top of the lock screen when the Adhan starts.
-[ ] UI: Beautiful "Weather-style" background, name of the prayer, current time, and a large "Stop" button.
+[x] UI: Beautiful "Weather-style" background, name of the prayer, current time, and a large "Stop" button.
 
 🧭 EPIC 4 – Qibla & Map Integration
-... (rest of the file remains same)
+Goal: Free, open-source mapping and high-accuracy orientation.
+
+Feature 4.1 – MapLibre & OSM
+[x] Integrate MapLibre GL SDK.
+[x] Load OpenStreetMap tiles (Free usage).
+[x] Draw a Geodesic line (Great Circle) from user coordinates to Kaaba.
+
+Feature 4.2 – Sensor-Based Compass
+[x] Implement Rotation Vector sensor logic for the needle.
+[x] Calibration Prompt: Detect low sensor accuracy (SENSOR_STATUS_UNRELIABLE) and show a "Figure-8" calibration pop-up.
+
+🎨 EPIC 5 – Weather-Style UI & Experience
+Goal: A high-end, immersive interface that changes with the day.
+
+Feature 5.1 – Dynamic Home Screen
+[x] Display: City/Country, Gregorian Date, and API-fetched Hijri Date.
+[x] Dynamic Theming: Change UI gradients based on the next prayer (e.g., Deep purple for Isha, Soft Orange for Fajr).
+
+Feature 5.2 – Prayer List & Countdown
+[x] Show all 5 prayer times in a frosted-glass (Glassmorphism) list.
+[x] Active countdown timer (Hours:Minutes:Seconds) to the next Adhan.
+
+⚙️ EPIC 6 – Settings & Monetization
+Goal: User control and project sustainability.
+
+Feature 6.1 – Calculation Settings
+[ ] Selection of Madhab (Hanafi/Shafi).
+[ ] Selection of Calculation Authority (MWL, ISNA, Egypt, etc.).
+
+Feature 6.2 – Support & Donation
+[ ] Integrate Google Play Billing for "Buy me a coffee" style donations.
+[ ] Integrate In-App Review API for smart feedback prompts.
+
+🧪 EPIC 7 – Quality Assurance & Localization
+Goal: Reliability and global readiness.
+
+Feature 7.1 – Testing Suite
+[ ] Unit tests for Adhan-Java integration and time parsing.
+[ ] UI Tests for the Full-Screen Alarm activity.
+
+Feature 7.2 – Localization
+[x] Primary Language: English.
+[x] Structure the strings.xml to allow easy community translation for Arabic, Turkish, etc., in future updates.

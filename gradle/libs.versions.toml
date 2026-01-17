@@ -21,6 +21,7 @@ retrofit = "2.11.0"
 okhttp = "4.12.0"
 hiltWork = "1.2.0"
 adhan = "1.1.0"
+maplibre = "12.3.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -70,6 +71,9 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 
 # Adhan (Offline Calculation)
 adhan = { group = "com.github.batoulapps", name = "adhan-java", version.ref = "adhan" }
+
+# MapLibre
+maplibre-android = { group = "org.maplibre.gl", name = "android-sdk", version.ref = "maplibre" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
