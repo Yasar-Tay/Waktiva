@@ -1,16 +1,29 @@
 package com.ybugmobile.vaktiva
 
+import android.app.AlarmManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
@@ -24,21 +37,48 @@ import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    
+    private var isExactAlarmPermissionGranted by mutableStateOf(true)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
         scheduleWork()
+        checkExactAlarmPermission()
         
         enableEdgeToEdge()
         setContent {
             VaktivaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Vaktiva",
+                    MainScreen(
+                        isPermissionGranted = isExactAlarmPermissionGranted,
+                        onRequestPermission = { openExactAlarmSettings() },
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkExactAlarmPermission()
+    }
+
+    private fun checkExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            isExactAlarmPermissionGranted = alarmManager.canScheduleExactAlarms()
+        }
+    }
+
+    private fun openExactAlarmSettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val intent = Intent().apply {
+                action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
         }
     }
 
@@ -49,10 +89,7 @@ class MainActivity : ComponentActivity() {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        // Prayer data refresh (every 24h)
-        val prayerRequest = PeriodicWorkRequestBuilder<PrayerUpdateWorker>(
-            24, TimeUnit.HOURS
-        )
+        val prayerRequest = PeriodicWorkRequestBuilder<PrayerUpdateWorker>(24, TimeUnit.HOURS)
             .setConstraints(constraints)
             .build()
 
@@ -62,10 +99,7 @@ class MainActivity : ComponentActivity() {
             prayerRequest
         )
 
-        // Location check (every 4h) to see if user moved significantly
-        val locationRequest = PeriodicWorkRequestBuilder<LocationUpdateWorker>(
-            4, TimeUnit.HOURS
-        )
+        val locationRequest = PeriodicWorkRequestBuilder<LocationUpdateWorker>(4, TimeUnit.HOURS)
             .setConstraints(constraints)
             .build()
 
@@ -78,17 +112,22 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Welcome to $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    VaktivaTheme {
-        Greeting("Vaktiva")
+fun MainScreen(
+    isPermissionGranted: Boolean,
+    onRequestPermission: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.padding(16.dp)) {
+        Text(text = "Welcome to Vaktiva!")
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        if (!isPermissionGranted) {
+            Text(text = "Exact alarm permission is required to notify you at the exact prayer time.")
+            Button(onClick = onRequestPermission) {
+                Text(text = "Grant Permission")
+            }
+        } else {
+            Text(text = "Alarms are correctly scheduled.")
+        }
     }
 }
