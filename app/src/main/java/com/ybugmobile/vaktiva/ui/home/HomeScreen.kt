@@ -1,5 +1,10 @@
 package com.ybugmobile.vaktiva.ui.home
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,14 +16,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
 import java.time.format.DateTimeFormatter
 import kotlin.math.floor
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
@@ -26,6 +35,17 @@ fun HomeScreen(
     val currentDay by viewModel.currentPrayerDay.collectAsState(initial = null)
     val nextPrayer by viewModel.nextPrayerInfo.collectAsState(initial = null)
     val currentTime by viewModel.currentTime.collectAsState()
+    val context = LocalContext.current
+
+    val permissions = mutableListOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    val permissionState = rememberMultiplePermissionsState(permissions)
 
     val backgroundGradient = getGradientForPrayer(nextPrayer?.name)
 
@@ -40,6 +60,11 @@ fun HomeScreen(
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (!permissionState.allPermissionsGranted) {
+                PermissionRequestCard(permissionState)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
             Spacer(modifier = Modifier.height(48.dp))
             
             // City & Date
@@ -85,6 +110,54 @@ fun HomeScreen(
             // Prayer Times List (Glassmorphism effect)
             currentDay?.let { day ->
                 PrayerTimeList(day, nextPrayer?.name)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun PermissionRequestCard(permissionState: MultiplePermissionsState) {
+    val context = LocalContext.current
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.8f)
+        ),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Permissions Required",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onErrorContainer
+            )
+            Text(
+                text = "Location and Notification permissions are needed for the app to function correctly.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onErrorContainer,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+            Button(
+                onClick = {
+                    if (permissionState.shouldShowRationale) {
+                        permissionState.launchMultiplePermissionRequest()
+                    } else {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                        context.startActivity(intent)
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text("Grant Permissions")
             }
         }
     }

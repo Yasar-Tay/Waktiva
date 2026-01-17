@@ -92,6 +92,12 @@ dependencies {
     // MapLibre
     implementation(libs.maplibre.android)
 
+    // OsmDroid
+    implementation(libs.osmdroid.android)
+
+    // Accompanist Permissions
+    implementation(libs.accompanist.permissions)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

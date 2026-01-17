@@ -23,6 +23,8 @@ hiltWork = "1.2.0"
 adhan = "1.1.0"
 maplibre = "12.3.1"
 navigationCompose = "2.8.6"
+osmdroid = "6.1.20"
+accompanistPermissions = "0.37.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -76,6 +78,12 @@ adhan = { group = "com.github.batoulapps", name = "adhan-java", version.ref = "a
 
 # MapLibre
 maplibre-android = { group = "org.maplibre.gl", name = "android-sdk", version.ref = "maplibre" }
+
+# OsmDroid
+osmdroid-android = { group = "org.osmdroid", name = "osmdroid-android", version.ref = "osmdroid" }
+
+# Accompanist
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

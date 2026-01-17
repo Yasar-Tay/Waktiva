@@ -46,11 +46,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    val nextPrayerInfo: Flow<NextPrayerInfo?> = combine(currentPrayerDay, currentTime) { day, now ->
-        if (day == null) return@combine null
-
+    // Parse times only when the day changes, not every second
+    private val prayerTimes = currentPrayerDay.map { day ->
+        if (day == null) return@map null
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
-        val prayers = listOf(
+        listOf(
             "Fajr" to LocalTime.parse(day.fajr, formatter),
             "Sunrise" to LocalTime.parse(day.sunrise, formatter),
             "Dhuhr" to LocalTime.parse(day.dhuhr, formatter),
@@ -58,7 +58,11 @@ class HomeViewModel @Inject constructor(
             "Maghrib" to LocalTime.parse(day.maghrib, formatter),
             "Isha" to LocalTime.parse(day.isha, formatter)
         )
+    }
 
+    val nextPrayerInfo: Flow<NextPrayerInfo?> = combine(prayerTimes, currentTime) { prayers, now ->
+        if (prayers == null) return@combine null
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
         val currentTime = now.toLocalTime()
         val next = prayers.firstOrNull { it.second.isAfter(currentTime) }
             ?: prayers.first().let { it.first to it.second } // Fallback to Fajr (next day, but simplified for now)
