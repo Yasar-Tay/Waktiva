@@ -55,7 +55,8 @@ fun QiblaScreen(
                 MapLibre.getInstance(context)
                 MapView(context).apply {
                     getMapAsync { map ->
-                        map.setStyle(Style.getPredefinedStyle("OpenStreetMap")) { style ->
+                        // Use a valid MapLibre style URI instead of "OpenStreetMap"
+                        map.setStyle("https://demotiles.maplibre.org/style.json") { style ->
                             userLocation?.let { loc ->
                                 val userLatLng = LatLng(loc.latitude, loc.longitude)
                                 map.animateCamera(CameraUpdateFactory.newCameraPosition(

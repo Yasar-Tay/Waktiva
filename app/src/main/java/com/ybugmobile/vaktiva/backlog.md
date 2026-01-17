@@ -84,8 +84,8 @@ Feature 5.2 – Prayer List & Countdown
 Goal: User control and project sustainability.
 
 Feature 6.1 – Calculation Settings
-[ ] Selection of Madhab (Hanafi/Shafi).
-[ ] Selection of Calculation Authority (MWL, ISNA, Egypt, etc.).
+[x] Selection of Madhab (Hanafi/Shafi).
+[x] Selection of Calculation Authority (MWL, ISNA, Egypt, etc.).
 
 Feature 6.2 – Support & Donation
 [ ] Integrate Google Play Billing for "Buy me a coffee" style donations.
@@ -95,7 +95,7 @@ Feature 6.2 – Support & Donation
 Goal: Reliability and global readiness.
 
 Feature 7.1 – Testing Suite
-[ ] Unit tests for Adhan-Java integration and time parsing.
+[x] Unit tests for Adhan-Java integration and time parsing.
 [ ] UI Tests for the Full-Screen Alarm activity.
 
 Feature 7.2 – Localization
