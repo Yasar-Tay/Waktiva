@@ -92,6 +92,7 @@ dependencies {
 
     // MapLibre
     implementation(libs.maplibre.android)
+    implementation(libs.maplibre.annotation)
 
     // OsmDroid
     implementation(libs.osmdroid.android)

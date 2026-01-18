@@ -79,6 +79,7 @@ adhan = { group = "com.github.batoulapps", name = "adhan-java", version.ref = "a
 
 # MapLibre
 maplibre-android = { group = "org.maplibre.gl", name = "android-sdk", version.ref = "maplibre" }
+maplibre-annotation = { group = "org.maplibre.gl", name = "android-plugin-annotation-v9", version = "3.0.2" }
 
 # OsmDroid
 osmdroid-android = { group = "org.osmdroid", name = "osmdroid-android", version.ref = "osmdroid" }
