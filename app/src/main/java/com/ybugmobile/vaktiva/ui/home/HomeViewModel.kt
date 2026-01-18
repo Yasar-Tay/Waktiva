@@ -38,6 +38,20 @@ class HomeViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
+    val calculationMethods = listOf(
+        "Muslim World League" to 3,
+        "Islamic Society of North America (ISNA)" to 2,
+        "Egyptian General Authority of Survey" to 5,
+        "Umm al-Qura University, Makkah" to 4,
+        "University of Islamic Sciences, Karachi" to 1,
+        "Institute of Geophysics, University of Tehran" to 7,
+        "Gulf Region" to 8,
+        "Kuwait" to 9,
+        "Qatar" to 10,
+        "Majlis Ugama Islam Singapura, Singapore" to 11,
+        "Turkey" to 13
+    )
+
     init {
         // Update current time every second
         tickerFlow(1000).onEach {
@@ -100,6 +114,13 @@ class HomeViewModel @Inject constructor(
             // Add a small delay for better UI feedback if it's too fast
             delay(500)
             _isRefreshing.value = false
+        }
+    }
+
+    fun updateCalculationMethod(methodId: Int) {
+        viewModelScope.launch {
+            settingsManager.updateCalculationMethod(methodId)
+            refresh()
         }
     }
 

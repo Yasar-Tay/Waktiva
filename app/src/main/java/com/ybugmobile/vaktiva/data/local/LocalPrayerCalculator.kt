@@ -1,6 +1,7 @@
 package com.ybugmobile.vaktiva.data.local
 
 import com.batoulapps.adhan.CalculationMethod
+import com.batoulapps.adhan.CalculationParameters
 import com.batoulapps.adhan.Coordinates
 import com.batoulapps.adhan.Madhab
 import com.batoulapps.adhan.PrayerTimes
@@ -22,10 +23,19 @@ class LocalPrayerCalculator @Inject constructor() {
         madhabId: Int = 0 // 0 for Shafi, 1 for Hanafi
     ): List<PrayerDayEntity> {
         val coordinates = Coordinates(latitude, longitude)
-        val method = getCalculationMethod(methodId)
+        val params = getCalculationParameters(methodId)
         val madhab = if (madhabId == 1) Madhab.HANAFI else Madhab.SHAFI
-        val params = method.parameters.apply {
-            this.madhab = madhab
+        params.madhab = madhab
+        
+        if (methodId == 13) {
+            // Turkey (Diyanet) adjustments
+            // Base is MWL (18°/17°) which matches Diyanet angles
+            params.adjustments.fajr = 0
+            params.adjustments.sunrise = -7
+            params.adjustments.dhuhr = 5
+            params.adjustments.asr = 4
+            params.adjustments.maghrib = 7
+            params.adjustments.isha = 2
         }
 
         val prayerDays = mutableListOf<PrayerDayEntity>()
@@ -61,20 +71,20 @@ class LocalPrayerCalculator @Inject constructor() {
         return prayerDays
     }
 
-    private fun getCalculationMethod(id: Int): CalculationMethod {
+    private fun getCalculationParameters(id: Int): CalculationParameters {
         return when (id) {
-            0 -> CalculationMethod.MUSLIM_WORLD_LEAGUE
-            1 -> CalculationMethod.EGYPTIAN
-            2 -> CalculationMethod.KARACHI
-            3 -> CalculationMethod.UMM_AL_QURA
-            4 -> CalculationMethod.DUBAI
-            5 -> CalculationMethod.MOON_SIGHTING_COMMITTEE
-            6 -> CalculationMethod.NORTH_AMERICA
-            7 -> CalculationMethod.KUWAIT
-            8 -> CalculationMethod.QATAR
-            9 -> CalculationMethod.SINGAPORE
-            10 -> CalculationMethod.MUSLIM_WORLD_LEAGUE // Turkey is not directly supported in adhan-java 1.1.0, using MWL as fallback
-            else -> CalculationMethod.NORTH_AMERICA // Default to ISNA/NA
+            1 -> CalculationMethod.KARACHI.parameters
+            2 -> CalculationMethod.NORTH_AMERICA.parameters
+            3 -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
+            4 -> CalculationMethod.UMM_AL_QURA.parameters
+            5 -> CalculationMethod.EGYPTIAN.parameters
+            7 -> CalculationParameters(17.7, 14.0) // Tehran (Institute of Geophysics)
+            8 -> CalculationMethod.DUBAI.parameters
+            9 -> CalculationMethod.KUWAIT.parameters
+            10 -> CalculationMethod.QATAR.parameters
+            11 -> CalculationMethod.SINGAPORE.parameters
+            13 -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters // Turkey (Diyanet)
+            else -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
         }
     }
 }

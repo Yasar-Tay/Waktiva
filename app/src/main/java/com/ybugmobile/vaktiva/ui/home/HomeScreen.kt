@@ -113,6 +113,14 @@ fun HomeScreen(
                     )
                 }
 
+                settings?.let { s ->
+                    CalculationMethodSelector(
+                        currentMethodId = s.calculationMethod,
+                        methods = viewModel.calculationMethods,
+                        onMethodSelected = { viewModel.updateCalculationMethod(it) }
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(48.dp))
 
                 // Countdown to Next Prayer
@@ -138,6 +146,50 @@ fun HomeScreen(
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun CalculationMethodSelector(
+    currentMethodId: Int,
+    methods: List<Pair<String, Int>>,
+    onMethodSelected: (Int) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val currentMethodName = methods.find { it.second == currentMethodId }?.first ?: "Unknown Method"
+
+    Box(modifier = Modifier.padding(top = 8.dp)) {
+        Surface(
+            onClick = { expanded = true },
+            color = Color.White.copy(alpha = 0.15f),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = currentMethodName,
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            methods.forEach { (name, id) ->
+                DropdownMenuItem(
+                    text = { Text(name) },
+                    onClick = {
+                        onMethodSelected(id)
+                        expanded = false
+                    }
+                )
             }
         }
     }

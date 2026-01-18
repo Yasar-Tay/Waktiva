@@ -58,6 +58,8 @@ class SettingsManager @Inject constructor(
         }
     }
 
+    suspend fun setCalculationMethod(method: Int) = updateCalculationMethod(method)
+
     suspend fun saveLocation(lat: Double, lng: Double, name: String) {
         context.dataStore.edit { preferences ->
             preferences[LAST_KNOWN_LAT] = lat

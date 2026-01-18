@@ -100,6 +100,12 @@ fun SettingsScreen(
                     "Islamic Society of North America (ISNA)" to 2,
                     "Egyptian General Authority of Survey" to 5,
                     "Umm al-Qura University, Makkah" to 4,
+                    "University of Islamic Sciences, Karachi" to 1,
+                    "Institute of Geophysics, University of Tehran" to 7,
+                    "Gulf Region" to 8,
+                    "Kuwait" to 9,
+                    "Qatar" to 10,
+                    "Majlis Ugama Islam Singapura, Singapore" to 11,
                     "Turkey" to 13
                 )
                 
