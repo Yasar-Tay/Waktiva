@@ -122,7 +122,7 @@ fun HomeScreenContent(
                     .fillMaxSize()
                     .verticalScroll(scrollState)
                     .padding(horizontal = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.Start
             ) {
                 if (!permissionState.allPermissionsGranted) {
                     Spacer(modifier = Modifier.height(24.dp))
@@ -137,19 +137,29 @@ fun HomeScreenContent(
                     String.format(Locale.US, "%.4f, %.4f", settings.latitude, settings.longitude)
                 } else ""
 
-                Text(
-                    text = locationText,
-                    color = Color.White,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = locationText,
+                        color = Color.White,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start
+                    )
+                }
+                
                 if (coordinatesText.isNotEmpty()) {
                     Text(
                         text = coordinatesText,
                         color = Color.White.copy(alpha = 0.6f),
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        modifier = Modifier.padding(start = 32.dp, bottom = 8.dp)
                     )
                 }
                 
@@ -163,29 +173,33 @@ fun HomeScreenContent(
                 Text(
                     text = displayDate,
                     color = Color.White.copy(alpha = 0.8f),
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(start = 32.dp)
                 )
                 
                 if (currentDay != null) {
                     Text(
                         text = formatHijriDate(currentDay.hijriDate),
                         color = Color.White.copy(alpha = 0.8f),
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(start = 32.dp)
                     )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Circular Prayer Visualization with Countdown
-                if (currentDay != null) {
-                    PrayerCircleVisualization(
-                        day = currentDay,
-                        currentTime = if (selectedDate == LocalDate.now()) currentTime.toLocalTime() else LocalTime.MIDNIGHT,
-                        nextPrayer = if (selectedDate == LocalDate.now()) nextPrayer else null,
-                        isSelectedDayToday = selectedDate == LocalDate.now()
-                    )
-                } else {
-                    Spacer(modifier = Modifier.height(250.dp))
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    if (currentDay != null) {
+                        PrayerCircleVisualization(
+                            day = currentDay,
+                            currentTime = if (selectedDate == LocalDate.now()) currentTime.toLocalTime() else LocalTime.MIDNIGHT,
+                            nextPrayer = if (selectedDate == LocalDate.now()) nextPrayer else null,
+                            isSelectedDayToday = selectedDate == LocalDate.now()
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.height(250.dp))
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -632,18 +646,17 @@ fun PrayerTimeList(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalAlignment = Alignment.Start
             ) {
                 Text(
                     text = stringResource(R.string.home_prayer_provider),
                     color = Color.White,
                     style = MaterialTheme.typography.titleMedium,
-                    fontSize = 12.sp,
-
+                    fontSize = 14.sp,
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 CalculationMethodSelector(
                     currentMethodId = currentMethodId,
                     methods = methods,
