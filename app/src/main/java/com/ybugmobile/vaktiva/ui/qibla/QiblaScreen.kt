@@ -121,7 +121,6 @@ fun QiblaScreen(
                                     lineManager = LineManager(this@apply, map, style)
                                     
                                     userLocation?.let {
-                                        // Move camera to user location with maximum zoom (20.0)
                                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), 18.0))
                                     }
                                 }
@@ -134,12 +133,21 @@ fun QiblaScreen(
                         }
                     },
                     update = { view ->
-                        // Re-apply style if it changed
                         mapInstance?.let { map ->
                             val currentStyle = map.style
-                            val targetStyleUri = if (isSatelliteView) "" else STREET_STYLE
-                            
-                            if (currentStyle == null || (isSatelliteView && currentStyle.uri.isNotEmpty()) || (!isSatelliteView && currentStyle.uri != STREET_STYLE)) {
+                            val needsStyleChange = if (isSatelliteView) {
+                                currentStyle == null || currentStyle.uri.isNotEmpty()
+                            } else {
+                                currentStyle == null || currentStyle.uri != STREET_STYLE
+                            }
+
+                            if (needsStyleChange) {
+                                // Clear managers before style change to prevent stale references
+                                symbolManager?.deleteAll()
+                                lineManager?.deleteAll()
+                                symbolManager = null
+                                lineManager = null
+
                                 map.setStyle(Style.Builder().run {
                                     if (isSatelliteView) fromJson(SATELLITE_STYLE_JSON) else fromUri(STREET_STYLE)
                                 }) { style ->
@@ -157,7 +165,7 @@ fun QiblaScreen(
                 )
 
                 // Update Annotations (Markers and Lines)
-                LaunchedEffect(userLocation, compassData, customPoint, symbolManager, lineManager) {
+                LaunchedEffect(userLocation, compassData.azimuth, customPoint, symbolManager, lineManager) {
                     val sm = symbolManager ?: return@LaunchedEffect
                     val lm = lineManager ?: return@LaunchedEffect
                     
@@ -170,7 +178,7 @@ fun QiblaScreen(
                         sm.create(SymbolOptions()
                             .withLatLng(userLatLng)
                             .withIconImage("user-arrow")
-                            .withIconRotate(-compassData.azimuth) // Points to device direction
+                            .withIconRotate(compassData.azimuth) // MapLibre uses clockwise rotation
                             .withIconSize(1.5f))
                         
                         // Line to Qibla from User
@@ -185,7 +193,7 @@ fun QiblaScreen(
                         sm.create(SymbolOptions()
                             .withLatLng(cp)
                             .withIconImage("custom-arrow")
-                            .withIconRotate(-compassData.azimuth) // Also follows phone rotation
+                            .withIconRotate(compassData.azimuth)
                             .withIconSize(1.5f))
                         
                         // Line to Qibla from Custom Point
@@ -206,13 +214,13 @@ fun QiblaScreen(
                         containerColor = MaterialTheme.colorScheme.surface,
                         contentColor = MaterialTheme.colorScheme.primary
                     ) {
-                        Icon(if (isSatelliteView) Icons.Default.Terrain else Icons.Default.Satellite, contentDescription = "Toggle Layer")
+                        // When satellite view is on, show Map icon to switch back, and vice-versa
+                        Icon(if (isSatelliteView) Icons.Default.Map else Icons.Default.Satellite, contentDescription = "Toggle Layer")
                     }
 
                     FloatingActionButton(
                         onClick = {
                             userLocation?.let { loc ->
-                                // Animate camera to user location with maximum zoom (20.0)
                                 mapInstance?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(loc.latitude, loc.longitude), 18.0))
                             }
                         },
