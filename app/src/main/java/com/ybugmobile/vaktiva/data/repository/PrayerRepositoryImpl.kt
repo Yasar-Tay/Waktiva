@@ -81,12 +81,12 @@ class PrayerRepositoryImpl @Inject constructor(
         return PrayerDayEntity(
             date = formattedDate,
             hijriDate = "${date.hijri.day} ${date.hijri.month.en} ${date.hijri.year}",
-            fajr = timings.fajr,
-            sunrise = timings.sunrise,
-            dhuhr = timings.dhuhr,
-            asr = timings.asr,
-            maghrib = timings.maghrib,
-            isha = timings.isha
+            fajr = timings.fajr.cleanTime(),
+            sunrise = timings.sunrise.cleanTime(),
+            dhuhr = timings.dhuhr.cleanTime(),
+            asr = timings.asr.cleanTime(),
+            maghrib = timings.maghrib.cleanTime(),
+            isha = timings.isha.cleanTime()
         )
     }
 
@@ -94,12 +94,16 @@ class PrayerRepositoryImpl @Inject constructor(
         return PrayerDayEntity(
             date = date,
             hijriDate = "",
-            fajr = timings.fajr,
-            sunrise = timings.sunrise,
-            dhuhr = timings.dhuhr,
-            asr = timings.asr,
-            maghrib = timings.maghrib,
-            isha = timings.isha
+            fajr = timings.fajr.cleanTime(),
+            sunrise = timings.sunrise.cleanTime(),
+            dhuhr = timings.dhuhr.cleanTime(),
+            asr = timings.asr.cleanTime(),
+            maghrib = timings.maghrib.cleanTime(),
+            isha = timings.isha.cleanTime()
         )
+    }
+
+    private fun String.cleanTime(): String {
+        return this.split(" ")[0]
     }
 }

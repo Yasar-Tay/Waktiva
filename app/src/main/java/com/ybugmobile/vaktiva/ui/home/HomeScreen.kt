@@ -7,10 +7,11 @@ import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,9 +26,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.math.floor
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
@@ -35,6 +37,8 @@ fun HomeScreen(
     val currentDay by viewModel.currentPrayerDay.collectAsState(initial = null)
     val nextPrayer by viewModel.nextPrayerInfo.collectAsState(initial = null)
     val currentTime by viewModel.currentTime.collectAsState()
+    val settings by viewModel.settings.collectAsState(initial = null)
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
     val context = LocalContext.current
 
     val permissions = mutableListOf(
@@ -48,68 +52,92 @@ fun HomeScreen(
     val permissionState = rememberMultiplePermissionsState(permissions)
 
     val backgroundGradient = getGradientForPrayer(nextPrayer?.name)
+    val scrollState = rememberScrollState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(brush = backgroundGradient)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = { viewModel.refresh() },
+            modifier = Modifier.fillMaxSize()
         ) {
-            if (!permissionState.allPermissionsGranted) {
-                PermissionRequestCard(permissionState)
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (!permissionState.allPermissionsGranted) {
+                    PermissionRequestCard(permissionState)
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
-            Spacer(modifier = Modifier.height(48.dp))
-            
-            // City & Date
-            Text(
-                text = "My Location", // Placeholder until location naming is implemented
-                color = Color.White,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = currentTime.format(DateTimeFormatter.ofPattern("EEEE, d MMMM")),
-                color = Color.White.copy(alpha = 0.8f),
-                style = MaterialTheme.typography.bodyLarge
-            )
-            
-            if (currentDay != null) {
+                Spacer(modifier = Modifier.height(48.dp))
+                
+                // Location & Date
+                val locationText = settings?.locationName ?: "Unknown Location"
+                val coordinatesText = if (settings != null) {
+                    String.format(Locale.US, "%.4f, %.4f", settings!!.latitude, settings!!.longitude)
+                } else ""
+
                 Text(
-                    text = currentDay!!.hijriDate,
+                    text = locationText,
+                    color = Color.White,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+                if (coordinatesText.isNotEmpty()) {
+                    Text(
+                        text = coordinatesText,
+                        color = Color.White.copy(alpha = 0.6f),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+                Text(
+                    text = currentTime.format(DateTimeFormatter.ofPattern("EEEE, d MMMM")),
                     color = Color.White.copy(alpha = 0.8f),
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyLarge
                 )
-            }
+                
+                if (currentDay != null) {
+                    Text(
+                        text = currentDay!!.hijriDate,
+                        color = Color.White.copy(alpha = 0.8f),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(48.dp))
 
-            // Countdown to Next Prayer
-            if (nextPrayer != null) {
-                Text(
-                    text = "Next: ${nextPrayer!!.name}",
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    text = formatRemainingTime(nextPrayer!!.remainingMillis),
-                    color = Color.White,
-                    fontSize = 64.sp,
-                    fontWeight = FontWeight.Thin
-                )
-            }
+                // Countdown to Next Prayer
+                if (nextPrayer != null) {
+                    Text(
+                        text = "Next: ${nextPrayer!!.name}",
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(
+                        text = formatRemainingTime(nextPrayer!!.remainingMillis),
+                        color = Color.White,
+                        fontSize = 64.sp,
+                        fontWeight = FontWeight.Thin
+                    )
+                }
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(48.dp))
 
-            // Prayer Times List (Glassmorphism effect)
-            currentDay?.let { day ->
-                PrayerTimeList(day, nextPrayer?.name)
+                // Prayer Times List (Glassmorphism effect)
+                currentDay?.let { day ->
+                    PrayerTimeList(day, nextPrayer?.name)
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

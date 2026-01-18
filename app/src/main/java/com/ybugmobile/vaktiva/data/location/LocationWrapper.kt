@@ -2,12 +2,17 @@ package com.ybugmobile.vaktiva.data.location
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Geocoder
 import android.location.Location
+import android.os.Build
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.*
@@ -26,6 +31,33 @@ class LocationWrapper @Inject constructor(
                 Priority.PRIORITY_BALANCED_POWER_ACCURACY,
                 null
             ).await()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun getAddressFromLocation(latitude: Double, longitude: Double): String? = withContext(Dispatchers.IO) {
+        try {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // Tiramisu and above use callback-based Geocoder, but we'll use the blocking one in IO thread for simplicity or handle both
+                val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+                if (!addresses.isNullOrEmpty()) {
+                    val address = addresses[0]
+                    val city = address.locality ?: address.subAdminArea ?: address.adminArea
+                    val country = address.countryName
+                    if (city != null && country != null) "$city, $country" else city ?: country
+                } else null
+            } else {
+                @Suppress("DEPRECATION")
+                val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+                if (!addresses.isNullOrEmpty()) {
+                    val address = addresses[0]
+                    val city = address.locality ?: address.subAdminArea ?: address.adminArea
+                    val country = address.countryName
+                    if (city != null && country != null) "$city, $country" else city ?: country
+                } else null
+            }
         } catch (e: Exception) {
             null
         }

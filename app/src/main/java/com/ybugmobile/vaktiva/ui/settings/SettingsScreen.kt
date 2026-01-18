@@ -7,8 +7,10 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -28,6 +30,7 @@ fun SettingsScreen(
 ) {
     val settings by viewModel.settings.collectAsState(initial = null)
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -39,6 +42,7 @@ fun SettingsScreen(
                 .padding(padding)
                 .padding(16.dp)
                 .fillMaxSize()
+                .verticalScroll(scrollState)
         ) {
             Text(
                 text = "Permissions",
@@ -124,6 +128,8 @@ fun SettingsScreen(
                     }
                 }
             }
+            
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }

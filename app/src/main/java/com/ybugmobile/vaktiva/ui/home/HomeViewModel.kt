@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
+import com.ybugmobile.vaktiva.data.location.LocationWrapper
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -18,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val prayerRepository: PrayerRepository,
-    private val settingsManager: SettingsManager
+    private val settingsManager: SettingsManager,
+    private val locationWrapper: LocationWrapper
 ) : ViewModel() {
 
     val settings = settingsManager.settingsFlow
@@ -31,6 +34,9 @@ class HomeViewModel @Inject constructor(
 
     private val _currentTime = MutableStateFlow(LocalDateTime.now())
     val currentTime = _currentTime.asStateFlow()
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
 
     init {
         // Update current time every second
@@ -50,13 +56,19 @@ class HomeViewModel @Inject constructor(
     private val prayerTimes = currentPrayerDay.map { day ->
         if (day == null) return@map null
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        
+        fun parseTime(timeStr: String): LocalTime {
+            val cleaned = timeStr.split(" ")[0]
+            return LocalTime.parse(cleaned, formatter)
+        }
+
         listOf(
-            "Fajr" to LocalTime.parse(day.fajr, formatter),
-            "Sunrise" to LocalTime.parse(day.sunrise, formatter),
-            "Dhuhr" to LocalTime.parse(day.dhuhr, formatter),
-            "Asr" to LocalTime.parse(day.asr, formatter),
-            "Maghrib" to LocalTime.parse(day.maghrib, formatter),
-            "Isha" to LocalTime.parse(day.isha, formatter)
+            "Fajr" to parseTime(day.fajr),
+            "Sunrise" to parseTime(day.sunrise),
+            "Dhuhr" to parseTime(day.dhuhr),
+            "Asr" to parseTime(day.asr),
+            "Maghrib" to parseTime(day.maghrib),
+            "Isha" to parseTime(day.isha)
         )
     }
 
@@ -79,6 +91,54 @@ class HomeViewModel @Inject constructor(
             time = next.second.format(formatter),
             remainingMillis = remainingMillis
         )
+    }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            onPermissionsGranted()
+            // Add a small delay for better UI feedback if it's too fast
+            delay(500)
+            _isRefreshing.value = false
+        }
+    }
+
+    fun onPermissionsGranted() {
+        viewModelScope.launch {
+            val location = locationWrapper.getCurrentLocation()
+            val currentSettings = settings.first()
+            val now = LocalDate.now()
+            
+            if (location != null) {
+                // Reverse geocode to get city, country
+                val addressName = locationWrapper.getAddressFromLocation(location.latitude, location.longitude)
+                    ?: "Current Location"
+
+                // Save the new location
+                settingsManager.saveLocation(
+                    lat = location.latitude,
+                    lng = location.longitude,
+                    name = addressName
+                )
+                
+                prayerRepository.refreshPrayerTimes(
+                    year = now.year,
+                    month = now.monthValue,
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    method = currentSettings.calculationMethod
+                )
+            } else {
+                // If location is still null, we might want to use cached settings or show error
+                prayerRepository.refreshPrayerTimes(
+                    year = now.year,
+                    month = now.monthValue,
+                    latitude = currentSettings.latitude,
+                    longitude = currentSettings.longitude,
+                    method = currentSettings.calculationMethod
+                )
+            }
+        }
     }
 }
 
