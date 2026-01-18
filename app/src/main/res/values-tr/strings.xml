@@ -1,0 +1,90 @@
+<resources>
+    <string name="app_name">Vaktiva</string>
+
+    <!-- Kıble Ekranı -->
+    <string name="qibla_compass">Pusula</string>
+    <string name="qibla_map">Harita</string>
+    <string name="qibla_mecca_aligned">Kıbleye Hizalandı</string>
+    <string name="qibla_rotate_phone">Telefonu Çevirin</string>
+    <string name="qibla_direction">Kıble: %d°</string>
+    <string name="qibla_locating">Konum Alınıyor...</string>
+    <string name="qibla_label">Kıble</string>
+    <string name="qibla_heading">Yönelim</string>
+    <string name="qibla_signal">Sinyal</string>
+    <string name="qibla_standard">Standart</string>
+    <string name="qibla_satellite">Uydu</string>
+    <string name="qibla_recenter">Ortala</string>
+    <string name="qibla_location_required">Konum İzni Gerekiyor</string>
+    <string name="qibla_location_required_desc">Hassas Kıble hesaplaması için konum gereklidir.</string>
+    <string name="qibla_grant_permission">İzin Ver</string>
+    <string name="qibla_calibration_needed">Kalibrasyon Gerekli</string>
+    <string name="qibla_calibration_desc">Hassasiyeti artırmak için telefonunuzu 8 çizecek şekilde (∞) hareket ettirin.</string>
+    <string name="qibla_got_it">Anladım</string>
+    <string name="qibla_aligned_badge">HİZALANDI</string>
+    <string name="qibla_magnetic_interference">Manyetik Müdahale Algılandı - Cihazı Kalibre Edin</string>
+
+    <!-- Ana Ekran -->
+    <string name="home_unknown_location">Bilinmeyen Konum</string>
+    <string name="home_next_prayer">Sıradaki: %s</string>
+    <string name="home_permissions_required">İzinler Gerekli</string>
+    <string name="home_permissions_desc">Uygulamanın doğru çalışması için Konum ve Bildirim izinleri gereklidir.</string>
+    <string name="home_grant_permissions">İzinleri Ver</string>
+    <string name="home_refresh_success">Namaz vakitleri güncellendi</string>
+    <string name="home_refresh_error">Vakitler güncellenemedi</string>
+
+    <!-- Namaz Vakitleri -->
+    <string name="prayer_fajr">İmsak</string>
+    <string name="prayer_sunrise">Güneş</string>
+    <string name="prayer_dhuhr">Öğle</string>
+    <string name="prayer_asr">İkindi</string>
+    <string name="prayer_maghrib">Akşam</string>
+    <string name="prayer_isha">Yatsı</string>
+
+    <!-- Doğruluk Etiketleri -->
+    <string name="accuracy_high">Yüksek</string>
+    <string name="accuracy_med">Orta</string>
+    <string name="accuracy_low">Düşük</string>
+    <string name="accuracy_poor">Zayıf</string>
+
+    <!-- Ayarlar -->
+    <string name="settings_title">Ayarlar</string>
+    <string name="settings_permissions">İzinler</string>
+    <string name="settings_calculation">Hesaplama Ayarları</string>
+    <string name="settings_madhab">Mezhep</string>
+    <string name="settings_method">Hesaplama Yöntemi</string>
+    <string name="settings_manage_system">Sistem Ayarlarından Yönet</string>
+    <string name="settings_location_access">Konum Erişimi</string>
+    <string name="settings_location_desc">Doğru namaz vakitleri ve Kıble yönü için gereklidir.</string>
+    <string name="settings_notifications">Bildirimler</string>
+    <string name="settings_notifications_desc">Namaz vakti uyarılarını göstermek için gereklidir.</string>
+    <string name="settings_granted">Verildi</string>
+    <string name="settings_denied">Reddedildi</string>
+    <string name="settings_language">Uygulama Dili</string>
+
+    <!-- Dil Seçenekleri -->
+    <string name="lang_system">Sistem Varsayılanı</string>
+    <string name="lang_en">English</string>
+    <string name="lang_tr">Türkçe</string>
+
+    <!-- Mezhep Seçenekleri -->
+    <string name="madhab_shafi">Şafii / Standart (Maliki, Hanbeli)</string>
+    <string name="madhab_hanafi">Hanefi</string>
+
+    <!-- Yöntemler -->
+    <string name="method_mwl">Müslüman Dünya Birliği</string>
+    <string name="method_isna">Kuzey Amerika İslam Cemiyeti (ISNA)</string>
+    <string name="method_egypt">Mısır Genel Araştırma Kurumu</string>
+    <string name="method_makkah">Umm al-Qura Üniversitesi, Mekke</string>
+    <string name="method_karachi">İslam Bilimleri Üniversitesi, Karaçi</string>
+    <string name="method_tehran">Tahran Üniversitesi Jeofizik Enstitüsü</string>
+    <string name="method_gulf">Körfez Bölgesi</string>
+    <string name="method_kuwait">Kuveyt</string>
+    <string name="method_qatar">Katar</string>
+    <string name="method_singapore">Singapur İslami Dini Meclisi</string>
+    <string name="method_turkey">Türkiye (Diyanet İşleri Başkanlığı)</string>
+
+    <!-- Ses Ayarları -->
+    <string name="audio_settings_title">Ezan Sesleri</string>
+    <string name="audio_add_custom">Özel Ses Ekle</string>
+    <string name="audio_delete_confirm">Ses dosyası silinsin mi?</string>
+</resources>

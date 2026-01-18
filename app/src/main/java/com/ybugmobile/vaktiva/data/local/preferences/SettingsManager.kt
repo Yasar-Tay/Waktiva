@@ -21,7 +21,8 @@ data class UserSettings(
     val calculationMethod: Int,
     val latitude: Double,
     val longitude: Double,
-    val locationName: String
+    val locationName: String,
+    val language: String
 )
 
 @Singleton
@@ -34,6 +35,7 @@ class SettingsManager @Inject constructor(
         val LAST_KNOWN_LAT = doublePreferencesKey("last_lat")
         val LAST_KNOWN_LNG = doublePreferencesKey("last_lng")
         val LAST_LOCATION_NAME = stringPreferencesKey("last_location_name")
+        val LANGUAGE = stringPreferencesKey("language")
     }
 
     val settingsFlow: Flow<UserSettings> = context.dataStore.data.map { preferences ->
@@ -42,7 +44,8 @@ class SettingsManager @Inject constructor(
             calculationMethod = preferences[CALCULATION_METHOD] ?: 2, // Default: ISNA
             latitude = preferences[LAST_KNOWN_LAT] ?: 0.0,
             longitude = preferences[LAST_KNOWN_LNG] ?: 0.0,
-            locationName = preferences[LAST_LOCATION_NAME] ?: "Unknown"
+            locationName = preferences[LAST_LOCATION_NAME] ?: "Unknown",
+            language = preferences[LANGUAGE] ?: "system"
         )
     }
 
@@ -55,6 +58,12 @@ class SettingsManager @Inject constructor(
     suspend fun updateCalculationMethod(method: Int) {
         context.dataStore.edit { preferences ->
             preferences[CALCULATION_METHOD] = method
+        }
+    }
+
+    suspend fun updateLanguage(language: String) {
+        context.dataStore.edit { preferences ->
+            preferences[LANGUAGE] = language
         }
     }
 

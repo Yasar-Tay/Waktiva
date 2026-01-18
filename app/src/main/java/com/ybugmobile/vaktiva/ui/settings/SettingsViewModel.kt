@@ -25,4 +25,10 @@ class SettingsViewModel @Inject constructor(
             settingsManager.updateCalculationMethod(method)
         }
     }
+
+    fun updateLanguage(language: String) {
+        viewModelScope.launch {
+            settingsManager.updateLanguage(language)
+        }
+    }
 }

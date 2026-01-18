@@ -9,6 +9,8 @@ import android.hardware.SensorManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas as ComposeCanvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +36,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
+import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.sensor.CompassData
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraUpdateFactory
@@ -94,21 +98,45 @@ fun QiblaScreen(
         MapLibre.getInstance(context)
     }
 
+    // Logic for accuracy warning
+    val isAccuracyLow = compassData.accuracy <= SensorManager.SENSOR_STATUS_ACCURACY_LOW
+    val isAccuracyUnreliable = compassData.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE
+
     LaunchedEffect(compassData.accuracy) {
-        showCalibrationDialog = compassData.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE
+        if (isAccuracyUnreliable) {
+            showCalibrationDialog = true
+        }
     }
 
-    // Smoothed Azimuth for the compass dial
+    // Background color shifts based on accuracy
+    val bgColor by animateColorAsState(
+        targetValue = if (isAccuracyLow)
+            MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f)
+        else
+            MaterialTheme.colorScheme.background,
+        animationSpec = tween(1000),
+        label = "bgColor"
+    )
+
+    // Pulse animation for critical warnings
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.1f,
+        targetValue = 0.3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseAlpha"
+    )
+
+    // Smoothed Azimuth
     val animatedAzimuth by animateFloatAsState(
         targetValue = compassData.azimuth,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
         label = "azimuth"
     )
 
-    // Calculate rotation for alignment logic (Qibla relative to phone)
     var relativeQiblaAngle = (qiblaDirection.toFloat() - compassData.azimuth)
     while (relativeQiblaAngle <= -180) relativeQiblaAngle += 360
     while (relativeQiblaAngle > 180) relativeQiblaAngle -= 360
@@ -119,7 +147,24 @@ fun QiblaScreen(
         label = "alignmentColor"
     )
 
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    Box(modifier = Modifier.fillMaxSize().background(bgColor)) {
+        
+        // 0. Interactive Warning Background
+        if (isAccuracyLow) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.radialGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.error.copy(alpha = pulseAlpha),
+                                Color.Transparent
+                            )
+                        )
+                    )
+            )
+        }
+
         if (locationPermissionState.status.isGranted) {
             
             // 1. Main Content Layer (Map or Compass)
@@ -136,6 +181,7 @@ fun QiblaScreen(
                                 }) { style ->
                                     style.addImage("user-arrow", createArrowBitmap("#2196F3"))
                                     style.addImage("custom-arrow", createArrowBitmap("#F44336"))
+                                    
                                     symbolManager = SymbolManager(this@apply, map, style).apply {
                                         iconAllowOverlap = true
                                         iconIgnorePlacement = true
@@ -198,11 +244,8 @@ fun QiblaScreen(
                     }
                 }
             } else {
-                // Compass positioned slightly higher to avoid info box
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .offset(y = (-60).dp), // Offset up to avoid bottom card
+                    modifier = Modifier.fillMaxSize().offset(y = (-60).dp),
                     contentAlignment = Alignment.Center
                 ) {
                     ProfessionalCompass(
@@ -214,112 +257,101 @@ fun QiblaScreen(
                 }
             }
 
-            // 2. UI Overlays (Top and Bottom)
+            // 2. UI Overlays
             
-            // TOP: Switcher
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 40.dp),
-                contentAlignment = Alignment.TopCenter
+            // TOP: Accuracy Warning Bar
+            AnimatedVisibility(
+                visible = isAccuracyLow,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier.fillMaxWidth().padding(top = 110.dp)
             ) {
                 Surface(
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
-                    shape = RoundedCornerShape(32.dp),
-                    tonalElevation = 8.dp
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth(),
+                    tonalElevation = 4.dp
                 ) {
-                    Row(modifier = Modifier.padding(4.dp)) {
-                        FilterChip(
-                            selected = !isMapView,
-                            onClick = { isMapView = false },
-                            label = { Text("Compass") },
-                            leadingIcon = { Icon(Icons.Default.Explore, null) },
-                            shape = RoundedCornerShape(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        FilterChip(
-                            selected = isMapView,
-                            onClick = { isMapView = true },
-                            label = { Text("Map") },
-                            leadingIcon = { Icon(Icons.Default.Map, null) },
-                            shape = RoundedCornerShape(24.dp)
+                    Row(
+                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(Icons.Default.Error, null, tint = Color.White, modifier = Modifier.size(16.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.qibla_magnetic_interference),
+                            color = Color.White,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
             }
 
-            // BOTTOM: Enhanced Info Card (More compact)
+            // TOP: Switcher
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                contentAlignment = Alignment.BottomCenter
+                modifier = Modifier.fillMaxWidth().padding(top = 40.dp),
+                contentAlignment = Alignment.TopCenter
             ) {
+                Row(modifier = Modifier.padding(4.dp)) {
+                    FilterChip(
+                        selected = !isMapView,
+                        onClick = { isMapView = false },
+                        label = { Text(stringResource(R.string.qibla_compass)) },
+                        leadingIcon = { Icon(Icons.Default.Explore, null) },
+                        shape = RoundedCornerShape(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    FilterChip(
+                        selected = isMapView,
+                        onClick = { isMapView = true },
+                        label = { Text(stringResource(R.string.qibla_map)) },
+                        leadingIcon = { Icon(Icons.Default.Map, null) },
+                        shape = RoundedCornerShape(24.dp)
+                    )
+                }
+            }
+
+            // BOTTOM: Enhanced Info Card
+            Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.BottomCenter) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(28.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-                    ),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)),
                     elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
-                        // Title and Status Row
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                             Column {
                                 Text(
-                                    text = if (isAligned) "Mecca Aligned" else "Rotate Phone",
+                                    text = if (isAligned) stringResource(R.string.qibla_mecca_aligned) else stringResource(R.string.qibla_rotate_phone),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = alignmentColor
                                 )
                                 Text(
-                                    text = userLocation?.let { "Qibla: ${qiblaDirection.toInt()}°" } ?: "Locating...",
+                                    text = userLocation?.let { stringResource(R.string.qibla_direction, qiblaDirection.toInt()) } ?: stringResource(R.string.qibla_locating),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
-                            
-                            // Minimal status indicator
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .background(alignmentColor.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = if (isAligned) Icons.Default.CheckCircle else Icons.Default.NearMe,
-                                    contentDescription = null,
-                                    tint = alignmentColor,
-                                    modifier = Modifier.size(24.dp)
-                                )
+                            Box(modifier = Modifier.size(40.dp).background(alignmentColor.copy(alpha = 0.1f), RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) {
+                                Icon(imageVector = if (isAligned) Icons.Default.CheckCircle else Icons.Default.NearMe, contentDescription = null, tint = alignmentColor, modifier = Modifier.size(24.dp))
                             }
                         }
-
                         Spacer(modifier = Modifier.height(16.dp))
-                        
-                        // Metric Grid
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            CompactMetric(label = "Qibla", value = "${qiblaDirection.toInt()}°", icon = Icons.Default.Place)
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                            CompactMetric(label = stringResource(R.string.qibla_label), value = "${qiblaDirection.toInt()}°", icon = Icons.Default.Place)
                             VerticalDivider(modifier = Modifier.height(32.dp), color = MaterialTheme.colorScheme.outlineVariant)
-                            CompactMetric(label = "Heading", value = "${(compassData.azimuth.toInt() + 360) % 360}°", icon = Icons.Default.Explore)
+                            CompactMetric(label = stringResource(R.string.qibla_heading), value = "${(compassData.azimuth.toInt() + 360) % 360}°", icon = Icons.Default.Explore)
                             VerticalDivider(modifier = Modifier.height(32.dp), color = MaterialTheme.colorScheme.outlineVariant)
                             CompactMetric(
-                                label = "Signal",
+                                label = stringResource(R.string.qibla_signal),
                                 value = getAccuracyLabel(compassData.accuracy),
                                 icon = Icons.Default.Wifi,
-                                color = if (compassData.accuracy <= SensorManager.SENSOR_STATUS_ACCURACY_LOW) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                                color = if (isAccuracyLow) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                             )
                         }
-
-                        // Map Specific Controls (Optional visibility)
                         if (isMapView) {
                             Spacer(modifier = Modifier.height(16.dp))
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -331,20 +363,16 @@ fun QiblaScreen(
                                 ) {
                                     Icon(if (isSatelliteView) Icons.Default.Map else Icons.Default.Satellite, null, modifier = Modifier.size(18.dp))
                                     Spacer(Modifier.width(8.dp))
-                                    Text(if (isSatelliteView) "Standard" else "Satellite", fontSize = 12.sp)
+                                    Text(if (isSatelliteView) stringResource(R.string.qibla_standard) else stringResource(R.string.qibla_satellite), fontSize = 12.sp)
                                 }
                                 Button(
-                                    onClick = {
-                                        userLocation?.let { loc ->
-                                            mapInstance?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(loc.latitude, loc.longitude), 18.0))
-                                        }
-                                    },
+                                    onClick = { userLocation?.let { loc -> mapInstance?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(loc.latitude, loc.longitude), 18.0)) } },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
                                     Icon(Icons.Default.MyLocation, null, modifier = Modifier.size(18.dp))
                                     Spacer(Modifier.width(8.dp))
-                                    Text("Recenter", fontSize = 12.sp)
+                                    Text(stringResource(R.string.qibla_recenter), fontSize = 12.sp)
                                 }
                             }
                         }
@@ -352,16 +380,15 @@ fun QiblaScreen(
                 }
             }
         } else {
-            // Permission Request UI
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(32.dp)) {
                     Icon(Icons.Default.LocationOn, null, modifier = Modifier.size(80.dp), tint = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.height(24.dp))
-                    Text(text = "Location Access Required", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                    Text(text = "Required for accurate Qibla calculation.", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(text = stringResource(R.string.qibla_location_required), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                    Text(text = stringResource(R.string.qibla_location_required_desc), style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.height(32.dp))
                     Button(onClick = { locationPermissionState.launchPermissionRequest() }, shape = RoundedCornerShape(16.dp)) {
-                        Text("Grant Permission")
+                        Text(stringResource(R.string.qibla_grant_permission))
                     }
                 }
             }
@@ -401,21 +428,10 @@ fun ProfessionalCompass(
             val radius = size.minDimension / 2
             val innerRadius = radius * 0.9f
 
-            // 1. Draw Outer Ring
-            drawCircle(
-                color = onSurface.copy(alpha = 0.05f),
-                radius = radius,
-                style = androidx.compose.ui.graphics.drawscope.Fill
-            )
-            drawCircle(
-                color = onSurface.copy(alpha = 0.15f),
-                radius = radius,
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
-            )
+            drawCircle(color = onSurface.copy(alpha = 0.05f), radius = radius, style = androidx.compose.ui.graphics.drawscope.Fill)
+            drawCircle(color = onSurface.copy(alpha = 0.15f), radius = radius, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx()))
 
-            // 2. Rotate everything relative to North (The Compass Dial)
             rotate(-azimuth) {
-                // Degree Ticks
                 for (i in 0 until 360 step 5) {
                     val angleInRad = Math.toRadians(i.toDouble() - 90)
                     val tickLength = if (i % 30 == 0) 15.dp.toPx() else 8.dp.toPx()
@@ -424,59 +440,27 @@ fun ProfessionalCompass(
                     val endX = center.x + (radius - 5.dp.toPx() - tickLength) * cos(angleInRad).toFloat()
                     val endY = center.y + (radius - 5.dp.toPx() - tickLength) * sin(angleInRad).toFloat()
 
-                    drawLine(
-                        color = if (i % 30 == 0) onSurface.copy(alpha = 0.4f) else onSurface.copy(alpha = 0.15f),
-                        start = androidx.compose.ui.geometry.Offset(startX, startY),
-                        end = androidx.compose.ui.geometry.Offset(endX, endY),
-                        strokeWidth = if (i % 30 == 0) 2.dp.toPx() else 1.dp.toPx()
-                    )
+                    drawLine(color = if (i % 30 == 0) onSurface.copy(alpha = 0.4f) else onSurface.copy(alpha = 0.15f), start = androidx.compose.ui.geometry.Offset(startX, startY), end = androidx.compose.ui.geometry.Offset(endX, endY), strokeWidth = if (i % 30 == 0) 2.dp.toPx() else 1.dp.toPx())
                 }
 
-                // Direction Labels (N, E, S, W)
                 val directions = listOf("N" to 0f, "E" to 90f, "S" to 180f, "W" to 270f)
                 directions.forEach { (label, angle) ->
                     val angleInRad = Math.toRadians(angle.toDouble() - 90)
                     val x = center.x + (innerRadius - 20.dp.toPx()) * cos(angleInRad).toFloat()
                     val y = center.y + (innerRadius - 20.dp.toPx()) * sin(angleInRad).toFloat()
-
                     rotate(azimuth, pivot = androidx.compose.ui.geometry.Offset(x, y)) {
-                        val textLayout = textMeasurer.measure(
-                            text = label,
-                            style = TextStyle(
-                                color = if (label == "N") Color.Red else onSurface,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
-                            )
-                        )
-                        drawText(
-                            textLayoutResult = textLayout,
-                            topLeft = androidx.compose.ui.geometry.Offset(
-                                x - textLayout.size.width / 2,
-                                y - textLayout.size.height / 2
-                            )
-                        )
+                        val textLayout = textMeasurer.measure(text = label, style = TextStyle(color = if (label == "N") Color.Red else onSurface, fontWeight = FontWeight.Bold, fontSize = 16.sp))
+                        drawText(textLayoutResult = textLayout, topLeft = androidx.compose.ui.geometry.Offset(x - textLayout.size.width / 2, y - textLayout.size.height / 2))
                     }
                 }
 
-                // Kaaba Marker on the outer circle (Moves with the dial)
                 val qiblaInRad = Math.toRadians(qiblaAngle.toDouble() - 90)
                 val kX = center.x + radius * cos(qiblaInRad).toFloat()
                 val kY = center.y + radius * sin(qiblaInRad).toFloat()
-                
-                drawCircle(
-                    color = Color(0xFFFFD700), // Gold
-                    radius = 8.dp.toPx(),
-                    center = androidx.compose.ui.geometry.Offset(kX, kY)
-                )
-                drawCircle(
-                    color = onSurface,
-                    radius = 8.dp.toPx(),
-                    center = androidx.compose.ui.geometry.Offset(kX, kY),
-                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
-                )
+                drawCircle(color = Color(0xFFFFD700), radius = 8.dp.toPx(), center = androidx.compose.ui.geometry.Offset(kX, kY))
+                drawCircle(color = onSurface, radius = 8.dp.toPx(), center = androidx.compose.ui.geometry.Offset(kX, kY), style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx()))
             }
 
-            // 3. Central Needle - Fixed towards phone heading
             val needlePath = Path().apply {
                 moveTo(center.x, center.y - radius * 0.75f)
                 lineTo(center.x + 12.dp.toPx(), center.y)
@@ -485,7 +469,6 @@ fun ProfessionalCompass(
                 close()
             }
             drawPath(path = needlePath, color = alignmentColor)
-            
             val shadowPath = Path().apply {
                 moveTo(center.x, center.y - radius * 0.75f)
                 lineTo(center.x + 12.dp.toPx(), center.y)
@@ -493,37 +476,25 @@ fun ProfessionalCompass(
                 close()
             }
             drawPath(path = shadowPath, color = Color.Black.copy(alpha = 0.1f))
-
-            // Center Point
             drawCircle(color = onSurface, radius = 4.dp.toPx())
             drawCircle(color = Color.White, radius = 2.dp.toPx())
         }
 
-        // Aligned indicator (Small and clean)
         AnimatedVisibility(visible = isAligned, modifier = Modifier.align(Alignment.TopCenter).padding(top = 20.dp)) {
-            Surface(
-                color = Color(0xFF4CAF50),
-                shape = RoundedCornerShape(20.dp),
-                tonalElevation = 4.dp
-            ) {
-                Text(
-                    text = "ALIGNED",
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                    color = Color.White,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.ExtraBold
-                )
+            Surface(color = Color(0xFF4CAF50), shape = RoundedCornerShape(20.dp), tonalElevation = 4.dp) {
+                Text(text = stringResource(R.string.qibla_aligned_badge), modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp), color = Color.White, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.ExtraBold)
             }
         }
     }
 }
 
+@Composable
 fun getAccuracyLabel(accuracy: Int): String {
     return when (accuracy) {
-        SensorManager.SENSOR_STATUS_ACCURACY_HIGH -> "High"
-        SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM -> "Med"
-        SensorManager.SENSOR_STATUS_ACCURACY_LOW -> "Low"
-        else -> "Poor"
+        SensorManager.SENSOR_STATUS_ACCURACY_HIGH -> stringResource(R.string.accuracy_high)
+        SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM -> stringResource(R.string.accuracy_med)
+        SensorManager.SENSOR_STATUS_ACCURACY_LOW -> stringResource(R.string.accuracy_low)
+        else -> stringResource(R.string.accuracy_poor)
     }
 }
 
@@ -534,12 +505,12 @@ fun CalibrationDialog(onDismiss: () -> Unit) {
             Column(modifier = Modifier.padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(Icons.Default.Refresh, null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.height(24.dp))
-                Text(text = "Calibration Needed", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.qibla_calibration_needed), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "Move your phone in a figure-8 pattern to improve accuracy.", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(text = stringResource(R.string.qibla_calibration_desc), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(32.dp))
                 Button(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
-                    Text("Got it")
+                    Text(stringResource(R.string.qibla_got_it))
                 }
             }
         }

@@ -1,3 +1,90 @@
 <resources>
     <string name="app_name">Vaktiva</string>
+
+    <!-- Qibla Screen -->
+    <string name="qibla_compass">Compass</string>
+    <string name="qibla_map">Map</string>
+    <string name="qibla_mecca_aligned">Mecca Aligned</string>
+    <string name="qibla_rotate_phone">Rotate Phone</string>
+    <string name="qibla_direction">Qibla: %d°</string>
+    <string name="qibla_locating">Locating...</string>
+    <string name="qibla_label">Qibla</string>
+    <string name="qibla_heading">Heading</string>
+    <string name="qibla_signal">Signal</string>
+    <string name="qibla_standard">Standard</string>
+    <string name="qibla_satellite">Satellite</string>
+    <string name="qibla_recenter">Recenter</string>
+    <string name="qibla_location_required">Location Access Required</string>
+    <string name="qibla_location_required_desc">Required for accurate Qibla calculation.</string>
+    <string name="qibla_grant_permission">Grant Permission</string>
+    <string name="qibla_calibration_needed">Calibration Needed</string>
+    <string name="qibla_calibration_desc">Move your phone in a figure-8 pattern to improve accuracy.</string>
+    <string name="qibla_got_it">Got it</string>
+    <string name="qibla_aligned_badge">ALIGNED</string>
+    <string name="qibla_magnetic_interference">Magnetic Interference Detected - Calibrate Device</string>
+
+    <!-- Home Screen -->
+    <string name="home_unknown_location">Unknown Location</string>
+    <string name="home_next_prayer">Next: %s</string>
+    <string name="home_permissions_required">Permissions Required</string>
+    <string name="home_permissions_desc">Location and Notification permissions are needed for the app to function correctly.</string>
+    <string name="home_grant_permissions">Grant Permissions</string>
+    <string name="home_refresh_success">Prayer times updated</string>
+    <string name="home_refresh_error">Failed to update times</string>
+
+    <!-- Prayer Names -->
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_sunrise">Sunrise</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+
+    <!-- Accuracy Labels -->
+    <string name="accuracy_high">High</string>
+    <string name="accuracy_med">Med</string>
+    <string name="accuracy_low">Low</string>
+    <string name="accuracy_poor">Poor</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_permissions">Permissions</string>
+    <string name="settings_calculation">Calculation Settings</string>
+    <string name="settings_madhab">Madhab</string>
+    <string name="settings_method">Calculation Method</string>
+    <string name="settings_manage_system">Manage in System Settings</string>
+    <string name="settings_location_access">Location Access</string>
+    <string name="settings_location_desc">Required for accurate prayer times and Qibla direction.</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_desc">Required to show prayer time alerts.</string>
+    <string name="settings_granted">Granted</string>
+    <string name="settings_denied">Denied</string>
+    <string name="settings_language">App Language</string>
+
+    <!-- Language Options -->
+    <string name="lang_system">System Default</string>
+    <string name="lang_en">English</string>
+    <string name="lang_tr">Türkçe</string>
+
+    <!-- Madhab Options -->
+    <string name="madhab_shafi">Shafi / Standard (Maliki, Hanbali)</string>
+    <string name="madhab_hanafi">Hanafi</string>
+
+    <!-- Methods -->
+    <string name="method_mwl">Muslim World League</string>
+    <string name="method_isna">Islamic Society of North America (ISNA)</string>
+    <string name="method_egypt">Egyptian General Authority of Survey</string>
+    <string name="method_makkah">Umm al-Qura University, Makkah</string>
+    <string name="method_karachi">University of Islamic Sciences, Karachi</string>
+    <string name="method_tehran">Institute of Geophysics, Univ. of Tehran</string>
+    <string name="method_gulf">Gulf Region</string>
+    <string name="method_kuwait">Kuwait</string>
+    <string name="method_qatar">Qatar</string>
+    <string name="method_singapore">Majlis Ugama Islam Singapura</string>
+    <string name="method_turkey">Turkey (Diyanet)</string>
+
+    <!-- Audio Settings -->
+    <string name="audio_settings_title">Adhan Sounds</string>
+    <string name="audio_add_custom">Add Custom Audio</string>
+    <string name="audio_delete_confirm">Delete audio file?</string>
 </resources>

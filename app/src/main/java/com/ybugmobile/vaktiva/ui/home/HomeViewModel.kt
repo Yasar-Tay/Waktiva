@@ -26,11 +26,15 @@ class HomeViewModel @Inject constructor(
 
     val settings = settingsManager.settingsFlow
 
-    val currentPrayerDay: Flow<PrayerDayEntity?> = prayerRepository.getPrayerDays()
-        .map { days ->
-            val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
-            days.find { it.date == today }
-        }
+    private val _selectedDate = MutableStateFlow(LocalDate.now())
+    val selectedDate = _selectedDate.asStateFlow()
+
+    val allPrayerDays: Flow<List<PrayerDayEntity>> = prayerRepository.getPrayerDays()
+
+    val currentPrayerDay: Flow<PrayerDayEntity?> = combine(allPrayerDays, selectedDate) { days, date ->
+        val dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
+        days.find { it.date == dateStr }
+    }
 
     private val _currentTime = MutableStateFlow(LocalDateTime.now())
     val currentTime = _currentTime.asStateFlow()
@@ -66,7 +70,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    // Parse times only when the day changes, not every second
+    // Parse times for the selected day
     private val prayerTimes = currentPrayerDay.map { day ->
         if (day == null) return@map null
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -86,7 +90,34 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    val nextPrayerInfo: Flow<NextPrayerInfo?> = combine(prayerTimes, currentTime) { prayers, now ->
+    // nextPrayerInfo should always be based on REAL current time and TODAY's (or next's) prayer times
+    // But for simplicity in UI, if we select another day, we might want to hide countdown or keep it for TODAY.
+    // Let's keep it for REAL next prayer.
+    val todayPrayerDay: Flow<PrayerDayEntity?> = allPrayerDays.map { days ->
+        val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+        days.find { it.date == today }
+    }
+
+    private val todayPrayerTimes = todayPrayerDay.map { day ->
+        if (day == null) return@map null
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        
+        fun parseTime(timeStr: String): LocalTime {
+            val cleaned = timeStr.split(" ")[0]
+            return LocalTime.parse(cleaned, formatter)
+        }
+
+        listOf(
+            "Fajr" to parseTime(day.fajr),
+            "Sunrise" to parseTime(day.sunrise),
+            "Dhuhr" to parseTime(day.dhuhr),
+            "Asr" to parseTime(day.asr),
+            "Maghrib" to parseTime(day.maghrib),
+            "Isha" to parseTime(day.isha)
+        )
+    }
+
+    val nextPrayerInfo: Flow<NextPrayerInfo?> = combine(todayPrayerTimes, currentTime) { prayers, now ->
         if (prayers == null) return@combine null
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
         val currentTime = now.toLocalTime()
@@ -96,7 +127,6 @@ class HomeViewModel @Inject constructor(
         val remainingMillis = if (next.second.isAfter(currentTime)) {
             ChronoUnit.MILLIS.between(currentTime, next.second)
         } else {
-            // It's after Isha, so next is Fajr tomorrow
             ChronoUnit.MILLIS.between(currentTime, LocalTime.MAX) + ChronoUnit.MILLIS.between(LocalTime.MIN, next.second)
         }
 
@@ -107,11 +137,14 @@ class HomeViewModel @Inject constructor(
         )
     }
 
+    fun selectDate(date: LocalDate) {
+        _selectedDate.value = date
+    }
+
     fun refresh() {
         viewModelScope.launch {
             _isRefreshing.value = true
             onPermissionsGranted()
-            // Add a small delay for better UI feedback if it's too fast
             delay(500)
             _isRefreshing.value = false
         }
@@ -131,11 +164,9 @@ class HomeViewModel @Inject constructor(
             val now = LocalDate.now()
             
             if (location != null) {
-                // Reverse geocode to get city, country
                 val addressName = locationWrapper.getAddressFromLocation(location.latitude, location.longitude)
                     ?: "Current Location"
 
-                // Save the new location
                 settingsManager.saveLocation(
                     lat = location.latitude,
                     lng = location.longitude,
@@ -150,7 +181,6 @@ class HomeViewModel @Inject constructor(
                     method = currentSettings.calculationMethod
                 )
             } else {
-                // If location is still null, we might want to use cached settings or show error
                 prayerRepository.refreshPrayerTimes(
                     year = now.year,
                     month = now.monthValue,

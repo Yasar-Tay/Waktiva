@@ -1,11 +1,11 @@
 package com.ybugmobile.vaktiva.ui.settings
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -18,10 +18,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
+import com.ybugmobile.vaktiva.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,12 +32,11 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.settings.collectAsState(initial = null)
-    val context = LocalContext.current
     val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Settings") })
+            TopAppBar(title = { Text(stringResource(R.string.settings_title)) })
         }
     ) { padding ->
         Column(
@@ -45,7 +47,7 @@ fun SettingsScreen(
                 .verticalScroll(scrollState)
         ) {
             Text(
-                text = "Permissions",
+                text = stringResource(R.string.settings_permissions),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -55,31 +57,57 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Language Selection
             Text(
-                text = "Calculation Settings",
+                text = stringResource(R.string.settings_language),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            LanguageSelector(
+                currentLanguage = settings?.language ?: "system",
+                onLanguageSelected = { lang ->
+                    viewModel.updateLanguage(lang)
+                    val appLocale: LocaleListCompat = if (lang == "system") {
+                        LocaleListCompat.getEmptyLocaleList()
+                    } else {
+                        LocaleListCompat.forLanguageTags(lang)
+                    }
+                    AppCompatDelegate.setApplicationLocales(appLocale)
+                }
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(R.string.settings_calculation),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(16.dp))
 
             // Madhab Selection
-            SettingsSection(title = "Madhab") {
-                val madhabOptions = listOf("Shafi (Standard)", "Hanafi")
-                madhabOptions.forEachIndexed { index, label ->
+            SettingsSection(title = stringResource(R.string.settings_madhab)) {
+                val madhabOptions = listOf(
+                    stringResource(R.string.madhab_shafi) to 0,
+                    stringResource(R.string.madhab_hanafi) to 1
+                )
+                madhabOptions.forEach { (label, value) ->
                     Row(
                         Modifier
                             .fillMaxWidth()
                             .height(56.dp)
                             .selectable(
-                                selected = (settings?.madhab == index),
-                                onClick = { viewModel.setMadhab(index) },
+                                selected = (settings?.madhab == value),
+                                onClick = { viewModel.setMadhab(value) },
                                 role = Role.RadioButton
                             )
                             .padding(horizontal = 16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = (settings?.madhab == index),
+                            selected = (settings?.madhab == value),
                             onClick = null
                         )
                         Text(
@@ -94,19 +122,19 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Calculation Method Selection
-            SettingsSection(title = "Calculation Method") {
+            SettingsSection(title = stringResource(R.string.settings_method)) {
                 val methods = listOf(
-                    "Muslim World League" to 3,
-                    "Islamic Society of North America (ISNA)" to 2,
-                    "Egyptian General Authority of Survey" to 5,
-                    "Umm al-Qura University, Makkah" to 4,
-                    "University of Islamic Sciences, Karachi" to 1,
-                    "Institute of Geophysics, University of Tehran" to 7,
-                    "Gulf Region" to 8,
-                    "Kuwait" to 9,
-                    "Qatar" to 10,
-                    "Majlis Ugama Islam Singapura, Singapore" to 11,
-                    "Turkey" to 13
+                    stringResource(R.string.method_mwl) to 3,
+                    stringResource(R.string.method_isna) to 2,
+                    stringResource(R.string.method_egypt) to 5,
+                    stringResource(R.string.method_makkah) to 4,
+                    stringResource(R.string.method_karachi) to 1,
+                    stringResource(R.string.method_tehran) to 7,
+                    stringResource(R.string.method_gulf) to 8,
+                    stringResource(R.string.method_kuwait) to 9,
+                    stringResource(R.string.method_qatar) to 10,
+                    stringResource(R.string.method_singapore) to 11,
+                    stringResource(R.string.method_turkey) to 13
                 )
                 
                 methods.forEach { (label, value) ->
@@ -140,6 +168,51 @@ fun SettingsScreen(
     }
 }
 
+@Composable
+fun LanguageSelector(
+    currentLanguage: String,
+    onLanguageSelected: (String) -> Unit
+) {
+    val options = listOf(
+        "system" to stringResource(R.string.lang_system),
+        "en" to stringResource(R.string.lang_en),
+        "tr" to stringResource(R.string.lang_tr)
+    )
+    
+    Surface(
+        shape = MaterialTheme.shapes.medium,
+        tonalElevation = 2.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.selectableGroup()) {
+            options.forEach { (code, label) ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .selectable(
+                            selected = (currentLanguage == code),
+                            onClick = { onLanguageSelected(code) },
+                            role = Role.RadioButton
+                        )
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = (currentLanguage == code),
+                        onClick = null
+                    )
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PermissionManager() {
@@ -161,16 +234,16 @@ fun PermissionManager() {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             PermissionItem(
-                title = "Location Access",
-                description = "Required for accurate prayer times and Qibla direction.",
+                title = stringResource(R.string.settings_location_access),
+                description = stringResource(R.string.settings_location_desc),
                 isGranted = permissionState.allPermissionsGranted
             )
             
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val notificationPermission = permissionState.permissions.find { it.permission == Manifest.permission.POST_NOTIFICATIONS }
                 PermissionItem(
-                    title = "Notifications",
-                    description = "Required to show prayer time alerts.",
+                    title = stringResource(R.string.settings_notifications),
+                    description = stringResource(R.string.settings_notifications_desc),
                     isGranted = notificationPermission?.status?.isGranted == true
                 )
             }
@@ -188,7 +261,7 @@ fun PermissionManager() {
             ) {
                 Icon(Icons.Default.Settings, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text("Manage in System Settings")
+                Text(stringResource(R.string.settings_manage_system))
             }
         }
     }
@@ -207,9 +280,9 @@ fun PermissionItem(title: String, description: String, isGranted: Boolean) {
             Text(text = description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         if (isGranted) {
-            Text("Granted", color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.settings_granted), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
         } else {
-            Text("Denied", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.settings_denied), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelLarge)
         }
     }
 }
@@ -221,7 +294,7 @@ fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) 
             text = title,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp, top = 16.dp)
         )
         Surface(
             shape = MaterialTheme.shapes.medium,
