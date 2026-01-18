@@ -37,12 +37,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.data.sensor.CompassData
 import org.osmdroid.config.Configuration
+import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import kotlin.math.abs
+
+// Custom Satellite source to ensure it works
+private val SATELLITE_SOURCE = XYTileSource(
+    "USGS-Imagery", 0, 18, 256, "",
+    arrayOf("https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/"),
+    "USGS"
+)
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -57,18 +67,24 @@ fun QiblaScreen(
     var isSatelliteView by remember { mutableStateOf(false) }
     val kaabaGeoPoint = GeoPoint(21.4225, 39.8262)
 
+    var customPoint by remember { mutableStateOf<GeoPoint?>(null) }
     var showCalibrationDialog by remember { mutableStateOf(false) }
-
-    LaunchedEffect(compassData.accuracy) {
-        showCalibrationDialog = compassData.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE
-    }
 
     val context = LocalContext.current
     val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+    
+    // Cache package name and icons
+    val pkgName = remember { context.packageName }
+    val userArrowIcon = remember { createArrowIcon(context, "#2196F3") }
+    val customArrowIcon = remember { createArrowIcon(context, "#F44336") }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(pkgName) {
         Configuration.getInstance().load(context, context.getSharedPreferences("osmdroid", 0))
-        Configuration.getInstance().userAgentValue = context.packageName
+        Configuration.getInstance().userAgentValue = pkgName
+    }
+
+    LaunchedEffect(compassData.accuracy) {
+        showCalibrationDialog = compassData.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE
     }
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -81,53 +97,118 @@ fun QiblaScreen(
                     factory = { ctx ->
                         MapView(ctx).apply {
                             setMultiTouchControls(true)
+                            setBuiltInZoomControls(false)
+                            minZoomLevel = 3.0
+                            maxZoomLevel = 20.0
+                            
+                            // Initialize map center if location is already known
+                            userLocation?.let {
+                                controller.setZoom(15.0)
+                                controller.setCenter(GeoPoint(it.latitude, it.longitude))
+                            }
+
+                            // Add persistent overlays once
+                            val qLine = Polyline().apply {
+                                color = AndroidColor.parseColor("#FFD700")
+                                width = 8f
+                                title = "qibla_line"
+                            }
+                            val cLine = Polyline().apply {
+                                color = AndroidColor.parseColor("#F44336")
+                                width = 6f
+                                title = "custom_line"
+                            }
+                            val uMarker = Marker(this).apply {
+                                icon = userArrowIcon
+                                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                                title = "user_marker"
+                            }
+                            val cMarker = Marker(this).apply {
+                                icon = customArrowIcon
+                                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                                title = "custom_marker"
+                            }
+                            
+                            overlays.add(qLine)
+                            overlays.add(cLine)
+                            overlays.add(uMarker)
+                            overlays.add(cMarker)
+
+                            val eventsReceiver = object : MapEventsReceiver {
+                                override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean = false
+                                override fun longPressHelper(p: GeoPoint?): Boolean {
+                                    p?.let { customPoint = it }
+                                    return true
+                                }
+                            }
+                            overlays.add(MapEventsOverlay(eventsReceiver))
+                            
                             mapViewRef = this
                         }
                     },
                     update = { map ->
-                        map.setTileSource(if (isSatelliteView) TileSourceFactory.USGS_SAT else TileSourceFactory.MAPNIK)
+                        // 1. Tile Source Update (only on change)
+                        val targetSource = if (isSatelliteView) SATELLITE_SOURCE else TileSourceFactory.MAPNIK
+                        if (map.tileProvider.tileSource.name() != targetSource.name()) {
+                            map.setTileSource(targetSource)
+                        }
+
+                        // 2. Find and update existing overlays (efficiently)
+                        var userMarker: Marker? = null
+                        var customMarker: Marker? = null
+                        var qiblaLine: Polyline? = null
+                        var customLine: Polyline? = null
                         
+                        for (overlay in map.overlays) {
+                            when (overlay) {
+                                is Marker -> {
+                                    if (overlay.title == "user_marker") userMarker = overlay
+                                    else if (overlay.title == "custom_marker") customMarker = overlay
+                                }
+                                is Polyline -> {
+                                    if (overlay.title == "qibla_line") qiblaLine = overlay
+                                    else if (overlay.title == "custom_line") customLine = overlay
+                                }
+                            }
+                        }
+
+                        // 3. Apply changes from State
                         userLocation?.let { loc ->
                             val userPoint = GeoPoint(loc.latitude, loc.longitude)
                             
-                            map.overlays.clear()
-
-                            // User Location Marker with Heading Arrow
-                            val userMarker = Marker(map)
-                            userMarker.position = userPoint
-                            userMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-                            
-                            // Create arrow icon
-                            val arrowBitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-                            val canvas = Canvas(arrowBitmap)
-                            val paint = Paint().apply {
-                                color = AndroidColor.parseColor("#2196F3")
-                                style = Paint.Style.FILL
-                                isAntiAlias = true
+                            // Center if never centered
+                            if (map.zoomLevelDouble < 4.0) {
+                                map.controller.setZoom(15.0)
+                                map.controller.setCenter(userPoint)
                             }
-                            val path = android.graphics.Path().apply {
-                                moveTo(50f, 10f)
-                                lineTo(90f, 90f)
-                                lineTo(50f, 70f)
-                                lineTo(10f, 90f)
-                                close()
-                            }
-                            canvas.drawPath(path, paint)
-                            
-                            userMarker.icon = BitmapDrawable(context.resources, arrowBitmap)
-                            userMarker.rotation = -compassData.azimuth // Inverse because osm rotation
-                            map.overlays.add(userMarker)
 
-                            // Qibla Line
-                            val line = Polyline()
-                            line.addPoint(userPoint)
-                            line.addPoint(kaabaGeoPoint)
-                            line.color = AndroidColor.parseColor("#FFD700")
-                            line.width = 8f
-                            map.overlays.add(line)
-                            
-                            map.invalidate()
+                            userMarker?.apply {
+                                position = userPoint
+                                rotation = -compassData.azimuth
+                            }
+                            qiblaLine?.apply {
+                                setPoints(listOf(userPoint, kaabaGeoPoint))
+                            }
                         }
+
+                        customPoint?.let { cp ->
+                            customMarker?.apply {
+                                position = cp
+                                rotation = -compassData.azimuth
+                                isEnabled = true // Marker doesn't have isVisible in some versions, use isEnabled or Alpha
+                                alpha = 1.0f
+                            }
+                            customLine?.apply {
+                                setPoints(listOf(cp, kaabaGeoPoint))
+                                isEnabled = true
+                            }
+                        } ?: run {
+                            customMarker?.alpha = 0f
+                            customLine?.isEnabled = false
+                        }
+                        
+                        // 4. Manual invalidate to ensure custom point and rotation appear immediately
+                        map.postInvalidate()
                     },
                     onRelease = { map ->
                         map.onDetach()
@@ -164,7 +245,7 @@ fun QiblaScreen(
                 }
             }
 
-            // Calculate rotation for the Qibla needle relative to the phone's top
+            // Compass Needle Rotation Logic
             var needleRotation = (qiblaDirection.toFloat() - compassData.azimuth)
             while (needleRotation <= -180) needleRotation += 360
             while (needleRotation > 180) needleRotation -= 360
@@ -175,16 +256,12 @@ fun QiblaScreen(
                 label = "alignmentColor"
             )
 
-            // Compass UI (Only shown if NOT in map view)
             if (!isMapView) {
                 Box(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .fillMaxSize(),
+                    modifier = Modifier.align(Alignment.Center).fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     val compassSize = 320f
-                    
                     Box(modifier = Modifier.size(compassSize.dp), contentAlignment = Alignment.Center) {
                         ComposeCanvas(modifier = Modifier.fillMaxSize()) {
                             rotate(-compassData.azimuth) {
@@ -247,11 +324,9 @@ fun QiblaScreen(
                 }
             }
 
-            // View Toggle and Top Info
+            // Top Header and Toggle
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 48.dp, start = 16.dp, end = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 48.dp, start = 16.dp, end = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Surface(
@@ -320,7 +395,7 @@ fun QiblaScreen(
             }
         }
         
-        // Info Box at bottom
+        // Info Box at Bottom
         if (locationPermissionState.status.isGranted) {
             Surface(
                 modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(16.dp),
@@ -363,4 +438,23 @@ fun QiblaScreen(
             }
         }
     }
+}
+
+private fun createArrowIcon(context: android.content.Context, colorHex: String): BitmapDrawable {
+    val arrowBitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(arrowBitmap)
+    val paint = Paint().apply {
+        color = AndroidColor.parseColor(colorHex)
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+    val path = android.graphics.Path().apply {
+        moveTo(50f, 10f)
+        lineTo(90f, 90f)
+        lineTo(50f, 70f)
+        lineTo(10f, 90f)
+        close()
+    }
+    canvas.drawPath(path, paint)
+    return BitmapDrawable(context.resources, arrowBitmap)
 }
