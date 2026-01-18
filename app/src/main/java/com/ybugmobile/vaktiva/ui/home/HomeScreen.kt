@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -168,7 +169,7 @@ fun HomeScreenContent(
                 
                 if (currentDay != null) {
                     Text(
-                        text = currentDay.hijriDate,
+                        text = formatHijriDate(currentDay.hijriDate),
                         color = Color.White.copy(alpha = 0.8f),
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -213,6 +214,33 @@ fun HomeScreenContent(
             }
         }
     }
+}
+
+@Composable
+fun formatHijriDate(date: String): String {
+    val locale = Locale.getDefault()
+    if (locale.language != "tr") return date
+
+    var formatted = date
+    val months = mapOf(
+        "Muharram" to "Muharrem",
+        "Safar" to "Safer",
+        "Rabi' al-awwal" to "Rebiülevvel",
+        "Rabi' ath-thani" to "Rebiülahir",
+        "Jumada al-ula" to "Cemaziyelevvel",
+        "Jumada al-akhira" to "Cemaziyelahir",
+        "Rajab" to "Recep",
+        "Sha'ban" to "Şaban",
+        "Ramadan" to "Ramazan",
+        "Shawwal" to "Şevval",
+        "Dhu al-Qi'dah" to "Zilkade",
+        "Dhu al-Hijjah" to "Zilhicce"
+    )
+
+    months.forEach { (en, tr) ->
+        formatted = formatted.replace(en, tr)
+    }
+    return formatted
 }
 
 @Composable
@@ -611,15 +639,16 @@ fun PrayerTimeList(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Daily Prayer",
+                    text = stringResource(R.string.home_prayer_provider),
                     color = Color.White,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 12.sp,
+
                 )
                 CalculationMethodSelector(
                     currentMethodId = currentMethodId,
                     methods = methods,
-                    onMethodSelected = onMethodSelected
+                    onMethodSelected = onMethodSelected,
                 )
             }
             

@@ -31,6 +31,7 @@
     <string name="home_grant_permissions">İzinleri Ver</string>
     <string name="home_refresh_success">Namaz vakitleri güncellendi</string>
     <string name="home_refresh_error">Vakitler güncellenemedi</string>
+    <string name="home_prayer_provider">Kaynak: </string>
 
     <!-- Namaz Vakitleri -->
     <string name="prayer_fajr">İmsak</string>
@@ -67,7 +68,7 @@
     <string name="lang_tr">Türkçe</string>
 
     <!-- Mezhep Seçenekleri -->
-    <string name="madhab_shafi">Şafii / Standart (Maliki, Hanbeli)</string>
+    <string name="madhab_shafi">Şafii / Standart (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanefi</string>
 
     <!-- Yöntemler -->

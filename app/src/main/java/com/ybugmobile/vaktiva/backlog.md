@@ -62,24 +62,27 @@ Feature 3.2 – Full-Screen Intent (The "Call" Experience)
 Goal: Free, open-source mapping and high-accuracy orientation.
 
 Feature 4.1 – MapLibre & OSM
-[/] Integrate MapLibre GL SDK (In progress: Resolving UI sync and line drawing).
-[/] Load OpenStreetMap tiles via Carto/Esri.
-[/] Draw a Geodesic line from user coordinates to Kaaba (In progress: Fix coordinate resolution).
+[x] Integrate MapLibre GL SDK.
+[x] Load OpenStreetMap tiles via Carto/Esri.
+[x] Draw a Geodesic line from user coordinates to Kaaba.
 
 Feature 4.2 – Sensor-Based Compass
 [x] Implement Rotation Vector sensor logic for the needle.
 [x] Calibration Prompt: Show "Figure-8" calibration pop-up for unreliable sensors.
+[x] Synchronize background theme with real-time sun position/prayer times.
 
 🎨 EPIC 5 – Weather-Style UI & Experience
 Goal: A high-end, immersive interface that changes with the day.
 
 Feature 5.1 – Dynamic Home Screen
 [x] Display: City/Country, Gregorian Date, and Hijri Date.
-[x] Dynamic Theming: Change UI gradients based on the next prayer.
+[x] Dynamic Theming: Adaptive gradients synchronized with real-time prayer time windows (Dawn, Morning, Midday, Golden Hour, Sunset, Night).
+[x] Shared Theming: Synchronized background gradients across Home and Qibla screens.
 
 Feature 5.2 – Prayer List & Countdown
 [x] Show all 5 prayer times in a glassmorphism list.
 [x] Active countdown timer to the next Adhan.
+[x] Responsive Visualization: Redesigned 24h Circular Prayer Visualization that scales to screen width.
 
 ⚙️ EPIC 6 – Settings & Monetization
 Goal: User control and project sustainability.

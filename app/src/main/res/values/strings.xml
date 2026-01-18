@@ -31,6 +31,7 @@
     <string name="home_grant_permissions">Grant Permissions</string>
     <string name="home_refresh_success">Prayer times updated</string>
     <string name="home_refresh_error">Failed to update times</string>
+    <string name="home_prayer_provider">Provider: </string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Fajr</string>
