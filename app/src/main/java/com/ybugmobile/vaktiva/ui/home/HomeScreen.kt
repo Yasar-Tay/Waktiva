@@ -320,36 +320,57 @@ fun ModernCalendarStrip(
                         .clickable { onDateSelected(date) }
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxSize().padding(vertical = 12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = date.format(dayNameFormatter).uppercase(),
-                            color = contentColor.copy(alpha = 0.6f),
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.5.sp
-                        )
+                        // Header section for Day Name with distinct background
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.38f)
+                                .background(if (isSelected) Color.Transparent else Color.Black.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = date.format(dayNameFormatter).uppercase(),
+                                color = contentColor.copy(alpha = 0.6f),
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.5.sp
+                            )
+                        }
                         
-                        Spacer(modifier = Modifier.height(4.dp))
-                        
-                        Text(
-                            text = date.dayOfMonth.toString(),
-                            color = contentColor,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 20.sp
+                        // Subtle Divider
+                        HorizontalDivider(
+                            color = if (isSelected) Color.Black.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.1f),
+                            thickness = 0.5.dp
                         )
 
-                        if (isToday) {
+                        // Body section for Date
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.62f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
                             Text(
-                                text = todayLabel,
-                                color = if (isSelected) Color.Blue else Color.Cyan,
-                                fontSize = 8.sp,
-                                fontWeight = FontWeight.Black,
-                                modifier = Modifier.padding(top = 2.dp)
+                                text = date.dayOfMonth.toString(),
+                                color = contentColor,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 20.sp
                             )
+
+                            if (isToday) {
+                                Text(
+                                    text = todayLabel,
+                                    color = if (isSelected) Color.Blue else Color.Cyan,
+                                    fontSize = 8.sp,
+                                    fontWeight = FontWeight.Black,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -367,7 +388,6 @@ fun PrayerCircleVisualization(
 ) {
     val textMeasurer = rememberTextMeasurer()
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
-    val runningManPainter = rememberVectorPainter(Icons.Default.DirectionsRun)
 
     fun parseTime(timeStr: String): LocalTime {
         val cleaned = timeStr.split(" ")[0]
@@ -393,7 +413,7 @@ fun PrayerCircleVisualization(
             .aspectRatio(1f),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.fillMaxSize().padding(5.dp)) {
+        Canvas(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             val center = Offset(size.width / 2, size.height / 2)
             val radius = size.width / 2 - 50.dp.toPx()
             
@@ -416,20 +436,30 @@ fun PrayerCircleVisualization(
             var sweepAngleDay = endAngleDay - startAngleDay
             if (sweepAngleDay < 0) sweepAngleDay += 360f
             
-            // NIGHT ARC - Improved Visibility (Lighter, more translucent white/blue)
+            // NIGHT ARC - Improved Visibility (Glowing neon effect)
             drawArc(
-                color = Color.White.copy(alpha = 0.15f),
+                color = Color.White.copy(alpha = 0.3f),
                 startAngle = endAngleDay,
                 sweepAngle = 360f - sweepAngleDay,
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
                 size = Size(radius * 2, radius * 2),
-                style = Stroke(width = 4.dp.toPx())
+                style = Stroke(width = 6.dp.toPx(), cap = StrokeCap.Round)
+            )
+            // Soft glow for night arc
+            drawArc(
+                color = Color(0xFF81D4FA).copy(alpha = 0.4f),
+                startAngle = endAngleDay,
+                sweepAngle = 360f - sweepAngleDay,
+                useCenter = false,
+                topLeft = Offset(center.x - radius, center.y - radius),
+                size = Size(radius * 2, radius * 2),
+                style = Stroke(width = 2.dp.toPx())
             )
 
             // DAY ARC
             drawArc(
-                color = Color(0xFFFFF176).copy(alpha = 0.3f),
+                color = Color(0xFFFFF176).copy(alpha = 0.4f),
                 startAngle = startAngleDay,
                 sweepAngle = sweepAngleDay,
                 useCenter = false,
@@ -438,19 +468,19 @@ fun PrayerCircleVisualization(
                 style = Stroke(width = 4.dp.toPx())
             )
 
-            // 2. Current Time Indicator (Flow-aware Navigation Pointer)
+            // 2. Current Time Indicator (Flow-aware precision pointer)
             if (isSelectedDayToday) {
                 val totalMinutes = currentTime.hour * 60 + currentTime.minute
                 val angle = (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
                 val currentPos = getOffset(currentTime, radius)
 
                 // Trail - Comet like
-                val trailLength = 20f
+                val trailLength = 35f
                 drawArc(
                     brush = Brush.sweepGradient(
                         0.0f to Color.Transparent,
                         (angle - trailLength) / 360f to Color.Transparent,
-                        angle / 360f to Color.Cyan.copy(alpha = 0.6f),
+                        angle / 360f to Color.Cyan.copy(alpha = 0.7f),
                         1.0f to Color.Transparent,
                         center = center
                     ),
@@ -459,12 +489,12 @@ fun PrayerCircleVisualization(
                     useCenter = false,
                     topLeft = Offset(center.x - radius, center.y - radius),
                     size = Size(radius * 2, radius * 2),
-                    style = Stroke(width = 6.dp.toPx(), cap = StrokeCap.Round)
+                    style = Stroke(width = 8.dp.toPx(), cap = StrokeCap.Round)
                 )
 
-                // Add a bright point at the tip for precision
-                drawCircle(Color.Cyan.copy(alpha = 0.3f), radius = 12.dp.toPx(), center = currentPos)
-                drawCircle(Color.White, radius = 2.dp.toPx(), center = currentPos)
+                // Add a glowing precision point
+                drawCircle(Color.Cyan.copy(alpha = 0.4f), radius = 18.dp.toPx(), center = currentPos)
+                drawCircle(Color.White, radius = 2.5.dp.toPx(), center = currentPos)
             }
 
             // 3. Prayer Markers & Labels
@@ -503,6 +533,13 @@ fun PrayerCircleVisualization(
                         cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx(), 4.dp.toPx())
                     )
                 }
+
+                // Small colored dot before text
+                drawCircle(
+                    color = markerColor,
+                    radius = indicatorSize / 2,
+                    center = Offset(labelPos.x - totalWidth / 2 + indicatorSize / 2, labelPos.y)
+                )
 
                 drawText(
                     textLayoutResult = textLayoutResult,
