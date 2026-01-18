@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,16 +17,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.WbSunny
+import androidx.compose.material.icons.outlined.WbTwilight
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -269,6 +279,9 @@ fun ModernCalendarStrip(
     val monthYearFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
     val dayNameFormatter = DateTimeFormatter.ofPattern("EEE")
 
+    // Language-aware "Today" label
+    val todayLabel = if (Locale.getDefault().language == "tr") "BUGÜN" else "TODAY"
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = selectedDate.format(monthYearFormatter),
@@ -280,42 +293,62 @@ fun ModernCalendarStrip(
         
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = PaddingValues(horizontal = 4.dp)
         ) {
             items(calendarDays) { date ->
                 val isSelected = date == selectedDate
                 val isToday = date == today
                 
+                val backgroundColor by animateColorAsState(
+                    targetValue = if (isSelected) Color.White else Color.White.copy(alpha = 0.08f),
+                    label = "bgColor"
+                )
+                val contentColor by animateColorAsState(
+                    targetValue = if (isSelected) Color.Black else Color.White,
+                    label = "contentColor"
+                )
+                val borderColor = if (isSelected) Color.Transparent else Color.White.copy(alpha = 0.15f)
+
                 Surface(
-                    color = if (isSelected) Color.White else Color.White.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(16.dp),
+                    color = backgroundColor,
+                    shape = RoundedCornerShape(20.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
                     modifier = Modifier
-                        .width(54.dp)
+                        .width(60.dp)
+                        .height(84.dp)
                         .clickable { onDateSelected(date) }
                 ) {
                     Column(
-                        modifier = Modifier.padding(vertical = 12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        modifier = Modifier.fillMaxSize().padding(vertical = 12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Text(
                             text = date.format(dayNameFormatter).uppercase(),
-                            color = if (isSelected) Color.Black.copy(alpha = 0.5f) else Color.White.copy(alpha = 0.5f),
+                            color = contentColor.copy(alpha = 0.6f),
                             fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 0.5.sp
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
+                        
+                        Spacer(modifier = Modifier.height(4.dp))
+                        
                         Text(
                             text = date.dayOfMonth.toString(),
-                            color = if (isSelected) Color.Black else Color.White,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.ExtraBold
+                            color = contentColor,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 20.sp
                         )
+
                         if (isToday) {
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Box(
-                                modifier = Modifier
-                                    .size(4.dp)
-                                    .background(if (isSelected) Color.Blue else Color.Cyan, RoundedCornerShape(2.dp))
+                            Text(
+                                text = todayLabel,
+                                color = if (isSelected) Color.Blue else Color.Cyan,
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Black,
+                                modifier = Modifier.padding(top = 2.dp)
                             )
                         }
                     }
@@ -334,10 +367,8 @@ fun PrayerCircleVisualization(
 ) {
     val textMeasurer = rememberTextMeasurer()
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
-    
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    
+    val runningManPainter = rememberVectorPainter(Icons.Default.DirectionsRun)
+
     fun parseTime(timeStr: String): LocalTime {
         val cleaned = timeStr.split(" ")[0]
         return LocalTime.parse(cleaned, formatter)
@@ -346,13 +377,14 @@ fun PrayerCircleVisualization(
     val sunrise = parseTime(day.sunrise)
     val sunset = parseTime(day.maghrib)
 
+    // Icons and Colors for each prayer
     val prayers = listOf(
-        stringResource(R.string.prayer_fajr) to parseTime(day.fajr),
-        stringResource(R.string.prayer_sunrise) to sunrise,
-        stringResource(R.string.prayer_dhuhr) to parseTime(day.dhuhr),
-        stringResource(R.string.prayer_asr) to parseTime(day.asr),
-        stringResource(R.string.prayer_maghrib) to sunset,
-        stringResource(R.string.prayer_isha) to parseTime(day.isha)
+        Triple(stringResource(R.string.prayer_fajr), parseTime(day.fajr), Color(0xFF90CAF9)),
+        Triple(stringResource(R.string.prayer_sunrise), sunrise, Color(0xFFFFB74D)),
+        Triple(stringResource(R.string.prayer_dhuhr), parseTime(day.dhuhr), Color(0xFFFFF176)),
+        Triple(stringResource(R.string.prayer_asr), parseTime(day.asr), Color(0xFFFF8A65)),
+        Triple(stringResource(R.string.prayer_maghrib), sunset, Color(0xFFBA68C8)),
+        Triple(stringResource(R.string.prayer_isha), parseTime(day.isha), Color(0xFF7986CB))
     )
 
     Box(
@@ -361,147 +393,142 @@ fun PrayerCircleVisualization(
             .aspectRatio(1f),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Canvas(modifier = Modifier.fillMaxSize().padding(5.dp)) {
             val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.width / 2 - 45.dp.toPx()
-            val strokeWidth = 5.dp.toPx()
+            val radius = size.width / 2 - 50.dp.toPx()
             
-            // Draw background arcs for Day and Night
+            // Mapping: 12:00 (Noon) at TOP (270 degrees)
+            fun getOffset(time: LocalTime, r: Float): Offset {
+                val totalMinutes = time.hour * 60 + time.minute
+                val angle = (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                val angleRad = Math.toRadians(angle.toDouble())
+                return Offset(
+                    center.x + r * cos(angleRad).toFloat(),
+                    center.y + r * sin(angleRad).toFloat()
+                )
+            }
+
+            // 1. Draw Arcs (Night & Day)
             val sunriseMinutes = sunrise.hour * 60 + sunrise.minute
             val sunsetMinutes = sunset.hour * 60 + sunset.minute
-            
-            val startAngleDay = (sunriseMinutes.toFloat() / (24 * 60)) * 360f - 90f
-            val endAngleDay = (sunsetMinutes.toFloat() / (24 * 60)) * 360f - 90f
+            val startAngleDay = (sunriseMinutes.toFloat() / (24 * 60)) * 360f + 90f
+            val endAngleDay = (sunsetMinutes.toFloat() / (24 * 60)) * 360f + 90f
             var sweepAngleDay = endAngleDay - startAngleDay
             if (sweepAngleDay < 0) sweepAngleDay += 360f
             
-            // Night Arc (Sunset to Sunrise)
+            // NIGHT ARC - Improved Visibility (Lighter, more translucent white/blue)
             drawArc(
-                color = Color(0xFF1A237E).copy(alpha = 0.3f),
+                color = Color.White.copy(alpha = 0.15f),
                 startAngle = endAngleDay,
                 sweepAngle = 360f - sweepAngleDay,
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
-                size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
-                style = Stroke(width = strokeWidth)
+                size = Size(radius * 2, radius * 2),
+                style = Stroke(width = 4.dp.toPx())
             )
 
-            // Day Arc (Sunrise to Sunset)
+            // DAY ARC
             drawArc(
                 color = Color(0xFFFFF176).copy(alpha = 0.3f),
                 startAngle = startAngleDay,
                 sweepAngle = sweepAngleDay,
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
-                size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
-                style = Stroke(width = strokeWidth)
+                size = Size(radius * 2, radius * 2),
+                style = Stroke(width = 4.dp.toPx())
             )
 
-            // Draw the 24h circle outline
-            drawCircle(
-                color = Color.White.copy(alpha = 0.1f),
-                radius = radius,
-                center = center,
-                style = Stroke(width = 1.dp.toPx())
-            )
-
-            // Function to calculate position on circle
-            fun getOffset(time: LocalTime, r: Float): Offset {
-                val totalMinutes = time.hour * 60 + time.minute
-                val angle = (totalMinutes.toFloat() / (24 * 60)) * 360f - 90f
-                val angleRad = Math.toRadians(angle.toDouble())
-                return Offset(
-                    x = center.x + r * cos(angleRad).toFloat(),
-                    y = center.y + r * sin(angleRad).toFloat()
-                )
-            }
-
-            // Draw current time progress marker (Cyan) only if today is selected
+            // 2. Current Time Indicator (Flow-aware Navigation Pointer)
             if (isSelectedDayToday) {
+                val totalMinutes = currentTime.hour * 60 + currentTime.minute
+                val angle = (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
                 val currentPos = getOffset(currentTime, radius)
-                drawCircle(
-                    color = Color.Cyan,
-                    radius = 6.dp.toPx(),
-                    center = currentPos
+
+                // Trail - Comet like
+                val trailLength = 20f
+                drawArc(
+                    brush = Brush.sweepGradient(
+                        0.0f to Color.Transparent,
+                        (angle - trailLength) / 360f to Color.Transparent,
+                        angle / 360f to Color.Cyan.copy(alpha = 0.6f),
+                        1.0f to Color.Transparent,
+                        center = center
+                    ),
+                    startAngle = angle - trailLength,
+                    sweepAngle = trailLength,
+                    useCenter = false,
+                    topLeft = Offset(center.x - radius, center.y - radius),
+                    size = Size(radius * 2, radius * 2),
+                    style = Stroke(width = 6.dp.toPx(), cap = StrokeCap.Round)
                 )
+
+                // Add a bright point at the tip for precision
+                drawCircle(Color.Cyan.copy(alpha = 0.3f), radius = 12.dp.toPx(), center = currentPos)
+                drawCircle(Color.White, radius = 2.dp.toPx(), center = currentPos)
             }
 
-            // Draw prayer dots and labels
-            prayers.forEach { (name, time) ->
+            // 3. Prayer Markers & Labels
+            prayers.forEach { (name, time, markerColor) ->
                 val pos = getOffset(time, radius)
                 val isNext = nextPrayer?.time == time.format(formatter) && isSelectedDayToday
 
-                // Dot
-                drawCircle(
-                    color = if (isNext) Color.Yellow else Color.White,
-                    radius = if (isNext) 8.dp.toPx() else 5.dp.toPx(),
-                    center = pos
-                )
+                if (isNext) {
+                    drawCircle(markerColor.copy(alpha = 0.3f), radius = 12.dp.toPx(), center = pos)
+                    drawCircle(markerColor, radius = 7.dp.toPx(), center = pos)
+                    drawCircle(Color.White, radius = 3.dp.toPx(), center = pos)
+                } else {
+                    drawCircle(markerColor.copy(alpha = 0.4f), radius = 5.dp.toPx(), center = pos, style = Stroke(2.dp.toPx()))
+                    drawCircle(markerColor.copy(alpha = 0.8f), radius = 2.dp.toPx(), center = pos)
+                }
 
-                // Label (Tag)
-                val labelPos = getOffset(time, radius + 28.dp.toPx())
-                val textLayoutResult = textMeasurer.measure(
-                    text = name,
-                    style = TextStyle(
-                        color = if (isNext) Color.Yellow else Color.White.copy(alpha = 0.7f),
-                        fontSize = 11.sp,
-                        fontWeight = if (isNext) FontWeight.Bold else FontWeight.Normal
-                    )
+                // Label Tag + Marker Indicator
+                val labelPos = getOffset(time, radius + 35.dp.toPx())
+                val textStyle = TextStyle(
+                    color = if (isNext) markerColor else Color.White.copy(alpha = 0.7f),
+                    fontSize = 11.sp,
+                    fontWeight = if (isNext) FontWeight.Bold else FontWeight.Medium
                 )
+                val textLayoutResult = textMeasurer.measure(name, textStyle)
                 
+                val indicatorSize = 6.dp.toPx()
+                val spacing = 4.dp.toPx()
+                val totalWidth = indicatorSize + spacing + textLayoutResult.size.width
+                
+                if (isNext) {
+                    val tagPadding = 4.dp.toPx()
+                    drawRoundRect(
+                        color = Color.Black.copy(alpha = 0.3f),
+                        topLeft = Offset(labelPos.x - totalWidth / 2 - tagPadding, labelPos.y - textLayoutResult.size.height / 2 - tagPadding / 2),
+                        size = Size(totalWidth + tagPadding * 2, textLayoutResult.size.height + tagPadding),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx(), 4.dp.toPx())
+                    )
+                }
+
                 drawText(
                     textLayoutResult = textLayoutResult,
-                    topLeft = Offset(
-                        labelPos.x - textLayoutResult.size.width / 2,
-                        labelPos.y - textLayoutResult.size.height / 2
-                    )
+                    topLeft = Offset(labelPos.x - totalWidth / 2 + indicatorSize + spacing, labelPos.y - textLayoutResult.size.height / 2)
                 )
             }
         }
 
         // Center Content
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             if (isSelectedDayToday && nextPrayer != null) {
-                val prayerNameRes = when (nextPrayer.name) {
+                val prayerName = stringResource(when (nextPrayer.name) {
                     "Fajr" -> R.string.prayer_fajr
                     "Sunrise" -> R.string.prayer_sunrise
                     "Dhuhr" -> R.string.prayer_dhuhr
                     "Asr" -> R.string.prayer_asr
                     "Maghrib" -> R.string.prayer_maghrib
                     "Isha" -> R.string.prayer_isha
-                    else -> -1
-                }
-                val prayerName = if (prayerNameRes != -1) stringResource(prayerNameRes) else nextPrayer.name
+                    else -> R.string.app_name
+                })
                 
-                Text(
-                    text = prayerName,
-                    color = Color.White.copy(alpha = 0.8f),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Light
-                )
-                Text(
-                    text = formatRemainingTime(nextPrayer.remainingMillis),
-                    color = Color.White,
-                    style = MaterialTheme.typography.displayMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            } else if (!isSelectedDayToday) {
-                Icon(
-                    imageVector = Icons.Default.Schedule,
-                    contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.5f),
-                    modifier = Modifier.size(64.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "VAKTIVA",
-                    color = Color.White.copy(alpha = 0.5f),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 4.sp
-                )
+                Text(prayerName, color = Color.White.copy(alpha = 0.8f), style = MaterialTheme.typography.titleLarge)
+                Text(formatRemainingTime(nextPrayer.remainingMillis), color = Color.White, style = MaterialTheme.typography.displayMedium, fontWeight = FontWeight.Bold)
+            } else {
+                Icon(Icons.Default.Schedule, null, tint = Color.White.copy(alpha = 0.5f), modifier = Modifier.size(64.dp))
+                Text("VAKTIVA", color = Color.White.copy(alpha = 0.5f), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, letterSpacing = 4.sp)
             }
         }
     }
