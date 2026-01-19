@@ -15,12 +15,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
-import com.ybugmobile.vaktiva.ui.home.NextPrayerInfo
+import com.ybugmobile.vaktiva.domain.model.NextPrayer
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import java.time.LocalDate
 
 @Composable
 fun NextPrayerCountdown(
-    nextPrayer: NextPrayerInfo?,
+    nextPrayer: NextPrayer?,
     selectedDate: LocalDate
 ) {
     Column(
@@ -28,19 +29,17 @@ fun NextPrayerCountdown(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if ((selectedDate == LocalDate.now()) && nextPrayer != null) {
-            val prayerName = stringResource(
-                when (nextPrayer.name) {
-                    "Fajr" -> R.string.prayer_fajr
-                    "Sunrise" -> R.string.prayer_sunrise
-                    "Dhuhr" -> R.string.prayer_dhuhr
-                    "Asr" -> R.string.prayer_asr
-                    "Maghrib" -> R.string.prayer_maghrib
-                    "Isha" -> R.string.prayer_isha
-                    else -> R.string.app_name
-                }
-            )
+            val prayerRes = when (nextPrayer.type) {
+                PrayerType.FAJR -> R.string.prayer_fajr
+                PrayerType.SUNRISE -> R.string.prayer_sunrise
+                PrayerType.DHUHR -> R.string.prayer_dhuhr
+                PrayerType.ASR -> R.string.prayer_asr
+                PrayerType.MAGHRIB -> R.string.prayer_maghrib
+                PrayerType.ISHA -> R.string.prayer_isha
+            }
 
-            val isUrgent = nextPrayer.remainingMillis < 45 * 60 * 1000
+            val remainingSeconds = nextPrayer.remainingDuration.seconds
+            val isUrgent = remainingSeconds < 45 * 60
             val infiniteTransition = rememberInfiniteTransition(label = "timerPulse")
             val alpha by infiniteTransition.animateFloat(
                 initialValue = 1f,
@@ -53,12 +52,12 @@ fun NextPrayerCountdown(
             )
 
             Text(
-                prayerName,
+                stringResource(prayerRes),
                 color = Color.White.copy(alpha = 0.8f),
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
-                formatRemainingTime(nextPrayer.remainingMillis),
+                formatRemainingTime(remainingSeconds),
                 color = Color.White.copy(alpha = if (isUrgent) alpha else 1f),
                 style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.Bold,
@@ -82,8 +81,7 @@ fun NextPrayerCountdown(
     }
 }
 
-fun formatRemainingTime(millis: Long): String {
-    val totalSeconds = millis / 1000
+fun formatRemainingTime(totalSeconds: Long): String {
     if (totalSeconds < 0) return "00:00:00"
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60

@@ -2,19 +2,20 @@ package com.ybugmobile.vaktiva.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
+import com.ybugmobile.vaktiva.domain.model.PrayerDay
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.vaktiva.data.location.LocationWrapper
+import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,12 +30,11 @@ class HomeViewModel @Inject constructor(
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate = _selectedDate.asStateFlow()
 
-    val allPrayerDays: StateFlow<List<PrayerDayEntity>> = prayerRepository.getPrayerDays()
+    private val allPrayerDays: StateFlow<List<PrayerDay>> = prayerRepository.getPrayerDays()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val currentPrayerDay: Flow<PrayerDayEntity?> = combine(allPrayerDays, selectedDate) { days, date ->
-        val dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
-        days.find { it.date == dateStr }
+    private val currentPrayerDay: Flow<PrayerDay?> = combine(allPrayerDays, selectedDate) { days, date ->
+        days.find { it.date == date }
     }
 
     private val _currentTime = MutableStateFlow(LocalDateTime.now())
@@ -43,19 +43,7 @@ class HomeViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
-    val calculationMethods = listOf(
-        "Muslim World League" to 3,
-        "Islamic Society of North America (ISNA)" to 2,
-        "Egyptian General Authority of Survey" to 5,
-        "Umm al-Qura University, Makkah" to 4,
-        "University of Islamic Sciences, Karachi" to 1,
-        "Institute of Geophysics, University of Tehran" to 7,
-        "Gulf Region" to 8,
-        "Kuwait" to 9,
-        "Qatar" to 10,
-        "Majlis Ugama Islam Singapura, Singapore" to 11,
-        "Turkey" to 13
-    )
+    val calculationMethods = CALCULATION_METHODS
 
     init {
         // Update current time every second
@@ -74,73 +62,84 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    val todayPrayerDay: Flow<PrayerDayEntity?> = allPrayerDays.map { days ->
-        val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+    private val todayPrayerDay: Flow<PrayerDay?> = allPrayerDays.map { days ->
+        val today = LocalDate.now()
         days.find { it.date == today }
     }
 
     private val todayPrayerTimes = todayPrayerDay.map { day ->
         if (day == null) return@map null
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
-        
-        fun parseTime(timeStr: String): LocalTime {
-            val cleaned = timeStr.split(" ")[0]
-            return LocalTime.parse(cleaned, formatter)
-        }
 
         listOf(
-            "Fajr" to parseTime(day.fajr),
-            "Sunrise" to parseTime(day.sunrise),
-            "Dhuhr" to parseTime(day.dhuhr),
-            "Asr" to parseTime(day.asr),
-            "Maghrib" to parseTime(day.maghrib),
-            "Isha" to parseTime(day.isha)
+            PrayerType.FAJR to (day.timings[PrayerType.FAJR] ?: LocalTime.MIN),
+            PrayerType.SUNRISE to (day.timings[PrayerType.SUNRISE] ?: LocalTime.MIN),
+            PrayerType.DHUHR to (day.timings[PrayerType.DHUHR] ?: LocalTime.MIN),
+            PrayerType.ASR to (day.timings[PrayerType.ASR] ?: LocalTime.MIN),
+            PrayerType.MAGHRIB to (day.timings[PrayerType.MAGHRIB] ?: LocalTime.MIN),
+            PrayerType.ISHA to (day.timings[PrayerType.ISHA] ?: LocalTime.MIN)
         )
     }
 
-    val nextPrayerInfo: Flow<NextPrayerInfo?> = combine(todayPrayerTimes, currentTime) { prayers, now ->
+    private val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime) { prayers, now ->
         if (prayers == null) return@combine null
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
         val currentTime = now.toLocalTime()
         val next = prayers.firstOrNull { it.second.isAfter(currentTime) }
-            ?: prayers.first().let { it.first to it.second }
+            ?: prayers.first()
 
-        val remainingMillis = if (next.second.isAfter(currentTime)) {
-            ChronoUnit.MILLIS.between(currentTime, next.second)
+        val remainingDuration = if (next.second.isAfter(currentTime)) {
+            Duration.between(currentTime, next.second)
         } else {
-            ChronoUnit.MILLIS.between(currentTime, LocalTime.MAX) + ChronoUnit.MILLIS.between(LocalTime.MIN, next.second)
+            Duration.between(currentTime, LocalTime.MAX).plus(Duration.between(LocalTime.MIN, next.second))
         }
 
-        NextPrayerInfo(
-            name = next.first,
-            time = next.second.format(formatter),
-            remainingMillis = remainingMillis
+        NextPrayer(
+            type = next.first,
+            time = next.second,
+            remainingDuration = remainingDuration
         )
     }
+
+    val state: StateFlow<HomeViewState> = combine(
+        combine(selectedDate, currentTime, currentPrayerDay, ::Triple),
+        combine(nextPrayerInfo, isRefreshing, settings, ::Triple)
+    ) { (date, time, prayerDay), (nextPrayer, refreshing, currentSettings) ->
+        HomeViewState(
+            selectedDate = date,
+            currentTime = time,
+            currentPrayerDay = prayerDay,
+            nextPrayer = nextPrayer,
+            isRefreshing = refreshing,
+            locationName = currentSettings.locationName
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState())
 
     fun selectDate(date: LocalDate) {
         _selectedDate.value = date
         
         // Check if data exists for this date, if not fetch it
-        val dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
-        val exists = allPrayerDays.value.any { it.date == dateStr }
+        val exists = allPrayerDays.value.any { it.date == date }
         
         if (!exists) {
             viewModelScope.launch {
-                _isRefreshing.value = true
-                val currentSettings = settings.first()
-                val location = locationWrapper.getCurrentLocation()
-                val lat = location?.latitude ?: currentSettings.latitude
-                val lng = location?.longitude ?: currentSettings.longitude
+                try {
+                    _isRefreshing.value = true
+                    val currentSettings = settings.first()
+                    val location = locationWrapper.getCurrentLocation()
+                    val lat = location?.latitude ?: currentSettings.latitude
+                    val lng = location?.longitude ?: currentSettings.longitude
 
-                prayerRepository.refreshPrayerTimes(
-                    year = date.year,
-                    month = date.monthValue,
-                    latitude = lat,
-                    longitude = lng,
-                    method = currentSettings.calculationMethod
-                )
-                _isRefreshing.value = false
+                    prayerRepository.refreshPrayerTimes(
+                        year = date.year,
+                        month = date.monthValue,
+                        latitude = lat,
+                        longitude = lng,
+                        method = currentSettings.calculationMethod
+                    )
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    _isRefreshing.value = false
+                }
             }
         }
     }
@@ -148,9 +147,13 @@ class HomeViewModel @Inject constructor(
     fun refresh() {
         viewModelScope.launch {
             _isRefreshing.value = true
-            onPermissionsGranted()
-            delay(500)
-            _isRefreshing.value = false
+            try {
+                fetchPrayerData()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _isRefreshing.value = false
+            }
         }
     }
 
@@ -163,56 +166,74 @@ class HomeViewModel @Inject constructor(
 
     fun onPermissionsGranted() {
         viewModelScope.launch {
-            val location = locationWrapper.getCurrentLocation()
-            val currentSettings = settings.first()
-            val now = LocalDate.now()
-            
-            if (location != null) {
-                val addressName = locationWrapper.getAddressFromLocation(location.latitude, location.longitude)
-                    ?: "Current Location"
+            try {
+                fetchPrayerData()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
-                settingsManager.saveLocation(
-                    lat = location.latitude,
-                    lng = location.longitude,
-                    name = addressName
-                )
-                
-                // Fetch current and next month to ensure 14+ days of data
+    private suspend fun fetchPrayerData() {
+        val location = locationWrapper.getCurrentLocation()
+        val currentSettings = settings.first()
+        val now = LocalDate.now()
+
+        if (location != null) {
+            val addressName = locationWrapper.getAddressFromLocation(location.latitude, location.longitude)
+                ?: "Current Location"
+
+            settingsManager.saveLocation(
+                lat = location.latitude,
+                lng = location.longitude,
+                name = addressName
+            )
+
+            // Fetch current and next month to ensure 14+ days of data
+            prayerRepository.refreshPrayerTimes(
+                year = now.year,
+                month = now.monthValue,
+                latitude = location.latitude,
+                longitude = location.longitude,
+                method = currentSettings.calculationMethod
+            )
+
+            // If late in the month, fetch next month too
+            if (now.dayOfMonth > 20) {
+                val nextMonth = now.plusMonths(1)
                 prayerRepository.refreshPrayerTimes(
-                    year = now.year,
-                    month = now.monthValue,
+                    year = nextMonth.year,
+                    month = nextMonth.monthValue,
                     latitude = location.latitude,
                     longitude = location.longitude,
                     method = currentSettings.calculationMethod
                 )
-                
-                // If late in the month, fetch next month too
-                if (now.dayOfMonth > 20) {
-                    val nextMonth = now.plusMonths(1)
-                    prayerRepository.refreshPrayerTimes(
-                        year = nextMonth.year,
-                        month = nextMonth.monthValue,
-                        latitude = location.latitude,
-                        longitude = location.longitude,
-                        method = currentSettings.calculationMethod
-                    )
-                }
-            } else {
-                // Fallback using stored settings if GPS is unavailable
-                prayerRepository.refreshPrayerTimes(
-                    year = now.year,
-                    month = now.monthValue,
-                    latitude = currentSettings.latitude,
-                    longitude = currentSettings.longitude,
-                    method = currentSettings.calculationMethod
-                )
             }
+        } else {
+            // Fallback using stored settings if GPS is unavailable
+            prayerRepository.refreshPrayerTimes(
+                year = now.year,
+                month = now.monthValue,
+                latitude = currentSettings.latitude,
+                longitude = currentSettings.longitude,
+                method = currentSettings.calculationMethod
+            )
         }
     }
-}
 
-data class NextPrayerInfo(
-    val name: String,
-    val time: String,
-    val remainingMillis: Long
-)
+    companion object {
+        val CALCULATION_METHODS = listOf(
+            "Muslim World League" to 3,
+            "Islamic Society of North America (ISNA)" to 2,
+            "Egyptian General Authority of Survey" to 5,
+            "Umm al-Qura University, Makkah" to 4,
+            "University of Islamic Sciences, Karachi" to 1,
+            "Institute of Geophysics, University of Tehran" to 7,
+            "Gulf Region" to 8,
+            "Kuwait" to 9,
+            "Qatar" to 10,
+            "Majlis Ugama Islam Singapura, Singapore" to 11,
+            "Turkey" to 13
+        )
+    }
+}

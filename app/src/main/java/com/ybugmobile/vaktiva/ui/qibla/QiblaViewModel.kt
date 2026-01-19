@@ -4,17 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.batoulapps.adhan.Qibla
 import com.batoulapps.adhan.Coordinates
-import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.vaktiva.data.sensor.CompassData
 import com.ybugmobile.vaktiva.data.sensor.CompassManager
+import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,8 +39,8 @@ class QiblaViewModel @Inject constructor(
     private val _currentTime = MutableStateFlow(LocalDateTime.now())
     val currentTime = _currentTime.asStateFlow()
 
-    val currentPrayerDay: Flow<PrayerDayEntity?> = prayerRepository.getPrayerDays().map { days ->
-        val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+    val currentPrayerDay: Flow<PrayerDay?> = prayerRepository.getPrayerDays().map { days ->
+        val today = LocalDate.now()
         days.find { it.date == today }
     }
 

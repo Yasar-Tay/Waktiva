@@ -3,12 +3,15 @@ package com.ybugmobile.vaktiva.data.repository
 import com.ybugmobile.vaktiva.data.local.LocalPrayerCalculator
 import com.ybugmobile.vaktiva.data.local.dao.PrayerDao
 import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
+import com.ybugmobile.vaktiva.data.mapper.toDomain
 import com.ybugmobile.vaktiva.data.remote.AladhanApiService
 import com.ybugmobile.vaktiva.data.remote.UmmahApiService
 import com.ybugmobile.vaktiva.data.remote.dto.PrayerDayDto
 import com.ybugmobile.vaktiva.data.remote.dto.UmmahPrayerDayDto
+import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class PrayerRepositoryImpl @Inject constructor(
@@ -18,8 +21,10 @@ class PrayerRepositoryImpl @Inject constructor(
     private val dao: PrayerDao
 ) : PrayerRepository {
 
-    override fun getPrayerDays(): Flow<List<PrayerDayEntity>> {
-        return dao.getAllPrayerDays()
+    override fun getPrayerDays(): Flow<List<PrayerDay>> {
+        return dao.getAllPrayerDays().map { entities -> 
+            entities.map { it.toDomain() } 
+        }
     }
 
     override suspend fun refreshPrayerTimes(

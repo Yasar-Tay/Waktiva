@@ -1,10 +1,10 @@
 package com.ybugmobile.vaktiva.domain.repository
 
-import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
+import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import kotlinx.coroutines.flow.Flow
 
 interface PrayerRepository {
-    fun getPrayerDays(): Flow<List<PrayerDayEntity>>
+    fun getPrayerDays(): Flow<List<PrayerDay>>
     
     suspend fun refreshPrayerTimes(
         year: Int,

@@ -2,22 +2,19 @@ package com.ybugmobile.vaktiva.ui.theme
 
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
+import com.ybugmobile.vaktiva.domain.model.PrayerDay
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
-fun getGradientForTime(currentTime: LocalTime, day: PrayerDayEntity?): Brush {
+fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
     if (day == null) return Brush.verticalGradient(listOf(Color(0xFF1e3c72), Color(0xFF2a5298)))
     
-    val formatter = DateTimeFormatter.ofPattern("HH:mm")
-    fun parse(s: String) = LocalTime.parse(s.split(" ")[0], formatter)
-    
-    val fajr = parse(day.fajr)
-    val sunrise = parse(day.sunrise)
-    val dhuhr = parse(day.dhuhr)
-    val asr = parse(day.asr)
-    val maghrib = parse(day.maghrib)
-    val isha = parse(day.isha)
+    val fajr = day.timings[PrayerType.FAJR] ?: LocalTime.of(5, 0)
+    val sunrise = day.timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 30)
+    val dhuhr = day.timings[PrayerType.DHUHR] ?: LocalTime.of(12, 30)
+    val asr = day.timings[PrayerType.ASR] ?: LocalTime.of(15, 30)
+    val maghrib = day.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 30)
+    val isha = day.timings[PrayerType.ISHA] ?: LocalTime.of(20, 0)
 
     return when {
         currentTime.isBefore(fajr) -> Brush.verticalGradient(listOf(Color(0xFF0F2027), Color(0xFF203A43))) // Deep Night

@@ -15,25 +15,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
-import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
+import com.ybugmobile.vaktiva.domain.model.PrayerDay
+import com.ybugmobile.vaktiva.domain.model.PrayerType
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun PrayerTimeList(
-    day: PrayerDayEntity,
-    nextPrayerName: String?,
+    day: PrayerDay,
+    nextPrayerType: PrayerType?,
     currentMethodId: Int,
-    methods: List<Pair<String, Int>>,
     onMethodSelected: (Int) -> Unit
 ) {
-    data class PrayerItem(val key: String, val resId: Int, val time: String, val icon: ImageVector)
+    data class PrayerItem(val type: PrayerType, val resId: Int, val time: String, val icon: ImageVector)
 
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    
     val prayers = listOf(
-        PrayerItem("Fajr", R.string.prayer_fajr, day.fajr, Icons.Default.WbTwilight),
-        PrayerItem("Sunrise", R.string.prayer_sunrise, day.sunrise, Icons.Default.WbSunny),
-        PrayerItem("Dhuhr", R.string.prayer_dhuhr, day.dhuhr, Icons.Default.LightMode),
-        PrayerItem("Asr", R.string.prayer_asr, day.asr, Icons.Default.WbSunny),
-        PrayerItem("Maghrib", R.string.prayer_maghrib, day.maghrib, Icons.Default.WbTwilight),
-        PrayerItem("Isha", R.string.prayer_isha, day.isha, Icons.Default.NightsStay)
+        PrayerItem(PrayerType.FAJR, R.string.prayer_fajr, day.timings[PrayerType.FAJR]?.format(timeFormatter) ?: "", Icons.Default.WbTwilight),
+        PrayerItem(PrayerType.SUNRISE, R.string.prayer_sunrise, day.timings[PrayerType.SUNRISE]?.format(timeFormatter) ?: "", Icons.Default.WbSunny),
+        PrayerItem(PrayerType.DHUHR, R.string.prayer_dhuhr, day.timings[PrayerType.DHUHR]?.format(timeFormatter) ?: "", Icons.Default.LightMode),
+        PrayerItem(PrayerType.ASR, R.string.prayer_asr, day.timings[PrayerType.ASR]?.format(timeFormatter) ?: "", Icons.Default.WbSunny),
+        PrayerItem(PrayerType.MAGHRIB, R.string.prayer_maghrib, day.timings[PrayerType.MAGHRIB]?.format(timeFormatter) ?: "", Icons.Default.WbTwilight),
+        PrayerItem(PrayerType.ISHA, R.string.prayer_isha, day.timings[PrayerType.ISHA]?.format(timeFormatter) ?: "", Icons.Default.NightsStay)
     )
 
     Surface(
@@ -57,7 +60,6 @@ fun PrayerTimeList(
                 Spacer(modifier = Modifier.height(4.dp))
                 CalculationMethodSelector(
                     currentMethodId = currentMethodId,
-                    methods = methods,
                     onMethodSelected = onMethodSelected,
                 )
             }
@@ -66,7 +68,7 @@ fun PrayerTimeList(
             Spacer(modifier = Modifier.height(8.dp))
 
             prayers.forEach { item ->
-                val isNext = item.key == nextPrayerName
+                val isNext = item.type == nextPrayerType
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -104,7 +106,6 @@ fun PrayerTimeList(
 @Composable
 fun CalculationMethodSelector(
     currentMethodId: Int,
-    methods: List<Pair<String, Int>>,
     onMethodSelected: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -123,9 +124,7 @@ fun CalculationMethodSelector(
         13 to stringResource(R.string.method_turkey)
     )
 
-    val currentMethodName =
-        methodNames[currentMethodId] ?: methods.find { it.second == currentMethodId }?.first
-        ?: "Unknown Method"
+    val currentMethodName = methodNames[currentMethodId] ?: "Unknown Method"
 
     Box {
         Surface(
@@ -155,8 +154,7 @@ fun CalculationMethodSelector(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            methods.forEach { (_, id) ->
-                val name = methodNames[id] ?: "Unknown"
+            methodNames.forEach { (id, name) ->
                 DropdownMenuItem(
                     text = { Text(name) },
                     onClick = {

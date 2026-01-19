@@ -27,6 +27,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.ui.home.HomeViewModel
 
+private val WelcomeGradientStart = Color(0xFF1A237E) // Deep Blue
+private val WelcomeGradientEnd = Color(0xFF3949AB)   // Lighter Blue
+private val ActionButtonColor = Color(0xFFFFD700)    // Gold accent
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WelcomeScreen(
@@ -76,8 +80,8 @@ fun WelcomeScreen(
     // Modern Gradient Background
     val backgroundBrush = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFF1A237E), // Deep Blue
-            Color(0xFF3949AB)  // Lighter Blue
+            WelcomeGradientStart,
+            WelcomeGradientEnd
         )
     )
 
@@ -145,7 +149,7 @@ fun WelcomeScreen(
                     .fillMaxWidth()
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFFD700), // Gold accent
+                    containerColor = ActionButtonColor,
                     contentColor = Color.Black
                 ),
                 shape = RoundedCornerShape(16.dp)

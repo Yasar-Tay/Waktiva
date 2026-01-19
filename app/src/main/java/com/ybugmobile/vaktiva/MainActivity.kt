@@ -27,6 +27,7 @@ import com.ybugmobile.vaktiva.data.worker.LocationUpdateWorker
 import com.ybugmobile.vaktiva.data.worker.PrayerUpdateWorker
 import com.ybugmobile.vaktiva.ui.home.HomeScreen
 import com.ybugmobile.vaktiva.ui.home.HomeViewModel
+import com.ybugmobile.vaktiva.ui.navigation.Screen
 import com.ybugmobile.vaktiva.ui.qibla.QiblaScreen
 import com.ybugmobile.vaktiva.ui.settings.SettingsScreen
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
@@ -34,20 +35,17 @@ import com.ybugmobile.vaktiva.ui.welcome.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 
-sealed class Screen(val route: String, val label: String? = null, val icon: ImageVector? = null) {
-    object Welcome : Screen("welcome")
-    object Home : Screen("home", "Home", Icons.Default.Home)
-    object Qibla : Screen("qibla", "Qibla", Icons.Default.LocationOn)
-    object Settings : Screen("settings", "Settings", Icons.Default.Settings)
-}
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        scheduleWork()
+        // Recommendation: Move scheduleWork() to your Application class onCreate()
+        // to ensure it runs once per app process, not every activity recreation.
+        if (savedInstanceState == null) {
+            scheduleWork()
+        }
         
         enableEdgeToEdge()
         setContent {
