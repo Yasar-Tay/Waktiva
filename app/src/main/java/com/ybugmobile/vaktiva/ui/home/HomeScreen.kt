@@ -169,7 +169,7 @@ fun HomeScreenContent(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Circular Prayer Visualization with Countdown
+                // Circular Prayer Visualization
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     if (currentDay != null) {
                         PrayerCircleVisualization(
