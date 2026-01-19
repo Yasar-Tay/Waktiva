@@ -61,7 +61,7 @@ fun NextPrayerCountdown(
                 color = Color.White.copy(alpha = if (isUrgent) alpha else 1f),
                 style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.Bold,
-                fontSize = 48.sp
+                fontSize = 60.sp
             )
         } else {
             Icon(

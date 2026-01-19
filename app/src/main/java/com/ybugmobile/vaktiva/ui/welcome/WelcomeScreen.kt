@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
@@ -31,11 +32,22 @@ private val WelcomeGradientStart = Color(0xFF1A237E) // Deep Blue
 private val WelcomeGradientEnd = Color(0xFF3949AB)   // Lighter Blue
 private val ActionButtonColor = Color(0xFFFFD700)    // Gold accent
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WelcomeScreen(
     onSetupComplete: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
+) {
+    WelcomeScreenContent(
+        onSetupComplete = onSetupComplete,
+        onPermissionsGranted = viewModel::onPermissionsGranted
+    )
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun WelcomeScreenContent(
+    onSetupComplete: () -> Unit,
+    onPermissionsGranted: () -> Unit
 ) {
     val context = LocalContext.current
     var showRationaleDialog by remember { mutableStateOf(false) }
@@ -59,7 +71,7 @@ fun WelcomeScreen(
                               result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         
         if (locationGranted) {
-            viewModel.onPermissionsGranted()
+            onPermissionsGranted()
             onSetupComplete()
         } else {
             permissionResultReceived = true
@@ -139,7 +151,7 @@ fun WelcomeScreen(
             Button(
                 onClick = {
                     if (permissionState.allPermissionsGranted) {
-                        viewModel.onPermissionsGranted()
+                        onPermissionsGranted()
                         onSetupComplete()
                     } else {
                         permissionState.launchMultiplePermissionRequest()
@@ -248,4 +260,13 @@ fun FeatureItem(icon: ImageVector, title: String, description: String) {
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun WelcomeScreenPreview() {
+    WelcomeScreenContent(
+        onSetupComplete = {},
+        onPermissionsGranted = {}
+    )
 }

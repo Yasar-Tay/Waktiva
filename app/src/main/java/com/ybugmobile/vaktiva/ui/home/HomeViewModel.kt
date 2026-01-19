@@ -30,10 +30,10 @@ class HomeViewModel @Inject constructor(
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate = _selectedDate.asStateFlow()
 
-    private val allPrayerDays: StateFlow<List<PrayerDay>> = prayerRepository.getPrayerDays()
+    val allPrayerDays: StateFlow<List<PrayerDay>> = prayerRepository.getPrayerDays()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    private val currentPrayerDay: Flow<PrayerDay?> = combine(allPrayerDays, selectedDate) { days, date ->
+    val currentPrayerDay: Flow<PrayerDay?> = combine(allPrayerDays, selectedDate) { days, date ->
         days.find { it.date == date }
     }
 
@@ -80,7 +80,7 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime) { prayers, now ->
+    val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime) { prayers, now ->
         if (prayers == null) return@combine null
         val currentTime = now.toLocalTime()
         val next = prayers.firstOrNull { it.second.isAfter(currentTime) }

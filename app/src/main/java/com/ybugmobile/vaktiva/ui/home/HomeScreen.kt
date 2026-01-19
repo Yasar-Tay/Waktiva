@@ -18,17 +18,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.domain.model.PrayerDay
+import com.ybugmobile.vaktiva.domain.model.PrayerType
+import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
+import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.ui.home.composables.ModernCalendarStrip
 import com.ybugmobile.vaktiva.ui.home.composables.NextPrayerCountdown
 import com.ybugmobile.vaktiva.ui.home.composables.PrayerCircleVisualization
 import com.ybugmobile.vaktiva.ui.home.composables.PermissionRequestCard
 import com.ybugmobile.vaktiva.ui.home.composables.PrayerTimeList
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -42,23 +49,43 @@ import java.util.Locale
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsState()
+    val currentDay by viewModel.currentPrayerDay.collectAsState(initial = null)
+    val nextPrayer by viewModel.nextPrayerInfo.collectAsState(initial = null)
+    val currentTime by viewModel.currentTime.collectAsState()
+    val settings by viewModel.settings.collectAsState(initial = null)
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val selectedDate by viewModel.selectedDate.collectAsState()
+    val allDays by viewModel.allPrayerDays.collectAsState()
 
     HomeScreenContent(
-        state = state,
+        currentDay = currentDay,
+        nextPrayer = nextPrayer,
+        currentTime = currentTime,
+        settings = settings,
+        isRefreshing = isRefreshing,
+        selectedDate = selectedDate,
+        allDays = allDays,
+        calculationMethods = viewModel.calculationMethods,
         onRefresh = { viewModel.refresh() },
-        onDateSelected = { viewModel.selectDate(it) },
-        onMethodSelected = { /* handled in settings or direct update logic */ }
+        onMethodSelected = { viewModel.updateCalculationMethod(it) },
+        onDateSelected = { viewModel.selectDate(it) }
     )
 }
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
-    state: HomeViewState,
+    currentDay: PrayerDay?,
+    nextPrayer: NextPrayer?,
+    currentTime: LocalDateTime,
+    settings: UserSettings?,
+    isRefreshing: Boolean,
+    selectedDate: LocalDate,
+    allDays: List<PrayerDay>,
+    calculationMethods: List<Pair<String, Int>>,
     onRefresh: () -> Unit,
-    onDateSelected: (LocalDate) -> Unit,
-    onMethodSelected: (Int) -> Unit
+    onMethodSelected: (Int) -> Unit,
+    onDateSelected: (LocalDate) -> Unit
 ) {
     val permissions = mutableListOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -69,10 +96,11 @@ fun HomeScreenContent(
     }
 
     val permissionState = rememberMultiplePermissionsState(permissions)
-    val scrollState = rememberScrollState()
-    var showDatePicker by remember { mutableStateOf(false) }
 
-    val backgroundGradient = getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
+    val backgroundGradient = getGradientForTime(currentTime.toLocalTime(), currentDay)
+    val scrollState = rememberScrollState()
+
+    var showDatePicker by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -80,17 +108,17 @@ fun HomeScreenContent(
             .background(brush = backgroundGradient)
     ) {
         PullToRefreshBox(
-            isRefreshing = state.isRefreshing,
+            isRefreshing = isRefreshing,
             onRefresh = onRefresh,
             modifier = Modifier.fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(horizontal = 24.dp),
+                    .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.Start
             ) {
+                Column(modifier = Modifier.padding(horizontal = 24.dp)) {
                 if (!permissionState.allPermissionsGranted) {
                     Spacer(modifier = Modifier.height(24.dp))
                     PermissionRequestCard(permissionState)
@@ -99,6 +127,12 @@ fun HomeScreenContent(
                 Spacer(modifier = Modifier.height(48.dp))
 
                 // Location & Date
+                val locationText =
+                    settings?.locationName ?: stringResource(R.string.home_unknown_location)
+                val coordinatesText = if (settings != null) {
+                    String.format(Locale.US, "%.4f, %.4f", settings.latitude, settings.longitude)
+                } else ""
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
@@ -106,19 +140,23 @@ fun HomeScreenContent(
                         tint = Color.White,
                         modifier = Modifier.size(24.dp)
                     )
+
                     Spacer(modifier = Modifier.width(8.dp))
+
                     Text(
-                        text = state.locationName.ifEmpty { stringResource(R.string.home_unknown_location) },
+                        text = locationText,
                         color = Color.White,
                         style = MaterialTheme.typography.headlineMedium,
-                        fontSize = 24.sp
+                        fontSize = 24.sp,
+                        textAlign = TextAlign.Start
                     )
                 }
 
-                val displayDate = if (state.selectedDate == LocalDate.now()) {
-                    state.currentTime.format(DateTimeFormatter.ofPattern("EEEE, d MMMM"))
+                // Display selected date's info
+                val displayDate = if (selectedDate == LocalDate.now()) {
+                    currentTime.format(DateTimeFormatter.ofPattern("EEEE, d MMMM"))
                 } else {
-                    state.selectedDate.format(DateTimeFormatter.ofPattern("EEEE, d MMMM"))
+                    selectedDate.format(DateTimeFormatter.ofPattern("EEEE, d MMMM"))
                 }
 
                 Text(
@@ -128,9 +166,9 @@ fun HomeScreenContent(
                     modifier = Modifier.padding(start = 32.dp)
                 )
 
-                state.currentPrayerDay?.let {
+                if (currentDay != null) {
                     Text(
-                        text = formatHijriDate(it.hijriDate),
+                        text = formatHijriDate(currentDay.hijriDate),
                         color = Color.White.copy(alpha = 0.8f),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(start = 32.dp)
@@ -141,96 +179,265 @@ fun HomeScreenContent(
 
                 // Circular Prayer Visualization
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    state.currentPrayerDay?.let { day ->
+                    if (currentDay != null) {
                         PrayerCircleVisualization(
-                            day = day,
-                            currentTime = if (state.selectedDate == LocalDate.now()) state.currentTime.toLocalTime() else LocalTime.MIDNIGHT,
-                            nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
-                            isSelectedDayToday = state.selectedDate == LocalDate.now(),
+                            day = currentDay,
+                            currentTime = if (selectedDate == LocalDate.now()) currentTime.toLocalTime() else LocalTime.MIDNIGHT,
+                            nextPrayer = if (selectedDate == LocalDate.now()) nextPrayer else null,
+                            isSelectedDayToday = selectedDate == LocalDate.now(),
                             centerContent = {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center,
-                                    modifier = Modifier.clickable { showDatePicker = true }
-                                ) {
-                                    Text(
-                                        text = state.selectedDate.format(DateTimeFormatter.ofPattern("MMM", Locale.getDefault())).uppercase(),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = Color.White.copy(alpha = 0.9f)
-                                    )
-                                    Text(
-                                        text = "${state.selectedDate.dayOfMonth}",
-                                        style = MaterialTheme.typography.displayMedium,
-                                        fontWeight = FontWeight.Bold,
+                                if (isRefreshing) {
+                                    CircularProgressIndicator(
                                         color = Color.White,
-                                        fontSize = 64.sp
+                                        modifier = Modifier.size(48.dp)
                                     )
+                                } else {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center,
+                                        modifier = Modifier.clickable { showDatePicker = true }
+                                    ) {
+                                        Text(
+                                            text = selectedDate.format(DateTimeFormatter.ofPattern("MMM", Locale.getDefault())).uppercase(),
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = Color.White.copy(alpha = 0.9f),
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                        Text(
+                                            text = "${selectedDate.dayOfMonth}",
+                                            style = MaterialTheme.typography.displayMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White,
+                                            fontSize = 64.sp
+                                        )
+                                        Text(
+                                            text = selectedDate.year.toString(),
+                                            style = MaterialTheme.typography.titleSmall,
+                                            color = Color.White.copy(alpha = 0.7f)
+                                        )
+                                    }
                                 }
                             }
                         )
+                    } else {
+                        if (isRefreshing) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color.White,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                            }
+                        } else {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = Color.White.copy(alpha = 0.6f),
+                                    modifier = Modifier.size(48.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Data unavailable",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = Color.White.copy(alpha = 0.8f)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Button(
+                                    onClick = { onDateSelected(selectedDate) },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.White.copy(alpha = 0.2f)
+                                    )
+                                ) {
+                                    Text("Retry")
+                                }
+                            }
+                        }
                     }
+                }
                 }
 
                 NextPrayerCountdown(
-                    nextPrayer = state.nextPrayer,
-                    selectedDate = state.selectedDate
+                    nextPrayer = nextPrayer,
+                    selectedDate = selectedDate
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Modern Calendar Strip - Mock dates for now
+                Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+                // Calendar Strip
                 ModernCalendarStrip(
-                    selectedDate = state.selectedDate,
-                    availableDates = listOf(state.selectedDate), // Should be populated from state
+                    selectedDate = selectedDate,
+                    availableDates = allDays.map { it.date }.filter { !it.isBefore(LocalDate.now()) },
                     onDateSelected = onDateSelected
                 )
-
+                
                 Spacer(modifier = Modifier.height(24.dp))
 
-                state.currentPrayerDay?.let { day ->
+                if (currentDay != null) {
                     PrayerTimeList(
-                        day = day,
-                        nextPrayerType = if (state.selectedDate == LocalDate.now()) state.nextPrayer?.type else null,
-                        currentMethodId = 3, // Mocked
+                        day = currentDay,
+                        nextPrayerType = if (selectedDate == LocalDate.now()) nextPrayer?.type else null,
+                        currentMethodId = settings?.calculationMethod ?: 3,
                         onMethodSelected = onMethodSelected
                     )
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Footer with calculation method info
+                settings?.let {
+                    val methodName = calculationMethods.find { m -> m.second == it.calculationMethod }?.first
+                        ?: "Unknown Method"
+
+                    Card(
+                        onClick = { /* Could open settings or method picker */ },
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White.copy(alpha = 0.1f)
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column {
+                                Text(
+                                    text = "Calculation Method",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = Color.White.copy(alpha = 0.6f)
+                                )
+                                Text(
+                                    text = methodName,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.White
+                                )
+                            }
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings",
+                                tint = Color.White.copy(alpha = 0.6f)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(100.dp))
+                }
             }
         }
+    }
 
-        if (showDatePicker) {
-            val datePickerState = rememberDatePickerState(
-                initialSelectedDateMillis = state.selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-            )
-            DatePickerDialog(
-                onDismissRequest = { showDatePicker = false },
-                confirmButton = {
-                    TextButton(onClick = {
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        )
+
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         datePickerState.selectedDateMillis?.let { millis ->
                             val date = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate()
                             onDateSelected(date)
                         }
                         showDatePicker = false
-                    }) {
-                        Text("OK")
                     }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDatePicker = false }) {
-                        Text("Cancel")
-                    }
+                ) {
+                    Text("OK")
                 }
-            ) {
-                DatePicker(state = datePickerState)
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancel")
+                }
             }
+        ) {
+            DatePicker(state = datePickerState)
         }
     }
 }
 
+// Utility to format Hijri date
+private fun formatHijriDate(hijri: String): String {
+    // Basic formatting if the string is like "1445-09-10"
+    return try {
+        val parts = hijri.split("-")
+        if (parts.size == 3) {
+            "${parts[2]} ${getMonthName(parts[1].toInt())} ${parts[0]} AH"
+        } else hijri
+    } catch (e: Exception) {
+        hijri
+    }
+}
+
+private fun getMonthName(month: Int): String {
+    val months = listOf(
+        "Muharram", "Safar", "Rabi' al-awwal", "Rabi' al-thani",
+        "Jumada al-ula", "Jumada al-akhira", "Rajab", "Sha'ban",
+        "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"
+    )
+    return if (month in 1..12) months[month - 1] else ""
+}
+
+@Preview(showBackground = true)
 @Composable
-fun formatHijriDate(date: String): String {
-    // Logic kept as is for brevity
-    return date
+fun HomeScreenPreview() {
+    val dummyDay = PrayerDay(
+        date = LocalDate.now(),
+        hijriDate = "1445-09-10",
+        timings = mapOf(
+            PrayerType.FAJR to LocalTime.of(5, 30),
+            PrayerType.SUNRISE to LocalTime.of(6, 45),
+            PrayerType.DHUHR to LocalTime.of(12, 30),
+            PrayerType.ASR to LocalTime.of(15, 45),
+            PrayerType.MAGHRIB to LocalTime.of(18, 15),
+            PrayerType.ISHA to LocalTime.of(19, 45)
+        )
+    )
+
+    val dummyNextPrayer = NextPrayer(
+        type = PrayerType.DHUHR,
+        time = LocalTime.of(12, 30),
+        remainingDuration = Duration.ofHours(1).plusMinutes(30)
+    )
+
+    val dummySettings = UserSettings(
+        locationName = "Istanbul, Turkey",
+        latitude = 41.0082,
+        longitude = 28.9784,
+        calculationMethod = 13,
+        madhab = 1,
+        language = "en"
+    )
+
+    MaterialTheme {
+        HomeScreenContent(
+            currentDay = dummyDay,
+            nextPrayer = dummyNextPrayer,
+            currentTime = LocalDateTime.now(),
+            settings = dummySettings,
+            isRefreshing = false,
+            selectedDate = LocalDate.now(),
+            allDays = listOf(dummyDay, dummyDay.copy(date = LocalDate.now().plusDays(1))),
+            calculationMethods = listOf("Turkey" to 13),
+            onRefresh = {},
+            onMethodSelected = {},
+            onDateSelected = {}
+        )
+    }
 }
