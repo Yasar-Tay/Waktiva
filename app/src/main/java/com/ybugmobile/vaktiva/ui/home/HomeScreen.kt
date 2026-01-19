@@ -2,6 +2,7 @@ package com.ybugmobile.vaktiva.ui.home
 
 import android.Manifest
 import android.os.Build
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -26,6 +27,7 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.ui.home.composables.ModernCalendarStrip
+import com.ybugmobile.vaktiva.ui.home.composables.NextPrayerCountdown
 import com.ybugmobile.vaktiva.ui.home.composables.PrayerCircleVisualization
 import com.ybugmobile.vaktiva.ui.home.composables.PermissionRequestCard
 import com.ybugmobile.vaktiva.ui.home.composables.PrayerTimeList
@@ -180,46 +182,24 @@ fun HomeScreenContent(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
                                 ) {
-                                    if ((selectedDate == LocalDate.now()) && nextPrayer != null) {
-                                        val prayerName = stringResource(
-                                            when (nextPrayer.name) {
-                                                "Fajr" -> R.string.prayer_fajr
-                                                "Sunrise" -> R.string.prayer_sunrise
-                                                "Dhuhr" -> R.string.prayer_dhuhr
-                                                "Asr" -> R.string.prayer_asr
-                                                "Maghrib" -> R.string.prayer_maghrib
-                                                "Isha" -> R.string.prayer_isha
-                                                else -> R.string.app_name
-                                            }
-                                        )
-
-                                        Text(
-                                            prayerName,
-                                            color = Color.White.copy(alpha = 0.8f),
-                                            style = MaterialTheme.typography.titleLarge
-                                        )
-                                        Text(
-                                            formatRemainingTime(nextPrayer.remainingMillis),
-                                            color = Color.White,
-                                            style = MaterialTheme.typography.displayMedium,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 36.sp
-                                        )
-                                    } else {
-                                        Icon(
-                                            Icons.Default.Schedule,
-                                            null,
-                                            tint = Color.White.copy(alpha = 0.5f),
-                                            modifier = Modifier.size(64.dp)
-                                        )
-                                        Text(
-                                            "VAKTIVA",
-                                            color = Color.White.copy(alpha = 0.5f),
-                                            style = MaterialTheme.typography.titleLarge,
-                                            fontWeight = FontWeight.Bold,
-                                            letterSpacing = 4.sp
-                                        )
-                                    }
+                                    Text(
+                                        text = selectedDate.format(DateTimeFormatter.ofPattern("MMM", Locale.getDefault())).uppercase(),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = Color.White.copy(alpha = 0.9f),
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        text = "${selectedDate.dayOfMonth}",
+                                        style = MaterialTheme.typography.displayMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White,
+                                        fontSize = 64.sp
+                                    )
+                                    Text(
+                                        text = selectedDate.year.toString(),
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = Color.White.copy(alpha = 0.7f)
+                                    )
                                 }
                             }
                         )
@@ -230,9 +210,34 @@ fun HomeScreenContent(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                NextPrayerCountdown(
+                    nextPrayer = nextPrayer,
+                    selectedDate = selectedDate
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
                 // Redesigned 14 Days Calendar
+                val today = currentTime.toLocalDate()
+                val availableDates = remember(allDays, today) {
+                    allDays.mapNotNull {
+                        try {
+                            LocalDate.parse(it.date, DateTimeFormatter.ISO_LOCAL_DATE)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    }.filter { !it.isBefore(today) }.sorted()
+                }
+
+                LaunchedEffect(availableDates, selectedDate, today) {
+                    if (availableDates.isNotEmpty() && selectedDate.isBefore(today)) {
+                        onDateSelected(availableDates.first())
+                    }
+                }
+
                 ModernCalendarStrip(
                     selectedDate = selectedDate,
+                    availableDates = availableDates,
                     onDateSelected = onDateSelected
                 )
 
@@ -291,15 +296,6 @@ fun formatHijriDate(date: String): String {
         formatted = formatted.replace(en, tr)
     }
     return formatted
-}
-
-fun formatRemainingTime(millis: Long): String {
-    val totalSeconds = millis / 1000
-    if (totalSeconds < 0) return "00:00:00"
-    val hours = totalSeconds / 3600
-    val minutes = (totalSeconds % 3600) / 60
-    val secs = totalSeconds % 60
-    return String.format("%02d:%02d:%02d", hours, minutes, secs)
 }
 
 @Preview(showBackground = true)
