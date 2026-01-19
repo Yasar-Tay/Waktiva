@@ -32,6 +32,12 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.settings.collectAsState(initial = null)
+    
+    // Use AppCompatDelegate as the single source of truth for the current language.
+    // This ensures the UI matches exactly what the system is using.
+    val currentAppLocales = AppCompatDelegate.getApplicationLocales()
+    val currentLanguage = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
+
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -66,9 +72,8 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(16.dp))
             
             LanguageSelector(
-                currentLanguage = settings?.language ?: "system",
+                currentLanguage = currentLanguage,
                 onLanguageSelected = { lang ->
-                    viewModel.updateLanguage(lang)
                     val appLocale: LocaleListCompat = if (lang == "system") {
                         LocaleListCompat.getEmptyLocaleList()
                     } else {
