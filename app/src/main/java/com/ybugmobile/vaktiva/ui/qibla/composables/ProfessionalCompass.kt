@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
@@ -32,10 +33,10 @@ fun ProfessionalCompass(
     azimuth: Float,
     qiblaAngle: Float,
     alignmentColor: Color,
-    isAligned: Boolean
+    isAligned: Boolean,
+    contentColor: Color = Color.White
 ) {
     val textMeasurer = rememberTextMeasurer()
-    val onSurface = MaterialTheme.colorScheme.onSurface
 
     Box(modifier = Modifier.size(320.dp), contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -44,12 +45,12 @@ fun ProfessionalCompass(
             val innerRadius = radius * 0.9f
 
             drawCircle(
-                color = onSurface.copy(alpha = 0.05f),
+                color = contentColor.copy(alpha = 0.1f),
                 radius = radius,
                 style = Fill
             )
             drawCircle(
-                color = onSurface.copy(alpha = 0.15f),
+                color = contentColor.copy(alpha = 0.3f),
                 radius = radius,
                 style = Stroke(width = 2.dp.toPx())
             )
@@ -66,8 +67,8 @@ fun ProfessionalCompass(
                         center.y + (radius - 5.dp.toPx() - tickLength) * sin(angleInRad).toFloat()
 
                     drawLine(
-                        color = if (i % 30 == 0) onSurface.copy(alpha = 0.4f) else onSurface.copy(
-                            alpha = 0.15f
+                        color = if (i % 30 == 0) contentColor.copy(alpha = 0.8f) else contentColor.copy(
+                            alpha = 0.4f
                         ),
                         start = Offset(startX, startY),
                         end = Offset(endX, endY),
@@ -84,9 +85,14 @@ fun ProfessionalCompass(
                         val textLayout = textMeasurer.measure(
                             text = label,
                             style = TextStyle(
-                                color = if (label == "N") Color.Red else onSurface,
+                                color = if (label == "N") Color.Red else contentColor,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
+                                fontSize = 16.sp,
+                                shadow = Shadow(
+                                    color = Color.Black.copy(alpha = 0.5f),
+                                    offset = Offset(0f, 2f),
+                                    blurRadius = 4f
+                                )
                             )
                         )
                         drawText(
@@ -108,7 +114,7 @@ fun ProfessionalCompass(
                     center = Offset(kX, kY)
                 )
                 drawCircle(
-                    color = onSurface,
+                    color = contentColor,
                     radius = 8.dp.toPx(),
                     center = Offset(kX, kY),
                     style = Stroke(width = 2.dp.toPx())
@@ -130,7 +136,7 @@ fun ProfessionalCompass(
                 close()
             }
             drawPath(path = shadowPath, color = Color.Black.copy(alpha = 0.1f))
-            drawCircle(color = onSurface, radius = 4.dp.toPx())
+            drawCircle(color = contentColor, radius = 4.dp.toPx())
             drawCircle(color = Color.White, radius = 2.dp.toPx())
         }
 

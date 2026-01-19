@@ -27,10 +27,6 @@ fun QiblaInfoCard(
     qiblaDirection: Double,
     compassData: CompassData,
     isAccuracyLow: Boolean,
-    isMapView: Boolean,
-    isSatelliteView: Boolean,
-    onToggleSatellite: () -> Unit,
-    onRecenter: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -111,44 +107,6 @@ fun QiblaInfoCard(
                     icon = Icons.Default.Wifi,
                     color = if (isAccuracyLow) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                 )
-            }
-            if (isMapView) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(
-                        onClick = onToggleSatellite,
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    ) {
-                        Icon(
-                            if (isSatelliteView) Icons.Default.Map else Icons.Default.Satellite,
-                            null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            if (isSatelliteView) stringResource(R.string.qibla_standard) else stringResource(
-                                R.string.qibla_satellite
-                            ), fontSize = 12.sp
-                        )
-                    }
-                    Button(
-                        onClick = onRecenter,
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(Icons.Default.MyLocation, null, modifier = Modifier.size(18.dp))
-                        Spacer(Modifier.width(8.dp))
-                        Text(stringResource(R.string.qibla_recenter), fontSize = 12.sp)
-                    }
-                }
             }
         }
     }

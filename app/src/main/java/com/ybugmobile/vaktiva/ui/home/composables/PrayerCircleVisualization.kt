@@ -7,8 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsRun
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,12 +20,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -54,7 +51,8 @@ fun PrayerCircleVisualization(
     currentTime: LocalTime,
     nextPrayer: NextPrayer?,
     isSelectedDayToday: Boolean,
-    centerContent: @Composable () -> Unit
+    centerContent: @Composable () -> Unit,
+    contentColor: Color = Color.White
 ) {
     val textMeasurer = rememberTextMeasurer()
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -81,8 +79,6 @@ fun PrayerCircleVisualization(
             center.y + radius * sin(angleRad).toFloat()
         )
     }
-
-    val runningManPainter = rememberVectorPainter(Icons.Default.DirectionsRun)
 
     // Icons and Colors for each prayer
     val prayers = listOf(
@@ -169,6 +165,33 @@ fun PrayerCircleVisualization(
                 return getPosition(time, r, center)
             }
 
+            // 0. Draw Background Track & Ticks
+            drawCircle(
+                color = contentColor.copy(alpha = 0.2f),
+                radius = radius,
+                center = center,
+                style = Stroke(width = 1.dp.toPx())
+            )
+
+            for (i in 0 until 24) {
+                val isMajor = i % 6 == 0
+                val tickLength = if (isMajor) 8.dp.toPx() else 4.dp.toPx()
+                val tickAngle = (i.toFloat() / 24) * 360f + 90f
+                val tickRad = Math.toRadians(tickAngle.toDouble())
+
+                val startX = center.x + (radius - tickLength) * cos(tickRad).toFloat()
+                val startY = center.y + (radius - tickLength) * sin(tickRad).toFloat()
+                val endX = center.x + radius * cos(tickRad).toFloat()
+                val endY = center.y + radius * sin(tickRad).toFloat()
+
+                drawLine(
+                    color = contentColor.copy(alpha = if (isMajor) 0.6f else 0.3f),
+                    start = Offset(startX, startY),
+                    end = Offset(endX, endY),
+                    strokeWidth = if (isMajor) 2.dp.toPx() else 1.dp.toPx()
+                )
+            }
+
             // 1. Draw Arcs (Night & Day)
             val sunriseMinutes = sunrise.hour * 60 + sunrise.minute
             val sunsetMinutes = sunset.hour * 60 + sunset.minute
@@ -179,13 +202,13 @@ fun PrayerCircleVisualization(
 
             // NIGHT ARC - Improved Visibility (Glowing neon effect)
             drawArc(
-                color = Color.White.copy(alpha = 0.3f),
+                color = contentColor.copy(alpha = 0.3f),
                 startAngle = endAngleDay,
                 sweepAngle = 360f - sweepAngleDay,
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
                 size = Size(radius * 2, radius * 2),
-                style = Stroke(width = 6.dp.toPx(), cap = StrokeCap.Round)
+                style = Stroke(width = 6.dp.toPx())
             )
             // Soft glow for night arc
             drawArc(
@@ -215,60 +238,30 @@ fun PrayerCircleVisualization(
                 val angle = (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
                 val currentPos = getOffset(currentTime, radius)
 
-                // Trail - Comet like
-                val trailLength = 35f
-                drawArc(
-                    brush = Brush.sweepGradient(
-                        0.0f to Color.Transparent,
-                        (angle - trailLength) / 360f to Color.Transparent,
-                        angle / 360f to Color.Cyan.copy(alpha = 0.7f),
-                        1.0f to Color.Transparent,
-                        center = center
-                    ),
-                    startAngle = angle - trailLength,
-                    sweepAngle = trailLength,
-                    useCenter = false,
-                    topLeft = Offset(center.x - radius, center.y - radius),
-                    size = Size(radius * 2, radius * 2),
-                    style = Stroke(width = 8.dp.toPx(), cap = StrokeCap.Round)
-                )
-
-                // Running Man Icon
-                val iconSize = 32.dp.toPx()
-
-                // Ghost Trail
-                for (i in 1..3) {
-                    val ghostAngle = angle - (i * 3f)
-                    val ghostRad = Math.toRadians(ghostAngle.toDouble())
-                    val ghostX = center.x + radius * cos(ghostRad).toFloat()
-                    val ghostY = center.y + radius * sin(ghostRad).toFloat()
-                    val ghostFlip = if ((ghostAngle % 360f) in 0f..180f) -1f else 1f
-
-                    val rmScale = if (clickedItemId == "current") bounceAnim.value else 1f
-                    withTransform({
-                        translate(left = ghostX - iconSize / 2, top = ghostY - iconSize / 2)
-                        rotate(degrees = ghostAngle + 90f, pivot = Offset(iconSize / 2, iconSize / 2))
-                        scale(scaleX = rmScale, scaleY = ghostFlip * rmScale, pivot = Offset(iconSize / 2, iconSize / 2))
-                    }) {
-                        with(runningManPainter) {
-                            draw(
-                                size = Size(iconSize, iconSize),
-                                colorFilter = ColorFilter.tint(Color.Cyan.copy(alpha = 0.4f / i))
-                            )
-                        }
-                    }
-                }
-
-                val flipScale = if ((angle % 360f) in 0f..180f) -1f else 1f
+                // Modern Indicator (Glowing Orb)
                 val rmScale = if (clickedItemId == "current") bounceAnim.value else 1f
                 withTransform({
-                    translate(left = currentPos.x - iconSize / 2, top = currentPos.y - iconSize / 2)
-                    rotate(degrees = angle + 90f, pivot = Offset(iconSize / 2, iconSize / 2))
-                    scale(scaleX = rmScale, scaleY = flipScale * rmScale, pivot = Offset(iconSize / 2, iconSize / 2))
+                    scale(scaleX = rmScale, scaleY = rmScale, pivot = currentPos)
                 }) {
-                    with(runningManPainter) {
-                        draw(size = Size(iconSize, iconSize), colorFilter = ColorFilter.tint(Color.Cyan))
-                    }
+                    // Outer Glow
+                    drawCircle(
+                        color = Color.Cyan.copy(alpha = 0.3f),
+                        radius = 12.dp.toPx(),
+                        center = currentPos
+                    )
+                    // Solid Core
+                    drawCircle(
+                        color = contentColor,
+                        radius = 5.dp.toPx(),
+                        center = currentPos
+                    )
+                    // Ring
+                    drawCircle(
+                        color = Color.Cyan,
+                        radius = 5.dp.toPx(),
+                        center = currentPos,
+                        style = Stroke(width = 2.dp.toPx())
+                    )
                 }
             }
 
@@ -300,9 +293,14 @@ fun PrayerCircleVisualization(
                     // Label Tag + Marker Indicator
                     val labelPos = getOffset(time, radius + 35.dp.toPx())
                     val textStyle = TextStyle(
-                        color = if (isNext) markerColor else Color.White.copy(alpha = 0.7f),
+                        color = if (isNext) markerColor else contentColor.copy(alpha = 0.7f),
                         fontSize = 11.sp,
-                        fontWeight = if (isNext) FontWeight.Bold else FontWeight.Medium
+                        fontWeight = if (isNext) FontWeight.Bold else FontWeight.Medium,
+                        shadow = if (contentColor.red > 0.5f) Shadow(
+                            color = Color.Black.copy(alpha = 0.8f),
+                            offset = Offset(1f, 1f),
+                            blurRadius = 2f
+                        ) else null
                     )
                     val textLayoutResult = textMeasurer.measure(name, textStyle)
 

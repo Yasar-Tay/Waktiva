@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +30,7 @@ import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.sensor.CompassData
 import com.ybugmobile.vaktiva.ui.qibla.composables.CalibrationDialog
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.qibla.composables.ProfessionalCompass
 import com.ybugmobile.vaktiva.ui.qibla.composables.QiblaInfoCard
 import com.ybugmobile.vaktiva.ui.qibla.composables.QiblaMap
@@ -108,6 +111,21 @@ fun QiblaScreen(
         label = "alignmentColor"
     )
 
+    // Dynamic Color Logic
+    val sunrise = currentDay?.timings?.get(PrayerType.SUNRISE)
+    val sunset = currentDay?.timings?.get(PrayerType.MAGHRIB)
+    val isLightBackground = if (sunrise != null && sunset != null) {
+        val t = currentTime.toLocalTime()
+        t.isAfter(sunrise) && t.isBefore(sunset)
+    } else false
+
+    val contentColor = if (isLightBackground) Color.Black else Color.White
+    val textShadow = if (!isLightBackground) Shadow(
+        color = Color.Black.copy(alpha = 0.5f),
+        offset = Offset(0f, 2f),
+        blurRadius = 4f
+    ) else null
+
     Box(modifier = Modifier.fillMaxSize().background(brush = backgroundGradient)) {
         
         // 0. Interactive Warning Background
@@ -136,19 +154,38 @@ fun QiblaScreen(
                     isSatelliteView = isSatelliteView,
                     kaabaLatLng = kaabaLatLng,
                     onMapReady = { mapInstance = it },
-                    onMapLongClick = { /* Handled internally or hoist state if needed */ }
+                    onMapLongClick = { /* Handled internally or hoist state if needed */ },
+                    onToggleSatellite = { isSatelliteView = !isSatelliteView }
                 )
             } else {
-                Box(
+                Column(
                     modifier = Modifier.fillMaxSize().offset(y = (-60).dp),
-                    contentAlignment = Alignment.Center
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    ProfessionalCompass(
-                        azimuth = animatedAzimuth,
-                        qiblaAngle = qiblaDirection.toFloat(),
-                        alignmentColor = alignmentColor,
-                        isAligned = isAligned
-                    )
+                    Spacer(modifier = Modifier.height(40.dp))
+                    Box(contentAlignment = Alignment.Center) {
+                        // Background scrim for compass visibility
+                        Box(
+                            modifier = Modifier
+                                .size(320.dp)
+                                .background(
+                                    Brush.radialGradient(
+                                        colors = listOf(
+                                            if (isLightBackground) Color.White.copy(alpha = 0.4f) else Color.Black.copy(alpha = 0.4f),
+                                            Color.Transparent
+                                        )
+                                    )
+                                )
+                        )
+                        ProfessionalCompass(
+                            azimuth = animatedAzimuth,
+                            qiblaAngle = qiblaDirection.toFloat(),
+                            alignmentColor = alignmentColor,
+                            isAligned = isAligned,
+                            contentColor = contentColor
+                        )
+                    }
                 }
             }
 
@@ -166,15 +203,15 @@ fun QiblaScreen(
                             Spacer(Modifier.width(8.dp))
                             Text(
                                 text = s.locationName,
-                                color = Color.White,
-                                style = MaterialTheme.typography.titleMedium,
+                                color = contentColor,
+                                style = MaterialTheme.typography.titleMedium.copy(shadow = textShadow),
                                 fontWeight = FontWeight.Bold
                             )
                         }
                         Text(
                             text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
-                            color = Color.White.copy(alpha = 0.6f),
-                            style = MaterialTheme.typography.labelSmall,
+                            color = contentColor.copy(alpha = 0.6f),
+                            style = MaterialTheme.typography.labelSmall.copy(shadow = textShadow),
                             modifier = Modifier.padding(start = 28.dp)
                         )
                     }
@@ -215,7 +252,11 @@ fun QiblaScreen(
                 modifier = Modifier.fillMaxWidth().padding(top = 100.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
-                Row(modifier = Modifier.padding(4.dp)) {
+                Row(
+                    modifier = Modifier
+                        .background(Color.Black.copy(alpha = 0.2f), RoundedCornerShape(28.dp))
+                        .padding(4.dp)
+                ) {
                     FilterChip(
                         selected = !isMapView,
                         onClick = { isMapView = false },
@@ -243,19 +284,6 @@ fun QiblaScreen(
                     qiblaDirection = qiblaDirection,
                     compassData = compassData,
                     isAccuracyLow = isAccuracyLow,
-                    isMapView = isMapView,
-                    isSatelliteView = isSatelliteView,
-                    onToggleSatellite = { isSatelliteView = !isSatelliteView },
-                    onRecenter = {
-                        settings?.let { loc ->
-                            mapInstance?.animateCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    LatLng(loc.latitude, loc.longitude),
-                                    MapConstants.DEFAULT_ZOOM
-                                )
-                            )
-                        }
-                    }
                 )
             }
         } else {

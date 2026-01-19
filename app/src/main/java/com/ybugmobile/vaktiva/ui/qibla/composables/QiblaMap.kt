@@ -4,9 +4,22 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Color as AndroidColor
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material.icons.filled.Satellite
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.data.sensor.CompassData
@@ -29,13 +42,15 @@ fun QiblaMap(
     isSatelliteView: Boolean,
     kaabaLatLng: LatLng,
     onMapReady: (MapLibreMap) -> Unit,
-    onMapLongClick: (LatLng) -> Unit
+    onMapLongClick: (LatLng) -> Unit,
+    onToggleSatellite: () -> Unit
 ) {
     var mapInstance by remember { mutableStateOf<MapLibreMap?>(null) }
     var symbolManager by remember { mutableStateOf<SymbolManager?>(null) }
     var lineManager by remember { mutableStateOf<LineManager?>(null) }
     var customPoint by remember { mutableStateOf<LatLng?>(null) }
 
+    Box(modifier = Modifier.fillMaxSize()) {
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = { ctx ->
@@ -101,6 +116,45 @@ fun QiblaMap(
         }
     )
 
+    Column(
+        modifier = Modifier
+            .align(Alignment.CenterEnd)
+            .padding(end = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        FloatingActionButton(
+            onClick = {
+                settings?.let { loc ->
+                    mapInstance?.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            LatLng(loc.latitude, loc.longitude),
+                            MapConstants.DEFAULT_ZOOM
+                        )
+                    )
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.primary
+        ) {
+            Icon(
+                imageVector = Icons.Default.MyLocation,
+                contentDescription = "Locate Me"
+            )
+        }
+
+        FloatingActionButton(
+            onClick = onToggleSatellite,
+            containerColor = if (isSatelliteView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+            contentColor = if (isSatelliteView) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
+        ) {
+            Icon(
+                imageVector = if (isSatelliteView) Icons.Default.Map else Icons.Default.Satellite,
+                contentDescription = "Toggle Satellite"
+            )
+        }
+    }
+    }
+
     // Annotations update
     LaunchedEffect(settings, compassData.azimuth, customPoint, symbolManager, lineManager) {
         val sm = symbolManager ?: return@LaunchedEffect
@@ -109,6 +163,15 @@ fun QiblaMap(
         lm.deleteAll()
         settings?.let { loc ->
             val userLatLng = LatLng(loc.latitude, loc.longitude)
+            
+            // Draw casing (outline) for the Qibla line
+            lm.create(
+                LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.BLACK))
+                    .withLineWidth(7f)
+                    .withLineOpacity(0.5f)
+            )
+            
             sm.create(
                 SymbolOptions().withLatLng(userLatLng).withIconImage(MapConstants.USER_ARROW_ID)
                     .withIconRotate(compassData.azimuth).withIconSize(1.5f)
@@ -120,6 +183,13 @@ fun QiblaMap(
             )
         }
         customPoint?.let { cp ->
+            // Casing for custom point
+            lm.create(
+                LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.BLACK))
+                    .withLineWidth(6f)
+                    .withLineOpacity(0.5f)
+            )
             sm.create(
                 SymbolOptions().withLatLng(cp).withIconImage(MapConstants.CUSTOM_ARROW_ID)
                     .withIconRotate(compassData.azimuth).withIconSize(1.5f)

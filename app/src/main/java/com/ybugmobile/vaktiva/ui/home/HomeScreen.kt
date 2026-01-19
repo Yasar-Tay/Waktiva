@@ -8,6 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -16,6 +18,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -101,6 +105,23 @@ fun HomeScreenContent(
     val scrollState = rememberScrollState()
 
     var showDatePicker by remember { mutableStateOf(false) }
+    var showMethodDialog by remember { mutableStateOf(false) }
+
+    // Dynamic Color Logic
+    val sunrise = currentDay?.timings?.get(PrayerType.SUNRISE)
+    val sunset = currentDay?.timings?.get(PrayerType.MAGHRIB)
+    val isLightBackground = if (sunrise != null && sunset != null) {
+        val t = currentTime.toLocalTime()
+        t.isAfter(sunrise) && t.isBefore(sunset)
+    } else false
+
+    val contentColor = if (isLightBackground) Color.Black else Color.White
+    val containerColor = if (isLightBackground) Color.White.copy(alpha = 0.5f) else Color.Black.copy(alpha = 0.2f)
+    val textShadow = if (!isLightBackground) Shadow(
+        color = Color.Black.copy(alpha = 0.5f),
+        offset = Offset(0f, 2f),
+        blurRadius = 4f
+    ) else null
 
     Box(
         modifier = Modifier
@@ -137,7 +158,7 @@ fun HomeScreenContent(
                     Icon(
                         imageVector = Icons.Default.LocationOn,
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = contentColor,
                         modifier = Modifier.size(24.dp)
                     )
 
@@ -145,9 +166,9 @@ fun HomeScreenContent(
 
                     Text(
                         text = locationText,
-                        color = Color.White,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontSize = 24.sp,
+                        color = contentColor,
+                        style = MaterialTheme.typography.titleMedium.copy(shadow = textShadow),
+                        fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start
                     )
                 }
@@ -161,16 +182,20 @@ fun HomeScreenContent(
 
                 Text(
                     text = displayDate,
-                    color = Color.White.copy(alpha = 0.8f),
-                    style = MaterialTheme.typography.bodyLarge,
+                    color = contentColor.copy(alpha = 0.8f),
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        shadow = textShadow
+                    ),
                     modifier = Modifier.padding(start = 32.dp)
                 )
 
                 if (currentDay != null) {
                     Text(
                         text = formatHijriDate(currentDay.hijriDate),
-                        color = Color.White.copy(alpha = 0.8f),
-                        style = MaterialTheme.typography.bodyMedium,
+                        color = contentColor.copy(alpha = 0.8f),
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            shadow = textShadow
+                        ),
                         modifier = Modifier.padding(start = 32.dp)
                     )
                 }
@@ -185,10 +210,11 @@ fun HomeScreenContent(
                             currentTime = if (selectedDate == LocalDate.now()) currentTime.toLocalTime() else LocalTime.MIDNIGHT,
                             nextPrayer = if (selectedDate == LocalDate.now()) nextPrayer else null,
                             isSelectedDayToday = selectedDate == LocalDate.now(),
+                            contentColor = contentColor,
                             centerContent = {
                                 if (isRefreshing) {
                                     CircularProgressIndicator(
-                                        color = Color.White,
+                                        color = contentColor,
                                         modifier = Modifier.size(48.dp)
                                     )
                                 } else {
@@ -199,21 +225,27 @@ fun HomeScreenContent(
                                     ) {
                                         Text(
                                             text = selectedDate.format(DateTimeFormatter.ofPattern("MMM", Locale.getDefault())).uppercase(),
-                                            style = MaterialTheme.typography.titleMedium,
-                                            color = Color.White.copy(alpha = 0.9f),
+                                            style = MaterialTheme.typography.titleMedium.copy(
+                                                shadow = textShadow
+                                            ),
+                                            color = contentColor.copy(alpha = 0.9f),
                                             fontWeight = FontWeight.Medium
                                         )
                                         Text(
                                             text = "${selectedDate.dayOfMonth}",
-                                            style = MaterialTheme.typography.displayMedium,
+                                            style = MaterialTheme.typography.displayMedium.copy(
+                                                shadow = textShadow
+                                            ),
                                             fontWeight = FontWeight.Bold,
-                                            color = Color.White,
+                                            color = contentColor,
                                             fontSize = 64.sp
                                         )
                                         Text(
                                             text = selectedDate.year.toString(),
-                                            style = MaterialTheme.typography.titleSmall,
-                                            color = Color.White.copy(alpha = 0.7f)
+                                            style = MaterialTheme.typography.titleSmall.copy(
+                                                shadow = textShadow
+                                            ),
+                                            color = contentColor.copy(alpha = 0.7f)
                                         )
                                     }
                                 }
@@ -228,7 +260,7 @@ fun HomeScreenContent(
                                 contentAlignment = Alignment.Center
                             ) {
                                 CircularProgressIndicator(
-                                    color = Color.White,
+                                    color = contentColor,
                                     modifier = Modifier.size(48.dp)
                                 )
                             }
@@ -243,20 +275,20 @@ fun HomeScreenContent(
                                 Icon(
                                     imageVector = Icons.Default.Warning,
                                     contentDescription = null,
-                                    tint = Color.White.copy(alpha = 0.6f),
+                                    tint = contentColor.copy(alpha = 0.6f),
                                     modifier = Modifier.size(48.dp)
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
                                     text = "Data unavailable",
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = Color.White.copy(alpha = 0.8f)
+                                    color = contentColor.copy(alpha = 0.8f)
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Button(
                                     onClick = { onDateSelected(selectedDate) },
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color.White.copy(alpha = 0.2f)
+                                        containerColor = containerColor
                                     )
                                 ) {
                                     Text("Retry")
@@ -288,8 +320,8 @@ fun HomeScreenContent(
                     PrayerTimeList(
                         day = currentDay,
                         nextPrayerType = if (selectedDate == LocalDate.now()) nextPrayer?.type else null,
-                        currentMethodId = settings?.calculationMethod ?: 3,
-                        onMethodSelected = onMethodSelected
+                        contentColor = contentColor,
+                        highlightColor = containerColor
                     )
                 }
 
@@ -301,9 +333,9 @@ fun HomeScreenContent(
                         ?: "Unknown Method"
 
                     Card(
-                        onClick = { /* Could open settings or method picker */ },
+                        onClick = { showMethodDialog = true },
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White.copy(alpha = 0.1f)
+                            containerColor = containerColor
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -318,18 +350,18 @@ fun HomeScreenContent(
                                 Text(
                                     text = "Calculation Method",
                                     style = MaterialTheme.typography.labelMedium,
-                                    color = Color.White.copy(alpha = 0.6f)
+                                    color = contentColor.copy(alpha = 0.6f)
                                 )
                                 Text(
                                     text = methodName,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White
+                                    color = contentColor
                                 )
                             }
                             Icon(
                                 imageVector = Icons.Default.Settings,
                                 contentDescription = "Settings",
-                                tint = Color.White.copy(alpha = 0.6f)
+                                tint = contentColor.copy(alpha = 0.6f)
                             )
                         }
                     }
@@ -369,6 +401,43 @@ fun HomeScreenContent(
         ) {
             DatePicker(state = datePickerState)
         }
+    }
+
+    if (showMethodDialog) {
+        AlertDialog(
+            onDismissRequest = { showMethodDialog = false },
+            title = { Text(text = stringResource(R.string.settings_method)) },
+            text = {
+                LazyColumn(
+                    modifier = Modifier.heightIn(max = 400.dp)
+                ) {
+                    items(calculationMethods) { (name, id) ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onMethodSelected(id)
+                                    showMethodDialog = false
+                                }
+                                .padding(vertical = 12.dp, horizontal = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = (id == settings?.calculationMethod),
+                                onClick = null
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = name, style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showMethodDialog = false }) {
+                    Text("Close")
+                }
+            }
+        )
     }
 }
 

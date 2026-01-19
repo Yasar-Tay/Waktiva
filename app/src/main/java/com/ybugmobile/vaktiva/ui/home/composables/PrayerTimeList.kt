@@ -1,5 +1,6 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -9,6 +10,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,8 +26,8 @@ import java.time.format.DateTimeFormatter
 fun PrayerTimeList(
     day: PrayerDay,
     nextPrayerType: PrayerType?,
-    currentMethodId: Int,
-    onMethodSelected: (Int) -> Unit
+    contentColor: Color = Color.White,
+    highlightColor: Color = Color.Black.copy(alpha = 0.2f)
 ) {
     data class PrayerItem(val type: PrayerType, val resId: Int, val time: String, val icon: ImageVector)
 
@@ -39,128 +42,61 @@ fun PrayerTimeList(
         PrayerItem(PrayerType.ISHA, R.string.prayer_isha, day.timings[PrayerType.ISHA]?.format(timeFormatter) ?: "", Icons.Default.NightsStay)
     )
 
-    Surface(
-        color = Color.White.copy(alpha = 0.1f),
-        shape = RoundedCornerShape(24.dp),
-        modifier = Modifier.fillMaxWidth()
+    val commonShadow = if (contentColor.red > 0.5f) Shadow(
+        color = Color.Black.copy(alpha = 0.5f),
+        offset = Offset(0f, 2f),
+        blurRadius = 4f
+    ) else null
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Column(
+        prayers.forEach { item ->
+            val isNext = item.type == nextPrayerType
+            
+            // Highlight container for next prayer
+            val itemContainerColor = if (isNext) highlightColor else Color.Transparent
+            val itemContentColor = if (isNext) contentColor else contentColor.copy(alpha = 0.7f)
+            val fontWeight = if (isNext) FontWeight.Bold else FontWeight.Medium
+
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = stringResource(R.string.home_prayer_provider),
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontSize = 14.sp,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                CalculationMethodSelector(
-                    currentMethodId = currentMethodId,
-                    onMethodSelected = onMethodSelected,
-                )
-            }
-
-            HorizontalDivider(color = Color.White.copy(alpha = 0.2f), thickness = 1.dp)
-            Spacer(modifier = Modifier.height(8.dp))
-
-            prayers.forEach { item ->
-                val isNext = item.type == nextPrayerType
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp, horizontal = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = null,
-                            tint = if (isNext) Color.Yellow else Color.White.copy(alpha = 0.6f),
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = stringResource(item.resId),
-                            color = if (isNext) Color.Yellow else Color.White,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = if (isNext) FontWeight.Bold else FontWeight.Normal
-                        )
-                    }
-                    Text(
-                        text = item.time,
-                        color = if (isNext) Color.Yellow else Color.White,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = if (isNext) FontWeight.Bold else FontWeight.Normal
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CalculationMethodSelector(
-    currentMethodId: Int,
-    onMethodSelected: (Int) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    val methodNames = mapOf(
-        3 to stringResource(R.string.method_mwl),
-        2 to stringResource(R.string.method_isna),
-        5 to stringResource(R.string.method_egypt),
-        4 to stringResource(R.string.method_makkah),
-        1 to stringResource(R.string.method_karachi),
-        7 to stringResource(R.string.method_tehran),
-        8 to stringResource(R.string.method_gulf),
-        9 to stringResource(R.string.method_kuwait),
-        10 to stringResource(R.string.method_qatar),
-        11 to stringResource(R.string.method_singapore),
-        13 to stringResource(R.string.method_turkey)
-    )
-
-    val currentMethodName = methodNames[currentMethodId] ?: "Unknown Method"
-
-    Box {
-        Surface(
-            onClick = { expanded = true },
-            color = Color.White.copy(alpha = 0.15f),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    .padding(vertical = 4.dp)
+                    .background(itemContainerColor, RoundedCornerShape(12.dp))
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = null,
+                        tint = itemContentColor,
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = stringResource(item.resId),
+                        color = itemContentColor,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            shadow = commonShadow
+                        ),
+                        fontWeight = fontWeight,
+                        fontSize = 16.sp
+                    )
+                }
+                
                 Text(
-                    text = currentMethodName,
-                    color = Color.White,
-                    style = MaterialTheme.typography.labelSmall
-                )
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(16.dp)
-                )
-            }
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            methodNames.forEach { (id, name) ->
-                DropdownMenuItem(
-                    text = { Text(name) },
-                    onClick = {
-                        onMethodSelected(id)
-                        expanded = false
-                    }
+                    text = item.time,
+                    color = itemContentColor,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        shadow = commonShadow
+                    ),
+                    fontWeight = fontWeight,
+                    fontSize = 16.sp
                 )
             }
         }
