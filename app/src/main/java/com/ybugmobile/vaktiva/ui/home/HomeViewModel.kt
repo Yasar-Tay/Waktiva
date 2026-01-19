@@ -29,7 +29,8 @@ class HomeViewModel @Inject constructor(
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate = _selectedDate.asStateFlow()
 
-    val allPrayerDays: Flow<List<PrayerDayEntity>> = prayerRepository.getPrayerDays()
+    val allPrayerDays: StateFlow<List<PrayerDayEntity>> = prayerRepository.getPrayerDays()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val currentPrayerDay: Flow<PrayerDayEntity?> = combine(allPrayerDays, selectedDate) { days, date ->
         val dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
@@ -119,6 +120,29 @@ class HomeViewModel @Inject constructor(
 
     fun selectDate(date: LocalDate) {
         _selectedDate.value = date
+        
+        // Check if data exists for this date, if not fetch it
+        val dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
+        val exists = allPrayerDays.value.any { it.date == dateStr }
+        
+        if (!exists) {
+            viewModelScope.launch {
+                _isRefreshing.value = true
+                val currentSettings = settings.first()
+                val location = locationWrapper.getCurrentLocation()
+                val lat = location?.latitude ?: currentSettings.latitude
+                val lng = location?.longitude ?: currentSettings.longitude
+
+                prayerRepository.refreshPrayerTimes(
+                    year = date.year,
+                    month = date.monthValue,
+                    latitude = lat,
+                    longitude = lng,
+                    method = currentSettings.calculationMethod
+                )
+                _isRefreshing.value = false
+            }
+        }
     }
 
     fun refresh() {

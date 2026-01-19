@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Build
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -32,10 +33,12 @@ import com.ybugmobile.vaktiva.ui.home.composables.PrayerCircleVisualization
 import com.ybugmobile.vaktiva.ui.home.composables.PermissionRequestCard
 import com.ybugmobile.vaktiva.ui.home.composables.PrayerTimeList
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.ZoneId
 import java.util.Locale
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
@@ -49,7 +52,7 @@ fun HomeScreen(
     val settings by viewModel.settings.collectAsState(initial = null)
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val selectedDate by viewModel.selectedDate.collectAsState()
-    val allDays by viewModel.allPrayerDays.collectAsState(initial = emptyList())
+    val allDays by viewModel.allPrayerDays.collectAsState()
 
     HomeScreenContent(
         currentDay = currentDay,
@@ -93,6 +96,8 @@ fun HomeScreenContent(
 
     val backgroundGradient = getGradientForTime(currentTime.toLocalTime(), currentDay)
     val scrollState = rememberScrollState()
+
+    var showDatePicker by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -178,37 +183,85 @@ fun HomeScreenContent(
                             nextPrayer = if (selectedDate == LocalDate.now()) nextPrayer else null,
                             isSelectedDayToday = selectedDate == LocalDate.now(),
                             centerContent = {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = selectedDate.format(DateTimeFormatter.ofPattern("MMM", Locale.getDefault())).uppercase(),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = Color.White.copy(alpha = 0.9f),
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                    Text(
-                                        text = "${selectedDate.dayOfMonth}",
-                                        style = MaterialTheme.typography.displayMedium,
-                                        fontWeight = FontWeight.Bold,
+                                if (isRefreshing) {
+                                    CircularProgressIndicator(
                                         color = Color.White,
-                                        fontSize = 64.sp
+                                        modifier = Modifier.size(48.dp)
                                     )
-                                    Text(
-                                        text = selectedDate.year.toString(),
-                                        style = MaterialTheme.typography.titleSmall,
-                                        color = Color.White.copy(alpha = 0.7f)
-                                    )
+                                } else {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center,
+                                        modifier = Modifier.clickable { showDatePicker = true }
+                                    ) {
+                                        Text(
+                                            text = selectedDate.format(DateTimeFormatter.ofPattern("MMM", Locale.getDefault())).uppercase(),
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = Color.White.copy(alpha = 0.9f),
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                        Text(
+                                            text = "${selectedDate.dayOfMonth}",
+                                            style = MaterialTheme.typography.displayMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White,
+                                            fontSize = 64.sp
+                                        )
+                                        Text(
+                                            text = selectedDate.year.toString(),
+                                            style = MaterialTheme.typography.titleSmall,
+                                            color = Color.White.copy(alpha = 0.7f)
+                                        )
+                                    }
                                 }
                             }
                         )
                     } else {
-                        Spacer(modifier = Modifier.height(250.dp))
+                        if (isRefreshing) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color.White,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                            }
+                        } else {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = Color.White.copy(alpha = 0.6f),
+                                    modifier = Modifier.size(48.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Data unavailable",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = Color.White.copy(alpha = 0.8f)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Button(
+                                    onClick = { onDateSelected(selectedDate) },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.White.copy(alpha = 0.2f)
+                                    )
+                                ) {
+                                    Text("Retry")
+                                }
+                            }
+                        }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(24.dp))
 
                 NextPrayerCountdown(
                     nextPrayer = nextPrayer,
@@ -255,6 +308,33 @@ fun HomeScreenContent(
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+
+        if (showDatePicker) {
+            val datePickerState = rememberDatePickerState(
+                initialSelectedDateMillis = selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            )
+            DatePickerDialog(
+                onDismissRequest = { showDatePicker = false },
+                confirmButton = {
+                    TextButton(onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            val date = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate()
+                            onDateSelected(date)
+                        }
+                        showDatePicker = false
+                    }) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDatePicker = false }) {
+                        Text("Cancel")
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
             }
         }
     }
