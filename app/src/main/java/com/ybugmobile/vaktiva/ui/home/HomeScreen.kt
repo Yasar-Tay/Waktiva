@@ -240,17 +240,28 @@ fun formatHijriDate(date: String): String {
     var formatted = date
     val months = mapOf(
         "Muharram" to "Muharrem",
+        "Muḥarram" to "Muharrem",
         "Safar" to "Safer",
+        "Ṣafar" to "Safer",
         "Rabi' al-awwal" to "Rebiülevvel",
+        "Rabīʿ al-Awwal" to "Rebiülevvel",
         "Rabi' ath-thani" to "Rebiülahir",
+        "Rabīʿ al-Thānī" to "Rebiülahir",
+        "Jumādā al-Ūlā" to "Cemaziyelevvel",
         "Jumada al-ula" to "Cemaziyelevvel",
         "Jumada al-akhira" to "Cemaziyelahir",
+        "Jumādā al-Ākhirah" to "Cemaziyelahir",
         "Rajab" to "Recep",
+        "Sha'ban" to "Şaban",
         "Shaʿbān" to "Şaban",
         "Ramadan" to "Ramazan",
+        "Ramaḍān" to "Ramazan",
         "Shawwal" to "Şevval",
+        "Shawwāl" to "Şevval",
         "Dhu al-Qi'dah" to "Zilkade",
-        "Dhu al-Hijjah" to "Zilhicce"
+        "Dhū al-Qaʿdah" to "Zilkade",
+        "Dhū al-Qaʿdah" to "Zilkade",
+        "Dhū al-Ḥijjah" to "Zilhicce"
     )
 
     months.forEach { (en, tr) ->
