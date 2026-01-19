@@ -61,6 +61,9 @@ class HomeViewModel @Inject constructor(
         tickerFlow(1000).onEach {
             _currentTime.value = LocalDateTime.now()
         }.launchIn(viewModelScope)
+
+        // Automatically fetch location and data on launch
+        onPermissionsGranted()
     }
 
     private fun tickerFlow(periodMillis: Long) = flow {
@@ -70,29 +73,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    // Parse times for the selected day
-    private val prayerTimes = currentPrayerDay.map { day ->
-        if (day == null) return@map null
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
-        
-        fun parseTime(timeStr: String): LocalTime {
-            val cleaned = timeStr.split(" ")[0]
-            return LocalTime.parse(cleaned, formatter)
-        }
-
-        listOf(
-            "Fajr" to parseTime(day.fajr),
-            "Sunrise" to parseTime(day.sunrise),
-            "Dhuhr" to parseTime(day.dhuhr),
-            "Asr" to parseTime(day.asr),
-            "Maghrib" to parseTime(day.maghrib),
-            "Isha" to parseTime(day.isha)
-        )
-    }
-
-    // nextPrayerInfo should always be based on REAL current time and TODAY's (or next's) prayer times
-    // But for simplicity in UI, if we select another day, we might want to hide countdown or keep it for TODAY.
-    // Let's keep it for REAL next prayer.
     val todayPrayerDay: Flow<PrayerDayEntity?> = allPrayerDays.map { days ->
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
         days.find { it.date == today }
@@ -122,7 +102,7 @@ class HomeViewModel @Inject constructor(
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
         val currentTime = now.toLocalTime()
         val next = prayers.firstOrNull { it.second.isAfter(currentTime) }
-            ?: prayers.first().let { it.first to it.second } // Fallback to Fajr (next day, but simplified for now)
+            ?: prayers.first().let { it.first to it.second }
 
         val remainingMillis = if (next.second.isAfter(currentTime)) {
             ChronoUnit.MILLIS.between(currentTime, next.second)
@@ -173,6 +153,7 @@ class HomeViewModel @Inject constructor(
                     name = addressName
                 )
                 
+                // Fetch current and next month to ensure 14+ days of data
                 prayerRepository.refreshPrayerTimes(
                     year = now.year,
                     month = now.monthValue,
@@ -180,7 +161,20 @@ class HomeViewModel @Inject constructor(
                     longitude = location.longitude,
                     method = currentSettings.calculationMethod
                 )
+                
+                // If late in the month, fetch next month too
+                if (now.dayOfMonth > 20) {
+                    val nextMonth = now.plusMonths(1)
+                    prayerRepository.refreshPrayerTimes(
+                        year = nextMonth.year,
+                        month = nextMonth.monthValue,
+                        latitude = location.latitude,
+                        longitude = location.longitude,
+                        method = currentSettings.calculationMethod
+                    )
+                }
             } else {
+                // Fallback using stored settings if GPS is unavailable
                 prayerRepository.refreshPrayerTimes(
                     year = now.year,
                     month = now.monthValue,

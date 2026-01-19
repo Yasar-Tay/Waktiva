@@ -38,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.sensor.CompassData
+import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
@@ -49,6 +50,7 @@ import org.maplibre.android.plugins.annotation.LineOptions
 import org.maplibre.android.plugins.annotation.SymbolManager
 import org.maplibre.android.plugins.annotation.SymbolOptions
 import org.maplibre.android.utils.ColorUtils
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -75,9 +77,11 @@ private const val SATELLITE_STYLE_JSON = """
 fun QiblaScreen(
     viewModel: QiblaViewModel = hiltViewModel()
 ) {
-    val userLocation by viewModel.userLocation.collectAsState(initial = null)
+    val settings by viewModel.settings.collectAsState(initial = null)
     val qiblaDirection by viewModel.qiblaDirection.collectAsState(initial = 0.0)
     val compassData by viewModel.compassData.collectAsState(initial = CompassData(0f, SensorManager.SENSOR_STATUS_ACCURACY_LOW))
+    val currentDay by viewModel.currentPrayerDay.collectAsState(initial = null)
+    val currentTime by viewModel.currentTime.collectAsState()
 
     var isMapView by remember { mutableStateOf(false) }
     var isSatelliteView by remember { mutableStateOf(false) }
@@ -108,15 +112,8 @@ fun QiblaScreen(
         }
     }
 
-    // Background color shifts based on accuracy
-    val bgColor by animateColorAsState(
-        targetValue = if (isAccuracyLow)
-            MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f)
-        else
-            MaterialTheme.colorScheme.background,
-        animationSpec = tween(1000),
-        label = "bgColor"
-    )
+    // Background logic
+    val backgroundGradient = getGradientForTime(currentTime.toLocalTime(), currentDay)
 
     // Pulse animation for critical warnings
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
@@ -147,7 +144,7 @@ fun QiblaScreen(
         label = "alignmentColor"
     )
 
-    Box(modifier = Modifier.fillMaxSize().background(bgColor)) {
+    Box(modifier = Modifier.fillMaxSize().background(brush = backgroundGradient)) {
         
         // 0. Interactive Warning Background
         if (isAccuracyLow) {
@@ -187,8 +184,8 @@ fun QiblaScreen(
                                         iconIgnorePlacement = true
                                     }
                                     lineManager = LineManager(this@apply, map, style)
-                                    userLocation?.let {
-                                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), 18.0))
+                                    settings?.let {
+                                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), MapConstants.DEFAULT_ZOOM))
                                     }
                                 }
                                 map.addOnMapLongClickListener { point ->
@@ -228,12 +225,12 @@ fun QiblaScreen(
                 )
 
                 // Annotations update
-                LaunchedEffect(userLocation, compassData.azimuth, customPoint, symbolManager, lineManager) {
+                LaunchedEffect(settings, compassData.azimuth, customPoint, symbolManager, lineManager) {
                     val sm = symbolManager ?: return@LaunchedEffect
                     val lm = lineManager ?: return@LaunchedEffect
                     sm.deleteAll()
                     lm.deleteAll()
-                    userLocation?.let { loc ->
+                    settings?.let { loc ->
                         val userLatLng = LatLng(loc.latitude, loc.longitude)
                         sm.create(SymbolOptions().withLatLng(userLatLng).withIconImage("user-arrow").withIconRotate(compassData.azimuth).withIconSize(1.5f))
                         lm.create(LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng)).withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor("#FFD700"))).withLineWidth(4f))
@@ -259,6 +256,33 @@ fun QiblaScreen(
 
             // 2. UI Overlays
             
+            // TOP: Location Info
+            settings?.let { s ->
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(top = 40.dp, start = 24.dp, end = 24.dp),
+                    contentAlignment = Alignment.TopStart
+                ) {
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.LocationOn, null, tint = Color.White, modifier = Modifier.size(20.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = s.locationName,
+                                color = Color.White,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Text(
+                            text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
+                            color = Color.White.copy(alpha = 0.6f),
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(start = 28.dp)
+                        )
+                    }
+                }
+            }
+
             // TOP: Accuracy Warning Bar
             AnimatedVisibility(
                 visible = isAccuracyLow,
@@ -290,7 +314,7 @@ fun QiblaScreen(
 
             // TOP: Switcher
             Box(
-                modifier = Modifier.fillMaxWidth().padding(top = 40.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 100.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
                 Row(modifier = Modifier.padding(4.dp)) {
@@ -330,7 +354,7 @@ fun QiblaScreen(
                                     color = alignmentColor
                                 )
                                 Text(
-                                    text = userLocation?.let { stringResource(R.string.qibla_direction, qiblaDirection.toInt()) } ?: stringResource(R.string.qibla_locating),
+                                    text = settings?.let { stringResource(R.string.qibla_direction, qiblaDirection.toInt()) } ?: stringResource(R.string.qibla_locating),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -366,7 +390,7 @@ fun QiblaScreen(
                                     Text(if (isSatelliteView) stringResource(R.string.qibla_standard) else stringResource(R.string.qibla_satellite), fontSize = 12.sp)
                                 }
                                 Button(
-                                    onClick = { userLocation?.let { loc -> mapInstance?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(loc.latitude, loc.longitude), 18.0)) } },
+                                    onClick = { settings?.let { loc -> mapInstance?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(loc.latitude, loc.longitude), MapConstants.DEFAULT_ZOOM)) } },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {

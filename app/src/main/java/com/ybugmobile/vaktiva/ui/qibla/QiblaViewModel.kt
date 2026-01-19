@@ -1,30 +1,57 @@
 package com.ybugmobile.vaktiva.ui.qibla
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.batoulapps.adhan.Qibla
 import com.batoulapps.adhan.Coordinates
+import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.vaktiva.data.sensor.CompassData
 import com.ybugmobile.vaktiva.data.sensor.CompassManager
+import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
 class QiblaViewModel @Inject constructor(
     settingsManager: SettingsManager,
-    compassManager: CompassManager
+    compassManager: CompassManager,
+    prayerRepository: PrayerRepository
 ) : ViewModel() {
 
-    val qiblaDirection: Flow<Double> = settingsManager.settingsFlow.map { settings ->
+    val settings = settingsManager.settingsFlow
+
+    val qiblaDirection: Flow<Double> = settings.map { settings ->
         val coordinates = Coordinates(settings.latitude, settings.longitude)
         Qibla(coordinates).direction
     }
 
-    val userLocation = settingsManager.settingsFlow.map { settings ->
+    val userLocation = settings.map { settings ->
         Coordinates(settings.latitude, settings.longitude)
     }
 
     val compassData: Flow<CompassData> = compassManager.compassFlow
+
+    private val _currentTime = MutableStateFlow(LocalDateTime.now())
+    val currentTime = _currentTime.asStateFlow()
+
+    val currentPrayerDay: Flow<PrayerDayEntity?> = prayerRepository.getPrayerDays().map { days ->
+        val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+        days.find { it.date == today }
+    }
+
+    init {
+        flow {
+            while (true) {
+                emit(LocalDateTime.now())
+                delay(1000)
+            }
+        }.onEach { _currentTime.value = it }
+            .launchIn(viewModelScope)
+    }
 }

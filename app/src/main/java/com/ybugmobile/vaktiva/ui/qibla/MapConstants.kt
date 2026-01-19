@@ -20,5 +20,5 @@ object MapConstants {
     const val CUSTOM_ARROW_ID = "custom-arrow"
     const val KAABA_LAT = 21.4225
     const val KAABA_LNG = 39.8262
-    const val DEFAULT_ZOOM = 18.0
+    const val DEFAULT_ZOOM = 16.5
 }

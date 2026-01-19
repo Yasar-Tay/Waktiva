@@ -27,8 +27,9 @@ class LocationWrapper @Inject constructor(
     @SuppressLint("MissingPermission")
     suspend fun getCurrentLocation(): Location? {
         return try {
+            // Priority is changed to HIGH_ACCURACY to refine location better
             fusedLocationClient.getCurrentLocation(
-                Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+                Priority.PRIORITY_HIGH_ACCURACY,
                 null
             ).await()
         } catch (e: Exception) {
@@ -40,7 +41,6 @@ class LocationWrapper @Inject constructor(
         try {
             val geocoder = Geocoder(context, Locale.getDefault())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                // Tiramisu and above use callback-based Geocoder, but we'll use the blocking one in IO thread for simplicity or handle both
                 val addresses = geocoder.getFromLocation(latitude, longitude, 1)
                 if (!addresses.isNullOrEmpty()) {
                     val address = addresses[0]
