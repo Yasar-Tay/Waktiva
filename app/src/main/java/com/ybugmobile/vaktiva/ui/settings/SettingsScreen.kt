@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
@@ -79,7 +81,6 @@ fun SettingsScreen(
                                 checked = settings?.playAdhanAudio ?: true,
                                 onCheckedChange = { enabled ->
                                     if (enabled) {
-                                        // When enabling, we might want to check for exact alarm permission on Android 12+
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                                             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                                             if (!alarmManager.canScheduleExactAlarms()) {
@@ -106,6 +107,49 @@ fun SettingsScreen(
                         modifier = Modifier.clickable { onNavigateToAudio() }
                     )
                 }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Reliability & Optimization",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                tonalElevation = 2.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                val isIgnoringBatteryOptimizations = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    powerManager.isIgnoringBatteryOptimizations(context.packageName)
+                } else true
+
+                ListItem(
+                    headlineContent = { Text("Battery Optimization") },
+                    supportingContent = { 
+                        Text(if (isIgnoringBatteryOptimizations) 
+                            "Optimized for reliability" 
+                            else "Click to disable optimization for reliable Adhans") 
+                    },
+                    leadingContent = { 
+                        Icon(
+                            Icons.Default.BatteryAlert, 
+                            contentDescription = null,
+                            tint = if (isIgnoringBatteryOptimizations) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                        ) 
+                    },
+                    modifier = Modifier.clickable {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations) {
+                            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                data = Uri.fromParts("package", context.packageName, null)
+                            }
+                            context.startActivity(intent)
+                        }
+                    }
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
