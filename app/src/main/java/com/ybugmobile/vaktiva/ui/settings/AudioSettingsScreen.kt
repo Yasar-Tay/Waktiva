@@ -66,6 +66,12 @@ fun AudioSettingsScreen(
                         text = "This sound will play during prayer times.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                    Text(
+                        text = "Supported formats: MP3, AAC, WAV, OGG",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                 }

@@ -103,6 +103,12 @@ class AudioSettingsViewModel @Inject constructor(
     }
 
     fun addCustomAudio(uri: Uri) {
+        val mimeType = context.contentResolver.getType(uri)
+        if (mimeType == null || !mimeType.startsWith("audio/")) {
+            // Log or show error in a real app. For now, we just skip invalid files.
+            return
+        }
+
         viewModelScope.launch {
             val fileName = getFileName(uri) ?: "custom_adhan_${System.currentTimeMillis()}.mp3"
             val savedPath = audioManager.saveCustomAdhan(uri, fileName)
