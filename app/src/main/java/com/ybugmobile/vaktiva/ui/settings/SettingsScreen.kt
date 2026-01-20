@@ -1,6 +1,8 @@
 package com.ybugmobile.vaktiva.ui.settings
 
 import android.Manifest
+import android.app.AlarmManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -36,6 +38,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.settings.collectAsState(initial = null)
+    val context = LocalContext.current
     
     val currentAppLocales = AppCompatDelegate.getApplicationLocales()
     val currentLanguage = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
@@ -66,13 +69,43 @@ fun SettingsScreen(
                 tonalElevation = 2.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                ListItem(
-                    headlineContent = { Text("Adhan Sound") },
-                    supportingContent = { Text("Select the sound played during prayer times") },
-                    leadingContent = { Icon(Icons.Default.Notifications, contentDescription = null) },
-                    trailingContent = { Icon(Icons.Default.KeyboardArrowRight, contentDescription = null) },
-                    modifier = Modifier.clickable { onNavigateToAudio() }
-                )
+                Column {
+                    // Adhan Audio Toggle
+                    ListItem(
+                        headlineContent = { Text("Play Adhan Audio") },
+                        supportingContent = { Text("Play adhan sound when it's time for prayer") },
+                        trailingContent = {
+                            Switch(
+                                checked = settings?.playAdhanAudio ?: true,
+                                onCheckedChange = { enabled ->
+                                    if (enabled) {
+                                        // When enabling, we might want to check for exact alarm permission on Android 12+
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                                            if (!alarmManager.canScheduleExactAlarms()) {
+                                                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                                                    data = Uri.fromParts("package", context.packageName, null)
+                                                }
+                                                context.startActivity(intent)
+                                            }
+                                        }
+                                    }
+                                    viewModel.setPlayAdhanAudio(enabled)
+                                }
+                            )
+                        }
+                    )
+                    
+                    Divider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
+                    
+                    ListItem(
+                        headlineContent = { Text("Adhan Sound Selection") },
+                        supportingContent = { Text("Select the sound played during prayer times") },
+                        leadingContent = { Icon(Icons.Default.Notifications, contentDescription = null) },
+                        trailingContent = { Icon(Icons.Default.KeyboardArrowRight, contentDescription = null) },
+                        modifier = Modifier.clickable { onNavigateToAudio() }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -275,6 +308,16 @@ fun PermissionManager() {
                     title = stringResource(R.string.settings_notifications),
                     description = stringResource(R.string.settings_notifications_desc),
                     isGranted = notificationPermission?.status?.isGranted == true
+                )
+            }
+            
+            // Exact Alarm Permission (Android 12+)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                PermissionItem(
+                    title = "Exact Alarms",
+                    description = "Needed for precise prayer time notifications",
+                    isGranted = alarmManager.canScheduleExactAlarms()
                 )
             }
 

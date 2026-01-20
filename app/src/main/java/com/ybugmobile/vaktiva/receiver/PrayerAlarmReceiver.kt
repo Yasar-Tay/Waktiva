@@ -30,17 +30,19 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         // Show high-priority notification with full-screen intent
         notificationHelper.showAdhanNotification(prayerName)
         
-        // Start background audio service
+        // Start background audio service if enabled in settings
         CoroutineScope(Dispatchers.IO).launch {
             val settings = settingsManager.settingsFlow.first()
             val audioPath = settings.selectedAdhanPath
             
-            if (!audioPath.isNullOrEmpty()) {
+            if (settings.playAdhanAudio && !audioPath.isNullOrEmpty()) {
                 val serviceIntent = Intent(context, AdhanService::class.java).apply {
                     putExtra("AUDIO_PATH", audioPath)
                     putExtra("PRAYER_NAME", prayerName)
                 }
                 context.startForegroundService(serviceIntent)
+            } else {
+                Log.d("PrayerAlarmReceiver", "Adhan audio is disabled or path is empty")
             }
         }
     }

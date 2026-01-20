@@ -31,4 +31,10 @@ class SettingsViewModel @Inject constructor(
             settingsManager.updateLanguage(language)
         }
     }
+
+    fun setPlayAdhanAudio(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updatePlayAdhanAudio(enabled)
+        }
+    }
 }

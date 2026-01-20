@@ -3,6 +3,7 @@ package com.ybugmobile.vaktiva.data.local.preferences
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -23,7 +24,8 @@ data class UserSettings(
     val longitude: Double,
     val locationName: String,
     val language: String,
-    val selectedAdhanPath: String?
+    val selectedAdhanPath: String?,
+    val playAdhanAudio: Boolean
 )
 
 @Singleton
@@ -38,6 +40,7 @@ class SettingsManager @Inject constructor(
         val LAST_LOCATION_NAME = stringPreferencesKey("last_location_name")
         val LANGUAGE = stringPreferencesKey("language")
         val SELECTED_ADHAN_PATH = stringPreferencesKey("selected_adhan_path")
+        val PLAY_ADHAN_AUDIO = booleanPreferencesKey("play_adhan_audio")
     }
 
     val settingsFlow: Flow<UserSettings> = context.dataStore.data.map { preferences ->
@@ -48,7 +51,8 @@ class SettingsManager @Inject constructor(
             longitude = preferences[LAST_KNOWN_LNG] ?: 0.0,
             locationName = preferences[LAST_LOCATION_NAME] ?: "Unknown",
             language = preferences[LANGUAGE] ?: "system",
-            selectedAdhanPath = preferences[SELECTED_ADHAN_PATH]
+            selectedAdhanPath = preferences[SELECTED_ADHAN_PATH],
+            playAdhanAudio = preferences[PLAY_ADHAN_AUDIO] ?: true
         )
     }
 
@@ -77,6 +81,12 @@ class SettingsManager @Inject constructor(
             } else {
                 preferences[SELECTED_ADHAN_PATH] = path
             }
+        }
+    }
+
+    suspend fun updatePlayAdhanAudio(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PLAY_ADHAN_AUDIO] = enabled
         }
     }
 
