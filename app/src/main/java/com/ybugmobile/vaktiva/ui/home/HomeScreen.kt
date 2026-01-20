@@ -493,8 +493,12 @@ fun HomeScreenPreview() {
         madhab = 1,
         language = "en",
         selectedAdhanPath = null,
+        prayerSpecificAdhanPaths = emptyMap(),
+        useSpecificAdhanForEachPrayer = false,
         playAdhanAudio = true,
-        isSetupComplete = true
+        isSetupComplete = true,
+        enablePreAdhanWarning = true,
+        preAdhanWarningMinutes = 5
     )
 
     MaterialTheme {

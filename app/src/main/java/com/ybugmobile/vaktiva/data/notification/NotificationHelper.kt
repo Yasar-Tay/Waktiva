@@ -23,16 +23,18 @@ class NotificationHelper @Inject constructor(
 
     companion object {
         const val CHANNEL_ID = "adhan_channel"
+        const val WARNING_CHANNEL_ID = "warning_channel"
         const val NOTIFICATION_ID = 1001
+        const val WARNING_NOTIFICATION_ID = 1002
     }
 
     init {
-        createNotificationChannel()
+        createNotificationChannels()
     }
 
-    private fun createNotificationChannel() {
+    private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
+            val adhanChannel = NotificationChannel(
                 CHANNEL_ID,
                 "Adhan Notifications",
                 NotificationManager.IMPORTANCE_HIGH
@@ -41,10 +43,18 @@ class NotificationHelper @Inject constructor(
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
                 setSound(null, null) // Audio is handled by AdhanService
                 enableVibration(true)
-                // Professional: Allow this channel to bypass DND if the user enables it in system settings
                 setShowBadge(true)
             }
-            notificationManager.createNotificationChannel(channel)
+
+            val warningChannel = NotificationChannel(
+                WARNING_CHANNEL_ID,
+                "Prayer Warnings",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Notifications for pre-adhan warnings"
+            }
+
+            notificationManager.createNotificationChannels(listOf(adhanChannel, warningChannel))
         }
     }
 
@@ -61,7 +71,6 @@ class NotificationHelper @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Use a different request code for full screen intent
         val fullScreenIntent = PendingIntent.getActivity(
             context,
             1,
@@ -73,16 +82,29 @@ class NotificationHelper @Inject constructor(
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setContentTitle("It's time for $prayerName")
             .setContentText("Tap to open Vaktiva")
-            .setPriority(NotificationCompat.PRIORITY_MAX) // Use MAX for alarms
-            .setCategory(NotificationCompat.CATEGORY_ALARM) // Important for system behavior
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(true)
             .setFullScreenIntent(fullScreenIntent, true)
             .setContentIntent(pendingIntent)
-            .setOngoing(true) // Keeps it from being swiped away while Adhan is playing
+            .setOngoing(true)
             .build()
 
         notificationManager.notify(NOTIFICATION_ID, notification)
+    }
+
+    fun showPreAdhanWarning(prayerName: String) {
+        val notification = NotificationCompat.Builder(context, WARNING_CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+            .setContentTitle("Upcoming: $prayerName")
+            .setContentText("$prayerName will start in a few minutes.")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager.notify(WARNING_NOTIFICATION_ID, notification)
     }
 
     fun cancelNotification() {

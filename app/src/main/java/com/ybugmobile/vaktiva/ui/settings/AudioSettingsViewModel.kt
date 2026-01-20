@@ -9,12 +9,13 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.audio.AdhanAudioManager
 import com.ybugmobile.vaktiva.data.audio.AudioPlayer
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -35,77 +36,115 @@ class AudioSettingsViewModel @Inject constructor(
     private val audioPlayer: AudioPlayer
 ) : ViewModel() {
 
-    private val _audioItems = MutableStateFlow<List<AdhanAudioItem>>(emptyList())
-    val audioItems: StateFlow<List<AdhanAudioItem>> = _audioItems.asStateFlow()
+    private val _currentPlayingPath = MutableStateFlow<String?>(null)
+    private val _selectedPrayerType = MutableStateFlow<PrayerType?>(null) // null means global selection
+    val selectedPrayerType: StateFlow<PrayerType?> = _selectedPrayerType.asStateFlow()
 
-    private var currentPlayingPath: String? = null
+    val settings = settingsManager.settingsFlow
 
-    init {
-        viewModelScope.launch {
-            settingsManager.settingsFlow.collect { settings ->
-                loadAudioFiles(settings.selectedAdhanPath)
-            }
-        }
-    }
-
-    private fun loadAudioFiles(selectedPath: String?) {
+    val audioItems: StateFlow<List<AdhanAudioItem>> = combine(
+        settingsManager.settingsFlow,
+        _currentPlayingPath,
+        _selectedPrayerType
+    ) { settings, playingPath, selectedPrayer ->
         val items = mutableListOf<AdhanAudioItem>()
 
         // 1. Add Default Adhan
         val defaultPath = "android.resource://${context.packageName}/${R.raw.ezan}"
+        val isSelected = if (selectedPrayer != null) {
+            settings.prayerSpecificAdhanPaths[selectedPrayer] == defaultPath || 
+            (settings.prayerSpecificAdhanPaths[selectedPrayer] == null && settings.selectedAdhanPath == defaultPath)
+        } else {
+            settings.selectedAdhanPath == defaultPath || settings.selectedAdhanPath == null
+        }
+
         items.add(
             AdhanAudioItem(
                 name = "Default Adhan",
                 path = defaultPath,
                 isDefault = true,
-                isSelected = selectedPath == defaultPath || selectedPath == null,
-                isPlaying = currentPlayingPath == defaultPath
+                isSelected = isSelected,
+                isPlaying = playingPath == defaultPath
             )
         )
 
         // 2. Add Custom Adhans
         audioManager.getCustomAdhans().forEach { file ->
             val path = file.absolutePath
+            val isCustomSelected = if (selectedPrayer != null) {
+                settings.prayerSpecificAdhanPaths[selectedPrayer] == path
+            } else {
+                settings.selectedAdhanPath == path
+            }
+
             items.add(
                 AdhanAudioItem(
                     name = file.name,
                     path = path,
-                    isSelected = selectedPath == path,
-                    isPlaying = currentPlayingPath == path
+                    isSelected = isCustomSelected,
+                    isPlaying = playingPath == path
                 )
             )
         }
+        items
+    }.asStateFlow(emptyList())
 
-        _audioItems.value = items
-        
-        // Ensure settings are updated if nothing was selected (set default)
-        if (selectedPath == null) {
-            selectAudio(defaultPath)
+    private fun <T> kotlinx.coroutines.flow.Flow<T>.asStateFlow(initialValue: T): StateFlow<T> {
+        val flow = this
+        val state = MutableStateFlow(initialValue)
+        viewModelScope.launch {
+            flow.collect { state.value = it }
         }
+        return state.asStateFlow()
+    }
+
+    fun selectPrayerType(type: PrayerType?) {
+        _selectedPrayerType.value = type
     }
 
     fun selectAudio(path: String) {
         viewModelScope.launch {
-            settingsManager.updateSelectedAdhanPath(path)
+            val currentPrayer = _selectedPrayerType.value
+            if (currentPrayer != null) {
+                settingsManager.updatePrayerSpecificAdhanPath(currentPrayer, path)
+            } else {
+                settingsManager.updateSelectedAdhanPath(path)
+            }
+        }
+    }
+
+    fun toggleUseSpecificAdhan(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updateUseSpecificAdhan(enabled)
+        }
+    }
+
+    fun togglePreAdhanWarning(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updatePreAdhanWarning(enabled)
+        }
+    }
+
+    fun updatePreAdhanWarningMinutes(minutes: Int) {
+        viewModelScope.launch {
+            settingsManager.updatePreAdhanWarningMinutes(minutes)
         }
     }
 
     fun togglePreview(path: String) {
-        if (currentPlayingPath == path) {
+        if (_currentPlayingPath.value == path) {
             audioPlayer.stop()
-            currentPlayingPath = null
+            _currentPlayingPath.value = null
         } else {
             audioPlayer.stop()
             audioPlayer.play(Uri.parse(path))
-            currentPlayingPath = path
+            _currentPlayingPath.value = path
         }
-        loadAudioFiles(_audioItems.value.find { it.isSelected }?.path)
     }
 
     fun addCustomAudio(uri: Uri) {
         val mimeType = context.contentResolver.getType(uri)
         if (mimeType == null || !mimeType.startsWith("audio/")) {
-            // Log or show error in a real app. For now, we just skip invalid files.
             return
         }
 
@@ -123,12 +162,6 @@ class AudioSettingsViewModel @Inject constructor(
             val file = File(path)
             if (file.exists()) {
                 audioManager.deleteAdhan(file)
-                // If deleted item was selected, fallback to default
-                val settings = settingsManager.settingsFlow.firstOrNull()
-                if (settings?.selectedAdhanPath == path) {
-                    val defaultPath = "android.resource://${context.packageName}/${R.raw.ezan}"
-                    selectAudio(defaultPath)
-                }
             }
         }
     }

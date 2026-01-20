@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -25,8 +26,12 @@ data class UserSettings(
     val locationName: String,
     val language: String,
     val selectedAdhanPath: String?,
+    val prayerSpecificAdhanPaths: Map<PrayerType, String?>,
+    val useSpecificAdhanForEachPrayer: Boolean,
     val playAdhanAudio: Boolean,
-    val isSetupComplete: Boolean
+    val isSetupComplete: Boolean,
+    val enablePreAdhanWarning: Boolean,
+    val preAdhanWarningMinutes: Int
 )
 
 @Singleton
@@ -41,11 +46,20 @@ class SettingsManager @Inject constructor(
         val LAST_LOCATION_NAME = stringPreferencesKey("last_location_name")
         val LANGUAGE = stringPreferencesKey("language")
         val SELECTED_ADHAN_PATH = stringPreferencesKey("selected_adhan_path")
+        val USE_SPECIFIC_ADHAN = booleanPreferencesKey("use_specific_adhan")
         val PLAY_ADHAN_AUDIO = booleanPreferencesKey("play_adhan_audio")
         val IS_SETUP_COMPLETE = booleanPreferencesKey("is_setup_complete")
+        val ENABLE_PRE_ADHAN_WARNING = booleanPreferencesKey("enable_pre_adhan_warning")
+        val PRE_ADHAN_WARNING_MINUTES = intPreferencesKey("pre_adhan_warning_minutes")
+
+        private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
 
     val settingsFlow: Flow<UserSettings> = context.dataStore.data.map { preferences ->
+        val prayerSpecificPaths = PrayerType.entries.associateWith { type ->
+            preferences[prayerPathKey(type)]
+        }
+
         UserSettings(
             madhab = preferences[MADHAB] ?: 0, // 0: Shafi, 1: Hanafi
             calculationMethod = preferences[CALCULATION_METHOD] ?: 2, // Default: ISNA
@@ -54,8 +68,12 @@ class SettingsManager @Inject constructor(
             locationName = preferences[LAST_LOCATION_NAME] ?: "Unknown",
             language = preferences[LANGUAGE] ?: "system",
             selectedAdhanPath = preferences[SELECTED_ADHAN_PATH],
+            prayerSpecificAdhanPaths = prayerSpecificPaths,
+            useSpecificAdhanForEachPrayer = preferences[USE_SPECIFIC_ADHAN] ?: false,
             playAdhanAudio = preferences[PLAY_ADHAN_AUDIO] ?: true,
-            isSetupComplete = preferences[IS_SETUP_COMPLETE] ?: false
+            isSetupComplete = preferences[IS_SETUP_COMPLETE] ?: false,
+            enablePreAdhanWarning = preferences[ENABLE_PRE_ADHAN_WARNING] ?: true,
+            preAdhanWarningMinutes = preferences[PRE_ADHAN_WARNING_MINUTES] ?: 5
         )
     }
 
@@ -87,9 +105,38 @@ class SettingsManager @Inject constructor(
         }
     }
 
+    suspend fun updatePrayerSpecificAdhanPath(type: PrayerType, path: String?) {
+        context.dataStore.edit { preferences ->
+            val key = prayerPathKey(type)
+            if (path == null) {
+                preferences.remove(key)
+            } else {
+                preferences[key] = path
+            }
+        }
+    }
+
+    suspend fun updateUseSpecificAdhan(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[USE_SPECIFIC_ADHAN] = enabled
+        }
+    }
+
     suspend fun updatePlayAdhanAudio(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PLAY_ADHAN_AUDIO] = enabled
+        }
+    }
+
+    suspend fun updatePreAdhanWarning(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[ENABLE_PRE_ADHAN_WARNING] = enabled
+        }
+    }
+
+    suspend fun updatePreAdhanWarningMinutes(minutes: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[PRE_ADHAN_WARNING_MINUTES] = minutes
         }
     }
 
