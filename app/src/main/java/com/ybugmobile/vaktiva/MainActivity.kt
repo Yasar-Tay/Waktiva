@@ -8,14 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +24,7 @@ import com.ybugmobile.vaktiva.ui.home.HomeScreen
 import com.ybugmobile.vaktiva.ui.home.HomeViewModel
 import com.ybugmobile.vaktiva.ui.navigation.Screen
 import com.ybugmobile.vaktiva.ui.qibla.QiblaScreen
+import com.ybugmobile.vaktiva.ui.settings.AudioSettingsScreen
 import com.ybugmobile.vaktiva.ui.settings.SettingsScreen
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
 import com.ybugmobile.vaktiva.ui.welcome.WelcomeScreen
@@ -41,8 +37,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Recommendation: Move scheduleWork() to your Application class onCreate()
-        // to ensure it runs once per app process, not every activity recreation.
         if (savedInstanceState == null) {
             scheduleWork()
         }
@@ -89,7 +83,6 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel = hiltViewModel())
     val navController = rememberNavController()
     val settings by viewModel.settings.collectAsState(initial = null)
     
-    // Determine start destination based on permissions and settings
     val startDestination = remember(settings) {
         if (settings == null) null
         else {
@@ -152,7 +145,18 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel = hiltViewModel())
             }
             composable(Screen.Home.route) { HomeScreen() }
             composable(Screen.Qibla.route) { QiblaScreen() }
-            composable(Screen.Settings.route) { SettingsScreen() }
+            composable(Screen.Settings.route) { 
+                SettingsScreen(
+                    onNavigateToAudio = {
+                        navController.navigate(Screen.AudioSettings.route)
+                    }
+                ) 
+            }
+            composable(Screen.AudioSettings.route) {
+                AudioSettingsScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }

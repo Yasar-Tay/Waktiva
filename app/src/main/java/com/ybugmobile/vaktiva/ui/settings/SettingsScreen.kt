@@ -6,12 +6,15 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -29,12 +32,11 @@ import com.ybugmobile.vaktiva.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    onNavigateToAudio: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.settings.collectAsState(initial = null)
     
-    // Use AppCompatDelegate as the single source of truth for the current language.
-    // This ensures the UI matches exactly what the system is using.
     val currentAppLocales = AppCompatDelegate.getApplicationLocales()
     val currentLanguage = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
 
@@ -52,6 +54,29 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
+            // Audio Settings Entry
+            Text(
+                text = "Notifications & Sound",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                tonalElevation = 2.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                ListItem(
+                    headlineContent = { Text("Adhan Sound") },
+                    supportingContent = { Text("Select the sound played during prayer times") },
+                    leadingContent = { Icon(Icons.Default.Notifications, contentDescription = null) },
+                    trailingContent = { Icon(Icons.Default.KeyboardArrowRight, contentDescription = null) },
+                    modifier = Modifier.clickable { onNavigateToAudio() }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             Text(
                 text = stringResource(R.string.settings_permissions),
                 style = MaterialTheme.typography.titleMedium,

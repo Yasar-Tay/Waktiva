@@ -22,7 +22,8 @@ data class UserSettings(
     val latitude: Double,
     val longitude: Double,
     val locationName: String,
-    val language: String
+    val language: String,
+    val selectedAdhanPath: String?
 )
 
 @Singleton
@@ -36,6 +37,7 @@ class SettingsManager @Inject constructor(
         val LAST_KNOWN_LNG = doublePreferencesKey("last_lng")
         val LAST_LOCATION_NAME = stringPreferencesKey("last_location_name")
         val LANGUAGE = stringPreferencesKey("language")
+        val SELECTED_ADHAN_PATH = stringPreferencesKey("selected_adhan_path")
     }
 
     val settingsFlow: Flow<UserSettings> = context.dataStore.data.map { preferences ->
@@ -45,7 +47,8 @@ class SettingsManager @Inject constructor(
             latitude = preferences[LAST_KNOWN_LAT] ?: 0.0,
             longitude = preferences[LAST_KNOWN_LNG] ?: 0.0,
             locationName = preferences[LAST_LOCATION_NAME] ?: "Unknown",
-            language = preferences[LANGUAGE] ?: "system"
+            language = preferences[LANGUAGE] ?: "system",
+            selectedAdhanPath = preferences[SELECTED_ADHAN_PATH]
         )
     }
 
@@ -64,6 +67,16 @@ class SettingsManager @Inject constructor(
     suspend fun updateLanguage(language: String) {
         context.dataStore.edit { preferences ->
             preferences[LANGUAGE] = language
+        }
+    }
+
+    suspend fun updateSelectedAdhanPath(path: String?) {
+        context.dataStore.edit { preferences ->
+            if (path == null) {
+                preferences.remove(SELECTED_ADHAN_PATH)
+            } else {
+                preferences[SELECTED_ADHAN_PATH] = path
+            }
         }
     }
 

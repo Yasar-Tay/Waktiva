@@ -4,8 +4,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.vaktiva.data.notification.NotificationHelper
+import com.ybugmobile.vaktiva.service.AdhanService
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -14,6 +20,9 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var notificationHelper: NotificationHelper
 
+    @Inject
+    lateinit var settingsManager: SettingsManager
+
     override fun onReceive(context: Context, intent: Intent) {
         val prayerName = intent.getStringExtra("PRAYER_NAME") ?: "Unknown"
         Log.d("PrayerAlarmReceiver", "Alarm received for $prayerName")
@@ -21,7 +30,18 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         // Show high-priority notification with full-screen intent
         notificationHelper.showAdhanNotification(prayerName)
         
-        // Audio playback will be handled by the AdhanActivity or a separate Service
-        // For now, AdhanActivity is triggered by showAdhanNotification's fullScreenIntent
+        // Start background audio service
+        CoroutineScope(Dispatchers.IO).launch {
+            val settings = settingsManager.settingsFlow.first()
+            val audioPath = settings.selectedAdhanPath
+            
+            if (!audioPath.isNullOrEmpty()) {
+                val serviceIntent = Intent(context, AdhanService::class.java).apply {
+                    putExtra("AUDIO_PATH", audioPath)
+                    putExtra("PRAYER_NAME", prayerName)
+                }
+                context.startForegroundService(serviceIntent)
+            }
+        }
     }
 }

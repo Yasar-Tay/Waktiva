@@ -5,6 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -22,31 +26,66 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.ui.home.HomeViewModel
+import com.ybugmobile.vaktiva.ui.settings.AudioSettingsScreen
 
 private val WelcomeGradientStart = Color(0xFF1A237E) // Deep Blue
 private val WelcomeGradientEnd = Color(0xFF3949AB)   // Lighter Blue
 private val ActionButtonColor = Color(0xFFFFD700)    // Gold accent
+
+enum class WelcomeStep {
+    PERMISSIONS,
+    AUDIO_SELECTION
+}
 
 @Composable
 fun WelcomeScreen(
     onSetupComplete: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    WelcomeScreenContent(
-        onSetupComplete = onSetupComplete,
-        onPermissionsGranted = viewModel::onPermissionsGranted
+    var currentStep by remember { mutableStateOf(WelcomeStep.PERMISSIONS) }
+
+    val backgroundBrush = Brush.verticalGradient(
+        colors = listOf(WelcomeGradientStart, WelcomeGradientEnd)
     )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgroundBrush)
+    ) {
+        AnimatedContent(
+            targetState = currentStep,
+            transitionSpec = {
+                fadeIn() togetherWith fadeOut()
+            },
+            label = "WelcomeStepAnimation"
+        ) { step ->
+            when (step) {
+                WelcomeStep.PERMISSIONS -> {
+                    WelcomePermissionsContent(
+                        onPermissionsGranted = {
+                            viewModel.onPermissionsGranted()
+                            currentStep = WelcomeStep.AUDIO_SELECTION
+                        }
+                    )
+                }
+                WelcomeStep.AUDIO_SELECTION -> {
+                    WelcomeAudioContent(
+                        onComplete = onSetupComplete
+                    )
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun WelcomeScreenContent(
-    onSetupComplete: () -> Unit,
+fun WelcomePermissionsContent(
     onPermissionsGranted: () -> Unit
 ) {
     val context = LocalContext.current
@@ -54,7 +93,6 @@ fun WelcomeScreenContent(
     var showSettingsDialog by remember { mutableStateOf(false) }
     var permissionResultReceived by remember { mutableStateOf(false) }
 
-    // Define permissions based on Android version
     val permissions = remember {
         mutableListOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -72,7 +110,6 @@ fun WelcomeScreenContent(
         
         if (locationGranted) {
             onPermissionsGranted()
-            onSetupComplete()
         } else {
             permissionResultReceived = true
         }
@@ -89,94 +126,76 @@ fun WelcomeScreenContent(
         }
     }
 
-    // Modern Gradient Background
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(
-            WelcomeGradientStart,
-            WelcomeGradientEnd
-        )
-    )
-
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundBrush)
             .padding(24.dp)
-            .systemBarsPadding()
+            .systemBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(modifier = Modifier.height(48.dp))
+            Text(
+                text = "Welcome to Vaktiva",
+                style = MaterialTheme.typography.displaySmall,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Your modern companion for prayer times and spiritual guidance.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White.copy(alpha = 0.8f),
+                textAlign = TextAlign.Center
+            )
+        }
+
         Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            modifier = Modifier.padding(vertical = 32.dp)
         ) {
-            // Top Section: Welcome Text
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Spacer(modifier = Modifier.height(48.dp))
-                Text(
-                    text = "Welcome to Vaktiva",
-                    style = MaterialTheme.typography.displaySmall,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Your modern companion for prayer times and spiritual guidance.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.White.copy(alpha = 0.8f),
-                    textAlign = TextAlign.Center
-                )
-            }
-
-            // Middle Section: Features/Permissions
-            Column(
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                modifier = Modifier.padding(vertical = 32.dp)
-            ) {
+            FeatureItem(
+                icon = Icons.Default.LocationOn,
+                title = "Location Access",
+                description = "Required to calculate accurate prayer times and Qibla direction for your specific location."
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 FeatureItem(
-                    icon = Icons.Default.LocationOn,
-                    title = "Location Access",
-                    description = "Required to calculate accurate prayer times and Qibla direction for your specific location."
-                )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    FeatureItem(
-                        icon = Icons.Default.Notifications,
-                        title = "Notifications",
-                        description = "Get timely reminders for Adhan and prayer alerts so you never miss a prayer."
-                    )
-                }
-            }
-
-            // Bottom Section: Action Button
-            Button(
-                onClick = {
-                    if (permissionState.allPermissionsGranted) {
-                        onPermissionsGranted()
-                        onSetupComplete()
-                    } else {
-                        permissionState.launchMultiplePermissionRequest()
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = ActionButtonColor,
-                    contentColor = Color.Black
-                ),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                val buttonText = if (permissionState.allPermissionsGranted) "Continue" else "Get Started"
-                Text(
-                    text = buttonText,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    icon = Icons.Default.Notifications,
+                    title = "Notifications",
+                    description = "Get timely reminders for Adhan and prayer alerts so you never miss a prayer."
                 )
             }
         }
+
+        Button(
+            onClick = {
+                if (permissionState.allPermissionsGranted) {
+                    onPermissionsGranted()
+                } else {
+                    permissionState.launchMultiplePermissionRequest()
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ActionButtonColor,
+                contentColor = Color.Black
+            ),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            val buttonText = if (permissionState.allPermissionsGranted) "Continue" else "Get Started"
+            Text(
+                text = buttonText,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 
-    // Rationale Dialog
     if (showRationaleDialog) {
         AlertDialog(
             onDismissRequest = { showRationaleDialog = false },
@@ -200,7 +219,6 @@ fun WelcomeScreenContent(
         )
     }
 
-    // Settings Dialog (Permanently Denied)
     if (showSettingsDialog) {
         AlertDialog(
             onDismissRequest = { showSettingsDialog = false },
@@ -225,6 +243,67 @@ fun WelcomeScreenContent(
                 }
             }
         )
+    }
+}
+
+@Composable
+fun WelcomeAudioContent(
+    onComplete: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(48.dp))
+        Text(
+            text = "Adhan Sound",
+            style = MaterialTheme.typography.displaySmall,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Choose your preferred Adhan sound.",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White.copy(alpha = 0.8f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 24.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        Box(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
+            // Reusing AudioSettingsScreen but with transparent background/custom styling if needed
+            // For simplicity, we use it as is but wrap it
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = Color.Transparent
+            ) {
+                AudioSettingsScreen()
+            }
+        }
+        
+        Button(
+            onClick = onComplete,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
+                .height(56.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ActionButtonColor,
+                contentColor = Color.Black
+            ),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text(
+                text = "Complete Setup",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
@@ -260,13 +339,4 @@ fun FeatureItem(icon: ImageVector, title: String, description: String) {
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun WelcomeScreenPreview() {
-    WelcomeScreenContent(
-        onSetupComplete = {},
-        onPermissionsGranted = {}
-    )
 }

@@ -11,4 +11,5 @@ sealed class Screen(val route: String, val label: String? = null, val icon: Imag
     object Home : Screen("home", "Home", Icons.Default.Home)
     object Qibla : Screen("qibla", "Qibla", Icons.Default.LocationOn)
     object Settings : Screen("settings", "Settings", Icons.Default.Settings)
+    object AudioSettings : Screen("audio_settings", "Audio Settings")
 }

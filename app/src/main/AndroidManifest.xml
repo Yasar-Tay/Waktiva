@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" tools:ignore="ExactAlarm" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <application
         android:name=".VaktivaApp"
@@ -21,6 +23,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Vaktiva">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -28,10 +31,27 @@
             android:theme="@style/Theme.Vaktiva">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.adhan.AdhanActivity"
+            android:exported="false"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Vaktiva" />
+
+        <service
+            android:name=".service.AdhanService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
 
         <receiver
             android:name=".receiver.PrayerAlarmReceiver"
