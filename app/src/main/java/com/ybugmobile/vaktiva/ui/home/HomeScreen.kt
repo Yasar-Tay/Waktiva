@@ -72,7 +72,8 @@ fun HomeScreen(
         calculationMethods = viewModel.calculationMethods,
         onRefresh = { viewModel.refresh() },
         onMethodSelected = { viewModel.updateCalculationMethod(it) },
-        onDateSelected = { viewModel.selectDate(it) }
+        onDateSelected = { viewModel.selectDate(it) },
+        onSkipNextAudio = { name -> viewModel.skipNextPrayerAudio(name) }
     )
 }
 
@@ -89,7 +90,8 @@ fun HomeScreenContent(
     calculationMethods: List<Pair<String, Int>>,
     onRefresh: () -> Unit,
     onMethodSelected: (Int) -> Unit,
-    onDateSelected: (LocalDate) -> Unit
+    onDateSelected: (LocalDate) -> Unit,
+    onSkipNextAudio: (String) -> Unit
 ) {
     val permissions = mutableListOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -301,7 +303,9 @@ fun HomeScreenContent(
 
                 NextPrayerCountdown(
                     nextPrayer = nextPrayer,
-                    selectedDate = selectedDate
+                    selectedDate = selectedDate,
+                    onSkipAudio = onSkipNextAudio,
+                    isMuted = settings?.mutedPrayerName == nextPrayer?.type?.name && settings?.mutedPrayerDate == LocalDate.now().toString()
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -498,7 +502,9 @@ fun HomeScreenPreview() {
         playAdhanAudio = true,
         isSetupComplete = true,
         enablePreAdhanWarning = true,
-        preAdhanWarningMinutes = 5
+        preAdhanWarningMinutes = 5,
+        mutedPrayerName = null,
+        mutedPrayerDate = null
     )
 
     MaterialTheme {
@@ -513,7 +519,8 @@ fun HomeScreenPreview() {
             calculationMethods = listOf("Turkey" to 13),
             onRefresh = {},
             onMethodSelected = {},
-            onDateSelected = {}
+            onDateSelected = {},
+            onSkipNextAudio = {}
         )
     }
 }

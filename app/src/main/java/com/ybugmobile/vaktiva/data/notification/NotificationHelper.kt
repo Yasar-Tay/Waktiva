@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
 import com.ybugmobile.vaktiva.ui.adhan.AdhanActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -26,6 +27,9 @@ class NotificationHelper @Inject constructor(
         const val WARNING_CHANNEL_ID = "warning_channel"
         const val NOTIFICATION_ID = 1001
         const val WARNING_NOTIFICATION_ID = 1002
+        
+        const val ACTION_SKIP_PRAYER = "com.ybugmobile.vaktiva.ACTION_SKIP_PRAYER"
+        const val EXTRA_PRAYER_NAME = "PRAYER_NAME"
     }
 
     init {
@@ -95,6 +99,18 @@ class NotificationHelper @Inject constructor(
     }
 
     fun showPreAdhanWarning(prayerName: String) {
+        val skipIntent = Intent(context, PrayerAlarmReceiver::class.java).apply {
+            action = ACTION_SKIP_PRAYER
+            putExtra(EXTRA_PRAYER_NAME, prayerName)
+        }
+        
+        val skipPendingIntent = PendingIntent.getBroadcast(
+            context,
+            prayerName.hashCode(),
+            skipIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification = NotificationCompat.Builder(context, WARNING_CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setContentTitle("Upcoming: $prayerName")
@@ -102,12 +118,17 @@ class NotificationHelper @Inject constructor(
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setAutoCancel(true)
+            .addAction(
+                android.R.drawable.ic_menu_close_clear_cancel,
+                "Skip Audio",
+                skipPendingIntent
+            )
             .build()
 
         notificationManager.notify(WARNING_NOTIFICATION_ID, notification)
     }
 
-    fun cancelNotification() {
-        notificationManager.cancel(NOTIFICATION_ID)
+    fun cancelNotification(id: Int = NOTIFICATION_ID) {
+        notificationManager.cancel(id)
     }
 }

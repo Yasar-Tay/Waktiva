@@ -31,7 +31,9 @@ data class UserSettings(
     val playAdhanAudio: Boolean,
     val isSetupComplete: Boolean,
     val enablePreAdhanWarning: Boolean,
-    val preAdhanWarningMinutes: Int
+    val preAdhanWarningMinutes: Int,
+    val mutedPrayerName: String?,
+    val mutedPrayerDate: String?
 )
 
 @Singleton
@@ -51,6 +53,8 @@ class SettingsManager @Inject constructor(
         val IS_SETUP_COMPLETE = booleanPreferencesKey("is_setup_complete")
         val ENABLE_PRE_ADHAN_WARNING = booleanPreferencesKey("enable_pre_adhan_warning")
         val PRE_ADHAN_WARNING_MINUTES = intPreferencesKey("pre_adhan_warning_minutes")
+        val MUTED_PRAYER_NAME = stringPreferencesKey("muted_prayer_name")
+        val MUTED_PRAYER_DATE = stringPreferencesKey("muted_prayer_date")
 
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
@@ -73,8 +77,24 @@ class SettingsManager @Inject constructor(
             playAdhanAudio = preferences[PLAY_ADHAN_AUDIO] ?: true,
             isSetupComplete = preferences[IS_SETUP_COMPLETE] ?: false,
             enablePreAdhanWarning = preferences[ENABLE_PRE_ADHAN_WARNING] ?: true,
-            preAdhanWarningMinutes = preferences[PRE_ADHAN_WARNING_MINUTES] ?: 5
+            preAdhanWarningMinutes = preferences[PRE_ADHAN_WARNING_MINUTES] ?: 5,
+            mutedPrayerName = preferences[MUTED_PRAYER_NAME],
+            mutedPrayerDate = preferences[MUTED_PRAYER_DATE]
         )
+    }
+
+    suspend fun muteNextPrayer(prayerName: String, date: String) {
+        context.dataStore.edit { preferences ->
+            preferences[MUTED_PRAYER_NAME] = prayerName
+            preferences[MUTED_PRAYER_DATE] = date
+        }
+    }
+
+    suspend fun clearMutedPrayer() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(MUTED_PRAYER_NAME)
+            preferences.remove(MUTED_PRAYER_DATE)
+        }
     }
 
     suspend fun updateMadhab(madhab: Int) {

@@ -164,6 +164,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun skipNextPrayerAudio(prayerName: String) {
+        viewModelScope.launch {
+            settingsManager.muteNextPrayer(prayerName, LocalDate.now().toString())
+        }
+    }
+
     fun onPermissionsGranted() {
         viewModelScope.launch {
             try {

@@ -3,6 +3,7 @@ package com.ybugmobile.vaktiva.ui.home.composables
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MusicOff
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -22,7 +23,9 @@ import java.time.LocalDate
 @Composable
 fun NextPrayerCountdown(
     nextPrayer: NextPrayer?,
-    selectedDate: LocalDate
+    selectedDate: LocalDate,
+    onSkipAudio: (String) -> Unit = {},
+    isMuted: Boolean = false
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -63,6 +66,34 @@ fun NextPrayerCountdown(
                 fontWeight = FontWeight.Bold,
                 fontSize = 60.sp
             )
+
+            if (!isMuted && remainingSeconds < 30 * 60) { // Show if within 30 mins
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = { onSkipAudio(nextPrayer.type.name) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White.copy(alpha = 0.2f),
+                        contentColor = Color.White
+                    ),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Icon(
+                        Icons.Default.MusicOff,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Skip Audio", fontSize = 14.sp)
+                }
+            } else if (isMuted) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "Audio Muted",
+                    color = Color.White.copy(alpha = 0.6f),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         } else {
             Icon(
                 Icons.Default.Schedule,
