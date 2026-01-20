@@ -39,8 +39,10 @@ class NotificationHelper @Inject constructor(
             ).apply {
                 description = "Notifications for prayer times"
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                setSound(null, null) // We handle audio separately via AudioPlayer
+                setSound(null, null) // Audio is handled by AdhanService
                 enableVibration(true)
+                // Professional: Allow this channel to bypass DND if the user enables it in system settings
+                setShowBadge(true)
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -59,24 +61,31 @@ class NotificationHelper @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        // Use a different request code for full screen intent
         val fullScreenIntent = PendingIntent.getActivity(
             context,
-            0,
+            1,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm) // Replace with app icon later
+            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setContentTitle("It's time for $prayerName")
             .setContentText("Tap to open Vaktiva")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setPriority(NotificationCompat.PRIORITY_MAX) // Use MAX for alarms
+            .setCategory(NotificationCompat.CATEGORY_ALARM) // Important for system behavior
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(true)
             .setFullScreenIntent(fullScreenIntent, true)
             .setContentIntent(pendingIntent)
+            .setOngoing(true) // Keeps it from being swiped away while Adhan is playing
             .build()
 
         notificationManager.notify(NOTIFICATION_ID, notification)
+    }
+
+    fun cancelNotification() {
+        notificationManager.cancel(NOTIFICATION_ID)
     }
 }

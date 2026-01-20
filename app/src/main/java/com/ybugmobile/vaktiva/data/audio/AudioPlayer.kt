@@ -27,8 +27,9 @@ class AudioPlayer @Inject constructor(
                 .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
                 .build()
 
+            // handleAudioFocus must be false for USAGE_ALARM
             exoPlayer = ExoPlayer.Builder(context)
-                .setAudioAttributes(audioAttributes, true)
+                .setAudioAttributes(audioAttributes, false)
                 .build()
                 .apply {
                     repeatMode = Player.REPEAT_MODE_OFF

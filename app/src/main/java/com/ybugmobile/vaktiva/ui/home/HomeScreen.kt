@@ -491,7 +491,9 @@ fun HomeScreenPreview() {
         longitude = 28.9784,
         calculationMethod = 13,
         madhab = 1,
-        language = "en"
+        language = "en",
+        selectedAdhanPath = null,
+        playAdhanAudio = true
     )
 
     MaterialTheme {
