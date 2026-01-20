@@ -493,7 +493,8 @@ fun HomeScreenPreview() {
         madhab = 1,
         language = "en",
         selectedAdhanPath = null,
-        playAdhanAudio = true
+        playAdhanAudio = true,
+        isSetupComplete = true
     )
 
     MaterialTheme {

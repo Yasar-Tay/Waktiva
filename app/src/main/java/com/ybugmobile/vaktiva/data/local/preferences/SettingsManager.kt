@@ -25,7 +25,8 @@ data class UserSettings(
     val locationName: String,
     val language: String,
     val selectedAdhanPath: String?,
-    val playAdhanAudio: Boolean
+    val playAdhanAudio: Boolean,
+    val isSetupComplete: Boolean
 )
 
 @Singleton
@@ -41,6 +42,7 @@ class SettingsManager @Inject constructor(
         val LANGUAGE = stringPreferencesKey("language")
         val SELECTED_ADHAN_PATH = stringPreferencesKey("selected_adhan_path")
         val PLAY_ADHAN_AUDIO = booleanPreferencesKey("play_adhan_audio")
+        val IS_SETUP_COMPLETE = booleanPreferencesKey("is_setup_complete")
     }
 
     val settingsFlow: Flow<UserSettings> = context.dataStore.data.map { preferences ->
@@ -52,7 +54,8 @@ class SettingsManager @Inject constructor(
             locationName = preferences[LAST_LOCATION_NAME] ?: "Unknown",
             language = preferences[LANGUAGE] ?: "system",
             selectedAdhanPath = preferences[SELECTED_ADHAN_PATH],
-            playAdhanAudio = preferences[PLAY_ADHAN_AUDIO] ?: true
+            playAdhanAudio = preferences[PLAY_ADHAN_AUDIO] ?: true,
+            isSetupComplete = preferences[IS_SETUP_COMPLETE] ?: false
         )
     }
 
@@ -87,6 +90,12 @@ class SettingsManager @Inject constructor(
     suspend fun updatePlayAdhanAudio(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PLAY_ADHAN_AUDIO] = enabled
+        }
+    }
+
+    suspend fun setSetupComplete(complete: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[IS_SETUP_COMPLETE] = complete
         }
     }
 

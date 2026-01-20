@@ -88,4 +88,25 @@
     <string name="audio_settings_title">Adhan Sounds</string>
     <string name="audio_add_custom">Add Custom Audio</string>
     <string name="audio_delete_confirm">Delete audio file?</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome_title">Welcome to Vaktiva</string>
+    <string name="welcome_desc">Your professional companion for prayer times, built with precision and modern design.</string>
+    <string name="welcome_begin">Begin Setup</string>
+    <string name="welcome_finish">Finish Setup</string>
+    <string name="welcome_precision_settings">Precision Settings</string>
+    <string name="welcome_precision_desc">Vaktiva needs these to serve you better</string>
+    <string name="welcome_loc_title">Accurate Location</string>
+    <string name="welcome_loc_desc">Used to calculate precise prayer times based on your coordinates.</string>
+    <string name="welcome_notif_title">Adhan Alerts</string>
+    <string name="welcome_notif_desc">Needed to send notifications when it\'s time to pray.</string>
+    <string name="welcome_alarm_title">Exact Alarms</string>
+    <string name="welcome_alarm_desc">Required for the Adhan to play exactly on time without delay.</string>
+    <string name="welcome_grant_btn">Grant Permissions</string>
+    <string name="welcome_continue_btn">Continue</string>
+    <string name="welcome_personalize">Personalize</string>
+    <string name="welcome_audio_desc">Set your prayer call preferences</string>
+    <string name="welcome_adhan_audio">Adhan Audio</string>
+    <string name="welcome_adhan_audio_desc">Play audio call for prayers</string>
+    <string name="welcome_select_sound">Select Sound</string>
 </resources>

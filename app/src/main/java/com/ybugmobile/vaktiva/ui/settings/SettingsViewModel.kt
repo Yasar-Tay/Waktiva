@@ -37,4 +37,10 @@ class SettingsViewModel @Inject constructor(
             settingsManager.updatePlayAdhanAudio(enabled)
         }
     }
+
+    fun setSetupComplete(complete: Boolean) {
+        viewModelScope.launch {
+            settingsManager.setSetupComplete(complete)
+        }
+    }
 }

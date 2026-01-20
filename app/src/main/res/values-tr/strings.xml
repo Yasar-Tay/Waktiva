@@ -88,4 +88,25 @@
     <string name="audio_settings_title">Ezan Sesleri</string>
     <string name="audio_add_custom">Özel Ses Ekle</string>
     <string name="audio_delete_confirm">Ses dosyası silinsin mi?</string>
+
+    <!-- Hoşgeldin Ekranı -->
+    <string name="welcome_title">Vaktiva\'ya Hoş Geldiniz</string>
+    <string name="welcome_desc">Hassasiyet ve modern tasarımla oluşturulmuş, namaz vakitleri için profesyonel rehberiniz.</string>
+    <string name="welcome_begin">Kuruluma Başla</string>
+    <string name="welcome_finish">Kurulumu Tamamla</string>
+    <string name="welcome_precision_settings">Hassasiyet Ayarları</string>
+    <string name="welcome_precision_desc">Vaktiva size daha iyi hizmet verebilmek için bunlara ihtiyaç duyar</string>
+    <string name="welcome_loc_title">Doğru Konum</string>
+    <string name="welcome_loc_desc">Koordinatlarınıza göre kesin namaz vakitlerini hesaplamak için kullanılır.</string>
+    <string name="welcome_notif_title">Ezan Uyarıları</string>
+    <string name="welcome_notif_desc">Namaz vakti geldiğinde bildirim göndermek için gereklidir.</string>
+    <string name="welcome_alarm_title">Tam Zamanında Alarmlar</string>
+    <string name="welcome_alarm_desc">Ezanın gecikme olmadan tam vaktinde okunması için gereklidir.</string>
+    <string name="welcome_grant_btn">İzinleri Ver</string>
+    <string name="welcome_continue_btn">Devam Et</string>
+    <string name="welcome_personalize">Kişiselleştir</string>
+    <string name="welcome_audio_desc">Ezan sesi tercihlerinizi belirleyin</string>
+    <string name="welcome_adhan_audio">Ezan Sesi</string>
+    <string name="welcome_adhan_audio_desc">Namaz vakitlerinde sesli ezan oku</string>
+    <string name="welcome_select_sound">Ses Seçin</string>
 </resources>

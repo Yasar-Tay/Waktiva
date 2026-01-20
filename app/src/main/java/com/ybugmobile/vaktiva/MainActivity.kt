@@ -86,13 +86,7 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel = hiltViewModel())
     val startDestination = remember(settings) {
         if (settings == null) null
         else {
-            val hasLocationPermission = ContextCompat.checkSelfPermission(
-                context, Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
-                context, Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-
-            if (hasLocationPermission) Screen.Home.route
+            if (settings?.isSetupComplete == true) Screen.Home.route
             else Screen.Welcome.route
         }
     }
