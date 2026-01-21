@@ -58,7 +58,7 @@ class AdhanService : MediaSessionService() {
             .build()
 
         player = ExoPlayer.Builder(this)
-            .setAudioAttributes(audioAttributes, true)
+            .setAudioAttributes(audioAttributes, false) // Changed to false to avoid IllegalArgumentException with USAGE_ALARM
             .build()
             .apply {
                 addListener(object : Player.Listener {
@@ -115,24 +115,23 @@ class AdhanService : MediaSessionService() {
                 // Add the full-screen intent
                 builder.setFullScreenIntent(fullScreenPendingIntent, true)
                 
-                // Add Stop Action
-                builder.addAction(
-                    Notification.Action.Builder(
-                        android.graphics.drawable.Icon.createWithResource(this@AdhanService, R.drawable.ic_launcher_foreground),
-                        "Stop",
-                        stopPendingIntent
-                    ).build()
-                )
+                // Create Stop Action
+                val stopAction = Notification.Action.Builder(
+                    android.graphics.drawable.Icon.createWithResource(this@AdhanService, android.R.drawable.ic_menu_close_clear_cancel),
+                    "Stop",
+                    stopPendingIntent
+                ).build()
 
-                // Show Stop button in compact view
-                // The new action is appended at the end of the list
-                val actionIndex = mediaNotification.notification.actions?.size ?: 0
+                // Replace existing actions (like Play/Pause) with just the Stop action
+                builder.setActions(stopAction)
+
+                // Show Stop button in compact view (index 0)
                 val token = mediaNotification.notification.extras?.getParcelable(Notification.EXTRA_MEDIA_SESSION) as? android.media.session.MediaSession.Token
                 if (token != null) {
                     builder.setStyle(
                         Notification.MediaStyle()
                             .setMediaSession(token)
-                            .setShowActionsInCompactView(actionIndex)
+                            .setShowActionsInCompactView(0)
                     )
                 }
                 

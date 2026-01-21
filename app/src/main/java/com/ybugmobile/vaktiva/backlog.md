@@ -77,14 +77,18 @@ Goal: Ensure the user never misses a prayer.
 - [x] Use `AlarmManager.setAlarmClock()` for precision.
 - [x] Reschedule alarms after device reboot via `BootReceiver`.
 - [x] Handle `SCHEDULE_EXACT_ALARM` permission logic.
+- [ ] **[Professional Improvement]** Implement a "chained" scheduling strategy (schedule only the next prayer and re-schedule on completion) to increase resilience against system restrictions.
 
-### Feature 3.2 – Full-Screen Intent
+### Feature 3.2 – Full-Screen Intent & Reliability
 - [x] High-Priority Notification Channel.
 - [x] Full-Screen Activity for lock screen alerts.
+- [ ] **[Professional Improvement]** Implement `PowerManager.WakeLock` in `PrayerAlarmReceiver` to ensure the CPU stays awake until `AdhanService` is foregrounded.
+- [ ] **[Professional Improvement]** Migrated to official **Full-Screen Intent** via `NotificationCompat.Builder.setFullScreenIntent()` for standard Android lock-screen integration.
 
 ### Feature 3.3 – Adhan Playback Controls
 - [ ] **Standard Notification Controls:** Ensure rich notification with a clear "Stop" action and proper service cleanup.
 - [ ] **In-App UI Controls:** The main app UI (HomeScreen) should reflect the Adhan's playback state via `MediaController` in `HomeViewModel`, showing controls only when active.
+- [ ] **[Professional Improvement]** Consolidate notification logic using Media3 `MediaNotification.Provider` for a single, consistent source of UI state.
 
 ---
 
@@ -117,7 +121,7 @@ Goal: Immersive interface that changes with the day.
 
 ---
 
-## ⚙️ EPIC 6 – Settings & Monetization
+## 🏗️ EPIC 6 – Settings & Monetization
 - [x] Selection of Madhab (Hanafi/Shafi).
 - [x] Selection of Calculation Authority.
 - [ ] Integrate Google Play Billing for donations.
