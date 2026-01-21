@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -125,7 +126,10 @@ private fun IntroStep(onNext: () -> Unit) {
 private fun PermissionsStep(onNext: () -> Unit) {
     val context = LocalContext.current
     
-    // Separate states for each permission to allow independent triggering via cards
+    // Track denials to decide when to lead to system settings
+    var locationDenialCount by remember { mutableStateOf(0) }
+    var notificationDenialCount by remember { mutableStateOf(0) }
+
     val locationPermissionState = rememberMultiplePermissionsState(
         listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     )
@@ -142,13 +146,33 @@ private fun PermissionsStep(onNext: () -> Unit) {
         ) 
     }
 
-    // Observe lifecycle to refresh alarm permission status when returning from settings
+    // Battery Optimization State
+    val powerManager = remember { context.getSystemService(Context.POWER_SERVICE) as PowerManager }
+    var batteryOptimizationIgnored by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) powerManager.isIgnoringBatteryOptimizations(context.packageName)
+            else true
+        )
+    }
+
+    // Helper to open app settings
+    fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", context.packageName, null)
+        }
+        context.startActivity(intent)
+    }
+
+    // Observe lifecycle
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     alarmGranted = alarmManager.canScheduleExactAlarms()
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    batteryOptimizationIgnored = powerManager.isIgnoringBatteryOptimizations(context.packageName)
                 }
             }
         }
@@ -179,7 +203,12 @@ private fun PermissionsStep(onNext: () -> Unit) {
                 isGranted = isLocationGranted,
                 onClick = {
                     if (!isLocationGranted) {
-                        locationPermissionState.launchMultiplePermissionRequest()
+                        if (locationDenialCount >= 2 || locationPermissionState.shouldShowRationale) {
+                            openAppSettings()
+                        } else {
+                            locationPermissionState.launchMultiplePermissionRequest()
+                            locationDenialCount++
+                        }
                     }
                 }
             )
@@ -192,7 +221,12 @@ private fun PermissionsStep(onNext: () -> Unit) {
                     isGranted = isNotificationGranted,
                     onClick = {
                         if (!isNotificationGranted) {
-                            notificationPermissionState?.launchPermissionRequest()
+                            if (notificationDenialCount >= 2 || (notificationPermissionState?.status as? PermissionStatus.Denied)?.shouldShowRationale == true) {
+                                openAppSettings()
+                            } else {
+                                notificationPermissionState?.launchPermissionRequest()
+                                notificationDenialCount++
+                            }
                         }
                     }
                 )
@@ -214,6 +248,35 @@ private fun PermissionsStep(onNext: () -> Unit) {
                     }
                 )
             }
+
+            // Battery Optimization Option (Optional but recommended for reliability)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PermissionCard(
+                    icon = Icons.Default.BatteryChargingFull,
+                    title = stringResource(R.string.settings_battery_opt),
+                    description = if (batteryOptimizationIgnored) "Optimized for reliability" else "Disable optimization for reliable Adhans",
+                    isGranted = batteryOptimizationIgnored,
+                    onClick = {
+                        if (!batteryOptimizationIgnored) {
+                            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                data = Uri.fromParts("package", context.packageName, null)
+                            }
+                            context.startActivity(intent)
+                        }
+                    }
+                )
+            }
+        }
+
+        if (!allGranted) {
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = stringResource(R.string.welcome_permission_later_info),
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.White.copy(alpha = 0.5f),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -223,27 +286,17 @@ private fun PermissionsStep(onNext: () -> Unit) {
                 if (allGranted) {
                     onNext()
                 } else {
-                    // Trigger first missing permission if the user clicks the main button
-                    if (!isLocationGranted) {
-                        locationPermissionState.launchMultiplePermissionRequest()
-                    } else if (!isNotificationGranted) {
-                        notificationPermissionState?.launchPermissionRequest()
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmGranted) {
-                        val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                            data = Uri.fromParts("package", context.packageName, null)
-                        }
-                        context.startActivity(intent)
-                    }
+                    onNext()
                 }
             },
             modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = if (allGranted) AccentColor else Color.White),
+            colors = ButtonDefaults.buttonColors(containerColor = if (allGranted) AccentColor else Color.White.copy(alpha = 0.2f)),
             shape = RoundedCornerShape(16.dp)
         ) {
             Text(
-                text = if (allGranted) stringResource(R.string.welcome_continue_btn) else stringResource(R.string.welcome_grant_btn),
+                text = if (allGranted) stringResource(R.string.welcome_continue_btn) else stringResource(R.string.welcome_skip_btn),
                 fontWeight = FontWeight.Bold,
-                color = if (allGranted) Color.Black else Color.Black
+                color = if (allGranted) Color.Black else Color.White
             )
         }
         Spacer(modifier = Modifier.height(16.dp))

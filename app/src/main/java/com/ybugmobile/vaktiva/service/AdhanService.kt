@@ -12,12 +12,14 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -40,6 +42,7 @@ class AdhanService : MediaSessionService() {
     
     private val handler = Handler(Looper.getMainLooper())
     private var volumeFadeRunnable: Runnable? = null
+    private var isFallbackPlaying = false
 
     companion object {
         const val ACTION_STOP_ADHAN = "com.ybugmobile.vaktiva.ACTION_STOP_ADHAN"
@@ -59,7 +62,7 @@ class AdhanService : MediaSessionService() {
             .build()
 
         player = ExoPlayer.Builder(this)
-            .setAudioAttributes(audioAttributes, false) 
+            .setAudioAttributes(audioAttributes, false) // Automatic focus handling only supports USAGE_MEDIA and USAGE_GAME
             .build()
             .apply {
                 addListener(object : Player.Listener {
@@ -75,6 +78,33 @@ class AdhanService : MediaSessionService() {
                                 stopForeground(Service.STOP_FOREGROUND_REMOVE)
                                 stopSelf()
                             }
+                        }
+                    }
+
+                    override fun onPlaybackSuppressionReasonChanged(playbackSuppressionReason: Int) {
+                        if (playbackSuppressionReason == Player.PLAYBACK_SUPPRESSION_REASON_TRANSIENT_AUDIO_FOCUS_LOSS) {
+                            player?.stop()
+                        }
+                    }
+
+                    override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                        if (!playWhenReady && reason == Player.PLAY_WHEN_READY_CHANGE_REASON_AUDIO_FOCUS_LOSS) {
+                            player?.stop()
+                        }
+                    }
+
+                    override fun onPlayerError(error: PlaybackException) {
+                        if (!isFallbackPlaying) {
+                            isFallbackPlaying = true
+                            // Try fallback to system alarm sound
+                            val fallbackUri = Settings.System.DEFAULT_ALARM_ALERT_URI
+                            val mediaItem = MediaItem.fromUri(fallbackUri)
+                            player?.setMediaItem(mediaItem)
+                            player?.prepare()
+                            player?.play()
+                        } else {
+                            stopForeground(Service.STOP_FOREGROUND_REMOVE)
+                            stopSelf()
                         }
                     }
                 })
@@ -157,6 +187,8 @@ class AdhanService : MediaSessionService() {
 
         val audioPath = intent?.getStringExtra("AUDIO_PATH")
         val prayerName = intent?.getStringExtra("PRAYER_NAME") ?: "Prayer"
+        
+        isFallbackPlaying = false
 
         if (audioPath != null) {
             val mediaMetadata = MediaMetadata.Builder()
@@ -179,7 +211,8 @@ class AdhanService : MediaSessionService() {
             player?.play()
         }
 
-        return super.onStartCommand(intent, flags, startId)
+        super.onStartCommand(intent, flags, startId)
+        return START_REDELIVER_INTENT
     }
 
     private fun createNotificationChannel() {

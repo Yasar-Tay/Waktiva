@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +47,14 @@ import java.util.Locale
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.addObserver(viewModel)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(viewModel)
+        }
+    }
+
     val state by viewModel.state.collectAsState()
     val settings by viewModel.settings.collectAsState(initial = null)
     val allDays by viewModel.allPrayerDays.collectAsState()
@@ -113,139 +122,133 @@ fun HomeScreenContent(
             .fillMaxSize()
             .background(brush = backgroundGradient)
     ) {
-        PullToRefreshBox(
-            isRefreshing = state.isRefreshing,
-            onRefresh = onRefresh,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState),
-                horizontalAlignment = Alignment.Start
+        if (state.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = contentColor)
+            }
+        } else {
+            PullToRefreshBox(
+                isRefreshing = state.isRefreshing,
+                onRefresh = onRefresh,
+                modifier = Modifier.fillMaxSize()
             ) {
-                Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-                    if (!permissionState.allPermissionsGranted) {
-                        Spacer(modifier = Modifier.height(24.dp))
-                        PermissionRequestCard(permissionState)
-                    }
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+                        if (!permissionState.allPermissionsGranted) {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            PermissionRequestCard(permissionState)
+                        }
 
-                    Spacer(modifier = Modifier.height(48.dp))
+                        Spacer(modifier = Modifier.height(48.dp))
 
-                    // Location & Date
-                    val locationText = state.locationName.ifEmpty { stringResource(R.string.home_unknown_location) }
+                        // Location & Date
+                        val locationText = state.locationName.ifEmpty { stringResource(R.string.home_unknown_location) }
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = null,
-                            tint = contentColor,
-                            modifier = Modifier.size(24.dp)
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = null,
+                                tint = contentColor,
+                                modifier = Modifier.size(24.dp)
+                            )
 
-                        Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Text(
+                                text = locationText,
+                                color = contentColor,
+                                style = MaterialTheme.typography.titleMedium.copy(shadow = textShadow),
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Start
+                            )
+                        }
+
+                        // Display selected date's info
+                        val displayDate = if (state.selectedDate == LocalDate.now()) {
+                            state.currentTime.format(DateTimeFormatter.ofPattern("EEEE, d MMMM"))
+                        } else {
+                            state.selectedDate.format(DateTimeFormatter.ofPattern("EEEE, d MMMM"))
+                        }
 
                         Text(
-                            text = locationText,
-                            color = contentColor,
-                            style = MaterialTheme.typography.titleMedium.copy(shadow = textShadow),
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Start
-                        )
-                    }
-
-                    // Display selected date's info
-                    val displayDate = if (state.selectedDate == LocalDate.now()) {
-                        state.currentTime.format(DateTimeFormatter.ofPattern("EEEE, d MMMM"))
-                    } else {
-                        state.selectedDate.format(DateTimeFormatter.ofPattern("EEEE, d MMMM"))
-                    }
-
-                    Text(
-                        text = displayDate,
-                        color = contentColor.copy(alpha = 0.8f),
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            shadow = textShadow
-                        ),
-                        modifier = Modifier.padding(start = 32.dp)
-                    )
-
-                    if (state.currentPrayerDay != null) {
-                        Text(
-                            text = formatHijriDate(state.currentPrayerDay.hijriDate),
+                            text = displayDate,
                             color = contentColor.copy(alpha = 0.8f),
-                            style = MaterialTheme.typography.bodyMedium.copy(
+                            style = MaterialTheme.typography.bodyLarge.copy(
                                 shadow = textShadow
                             ),
                             modifier = Modifier.padding(start = 32.dp)
                         )
-                    }
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Circular Prayer Visualization
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         if (state.currentPrayerDay != null) {
-                            PrayerCircleVisualization(
-                                day = state.currentPrayerDay,
-                                currentTime = if (state.selectedDate == LocalDate.now()) state.currentTime.toLocalTime() else LocalTime.MIDNIGHT,
-                                nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
-                                isSelectedDayToday = state.selectedDate == LocalDate.now(),
-                                contentColor = contentColor,
-                                centerContent = {
-                                    if (state.isRefreshing) {
-                                        CircularProgressIndicator(
-                                            color = contentColor,
-                                            modifier = Modifier.size(48.dp)
-                                        )
-                                    } else {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center,
-                                            modifier = Modifier.clickable { showDatePicker = true }
-                                        ) {
-                                            Text(
-                                                text = state.selectedDate.format(DateTimeFormatter.ofPattern("MMM", Locale.getDefault())).uppercase(),
-                                                style = MaterialTheme.typography.titleMedium.copy(
-                                                    shadow = textShadow
-                                                ),
-                                                color = contentColor.copy(alpha = 0.9f),
-                                                fontWeight = FontWeight.Medium
-                                            )
-                                            Text(
-                                                text = "${state.selectedDate.dayOfMonth}",
-                                                style = MaterialTheme.typography.displayMedium.copy(
-                                                    shadow = textShadow
-                                                ),
-                                                fontWeight = FontWeight.Bold,
+                            Text(
+                                text = formatHijriDate(state.currentPrayerDay.hijriDate),
+                                color = contentColor.copy(alpha = 0.8f),
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    shadow = textShadow
+                                ),
+                                modifier = Modifier.padding(start = 32.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        // Circular Prayer Visualization
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                            if (state.currentPrayerDay != null) {
+                                PrayerCircleVisualization(
+                                    day = state.currentPrayerDay,
+                                    currentTime = if (state.selectedDate == LocalDate.now()) state.currentTime.toLocalTime() else LocalTime.MIDNIGHT,
+                                    nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
+                                    isSelectedDayToday = state.selectedDate == LocalDate.now(),
+                                    contentColor = contentColor,
+                                    centerContent = {
+                                        if (state.isRefreshing) {
+                                            CircularProgressIndicator(
                                                 color = contentColor,
-                                                fontSize = 64.sp
+                                                modifier = Modifier.size(48.dp)
                                             )
-                                            Text(
-                                                text = state.selectedDate.year.toString(),
-                                                style = MaterialTheme.typography.titleSmall.copy(
-                                                    shadow = textShadow
-                                                ),
-                                                color = contentColor.copy(alpha = 0.7f)
-                                            )
+                                        } else {
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center,
+                                                modifier = Modifier.clickable { showDatePicker = true }
+                                            ) {
+                                                Text(
+                                                    text = state.selectedDate.format(DateTimeFormatter.ofPattern("MMM", Locale.getDefault())).uppercase(),
+                                                    style = MaterialTheme.typography.titleMedium.copy(
+                                                        shadow = textShadow
+                                                    ),
+                                                    color = contentColor.copy(alpha = 0.9f),
+                                                    fontWeight = FontWeight.Medium
+                                                )
+                                                Text(
+                                                    text = "${state.selectedDate.dayOfMonth}",
+                                                    style = MaterialTheme.typography.displayMedium.copy(
+                                                        shadow = textShadow
+                                                    ),
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = contentColor,
+                                                    fontSize = 64.sp
+                                                )
+                                                Text(
+                                                    text = state.selectedDate.year.toString(),
+                                                    style = MaterialTheme.typography.titleSmall.copy(
+                                                        shadow = textShadow
+                                                    ),
+                                                    color = contentColor.copy(alpha = 0.7f)
+                                                )
+                                            }
                                         }
                                     }
-                                }
-                            )
-                        } else {
-                            if (state.isRefreshing) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .aspectRatio(1f),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator(
-                                        color = contentColor,
-                                        modifier = Modifier.size(48.dp)
-                                    )
-                                }
+                                )
                             } else {
+                                // This branch is only taken if isLoading is false AND currentPrayerDay is null
+                                // (Truly no data even after checking)
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -267,7 +270,7 @@ fun HomeScreenContent(
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
                                     Button(
-                                        onClick = { onDateSelected(state.selectedDate) },
+                                        onClick = { onRefresh() },
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = containerColor
                                         )
@@ -278,138 +281,138 @@ fun HomeScreenContent(
                             }
                         }
                     }
-                }
 
-                NextPrayerCountdown(
-                    nextPrayer = state.nextPrayer,
-                    selectedDate = state.selectedDate,
-                    onSkipAudio = onSkipNextAudio,
-                    isMuted = settings?.mutedPrayerName == state.nextPrayer?.type?.name && settings?.mutedPrayerDate == LocalDate.now().toString()
-                )
-
-                // Adhan Playback Controls
-                AnimatedVisibility(
-                    visible = state.isAdhanPlaying,
-                    enter = expandVertically() + fadeIn(),
-                    exit = shrinkVertically() + fadeOut(),
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
-                ) {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f)
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = MaterialTheme.shapes.large,
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                modifier = Modifier.weight(1f),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.MusicNote,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(32.dp)
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Column {
-                                    Text(
-                                        text = state.playingPrayerName ?: "Adhan Playing",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                    Text(
-                                        text = "Playing right now",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                                    )
-                                }
-                            }
-                            Button(
-                                onClick = onStopAdhan,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.error,
-                                    contentColor = MaterialTheme.colorScheme.onError
-                                ),
-                                shape = MaterialTheme.shapes.medium
-                            ) {
-                                Icon(Icons.Default.Stop, contentDescription = null)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("STOP")
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-                    ModernCalendarStrip(
+                    NextPrayerCountdown(
+                        nextPrayer = state.nextPrayer,
                         selectedDate = state.selectedDate,
-                        availableDates = allDays.map { it.date }.filter { !it.isBefore(LocalDate.now()) },
-                        onDateSelected = onDateSelected
+                        onSkipAudio = onSkipNextAudio,
+                        isMuted = settings?.mutedPrayerName == state.nextPrayer?.type?.name && settings?.mutedPrayerDate == LocalDate.now().toString()
                     )
-                    
-                    Spacer(modifier = Modifier.height(24.dp))
 
-                    if (state.currentPrayerDay != null) {
-                        PrayerTimeList(
-                            day = state.currentPrayerDay,
-                            nextPrayerType = if (state.selectedDate == LocalDate.now()) state.nextPrayer?.type else null,
-                            contentColor = contentColor,
-                            highlightColor = containerColor
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    settings?.let {
-                        val methodName = calculationMethods.find { m -> m.second == it.calculationMethod }?.first
-                            ?: "Unknown Method"
-
+                    // Adhan Playback Controls
+                    AnimatedVisibility(
+                        visible = state.isAdhanPlaying,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut(),
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
+                    ) {
                         Card(
-                            onClick = { showMethodDialog = true },
                             colors = CardDefaults.cardColors(
-                                containerColor = containerColor
+                                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f)
                             ),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.large,
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                         ) {
                             Row(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
+                                modifier = Modifier.padding(16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Column {
-                                    Text(
-                                        text = "Calculation Method",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = contentColor.copy(alpha = 0.6f)
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.MusicNote,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(32.dp)
                                     )
-                                    Text(
-                                        text = methodName,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = contentColor
-                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Column {
+                                        Text(
+                                            text = state.playingPrayerName ?: "Adhan Playing",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                        Text(
+                                            text = "Playing right now",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                        )
+                                    }
                                 }
-                                Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = "Settings",
-                                    tint = contentColor.copy(alpha = 0.6f)
-                                )
+                                Button(
+                                    onClick = onStopAdhan,
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.error,
+                                        contentColor = MaterialTheme.colorScheme.onError
+                                    ),
+                                    shape = MaterialTheme.shapes.medium
+                                ) {
+                                    Icon(Icons.Default.Stop, contentDescription = null)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("STOP")
+                                }
                             }
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(100.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+                        ModernCalendarStrip(
+                            selectedDate = state.selectedDate,
+                            availableDates = allDays.map { it.date }.filter { !it.isBefore(LocalDate.now()) },
+                            onDateSelected = onDateSelected
+                        )
+                        
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        if (state.currentPrayerDay != null) {
+                            PrayerTimeList(
+                                day = state.currentPrayerDay,
+                                nextPrayerType = if (state.selectedDate == LocalDate.now()) state.nextPrayer?.type else null,
+                                contentColor = contentColor,
+                                highlightColor = containerColor
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        settings?.let {
+                            val methodName = calculationMethods.find { m -> m.second == it.calculationMethod }?.first
+                                ?: "Unknown Method"
+
+                            Card(
+                                onClick = { showMethodDialog = true },
+                                colors = CardDefaults.cardColors(
+                                    containerColor = containerColor
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Column {
+                                        Text(
+                                            text = "Calculation Method",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = contentColor.copy(alpha = 0.6f)
+                                        )
+                                        Text(
+                                            text = methodName,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = contentColor
+                                        )
+                                    }
+                                    Icon(
+                                        imageVector = Icons.Default.Settings,
+                                        contentDescription = "Settings",
+                                        tint = contentColor.copy(alpha = 0.6f)
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(100.dp))
+                    }
                 }
             }
         }

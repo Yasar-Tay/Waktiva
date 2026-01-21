@@ -1,7 +1,12 @@
 package com.ybugmobile.vaktiva.ui.home
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
@@ -34,7 +39,7 @@ class HomeViewModel @Inject constructor(
     private val locationWrapper: LocationWrapper,
     private val alarmScheduler: AlarmScheduler,
     @ApplicationContext private val context: Context
-) : ViewModel() {
+) : ViewModel(), DefaultLifecycleObserver {
 
     val settings = settingsManager.settingsFlow
 
@@ -61,13 +66,15 @@ class HomeViewModel @Inject constructor(
 
     val calculationMethods = CALCULATION_METHODS
 
+    private var lastPermissionStatus = isLocationPermissionGranted()
+
     init {
         // Update current time every second
         tickerFlow(1000).onEach {
             _currentTime.value = LocalDateTime.now()
         }.launchIn(viewModelScope)
 
-        // Automatically fetch location and data on launch
+        // Initial check
         onPermissionsGranted()
         
         // Observe all prayer days and reschedule alarms when they change
@@ -79,6 +86,22 @@ class HomeViewModel @Inject constructor(
             .launchIn(viewModelScope)
 
         setupMediaController()
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        val currentPermissionStatus = isLocationPermissionGranted()
+        if (currentPermissionStatus && !lastPermissionStatus) {
+            // Permission was just granted!
+            refresh()
+        }
+        lastPermissionStatus = currentPermissionStatus
+    }
+
+    private fun isLocationPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun setupMediaController() {
@@ -160,22 +183,29 @@ class HomeViewModel @Inject constructor(
         )
     }
 
+    // A state to track if we've attempted the first load from DB/Network
+    private val _hasSettled = MutableStateFlow(false)
+
     val state: StateFlow<HomeViewState> = combine(
         combine(selectedDate, currentTime, currentPrayerDay, ::Triple),
         combine(nextPrayerInfo, isRefreshing, settings, ::Triple),
-        combine(_isAdhanPlaying, _playingPrayerName, ::Pair)
-    ) { (date, time, prayerDay), (nextPrayer, refreshing, currentSettings), (playing, prayerName) ->
+        combine(_isAdhanPlaying, _playingPrayerName, _hasSettled, ::Triple)
+    ) { (date, time, prayerDay), (nextPrayer, refreshing, currentSettings), (playing, prayerName, settled) ->
+        
+        val loading = !settled && prayerDay == null
+
         HomeViewState(
             selectedDate = date,
             currentTime = time,
             currentPrayerDay = prayerDay,
             nextPrayer = nextPrayer,
             isRefreshing = refreshing,
+            isLoading = loading,
             locationName = currentSettings.locationName,
             isAdhanPlaying = playing,
             playingPrayerName = prayerName
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))
 
     fun selectDate(date: LocalDate) {
         _selectedDate.value = date
@@ -217,6 +247,7 @@ class HomeViewModel @Inject constructor(
                 e.printStackTrace()
             } finally {
                 _isRefreshing.value = false
+                _hasSettled.value = true
             }
         }
     }
@@ -240,6 +271,8 @@ class HomeViewModel @Inject constructor(
                 fetchPrayerData()
             } catch (e: Exception) {
                 e.printStackTrace()
+            } finally {
+                _hasSettled.value = true
             }
         }
     }
@@ -306,8 +339,7 @@ class HomeViewModel @Inject constructor(
             "Egyptian General Authority of Survey" to 5,
             "Umm al-Qura University, Makkah" to 4,
             "University of Islamic Sciences, Karachi" to 1,
-            "Institute of Geophysics, University of Tehran" to 7,
-            "Gulf Region" to 8,
+            "Institute of Geophysics, University of Tehran" to 7, "Gulf Region" to 8,
             "Kuwait" to 9,
             "Qatar" to 10,
             "Majlis Ugama Islam Singapura, Singapore" to 11,

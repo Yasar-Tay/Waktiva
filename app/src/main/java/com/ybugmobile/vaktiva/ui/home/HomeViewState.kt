@@ -11,6 +11,7 @@ data class HomeViewState(
     val currentPrayerDay: PrayerDay? = null,
     val nextPrayer: NextPrayer? = null,
     val isRefreshing: Boolean = false,
+    val isLoading: Boolean = true, // Initial state is loading
     val locationName: String = "",
     val isAdhanPlaying: Boolean = false,
     val playingPrayerName: String? = null,

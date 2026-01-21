@@ -90,6 +90,8 @@
     <string name="welcome_adhan_audio">Ezan Sesi</string>
     <string name="welcome_adhan_audio_desc">Namaz vakitlerinde sesli ezan oku</string>
     <string name="welcome_select_sound">Ses Seçin</string>
+    <string name="welcome_skip_btn">Yine de devam et</string>
+    <string name="welcome_permission_later_info">Bu izinleri dilediğiniz zaman Ayarlar ekranından yönetebilirsiniz.</string>
 
     <!-- Adhan Audio per prayer (from EPIC 2) -->
     <string name="audio_setting_fajr">Sabah Ezanı</string>
