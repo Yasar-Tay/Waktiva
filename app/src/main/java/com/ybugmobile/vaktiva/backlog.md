@@ -82,13 +82,13 @@ Goal: Ensure the user never misses a prayer.
 ### Feature 3.2 – Full-Screen Intent & Reliability
 - [x] High-Priority Notification Channel.
 - [x] Full-Screen Activity for lock screen alerts.
-- [ ] **[Professional Improvement]** Implement `PowerManager.WakeLock` in `PrayerAlarmReceiver` to ensure the CPU stays awake until `AdhanService` is foregrounded.
-- [ ] **[Professional Improvement]** Migrated to official **Full-Screen Intent** via `NotificationCompat.Builder.setFullScreenIntent()` for standard Android lock-screen integration.
+- [x] **[Professional Improvement]** Implement `PowerManager.WakeLock` in `PrayerAlarmReceiver` to ensure the CPU stays awake until `AdhanService` is foregrounded.
+- [x] **[Professional Improvement]** Migrated to official **Full-Screen Intent** via `NotificationCompat.Builder.setFullScreenIntent()` for standard Android lock-screen integration.
 
 ### Feature 3.3 – Adhan Playback Controls
 - [ ] **Standard Notification Controls:** Ensure rich notification with a clear "Stop" action and proper service cleanup.
 - [ ] **In-App UI Controls:** The main app UI (HomeScreen) should reflect the Adhan's playback state via `MediaController` in `HomeViewModel`, showing controls only when active.
-- [ ] **[Professional Improvement]** Consolidate notification logic using Media3 `MediaNotification.Provider` for a single, consistent source of UI state.
+- [x] **[Professional Improvement]** Consolidate notification logic using Media3 `MediaNotification.Provider` for a single, consistent source of UI state.
 
 ---
 

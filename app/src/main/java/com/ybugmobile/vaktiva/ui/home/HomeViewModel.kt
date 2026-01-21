@@ -74,7 +74,7 @@ class HomeViewModel @Inject constructor(
         allPrayerDays
             .filter { it.isNotEmpty() }
             .onEach { days ->
-                alarmScheduler.scheduleUpcomingAlarms(days)
+                alarmScheduler.scheduleNextAlarm(days)
             }
             .launchIn(viewModelScope)
 

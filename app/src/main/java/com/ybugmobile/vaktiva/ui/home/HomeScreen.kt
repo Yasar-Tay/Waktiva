@@ -24,7 +24,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,13 +32,10 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
-import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.ui.home.composables.*
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
-import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.ZoneId
@@ -291,34 +287,62 @@ fun HomeScreenContent(
                     isMuted = settings?.mutedPrayerName == state.nextPrayer?.type?.name && settings?.mutedPrayerDate == LocalDate.now().toString()
                 )
 
+                // Adhan Playback Controls
                 AnimatedVisibility(
                     visible = state.isAdhanPlaying,
                     enter = expandVertically() + fadeIn(),
                     exit = shrinkVertically() + fadeOut(),
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
                 ) {
                     Card(
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                        modifier = Modifier.fillMaxWidth()
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f)
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.large,
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
                         Row(
                             modifier = Modifier.padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = state.playingPrayerName ?: "Adhan Playing",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.MusicNote,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(32.dp)
                                 )
-                                Text(
-                                    text = "Playing right now...",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Column {
+                                    Text(
+                                        text = state.playingPrayerName ?: "Adhan Playing",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                    Text(
+                                        text = "Playing right now",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                    )
+                                }
                             }
-                            IconButton(onClick = onStopAdhan) {
-                                Icon(Icons.Default.Stop, contentDescription = "Stop")
+                            Button(
+                                onClick = onStopAdhan,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.error,
+                                    contentColor = MaterialTheme.colorScheme.onError
+                                ),
+                                shape = MaterialTheme.shapes.medium
+                            ) {
+                                Icon(Icons.Default.Stop, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("STOP")
                             }
                         }
                     }

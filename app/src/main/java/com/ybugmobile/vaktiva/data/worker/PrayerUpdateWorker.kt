@@ -70,6 +70,6 @@ class PrayerUpdateWorker @AssistedInject constructor(
 
     private suspend fun scheduleAlarms() {
         val prayerDays = repository.getPrayerDays().first()
-        alarmScheduler.scheduleUpcomingAlarms(prayerDays)
+        alarmScheduler.scheduleNextAlarm(prayerDays)
     }
 }

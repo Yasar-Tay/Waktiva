@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.PowerManager
 import android.util.Log
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
@@ -32,6 +33,13 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
             Log.e("PrayerAlarmReceiver", "PRAYER_NAME extra is missing or key mismatch! Check your AlarmScheduler.")
             return
         }
+
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val wakeLock = powerManager.newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK,
+            "Vaktiva:AdhanWakeLock"
+        )
+        wakeLock.acquire(10 * 60 * 1000L /*10 minutes max*/)
 
         val pendingResult = goAsync()
         Log.d("PrayerAlarmReceiver", "Alarm received for $prayerName. Processing...")
@@ -73,6 +81,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
             } catch (e: Exception) {
                 Log.e("PrayerAlarmReceiver", "Error starting service", e)
             } finally {
+                if (wakeLock.isHeld) wakeLock.release()
                 pendingResult.finish()
             }
         }

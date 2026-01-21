@@ -26,6 +26,7 @@ import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import androidx.media3.session.MediaStyleNotificationHelper
 import com.google.common.collect.ImmutableList
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.ui.adhan.AdhanActivity
@@ -58,14 +59,22 @@ class AdhanService : MediaSessionService() {
             .build()
 
         player = ExoPlayer.Builder(this)
-            .setAudioAttributes(audioAttributes, false) // Changed to false to avoid IllegalArgumentException with USAGE_ALARM
+            .setAudioAttributes(audioAttributes, false) 
             .build()
             .apply {
                 addListener(object : Player.Listener {
                     override fun onPlaybackStateChanged(playbackState: Int) {
-                        if (playbackState == Player.STATE_ENDED) {
-                            stopForeground(Service.STOP_FOREGROUND_REMOVE)
-                            stopSelf()
+                        when (playbackState) {
+                            Player.STATE_ENDED -> {
+                                // Natural completion
+                                stopForeground(Service.STOP_FOREGROUND_REMOVE)
+                                stopSelf()
+                            }
+                            Player.STATE_IDLE -> {
+                                // Manually stopped or error
+                                stopForeground(Service.STOP_FOREGROUND_REMOVE)
+                                stopSelf()
+                            }
                         }
                     }
                 })
@@ -84,8 +93,7 @@ class AdhanService : MediaSessionService() {
                 actionFactory: MediaNotification.ActionFactory,
                 onNotificationChangedCallback: MediaNotification.Provider.Callback
             ): MediaNotification {
-                val mediaNotification = defaultProvider.createNotification(session, customLayout, actionFactory, onNotificationChangedCallback)
-                
+                // We use MediaItem metadata to get prayer name
                 val prayerName = session.player.currentMediaItem?.mediaMetadata?.title?.toString()?.replace("Adhan: ", "") ?: "Prayer"
                 
                 val fullScreenIntent = Intent(this@AdhanService, AdhanActivity::class.java).apply {
@@ -109,34 +117,24 @@ class AdhanService : MediaSessionService() {
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
 
-                // Recover the builder from the notification created by the default provider
-                val builder = Notification.Builder.recoverBuilder(this@AdhanService, mediaNotification.notification)
+                val notificationBuilder = NotificationCompat.Builder(this@AdhanService, CHANNEL_ID)
+                    .setContentTitle("Adhan: $prayerName")
+                    .setContentText("It's time for prayer")
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setCategory(NotificationCompat.CATEGORY_ALARM)
+                    .setFullScreenIntent(fullScreenPendingIntent, true)
+                    .setOngoing(true)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .addAction(android.R.drawable.ic_menu_close_clear_cancel, "STOP", stopPendingIntent)
                 
-                // Add the full-screen intent
-                builder.setFullScreenIntent(fullScreenPendingIntent, true)
+                // Set MediaStyle
+                val mediaStyle = MediaStyleNotificationHelper.MediaStyle(session)
+                    .setShowActionsInCompactView(0)
                 
-                // Create Stop Action
-                val stopAction = Notification.Action.Builder(
-                    android.graphics.drawable.Icon.createWithResource(this@AdhanService, android.R.drawable.ic_menu_close_clear_cancel),
-                    "Stop",
-                    stopPendingIntent
-                ).build()
+                notificationBuilder.setStyle(mediaStyle)
 
-                // Replace existing actions (like Play/Pause) with just the Stop action
-                builder.setActions(stopAction)
-
-                // Show Stop button in compact view (index 0)
-                val token = mediaNotification.notification.extras?.getParcelable(Notification.EXTRA_MEDIA_SESSION) as? android.media.session.MediaSession.Token
-                if (token != null) {
-                    builder.setStyle(
-                        Notification.MediaStyle()
-                            .setMediaSession(token)
-                            .setShowActionsInCompactView(0)
-                    )
-                }
-                
-                // Rebuild the notification
-                return MediaNotification(mediaNotification.notificationId, builder.build())
+                return MediaNotification(NOTIFICATION_ID, notificationBuilder.build())
             }
 
             override fun handleCustomCommand(
@@ -153,8 +151,7 @@ class AdhanService : MediaSessionService() {
         if (intent?.action == ACTION_STOP_ADHAN) {
             player?.stop()
             player?.clearMediaItems()
-            stopForeground(Service.STOP_FOREGROUND_REMOVE)
-            stopSelf()
+            // stopSelf() is called via listener
             return START_NOT_STICKY
         }
 
@@ -162,34 +159,6 @@ class AdhanService : MediaSessionService() {
         val prayerName = intent?.getStringExtra("PRAYER_NAME") ?: "Prayer"
 
         if (audioPath != null) {
-            val fullScreenIntent = Intent(this, AdhanActivity::class.java).apply {
-                putExtra("PRAYER_NAME", prayerName)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            }
-            val fullScreenPendingIntent = PendingIntent.getActivity(
-                this, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-
-            val stopIntent = Intent(this, AdhanService::class.java).apply {
-                action = ACTION_STOP_ADHAN
-            }
-            val stopPendingIntent = PendingIntent.getService(
-                this, 1, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-
-            val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Adhan: $prayerName")
-                .setContentText("It's time for prayer")
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setFullScreenIntent(fullScreenPendingIntent, true)
-                .addAction(R.drawable.ic_launcher_foreground, "STOP", stopPendingIntent)
-                .setOngoing(true)
-                .build()
-
-            startForeground(NOTIFICATION_ID, notification)
-
             val mediaMetadata = MediaMetadata.Builder()
                 .setTitle("Adhan: $prayerName")
                 .setArtist("Vaktiva")
