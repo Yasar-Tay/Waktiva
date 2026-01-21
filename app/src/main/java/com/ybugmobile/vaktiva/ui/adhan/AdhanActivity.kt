@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
@@ -34,8 +35,7 @@ import java.util.*
 class AdhanActivity : ComponentActivity() {
 
     private var controllerFuture: ListenableFuture<MediaController>? = null
-    private val controller: MediaController?
-        get() = if (controllerFuture?.isDone == true) controllerFuture?.get() else null
+    private var controller: MediaController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         showOnLockScreen()
@@ -61,7 +61,22 @@ class AdhanActivity : ComponentActivity() {
         val sessionToken = SessionToken(this, ComponentName(this, AdhanService::class.java))
         controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
         controllerFuture?.addListener({
-            // Controller is ready
+            try {
+                controller = controllerFuture?.get()
+                controller?.addListener(object : Player.Listener {
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        if (playbackState == Player.STATE_IDLE || playbackState == Player.STATE_ENDED) {
+                            finish()
+                        }
+                    }
+                })
+                // If it's already idle or ended by the time we connect
+                if (controller?.playbackState == Player.STATE_IDLE || controller?.playbackState == Player.STATE_ENDED) {
+                    finish()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }, MoreExecutors.directExecutor())
     }
 
@@ -70,6 +85,7 @@ class AdhanActivity : ComponentActivity() {
         controllerFuture?.let {
             MediaController.releaseFuture(it)
         }
+        controller = null
     }
 
     private fun showOnLockScreen() {
@@ -85,8 +101,8 @@ class AdhanActivity : ComponentActivity() {
             )
         }
         
-        val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
             keyguardManager.requestDismissKeyguard(this, null)
         }
     }

@@ -12,5 +12,7 @@ data class HomeViewState(
     val nextPrayer: NextPrayer? = null,
     val isRefreshing: Boolean = false,
     val locationName: String = "",
+    val isAdhanPlaying: Boolean = false,
+    val playingPrayerName: String? = null,
     val error: String? = null
 )

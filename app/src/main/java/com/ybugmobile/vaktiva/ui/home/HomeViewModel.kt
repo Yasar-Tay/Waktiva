@@ -1,7 +1,13 @@
 package com.ybugmobile.vaktiva.ui.home
 
+import android.content.ComponentName
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.Player
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.MoreExecutors
 import com.ybugmobile.vaktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
@@ -9,7 +15,9 @@ import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.vaktiva.data.location.LocationWrapper
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
+import com.ybugmobile.vaktiva.service.AdhanService
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -24,7 +32,8 @@ class HomeViewModel @Inject constructor(
     private val prayerRepository: PrayerRepository,
     private val settingsManager: SettingsManager,
     private val locationWrapper: LocationWrapper,
-    private val alarmScheduler: AlarmScheduler
+    private val alarmScheduler: AlarmScheduler,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     val settings = settingsManager.settingsFlow
@@ -45,6 +54,11 @@ class HomeViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
+    private val _isAdhanPlaying = MutableStateFlow(false)
+    private val _playingPrayerName = MutableStateFlow<String?>(null)
+
+    private var mediaController: MediaController? = null
+
     val calculationMethods = CALCULATION_METHODS
 
     init {
@@ -63,6 +77,43 @@ class HomeViewModel @Inject constructor(
                 alarmScheduler.scheduleUpcomingAlarms(days)
             }
             .launchIn(viewModelScope)
+
+        setupMediaController()
+    }
+
+    private fun setupMediaController() {
+        val sessionToken = SessionToken(context, ComponentName(context, AdhanService::class.java))
+        val controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+        controllerFuture.addListener({
+            try {
+                mediaController = controllerFuture.get()
+                mediaController?.addListener(object : Player.Listener {
+                    override fun onIsPlayingChanged(isPlaying: Boolean) {
+                        _isAdhanPlaying.value = isPlaying
+                        if (isPlaying) {
+                            _playingPrayerName.value = mediaController?.currentMediaItem?.mediaMetadata?.title?.toString()
+                        } else {
+                            _playingPrayerName.value = null
+                        }
+                    }
+
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        if (playbackState == Player.STATE_IDLE || playbackState == Player.STATE_ENDED) {
+                            _isAdhanPlaying.value = false
+                            _playingPrayerName.value = null
+                        }
+                    }
+                })
+                _isAdhanPlaying.value = mediaController?.isPlaying == true
+                _playingPrayerName.value = mediaController?.currentMediaItem?.mediaMetadata?.title?.toString()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }, MoreExecutors.directExecutor())
+    }
+
+    fun stopAdhan() {
+        mediaController?.stop()
     }
 
     private fun tickerFlow(periodMillis: Long) = flow {
@@ -111,15 +162,18 @@ class HomeViewModel @Inject constructor(
 
     val state: StateFlow<HomeViewState> = combine(
         combine(selectedDate, currentTime, currentPrayerDay, ::Triple),
-        combine(nextPrayerInfo, isRefreshing, settings, ::Triple)
-    ) { (date, time, prayerDay), (nextPrayer, refreshing, currentSettings) ->
+        combine(nextPrayerInfo, isRefreshing, settings, ::Triple),
+        combine(_isAdhanPlaying, _playingPrayerName, ::Pair)
+    ) { (date, time, prayerDay), (nextPrayer, refreshing, currentSettings), (playing, prayerName) ->
         HomeViewState(
             selectedDate = date,
             currentTime = time,
             currentPrayerDay = prayerDay,
             nextPrayer = nextPrayer,
             isRefreshing = refreshing,
-            locationName = currentSettings.locationName
+            locationName = currentSettings.locationName,
+            isAdhanPlaying = playing,
+            playingPrayerName = prayerName
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState())
 
@@ -234,6 +288,14 @@ class HomeViewModel @Inject constructor(
                 longitude = currentSettings.longitude,
                 method = currentSettings.calculationMethod
             )
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        mediaController?.let {
+            it.release()
+            mediaController = null
         }
     }
 
