@@ -109,4 +109,60 @@
     <string name="welcome_adhan_audio">Adhan Audio</string>
     <string name="welcome_adhan_audio_desc">Play audio call for prayers</string>
     <string name="welcome_select_sound">Select Sound</string>
+
+    <!-- Adhan Audio per prayer (from EPIC 2) -->
+    <string name="audio_setting_fajr">Fajr Adhan</string>
+    <string name="audio_setting_dhuhr">Dhuhr Adhan</string>
+    <string name="audio_setting_asr">Asr Adhan</string>
+    <string name="audio_setting_maghrib">Maghrib Adhan</string>
+    <string name="audio_setting_isha">Isha Adhan</string>
+    <string name="audio_setting_default">Default Adhan</string>
+
+    <!-- Pre-Adhan Warning (from EPIC 2) -->
+    <string name="settings_pre_adhan_warning">Pre-Adhan Warning</string>
+    <string name="settings_pre_adhan_warning_summary">Get a notification 5 minutes before prayer time.</string>
+    <string name="pre_adhan_notification_title">Approaching Prayer</string>
+    <string name="pre_adhan_notification_text">Time for %s prayer in 5 minutes.</string>
+    <string name="pre_adhan_cancel_action">Dismiss</string>
+
+    <!-- Donations (from EPIC 6) -->
+    <string name="settings_donate">Support the Developer</string>
+    <string name="donate_title">Support Vaktiva</string>
+    <string name="donate_description">Vaktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
+    <string name="donate_button">Donate</string>
+    <string name="donate_thank_you">Thank you for your support!</string>
+    <string name="donate_error">Donation failed. Please try again.</string>
+
+    <!-- Pre-Adhan Notification Channel -->
+    <string name="pre_adhan_channel_name">Pre-Adhan Warnings</string>
+    <string name="pre_adhan_channel_description">Notifications shown 5 minutes before prayer time.</string>
+
+    <!-- Audio Settings Screen -->
+    <string name="cd_back">Back</string>
+    <string name="audio_select_prayer_prompt">Select Prayer to Configure</string>
+    <string name="audio_header_specific">Adhan for %1$s</string>
+    <string name="audio_header_all_prayers">All Prayers</string>
+    <string name="audio_header_global">Select Adhan Sound (Global)</string>
+    <string name="audio_supported_formats">Supported: MP3, AAC, WAV, OGG</string>
+    <string name="audio_minutes_before">Minutes before:</string>
+    <string name="audio_individual_sounds_title">Individual Prayer Sounds</string>
+    <string name="audio_individual_sounds_desc">Set different Adhans for each prayer time</string>
+    <string name="audio_preview_stop">Stop preview</string>
+    <string name="audio_preview_play">Play preview</string>
+    <string name="audio_built_in">Built-in</string>
+    <string name="audio_delete_description">Delete audio file</string>
+    <string name="audio_selected_description">Selected</string>
+
+    <!-- Settings Screen Items -->
+    <string name="settings_notifications_sound">Notifications &amp; Sound</string>
+    <string name="settings_play_adhan">Play Adhan Audio</string>
+    <string name="settings_play_adhan_desc">Play adhan sound when it\'s time for prayer</string>
+    <string name="settings_adhan_sound_selection">Adhan Sound Selection</string>
+    <string name="settings_adhan_sound_selection_desc">Select the sound played during prayer times</string>
+    <string name="settings_reliability">Reliability &amp; Optimization</string>
+    <string name="settings_battery_opt">Battery Optimization</string>
+    <string name="settings_battery_opt_enabled">Optimized for reliability</string>
+    <string name="settings_battery_opt_disabled">Click to disable optimization for reliable Adhans</string>
+    <string name="settings_exact_alarm_title">Exact Alarms</string>
+    <string name="settings_exact_alarm_desc">Needed for precise prayer time notifications</string>
 </resources>

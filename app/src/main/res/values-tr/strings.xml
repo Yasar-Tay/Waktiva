@@ -1,7 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Vaktiva</string>
-
-    <!-- Kıble Ekranı -->
     <string name="qibla_compass">Pusula</string>
     <string name="qibla_map">Harita</string>
     <string name="qibla_mecca_aligned">Kıbleye Hizalandı</string>
@@ -22,8 +21,6 @@
     <string name="qibla_got_it">Anladım</string>
     <string name="qibla_aligned_badge">HİZALANDI</string>
     <string name="qibla_magnetic_interference">Manyetik Müdahale Algılandı - Cihazı Kalibre Edin</string>
-
-    <!-- Ana Ekran -->
     <string name="home_unknown_location">Bilinmeyen Konum</string>
     <string name="home_next_prayer">Sıradaki: %s</string>
     <string name="home_permissions_required">İzinler Gerekli</string>
@@ -32,22 +29,16 @@
     <string name="home_refresh_success">Namaz vakitleri güncellendi</string>
     <string name="home_refresh_error">Vakitler güncellenemedi</string>
     <string name="home_prayer_provider">Kaynak: </string>
-
-    <!-- Namaz Vakitleri -->
     <string name="prayer_fajr">İmsak</string>
     <string name="prayer_sunrise">Güneş</string>
     <string name="prayer_dhuhr">Öğle</string>
     <string name="prayer_asr">İkindi</string>
     <string name="prayer_maghrib">Akşam</string>
     <string name="prayer_isha">Yatsı</string>
-
-    <!-- Doğruluk Etiketleri -->
     <string name="accuracy_high">Yüksek</string>
     <string name="accuracy_med">Orta</string>
     <string name="accuracy_low">Düşük</string>
     <string name="accuracy_poor">Zayıf</string>
-
-    <!-- Ayarlar -->
     <string name="settings_title">Ayarlar</string>
     <string name="settings_permissions">İzinler</string>
     <string name="settings_calculation">Hesaplama Ayarları</string>
@@ -61,17 +52,11 @@
     <string name="settings_granted">Verildi</string>
     <string name="settings_denied">Reddedildi</string>
     <string name="settings_language">Uygulama Dili</string>
-
-    <!-- Dil Seçenekleri -->
     <string name="lang_system">Sistem Varsayılanı</string>
     <string name="lang_en">English</string>
     <string name="lang_tr">Türkçe</string>
-
-    <!-- Mezhep Seçenekleri -->
     <string name="madhab_shafi">Şafii / Standart (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanefi</string>
-
-    <!-- Yöntemler -->
     <string name="method_mwl">Müslüman Dünya Birliği</string>
     <string name="method_isna">Kuzey Amerika İslam Cemiyeti (ISNA)</string>
     <string name="method_egypt">Mısır Genel Araştırma Kurumu</string>
@@ -83,13 +68,9 @@
     <string name="method_qatar">Katar</string>
     <string name="method_singapore">Singapur İslami Dini Meclisi</string>
     <string name="method_turkey">Türkiye (Diyanet İşleri Başkanlığı)</string>
-
-    <!-- Ses Ayarları -->
     <string name="audio_settings_title">Ezan Sesleri</string>
     <string name="audio_add_custom">Özel Ses Ekle</string>
     <string name="audio_delete_confirm">Ses dosyası silinsin mi?</string>
-
-    <!-- Hoşgeldin Ekranı -->
     <string name="welcome_title">Vaktiva\'ya Hoş Geldiniz</string>
     <string name="welcome_desc">Hassasiyet ve modern tasarımla oluşturulmuş, namaz vakitleri için profesyonel rehberiniz.</string>
     <string name="welcome_begin">Kuruluma Başla</string>
@@ -109,4 +90,60 @@
     <string name="welcome_adhan_audio">Ezan Sesi</string>
     <string name="welcome_adhan_audio_desc">Namaz vakitlerinde sesli ezan oku</string>
     <string name="welcome_select_sound">Ses Seçin</string>
+
+    <!-- Adhan Audio per prayer (from EPIC 2) -->
+    <string name="audio_setting_fajr">Sabah Ezanı</string>
+    <string name="audio_setting_dhuhr">Öğle Ezanı</string>
+    <string name="audio_setting_asr">İkindi Ezanı</string>
+    <string name="audio_setting_maghrib">Akşam Ezanı</string>
+    <string name="audio_setting_isha">Yatsı Ezanı</string>
+    <string name="audio_setting_default">Varsayılan Ezan</string>
+
+    <!-- Pre-Adhan Warning (from EPIC 2) -->
+    <string name="settings_pre_adhan_warning">Ezan Öncesi Uyarı</string>
+    <string name="settings_pre_adhan_warning_summary">Namaz vaktinden 5 dakika önce bildirim alın.</string>
+    <string name="pre_adhan_notification_title">Yaklaşan Namaz Vakti</string>
+    <string name="pre_adhan_notification_text">%s vaktine 5 dakika kaldı.</string>
+    <string name="pre_adhan_cancel_action">Kapat</string>
+
+    <!-- Donations (from EPIC 6) -->
+    <string name="settings_donate">Geliştiriciyi Destekle</string>
+    <string name="donate_title">Vaktiva\'yı Destekleyin</string>
+    <string name="donate_description">Vaktiva özenle geliştirilmiş ücretsiz bir uygulamadır. Desteğiniz, uygulamanın reklamsız kalmasına ve gelecekteki geliştirmelere olanak tanır.</string>
+    <string name="donate_button">Bağış Yap</string>
+    <string name="donate_thank_you">Desteğiniz için teşekkür ederiz!</string>
+    <string name="donate_error">Bağış işlemi başarısız oldu. Lütfen tekrar deneyin.</string>
+
+    <!-- Pre-Adhan Notification Channel -->
+    <string name="pre_adhan_channel_name">Ezan Öncesi Uyarılar</string>
+    <string name="pre_adhan_channel_description">Namaz vaktinden 5 dakika önce gösterilen bildirimler.</string>
+
+    <!-- Audio Settings Screen -->
+    <string name="cd_back">Geri</string>
+    <string name="audio_select_prayer_prompt">Yapılandırılacak Vakti Seçin</string>
+    <string name="audio_header_specific">%1$s için Ezan</string>
+    <string name="audio_header_all_prayers">Tüm Vakitler</string>
+    <string name="audio_header_global">Ezan Sesini Seçin (Genel)</string>
+    <string name="audio_supported_formats">Desteklenenler: MP3, AAC, WAV, OGG</string>
+    <string name="audio_minutes_before">Dakika önce:</string>
+    <string name="audio_individual_sounds_title">Vakte Özel Sesler</string>
+    <string name="audio_individual_sounds_desc">Her namaz vakti için farklı ezanlar ayarlayın</string>
+    <string name="audio_preview_stop">Önizlemeyi durdur</string>
+    <string name="audio_preview_play">Önizlemeyi oynat</string>
+    <string name="audio_built_in">Dahili</string>
+    <string name="audio_delete_description">Ses dosyasını sil</string>
+    <string name="audio_selected_description">Seçili</string>
+
+    <!-- Settings Screen Items -->
+    <string name="settings_notifications_sound">Bildirimler ve Ses</string>
+    <string name="settings_play_adhan">Ezan Sesini Çal</string>
+    <string name="settings_play_adhan_desc">Namaz vakti geldiğinde ezan sesi çal</string>
+    <string name="settings_adhan_sound_selection">Ezan Sesi Seçimi</string>
+    <string name="settings_adhan_sound_selection_desc">Namaz vakitlerinde çalınacak sesi seçin</string>
+    <string name="settings_reliability">Güvenilirlik ve Optimizasyon</string>
+    <string name="settings_battery_opt">Pil Optimizasyonu</string>
+    <string name="settings_battery_opt_enabled">Güvenilirlik için optimize edildi</string>
+    <string name="settings_battery_opt_disabled">Güvenilir ezanlar için optimizasyonu kapatmak üzere tıklayın</string>
+    <string name="settings_exact_alarm_title">Tam Zamanlı Alarmlar</string>
+    <string name="settings_exact_alarm_desc">Hassas namaz vakti bildirimleri için gereklidir</string>
 </resources>

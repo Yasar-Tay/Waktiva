@@ -64,7 +64,7 @@ fun SettingsScreen(
         ) {
             // Audio Settings Entry
             Text(
-                text = "Notifications & Sound",
+                text = stringResource(R.string.settings_notifications_sound),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -77,8 +77,8 @@ fun SettingsScreen(
                 Column {
                     // Adhan Audio Toggle
                     ListItem(
-                        headlineContent = { Text("Play Adhan Audio") },
-                        supportingContent = { Text("Play adhan sound when it's time for prayer") },
+                        headlineContent = { Text(stringResource(R.string.settings_play_adhan)) },
+                        supportingContent = { Text(stringResource(R.string.settings_play_adhan_desc)) },
                         trailingContent = {
                             Switch(
                                 checked = settings?.playAdhanAudio ?: true,
@@ -103,8 +103,8 @@ fun SettingsScreen(
                     Divider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
                     
                     ListItem(
-                        headlineContent = { Text("Adhan Sound Selection") },
-                        supportingContent = { Text("Select the sound played during prayer times") },
+                        headlineContent = { Text(stringResource(R.string.settings_adhan_sound_selection)) },
+                        supportingContent = { Text(stringResource(R.string.settings_adhan_sound_selection_desc)) },
                         leadingContent = { Icon(Icons.Default.Notifications, contentDescription = null) },
                         trailingContent = { Icon(Icons.Default.KeyboardArrowRight, contentDescription = null) },
                         modifier = Modifier.clickable { onNavigateToAudio() }
@@ -115,7 +115,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Reliability & Optimization",
+                text = stringResource(R.string.settings_reliability),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -144,11 +144,11 @@ fun SettingsScreen(
                 }
 
                 ListItem(
-                    headlineContent = { Text("Battery Optimization") },
+                    headlineContent = { Text(stringResource(R.string.settings_battery_opt)) },
                     supportingContent = { 
                         Text(if (isIgnoringBatteryOptimizations) 
-                            "Optimized for reliability" 
-                            else "Click to disable optimization for reliable Adhans")
+                            stringResource(R.string.settings_battery_opt_enabled)
+                            else stringResource(R.string.settings_battery_opt_disabled))
                     },
                     leadingContent = { 
                         Icon(
@@ -392,8 +392,8 @@ fun PermissionManager() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 PermissionItem(
-                    title = "Exact Alarms",
-                    description = "Needed for precise prayer time notifications",
+                    title = stringResource(R.string.settings_exact_alarm_title),
+                    description = stringResource(R.string.settings_exact_alarm_desc),
                     isGranted = alarmManager.canScheduleExactAlarms()
                 )
             }

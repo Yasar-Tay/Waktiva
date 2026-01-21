@@ -60,7 +60,7 @@ class AudioSettingsViewModel @Inject constructor(
 
         items.add(
             AdhanAudioItem(
-                name = "Default Adhan",
+                name = context.getString(R.string.audio_setting_default),
                 path = defaultPath,
                 isDefault = true,
                 isSelected = isSelected,

@@ -15,8 +15,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,11 +40,11 @@ fun AudioSettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Audio Settings") },
+                title = { Text(stringResource(id = R.string.audio_settings_title)) },
                 navigationIcon = {
                     if (onBack != null) {
                         IconButton(onClick = onBack) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.cd_back))
                         }
                     }
                 }
@@ -52,7 +54,7 @@ fun AudioSettingsScreen(
             ExtendedFloatingActionButton(
                 onClick = { launcher.launch("audio/*") },
                 icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                text = { Text("Add Custom") }
+                text = { Text(stringResource(id = R.string.audio_add_custom)) }
             )
         }
     ) { padding ->
@@ -85,7 +87,7 @@ fun AudioSettingsScreen(
             if (settings?.useSpecificAdhanForEachPrayer == true) {
                 item {
                     Text(
-                        text = "Select Prayer to Configure",
+                        text = stringResource(id = R.string.audio_select_prayer_prompt),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -100,9 +102,9 @@ fun AudioSettingsScreen(
             // 4. Audio List Header
             item {
                 val headerText = if (settings?.useSpecificAdhanForEachPrayer == true) {
-                    "Adhan for ${selectedPrayerType?.displayName ?: "All"}"
+                    stringResource(R.string.audio_header_specific, selectedPrayerType?.displayName ?: stringResource(R.string.audio_header_all_prayers))
                 } else {
-                    "Select Adhan Sound (Global)"
+                    stringResource(R.string.audio_header_global)
                 }
                 
                 Text(
@@ -111,7 +113,7 @@ fun AudioSettingsScreen(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Supported: MP3, AAC, WAV, OGG",
+                    text = stringResource(id = R.string.audio_supported_formats),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -150,9 +152,9 @@ fun PreAdhanWarningCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Pre-Adhan Warning", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(id = R.string.settings_pre_adhan_warning), style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "Play a subtle sound before the Adhan starts",
+                        stringResource(id = R.string.settings_pre_adhan_warning_summary),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -166,7 +168,7 @@ fun PreAdhanWarningCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Text("Minutes before:", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(id = R.string.audio_minutes_before), style = MaterialTheme.typography.bodyMedium)
                     Slider(
                         value = minutes.toFloat(),
                         onValueChange = { onMinutesChange(it.toInt()) },
@@ -201,9 +203,9 @@ fun SelectionModeCard(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Individual Prayer Sounds", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(id = R.string.audio_individual_sounds_title), style = MaterialTheme.typography.titleMedium)
                 Text(
-                    "Set different Adhans for each prayer time",
+                    stringResource(id = R.string.audio_individual_sounds_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -258,7 +260,7 @@ fun AudioFileItem(
             IconButton(onClick = onTogglePreview) {
                 Icon(
                     imageVector = if (item.isPlaying) Icons.Default.Stop else Icons.Default.PlayArrow,
-                    contentDescription = if (item.isPlaying) "Stop" else "Play",
+                    contentDescription = if (item.isPlaying) stringResource(R.string.audio_preview_stop) else stringResource(R.string.audio_preview_play),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -271,7 +273,7 @@ fun AudioFileItem(
                 )
                 if (item.isDefault) {
                     Text(
-                        text = "Built-in",
+                        text = stringResource(id = R.string.audio_built_in),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -281,7 +283,7 @@ fun AudioFileItem(
             if (item.isSelected) {
                 Icon(
                     Icons.Default.CheckCircle,
-                    contentDescription = "Selected",
+                    contentDescription = stringResource(id = R.string.audio_selected_description),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(end = 8.dp)
                 )
@@ -291,7 +293,7 @@ fun AudioFileItem(
                 IconButton(onClick = onDelete) {
                     Icon(
                         Icons.Default.Delete,
-                        contentDescription = "Delete",
+                        contentDescription = stringResource(id = R.string.audio_delete_description),
                         tint = MaterialTheme.colorScheme.error
                     )
                 }

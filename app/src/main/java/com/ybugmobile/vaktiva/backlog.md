@@ -61,8 +61,8 @@ Goal: Reliable, user-customizable audio delivery.
 - [x] **[NEW]** Enhanced UI to inform users about supported formats (MP3, WAV, OGG, AAC).
 - [x] Internal Copying: Copy selected files to app's `files/audio` directory.
 - [x] Management UI: List custom sounds with a "Delete" option.
-- [ ] **[TODO]** Implement prayer-specific audio selection (e.g., Different Adhan for Fajr).
-- [ ] **[TODO]** Implement "Pre-Adhan Warning" system (5 min before with cancel option).
+- [x] Implement prayer-specific audio selection (e.g., Different Adhan for Fajr).
+- [x] Implement "Pre-Adhan Warning" system (5 min before with cancel option).
 
 ### Feature 2.2 – Playback Engine
 - [x] Integrate ExoPlayer with AudioAttributes for "Alarm" usage.
