@@ -8,7 +8,7 @@ import java.time.LocalTime
 
 fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
     if (day == null) return Brush.verticalGradient(listOf(Color(0xFF1e3c72), Color(0xFF2a5298)))
-    
+
     val fajr = day.timings[PrayerType.FAJR] ?: LocalTime.of(5, 0)
     val sunrise = day.timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 30)
     val dhuhr = day.timings[PrayerType.DHUHR] ?: LocalTime.of(12, 30)
@@ -17,12 +17,47 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
     val isha = day.timings[PrayerType.ISHA] ?: LocalTime.of(20, 0)
 
     return when {
-        currentTime.isBefore(fajr) -> Brush.verticalGradient(listOf(Color(0xFF0F2027), Color(0xFF203A43))) // Deep Night
-        currentTime.isBefore(sunrise) -> Brush.verticalGradient(listOf(Color(0xFF2C3E50), Color(0xFFFD746C))) // Dawn
-        currentTime.isBefore(dhuhr) -> Brush.verticalGradient(listOf(Color(0xFFF3904F), Color(0xFF3B4371))) // Morning
-        currentTime.isBefore(asr) -> Brush.verticalGradient(listOf(Color(0xFF4CA1AF), Color(0xFFC4E0E5))) // Midday
-        currentTime.isBefore(maghrib) -> Brush.verticalGradient(listOf(Color(0xFFF16529), Color(0xFFE44D26))) // Golden Hour
-        currentTime.isBefore(isha) -> Brush.verticalGradient(listOf(Color(0xFFE94057), Color(0xFFF27121))) // Sunset
-        else -> Brush.verticalGradient(listOf(Color(0xFF0F2027), Color(0xFF2C5364))) // Night After Isha
+        currentTime.isBefore(fajr) -> Brush.verticalGradient(
+            listOf(
+                Color(0xFF0F2027),
+                Color(0xFF203A43)
+            )
+        ) // Deep Night
+        currentTime.isBefore(sunrise) -> Brush.verticalGradient(
+            listOf(
+                Color(0xFF2C3E50),
+                Color(0xFFFD746C)
+            )
+        ) // Dawn
+        currentTime.isBefore(dhuhr) -> Brush.verticalGradient(
+            listOf(
+                Color(0xFF4CA1AF),
+                Color(0xFFC4E0E5)
+            )
+        ) // Midday
+        currentTime.isBefore(asr) -> Brush.verticalGradient(
+            listOf(
+                Color(0xFF4C79AF),
+                Color(0xFF4CA1AF)
+            )
+        ) // Morning
+        currentTime.isBefore(maghrib) -> Brush.verticalGradient(
+            listOf(
+                Color(0xFFF16529),
+                Color(0xFFE44D26)
+            )
+        ) // Golden Hour
+        currentTime.isBefore(isha) -> Brush.verticalGradient(
+            listOf(
+                Color(0xFFE94057),
+                Color(0xFFF27121)
+            )
+        ) // Sunset
+        else -> Brush.verticalGradient(
+            listOf(
+                Color(0xFF0F2027),
+                Color(0xFF2C5364)
+            )
+        ) // Night After Isha
     }
 }
