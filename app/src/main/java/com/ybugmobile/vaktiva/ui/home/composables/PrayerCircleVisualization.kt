@@ -1,7 +1,11 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -16,9 +20,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -29,6 +36,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NightsStay
+import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.filled.WbTwilight
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
@@ -61,6 +72,22 @@ fun PrayerCircleVisualization(
     var clickedItemId by remember { mutableStateOf<String?>(null) }
     val bounceAnim = remember { Animatable(1f) }
 
+    // Ripple Animation State
+    val rippleAnim = remember { Animatable(0f) }
+    var rippleCenter by remember { mutableStateOf(Offset.Zero) }
+
+    // Pulse Animation for Active Prayer
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 0.85f,
+        targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseScale"
+    )
+
     val sunrise = day.timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 0)
     val sunset = day.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
 
@@ -74,14 +101,19 @@ fun PrayerCircleVisualization(
         )
     }
 
+    val moonPainter = rememberVectorPainter(Icons.Default.NightsStay)
+    val sunPainter = rememberVectorPainter(Icons.Default.WbSunny)
+    val sunrisePainter = rememberVectorPainter(Icons.Default.WbTwilight)
+    val sunsetPainter = rememberVectorPainter(Icons.Default.WbTwilight)
+
     // Colors for each prayer - Vibrant and modern
     val prayers = listOf(
-        Triple(stringResource(R.string.prayer_fajr), day.timings[PrayerType.FAJR] ?: LocalTime.MIN, Color(0xFF64B5F6)),
-        Triple(stringResource(R.string.prayer_sunrise), sunrise, Color(0xFFFFB74D)),
-        Triple(stringResource(R.string.prayer_dhuhr), day.timings[PrayerType.DHUHR] ?: LocalTime.MIN, Color(0xFFFFD54F)),
-        Triple(stringResource(R.string.prayer_asr), day.timings[PrayerType.ASR] ?: LocalTime.MIN, Color(0xFFFF8A65)),
-        Triple(stringResource(R.string.prayer_maghrib), sunset, Color(0xFFBA68C8)),
-        Triple(stringResource(R.string.prayer_isha), day.timings[PrayerType.ISHA] ?: LocalTime.MIN, Color(0xFF9FA8DA))
+        PrayerInfo(stringResource(R.string.prayer_fajr), day.timings[PrayerType.FAJR] ?: LocalTime.MIN, Color(0xFF64B5F6), moonPainter),
+        PrayerInfo(stringResource(R.string.prayer_sunrise), sunrise, Color(0xFFFFB74D), sunrisePainter),
+        PrayerInfo(stringResource(R.string.prayer_dhuhr), day.timings[PrayerType.DHUHR] ?: LocalTime.MIN, Color(0xFFFFD54F), sunPainter),
+        PrayerInfo(stringResource(R.string.prayer_asr), day.timings[PrayerType.ASR] ?: LocalTime.MIN, Color(0xFFFF8A65), sunPainter),
+        PrayerInfo(stringResource(R.string.prayer_maghrib), sunset, Color(0xFFBA68C8), sunsetPainter),
+        PrayerInfo(stringResource(R.string.prayer_isha), day.timings[PrayerType.ISHA] ?: LocalTime.MIN, Color(0xFF9FA8DA), moonPainter)
     )
 
     Box(
@@ -120,12 +152,19 @@ fun PrayerCircleVisualization(
                         if (!clicked) {
                             val hitRadius = with(density) { 28.dp.toPx() }
                             for (prayer in prayers) {
-                                val (name, time, _) = prayer
+                                val (name, time, _, _) = prayer
                                 val pos = getPosition(time, radius, center)
                                 if ((tapOffset - pos).getDistance() <= hitRadius) {
                                     newTooltipData = "$name: ${time.format(formatter)}" to pos
                                     newClickedId = name
                                     clicked = true
+                                    
+                                    // Trigger Ripple
+                                    rippleCenter = pos
+                                    scope.launch {
+                                        rippleAnim.snapTo(0f)
+                                        rippleAnim.animateTo(1f, tween(400))
+                                    }
                                     break
                                 }
                             }
@@ -172,11 +211,11 @@ fun PrayerCircleVisualization(
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
                 size = Size(radius * 2, radius * 2),
-                style = Stroke(width = 8.dp.toPx())
+                style = Stroke(width = 4.dp.toPx())
             )
 
             // 2. Prayer Markers (Redesigned: Bold & Tactile)
-            prayers.forEach { (name, time, markerColor) ->
+            prayers.forEach { (name, time, markerColor, iconPainter) ->
                 val pos = getPosition(time, radius, center)
                 val isNext = nextPrayer?.time == time && isSelectedDayToday
                 val pScale = if (clickedItemId == name) bounceAnim.value else 1f
@@ -187,46 +226,53 @@ fun PrayerCircleVisualization(
                         // Outer pulse/halo
                         drawCircle(
                             color = markerColor.copy(alpha = 0.2f),
-                            radius = 24.dp.toPx(),
+                            radius = 24.dp.toPx() * pulseScale,
                             center = pos
                         )
                         drawCircle(
                             color = markerColor.copy(alpha = 0.4f),
-                            radius = 16.dp.toPx(),
+                            radius = 18.dp.toPx(),
                             center = pos
                         )
                         // Main body
                         drawCircle(
                             color = markerColor,
-                            radius = 11.dp.toPx(),
-                            center = pos
-                        )
-                        // Highlight center
-                        drawCircle(
-                            color = Color.White,
-                            radius = 4.dp.toPx(),
+                            radius = 14.dp.toPx(),
                             center = pos
                         )
                     } else {
                         // Regular "Glass Bead" Marker
                         drawCircle(
                             color = markerColor.copy(alpha = 0.3f),
-                            radius = 14.dp.toPx(),
+                            radius = 16.dp.toPx(),
                             center = pos
                         )
                         drawCircle(
                             color = markerColor.copy(alpha = 0.9f),
-                            radius = 9.dp.toPx(),
-                            center = pos
-                        )
-                        // Subtle inner depth
-                        drawCircle(
-                            color = Color.Black.copy(alpha = 0.15f),
-                            radius = 3.dp.toPx(),
+                            radius = 12.dp.toPx(),
                             center = pos
                         )
                     }
+
+                    // Draw Icon in the center
+                    val iconSize = 16.dp.toPx()
+                    val iconTint = if (markerColor.luminance() > 0.5f) Color.Black else Color.White
+
+                    translate(left = pos.x - iconSize / 2, top = pos.y - iconSize / 2) {
+                        with(iconPainter) {
+                            draw(size = Size(iconSize, iconSize), colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(iconTint))
+                        }
+                    }
                 }
+            }
+
+            // Ripple Effect
+            if (rippleAnim.value > 0f && rippleAnim.value < 1f) {
+                drawCircle(
+                    color = Color.White.copy(alpha = 0.5f * (1f - rippleAnim.value)),
+                    radius = 40.dp.toPx() * rippleAnim.value,
+                    center = rippleCenter
+                )
             }
 
             // 3. Current Time Handle
@@ -298,3 +344,10 @@ fun PrayerCircleVisualization(
         }
     }
 }
+
+private data class PrayerInfo(
+    val name: String,
+    val time: LocalTime,
+    val color: Color,
+    val icon: androidx.compose.ui.graphics.vector.VectorPainter
+)
