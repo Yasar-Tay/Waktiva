@@ -1,7 +1,10 @@
 package com.ybugmobile.vaktiva
 
 import android.Manifest
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -27,7 +30,9 @@ import com.ybugmobile.vaktiva.ui.qibla.QiblaScreen
 import com.ybugmobile.vaktiva.ui.settings.AudioSettingsScreen
 import com.ybugmobile.vaktiva.ui.settings.SettingsScreen
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
+import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
 import com.ybugmobile.vaktiva.ui.welcome.WelcomeScreen
+import android.widget.Toast
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 
@@ -120,6 +125,31 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel = hiltViewModel())
                         )
                     }
                 }
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val intent = Intent(context, PrayerAlarmReceiver::class.java).apply {
+                    putExtra("PRAYER_NAME", "Fajr")
+                }
+
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    999, // Unique request code for testing
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+
+                val triggerTime = System.currentTimeMillis() + 10_000 // 10 seconds from now
+
+                alarmManager.setAlarmClock(
+                    AlarmManager.AlarmClockInfo(triggerTime, pendingIntent),
+                    pendingIntent
+                )
+                Toast.makeText(context, "Test alarm set for 10 seconds.", Toast.LENGTH_SHORT).show()
+            }) {
+                Text("Test Adhan")
             }
         }
     ) { innerPadding ->

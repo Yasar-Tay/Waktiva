@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.ybugmobile.vaktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import dagger.assisted.Assisted
@@ -18,7 +19,8 @@ class PrayerUpdateWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val repository: PrayerRepository,
-    private val settingsManager: SettingsManager
+    private val settingsManager: SettingsManager,
+    private val alarmScheduler: AlarmScheduler
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -52,15 +54,22 @@ class PrayerUpdateWorker @AssistedInject constructor(
                 )
                 
                 if (resultCurrent.isSuccess && resultNext.isSuccess) {
+                    scheduleAlarms()
                     Result.success()
                 } else {
                     Result.retry()
                 }
             } else {
+                scheduleAlarms()
                 Result.success()
             }
         } catch (e: Exception) {
             Result.failure()
         }
+    }
+
+    private suspend fun scheduleAlarms() {
+        val prayerDays = repository.getPrayerDays().first()
+        alarmScheduler.scheduleUpcomingAlarms(prayerDays)
     }
 }

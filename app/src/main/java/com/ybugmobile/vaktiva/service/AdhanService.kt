@@ -1,11 +1,16 @@
 package com.ybugmobile.vaktiva.service
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.OptIn
+import androidx.core.app.NotificationCompat
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -63,10 +68,25 @@ class AdhanService : MediaSessionService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
+
         val audioPath = intent?.getStringExtra("AUDIO_PATH")
         val prayerName = intent?.getStringExtra("PRAYER_NAME") ?: "Prayer"
 
         if (audioPath != null) {
+            // Create a temporary notification to immediately promote the service to the foreground.
+            // This prevents Android from killing the service after a few seconds.
+            // The MediaSession notification will replace this one shortly.
+            createNotificationChannel()
+            val notification = NotificationCompat.Builder(this, "adhan_channel")
+                .setContentTitle("Adhan: $prayerName")
+                .setContentText("Preparing to play...")
+                .setSmallIcon(R.drawable.ic_launcher_foreground) // Ensure this is a valid icon
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .build()
+
+            startForeground(1001, notification)
+
             val mediaMetadata = MediaMetadata.Builder()
                 .setTitle("Adhan: $prayerName")
                 .setArtist("Vaktiva")
@@ -87,7 +107,23 @@ class AdhanService : MediaSessionService() {
             player?.play()
         }
 
-        return super.onStartCommand(intent, flags, startId)
+        // If the service is killed, it will be automatically restarted with the last intent.
+        return START_REDELIVER_INTENT
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "adhan_channel",
+                "Adhan Playback",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Shows notification when Adhan is playing"
+                setSound(null, null) // Audio is handled by the player, not the notification
+            }
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(channel)
+        }
     }
 
     private fun startFadeIn() {

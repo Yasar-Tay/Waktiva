@@ -3,11 +3,12 @@ package com.ybugmobile.vaktiva.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.os.Build
+import android.util.Log
 import com.ybugmobile.vaktiva.R
-import com.ybugmobile.vaktiva.data.audio.AudioPlayer
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.vaktiva.domain.model.PrayerType
+import com.ybugmobile.vaktiva.service.AdhanService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,21 +23,27 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var settingsManager: SettingsManager
 
-    @Inject
-    lateinit var audioPlayer: AudioPlayer
-
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
     override fun onReceive(context: Context, intent: Intent) {
-        val prayerName = intent.getStringExtra("PRAYER_NAME") ?: return
+        val prayerName = intent.getStringExtra("PRAYER_NAME")
+        if (prayerName == null) {
+            Log.e("PrayerAlarmReceiver", "PRAYER_NAME extra is missing or key mismatch! Check your AlarmScheduler.")
+            return
+        }
+
         val pendingResult = goAsync()
+        Log.d("PrayerAlarmReceiver", "Alarm received for $prayerName. Processing...")
 
         scope.launch {
             try {
                 val settings = settingsManager.settingsFlow.first()
 
-                if (!settings.playAdhanAudio) return@launch
+                if (!settings.playAdhanAudio) {
+                    Log.d("PrayerAlarmReceiver", "Adhan audio is disabled in settings.")
+                    return@launch
+                }
 
                 val prayerType = PrayerType.fromString(prayerName)
 
@@ -51,7 +58,20 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 // Fallback to default built-in adhan if no path is selected
                 val finalAudioPath = audioPath ?: "android.resource://${context.packageName}/${R.raw.ezan}"
 
-                audioPlayer.play(Uri.parse(finalAudioPath))
+                Log.d("PrayerAlarmReceiver", "Starting AdhanService for $prayerName. URI: $finalAudioPath")
+
+                val serviceIntent = Intent(context, AdhanService::class.java).apply {
+                    putExtra("PRAYER_NAME", prayerName)
+                    putExtra("AUDIO_PATH", finalAudioPath)
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(serviceIntent)
+                } else {
+                    context.startService(serviceIntent)
+                }
+            } catch (e: Exception) {
+                Log.e("PrayerAlarmReceiver", "Error starting service", e)
             } finally {
                 pendingResult.finish()
             }

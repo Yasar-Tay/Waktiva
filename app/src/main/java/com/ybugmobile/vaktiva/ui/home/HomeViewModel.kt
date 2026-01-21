@@ -2,6 +2,7 @@ package com.ybugmobile.vaktiva.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ybugmobile.vaktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
@@ -22,7 +23,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val prayerRepository: PrayerRepository,
     private val settingsManager: SettingsManager,
-    private val locationWrapper: LocationWrapper
+    private val locationWrapper: LocationWrapper,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
     val settings = settingsManager.settingsFlow
@@ -53,6 +55,14 @@ class HomeViewModel @Inject constructor(
 
         // Automatically fetch location and data on launch
         onPermissionsGranted()
+        
+        // Observe all prayer days and reschedule alarms when they change
+        allPrayerDays
+            .filter { it.isNotEmpty() }
+            .onEach { days ->
+                alarmScheduler.scheduleUpcomingAlarms(days)
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun tickerFlow(periodMillis: Long) = flow {

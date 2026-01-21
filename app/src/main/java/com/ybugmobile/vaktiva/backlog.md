@@ -82,6 +82,10 @@ Goal: Ensure the user never misses a prayer.
 - [x] High-Priority Notification Channel.
 - [x] Full-Screen Activity for lock screen alerts.
 
+### Feature 3.3 – Adhan Playback Controls
+- [ ] **Standard Notification Controls:** Ensure rich notification with a clear "Stop" action and proper service cleanup.
+- [ ] **In-App UI Controls:** The main app UI (HomeScreen) should reflect the Adhan's playback state via `MediaController` in `HomeViewModel`, showing controls only when active.
+
 ---
 
 ## 🧭 EPIC 4 – Qibla & Map Integration
