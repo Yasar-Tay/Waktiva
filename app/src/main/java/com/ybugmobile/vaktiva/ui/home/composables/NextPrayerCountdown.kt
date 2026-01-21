@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
@@ -64,7 +65,8 @@ fun NextPrayerCountdown(
                 color = Color.White.copy(alpha = if (isUrgent) alpha else 1f),
                 style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.Bold,
-                fontSize = 60.sp
+                fontSize = 60.sp,
+                fontFamily = FontFamily.Monospace
             )
 
             if (!isMuted && remainingSeconds < 30 * 60) { // Show if within 30 mins
