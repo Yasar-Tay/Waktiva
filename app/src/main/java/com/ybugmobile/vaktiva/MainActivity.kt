@@ -1,13 +1,21 @@
 package com.ybugmobile.vaktiva
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -17,6 +25,7 @@ import androidx.navigation.compose.*
 import androidx.work.*
 import com.ybugmobile.vaktiva.data.worker.LocationUpdateWorker
 import com.ybugmobile.vaktiva.data.worker.PrayerUpdateWorker
+import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
 import com.ybugmobile.vaktiva.ui.home.HomeScreen
 import com.ybugmobile.vaktiva.ui.home.HomeViewModel
 import com.ybugmobile.vaktiva.ui.navigation.Screen
@@ -41,9 +50,44 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             VaktivaTheme {
-                MainNavigation(this)
+                Box(modifier = Modifier.fillMaxSize()) {
+                    MainNavigation(this@MainActivity)
+                    
+                    // Test FAB to schedule alarm in 10 seconds
+                    FloatingActionButton(
+                        onClick = { scheduleTestAlarm() },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(end = 16.dp, bottom = 80.dp),
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                    ) {
+                        Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
+                    }
+                }
             }
         }
+    }
+
+    private fun scheduleTestAlarm() {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, PrayerAlarmReceiver::class.java).apply {
+            putExtra("PRAYER_NAME", "Fajr")
+            action = "com.ybugmobile.vaktiva.ACTION_PRAYER_ALARM"
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            2002, // Unique ID for test
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val triggerAt = System.currentTimeMillis() + 10000 // 10 seconds
+
+        alarmManager.setAlarmClock(
+            AlarmManager.AlarmClockInfo(triggerAt, pendingIntent),
+            pendingIntent
+        )
     }
 
     private fun scheduleWork() {

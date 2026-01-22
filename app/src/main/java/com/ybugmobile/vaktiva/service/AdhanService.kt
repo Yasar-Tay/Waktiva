@@ -1,12 +1,12 @@
 package com.ybugmobile.vaktiva.service
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +17,7 @@ import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
+import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
@@ -24,12 +25,15 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.CommandButton
-import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.MediaStyleNotificationHelper
+import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.ui.adhan.AdhanActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,7 +41,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AdhanService : MediaSessionService() {
 
-    private var player: ExoPlayer? = null
+    private var player: Player? = null
     private var mediaSession: MediaSession? = null
     
     private val handler = Handler(Looper.getMainLooper())
@@ -61,162 +65,187 @@ class AdhanService : MediaSessionService() {
             .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             .build()
 
-        player = ExoPlayer.Builder(this)
-            .setAudioAttributes(audioAttributes, false) // Automatic focus handling only supports USAGE_MEDIA and USAGE_GAME
+        val basePlayer = ExoPlayer.Builder(this)
+            .setAudioAttributes(audioAttributes, false)
             .build()
-            .apply {
-                addListener(object : Player.Listener {
-                    override fun onPlaybackStateChanged(playbackState: Int) {
-                        when (playbackState) {
-                            Player.STATE_ENDED -> {
-                                // Natural completion
-                                stopForeground(Service.STOP_FOREGROUND_REMOVE)
-                                stopSelf()
-                            }
-                            Player.STATE_IDLE -> {
-                                // Manually stopped or error
-                                stopForeground(Service.STOP_FOREGROUND_REMOVE)
-                                stopSelf()
-                            }
-                        }
-                    }
 
-                    override fun onPlaybackSuppressionReasonChanged(playbackSuppressionReason: Int) {
-                        if (playbackSuppressionReason == Player.PLAYBACK_SUPPRESSION_REASON_TRANSIENT_AUDIO_FOCUS_LOSS) {
-                            player?.stop()
-                        }
-                    }
+        // Hide "seek to previous/next" buttons by stripping the commands
+        player = object : ForwardingPlayer(basePlayer) {
+            override fun getAvailableCommands(): Player.Commands {
+                return super.getAvailableCommands().buildUpon()
+                    .remove(Player.COMMAND_SEEK_TO_PREVIOUS)
+                    .remove(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+                    .remove(Player.COMMAND_SEEK_TO_NEXT)
+                    .remove(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
+                    .build()
+            }
+        }
 
-                    override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-                        if (!playWhenReady && reason == Player.PLAY_WHEN_READY_CHANGE_REASON_AUDIO_FOCUS_LOSS) {
-                            player?.stop()
-                        }
-                    }
-
-                    override fun onPlayerError(error: PlaybackException) {
-                        if (!isFallbackPlaying) {
-                            isFallbackPlaying = true
-                            // Try fallback to system alarm sound
-                            val fallbackUri = Settings.System.DEFAULT_ALARM_ALERT_URI
-                            val mediaItem = MediaItem.fromUri(fallbackUri)
-                            player?.setMediaItem(mediaItem)
-                            player?.prepare()
-                            player?.play()
-                        } else {
-                            stopForeground(Service.STOP_FOREGROUND_REMOVE)
-                            stopSelf()
-                        }
-                    }
-                })
+        basePlayer.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                if (playbackState == Player.STATE_ENDED) {
+                    stopPlaybackAndService()
+                }
             }
 
-        mediaSession = MediaSession.Builder(this, player!!)
+            override fun onPlayerError(error: PlaybackException) {
+                if (!isFallbackPlaying) {
+                    isFallbackPlaying = true
+                    val fallbackUri = Settings.System.DEFAULT_ALARM_ALERT_URI
+                    val mediaItem = MediaItem.fromUri(fallbackUri)
+                    basePlayer.setMediaItem(mediaItem)
+                    basePlayer.prepare()
+                    basePlayer.play()
+                } else {
+                    stopPlaybackAndService()
+                }
+            }
+        })
+
+        // Define a custom STOP button for the MediaSession
+        val stopButton = CommandButton.Builder()
+            .setDisplayName("Stop Adhan")
+            .setIconResId(android.R.drawable.ic_menu_close_clear_cancel)
+            .setSessionCommand(SessionCommand(ACTION_STOP_ADHAN, Bundle.EMPTY))
             .build()
 
-        // Custom notification provider to handle full-screen intent and custom actions
-        setMediaNotificationProvider(object : MediaNotification.Provider {
-            private val defaultProvider = DefaultMediaNotificationProvider(this@AdhanService)
+        mediaSession = MediaSession.Builder(this, player!!)
+            .setCustomLayout(ImmutableList.of(stopButton))
+            .setCallback(object : MediaSession.Callback {
+                override fun onCustomCommand(
+                    session: MediaSession,
+                    controller: MediaSession.ControllerInfo,
+                    customCommand: SessionCommand,
+                    args: Bundle
+                ): ListenableFuture<SessionResult> {
+                    if (customCommand.customAction == ACTION_STOP_ADHAN) {
+                        stopPlaybackAndService()
+                    }
+                    return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+                }
+            })
+            .build()
 
+        setMediaNotificationProvider(object : MediaNotification.Provider {
             override fun createNotification(
                 session: MediaSession,
                 customLayout: ImmutableList<CommandButton>,
                 actionFactory: MediaNotification.ActionFactory,
                 onNotificationChangedCallback: MediaNotification.Provider.Callback
             ): MediaNotification {
-                // We use MediaItem metadata to get prayer name
                 val prayerName = session.player.currentMediaItem?.mediaMetadata?.title?.toString()?.replace("Adhan: ", "") ?: "Prayer"
                 
-                val fullScreenIntent = Intent(this@AdhanService, AdhanActivity::class.java).apply {
-                    putExtra("PRAYER_NAME", prayerName)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                }
-                val fullScreenPendingIntent = PendingIntent.getActivity(
-                    this@AdhanService, 
-                    0, 
-                    fullScreenIntent, 
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-
-                val stopIntent = Intent(this@AdhanService, AdhanService::class.java).apply {
-                    action = ACTION_STOP_ADHAN
-                }
-                val stopPendingIntent = PendingIntent.getService(
-                    this@AdhanService,
-                    1,
-                    stopIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-
-                val notificationBuilder = NotificationCompat.Builder(this@AdhanService, CHANNEL_ID)
-                    .setContentTitle("Adhan: $prayerName")
-                    .setContentText("It's time for prayer")
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setCategory(NotificationCompat.CATEGORY_ALARM)
-                    .setFullScreenIntent(fullScreenPendingIntent, true)
-                    .setOngoing(true)
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                    .addAction(android.R.drawable.ic_menu_close_clear_cancel, "STOP", stopPendingIntent)
+                val notificationBuilder = createNotificationBuilder(prayerName)
                 
-                // Set MediaStyle
+                // Index 0 is Play/Pause (since seek is removed), Index 1 is our custom Stop button
                 val mediaStyle = MediaStyleNotificationHelper.MediaStyle(session)
-                    .setShowActionsInCompactView(0)
+                    .setShowActionsInCompactView(0, 1)
                 
                 notificationBuilder.setStyle(mediaStyle)
 
                 return MediaNotification(NOTIFICATION_ID, notificationBuilder.build())
             }
 
-            override fun handleCustomCommand(
-                session: MediaSession,
-                action: String,
-                extras: Bundle
-            ): Boolean {
-                return defaultProvider.handleCustomCommand(session, action, extras)
-            }
+            override fun handleCustomCommand(session: MediaSession, action: String, extras: Bundle) = false
         })
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP_ADHAN) {
-            player?.stop()
-            player?.clearMediaItems()
-            // stopSelf() is called via listener
+            stopPlaybackAndService()
             return START_NOT_STICKY
         }
 
-        val audioPath = intent?.getStringExtra("AUDIO_PATH")
         val prayerName = intent?.getStringExtra("PRAYER_NAME") ?: "Prayer"
         
-        isFallbackPlaying = false
+        // Immediate foregrounding
+        val notification = createNotificationBuilder(prayerName).build()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+        } else {
+            startForeground(NOTIFICATION_ID, notification)
+        }
 
-        if (audioPath != null) {
+        val audioPath = intent?.getStringExtra("AUDIO_PATH")
+        if (audioPath != null && player?.playbackState == Player.STATE_IDLE) {
+            isFallbackPlaying = false
+            
             val mediaMetadata = MediaMetadata.Builder()
                 .setTitle("Adhan: $prayerName")
-                .setArtist("Vaktiva")
-                .setAlbumTitle("Prayer Call")
-                .setDisplayTitle("Time for $prayerName")
                 .build()
 
             val mediaItem = MediaItem.Builder()
                 .setUri(Uri.parse(audioPath))
-                .setMediaId(prayerName)
                 .setMediaMetadata(mediaMetadata)
                 .build()
             
             player?.setMediaItem(mediaItem)
             player?.prepare()
-            
             startFadeIn()
             player?.play()
+
+            val activityIntent = Intent(this, AdhanActivity::class.java).apply {
+                putExtra("PRAYER_NAME", prayerName)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+            startActivity(activityIntent)
         }
 
-        super.onStartCommand(intent, flags, startId)
-        return START_REDELIVER_INTENT
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun createNotificationBuilder(prayerName: String): NotificationCompat.Builder {
+        val fullScreenIntent = Intent(this, AdhanActivity::class.java).apply {
+            putExtra("PRAYER_NAME", prayerName)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+        val fullScreenPendingIntent = PendingIntent.getActivity(
+            this, 
+            0, 
+            fullScreenIntent, 
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val stopIntent = Intent(this, AdhanService::class.java).apply {
+            action = ACTION_STOP_ADHAN
+        }
+        val stopPendingIntent = PendingIntent.getService(
+            this,
+            1,
+            stopIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Adhan: $prayerName")
+            .setContentText("It's time for prayer")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setFullScreenIntent(fullScreenPendingIntent, true)
+            .setOngoing(true)
+            .setAutoCancel(false)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .addAction(android.R.drawable.ic_menu_close_clear_cancel, "STOP ADHAN", stopPendingIntent)
+
+        mediaSession?.let {
+            builder.setStyle(MediaStyleNotificationHelper.MediaStyle(it)
+                .setShowActionsInCompactView(0, 1))
+        }
+
+        return builder
+    }
+
+    private fun stopPlaybackAndService() {
+        player?.stop()
+        player?.clearMediaItems()
+        stopForeground(Service.STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 "Adhan Playback",
@@ -228,21 +257,17 @@ class AdhanService : MediaSessionService() {
                 setBypassDnd(true)
                 lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
             }
-            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
         }
     }
 
     private fun startFadeIn() {
         volumeFadeRunnable?.let { handler.removeCallbacks(it) }
-        
         var currentVolume = 0.05f
         player?.volume = currentVolume
-        
         volumeFadeRunnable = object : Runnable {
             override fun run() {
                 if (player == null) return
-                
                 currentVolume += 0.05f
                 if (currentVolume <= 1.0f) {
                     player?.volume = currentVolume
@@ -253,9 +278,7 @@ class AdhanService : MediaSessionService() {
         handler.post(volumeFadeRunnable!!)
     }
 
-    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
-        return mediaSession
-    }
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
     override fun onDestroy() {
         volumeFadeRunnable?.let { handler.removeCallbacks(it) }

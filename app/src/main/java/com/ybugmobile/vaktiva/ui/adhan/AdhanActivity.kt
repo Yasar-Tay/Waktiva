@@ -65,13 +65,17 @@ class AdhanActivity : ComponentActivity() {
                 controller = controllerFuture?.get()
                 controller?.addListener(object : Player.Listener {
                     override fun onPlaybackStateChanged(playbackState: Int) {
-                        if (playbackState == Player.STATE_IDLE || playbackState == Player.STATE_ENDED) {
+                        // Finish if the audio reaches the end OR is stopped/idle
+                        // (which happens when the notification STOP action is clicked)
+                        if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
                             finish()
                         }
                     }
                 })
-                // If it's already idle or ended by the time we connect
-                if (controller?.playbackState == Player.STATE_IDLE || controller?.playbackState == Player.STATE_ENDED) {
+                
+                // If it's already ended or idle by the time we connect, close activity
+                val state = controller?.playbackState
+                if (state == Player.STATE_ENDED || state == Player.STATE_IDLE) {
                     finish()
                 }
             } catch (e: Exception) {
