@@ -3,11 +3,8 @@ package com.ybugmobile.vaktiva.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -15,6 +12,7 @@ import android.os.Looper
 import android.provider.Settings
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.ForwardingPlayer
@@ -102,7 +100,6 @@ class AdhanService : MediaSessionService() {
             }
         })
 
-        // Define a custom STOP button for the MediaSession
         val stopButton = CommandButton.Builder()
             .setDisplayName("Stop Adhan")
             .setIconResId(android.R.drawable.ic_menu_close_clear_cancel)
@@ -127,6 +124,7 @@ class AdhanService : MediaSessionService() {
             .build()
 
         setMediaNotificationProvider(object : MediaNotification.Provider {
+            @OptIn(UnstableApi::class)
             override fun createNotification(
                 session: MediaSession,
                 customLayout: ImmutableList<CommandButton>,
@@ -134,15 +132,7 @@ class AdhanService : MediaSessionService() {
                 onNotificationChangedCallback: MediaNotification.Provider.Callback
             ): MediaNotification {
                 val prayerName = session.player.currentMediaItem?.mediaMetadata?.title?.toString()?.replace("Adhan: ", "") ?: "Prayer"
-                
-                val notificationBuilder = createNotificationBuilder(prayerName)
-                
-                // Index 0 is Play/Pause (since seek is removed), Index 1 is our custom Stop button
-                val mediaStyle = MediaStyleNotificationHelper.MediaStyle(session)
-                    .setShowActionsInCompactView(0, 1)
-                
-                notificationBuilder.setStyle(mediaStyle)
-
+                val notificationBuilder = createNotificationBuilder(prayerName, session)
                 return MediaNotification(NOTIFICATION_ID, notificationBuilder.build())
             }
 
@@ -158,8 +148,7 @@ class AdhanService : MediaSessionService() {
 
         val prayerName = intent?.getStringExtra("PRAYER_NAME") ?: "Prayer"
         
-        // Immediate foregrounding
-        val notification = createNotificationBuilder(prayerName).build()
+        val notification = createNotificationBuilder(prayerName, mediaSession).build()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
         } else {
@@ -175,7 +164,7 @@ class AdhanService : MediaSessionService() {
                 .build()
 
             val mediaItem = MediaItem.Builder()
-                .setUri(Uri.parse(audioPath))
+                .setUri(audioPath.toUri())
                 .setMediaMetadata(mediaMetadata)
                 .build()
             
@@ -194,7 +183,8 @@ class AdhanService : MediaSessionService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun createNotificationBuilder(prayerName: String): NotificationCompat.Builder {
+    @OptIn(UnstableApi::class)
+    private fun createNotificationBuilder(prayerName: String, session: MediaSession?): NotificationCompat.Builder {
         val fullScreenIntent = Intent(this, AdhanActivity::class.java).apply {
             putExtra("PRAYER_NAME", prayerName)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -228,7 +218,7 @@ class AdhanService : MediaSessionService() {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, "STOP ADHAN", stopPendingIntent)
 
-        mediaSession?.let {
+        session?.let {
             builder.setStyle(MediaStyleNotificationHelper.MediaStyle(it)
                 .setShowActionsInCompactView(0, 1))
         }
@@ -239,13 +229,13 @@ class AdhanService : MediaSessionService() {
     private fun stopPlaybackAndService() {
         player?.stop()
         player?.clearMediaItems()
-        stopForeground(Service.STOP_FOREGROUND_REMOVE)
+        stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 "Adhan Playback",
