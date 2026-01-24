@@ -2,7 +2,6 @@ package com.ybugmobile.vaktiva.ui.home
 
 import android.Manifest
 import android.os.Build
-import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -20,11 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,7 +40,6 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.ZoneId
-import java.util.Locale
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -50,9 +49,7 @@ fun HomeScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         lifecycleOwner.lifecycle.addObserver(viewModel)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(viewModel)
-        }
+        onDispose { lifecycleOwner.lifecycle.removeObserver(viewModel) }
     }
 
     val state by viewModel.state.collectAsState()
@@ -92,52 +89,48 @@ fun HomeScreenContent(
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         permissions.add(Manifest.permission.POST_NOTIFICATIONS)
     }
-
     val permissionState = rememberMultiplePermissionsState(permissions)
 
-    val backgroundGradient = getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
+    val backgroundGradient =
+        getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
     val scrollState = rememberScrollState()
-
+    var isFlipped by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
     var showMethodDialog by remember { mutableStateOf(false) }
 
-    // Dynamic Color Logic
-    val sunrise = state.currentPrayerDay?.timings?.get(PrayerType.SUNRISE)
-    val sunset = state.currentPrayerDay?.timings?.get(PrayerType.MAGHRIB)
-    val isLightBackground = if (sunrise != null && sunset != null) {
-        val t = state.currentTime.toLocalTime()
-        t.isAfter(sunrise) && t.isBefore(sunset)
-    } else false
+    val isLight = state.currentPrayerDay?.let { day ->
+        val sunrise = day.timings[PrayerType.SUNRISE]
+        val sunset = day.timings[PrayerType.MAGHRIB]
+        if (sunrise != null && sunset != null) {
+            val now = state.currentTime.toLocalTime()
+            now.isAfter(sunrise) && now.isBefore(sunset)
+        } else false
+    } ?: false
 
-    val contentColor = if (isLightBackground) Color.Black else Color.White
-    val containerColor = if (isLightBackground) Color.White.copy(alpha = 0.5f) else Color.Black.copy(alpha = 0.2f)
-    val textShadow = if (!isLightBackground) Shadow(
-        color = Color.Black.copy(alpha = 0.5f),
+    val contentColor = if (isLight) Color.Black else Color.White
+    val textShadow = if (!isLight) Shadow(
+        Color.Black.copy(alpha = 0.5f),
         offset = Offset(0f, 2f),
         blurRadius = 4f
     ) else null
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(brush = backgroundGradient)
-    ) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(brush = backgroundGradient)) {
         if (state.isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = contentColor)
-            }
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = contentColor
+            )
         } else {
             PullToRefreshBox(
                 isRefreshing = state.isRefreshing,
                 onRefresh = onRefresh,
                 modifier = Modifier.fillMaxSize()
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(scrollState),
-                    horizontalAlignment = Alignment.Start
-                ) {
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)) {
                     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
                         if (!permissionState.allPermissionsGranted) {
                             Spacer(modifier = Modifier.height(24.dp))
@@ -146,59 +139,178 @@ fun HomeScreenContent(
 
                         Spacer(modifier = Modifier.height(48.dp))
 
-                        // Location & Date
-                        val locationText = state.locationName.ifEmpty { stringResource(R.string.home_unknown_location) }
+                        // Header with Location and Date Card on top right
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Column(
+                                modifier = Modifier
+                                    .align(Alignment.TopStart)
+                                    .padding(end = 100.dp)
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        Icons.Default.LocationOn,
+                                        null,
+                                        tint = contentColor,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = state.locationName.ifEmpty { stringResource(R.string.home_unknown_location) },
+                                        color = contentColor,
+                                        style = MaterialTheme.typography.titleMedium.copy(shadow = textShadow),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                Text(
+                                    text = state.selectedDate.format(DateTimeFormatter.ofPattern("EEEE, d MMMM")),
+                                    color = contentColor.copy(alpha = 0.8f),
+                                    style = MaterialTheme.typography.bodyLarge.copy(shadow = textShadow),
+                                    modifier = Modifier
+                                        .padding(start = 32.dp)
+                                        .clickable { showDatePicker = true }
+                                )
+                            }
 
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = null,
-                                tint = contentColor,
-                                modifier = Modifier.size(24.dp)
-                            )
-
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            Text(
-                                text = locationText,
-                                color = contentColor,
-                                style = MaterialTheme.typography.titleMedium.copy(shadow = textShadow),
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Start
-                            )
-                        }
-
-                        // Display selected date's info
-                        val displayDate = if (state.selectedDate == LocalDate.now()) {
-                            state.currentTime.format(DateTimeFormatter.ofPattern("EEEE, d MMMM"))
-                        } else {
-                            state.selectedDate.format(DateTimeFormatter.ofPattern("EEEE, d MMMM"))
-                        }
-
-                        Text(
-                            text = displayDate,
-                            color = contentColor.copy(alpha = 0.8f),
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                shadow = textShadow
-                            ),
-                            modifier = Modifier.padding(start = 32.dp)
-                        )
-
-                        if (state.currentPrayerDay != null) {
-                            Text(
-                                text = formatHijriDate(state.currentPrayerDay.hijriDate),
-                                color = contentColor.copy(alpha = 0.8f),
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    shadow = textShadow
-                                ),
-                                modifier = Modifier.padding(start = 32.dp)
-                            )
+                            // Flippable Date Card (Top Right)
+                            if (state.currentPrayerDay != null) {
+                                val rotation by animateFloatAsState(
+                                    if (isFlipped) 180f else 0f,
+                                    tween(500, easing = FastOutSlowInEasing),
+                                    label = "flip"
+                                )
+                                Surface(
+                                    color = Color.White,
+                                    shape = RoundedCornerShape(16.dp),
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .width(84.dp)
+                                        .height(112.dp)
+                                        .graphicsLayer {
+                                            rotationY = rotation; cameraDistance = 12f * density
+                                        }
+                                        .clickable { isFlipped = !isFlipped },
+                                    shadowElevation = 8.dp
+                                ) {
+                                    if (rotation <= 90f) {
+                                        // FRONT: Gregorian
+                                        Column(
+                                            Modifier.fillMaxSize(),
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Box(
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .weight(0.35f)
+                                                    .background(
+                                                        MaterialTheme.colorScheme.error.copy(0.3f)
+                                                    ), Alignment.Center
+                                            ) {
+                                                Text(
+                                                    state.selectedDate.format(
+                                                        DateTimeFormatter.ofPattern(
+                                                            "MMM"
+                                                        )
+                                                    ).uppercase(),
+                                                    color = MaterialTheme.colorScheme.primary,
+                                                    fontSize = 12.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            }
+                                            HorizontalDivider(
+                                                thickness = 1.dp,
+                                                color = Color.Black.copy(0.05f)
+                                            )
+                                            Column(
+                                                Modifier.weight(0.65f),
+                                                Arrangement.Center,
+                                                Alignment.CenterHorizontally
+                                            ) {
+                                                Text(
+                                                    state.selectedDate.dayOfMonth.toString(),
+                                                    fontSize = 32.sp,
+                                                    fontWeight = FontWeight.ExtraBold,
+                                                    color = Color.Black
+                                                )
+                                                Text(
+                                                    state.selectedDate.format(
+                                                        DateTimeFormatter.ofPattern(
+                                                            "EEEE"
+                                                        )
+                                                    ).uppercase().take(3),
+                                                    fontSize = 10.sp,
+                                                    fontWeight = FontWeight.Black,
+                                                    color = MaterialTheme.colorScheme.primary
+                                                )
+                                                /*Text(
+                                                    state.selectedDate.year.toString(),
+                                                    fontSize = 10.sp,
+                                                    color = Color.Gray
+                                                )*/
+                                            }
+                                        }
+                                    } else {
+                                        // BACK: Hijri
+                                        Box(
+                                            Modifier
+                                                .fillMaxSize()
+                                                .graphicsLayer { rotationY = 180f }) {
+                                            val parts = state.currentPrayerDay.hijriDate.split(" ")
+                                            if (parts.size >= 3) {
+                                                Column(
+                                                    Modifier.fillMaxSize(),
+                                                    horizontalAlignment = Alignment.CenterHorizontally
+                                                ) {
+                                                    Box(
+                                                        Modifier
+                                                            .fillMaxWidth()
+                                                            .weight(0.35f)
+                                                            .background(Color(0xFF4CAF50).copy(0.2f)),
+                                                        Alignment.Center
+                                                    ) {
+                                                        Text(
+                                                            parts[1].uppercase().take(3),
+                                                            color = Color(0xFF2E7D32),
+                                                            fontSize = 12.sp,
+                                                            fontWeight = FontWeight.Bold
+                                                        )
+                                                    }
+                                                    HorizontalDivider(
+                                                        thickness = 1.dp,
+                                                        color = Color.Black.copy(0.05f)
+                                                    )
+                                                    Column(
+                                                        Modifier.weight(0.65f),
+                                                        Arrangement.Center,
+                                                        Alignment.CenterHorizontally
+                                                    ) {
+                                                        Text(
+                                                            parts[0],
+                                                            fontSize = 32.sp,
+                                                            fontWeight = FontWeight.ExtraBold,
+                                                            color = Color.Black
+                                                        )
+                                                        Text(
+                                                            "${parts[2]} AH",
+                                                            fontSize = 10.sp,
+                                                            fontWeight = FontWeight.Bold,
+                                                            color = Color.Gray
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        // Circular Prayer Visualization
-                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        // Circular Visualization
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             if (state.currentPrayerDay != null) {
                                 PrayerCircleVisualization(
                                     day = state.currentPrayerDay,
@@ -206,78 +318,8 @@ fun HomeScreenContent(
                                     nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
                                     isSelectedDayToday = state.selectedDate == LocalDate.now(),
                                     contentColor = contentColor,
-                                    centerContent = {
-                                        if (state.isRefreshing) {
-                                            CircularProgressIndicator(
-                                                color = contentColor,
-                                                modifier = Modifier.size(48.dp)
-                                            )
-                                        } else {
-                                            Column(
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                verticalArrangement = Arrangement.Center,
-                                                modifier = Modifier.clickable { showDatePicker = true }
-                                            ) {
-                                                Text(
-                                                    text = state.selectedDate.format(DateTimeFormatter.ofPattern("MMM", Locale.getDefault())).uppercase(),
-                                                    style = MaterialTheme.typography.titleMedium.copy(
-                                                        shadow = textShadow
-                                                    ),
-                                                    color = contentColor.copy(alpha = 0.9f),
-                                                    fontWeight = FontWeight.Medium
-                                                )
-                                                Text(
-                                                    text = "${state.selectedDate.dayOfMonth}",
-                                                    style = MaterialTheme.typography.displayMedium.copy(
-                                                        shadow = textShadow
-                                                    ),
-                                                    fontWeight = FontWeight.Bold,
-                                                    color = contentColor,
-                                                    fontSize = 64.sp
-                                                )
-                                                Text(
-                                                    text = state.selectedDate.year.toString(),
-                                                    style = MaterialTheme.typography.titleSmall.copy(
-                                                        shadow = textShadow
-                                                    ),
-                                                    color = contentColor.copy(alpha = 0.7f)
-                                                )
-                                            }
-                                        }
-                                    }
+                                    centerContent = {}
                                 )
-                            } else {
-                                // This branch is only taken if isLoading is false AND currentPrayerDay is null
-                                // (Truly no data even after checking)
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .aspectRatio(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Warning,
-                                        contentDescription = null,
-                                        tint = contentColor.copy(alpha = 0.6f),
-                                        modifier = Modifier.size(48.dp)
-                                    )
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Text(
-                                        text = "Data unavailable",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = contentColor.copy(alpha = 0.8f)
-                                    )
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Button(
-                                        onClick = { onRefresh() },
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = containerColor
-                                        )
-                                    ) {
-                                        Text("Retry")
-                                    }
-                                }
                             }
                         }
                     }
@@ -285,106 +327,59 @@ fun HomeScreenContent(
                     NextPrayerCountdown(
                         nextPrayer = state.nextPrayer,
                         selectedDate = state.selectedDate,
-                        onSkipAudio = onSkipNextAudio,
-                        isMuted = settings?.mutedPrayerName == state.nextPrayer?.type?.name && settings?.mutedPrayerDate == LocalDate.now().toString()
+                        onSkipAudio = { state.nextPrayer?.let { onSkipNextAudio(it.type.name) } },
+                        isMuted = settings?.mutedPrayerName == state.nextPrayer?.type?.name && settings?.mutedPrayerDate == LocalDate.now()
+                            .toString()
                     )
 
-                    // Adhan Playback Controls
-                    AnimatedVisibility(
-                        visible = state.isAdhanPlaying,
-                        enter = expandVertically() + fadeIn(),
-                        exit = shrinkVertically() + fadeOut(),
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
-                    ) {
+                    // Adhan Controls
+                    if (state.isAdhanPlaying) {
                         Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f)
-                            ),
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.large,
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                            modifier = Modifier
+                                .padding(24.dp)
+                                .fillMaxWidth(),
+                            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
                         ) {
                             Row(
-                                modifier = Modifier.padding(16.dp),
+                                Modifier.padding(16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Row(
-                                    modifier = Modifier.weight(1f),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.MusicNote,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(32.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                    Column {
-                                        Text(
-                                            text = state.playingPrayerName ?: "Adhan Playing",
-                                            style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                                        )
-                                        Text(
-                                            text = "Playing right now",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                                        )
-                                    }
-                                }
+                                Text(
+                                    state.playingPrayerName ?: "Adhan Playing",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
                                 Button(
                                     onClick = onStopAdhan,
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.error,
-                                        contentColor = MaterialTheme.colorScheme.onError
-                                    ),
-                                    shape = MaterialTheme.shapes.medium
-                                ) {
-                                    Icon(Icons.Default.Stop, contentDescription = null)
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text("STOP")
-                                }
+                                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
+                                ) { Text("STOP") }
                             }
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+                    Column(modifier = Modifier.padding(24.dp)) {
                         ModernCalendarStrip(
-                            selectedDate = state.selectedDate,
-                            availableDates = allDays.map { it.date }.filter { !it.isBefore(LocalDate.now()) },
-                            onDateSelected = onDateSelected
+                            state.selectedDate,
+                            allDays.map { it.date }.filter { !it.isBefore(LocalDate.now()) },
+                            onDateSelected
                         )
-                        
-                        Spacer(modifier = Modifier.height(24.dp))
-
+                        Spacer(Modifier.height(24.dp))
                         if (state.currentPrayerDay != null) {
                             PrayerTimeList(
-                                day = state.currentPrayerDay,
-                                nextPrayerType = if (state.selectedDate == LocalDate.now()) state.nextPrayer?.type else null,
-                                contentColor = contentColor,
-                                highlightColor = containerColor
+                                state.currentPrayerDay,
+                                if (state.selectedDate == LocalDate.now()) state.nextPrayer?.type else null,
+                                contentColor,
+                                contentColor.copy(0.1f)
                             )
                         }
-
-                        Spacer(modifier = Modifier.height(32.dp))
-
-                        settings?.let {
-                            val methodName = calculationMethods.find { m -> m.second == it.calculationMethod }?.first
-                                ?: "Unknown Method"
-
+                        Spacer(Modifier.height(32.dp))
+                        settings?.let { s ->
                             Card(
                                 onClick = { showMethodDialog = true },
-                                colors = CardDefaults.cardColors(
-                                    containerColor = containerColor
-                                ),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Row(
-                                    modifier = Modifier
+                                    Modifier
                                         .padding(16.dp)
                                         .fillMaxWidth(),
                                     verticalAlignment = Alignment.CenterVertically,
@@ -392,26 +387,20 @@ fun HomeScreenContent(
                                 ) {
                                     Column {
                                         Text(
-                                            text = "Calculation Method",
-                                            style = MaterialTheme.typography.labelMedium,
-                                            color = contentColor.copy(alpha = 0.6f)
+                                            "Calculation Method",
+                                            style = MaterialTheme.typography.labelMedium
                                         )
                                         Text(
-                                            text = methodName,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = contentColor
+                                            calculationMethods.find { it.second == s.calculationMethod }?.first
+                                                ?: "Default",
+                                            style = MaterialTheme.typography.bodyMedium
                                         )
                                     }
-                                    Icon(
-                                        imageVector = Icons.Default.Settings,
-                                        contentDescription = "Settings",
-                                        tint = contentColor.copy(alpha = 0.6f)
-                                    )
+                                    Icon(Icons.Default.Settings, null)
                                 }
                             }
                         }
-
-                        Spacer(modifier = Modifier.height(100.dp))
+                        Spacer(Modifier.height(100.dp))
                     }
                 }
             }
@@ -419,90 +408,57 @@ fun HomeScreenContent(
     }
 
     if (showDatePicker) {
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = state.selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val dateState = rememberDatePickerState(
+            state.selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
         )
-
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let { millis ->
-                            val date = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate()
-                            onDateSelected(date)
-                        }
-                        showDatePicker = false
-                    }
-                ) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            DatePicker(state = datePickerState)
+                TextButton(onClick = {
+                    dateState.selectedDateMillis?.let {
+                        onDateSelected(
+                            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+                        )
+                    }; showDatePicker = false
+                }) { Text("OK") }
+            }) {
+            DatePicker(dateState)
         }
     }
 
     if (showMethodDialog) {
         AlertDialog(
             onDismissRequest = { showMethodDialog = false },
-            title = { Text(text = stringResource(R.string.settings_method)) },
+            title = { Text("Method") },
             text = {
-                LazyColumn(
-                    modifier = Modifier.heightIn(max = 400.dp)
-                ) {
+                LazyColumn {
                     items(calculationMethods) { (name, id) ->
                         Row(
-                            modifier = Modifier
+                            Modifier
                                 .fillMaxWidth()
-                                .clickable {
-                                    onMethodSelected(id)
-                                    showMethodDialog = false
-                                }
-                                .padding(vertical = 12.dp, horizontal = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .clickable { onMethodSelected(id); showMethodDialog = false }
+                                .padding(12.dp), verticalAlignment = Alignment.CenterVertically
                         ) {
-                            RadioButton(
-                                selected = (id == settings?.calculationMethod),
-                                onClick = null
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = name, style = MaterialTheme.typography.bodyMedium)
+                            RadioButton(id == settings?.calculationMethod, null)
+                            Spacer(Modifier.width(8.dp))
+                            Text(name)
                         }
                     }
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showMethodDialog = false }) {
-                    Text("Close")
-                }
-            }
-        )
+                TextButton(onClick = {
+                    showMethodDialog = false
+                }) { Text("Close") }
+            })
     }
 }
 
-// Utility to format Hijri date
 private fun formatHijriDate(hijri: String): String {
     return try {
-        val parts = hijri.split("-")
-        if (parts.size == 3) {
-            "${parts[2]} ${getMonthName(parts[1].toInt())} ${parts[0]} AH"
-        } else hijri
+        val parts = hijri.split(" ")
+        if (parts.size >= 3) "${parts[0]} ${parts[1]} ${parts[2]} AH" else hijri
     } catch (e: Exception) {
         hijri
     }
-}
-
-private fun getMonthName(month: Int): String {
-    val months = listOf(
-        "Muharram", "Safar", "Rabi' al-awwal", "Rabi' al-thani",
-        "Jumada al-ula", "Jumada al-akhira", "Rajab", "Sha'ban",
-        "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"
-    )
-    return if (month in 1..12) months[month - 1] else ""
 }
