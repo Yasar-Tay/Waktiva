@@ -167,4 +167,9 @@
     <string name="settings_battery_opt_disabled">Click to disable optimization for reliable Adhans</string>
     <string name="settings_exact_alarm_title">Exact Alarms</string>
     <string name="settings_exact_alarm_desc">Needed for precise prayer time notifications</string>
+
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">It\'s time for</string>
+    <string name="adhan_stop">STOP ADHAN</string>
+    <string name="adhan_default_prayer">Prayer</string>
 </resources>

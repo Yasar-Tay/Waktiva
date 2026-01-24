@@ -148,4 +148,9 @@
     <string name="settings_battery_opt_disabled">Güvenilir ezanlar için optimizasyonu kapatmak üzere tıklayın</string>
     <string name="settings_exact_alarm_title">Tam Zamanlı Alarmlar</string>
     <string name="settings_exact_alarm_desc">Hassas namaz vakti bildirimleri için gereklidir</string>
+
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">Vakti Geldi:</string>
+    <string name="adhan_stop">EZANI DURDUR</string>
+    <string name="adhan_default_prayer">Namaz</string>
 </resources>
