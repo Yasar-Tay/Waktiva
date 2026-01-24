@@ -18,22 +18,26 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
@@ -63,7 +67,7 @@ fun PrayerCircleVisualization(
     val scope = rememberCoroutineScope()
 
     var canvasSize by remember { mutableStateOf(Size.Zero) }
-    
+
     // Tooltip & Animation State
     var tooltipData by remember { mutableStateOf<Triple<String, Offset, Color>?>(null) }
     val tooltipAlpha = remember { Animatable(0f) }
@@ -135,7 +139,7 @@ fun PrayerCircleVisualization(
             } else break
         }
         // If it's before the first prayer, it's Isha from the previous day, but in this circle we might just not emphasize yet
-        current ?: PrayerType.ISHA 
+        current ?: PrayerType.ISHA
     }
 
     Box(
@@ -165,7 +169,7 @@ fun PrayerCircleVisualization(
                             val currentPos = getPosition(currentTime, radius, center)
                             val hitRadius = with(density) { 32.dp.toPx() } // Generous hit area
                             if ((tapOffset - currentPos).getDistance() <= hitRadius) {
-                                newTooltipData = Triple("Current: ${currentTime.format(formatter)}", currentPos, Color.Cyan)
+                                newTooltipData = Triple("Current: ${currentTime.format(formatter)}", currentPos, Color.Red)
                                 newClickedId = "current"
                                 clicked = true
                             }
@@ -182,7 +186,7 @@ fun PrayerCircleVisualization(
                                     newTooltipData = Triple("${type.name}: ${time.format(formatter)}", pos, color)
                                     newClickedId = name
                                     clicked = true
-                                    
+
                                     // Trigger Ripple
                                     rippleCenter = pos
                                     scope.launch {
@@ -299,40 +303,51 @@ fun PrayerCircleVisualization(
                 )
             }
 
-            // Current Time Clock Hand
-            /*if (isSelectedDayToday) {
+            // Current Time Pointer (Triangle)
+            if (isSelectedDayToday) {
                 val totalMinutes = currentTime.hour * 60 + currentTime.minute
                 val angle = (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
-                val angleRad = Math.toRadians(angle.toDouble())
-                
+
                 val innerRadius = 120.dp.toPx()
                 val outerRadius = radius
-                
-                val start = Offset(
-                    center.x + innerRadius * cos(angleRad).toFloat(),
-                    center.y + innerRadius * sin(angleRad).toFloat()
-                )
-                val end = Offset(
+
+                val baseHalfAngle = 8f // 16 degrees total base
+
+                val angleRad = Math.toRadians(angle.toDouble())
+                val angleStartRad = Math.toRadians((angle - baseHalfAngle).toDouble())
+                val angleEndRad = Math.toRadians((angle + baseHalfAngle).toDouble())
+
+                val peak = Offset(
                     center.x + outerRadius * cos(angleRad).toFloat(),
                     center.y + outerRadius * sin(angleRad).toFloat()
                 )
-                
-                drawLine(
-                    color = Color.Cyan.copy(alpha = 0.8f),
-                    start = start,
-                    end = end,
-                    strokeWidth = 4.dp.toPx(),
-                    cap = StrokeCap.Round
+                val base1 = Offset(
+                    center.x + innerRadius * cos(angleStartRad).toFloat(),
+                    center.y + innerRadius * sin(angleStartRad).toFloat()
                 )
-                
-                drawLine(
-                    color = Color.Cyan.copy(alpha = 0.3f),
-                    start = start,
-                    end = end,
-                    strokeWidth = 8.dp.toPx(),
-                    cap = StrokeCap.Round
+                val base2 = Offset(
+                    center.x + innerRadius * cos(angleEndRad).toFloat(),
+                    center.y + innerRadius * sin(angleEndRad).toFloat()
                 )
-            }*/
+
+                val pointerPath = Path().apply {
+                    moveTo(peak.x, peak.y)
+                    lineTo(base1.x, base1.y)
+                    lineTo(base2.x, base2.y)
+                    close()
+                }
+
+                drawPath(
+                    path = pointerPath,
+                    color = Color.Red.copy(alpha = 0.6f)
+                )
+
+                drawPath(
+                    path = pointerPath,
+                    color = Color.Red,
+                    style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
+                )
+            }
         }
 
         // 2. Center Content (Date/Refresh/etc) - NextPrayerCountdown
@@ -349,7 +364,7 @@ fun PrayerCircleVisualization(
             if (tooltipAlpha.value > 0f && tooltipData != null) {
                 val (text, pos, bgColor) = tooltipData!!
                 val alpha = tooltipAlpha.value
-                
+
                 val textColor = if (bgColor.luminance() > 0.5f) Color.Black else Color.White
                 val textStyle = TextStyle(
                     color = textColor.copy(alpha = alpha),
@@ -358,7 +373,7 @@ fun PrayerCircleVisualization(
                     shadow = if (textColor == Color.White) Shadow(color = Color.Black, blurRadius = 8f) else null
                 )
                 val textLayout = textMeasurer.measure(text, textStyle)
-                
+
                 val paddingH = 16.dp.toPx()
                 val paddingV = 10.dp.toPx()
                 val boxWidth = textLayout.size.width + paddingH * 2
@@ -373,7 +388,7 @@ fun PrayerCircleVisualization(
                     size = Size(boxWidth, boxHeight),
                     cornerRadius = CornerRadius(16.dp.toPx())
                 )
-                
+
                 drawText(
                     textLayoutResult = textLayout,
                     topLeft = Offset(tooltipX + paddingH, tooltipY + paddingV)
