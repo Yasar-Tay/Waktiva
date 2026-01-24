@@ -158,17 +158,18 @@ fun HomeScreenContent(
                                         text = state.locationName.ifEmpty { stringResource(R.string.home_unknown_location) },
                                         color = contentColor,
                                         style = MaterialTheme.typography.titleMedium.copy(shadow = textShadow),
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 24.sp
                                     )
                                 }
-                                Text(
+                                /*Text(
                                     text = state.selectedDate.format(DateTimeFormatter.ofPattern("EEEE, d MMMM")),
                                     color = contentColor.copy(alpha = 0.8f),
                                     style = MaterialTheme.typography.bodyLarge.copy(shadow = textShadow),
                                     modifier = Modifier
                                         .padding(start = 32.dp)
                                         .clickable { showDatePicker = true }
-                                )
+                                )*/
                             }
 
                             // Flippable Date Card (Top Right)

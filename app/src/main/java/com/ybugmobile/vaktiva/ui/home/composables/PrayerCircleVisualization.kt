@@ -24,20 +24,17 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
@@ -138,8 +135,11 @@ fun PrayerCircleVisualization(
                 current = sortedTimings[i].first
             } else break
         }
-        // If it's before the first prayer, it's Isha from the previous day, but in this circle we might just not emphasize yet
         current ?: PrayerType.ISHA
+    }
+
+    val currentPrayerColor = remember(currentPrayerType, prayers) {
+        prayers.find { it.type == currentPrayerType }?.color ?: Color(0xFF64B5F6)
     }
 
     Box(
@@ -169,9 +169,16 @@ fun PrayerCircleVisualization(
                             val currentPos = getPosition(currentTime, radius, center)
                             val hitRadius = with(density) { 32.dp.toPx() } // Generous hit area
                             if ((tapOffset - currentPos).getDistance() <= hitRadius) {
-                                newTooltipData = Triple("Current: ${currentTime.format(formatter)}", currentPos, Color.Red)
+                                newTooltipData = Triple("Current: ${currentTime.format(formatter)}", currentPos, currentPrayerColor)
                                 newClickedId = "current"
                                 clicked = true
+
+                                // Trigger Ripple
+                                rippleCenter = currentPos
+                                scope.launch {
+                                    rippleAnim.snapTo(0f)
+                                    rippleAnim.animateTo(1f, tween(400))
+                                }
                             }
                         }
 
@@ -305,6 +312,7 @@ fun PrayerCircleVisualization(
 
             // Current Time Pointer (Triangle)
             if (isSelectedDayToday) {
+                val tScale = if (clickedItemId == "current") bounceAnim.value else 1f
                 val totalMinutes = currentTime.hour * 60 + currentTime.minute
                 val angle = (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
 
@@ -337,16 +345,18 @@ fun PrayerCircleVisualization(
                     close()
                 }
 
-                drawPath(
-                    path = pointerPath,
-                    color = Color.Red.copy(alpha = 0.6f)
-                )
+                withTransform({ scale(tScale, tScale, peak) }) {
+                    drawPath(
+                        path = pointerPath,
+                        color = currentPrayerColor.copy(alpha = 0.4f),
+                    )
 
-                drawPath(
-                    path = pointerPath,
-                    color = Color.Red,
-                    style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
-                )
+                    drawPath(
+                        path = pointerPath,
+                        color = currentPrayerColor.copy(alpha = 0.8f),
+                        style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
+                    )
+                }
             }
         }
 

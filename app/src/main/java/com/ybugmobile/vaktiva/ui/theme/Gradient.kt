@@ -43,14 +43,15 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
         ) // Morning
         currentTime.isBefore(maghrib) -> Brush.verticalGradient(
             listOf(
-                Color(0xFFF16529),
-                Color(0xFFE44D26)
+                Color(0xFF2863A9),
+                Color(0xFF4C79AF)
             )
         ) // Golden Hour
         currentTime.isBefore(isha) -> Brush.verticalGradient(
             listOf(
                 Color(0xFFE94057),
-                Color(0xFFF27121)
+                Color(0xFFFF5722),
+                Color(0xFF381B08)
             )
         ) // Sunset
         else -> Brush.verticalGradient(
