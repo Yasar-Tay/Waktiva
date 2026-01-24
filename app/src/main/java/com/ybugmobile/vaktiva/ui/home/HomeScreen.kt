@@ -318,19 +318,19 @@ fun HomeScreenContent(
                                     nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
                                     isSelectedDayToday = state.selectedDate == LocalDate.now(),
                                     contentColor = contentColor,
-                                    centerContent = {}
+                                    centerContent = {
+                                        NextPrayerCountdown(
+                                            nextPrayer = state.nextPrayer,
+                                            selectedDate = state.selectedDate,
+                                            onSkipAudio = { state.nextPrayer?.let { onSkipNextAudio(it.type.name) } },
+                                            isMuted = settings?.mutedPrayerName == state.nextPrayer?.type?.name && settings?.mutedPrayerDate == LocalDate.now().toString(),
+                                            contentColor = contentColor
+                                        )
+                                    }
                                 )
                             }
                         }
                     }
-
-                    NextPrayerCountdown(
-                        nextPrayer = state.nextPrayer,
-                        selectedDate = state.selectedDate,
-                        onSkipAudio = { state.nextPrayer?.let { onSkipNextAudio(it.type.name) } },
-                        isMuted = settings?.mutedPrayerName == state.nextPrayer?.type?.name && settings?.mutedPrayerDate == LocalDate.now()
-                            .toString()
-                    )
 
                     // Adhan Controls
                     if (state.isAdhanPlaying) {

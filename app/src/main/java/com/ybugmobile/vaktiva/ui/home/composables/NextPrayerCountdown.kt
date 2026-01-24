@@ -1,7 +1,10 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MusicOff
 import androidx.compose.material.icons.filled.Schedule
@@ -11,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontFamily
@@ -26,11 +30,12 @@ fun NextPrayerCountdown(
     nextPrayer: NextPrayer?,
     selectedDate: LocalDate,
     onSkipAudio: (String) -> Unit = {},
-    isMuted: Boolean = false
+    isMuted: Boolean = false,
+    contentColor: Color = Color.White
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(200.dp)
     ) {
         if ((selectedDate == LocalDate.now()) && nextPrayer != null) {
             val prayerRes = when (nextPrayer.type) {
@@ -55,61 +60,81 @@ fun NextPrayerCountdown(
                 label = "timerAlpha"
             )
 
-            Text(
-                stringResource(prayerRes),
-                color = Color.White.copy(alpha = 0.8f),
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(
-                formatRemainingTime(remainingSeconds),
-                color = Color.White.copy(alpha = if (isUrgent) alpha else 1f),
-                style = MaterialTheme.typography.displayMedium,
-                fontWeight = FontWeight.Bold,
-                fontSize = 60.sp,
-                fontFamily = FontFamily.Monospace
-            )
-
-            if (!isMuted && remainingSeconds < 30 * 60) { // Show if within 30 mins
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { onSkipAudio(nextPrayer.type.name) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White.copy(alpha = 0.2f),
-                        contentColor = Color.White
-                    ),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-                ) {
-                    Icon(
-                        Icons.Default.MusicOff,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Skip Audio", fontSize = 14.sp)
-                }
-            } else if (isMuted) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    "Audio Muted",
-                    color = Color.White.copy(alpha = 0.6f),
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold
+            // Decorative Ring
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawCircle(
+                    color = contentColor.copy(alpha = 0.1f),
+                    style = Stroke(width = 2.dp.toPx())
                 )
             }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    stringResource(R.string.home_next_prayer, stringResource(prayerRes)),
+                    color = contentColor.copy(alpha = 0.7f),
+                    style = MaterialTheme.typography.labelMedium
+                )
+                
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    formatRemainingTime(remainingSeconds),
+                    color = contentColor.copy(alpha = if (isUrgent) alpha else 1f),
+                    style = MaterialTheme.typography.displayMedium,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 42.sp,
+                    fontFamily = FontFamily.Monospace,
+                    letterSpacing = (-1).sp
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                if (!isMuted && remainingSeconds < 30 * 60) { // Show if within 30 mins
+                    IconButton(
+                        onClick = { onSkipAudio(nextPrayer.type.name) },
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(contentColor.copy(alpha = 0.15f), CircleShape)
+                    ) {
+                        Icon(
+                            Icons.Default.MusicOff,
+                            contentDescription = "Skip Audio",
+                            tint = contentColor,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                } else if (isMuted) {
+                    Icon(
+                        Icons.Default.MusicOff,
+                        contentDescription = "Muted",
+                        tint = contentColor.copy(alpha = 0.5f),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
         } else {
-            Icon(
-                Icons.Default.Schedule,
-                null,
-                tint = Color.White.copy(alpha = 0.5f),
-                modifier = Modifier.size(64.dp)
-            )
-            Text(
-                "VAKTIVA",
-                color = Color.White.copy(alpha = 0.5f),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 4.sp
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    Icons.Default.Schedule,
+                    null,
+                    tint = contentColor.copy(alpha = 0.5f),
+                    modifier = Modifier.size(48.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "VAKTIVA",
+                    color = contentColor.copy(alpha = 0.5f),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 4.sp
+                )
+            }
         }
     }
 }
