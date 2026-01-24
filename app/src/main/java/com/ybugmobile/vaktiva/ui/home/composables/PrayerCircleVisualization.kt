@@ -300,7 +300,7 @@ fun PrayerCircleVisualization(
             }
 
             // Current Time Clock Hand
-            if (isSelectedDayToday) {
+            /*if (isSelectedDayToday) {
                 val totalMinutes = currentTime.hour * 60 + currentTime.minute
                 val angle = (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
                 val angleRad = Math.toRadians(angle.toDouble())
@@ -332,7 +332,7 @@ fun PrayerCircleVisualization(
                     strokeWidth = 8.dp.toPx(),
                     cap = StrokeCap.Round
                 )
-            }
+            }*/
         }
 
         // 2. Center Content (Date/Refresh/etc) - NextPrayerCountdown

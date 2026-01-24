@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,7 +24,6 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
-import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.service.AdhanService
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +41,7 @@ class AdhanActivity : ComponentActivity() {
         showOnLockScreen()
         super.onCreate(savedInstanceState)
         
-        val prayerName = intent.getStringExtra("PRAYER_NAME")
+        val prayerName = intent.getStringExtra("PRAYER_NAME") ?: "Prayer"
 
         setContent {
             VaktivaTheme {
@@ -67,12 +65,15 @@ class AdhanActivity : ComponentActivity() {
                 controller = controllerFuture?.get()
                 controller?.addListener(object : Player.Listener {
                     override fun onPlaybackStateChanged(playbackState: Int) {
+                        // Finish if the audio reaches the end OR is stopped/idle
+                        // (which happens when the notification STOP action is clicked)
                         if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
                             finish()
                         }
                     }
                 })
                 
+                // If it's already ended or idle by the time we connect, close activity
                 val state = controller?.playbackState
                 if (state == Player.STATE_ENDED || state == Player.STATE_IDLE) {
                     finish()
@@ -96,7 +97,6 @@ class AdhanActivity : ComponentActivity() {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
         } else {
-            @Suppress("DEPRECATION")
             window.addFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
                 WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON or
@@ -113,20 +113,8 @@ class AdhanActivity : ComponentActivity() {
 }
 
 @Composable
-fun AdhanScreen(prayerName: String?, onDismiss: () -> Unit) {
+fun AdhanScreen(prayerName: String, onDismiss: () -> Unit) {
     var currentTime by remember { mutableStateOf(SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())) }
-
-    // Map prayer name string to localized resource if possible
-    val displayPrayerName = when (prayerName?.lowercase()) {
-        "fajr" -> stringResource(R.string.prayer_fajr)
-        "sunrise" -> stringResource(R.string.prayer_sunrise)
-        "dhuhr" -> stringResource(R.string.prayer_dhuhr)
-        "asr" -> stringResource(R.string.prayer_asr)
-        "maghrib" -> stringResource(R.string.prayer_maghrib)
-        "isha" -> stringResource(R.string.prayer_isha)
-        null -> stringResource(R.string.adhan_default_prayer)
-        else -> prayerName
-    }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -170,12 +158,12 @@ fun AdhanScreen(prayerName: String?, onDismiss: () -> Unit) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = stringResource(R.string.adhan_its_time_for),
+                    text = "It's time for",
                     style = MaterialTheme.typography.headlineSmall,
                     color = Color.White.copy(alpha = 0.8f)
                 )
                 Text(
-                    text = displayPrayerName,
+                    text = prayerName,
                     style = MaterialTheme.typography.displayLarge.copy(fontSize = 64.sp),
                     color = Color.White,
                     fontWeight = FontWeight.Bold
@@ -190,11 +178,7 @@ fun AdhanScreen(prayerName: String?, onDismiss: () -> Unit) {
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.2f)),
                 shape = MaterialTheme.shapes.extraLarge
             ) {
-                Text(
-                    text = stringResource(R.string.adhan_stop), 
-                    color = Color.White, 
-                    style = MaterialTheme.typography.titleLarge
-                )
+                Text(text = "STOP ADHAN", color = Color.White, style = MaterialTheme.typography.titleLarge)
             }
         }
     }
