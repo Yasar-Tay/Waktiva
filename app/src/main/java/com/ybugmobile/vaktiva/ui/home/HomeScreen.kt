@@ -158,7 +158,7 @@ fun HomeScreenContent(
                                         text = state.locationName.ifEmpty { stringResource(R.string.home_unknown_location) },
                                         color = contentColor,
                                         style = MaterialTheme.typography.titleMedium.copy(shadow = textShadow),
-                                        fontSize = 24.sp
+                                        fontWeight = FontWeight.Bold,
                                     )
                                 }
                                 /*Text(
