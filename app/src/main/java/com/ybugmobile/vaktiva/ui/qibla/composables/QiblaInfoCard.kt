@@ -1,6 +1,7 @@
 package com.ybugmobile.vaktiva.ui.qibla.composables
 
 import android.hardware.SensorManager
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +28,8 @@ fun QiblaInfoCard(
     qiblaDirection: Double,
     compassData: CompassData,
     isAccuracyLow: Boolean,
+    isAccuracyUnreliable: Boolean,
+    onCalibrationClick: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -36,7 +39,7 @@ fun QiblaInfoCard(
                 alpha = 0.95f
             )
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(
@@ -44,7 +47,7 @@ fun QiblaInfoCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = if (isAligned) stringResource(R.string.qibla_mecca_aligned) else stringResource(
                             R.string.qibla_rotate_phone
@@ -64,18 +67,40 @@ fun QiblaInfoCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(alignmentColor.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = if (isAligned) Icons.Default.CheckCircle else Icons.Default.NearMe,
-                        contentDescription = null,
-                        tint = alignmentColor,
-                        modifier = Modifier.size(24.dp)
-                    )
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (isAccuracyLow) {
+                        FilledIconButton(
+                            onClick = onCalibrationClick,
+                            modifier = Modifier.size(40.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = IconButtonDefaults.filledIconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Warning,
+                                contentDescription = "Calibration Needed",
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(alignmentColor.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (isAligned) Icons.Default.CheckCircle else Icons.Default.NearMe,
+                            contentDescription = null,
+                            tint = alignmentColor,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))

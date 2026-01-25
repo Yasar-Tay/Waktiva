@@ -60,14 +60,6 @@ fun QiblaScreen(
     val isAccuracyUnreliable = state.compassData.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE
 
     var showCalibrationDialog by remember { mutableStateOf(false) }
-    var hasShownCalibrationDialog by rememberSaveable { mutableStateOf(false) }
-    
-    LaunchedEffect(state.compassData.accuracy) {
-        if (isAccuracyUnreliable && !hasShownCalibrationDialog) {
-            showCalibrationDialog = true
-            hasShownCalibrationDialog = true
-        }
-    }
 
     // Background logic
     val backgroundGradient = getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
@@ -307,35 +299,18 @@ private fun QiblaContent(
                 }
             }
 
-            // BOTTOM: Info Card and Calibration FAB
+            // BOTTOM: Info Card
             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Box {
-                    QiblaInfoCard(
-                        isAligned = isAligned,
-                        alignmentColor = alignmentColor,
-                        settings = state.settings,
-                        qiblaDirection = state.qiblaDirection,
-                        compassData = state.compassData,
-                        isAccuracyLow = isAccuracyLow,
-                    )
-                    
-                    if (isAccuracyUnreliable) {
-                        SmallFloatingActionButton(
-                            onClick = onCalibrationClick,
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
-                            contentColor = MaterialTheme.colorScheme.error,
-                            modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .offset(x = 12.dp, y = (-20).dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Warning,
-                                contentDescription = "Calibration Needed",
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    }
-                }
+                QiblaInfoCard(
+                    isAligned = isAligned,
+                    alignmentColor = alignmentColor,
+                    settings = state.settings,
+                    qiblaDirection = state.qiblaDirection,
+                    compassData = state.compassData,
+                    isAccuracyLow = isAccuracyLow,
+                    isAccuracyUnreliable = isAccuracyUnreliable,
+                    onCalibrationClick = onCalibrationClick
+                )
             }
         }
     }
