@@ -152,7 +152,6 @@ fun PrayerCircleVisualization(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp) // Minimal padding to maximize ring size
                 .onSizeChanged { canvasSize = Size(it.width.toFloat(), it.height.toFloat()) }
                 .pointerInput(day, currentTime, isSelectedDayToday, canvasSize) {
                     detectTapGestures { tapOffset ->
@@ -305,7 +304,7 @@ fun PrayerCircleVisualization(
             if (rippleAnim.value > 0f && rippleAnim.value < 1f) {
                 drawCircle(
                     color = Color.White.copy(alpha = 0.5f * (1f - rippleAnim.value)),
-                    radius = 40.dp.toPx() * rippleAnim.value,
+                    radius = 30.dp.toPx() * rippleAnim.value,
                     center = rippleCenter
                 )
             }

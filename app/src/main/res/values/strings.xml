@@ -25,7 +25,8 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Unknown Location</string>
-    <string name="home_next_prayer">Next: %s</string>
+    <string name="home_next_prayer">%s</string>
+    <string name="home_remaining_time">Remaining Time</string>
     <string name="home_permissions_required">Permissions Required</string>
     <string name="home_permissions_desc">Location and Notification permissions are needed for the app to function correctly.</string>
     <string name="home_grant_permissions">Grant Permissions</string>

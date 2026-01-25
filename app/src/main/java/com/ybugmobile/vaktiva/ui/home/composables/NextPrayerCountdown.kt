@@ -1,7 +1,6 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -14,15 +13,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.PrayerType
+import com.ybugmobile.vaktiva.ui.theme.Inter
 import java.time.LocalDate
 
 @Composable
@@ -35,16 +33,16 @@ fun NextPrayerCountdown(
 ) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(200.dp)
+        modifier = Modifier.size(230.dp)
     ) {
         if ((selectedDate == LocalDate.now()) && nextPrayer != null) {
-            val prayerRes = when (nextPrayer.type) {
-                PrayerType.FAJR -> R.string.prayer_fajr
-                PrayerType.SUNRISE -> R.string.prayer_sunrise
-                PrayerType.DHUHR -> R.string.prayer_dhuhr
-                PrayerType.ASR -> R.string.prayer_asr
-                PrayerType.MAGHRIB -> R.string.prayer_maghrib
-                PrayerType.ISHA -> R.string.prayer_isha
+            val currentPrayerRes = when (nextPrayer.type) {
+                PrayerType.FAJR -> R.string.prayer_isha
+                PrayerType.SUNRISE -> R.string.prayer_fajr
+                PrayerType.DHUHR -> R.string.prayer_sunrise
+                PrayerType.ASR -> R.string.prayer_dhuhr
+                PrayerType.MAGHRIB -> R.string.prayer_asr
+                PrayerType.ISHA -> R.string.prayer_maghrib
             }
 
             val remainingSeconds = nextPrayer.remainingDuration.seconds
@@ -60,39 +58,47 @@ fun NextPrayerCountdown(
                 label = "timerAlpha"
             )
 
-            // Decorative Ring
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                drawCircle(
-                    color = contentColor.copy(alpha = 0.1f),
-                    style = Stroke(width = 2.dp.toPx())
-                )
-            }
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+            // 1. Top Labels (Prayer name & "Remaining Time")
+           Column(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(y = (-60).dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    stringResource(R.string.home_next_prayer, stringResource(prayerRes)),
+                    stringResource(currentPrayerRes),
                     color = contentColor.copy(alpha = 0.7f),
-                    style = MaterialTheme.typography.labelMedium
+                    style = MaterialTheme.typography.labelMedium,
+                    fontSize = 24.sp,
                 )
-                
-                Spacer(modifier = Modifier.height(4.dp))
+                /*Text(
+                    stringResource(R.string.home_remaining_time),
+                    color = contentColor.copy(alpha = 0.7f),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontSize = 18.sp,
+                    fontFamily = Inter,
+                )*/
+            }
 
-                Text(
-                    formatRemainingTime(remainingSeconds),
-                    color = contentColor.copy(alpha = if (isUrgent) alpha else 1f),
-                    style = MaterialTheme.typography.displayMedium,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 42.sp,
-                    fontFamily = FontFamily.Monospace,
-                    letterSpacing = (-1).sp
-                )
+            // 2. The Countdown Timer (Absolute center)
+            Text(
+                formatRemainingTime(remainingSeconds),
+                modifier = Modifier.align(Alignment.Center),
+                color = contentColor.copy(alpha = if (isUrgent) alpha else 1f),
+                style = MaterialTheme.typography.displayLarge,
+                fontSize = 48.sp,
+                fontFamily = Inter,
+                letterSpacing = (-1).sp
+            )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                if (!isMuted && remainingSeconds < 30 * 60) { // Show if within 30 mins
+            // 3. Bottom Controls (Mute/Skip Icon)
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(y = 65.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                if (!isMuted && remainingSeconds < 30 * 60) {
                     IconButton(
                         onClick = { onSkipAudio(nextPrayer.type.name) },
                         modifier = Modifier
@@ -144,5 +150,5 @@ fun formatRemainingTime(totalSeconds: Long): String {
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60
     val secs = totalSeconds % 60
-    return String.format("%02d:%02d:%02d", hours, minutes, secs)
+    return String.format("%02d : %02d : %02d", hours, minutes, secs)
 }

@@ -22,7 +22,8 @@
     <string name="qibla_aligned_badge">HİZALANDI</string>
     <string name="qibla_magnetic_interference">Manyetik Müdahale Algılandı - Cihazı Kalibre Edin</string>
     <string name="home_unknown_location">Bilinmeyen Konum</string>
-    <string name="home_next_prayer">Sıradaki: %s</string>
+    <string name="home_next_prayer">%s</string>
+    <string name="home_remaining_time">Vaktinin Çıkmasına</string>
     <string name="home_permissions_required">İzinler Gerekli</string>
     <string name="home_permissions_desc">Uygulamanın doğru çalışması için Konum ve Bildirim izinleri gereklidir.</string>
     <string name="home_grant_permissions">İzinleri Ver</string>
