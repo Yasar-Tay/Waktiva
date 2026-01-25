@@ -146,29 +146,30 @@ fun HomeScreenContent(
                                     .align(Alignment.TopStart)
                                     .padding(end = 100.dp)
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        Icons.Default.LocationOn,
-                                        null,
-                                        tint = contentColor,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
+                                Column {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            Icons.Default.LocationOn,
+                                            null,
+                                            tint = contentColor,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = state.locationName.substringBefore(",").ifEmpty { stringResource(R.string.home_unknown_location) },
+                                            color = contentColor,
+                                            style = MaterialTheme.typography.titleMedium.copy(shadow = textShadow),
+                                            fontWeight = FontWeight.Bold,
+                                            maxLines = 1
+                                        )
+                                    }
                                     Text(
-                                        text = state.locationName.ifEmpty { stringResource(R.string.home_unknown_location) },
-                                        color = contentColor,
-                                        style = MaterialTheme.typography.titleMedium.copy(shadow = textShadow),
-                                        fontWeight = FontWeight.Bold,
+                                        text = state.locationName.substringAfter(", ").ifEmpty { "" },
+                                        color = contentColor.copy(alpha = 0.6f),
+                                        style = MaterialTheme.typography.labelSmall.copy(shadow = textShadow),
+                                        modifier = Modifier.padding(start = 26.dp)
                                     )
                                 }
-                                /*Text(
-                                    text = state.selectedDate.format(DateTimeFormatter.ofPattern("EEEE, d MMMM")),
-                                    color = contentColor.copy(alpha = 0.8f),
-                                    style = MaterialTheme.typography.bodyLarge.copy(shadow = textShadow),
-                                    modifier = Modifier
-                                        .padding(start = 32.dp)
-                                        .clickable { showDatePicker = true }
-                                )*/
                             }
 
                             // Flippable Date Card (Top Right)
@@ -254,8 +255,7 @@ fun HomeScreenContent(
                                             Modifier
                                                 .fillMaxSize()
                                                 .graphicsLayer { rotationY = 180f }) {
-                                            val parts = state.currentPrayerDay.hijriDate.split(" ")
-                                            if (parts.size >= 3) {
+                                            state.currentPrayerDay.hijriDate?.let { hijri ->
                                                 Column(
                                                     Modifier.fillMaxSize(),
                                                     horizontalAlignment = Alignment.CenterHorizontally
@@ -268,7 +268,7 @@ fun HomeScreenContent(
                                                         Alignment.Center
                                                     ) {
                                                         Text(
-                                                            parts[1].uppercase().take(3),
+                                                            hijri.monthEn.uppercase().take(3),
                                                             color = Color(0xFF2E7D32),
                                                             fontSize = 12.sp,
                                                             fontWeight = FontWeight.Bold
@@ -284,13 +284,13 @@ fun HomeScreenContent(
                                                         Alignment.CenterHorizontally
                                                     ) {
                                                         Text(
-                                                            parts[0],
+                                                            hijri.day.toString(),
                                                             fontSize = 32.sp,
                                                             fontWeight = FontWeight.ExtraBold,
                                                             color = Color.Black
                                                         )
                                                         Text(
-                                                            "${parts[2]} AH",
+                                                            "${hijri.year} AH",
                                                             fontSize = 10.sp,
                                                             fontWeight = FontWeight.Bold,
                                                             color = Color.Gray
@@ -451,14 +451,5 @@ fun HomeScreenContent(
                     showMethodDialog = false
                 }) { Text("Close") }
             })
-    }
-}
-
-private fun formatHijriDate(hijri: String): String {
-    return try {
-        val parts = hijri.split(" ")
-        if (parts.size >= 3) "${parts[0]} ${parts[1]} ${parts[2]} AH" else hijri
-    } catch (e: Exception) {
-        hijri
     }
 }

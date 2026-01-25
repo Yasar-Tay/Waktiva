@@ -1,6 +1,7 @@
 package com.ybugmobile.vaktiva.data.mapper
 
 import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
+import com.ybugmobile.vaktiva.domain.model.HijriData
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import java.time.LocalDate
@@ -15,9 +16,22 @@ fun PrayerDayEntity.toDomain(): PrayerDay {
         return LocalTime.parse(cleaned, formatter)
     }
 
+    val hijri = try {
+        val parts = hijriDate.split(" ")
+        if (parts.size >= 3) {
+            HijriData(
+                day = parts[0].toInt(),
+                monthEn = parts[1],
+                year = parts[2].toInt()
+            )
+        } else null
+    } catch (e: Exception) {
+        null
+    }
+
     return PrayerDay(
         date = LocalDate.parse(date),
-        hijriDate = hijriDate,
+        hijriDate = hijri,
         timings = mapOf(
             PrayerType.FAJR to parseTime(fajr),
             PrayerType.SUNRISE to parseTime(sunrise),
