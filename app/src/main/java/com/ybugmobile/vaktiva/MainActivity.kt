@@ -35,6 +35,7 @@ import com.ybugmobile.vaktiva.ui.settings.SettingsScreen
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
 import com.ybugmobile.vaktiva.ui.welcome.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
@@ -50,12 +51,14 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             VaktivaTheme {
+                val viewModel: HomeViewModel = hiltViewModel()
+                
                 Box(modifier = Modifier.fillMaxSize()) {
-                    MainNavigation(this@MainActivity)
+                    MainNavigation(this@MainActivity, viewModel)
                     
-                    // Test FAB to schedule alarm in 10 seconds
+                    // Test FAB to schedule alarm exactly as it would be scheduled by AlarmScheduler
                     FloatingActionButton(
-                        onClick = { scheduleTestAlarm() },
+                        onClick = { scheduleTestAlarm(viewModel) },
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(end = 16.dp, bottom = 80.dp),
@@ -68,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun scheduleTestAlarm() {
+    private fun scheduleTestAlarm(viewModel: HomeViewModel) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, PrayerAlarmReceiver::class.java).apply {
             putExtra("PRAYER_NAME", "Fajr")
@@ -77,17 +80,24 @@ class MainActivity : AppCompatActivity() {
 
         val pendingIntent = PendingIntent.getBroadcast(
             this,
-            2002, // Unique ID for test
+            1001, // Use the same ID as AlarmScheduler (1001) for exact simulation
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val triggerAt = System.currentTimeMillis() + 10000 // 10 seconds
+        val secondsToTrigger = 70
+        val triggerAt = System.currentTimeMillis() + (secondsToTrigger * 1000)
+        
+        // Update the ViewModel so the UI reflects this test alarm
+        viewModel.setTestAlarm(LocalDateTime.now().plusSeconds(secondsToTrigger.toLong()))
 
+        // Using setAlarmClock as it is the most reliable way to wake up the device
         alarmManager.setAlarmClock(
             AlarmManager.AlarmClockInfo(triggerAt, pendingIntent),
             pendingIntent
         )
+        
+        android.widget.Toast.makeText(this, "Test alarm set for $secondsToTrigger seconds", android.widget.Toast.LENGTH_SHORT).show()
     }
 
     private fun scheduleWork() {
@@ -120,7 +130,7 @@ class MainActivity : AppCompatActivity() {
 }
 
 @Composable
-fun MainNavigation(context: Context, viewModel: HomeViewModel = hiltViewModel()) {
+fun MainNavigation(context: Context, viewModel: HomeViewModel) {
     val navController = rememberNavController()
     val settings by viewModel.settings.collectAsState(initial = null)
     
@@ -178,7 +188,7 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel = hiltViewModel())
                     }
                 )
             }
-            composable(Screen.Home.route) { HomeScreen() }
+            composable(Screen.Home.route) { HomeScreen(viewModel = viewModel) }
             composable(Screen.Qibla.route) { QiblaScreen() }
             composable(Screen.Settings.route) { 
                 SettingsScreen(

@@ -23,6 +23,7 @@ class GetNextPrayerUseCase @Inject constructor() {
             NextPrayer(
                 type = nextToday.first,
                 time = nextToday.second,
+                date = today.date,
                 remainingDuration = Duration.between(currentTime, nextToday.second)
             )
         } else if (tomorrow != null) {
@@ -34,6 +35,7 @@ class GetNextPrayerUseCase @Inject constructor() {
             NextPrayer(
                 type = PrayerType.FAJR,
                 time = firstTomorrow,
+                date = tomorrow.date,
                 remainingDuration = durationToMidnight.plus(durationFromMidnight).plusSeconds(1)
             )
         } else {

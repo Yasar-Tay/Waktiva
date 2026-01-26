@@ -4,7 +4,9 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.MusicOff
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
@@ -29,7 +31,8 @@ fun NextPrayerCountdown(
     selectedDate: LocalDate,
     onSkipAudio: (String) -> Unit = {},
     isMuted: Boolean = false,
-    contentColor: Color = Color.White
+    contentColor: Color = Color.White,
+    preAdhanWarningMinutes: Int = 5 // Default fallback
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -71,13 +74,6 @@ fun NextPrayerCountdown(
                     style = MaterialTheme.typography.labelMedium,
                     fontSize = 24.sp,
                 )
-                /*Text(
-                    stringResource(R.string.home_remaining_time),
-                    color = contentColor.copy(alpha = 0.7f),
-                    style = MaterialTheme.typography.labelLarge,
-                    fontSize = 18.sp,
-                    fontFamily = Inter,
-                )*/
             }
 
             // 2. The Countdown Timer (Absolute center)
@@ -98,27 +94,36 @@ fun NextPrayerCountdown(
                     .offset(y = 65.dp),
                 contentAlignment = Alignment.Center
             ) {
-                if (!isMuted && remainingSeconds < 30 * 60) {
-                    IconButton(
+                // Show Skip button only within the pre-adhan warning window
+                val showSkipButton = remainingSeconds <= (preAdhanWarningMinutes * 60)
+
+                if (showSkipButton) {
+                    Surface(
                         onClick = { onSkipAudio(nextPrayer.type.name) },
-                        modifier = Modifier
-                            .size(32.dp)
-                            .background(contentColor.copy(alpha = 0.15f), CircleShape)
+                        color = if (isMuted) Color.Black.copy(alpha = 0.3f) else contentColor.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier.height(32.dp)
                     ) {
-                        Icon(
-                            Icons.Default.MusicOff,
-                            contentDescription = "Skip Audio",
-                            tint = contentColor,
-                            modifier = Modifier.size(16.dp)
-                        )
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = if (isMuted) Icons.Default.MusicOff else Icons.Default.MusicNote,
+                                contentDescription = if (isMuted) "Unmute Audio" else "Mute Audio",
+                                tint = if (isMuted) contentColor.copy(alpha = 0.6f) else contentColor,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = if (isMuted) "MUTED" else "MUTE",
+                                color = if (isMuted) contentColor.copy(alpha = 0.6f) else contentColor,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
-                } else if (isMuted) {
-                    Icon(
-                        Icons.Default.MusicOff,
-                        contentDescription = "Muted",
-                        tint = contentColor.copy(alpha = 0.5f),
-                        modifier = Modifier.size(20.dp)
-                    )
                 }
             }
         } else {

@@ -64,7 +64,7 @@ fun HomeScreen(
         onRefresh = { viewModel.refresh() },
         onMethodSelected = { viewModel.updateCalculationMethod(it) },
         onDateSelected = { viewModel.selectDate(it) },
-        onSkipNextAudio = { name -> viewModel.skipNextPrayerAudio(name) },
+        onSkipNextAudio = { name, date -> viewModel.toggleSkipNextPrayerAudio(name, date) },
         onStopAdhan = { viewModel.stopAdhan() }
     )
 }
@@ -79,7 +79,7 @@ fun HomeScreenContent(
     onRefresh: () -> Unit,
     onMethodSelected: (Int) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
-    onSkipNextAudio: (String) -> Unit,
+    onSkipNextAudio: (String, LocalDate) -> Unit,
     onStopAdhan: () -> Unit
 ) {
     val permissions = mutableListOf(
@@ -242,11 +242,6 @@ fun HomeScreenContent(
                                                     fontWeight = FontWeight.Black,
                                                     color = MaterialTheme.colorScheme.primary
                                                 )
-                                                /*Text(
-                                                    state.selectedDate.year.toString(),
-                                                    fontSize = 10.sp,
-                                                    color = Color.Gray
-                                                )*/
                                             }
                                         }
                                     } else {
@@ -322,9 +317,10 @@ fun HomeScreenContent(
                                         NextPrayerCountdown(
                                             nextPrayer = state.nextPrayer,
                                             selectedDate = state.selectedDate,
-                                            onSkipAudio = { state.nextPrayer?.let { onSkipNextAudio(it.type.name) } },
-                                            isMuted = settings?.mutedPrayerName == state.nextPrayer?.type?.name && settings?.mutedPrayerDate == LocalDate.now().toString(),
-                                            contentColor = contentColor
+                                            onSkipAudio = { state.nextPrayer?.let { onSkipNextAudio(it.type.name, it.date) } },
+                                            isMuted = settings?.mutedPrayerName == state.nextPrayer?.type?.name && settings?.mutedPrayerDate == state.nextPrayer?.date?.toString(),
+                                            contentColor = contentColor,
+                                            preAdhanWarningMinutes = settings?.preAdhanWarningMinutes ?: 5
                                         )
                                     }
                                 )

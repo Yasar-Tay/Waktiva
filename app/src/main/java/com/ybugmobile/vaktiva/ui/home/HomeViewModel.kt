@@ -62,6 +62,9 @@ class HomeViewModel @Inject constructor(
     private val _isAdhanPlaying = MutableStateFlow(false)
     private val _playingPrayerName = MutableStateFlow<String?>(null)
 
+    // Internal state for simulating a test alarm in the UI
+    private val _testAlarmTime = MutableStateFlow<LocalDateTime?>(null)
+
     private var mediaController: MediaController? = null
 
     val calculationMethods = CALCULATION_METHODS
@@ -139,6 +142,10 @@ class HomeViewModel @Inject constructor(
         mediaController?.stop()
     }
 
+    fun setTestAlarm(time: LocalDateTime) {
+        _testAlarmTime.value = time
+    }
+
     private fun tickerFlow(periodMillis: Long) = flow {
         while (true) {
             emit(Unit)
@@ -164,21 +171,38 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime) { prayers, now ->
+    val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, _testAlarmTime) { prayers, now, testTime ->
         if (prayers == null) return@combine null
-        val currentTime = now.toLocalTime()
-        val next = prayers.firstOrNull { it.second.isAfter(currentTime) }
+        
+        val nowDateTime = now
+        val nowTime = now.toLocalTime()
+        
+        // Find the next real prayer
+        val nextReal = prayers.firstOrNull { it.second.isAfter(nowTime) }
             ?: prayers.first()
-
-        val remainingDuration = if (next.second.isAfter(currentTime)) {
-            Duration.between(currentTime, next.second)
+        
+        val realDateTime = if (nextReal.second.isAfter(nowTime)) {
+            nowDateTime.toLocalDate().atTime(nextReal.second)
         } else {
-            Duration.between(currentTime, LocalTime.MAX).plus(Duration.between(LocalTime.MIN, next.second))
+            nowDateTime.toLocalDate().plusDays(1).atTime(nextReal.second)
         }
 
+        // Check if we have a test alarm that is sooner
+        if (testTime != null && testTime.isAfter(nowDateTime) && testTime.isBefore(realDateTime)) {
+            return@combine NextPrayer(
+                type = PrayerType.FAJR, // Simulation type
+                time = testTime.toLocalTime(),
+                date = testTime.toLocalDate(),
+                remainingDuration = Duration.between(nowDateTime, testTime)
+            )
+        }
+
+        val remainingDuration = Duration.between(nowDateTime, realDateTime)
+
         NextPrayer(
-            type = next.first,
-            time = next.second,
+            type = nextReal.first,
+            time = nextReal.second,
+            date = realDateTime.toLocalDate(),
             remainingDuration = remainingDuration
         )
     }
@@ -259,9 +283,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun skipNextPrayerAudio(prayerName: String) {
+    fun toggleSkipNextPrayerAudio(prayerName: String, prayerDate: LocalDate) {
         viewModelScope.launch {
-            settingsManager.muteNextPrayer(prayerName, LocalDate.now().toString())
+            val current = settings.first()
+            val dateStr = prayerDate.toString()
+            if (current.mutedPrayerName == prayerName && current.mutedPrayerDate == dateStr) {
+                settingsManager.clearMutedPrayer()
+            } else {
+                settingsManager.muteNextPrayer(prayerName, dateStr)
+            }
         }
     }
 
