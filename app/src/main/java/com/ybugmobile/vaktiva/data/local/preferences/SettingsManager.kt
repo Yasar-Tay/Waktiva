@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.ybugmobile.vaktiva.domain.manager.SettingsManagerInterface
@@ -34,7 +35,8 @@ data class UserSettings(
     val enablePreAdhanWarning: Boolean,
     val preAdhanWarningMinutes: Int,
     val mutedPrayerName: String?,
-    val mutedPrayerDate: String?
+    val mutedPrayerDate: String?,
+    val testAlarmEndTime: Long?
 )
 
 @Singleton
@@ -56,6 +58,7 @@ class SettingsManager @Inject constructor(
         val PRE_ADHAN_WARNING_MINUTES = intPreferencesKey("pre_adhan_warning_minutes")
         val MUTED_PRAYER_NAME = stringPreferencesKey("muted_prayer_name")
         val MUTED_PRAYER_DATE = stringPreferencesKey("muted_prayer_date")
+        val TEST_ALARM_END_TIME = longPreferencesKey("test_alarm_end_time")
 
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
@@ -66,8 +69,8 @@ class SettingsManager @Inject constructor(
         }
 
         UserSettings(
-            madhab = preferences[MADHAB] ?: 0, // 0: Shafi, 1: Hanafi
-            calculationMethod = preferences[CALCULATION_METHOD] ?: 2, // Default: ISNA
+            madhab = preferences[MADHAB] ?: 0,
+            calculationMethod = preferences[CALCULATION_METHOD] ?: 2,
             latitude = preferences[LAST_KNOWN_LAT] ?: 0.0,
             longitude = preferences[LAST_KNOWN_LNG] ?: 0.0,
             locationName = preferences[LAST_LOCATION_NAME] ?: "Unknown",
@@ -75,12 +78,13 @@ class SettingsManager @Inject constructor(
             selectedAdhanPath = preferences[SELECTED_ADHAN_PATH],
             prayerSpecificAdhanPaths = prayerSpecificPaths,
             useSpecificAdhanForEachPrayer = preferences[USE_SPECIFIC_ADHAN] ?: false,
-            playAdhanAudio = preferences[PLAY_ADHAN_AUDIO] ?: false, // Default changed to FALSE
+            playAdhanAudio = preferences[PLAY_ADHAN_AUDIO] ?: false,
             isSetupComplete = preferences[IS_SETUP_COMPLETE] ?: false,
             enablePreAdhanWarning = preferences[ENABLE_PRE_ADHAN_WARNING] ?: true,
             preAdhanWarningMinutes = preferences[PRE_ADHAN_WARNING_MINUTES] ?: 5,
             mutedPrayerName = preferences[MUTED_PRAYER_NAME],
-            mutedPrayerDate = preferences[MUTED_PRAYER_DATE]
+            mutedPrayerDate = preferences[MUTED_PRAYER_DATE],
+            testAlarmEndTime = preferences[TEST_ALARM_END_TIME]
         )
     }
 
@@ -174,6 +178,16 @@ class SettingsManager @Inject constructor(
             preferences[LAST_KNOWN_LAT] = lat
             preferences[LAST_KNOWN_LNG] = lng
             preferences[LAST_LOCATION_NAME] = name
+        }
+    }
+
+    override suspend fun setTestAlarmEndTime(timeMillis: Long?) {
+        context.dataStore.edit { preferences ->
+            if (timeMillis == null) {
+                preferences.remove(TEST_ALARM_END_TIME)
+            } else {
+                preferences[TEST_ALARM_END_TIME] = timeMillis
+            }
         }
     }
 }

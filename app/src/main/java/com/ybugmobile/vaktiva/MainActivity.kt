@@ -52,11 +52,10 @@ class MainActivity : AppCompatActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     MainNavigation(this@MainActivity, viewModel)
                     
-                    // Refactored Test FAB to use centralized logic
                     Box(modifier = Modifier.fillMaxSize()) {
                         FloatingActionButton(
                             onClick = { 
-                                val seconds = 5 // Reduced from 70 to 5 for better testing
+                                val seconds = 70
                                 viewModel.triggerTestAlarm(seconds)
                                 Toast.makeText(this@MainActivity, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
                             },

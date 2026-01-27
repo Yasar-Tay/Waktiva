@@ -31,7 +31,6 @@ fun NextPrayerCountdown(
     onSkipAudio: (String) -> Unit = {},
     isMuted: Boolean = false,
     contentColor: Color = Color.White,
-    @Suppress("UNUSED_PARAMETER") preAdhanWarningMinutes: Int = 5,
     playAdhanAudio: Boolean = false
 ) {
     Box(

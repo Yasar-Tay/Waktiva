@@ -52,8 +52,15 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 val today = LocalDate.now().toString()
                 settingsManager.muteNextPrayer(prayerName, today)
                 Log.d("PrayerAlarmReceiver", "SKIP SUCCESS: $prayerName muted for $today")
+                
+                // Update notification immediately to show muted state
+                val settings = settingsManager.settingsFlow.first()
+                notificationHelper.showPreAdhanWarning(
+                    prayerName = prayerName,
+                    minutes = settings.preAdhanWarningMinutes,
+                    isMuted = true
+                )
             }
-            notificationHelper.showPreAdhanWarning(prayerName, isMuted = true)
             return
         }
 
@@ -62,12 +69,15 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
             try {
                 when (action) {
                     AlarmScheduler.ACTION_PRE_ADHAN_NOTIFICATION -> {
-                        // Check if already muted before showing notification
                         val settings = settingsManager.settingsFlow.first()
                         val isMuted = settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && 
                                      settings.mutedPrayerDate == LocalDate.now().toString()
                         
-                        notificationHelper.showPreAdhanWarning(prayerName, isMuted = isMuted)
+                        notificationHelper.showPreAdhanWarning(
+                            prayerName = prayerName,
+                            minutes = settings.preAdhanWarningMinutes,
+                            isMuted = isMuted
+                        )
                     }
                     AlarmScheduler.ACTION_PRAYER_ALARM -> {
                         handleAdhanTrigger(context, prayerName)
@@ -99,6 +109,8 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         
         if (!settings.playAdhanAudio) {
             Log.d("PrayerAlarmReceiver", "ADHAN SUPPRESSED: playAdhanAudio is disabled in settings.")
+            // Clear mute state even if audio is disabled, as the "prayer time" event has occurred
+            settingsManager.clearMutedPrayer()
             return
         }
 
@@ -106,10 +118,13 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
         if (settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && settings.mutedPrayerDate == today) {
             Log.d("PrayerAlarmReceiver", "ADHAN SKIPPED: Logic recognized skip for $prayerName.")
-            // Don't clear here yet, let the HomeViewModel/Settings handle the cycle
+            settingsManager.clearMutedPrayer()
             notificationHelper.cancelWarningNotification()
             return
         }
+
+        // Always clear muted prayer state when an alarm triggers (and is not skipped)
+        settingsManager.clearMutedPrayer()
 
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
         val wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Vaktiva:AdhanWakeLock")

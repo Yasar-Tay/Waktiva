@@ -64,7 +64,7 @@ class NotificationHelper @Inject constructor(
         }
     }
 
-    fun showPreAdhanWarning(prayerName: String, isMuted: Boolean = false) {
+    fun showPreAdhanWarning(prayerName: String, minutes: Int, isMuted: Boolean = false) {
         val contentIntent = PendingIntent.getActivity(
             context, 0, Intent(context, MainActivity::class.java), 
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -81,6 +81,7 @@ class NotificationHelper @Inject constructor(
         if (isMuted) {
             builder.setContentTitle("Adhan Muted")
                 .setContentText("Adhan for $prayerName is skipped.")
+                .setSmallIcon(R.drawable.ic_launcher_foreground) // Use a different icon if available
         } else {
             val skipIntent = Intent(context, PrayerAlarmReceiver::class.java).apply {
                 action = ACTION_SKIP_ADHAN
@@ -91,9 +92,9 @@ class NotificationHelper @Inject constructor(
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            builder.setContentTitle("Upcoming Adhan")
-                .setContentText("$prayerName is approaching.")
-                .addAction(R.drawable.ic_launcher_foreground, "SKIP ADHAN", skipPendingIntent)
+            builder.setContentTitle("Upcoming Adhan: $prayerName")
+                .setContentText("Adhan will be played in $minutes minutes.")
+                .addAction(R.drawable.ic_launcher_foreground, "SKIP FOR THIS PRAYER", skipPendingIntent)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
         }
 

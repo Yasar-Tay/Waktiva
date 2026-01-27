@@ -20,4 +20,5 @@ interface SettingsManagerInterface {
     suspend fun setSetupComplete(complete: Boolean)
     suspend fun setCalculationMethod(method: Int)
     suspend fun saveLocation(lat: Double, lng: Double, name: String)
+    suspend fun setTestAlarmEndTime(timeMillis: Long?)
 }

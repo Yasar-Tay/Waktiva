@@ -324,7 +324,6 @@ fun HomeScreenContent(
                                             onSkipAudio = { state.nextPrayer?.let { onSkipNextAudio(it.type.name, it.date) } },
                                             isMuted = state.isMuted,
                                             contentColor = contentColor,
-                                            preAdhanWarningMinutes = settings?.preAdhanWarningMinutes ?: 5,
                                             playAdhanAudio = settings?.playAdhanAudio ?: false
                                         )
                                     }

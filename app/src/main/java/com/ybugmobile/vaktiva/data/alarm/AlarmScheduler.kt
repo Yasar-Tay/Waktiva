@@ -13,6 +13,8 @@ import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
@@ -30,13 +32,36 @@ class AlarmScheduler @Inject constructor(
         const val REQUEST_CODE_ADHAN = 1001
         const val REQUEST_CODE_PRE_ADHAN = 1002
         const val REQUEST_CODE_TEST = 9999
+        const val REQUEST_CODE_TEST_PRE = 9998
     }
 
+    /**
+     * For Testing:
+     * We calculate the notification trigger time based on the user's settings
+     * to ensure test behavior matches real-world prayer behavior.
+     */
     fun scheduleTestAlarm(secondsFromNow: Int) {
-        val triggerAt = System.currentTimeMillis() + (secondsFromNow * 1000)
-        Log.d("AlarmScheduler", "Scheduling TEST alarm in $secondsFromNow seconds")
-        // Use PrayerType.FAJR.name to match the dummy type used in HomeViewModel for tests
-        scheduleAlarm(triggerAt, PrayerType.FAJR.name, ACTION_PRAYER_ALARM, REQUEST_CODE_TEST)
+        val adhanDelay = if (secondsFromNow < 5) 5 else secondsFromNow
+        val adhanTriggerAt = System.currentTimeMillis() + (adhanDelay * 1000)
+        
+        Log.d("AlarmScheduler", "Scheduling TEST adhan in $adhanDelay seconds")
+        scheduleAlarm(adhanTriggerAt, PrayerType.FAJR.name, ACTION_PRAYER_ALARM, REQUEST_CODE_TEST)
+
+        runBlocking {
+            val settings = settingsManager.settingsFlow.first()
+            if (settings.enablePreAdhanWarning) {
+                val warningSeconds = settings.preAdhanWarningMinutes * 60
+                
+                // Calculate when the notification should appear.
+                // If warning is 60s and test is 70s, delay is 10s.
+                // If warning is 60s and test is 30s, delay is 1s (immediate).
+                val notificationDelaySeconds = (adhanDelay - warningSeconds).coerceAtLeast(1)
+                
+                val preTriggerAt = System.currentTimeMillis() + (notificationDelaySeconds * 1000)
+                Log.d("AlarmScheduler", "Scheduling TEST pre-adhan in $notificationDelaySeconds seconds (Warning Window: $warningSeconds s)")
+                scheduleAlarm(preTriggerAt, PrayerType.FAJR.name, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_TEST_PRE)
+            }
+        }
     }
 
     fun scheduleNextAlarm(prayerDays: List<PrayerDay>, enablePreAdhan: Boolean, preAdhanMinutes: Int) {
@@ -62,12 +87,15 @@ class AlarmScheduler @Inject constructor(
             scheduleAlarm(epochMillis, type.name, ACTION_PRAYER_ALARM, REQUEST_CODE_ADHAN)
 
             // Schedule Pre-Adhan Notification
-            if (enablePreAdhan) {
+            if (enablePreAdhan && preAdhanMinutes > 0) {
                 val preTime = dateTime.minusMinutes(preAdhanMinutes.toLong())
                 if (preTime.isAfter(now)) {
                     val preEpochMillis = preTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                    Log.d("AlarmScheduler", "Scheduling PRE-ADHAN alarm for: ${type.name} at $preTime")
+                    Log.d("AlarmScheduler", "Scheduling PRE-ADHAN alarm for: ${type.name} at $preTime ($preAdhanMinutes mins before)")
                     scheduleAlarm(preEpochMillis, type.name, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_PRE_ADHAN)
+                } else {
+                    Log.d("AlarmScheduler", "Pre-adhan time passed, scheduling immediate warning for ${type.name}")
+                    scheduleAlarm(System.currentTimeMillis() + 500, type.name, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_PRE_ADHAN)
                 }
             }
         } else {
@@ -110,6 +138,7 @@ class AlarmScheduler @Inject constructor(
         cancelAlarm(REQUEST_CODE_ADHAN)
         cancelAlarm(REQUEST_CODE_PRE_ADHAN)
         cancelAlarm(REQUEST_CODE_TEST)
+        cancelAlarm(REQUEST_CODE_TEST_PRE)
     }
 
     private fun cancelAlarm(requestCode: Int) {

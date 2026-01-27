@@ -27,9 +27,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
@@ -62,11 +64,6 @@ class HomeViewModel @Inject constructor(
     private val _isAdhanPlaying = MutableStateFlow(false)
     private val _playingPrayerName = MutableStateFlow<String?>(null)
     
-    // TRANSIENT MUTE STATE: Resets on app start and new prayer cycles
-    private val _isMuted = MutableStateFlow(false)
-
-    private val _testAlarmEndTime = MutableStateFlow<LocalDateTime?>(null)
-
     private var mediaController: MediaController? = null
 
     val calculationMethods = CALCULATION_METHODS
@@ -79,17 +76,22 @@ class HomeViewModel @Inject constructor(
         PrayerType.entries.map { it to (day.timings[it] ?: LocalTime.MIN) }
     }
 
-    val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, _testAlarmEndTime) { prayers, now, testEndTime ->
+    val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, settings) { prayers, now, currentSettings ->
         if (prayers == null) return@combine null
         
-        if (testEndTime != null && testEndTime.isAfter(now)) {
-            return@combine NextPrayer(
-                type = PrayerType.FAJR,
-                time = testEndTime.toLocalTime(),
-                date = testEndTime.toLocalDate(),
-                remainingDuration = Duration.between(now, testEndTime),
-                isTest = true
-            )
+        // Use persisted test end time if available and not expired
+        val testEndTimeMillis = currentSettings.testAlarmEndTime
+        if (testEndTimeMillis != null) {
+            val testEndTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(testEndTimeMillis), ZoneId.systemDefault())
+            if (testEndTime.isAfter(now)) {
+                return@combine NextPrayer(
+                    type = PrayerType.FAJR,
+                    time = testEndTime.toLocalTime(),
+                    date = testEndTime.toLocalDate(),
+                    remainingDuration = Duration.between(now, testEndTime),
+                    isTest = true
+                )
+            }
         }
 
         val nowTime = now.toLocalTime()
@@ -101,10 +103,13 @@ class HomeViewModel @Inject constructor(
 
     init {
         tickerFlow(1000).onEach { 
-            _currentTime.value = LocalDateTime.now() 
-            _testAlarmEndTime.value?.let { end ->
-                if (LocalDateTime.now().isAfter(end.plusSeconds(5))) {
-                    _testAlarmEndTime.value = null
+            _currentTime.value = LocalDateTime.now()
+            // Cleanup expired test time
+            val s = settings.first()
+            s.testAlarmEndTime?.let { end ->
+                if (System.currentTimeMillis() > end + 5000) {
+                    settingsManager.setTestAlarmEndTime(null)
+                    settingsManager.clearMutedPrayer()
                 }
             }
         }.launchIn(viewModelScope)
@@ -118,20 +123,18 @@ class HomeViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
         setupMediaController()
-
-        // Reset mute state whenever the next prayer changes
-        nextPrayerInfo.map { it?.time }
-            .distinctUntilChanged()
-            .onEach { 
-                _isMuted.value = false 
-                settingsManager.clearMutedPrayer()
-            }
-            .launchIn(viewModelScope)
     }
 
     fun triggerTestAlarm(seconds: Int) {
-        _testAlarmEndTime.value = LocalDateTime.now().plusSeconds(seconds.toLong())
-        alarmScheduler.scheduleTestAlarm(seconds)
+        val endTimeMillis = System.currentTimeMillis() + (seconds * 1000)
+        viewModelScope.launch {
+            // Cancel existing alarms (including test alarms) before scheduling a new one
+            alarmScheduler.cancelAllAlarms()
+            settingsManager.clearMutedPrayer()
+
+            settingsManager.setTestAlarmEndTime(endTimeMillis)
+            alarmScheduler.scheduleTestAlarm(seconds)
+        }
     }
 
     override fun onResume(owner: LifecycleOwner) {
@@ -179,23 +182,27 @@ class HomeViewModel @Inject constructor(
     val state: StateFlow<HomeViewState> = combine(
         combine(selectedDate, currentTime, currentPrayerDay, ::Triple),
         combine(nextPrayerInfo, isRefreshing, settings, ::Triple),
-        combine(_isAdhanPlaying, _playingPrayerName, _isMuted, ::Triple)
-    ) { (date, time, prayerDay), (nextPrayer, refreshing, currentSettings), (playing, prayerName, muted) ->
+        combine(_isAdhanPlaying, _playingPrayerName) { playing, name -> playing to name }
+    ) { (date, time, prayerDay), (nextPrayer, refreshing, currentSettings), (playing, prayerName) ->
         
+        val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
+                      currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
+
         HomeViewState(
             selectedDate = date, currentTime = time, currentPrayerDay = prayerDay,
             nextPrayer = nextPrayer, isRefreshing = refreshing, isLoading = !hasSettled() && prayerDay == null,
             locationName = currentSettings.locationName, isAdhanPlaying = playing, playingPrayerName = prayerName,
-            isMuted = muted 
+            isMuted = isMuted 
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))
 
     private fun hasSettled() = _hasSettled.value
 
     fun stopTestAlarm() {
-        _testAlarmEndTime.value = null
-        alarmScheduler.cancelAllAlarms()
         viewModelScope.launch {
+            settingsManager.setTestAlarmEndTime(null)
+            settingsManager.clearMutedPrayer()
+            alarmScheduler.cancelAllAlarms()
             val days = allPrayerDays.value
             val s = settings.first()
             if (days.isNotEmpty()) {
@@ -224,11 +231,14 @@ class HomeViewModel @Inject constructor(
     fun updateCalculationMethod(methodId: Int) = viewModelScope.launch { settingsManager.updateCalculationMethod(methodId); refresh() }
 
     fun toggleSkipNextPrayerAudio(prayerName: String, prayerDate: LocalDate) = viewModelScope.launch {
-        _isMuted.value = !_isMuted.value
-        if (_isMuted.value) {
-            settingsManager.muteNextPrayer(prayerName, prayerDate.toString())
-        } else {
+        val s = settings.first()
+        val currentlyMuted = s.mutedPrayerName.equals(prayerName, ignoreCase = true) &&
+                             s.mutedPrayerDate == prayerDate.toString()
+        
+        if (currentlyMuted) {
             settingsManager.clearMutedPrayer()
+        } else {
+            settingsManager.muteNextPrayer(prayerName, prayerDate.toString())
         }
     }
 
