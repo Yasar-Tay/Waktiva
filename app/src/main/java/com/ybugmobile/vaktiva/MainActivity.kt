@@ -1,13 +1,11 @@
 package com.ybugmobile.vaktiva
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,7 +23,6 @@ import androidx.navigation.compose.*
 import androidx.work.*
 import com.ybugmobile.vaktiva.data.worker.LocationUpdateWorker
 import com.ybugmobile.vaktiva.data.worker.PrayerUpdateWorker
-import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
 import com.ybugmobile.vaktiva.ui.home.HomeScreen
 import com.ybugmobile.vaktiva.ui.home.HomeViewModel
 import com.ybugmobile.vaktiva.ui.navigation.Screen
@@ -35,7 +32,6 @@ import com.ybugmobile.vaktiva.ui.settings.SettingsScreen
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
 import com.ybugmobile.vaktiva.ui.welcome.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
@@ -56,9 +52,13 @@ class MainActivity : AppCompatActivity() {
                 Box(modifier = Modifier.fillMaxSize()) {
                     MainNavigation(this@MainActivity, viewModel)
                     
-                    // Test FAB to schedule alarm exactly as it would be scheduled by AlarmScheduler
+                    // Refactored Test FAB to use centralized logic
                     FloatingActionButton(
-                        onClick = { scheduleTestAlarm(viewModel) },
+                        onClick = { 
+                            val seconds = 70
+                            viewModel.triggerTestAlarm(seconds)
+                            Toast.makeText(this@MainActivity, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
+                        },
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(end = 16.dp, bottom = 180.dp),
@@ -69,35 +69,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun scheduleTestAlarm(viewModel: HomeViewModel) {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, PrayerAlarmReceiver::class.java).apply {
-            putExtra("PRAYER_NAME", "Fajr")
-            action = "com.ybugmobile.vaktiva.ACTION_PRAYER_ALARM"
-        }
-
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            1001, // Use the same ID as AlarmScheduler (1001) for exact simulation
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val secondsToTrigger = 70
-        val triggerAt = System.currentTimeMillis() + (secondsToTrigger * 1000)
-        
-        // Update the ViewModel so the UI reflects this test alarm
-        viewModel.setTestAlarm(LocalDateTime.now().plusSeconds(secondsToTrigger.toLong()))
-
-        // Using setAlarmClock as it is the most reliable way to wake up the device
-        alarmManager.setAlarmClock(
-            AlarmManager.AlarmClockInfo(triggerAt, pendingIntent),
-            pendingIntent
-        )
-        
-        android.widget.Toast.makeText(this, "Test alarm set for $secondsToTrigger seconds", android.widget.Toast.LENGTH_SHORT).show()
     }
 
     private fun scheduleWork() {

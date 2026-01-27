@@ -69,7 +69,12 @@ class PrayerUpdateWorker @AssistedInject constructor(
     }
 
     private suspend fun scheduleAlarms() {
+        val settings = settingsManager.settingsFlow.first()
         val prayerDays = repository.getPrayerDays().first()
-        alarmScheduler.scheduleNextAlarm(prayerDays)
+        alarmScheduler.scheduleNextAlarm(
+            prayerDays = prayerDays,
+            enablePreAdhan = settings.enablePreAdhanWarning,
+            preAdhanMinutes = settings.preAdhanWarningMinutes
+        )
     }
 }

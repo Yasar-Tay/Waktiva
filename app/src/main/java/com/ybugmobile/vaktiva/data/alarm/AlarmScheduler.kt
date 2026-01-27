@@ -8,12 +8,11 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
+import com.ybugmobile.vaktiva.data.notification.NotificationHelper
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
@@ -30,12 +29,16 @@ class AlarmScheduler @Inject constructor(
         
         const val REQUEST_CODE_ADHAN = 1001
         const val REQUEST_CODE_PRE_ADHAN = 1002
+        const val REQUEST_CODE_TEST = 9999
     }
 
-    /**
-     * Finds and schedules the NEXT prayer alarm and its pre-notification if enabled.
-     */
-    fun scheduleNextAlarm(prayerDays: List<PrayerDay>) {
+    fun scheduleTestAlarm(secondsFromNow: Int) {
+        val triggerAt = System.currentTimeMillis() + (secondsFromNow * 1000)
+        Log.d("AlarmScheduler", "Scheduling TEST alarm in $secondsFromNow seconds")
+        scheduleAlarm(triggerAt, "Test Prayer", ACTION_PRAYER_ALARM, REQUEST_CODE_ADHAN)
+    }
+
+    fun scheduleNextAlarm(prayerDays: List<PrayerDay>, enablePreAdhan: Boolean, preAdhanMinutes: Int) {
         val now = LocalDateTime.now()
         
         val nextPrayer = prayerDays
@@ -53,15 +56,13 @@ class AlarmScheduler @Inject constructor(
             val (type, dateTime, _) = nextPrayer
             val epochMillis = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
             
-            val settings = runBlocking { settingsManager.settingsFlow.first() }
-
             // Schedule actual Adhan
             Log.d("AlarmScheduler", "Scheduling ADHAN alarm for: ${type.name} at $dateTime")
             scheduleAlarm(epochMillis, type.name, ACTION_PRAYER_ALARM, REQUEST_CODE_ADHAN)
 
             // Schedule Pre-Adhan Notification
-            if (settings.enablePreAdhanWarning) {
-                val preTime = dateTime.minusMinutes(settings.preAdhanWarningMinutes.toLong())
+            if (enablePreAdhan) {
+                val preTime = dateTime.minusMinutes(preAdhanMinutes.toLong())
                 if (preTime.isAfter(now)) {
                     val preEpochMillis = preTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
                     Log.d("AlarmScheduler", "Scheduling PRE-ADHAN alarm for: ${type.name} at $preTime")
@@ -76,8 +77,7 @@ class AlarmScheduler @Inject constructor(
     private fun scheduleAlarm(timeMillis: Long, prayerName: String, action: String, requestCode: Int) {
         val intent = Intent(context, PrayerAlarmReceiver::class.java).apply {
             this.action = action
-            putExtra("PRAYER_NAME", prayerName)
-            // Using explicit component name for maximum reliability when app is backgrounded/killed
+            putExtra(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
             component = ComponentName(context, PrayerAlarmReceiver::class.java)
         }
 
@@ -88,7 +88,6 @@ class AlarmScheduler @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Using setAlarmClock is the most reliable way to wake up the device from Doze mode
         val alarmClockInfo = AlarmManager.AlarmClockInfo(timeMillis, pendingIntent)
         
         try {
@@ -96,14 +95,12 @@ class AlarmScheduler @Inject constructor(
                 if (alarmManager.canScheduleExactAlarms()) {
                     alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
                 } else {
-                    Log.e("AlarmScheduler", "Exact alarm permission missing, using fallback setAndAllowWhileIdle")
                     alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent)
                 }
             } else {
                 alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
             }
         } catch (e: SecurityException) {
-            Log.e("AlarmScheduler", "SecurityException scheduling alarm", e)
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent)
         }
     }

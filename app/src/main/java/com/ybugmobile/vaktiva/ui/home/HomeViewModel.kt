@@ -62,7 +62,8 @@ class HomeViewModel @Inject constructor(
     private val _isAdhanPlaying = MutableStateFlow(false)
     private val _playingPrayerName = MutableStateFlow<String?>(null)
 
-    private val _testAlarmTime = MutableStateFlow<LocalDateTime?>(null)
+    // State for the test alarm countdown
+    private val _testAlarmEndTime = MutableStateFlow<LocalDateTime?>(null)
 
     private var mediaController: MediaController? = null
 
@@ -70,15 +71,31 @@ class HomeViewModel @Inject constructor(
     private var lastPermissionStatus = isLocationPermissionGranted()
 
     init {
-        tickerFlow(1000).onEach { _currentTime.value = LocalDateTime.now() }.launchIn(viewModelScope)
+        tickerFlow(1000).onEach { 
+            _currentTime.value = LocalDateTime.now() 
+            // Reset test alarm if it has passed
+            _testAlarmEndTime.value?.let { end ->
+                if (LocalDateTime.now().isAfter(end.plusSeconds(5))) {
+                    _testAlarmEndTime.value = null
+                }
+            }
+        }.launchIn(viewModelScope)
+
         onPermissionsGranted()
         
-        allPrayerDays
-            .filter { it.isNotEmpty() }
-            .onEach { days -> alarmScheduler.scheduleNextAlarm(days) }
-            .launchIn(viewModelScope)
+        // Centralized scheduling when data changes
+        combine(allPrayerDays, settings) { days, s -> 
+            if (days.isNotEmpty()) {
+                alarmScheduler.scheduleNextAlarm(days, s.enablePreAdhanWarning, s.preAdhanWarningMinutes)
+            }
+        }.launchIn(viewModelScope)
 
         setupMediaController()
+    }
+
+    fun triggerTestAlarm(seconds: Int) {
+        _testAlarmEndTime.value = LocalDateTime.now().plusSeconds(seconds.toLong())
+        alarmScheduler.scheduleTestAlarm(seconds)
     }
 
     override fun onResume(owner: LifecycleOwner) {
@@ -109,19 +126,6 @@ class HomeViewModel @Inject constructor(
 
     fun stopAdhan() = mediaController?.stop()
 
-    fun setTestAlarm(time: LocalDateTime) {
-        _testAlarmTime.value = time
-        // Actually schedule a real system alarm for testing
-        viewModelScope.launch {
-            val dummyDay = PrayerDay(
-                date = time.toLocalDate(),
-                hijriDate = null,
-                timings = mapOf(PrayerType.FAJR to time.toLocalTime())
-            )
-            alarmScheduler.scheduleNextAlarm(listOf(dummyDay))
-        }
-    }
-
     private fun tickerFlow(periodMillis: Long) = flow { while (true) { emit(Unit); delay(periodMillis) } }
 
     private val todayPrayerDay: Flow<PrayerDay?> = allPrayerDays.map { days -> days.find { it.date == LocalDate.now() } }
@@ -131,18 +135,24 @@ class HomeViewModel @Inject constructor(
         PrayerType.entries.map { it to (day.timings[it] ?: LocalTime.MIN) }
     }
 
-    val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, _testAlarmTime) { prayers, now, testTime ->
+    val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, _testAlarmEndTime) { prayers, now, testEndTime ->
         if (prayers == null) return@combine null
-        val nowDateTime = now
+        
+        // If a test alarm is active, prioritize showing it
+        if (testEndTime != null && testEndTime.isAfter(now)) {
+            return@combine NextPrayer(
+                type = PrayerType.FAJR, // Dummy type for test
+                time = testEndTime.toLocalTime(),
+                date = testEndTime.toLocalDate(),
+                remainingDuration = Duration.between(now, testEndTime)
+            )
+        }
+
         val nowTime = now.toLocalTime()
         val nextReal = prayers.firstOrNull { it.second.isAfter(nowTime) } ?: prayers.first()
-        val realDateTime = if (nextReal.second.isAfter(nowTime)) nowDateTime.toLocalDate().atTime(nextReal.second) else nowDateTime.toLocalDate().plusDays(1).atTime(nextReal.second)
+        val realDateTime = if (nextReal.second.isAfter(nowTime)) now.toLocalDate().atTime(nextReal.second) else now.toLocalDate().plusDays(1).atTime(nextReal.second)
 
-        if (testTime != null && testTime.isAfter(nowDateTime)) {
-            // Keep the test countdown active until it hits zero
-            return@combine NextPrayer(PrayerType.FAJR, testTime.toLocalTime(), testTime.toLocalDate(), Duration.between(nowDateTime, testTime))
-        }
-        NextPrayer(nextReal.first, nextReal.second, realDateTime.toLocalDate(), Duration.between(nowDateTime, realDateTime))
+        NextPrayer(nextReal.first, nextReal.second, realDateTime.toLocalDate(), Duration.between(now, realDateTime))
     }
 
     private val _hasSettled = MutableStateFlow(false)

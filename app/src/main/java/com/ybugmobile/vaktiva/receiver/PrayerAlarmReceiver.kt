@@ -11,6 +11,7 @@ import com.ybugmobile.vaktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.vaktiva.data.notification.NotificationHelper
 import com.ybugmobile.vaktiva.domain.model.PrayerType
+import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import com.ybugmobile.vaktiva.service.AdhanService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +31,12 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
     
     @Inject
     lateinit var notificationHelper: NotificationHelper
+
+    @Inject
+    lateinit var alarmScheduler: AlarmScheduler
+
+    @Inject
+    lateinit var prayerRepository: PrayerRepository
 
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
@@ -61,9 +68,26 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         handleAdhanTrigger(context, prayerName)
                     }
                 }
+                
+                // CRITICAL: Reschedule the NEXT alarm after this one is handled
+                // This ensures the "Chain of Survival" for the alarm system.
+                rescheduleNextPrayer()
+                
             } finally {
                 pendingResult.finish()
             }
+        }
+    }
+
+    private suspend fun rescheduleNextPrayer() {
+        val settings = settingsManager.settingsFlow.first()
+        val prayerDays = prayerRepository.getPrayerDays().first()
+        if (prayerDays.isNotEmpty()) {
+            alarmScheduler.scheduleNextAlarm(
+                prayerDays, 
+                settings.enablePreAdhanWarning, 
+                settings.preAdhanWarningMinutes
+            )
         }
     }
 

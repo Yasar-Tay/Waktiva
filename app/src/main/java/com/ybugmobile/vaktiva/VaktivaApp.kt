@@ -7,7 +7,6 @@ import android.os.Build
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.ybugmobile.vaktiva.data.notification.NotificationHelper
-import com.ybugmobile.vaktiva.service.AdhanService
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -44,7 +43,7 @@ class VaktivaApp : Application(), Configuration.Provider {
 
             // 2. Channel for Adhan Playback (Stop Notification)
             val adhanChannel = NotificationChannel(
-                AdhanService.CHANNEL_ID,
+                NotificationHelper.CHANNEL_ID_ADHAN,
                 "Adhan Playback",
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {

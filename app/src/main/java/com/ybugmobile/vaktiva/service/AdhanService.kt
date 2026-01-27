@@ -32,6 +32,7 @@ import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.data.notification.NotificationHelper
 import com.ybugmobile.vaktiva.ui.adhan.AdhanActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,8 +48,6 @@ class AdhanService : MediaSessionService() {
 
     companion object {
         const val ACTION_STOP_ADHAN = "com.ybugmobile.vaktiva.ACTION_STOP_ADHAN"
-        const val NOTIFICATION_ID = 1001
-        const val CHANNEL_ID = "adhan_playback_channel"
     }
 
     @OptIn(UnstableApi::class)
@@ -103,7 +102,7 @@ class AdhanService : MediaSessionService() {
         setMediaNotificationProvider(object : MediaNotification.Provider {
             override fun createNotification(s: MediaSession, cl: ImmutableList<CommandButton>, af: MediaNotification.ActionFactory, cb: MediaNotification.Provider.Callback): MediaNotification {
                 val prayerName = s.player.currentMediaItem?.mediaMetadata?.title?.toString()?.replace("Adhan: ", "") ?: "Prayer"
-                return MediaNotification(NOTIFICATION_ID, createNotificationBuilder(prayerName, s).build())
+                return MediaNotification(NotificationHelper.NOTIFICATION_ID_ADHAN, createNotificationBuilder(prayerName, s).build())
             }
             override fun handleCustomCommand(s: MediaSession, a: String, e: Bundle) = false
         })
@@ -115,15 +114,15 @@ class AdhanService : MediaSessionService() {
             return START_NOT_STICKY
         }
 
-        val prayerName = intent?.getStringExtra("PRAYER_NAME") ?: "Prayer"
+        val prayerName = intent?.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME) ?: "Prayer"
         val audioPath = intent?.getStringExtra("AUDIO_PATH")
 
         // 1. Create and Start Foreground immediately
         val notification = createNotificationBuilder(prayerName, mediaSession).build()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+            startForeground(NotificationHelper.NOTIFICATION_ID_ADHAN, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
         } else {
-            startForeground(NOTIFICATION_ID, notification)
+            startForeground(NotificationHelper.NOTIFICATION_ID_ADHAN, notification)
         }
 
         // 2. Prepare Player
@@ -144,7 +143,7 @@ class AdhanService : MediaSessionService() {
     @OptIn(UnstableApi::class)
     private fun createNotificationBuilder(prayerName: String, session: MediaSession?): NotificationCompat.Builder {
         val fullScreenIntent = Intent(this, AdhanActivity::class.java).apply {
-            putExtra("PRAYER_NAME", prayerName)
+            putExtra(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         val fullScreenPendingIntent = PendingIntent.getActivity(
@@ -154,7 +153,7 @@ class AdhanService : MediaSessionService() {
         val stopIntent = Intent(this, AdhanService::class.java).apply { action = ACTION_STOP_ADHAN }
         val stopPendingIntent = PendingIntent.getService(this, 1, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        return NotificationCompat.Builder(this, NotificationHelper.CHANNEL_ID_ADHAN)
             .setContentTitle("Adhan: $prayerName")
             .setContentText("It's time for prayer")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
