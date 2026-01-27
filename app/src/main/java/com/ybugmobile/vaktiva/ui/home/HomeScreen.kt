@@ -334,13 +334,7 @@ fun HomeScreenContent(
                     }
 
                     // Modern Adhan Controls
-                    val remainingSeconds = state.nextPrayer?.remainingDuration?.seconds ?: Long.MAX_VALUE
-                    val isWithinWarning = settings?.playAdhanAudio == true && 
-                                          state.nextPrayer != null && 
-                                          remainingSeconds <= (settings.preAdhanWarningMinutes * 60) &&
-                                          remainingSeconds > 0
-
-                    val showAdhanControls = state.isAdhanPlaying || (isWithinWarning && !state.isMuted) || (state.nextPrayer?.isTest == true)
+                    val showAdhanControls = state.isAdhanPlaying
 
                     AnimatedVisibility(
                         visible = showAdhanControls,
@@ -398,61 +392,24 @@ fun HomeScreenContent(
                                     )
                                 }
 
-                                AnimatedContent(
-                                    targetState = state.isAdhanPlaying || state.nextPrayer?.isTest == true,
-                                    label = "buttonSwap",
-                                    transitionSpec = {
-                                        fadeIn(animationSpec = tween(300)) togetherWith 
-                                        fadeOut(animationSpec = tween(300))
-                                    }
-                                ) { isActionActive ->
-                                    if (isActionActive) {
-                                        // STOP BUTTON
-                                        Surface(
-                                            onClick = if (state.isAdhanPlaying) onStopAdhan else onStopTest,
-                                            color = MaterialTheme.colorScheme.error,
-                                            shape = RoundedCornerShape(12.dp)
-                                        ) {
-                                            Row(
-                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Icon(Icons.Default.Stop, null, tint = Color.White, modifier = Modifier.size(18.dp))
-                                                Spacer(Modifier.width(8.dp))
-                                                Text(
-                                                    if (state.isAdhanPlaying) "STOP" else "CANCEL", 
-                                                    color = Color.White, 
-                                                    style = MaterialTheme.typography.labelLarge, 
-                                                    fontWeight = FontWeight.Bold
-                                                )
-                                            }
-                                        }
-                                    } else {
-                                        // MUTE BUTTON
-                                        Surface(
-                                            onClick = { state.nextPrayer?.let { onSkipNextAudio(it.type.name, it.date) } },
-                                            color = if (state.isMuted) MaterialTheme.colorScheme.error.copy(alpha = 0.1f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                            shape = RoundedCornerShape(12.dp)
-                                        ) {
-                                            Row(
-                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Icon(
-                                                    if (state.isMuted) Icons.Default.MusicOff else Icons.Default.MusicNote,
-                                                    null,
-                                                    tint = if (state.isMuted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                                                    modifier = Modifier.size(18.dp)
-                                                )
-                                                Spacer(Modifier.width(8.dp))
-                                                Text(
-                                                    if (state.isMuted) "MUTED" else "MUTE",
-                                                    color = if (state.isMuted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                                                    style = MaterialTheme.typography.labelLarge,
-                                                    fontWeight = FontWeight.Bold
-                                                )
-                                            }
-                                        }
+                                // STOP BUTTON
+                                Surface(
+                                    onClick = if (state.isAdhanPlaying) onStopAdhan else onStopTest,
+                                    color = MaterialTheme.colorScheme.error,
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(Icons.Default.Stop, null, tint = Color.White, modifier = Modifier.size(18.dp))
+                                        Spacer(Modifier.width(8.dp))
+                                        Text(
+                                            "STOP", 
+                                            color = Color.White, 
+                                            style = MaterialTheme.typography.labelLarge, 
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     }
                                 }
                             }
