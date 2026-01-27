@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.ybugmobile.vaktiva.MainActivity
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
 import com.ybugmobile.vaktiva.ui.adhan.AdhanActivity
@@ -23,12 +24,13 @@ class NotificationHelper @Inject constructor(
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     companion object {
-        const val CHANNEL_ID = "adhan_channel"
-        const val WARNING_CHANNEL_ID = "warning_channel"
-        const val NOTIFICATION_ID = 1001
-        const val WARNING_NOTIFICATION_ID = 1002
+        const val CHANNEL_ID_ADHAN = "adhan_playback_channel"
+        const val CHANNEL_ID_WARNING = "pre_adhan_warning_channel_v1"
         
-        const val ACTION_SKIP_PRAYER = "com.ybugmobile.vaktiva.ACTION_SKIP_PRAYER"
+        const val NOTIFICATION_ID_ADHAN = 1001
+        const val NOTIFICATION_ID_WARNING = 2001
+        
+        const val ACTION_SKIP_ADHAN = "com.ybugmobile.vaktiva.ACTION_SKIP_ADHAN"
         const val EXTRA_PRAYER_NAME = "PRAYER_NAME"
     }
 
@@ -39,96 +41,70 @@ class NotificationHelper @Inject constructor(
     private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val adhanChannel = NotificationChannel(
-                CHANNEL_ID,
-                "Adhan Notifications",
+                CHANNEL_ID_ADHAN,
+                "Adhan Playback",
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Notifications for prayer times"
+                description = "Notification for active Adhan playback"
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                setSound(null, null) // Audio is handled by AdhanService
+                setSound(null, null) 
                 enableVibration(true)
-                setShowBadge(true)
             }
 
             val warningChannel = NotificationChannel(
-                WARNING_CHANNEL_ID,
-                "Prayer Warnings",
-                NotificationManager.IMPORTANCE_DEFAULT
+                CHANNEL_ID_WARNING,
+                "Prayer Reminders",
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Notifications for pre-adhan warnings"
+                description = "Notifications for upcoming prayers"
+                setShowBadge(true)
             }
 
             notificationManager.createNotificationChannels(listOf(adhanChannel, warningChannel))
         }
     }
 
-    fun showAdhanNotification(prayerName: String) {
-        val intent = Intent(context, AdhanActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra("PRAYER_NAME", prayerName)
-        }
-
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            0,
-            intent,
+    fun showPreAdhanWarning(prayerName: String, isMuted: Boolean = false) {
+        val contentIntent = PendingIntent.getActivity(
+            context, 0, Intent(context, MainActivity::class.java), 
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val fullScreenIntent = PendingIntent.getActivity(
-            context,
-            1,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .setContentTitle("It's time for $prayerName")
-            .setContentText("Tap to open Vaktiva")
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID_WARNING)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setAutoCancel(true)
-            .setFullScreenIntent(fullScreenIntent, true)
-            .setContentIntent(pendingIntent)
-            .setOngoing(true)
-            .build()
-
-        notificationManager.notify(NOTIFICATION_ID, notification)
-    }
-
-    fun showPreAdhanWarning(prayerName: String) {
-        val skipIntent = Intent(context, PrayerAlarmReceiver::class.java).apply {
-            action = ACTION_SKIP_PRAYER
-            putExtra(EXTRA_PRAYER_NAME, prayerName)
-        }
-        
-        val skipPendingIntent = PendingIntent.getBroadcast(
-            context,
-            prayerName.hashCode(),
-            skipIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val notification = NotificationCompat.Builder(context, WARNING_CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .setContentTitle("Upcoming: $prayerName")
-            .setContentText("$prayerName will start in a few minutes.")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setContentIntent(contentIntent)
             .setAutoCancel(true)
-            .addAction(
-                android.R.drawable.ic_menu_close_clear_cancel,
-                "Skip Audio",
-                skipPendingIntent
-            )
-            .build()
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
-        notificationManager.notify(WARNING_NOTIFICATION_ID, notification)
+        if (isMuted) {
+            builder.setContentTitle("Adhan Muted")
+                .setContentText("Adhan for $prayerName is skipped.")
+        } else {
+            val skipIntent = Intent(context, PrayerAlarmReceiver::class.java).apply {
+                action = ACTION_SKIP_ADHAN
+                putExtra(EXTRA_PRAYER_NAME, prayerName)
+            }
+            val skipPendingIntent = PendingIntent.getBroadcast(
+                context, prayerName.hashCode(), skipIntent, 
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            builder.setContentTitle("Upcoming Adhan")
+                .setContentText("$prayerName is approaching.")
+                .addAction(R.drawable.ic_launcher_foreground, "SKIP ADHAN", skipPendingIntent)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+        }
+
+        notificationManager.notify(NOTIFICATION_ID_WARNING, builder.build())
     }
 
-    fun cancelNotification(id: Int = NOTIFICATION_ID) {
-        notificationManager.cancel(id)
+    fun cancelWarningNotification() {
+        notificationManager.cancel(NOTIFICATION_ID_WARNING)
+    }
+
+    fun cancelAdhanNotification() {
+        notificationManager.cancel(NOTIFICATION_ID_ADHAN)
     }
 }

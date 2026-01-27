@@ -6,7 +6,7 @@ import android.app.NotificationManager
 import android.os.Build
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
+import com.ybugmobile.vaktiva.data.notification.NotificationHelper
 import com.ybugmobile.vaktiva.service.AdhanService
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -33,7 +33,7 @@ class VaktivaApp : Application(), Configuration.Provider {
 
             // 1. Channel for Pre-Adhan Warning (Skip Notification)
             val warningChannel = NotificationChannel(
-                PrayerAlarmReceiver.CHANNEL_ID_WARNING,
+                NotificationHelper.CHANNEL_ID_WARNING,
                 "Prayer Warnings",
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
@@ -53,8 +53,8 @@ class VaktivaApp : Application(), Configuration.Provider {
                 enableVibration(false)
             }
 
-            manager.createNotificationChannel(warningChannel)
-            manager.createNotificationChannel(adhanChannel)
+            manager?.createNotificationChannel(warningChannel)
+            manager?.createNotificationChannel(adhanChannel)
         }
     }
 }

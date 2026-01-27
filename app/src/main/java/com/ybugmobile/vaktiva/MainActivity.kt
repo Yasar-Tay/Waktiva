@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                         onClick = { scheduleTestAlarm(viewModel) },
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(end = 16.dp, bottom = 80.dp),
+                            .padding(end = 16.dp, bottom = 180.dp),
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer
                     ) {
                         Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")

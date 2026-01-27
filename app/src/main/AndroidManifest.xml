@@ -46,6 +46,14 @@
             android:launchMode="singleTop"
             android:theme="@style/Theme.Vaktiva" />
 
+        <activity
+            android:name=".ui.adhan.SkipAdhanActivity"
+            android:exported="false"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Vaktiva" />
+
         <service
             android:name=".service.AdhanService"
             android:enabled="true"
@@ -58,7 +66,13 @@
 
         <receiver
             android:name=".receiver.PrayerAlarmReceiver"
-            android:exported="false" />
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.ybugmobile.vaktiva.ACTION_PRAYER_ALARM" />
+                <action android:name="com.ybugmobile.vaktiva.ACTION_PRE_ADHAN_NOTIFICATION" />
+                <action android:name="com.ybugmobile.vaktiva.ACTION_SKIP_ADHAN" />
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name=".receiver.BootReceiver"
