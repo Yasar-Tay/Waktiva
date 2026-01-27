@@ -70,6 +70,13 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 when (action) {
                     AlarmScheduler.ACTION_PRE_ADHAN_NOTIFICATION -> {
                         val settings = settingsManager.settingsFlow.first()
+                        
+                        // If adhan audio is disabled, do not show the skip notification
+                        if (!settings.playAdhanAudio) {
+                            Log.d("PrayerAlarmReceiver", "PRE-ADHAN SUPPRESSED: playAdhanAudio is disabled.")
+                            return@launch
+                        }
+
                         val isMuted = settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && 
                                      settings.mutedPrayerDate == LocalDate.now().toString()
                         

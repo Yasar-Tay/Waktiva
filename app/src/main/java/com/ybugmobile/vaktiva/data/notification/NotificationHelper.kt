@@ -58,6 +58,7 @@ class NotificationHelper @Inject constructor(
             ).apply {
                 description = "Notifications for upcoming prayers"
                 setShowBadge(true)
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
 
             notificationManager.createNotificationChannels(listOf(adhanChannel, warningChannel))
