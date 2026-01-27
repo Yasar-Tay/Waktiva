@@ -2,8 +2,14 @@ package com.ybugmobile.vaktiva.service
 
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ServiceInfo
+import android.media.AudioAttributes as AndroidAudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -37,14 +43,24 @@ import com.ybugmobile.vaktiva.ui.adhan.AdhanActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AdhanService : MediaSessionService() {
+class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListener {
 
     private var player: Player? = null
     private var mediaSession: MediaSession? = null
+    private lateinit var audioManager: AudioManager
+    private var focusRequest: AudioFocusRequest? = null
     
     private val handler = Handler(Looper.getMainLooper())
     private var volumeFadeRunnable: Runnable? = null
     private var isFallbackPlaying = false
+
+    private val noisyReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
+                player?.pause()
+            }
+        }
+    }
 
     companion object {
         const val ACTION_STOP_ADHAN = "com.ybugmobile.vaktiva.ACTION_STOP_ADHAN"
@@ -53,6 +69,7 @@ class AdhanService : MediaSessionService() {
     @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(C.USAGE_ALARM)
@@ -61,6 +78,7 @@ class AdhanService : MediaSessionService() {
 
         val basePlayer = ExoPlayer.Builder(this)
             .setAudioAttributes(audioAttributes, false)
+            .setWakeMode(C.WAKE_MODE_NETWORK) // Enable wake lock support
             .build()
 
         player = object : ForwardingPlayer(basePlayer) {
@@ -106,6 +124,8 @@ class AdhanService : MediaSessionService() {
             }
             override fun handleCustomCommand(s: MediaSession, a: String, e: Bundle) = false
         })
+
+        registerReceiver(noisyReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -125,19 +145,47 @@ class AdhanService : MediaSessionService() {
             startForeground(NotificationHelper.NOTIFICATION_ID_ADHAN, notification)
         }
 
-        // 2. Prepare Player
-        if (audioPath != null && player?.playbackState == Player.STATE_IDLE) {
-            isFallbackPlaying = false
-            val metadata = MediaMetadata.Builder().setTitle("Adhan: $prayerName").build()
-            val mediaItem = MediaItem.Builder().setUri(audioPath.toUri()).setMediaMetadata(metadata).build()
-            
-            player?.setMediaItem(mediaItem)
-            player?.prepare()
-            startFadeIn()
-            player?.play()
+        // 2. Request Audio Focus and Prepare Player
+        if (requestAudioFocus()) {
+            if (audioPath != null && player?.playbackState == Player.STATE_IDLE) {
+                isFallbackPlaying = false
+                val metadata = MediaMetadata.Builder().setTitle("Adhan: $prayerName").build()
+                val mediaItem = MediaItem.Builder().setUri(audioPath.toUri()).setMediaMetadata(metadata).build()
+                
+                player?.setMediaItem(mediaItem)
+                player?.prepare()
+                startFadeIn()
+                player?.play()
+            }
         }
 
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun requestAudioFocus(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val playbackAttributes = AndroidAudioAttributes.Builder()
+                .setUsage(AndroidAudioAttributes.USAGE_ALARM)
+                .setContentType(AndroidAudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+            focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+                .setAudioAttributes(playbackAttributes)
+                .setAcceptsDelayedFocusGain(true)
+                .setOnAudioFocusChangeListener(this)
+                .build()
+            audioManager.requestAudioFocus(focusRequest!!) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.requestAudioFocus(this, AudioManager.STREAM_ALARM, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        }
+    }
+
+    override fun onAudioFocusChange(focusChange: Int) {
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_GAIN -> player?.volume = 1.0f
+            AudioManager.AUDIOFOCUS_LOSS, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> player?.pause()
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> player?.volume = 0.2f
+        }
     }
 
     @OptIn(UnstableApi::class)
@@ -159,7 +207,7 @@ class AdhanService : MediaSessionService() {
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setFullScreenIntent(fullScreenPendingIntent, true) // This launches the UI on lockscreen
+            .setFullScreenIntent(fullScreenPendingIntent, true) 
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, "STOP ADHAN", stopPendingIntent)
@@ -168,6 +216,12 @@ class AdhanService : MediaSessionService() {
 
     private fun stopPlaybackAndService() {
         player?.stop()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && focusRequest != null) {
+            audioManager.abandonAudioFocusRequest(focusRequest!!)
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.abandonAudioFocus(this)
+        }
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
@@ -191,6 +245,7 @@ class AdhanService : MediaSessionService() {
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
     override fun onDestroy() {
+        unregisterReceiver(noisyReceiver)
         volumeFadeRunnable?.let { handler.removeCallbacks(it) }
         mediaSession?.run { player.release(); release() }
         super.onDestroy()

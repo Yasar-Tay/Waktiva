@@ -16,7 +16,7 @@ import com.google.common.util.concurrent.MoreExecutors
 import com.ybugmobile.vaktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
-import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
+import com.ybugmobile.vaktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.vaktiva.data.location.LocationWrapper
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
@@ -35,7 +35,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val prayerRepository: PrayerRepository,
-    private val settingsManager: SettingsManager,
+    private val settingsManager: SettingsManagerInterface,
     private val locationWrapper: LocationWrapper,
     private val alarmScheduler: AlarmScheduler,
     @ApplicationContext private val context: Context

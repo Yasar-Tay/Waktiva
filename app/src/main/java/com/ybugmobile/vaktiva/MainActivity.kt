@@ -49,22 +49,24 @@ class MainActivity : AppCompatActivity() {
             VaktivaTheme {
                 val viewModel: HomeViewModel = hiltViewModel()
                 
-                Box(modifier = Modifier.fillMaxSize()) {
+                Surface(modifier = Modifier.fillMaxSize()) {
                     MainNavigation(this@MainActivity, viewModel)
                     
                     // Refactored Test FAB to use centralized logic
-                    FloatingActionButton(
-                        onClick = { 
-                            val seconds = 70
-                            viewModel.triggerTestAlarm(seconds)
-                            Toast.makeText(this@MainActivity, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
-                        },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = 16.dp, bottom = 180.dp),
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                    ) {
-                        Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        FloatingActionButton(
+                            onClick = { 
+                                val seconds = 70
+                                viewModel.triggerTestAlarm(seconds)
+                                Toast.makeText(this@MainActivity, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(end = 16.dp, bottom = 100.dp), // Adjusted bottom padding
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                        ) {
+                            Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
+                        }
                     }
                 }
             }
@@ -122,6 +124,7 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
     val showBottomBar = items.any { it.route == currentDestination?.route }
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         bottomBar = {
             if (showBottomBar) {
                 NavigationBar {
@@ -148,7 +151,7 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
         NavHost(
             navController, 
             startDestination = startDestination, 
-            Modifier.padding(if (showBottomBar) innerPadding else androidx.compose.foundation.layout.PaddingValues(0.dp))
+            Modifier.padding(innerPadding) // Consuming the padding correctly
         ) {
             composable(Screen.Welcome.route) { 
                 WelcomeScreen(

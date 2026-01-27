@@ -39,6 +39,7 @@ import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.ui.settings.AudioSettingsViewModel
 import com.ybugmobile.vaktiva.ui.settings.SettingsViewModel
+import com.ybugmobile.vaktiva.utils.PermissionUtils
 
 private val WelcomeGradientStart = Color(0xFF0F172A)
 private val WelcomeGradientEnd = Color(0xFF1E293B)
@@ -138,22 +139,8 @@ private fun PermissionsStep(onNext: () -> Unit) {
         rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
     } else null
 
-    val alarmManager = remember { context.getSystemService(Context.ALARM_SERVICE) as AlarmManager }
-    var alarmGranted by remember { 
-        mutableStateOf(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) alarmManager.canScheduleExactAlarms() 
-            else true
-        ) 
-    }
-
-    // Battery Optimization State
-    val powerManager = remember { context.getSystemService(Context.POWER_SERVICE) as PowerManager }
-    var batteryOptimizationIgnored by remember {
-        mutableStateOf(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) powerManager.isIgnoringBatteryOptimizations(context.packageName)
-            else true
-        )
-    }
+    var alarmGranted by remember { mutableStateOf(PermissionUtils.canScheduleExactAlarms(context)) }
+    var batteryOptimizationIgnored by remember { mutableStateOf(PermissionUtils.isIgnoringBatteryOptimizations(context)) }
 
     // Helper to open app settings
     fun openAppSettings() {
@@ -168,12 +155,8 @@ private fun PermissionsStep(onNext: () -> Unit) {
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    alarmGranted = alarmManager.canScheduleExactAlarms()
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    batteryOptimizationIgnored = powerManager.isIgnoringBatteryOptimizations(context.packageName)
-                }
+                alarmGranted = PermissionUtils.canScheduleExactAlarms(context)
+                batteryOptimizationIgnored = PermissionUtils.isIgnoringBatteryOptimizations(context)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -240,32 +223,26 @@ private fun PermissionsStep(onNext: () -> Unit) {
                     isGranted = alarmGranted,
                     onClick = {
                         if (!alarmGranted) {
-                            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                                data = Uri.fromParts("package", context.packageName, null)
+                            PermissionUtils.getExactAlarmSettingIntent(context)?.let {
+                                context.startActivity(it)
                             }
-                            context.startActivity(intent)
                         }
                     }
                 )
             }
 
-            // Battery Optimization Option (Optional but recommended for reliability)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                PermissionCard(
-                    icon = Icons.Default.BatteryChargingFull,
-                    title = stringResource(R.string.settings_battery_opt),
-                    description = if (batteryOptimizationIgnored) "Optimized for reliability" else "Disable optimization for reliable Adhans",
-                    isGranted = batteryOptimizationIgnored,
-                    onClick = {
-                        if (!batteryOptimizationIgnored) {
-                            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                                data = Uri.fromParts("package", context.packageName, null)
-                            }
-                            context.startActivity(intent)
-                        }
+            // Battery Optimization Option (Recommended for reliability)
+            PermissionCard(
+                icon = Icons.Default.BatteryChargingFull,
+                title = stringResource(R.string.settings_battery_opt),
+                description = if (batteryOptimizationIgnored) "Optimized for reliability" else "Disable optimization for reliable Adhans",
+                isGranted = batteryOptimizationIgnored,
+                onClick = {
+                    if (!batteryOptimizationIgnored) {
+                        context.startActivity(PermissionUtils.getIgnoreBatteryOptimizationIntent(context))
                     }
-                )
-            }
+                }
+            )
         }
 
         if (!allGranted) {
@@ -283,11 +260,7 @@ private fun PermissionsStep(onNext: () -> Unit) {
 
         Button(
             onClick = {
-                if (allGranted) {
-                    onNext()
-                } else {
-                    onNext()
-                }
+                onNext()
             },
             modifier = Modifier.fillMaxWidth().height(56.dp),
             colors = ButtonDefaults.buttonColors(containerColor = if (allGranted) AccentColor else Color.White.copy(alpha = 0.2f)),

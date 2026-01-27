@@ -1,6 +1,7 @@
 package com.ybugmobile.vaktiva.data.worker
 
 import android.content.Context
+import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -26,15 +27,18 @@ class PrayerUpdateWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return try {
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val currentDate = sdf.format(Calendar.getInstance().time)
+            val calendar = Calendar.getInstance()
+            val currentDate = sdf.format(calendar.time)
             
             val remainingDays = repository.getRemainingDaysCount(currentDate)
+            Log.d("PrayerUpdateWorker", "Remaining days in cache: $remainingDays")
             
-            if (remainingDays < 3) {
+            // If less than 15 days of data remaining, proactively fetch to maintain a 30-day buffer
+            if (remainingDays < 15) {
+                Log.d("PrayerUpdateWorker", "Proactively fetching prayer times for current and next month")
                 val settings = settingsManager.settingsFlow.first()
-                val calendar = Calendar.getInstance()
                 
-                // Fetch current month and next month to ensure we have enough data
+                // Fetch current month
                 val resultCurrent = repository.refreshPrayerTimes(
                     year = calendar.get(Calendar.YEAR),
                     month = calendar.get(Calendar.MONTH) + 1,
@@ -43,11 +47,12 @@ class PrayerUpdateWorker @AssistedInject constructor(
                     method = settings.calculationMethod
                 )
                 
-                // Also fetch next month just in case we are at the end of the month
-                calendar.add(Calendar.MONTH, 1)
+                // Fetch next month
+                val nextMonthCal = calendar.clone() as Calendar
+                nextMonthCal.add(Calendar.MONTH, 1)
                 val resultNext = repository.refreshPrayerTimes(
-                    year = calendar.get(Calendar.YEAR),
-                    month = calendar.get(Calendar.MONTH) + 1,
+                    year = nextMonthCal.get(Calendar.YEAR),
+                    month = nextMonthCal.get(Calendar.MONTH) + 1,
                     latitude = settings.latitude,
                     longitude = settings.longitude,
                     method = settings.calculationMethod
@@ -57,6 +62,7 @@ class PrayerUpdateWorker @AssistedInject constructor(
                     scheduleAlarms()
                     Result.success()
                 } else {
+                    // If one fails, we retry later
                     Result.retry()
                 }
             } else {
@@ -64,6 +70,7 @@ class PrayerUpdateWorker @AssistedInject constructor(
                 Result.success()
             }
         } catch (e: Exception) {
+            Log.e("PrayerUpdateWorker", "Error updating prayer times", e)
             Result.failure()
         }
     }

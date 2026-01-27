@@ -24,12 +24,22 @@ class LocationWrapper @Inject constructor(
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
+    /**
+     * Retrieves the current location.
+     * @param highAccuracy If true, uses PRIORITY_HIGH_ACCURACY (for Qibla).
+     *                     If false, uses PRIORITY_BALANCED_POWER_ACCURACY (for Prayer Times).
+     */
     @SuppressLint("MissingPermission")
-    suspend fun getCurrentLocation(): Location? {
+    suspend fun getCurrentLocation(highAccuracy: Boolean = false): Location? {
         return try {
-            // Priority is changed to HIGH_ACCURACY to refine location better
+            val priority = if (highAccuracy) {
+                Priority.PRIORITY_HIGH_ACCURACY
+            } else {
+                Priority.PRIORITY_BALANCED_POWER_ACCURACY
+            }
+            
             fusedLocationClient.getCurrentLocation(
-                Priority.PRIORITY_HIGH_ACCURACY,
+                priority,
                 null
             ).await()
         } catch (e: Exception) {

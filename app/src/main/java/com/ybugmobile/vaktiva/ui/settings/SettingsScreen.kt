@@ -35,6 +35,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.utils.PermissionUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,15 +84,9 @@ fun SettingsScreen(
                             Switch(
                                 checked = settings?.playAdhanAudio ?: true,
                                 onCheckedChange = { enabled ->
-                                    if (enabled) {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                                            if (!alarmManager.canScheduleExactAlarms()) {
-                                                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                                                    data = Uri.fromParts("package", context.packageName, null)
-                                                }
-                                                context.startActivity(intent)
-                                            }
+                                    if (enabled && !PermissionUtils.canScheduleExactAlarms(context)) {
+                                        PermissionUtils.getExactAlarmSettingIntent(context)?.let {
+                                            context.startActivity(it)
                                         }
                                     }
                                     viewModel.setPlayAdhanAudio(enabled)
@@ -126,17 +121,13 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 var isIgnoringBatteryOptimizations by remember {
-                    mutableStateOf(
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            (context.getSystemService(Context.POWER_SERVICE) as PowerManager).isIgnoringBatteryOptimizations(context.packageName)
-                        } else true
-                    )
+                    mutableStateOf(PermissionUtils.isIgnoringBatteryOptimizations(context))
                 }
                 val lifecycleOwner = LocalLifecycleOwner.current
                 DisposableEffect(lifecycleOwner) {
                     val observer = LifecycleEventObserver { _, event ->
-                        if (event == Lifecycle.Event.ON_RESUME && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            isIgnoringBatteryOptimizations = (context.getSystemService(Context.POWER_SERVICE) as PowerManager).isIgnoringBatteryOptimizations(context.packageName)
+                        if (event == Lifecycle.Event.ON_RESUME) {
+                            isIgnoringBatteryOptimizations = PermissionUtils.isIgnoringBatteryOptimizations(context)
                         }
                     }
                     lifecycleOwner.lifecycle.addObserver(observer)
@@ -158,27 +149,20 @@ fun SettingsScreen(
                         ) 
                     },
                     modifier = Modifier.clickable {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        try {
+                            if (!isIgnoringBatteryOptimizations) {
+                                context.startActivity(PermissionUtils.getIgnoreBatteryOptimizationIntent(context))
+                            } else {
+                                context.startActivity(PermissionUtils.getBatteryOptimizationSettingsIntent())
+                            }
+                        } catch (e: Exception) {
                             try {
-                                if (!isIgnoringBatteryOptimizations) {
-                                    val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                                        data = Uri.fromParts("package", context.packageName, null)
-                                    }
-                                    context.startActivity(intent)
-                                } else {
-                                    val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-                                    context.startActivity(intent)
+                                context.startActivity(PermissionUtils.getBatteryOptimizationSettingsIntent())
+                            } catch (e2: Exception) {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", context.packageName, null)
                                 }
-                            } catch (e: Exception) {
-                                try {
-                                    val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-                                    context.startActivity(intent)
-                                } catch (e2: Exception) {
-                                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                        data = Uri.fromParts("package", context.packageName, null)
-                                    }
-                                    context.startActivity(intent)
-                                }
+                                context.startActivity(intent)
                             }
                         }
                     }
@@ -390,11 +374,10 @@ fun PermissionManager() {
             
             // Exact Alarm Permission (Android 12+)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 PermissionItem(
                     title = stringResource(R.string.settings_exact_alarm_title),
                     description = stringResource(R.string.settings_exact_alarm_desc),
-                    isGranted = alarmManager.canScheduleExactAlarms()
+                    isGranted = PermissionUtils.canScheduleExactAlarms(context)
                 )
             }
 

@@ -29,10 +29,12 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
@@ -61,6 +63,7 @@ fun PrayerCircleVisualization(
     val textMeasurer = rememberTextMeasurer()
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
     val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
     val scope = rememberCoroutineScope()
 
     var canvasSize by remember { mutableStateOf(Size.Zero) }
@@ -102,7 +105,12 @@ fun PrayerCircleVisualization(
 
     fun getPosition(time: LocalTime, radius: Float, center: Offset): Offset {
         val totalMinutes = time.hour * 60 + time.minute
-        val angle = (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
+        // For RTL, we mirror the angle to make the time progress counter-clockwise
+        val angle = if (layoutDirection == LayoutDirection.Rtl) {
+            -(totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
+        } else {
+            (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
+        }
         val angleRad = Math.toRadians(angle.toDouble())
         return Offset(
             center.x + radius * cos(angleRad).toFloat(),
@@ -153,7 +161,7 @@ fun PrayerCircleVisualization(
             modifier = Modifier
                 .fillMaxSize()
                 .onSizeChanged { canvasSize = Size(it.width.toFloat(), it.height.toFloat()) }
-                .pointerInput(day, currentTime, isSelectedDayToday, canvasSize) {
+                .pointerInput(day, currentTime, isSelectedDayToday, canvasSize, layoutDirection) {
                     detectTapGestures { tapOffset ->
                         if (canvasSize == Size.Zero) return@detectTapGestures
 
@@ -234,10 +242,20 @@ fun PrayerCircleVisualization(
             // Day/Night Arcs
             val sunriseMinutes = sunrise.hour * 60 + sunrise.minute
             val sunsetMinutes = sunset.hour * 60 + sunset.minute
-            val startAngleDay = (sunriseMinutes.toFloat() / (24 * 60)) * 360f + 90f
-            val endAngleDay = (sunsetMinutes.toFloat() / (24 * 60)) * 360f + 90f
-            var sweepAngleDay = endAngleDay - startAngleDay
-            if (sweepAngleDay < 0) sweepAngleDay += 360f
+            
+            val (startAngleDay, sweepAngleDay) = if (layoutDirection == LayoutDirection.Rtl) {
+                val endAngle = -(sunriseMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                val startAngle = -(sunsetMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                var sweep = endAngle - startAngle
+                if (sweep < 0) sweep += 360f
+                startAngle to sweep
+            } else {
+                val startAngle = (sunriseMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                val endAngle = (sunsetMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                var sweep = endAngle - startAngle
+                if (sweep < 0) sweep += 360f
+                startAngle to sweep
+            }
 
             drawArc(
                 color = Color(0xFFFFF176).copy(alpha = 0.4f),
@@ -313,7 +331,12 @@ fun PrayerCircleVisualization(
             if (isSelectedDayToday) {
                 val tScale = if (clickedItemId == "current") bounceAnim.value else 1f
                 val totalMinutes = currentTime.hour * 60 + currentTime.minute
-                val angle = (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                
+                val angle = if (layoutDirection == LayoutDirection.Rtl) {
+                    -(totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                } else {
+                    (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                }
 
                 val innerRadius = 120.dp.toPx()
                 val outerRadius = radius

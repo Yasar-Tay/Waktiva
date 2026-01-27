@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.ybugmobile.vaktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -39,7 +40,7 @@ data class UserSettings(
 @Singleton
 class SettingsManager @Inject constructor(
     @ApplicationContext private val context: Context
-) {
+) : SettingsManagerInterface {
     companion object {
         val MADHAB = intPreferencesKey("madhab")
         val CALCULATION_METHOD = intPreferencesKey("calculation_method")
@@ -59,7 +60,7 @@ class SettingsManager @Inject constructor(
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
 
-    val settingsFlow: Flow<UserSettings> = context.dataStore.data.map { preferences ->
+    override val settingsFlow: Flow<UserSettings> = context.dataStore.data.map { preferences ->
         val prayerSpecificPaths = PrayerType.entries.associateWith { type ->
             preferences[prayerPathKey(type)]
         }
@@ -83,39 +84,39 @@ class SettingsManager @Inject constructor(
         )
     }
 
-    suspend fun muteNextPrayer(prayerName: String, date: String) {
+    override suspend fun muteNextPrayer(prayerName: String, date: String) {
         context.dataStore.edit { preferences ->
             preferences[MUTED_PRAYER_NAME] = prayerName
             preferences[MUTED_PRAYER_DATE] = date
         }
     }
 
-    suspend fun clearMutedPrayer() {
+    override suspend fun clearMutedPrayer() {
         context.dataStore.edit { preferences ->
             preferences.remove(MUTED_PRAYER_NAME)
             preferences.remove(MUTED_PRAYER_DATE)
         }
     }
 
-    suspend fun updateMadhab(madhab: Int) {
+    override suspend fun updateMadhab(madhab: Int) {
         context.dataStore.edit { preferences ->
             preferences[MADHAB] = madhab
         }
     }
 
-    suspend fun updateCalculationMethod(method: Int) {
+    override suspend fun updateCalculationMethod(method: Int) {
         context.dataStore.edit { preferences ->
             preferences[CALCULATION_METHOD] = method
         }
     }
 
-    suspend fun updateLanguage(language: String) {
+    override suspend fun updateLanguage(language: String) {
         context.dataStore.edit { preferences ->
             preferences[LANGUAGE] = language
         }
     }
 
-    suspend fun updateSelectedAdhanPath(path: String?) {
+    override suspend fun updateSelectedAdhanPath(path: String?) {
         context.dataStore.edit { preferences ->
             if (path == null) {
                 preferences.remove(SELECTED_ADHAN_PATH)
@@ -125,7 +126,7 @@ class SettingsManager @Inject constructor(
         }
     }
 
-    suspend fun updatePrayerSpecificAdhanPath(type: PrayerType, path: String?) {
+    override suspend fun updatePrayerSpecificAdhanPath(type: PrayerType, path: String?) {
         context.dataStore.edit { preferences ->
             val key = prayerPathKey(type)
             if (path == null) {
@@ -136,39 +137,39 @@ class SettingsManager @Inject constructor(
         }
     }
 
-    suspend fun updateUseSpecificAdhan(enabled: Boolean) {
+    override suspend fun updateUseSpecificAdhan(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[USE_SPECIFIC_ADHAN] = enabled
         }
     }
 
-    suspend fun updatePlayAdhanAudio(enabled: Boolean) {
+    override suspend fun updatePlayAdhanAudio(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PLAY_ADHAN_AUDIO] = enabled
         }
     }
 
-    suspend fun updatePreAdhanWarning(enabled: Boolean) {
+    override suspend fun updatePreAdhanWarning(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[ENABLE_PRE_ADHAN_WARNING] = enabled
         }
     }
 
-    suspend fun updatePreAdhanWarningMinutes(minutes: Int) {
+    override suspend fun updatePreAdhanWarningMinutes(minutes: Int) {
         context.dataStore.edit { preferences ->
             preferences[PRE_ADHAN_WARNING_MINUTES] = minutes
         }
     }
 
-    suspend fun setSetupComplete(complete: Boolean) {
+    override suspend fun setSetupComplete(complete: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[IS_SETUP_COMPLETE] = complete
         }
     }
 
-    suspend fun setCalculationMethod(method: Int) = updateCalculationMethod(method)
+    override suspend fun setCalculationMethod(method: Int) = updateCalculationMethod(method)
 
-    suspend fun saveLocation(lat: Double, lng: Double, name: String) {
+    override suspend fun saveLocation(lat: Double, lng: Double, name: String) {
         context.dataStore.edit { preferences ->
             preferences[LAST_KNOWN_LAT] = lat
             preferences[LAST_KNOWN_LNG] = lng
