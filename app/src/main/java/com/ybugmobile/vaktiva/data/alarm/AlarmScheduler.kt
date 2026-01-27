@@ -35,7 +35,8 @@ class AlarmScheduler @Inject constructor(
     fun scheduleTestAlarm(secondsFromNow: Int) {
         val triggerAt = System.currentTimeMillis() + (secondsFromNow * 1000)
         Log.d("AlarmScheduler", "Scheduling TEST alarm in $secondsFromNow seconds")
-        scheduleAlarm(triggerAt, "Test Prayer", ACTION_PRAYER_ALARM, REQUEST_CODE_ADHAN)
+        // Use PrayerType.FAJR.name to match the dummy type used in HomeViewModel for tests
+        scheduleAlarm(triggerAt, PrayerType.FAJR.name, ACTION_PRAYER_ALARM, REQUEST_CODE_TEST)
     }
 
     fun scheduleNextAlarm(prayerDays: List<PrayerDay>, enablePreAdhan: Boolean, preAdhanMinutes: Int) {
@@ -108,6 +109,7 @@ class AlarmScheduler @Inject constructor(
     fun cancelAllAlarms() {
         cancelAlarm(REQUEST_CODE_ADHAN)
         cancelAlarm(REQUEST_CODE_PRE_ADHAN)
+        cancelAlarm(REQUEST_CODE_TEST)
     }
 
     private fun cancelAlarm(requestCode: Int) {

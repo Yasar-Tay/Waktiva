@@ -61,8 +61,10 @@ class HomeViewModel @Inject constructor(
 
     private val _isAdhanPlaying = MutableStateFlow(false)
     private val _playingPrayerName = MutableStateFlow<String?>(null)
+    
+    // TRANSIENT MUTE STATE: Resets on app start and new prayer cycles
+    private val _isMuted = MutableStateFlow(false)
 
-    // State for the test alarm countdown
     private val _testAlarmEndTime = MutableStateFlow<LocalDateTime?>(null)
 
     private var mediaController: MediaController? = null
@@ -70,10 +72,36 @@ class HomeViewModel @Inject constructor(
     val calculationMethods = CALCULATION_METHODS
     private var lastPermissionStatus = isLocationPermissionGranted()
 
+    private val todayPrayerDay: Flow<PrayerDay?> = allPrayerDays.map { days -> days.find { it.date == LocalDate.now() } }
+
+    private val todayPrayerTimes = todayPrayerDay.map { day ->
+        if (day == null) return@map null
+        PrayerType.entries.map { it to (day.timings[it] ?: LocalTime.MIN) }
+    }
+
+    val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, _testAlarmEndTime) { prayers, now, testEndTime ->
+        if (prayers == null) return@combine null
+        
+        if (testEndTime != null && testEndTime.isAfter(now)) {
+            return@combine NextPrayer(
+                type = PrayerType.FAJR,
+                time = testEndTime.toLocalTime(),
+                date = testEndTime.toLocalDate(),
+                remainingDuration = Duration.between(now, testEndTime),
+                isTest = true
+            )
+        }
+
+        val nowTime = now.toLocalTime()
+        val nextReal = prayers.firstOrNull { it.second.isAfter(nowTime) } ?: prayers.first()
+        val realDateTime = if (nextReal.second.isAfter(nowTime)) now.toLocalDate().atTime(nextReal.second) else now.toLocalDate().plusDays(1).atTime(nextReal.second)
+
+        NextPrayer(nextReal.first, nextReal.second, realDateTime.toLocalDate(), Duration.between(now, realDateTime))
+    }
+
     init {
         tickerFlow(1000).onEach { 
             _currentTime.value = LocalDateTime.now() 
-            // Reset test alarm if it has passed
             _testAlarmEndTime.value?.let { end ->
                 if (LocalDateTime.now().isAfter(end.plusSeconds(5))) {
                     _testAlarmEndTime.value = null
@@ -83,7 +111,6 @@ class HomeViewModel @Inject constructor(
 
         onPermissionsGranted()
         
-        // Centralized scheduling when data changes
         combine(allPrayerDays, settings) { days, s -> 
             if (days.isNotEmpty()) {
                 alarmScheduler.scheduleNextAlarm(days, s.enablePreAdhanWarning, s.preAdhanWarningMinutes)
@@ -91,6 +118,15 @@ class HomeViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
         setupMediaController()
+
+        // Reset mute state whenever the next prayer changes
+        nextPrayerInfo.map { it?.time }
+            .distinctUntilChanged()
+            .onEach { 
+                _isMuted.value = false 
+                settingsManager.clearMutedPrayer()
+            }
+            .launchIn(viewModelScope)
     }
 
     fun triggerTestAlarm(seconds: Int) {
@@ -115,59 +151,58 @@ class HomeViewModel @Inject constructor(
                 mediaController?.addListener(object : Player.Listener {
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
                         _isAdhanPlaying.value = isPlaying
-                        _playingPrayerName.value = if (isPlaying) mediaController?.currentMediaItem?.mediaMetadata?.title?.toString() else null
+                        _playingPrayerName.value = if (isPlaying) mediaController?.currentMediaItem?.mediaMetadata?.title?.toString()?.replace("Adhan: ", "") else null
+                    }
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
+                            _isAdhanPlaying.value = false
+                            _playingPrayerName.value = null
+                        }
                     }
                 })
                 _isAdhanPlaying.value = mediaController?.isPlaying == true
-                _playingPrayerName.value = mediaController?.currentMediaItem?.mediaMetadata?.title?.toString()
+                _playingPrayerName.value = if (mediaController?.isPlaying == true) mediaController?.currentMediaItem?.mediaMetadata?.title?.toString()?.replace("Adhan: ", "") else null
             } catch (e: Exception) { e.printStackTrace() }
         }, MoreExecutors.directExecutor())
     }
 
-    fun stopAdhan() = mediaController?.stop()
+    fun stopAdhan() {
+        mediaController?.stop()
+        _isAdhanPlaying.value = false
+        _playingPrayerName.value = null
+    }
 
     private fun tickerFlow(periodMillis: Long) = flow { while (true) { emit(Unit); delay(periodMillis) } }
-
-    private val todayPrayerDay: Flow<PrayerDay?> = allPrayerDays.map { days -> days.find { it.date == LocalDate.now() } }
-
-    private val todayPrayerTimes = todayPrayerDay.map { day ->
-        if (day == null) return@map null
-        PrayerType.entries.map { it to (day.timings[it] ?: LocalTime.MIN) }
-    }
-
-    val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, _testAlarmEndTime) { prayers, now, testEndTime ->
-        if (prayers == null) return@combine null
-        
-        // If a test alarm is active, prioritize showing it
-        if (testEndTime != null && testEndTime.isAfter(now)) {
-            return@combine NextPrayer(
-                type = PrayerType.FAJR, // Dummy type for test
-                time = testEndTime.toLocalTime(),
-                date = testEndTime.toLocalDate(),
-                remainingDuration = Duration.between(now, testEndTime)
-            )
-        }
-
-        val nowTime = now.toLocalTime()
-        val nextReal = prayers.firstOrNull { it.second.isAfter(nowTime) } ?: prayers.first()
-        val realDateTime = if (nextReal.second.isAfter(nowTime)) now.toLocalDate().atTime(nextReal.second) else now.toLocalDate().plusDays(1).atTime(nextReal.second)
-
-        NextPrayer(nextReal.first, nextReal.second, realDateTime.toLocalDate(), Duration.between(now, realDateTime))
-    }
 
     private val _hasSettled = MutableStateFlow(false)
 
     val state: StateFlow<HomeViewState> = combine(
         combine(selectedDate, currentTime, currentPrayerDay, ::Triple),
         combine(nextPrayerInfo, isRefreshing, settings, ::Triple),
-        combine(_isAdhanPlaying, _playingPrayerName, _hasSettled, ::Triple)
-    ) { (date, time, prayerDay), (nextPrayer, refreshing, currentSettings), (playing, prayerName, settled) ->
+        combine(_isAdhanPlaying, _playingPrayerName, _isMuted, ::Triple)
+    ) { (date, time, prayerDay), (nextPrayer, refreshing, currentSettings), (playing, prayerName, muted) ->
+        
         HomeViewState(
             selectedDate = date, currentTime = time, currentPrayerDay = prayerDay,
-            nextPrayer = nextPrayer, isRefreshing = refreshing, isLoading = !settled && prayerDay == null,
-            locationName = currentSettings.locationName, isAdhanPlaying = playing, playingPrayerName = prayerName
+            nextPrayer = nextPrayer, isRefreshing = refreshing, isLoading = !hasSettled() && prayerDay == null,
+            locationName = currentSettings.locationName, isAdhanPlaying = playing, playingPrayerName = prayerName,
+            isMuted = muted 
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))
+
+    private fun hasSettled() = _hasSettled.value
+
+    fun stopTestAlarm() {
+        _testAlarmEndTime.value = null
+        alarmScheduler.cancelAllAlarms()
+        viewModelScope.launch {
+            val days = allPrayerDays.value
+            val s = settings.first()
+            if (days.isNotEmpty()) {
+                alarmScheduler.scheduleNextAlarm(days, s.enablePreAdhanWarning, s.preAdhanWarningMinutes)
+            }
+        }
+    }
 
     fun selectDate(date: LocalDate) {
         _selectedDate.value = date
@@ -189,10 +224,12 @@ class HomeViewModel @Inject constructor(
     fun updateCalculationMethod(methodId: Int) = viewModelScope.launch { settingsManager.updateCalculationMethod(methodId); refresh() }
 
     fun toggleSkipNextPrayerAudio(prayerName: String, prayerDate: LocalDate) = viewModelScope.launch {
-        val s = settings.first()
-        val dateStr = prayerDate.toString()
-        if (s.mutedPrayerName == prayerName && s.mutedPrayerDate == dateStr) settingsManager.clearMutedPrayer()
-        else settingsManager.muteNextPrayer(prayerName, dateStr)
+        _isMuted.value = !_isMuted.value
+        if (_isMuted.value) {
+            settingsManager.muteNextPrayer(prayerName, prayerDate.toString())
+        } else {
+            settingsManager.clearMutedPrayer()
+        }
     }
 
     fun onPermissionsGranted() = viewModelScope.launch { try { fetchPrayerData() } finally { _hasSettled.value = true } }

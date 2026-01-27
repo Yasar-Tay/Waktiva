@@ -2,6 +2,7 @@ package com.ybugmobile.vaktiva.ui.home
 
 import android.Manifest
 import android.os.Build
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -65,7 +67,8 @@ fun HomeScreen(
         onMethodSelected = { viewModel.updateCalculationMethod(it) },
         onDateSelected = { viewModel.selectDate(it) },
         onSkipNextAudio = { name, date -> viewModel.toggleSkipNextPrayerAudio(name, date) },
-        onStopAdhan = { viewModel.stopAdhan() }
+        onStopAdhan = { viewModel.stopAdhan() },
+        onStopTest = { viewModel.stopTestAlarm() }
     )
 }
 
@@ -80,7 +83,8 @@ fun HomeScreenContent(
     onMethodSelected: (Int) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onSkipNextAudio: (String, LocalDate) -> Unit,
-    onStopAdhan: () -> Unit
+    onStopAdhan: () -> Unit,
+    onStopTest: () -> Unit
 ) {
     val permissions = mutableListOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -318,9 +322,10 @@ fun HomeScreenContent(
                                             nextPrayer = state.nextPrayer,
                                             selectedDate = state.selectedDate,
                                             onSkipAudio = { state.nextPrayer?.let { onSkipNextAudio(it.type.name, it.date) } },
-                                            isMuted = settings?.mutedPrayerName == state.nextPrayer?.type?.name && settings?.mutedPrayerDate == state.nextPrayer?.date?.toString(),
+                                            isMuted = state.isMuted,
                                             contentColor = contentColor,
-                                            preAdhanWarningMinutes = settings?.preAdhanWarningMinutes ?: 5
+                                            preAdhanWarningMinutes = settings?.preAdhanWarningMinutes ?: 5,
+                                            playAdhanAudio = settings?.playAdhanAudio ?: false
                                         )
                                     }
                                 )
@@ -328,27 +333,128 @@ fun HomeScreenContent(
                         }
                     }
 
-                    // Adhan Controls
-                    if (state.isAdhanPlaying) {
-                        Card(
+                    // Modern Adhan Controls
+                    val remainingSeconds = state.nextPrayer?.remainingDuration?.seconds ?: Long.MAX_VALUE
+                    val isWithinWarning = settings?.playAdhanAudio == true && 
+                                          state.nextPrayer != null && 
+                                          remainingSeconds <= (settings.preAdhanWarningMinutes * 60) &&
+                                          remainingSeconds > 0
+
+                    val showAdhanControls = state.isAdhanPlaying || (isWithinWarning && !state.isMuted) || (state.nextPrayer?.isTest == true)
+
+                    AnimatedVisibility(
+                        visible = showAdhanControls,
+                        enter = slideInVertically { it } + fadeIn(),
+                        exit = slideOutVertically { it } + fadeOut()
+                    ) {
+                        Surface(
                             modifier = Modifier
                                 .padding(24.dp)
                                 .fillMaxWidth(),
-                            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
+                            shape = RoundedCornerShape(24.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f),
+                            tonalElevation = 8.dp,
+                            shadowElevation = 12.dp
                         ) {
                             Row(
-                                Modifier.padding(16.dp),
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp, vertical = 16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
-                                Text(
-                                    state.playingPrayerName ?: "Adhan Playing",
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                                Button(
-                                    onClick = onStopAdhan,
-                                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
-                                ) { Text("STOP") }
+                                Box(
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .background(
+                                            if (state.isAdhanPlaying) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                            else MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
+                                            CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        if (state.isAdhanPlaying) Icons.Default.NotificationsActive else Icons.Default.Notifications,
+                                        contentDescription = null,
+                                        tint = if (state.isAdhanPlaying) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                                
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = if (state.isAdhanPlaying) (state.playingPrayerName ?: stringResource(R.string.adhan_playing)) 
+                                               else if (state.nextPrayer?.isTest == true) stringResource(R.string.adhan_test_alarm)
+                                               else (state.nextPrayer?.type?.displayName ?: ""),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = if (state.isAdhanPlaying) stringResource(R.string.adhan_sounding) 
+                                               else if (state.nextPrayer?.isTest == true) stringResource(R.string.adhan_test_desc)
+                                               else stringResource(R.string.adhan_upcoming),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                    )
+                                }
+
+                                AnimatedContent(
+                                    targetState = state.isAdhanPlaying || state.nextPrayer?.isTest == true,
+                                    label = "buttonSwap",
+                                    transitionSpec = {
+                                        fadeIn(animationSpec = tween(300)) togetherWith 
+                                        fadeOut(animationSpec = tween(300))
+                                    }
+                                ) { isActionActive ->
+                                    if (isActionActive) {
+                                        // STOP BUTTON
+                                        Surface(
+                                            onClick = if (state.isAdhanPlaying) onStopAdhan else onStopTest,
+                                            color = MaterialTheme.colorScheme.error,
+                                            shape = RoundedCornerShape(12.dp)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Icon(Icons.Default.Stop, null, tint = Color.White, modifier = Modifier.size(18.dp))
+                                                Spacer(Modifier.width(8.dp))
+                                                Text(
+                                                    if (state.isAdhanPlaying) "STOP" else "CANCEL", 
+                                                    color = Color.White, 
+                                                    style = MaterialTheme.typography.labelLarge, 
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            }
+                                        }
+                                    } else {
+                                        // MUTE BUTTON
+                                        Surface(
+                                            onClick = { state.nextPrayer?.let { onSkipNextAudio(it.type.name, it.date) } },
+                                            color = if (state.isMuted) MaterialTheme.colorScheme.error.copy(alpha = 0.1f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                            shape = RoundedCornerShape(12.dp)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Icon(
+                                                    if (state.isMuted) Icons.Default.MusicOff else Icons.Default.MusicNote,
+                                                    null,
+                                                    tint = if (state.isMuted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                                Spacer(Modifier.width(8.dp))
+                                                Text(
+                                                    if (state.isMuted) "MUTED" else "MUTE",
+                                                    color = if (state.isMuted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                                                    style = MaterialTheme.typography.labelLarge,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

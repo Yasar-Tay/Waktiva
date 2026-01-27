@@ -99,6 +99,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
             override fun onPlayerError(error: PlaybackException) {
                 if (!isFallbackPlaying) {
                     isFallbackPlaying = true
+                    // Fix: Use localized fallback or system default
                     basePlayer.setMediaItem(MediaItem.fromUri(Settings.System.DEFAULT_ALARM_ALERT_URI))
                     basePlayer.prepare()
                     basePlayer.play()
@@ -135,7 +136,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         }
 
         val prayerName = intent?.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME) ?: "Prayer"
-        val audioPath = intent?.getStringExtra("AUDIO_PATH")
+        var audioPath = intent?.getStringExtra("AUDIO_PATH")
 
         // 1. Create and Start Foreground immediately
         val notification = createNotificationBuilder(prayerName, mediaSession).build()
@@ -147,8 +148,20 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
 
         // 2. Request Audio Focus and Prepare Player
         if (requestAudioFocus()) {
-            if (audioPath != null && player?.playbackState == Player.STATE_IDLE) {
+            if (audioPath != null) {
                 isFallbackPlaying = false
+                
+                // Fix: Check if path is raw resource
+                if (audioPath.startsWith("android.resource://")) {
+                    // It's already a full URI
+                } else if (!audioPath.contains("://")) {
+                     // Check if it's a raw resource name like "ezan"
+                     val resId = resources.getIdentifier(audioPath, "raw", packageName)
+                     if (resId != 0) {
+                         audioPath = "android.resource://$packageName/$resId"
+                     }
+                }
+
                 val metadata = MediaMetadata.Builder().setTitle("Adhan: $prayerName").build()
                 val mediaItem = MediaItem.Builder().setUri(audioPath.toUri()).setMediaMetadata(metadata).build()
                 

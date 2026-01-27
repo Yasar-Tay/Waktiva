@@ -75,7 +75,7 @@ class SettingsManager @Inject constructor(
             selectedAdhanPath = preferences[SELECTED_ADHAN_PATH],
             prayerSpecificAdhanPaths = prayerSpecificPaths,
             useSpecificAdhanForEachPrayer = preferences[USE_SPECIFIC_ADHAN] ?: false,
-            playAdhanAudio = preferences[PLAY_ADHAN_AUDIO] ?: true,
+            playAdhanAudio = preferences[PLAY_ADHAN_AUDIO] ?: false, // Default changed to FALSE
             isSetupComplete = preferences[IS_SETUP_COMPLETE] ?: false,
             enablePreAdhanWarning = preferences[ENABLE_PRE_ADHAN_WARNING] ?: true,
             preAdhanWarningMinutes = preferences[PRE_ADHAN_WARNING_MINUTES] ?: 5,

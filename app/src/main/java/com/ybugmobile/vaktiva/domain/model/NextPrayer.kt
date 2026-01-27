@@ -8,5 +8,6 @@ data class NextPrayer(
     val type: PrayerType,
     val time: LocalTime,
     val date: LocalDate,
-    val remainingDuration: Duration
+    val remainingDuration: Duration,
+    val isTest: Boolean = false
 )

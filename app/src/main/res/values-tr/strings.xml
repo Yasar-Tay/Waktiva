@@ -154,4 +154,7 @@
     <string name="adhan_its_time_for">Vakti Geldi:</string>
     <string name="adhan_stop">EZANI DURDUR</string>
     <string name="adhan_default_prayer">Namaz</string>
+    <string name="adhan_playing">Ezan</string>
+    <string name="adhan_sounding">Okunuyor</string>
+    <string name="adhan_upcoming">Sıradaki ezan</string>
 </resources>

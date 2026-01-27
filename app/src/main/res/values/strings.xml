@@ -173,4 +173,10 @@
     <string name="adhan_its_time_for">It\'s time for</string>
     <string name="adhan_stop">STOP ADHAN</string>
     <string name="adhan_default_prayer">Prayer</string>
+    <string name="adhan_playing">Adhan</string>
+    <string name="adhan_sounding">Sounding now</string>
+    <string name="adhan_upcoming">Upcoming adhan</string>
+    <string name="adhan_test_alarm">Test Alarm</string>
+    <string name="adhan_test_desc">Simulating adhan trigger</string>
+    <string name="adhan_stop_test">CANCEL TEST</string>
 </resources>

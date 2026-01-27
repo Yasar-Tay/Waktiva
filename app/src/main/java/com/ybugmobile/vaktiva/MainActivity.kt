@@ -56,13 +56,13 @@ class MainActivity : AppCompatActivity() {
                     Box(modifier = Modifier.fillMaxSize()) {
                         FloatingActionButton(
                             onClick = { 
-                                val seconds = 70
+                                val seconds = 5 // Reduced from 70 to 5 for better testing
                                 viewModel.triggerTestAlarm(seconds)
                                 Toast.makeText(this@MainActivity, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
                             },
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
-                                .padding(end = 16.dp, bottom = 100.dp), // Adjusted bottom padding
+                                .padding(end = 16.dp, bottom = 100.dp),
                             containerColor = MaterialTheme.colorScheme.tertiaryContainer
                         ) {
                             Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
@@ -151,7 +151,7 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
         NavHost(
             navController, 
             startDestination = startDestination, 
-            Modifier.padding(innerPadding) // Consuming the padding correctly
+            Modifier.padding(innerPadding)
         ) {
             composable(Screen.Welcome.route) { 
                 WelcomeScreen(
