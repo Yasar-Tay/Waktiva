@@ -97,6 +97,7 @@ fun NextPrayerCountdown(
                 if (playAdhanAudio) {
                     AudioStatusChip(
                         isMuted = isMuted,
+                        isTest = nextPrayer.isTest,
                         contentColor = contentColor,
                         onClick = { onSkipAudio(nextPrayer.type.name) }
                     )
@@ -143,6 +144,7 @@ private fun TimeSeparator(color: Color) {
 @Composable
 private fun AudioStatusChip(
     isMuted: Boolean,
+    isTest: Boolean,
     contentColor: Color,
     onClick: () -> Unit
 ) {
@@ -158,6 +160,7 @@ private fun AudioStatusChip(
 
     Surface(
         onClick = onClick,
+        enabled = !isMuted,
         color = backgroundColor,
         shape = CircleShape,
         border = if (isMuted) null else androidx.compose.foundation.BorderStroke(1.dp, contentColor.copy(alpha = 0.1f)),
@@ -195,14 +198,12 @@ private fun AudioStatusChip(
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 0.5.sp
                 )
-                if (!isMuted) {
-                    Text(
-                        text = "Tap to skip next",
-                        color = tintColor.copy(alpha = 0.5f),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontSize = 9.sp
-                    )
-                }
+                Text(
+                    text = if (isMuted) "Skipped for this prayer" else if (isTest) "Tap to skip test" else "Tap to skip next",
+                    color = tintColor.copy(alpha = 0.5f),
+                    style = MaterialTheme.typography.labelSmall,
+                    fontSize = 9.sp
+                )
             }
         }
     }
