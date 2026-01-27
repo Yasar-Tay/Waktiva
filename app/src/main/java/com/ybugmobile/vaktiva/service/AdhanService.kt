@@ -31,7 +31,6 @@ import androidx.media3.session.CommandButton
 import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import androidx.media3.session.MediaStyleNotificationHelper
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
@@ -57,7 +56,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
     private val noisyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
-                player?.pause()
+                stopPlaybackAndService()
             }
         }
     }
@@ -78,14 +77,18 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
 
         val basePlayer = ExoPlayer.Builder(this)
             .setAudioAttributes(audioAttributes, false)
-            .setWakeMode(C.WAKE_MODE_NETWORK) // Enable wake lock support
+            .setWakeMode(C.WAKE_MODE_NETWORK)
             .build()
 
+        // Restrict player commands to prevent pause/seek from UI or external controllers
         player = object : ForwardingPlayer(basePlayer) {
             override fun getAvailableCommands(): Player.Commands {
                 return super.getAvailableCommands().buildUpon()
+                    .remove(Player.COMMAND_PLAY_PAUSE)
                     .remove(Player.COMMAND_SEEK_TO_PREVIOUS)
                     .remove(Player.COMMAND_SEEK_TO_NEXT)
+                    .remove(Player.COMMAND_SEEK_BACK)
+                    .remove(Player.COMMAND_SEEK_FORWARD)
                     .build()
             }
         }
@@ -99,7 +102,6 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
             override fun onPlayerError(error: PlaybackException) {
                 if (!isFallbackPlaying) {
                     isFallbackPlaying = true
-                    // Fix: Use localized fallback or system default
                     basePlayer.setMediaItem(MediaItem.fromUri(Settings.System.DEFAULT_ALARM_ALERT_URI))
                     basePlayer.prepare()
                     basePlayer.play()
@@ -121,7 +123,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         setMediaNotificationProvider(object : MediaNotification.Provider {
             override fun createNotification(s: MediaSession, cl: ImmutableList<CommandButton>, af: MediaNotification.ActionFactory, cb: MediaNotification.Provider.Callback): MediaNotification {
                 val prayerName = s.player.currentMediaItem?.mediaMetadata?.title?.toString()?.replace("Adhan: ", "") ?: "Prayer"
-                return MediaNotification(NotificationHelper.NOTIFICATION_ID_ADHAN, createNotificationBuilder(prayerName, s).build())
+                return MediaNotification(NotificationHelper.NOTIFICATION_ID_ADHAN, createNotificationBuilder(prayerName).build())
             }
             override fun handleCustomCommand(s: MediaSession, a: String, e: Bundle) = false
         })
@@ -138,24 +140,20 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         val prayerName = intent?.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME) ?: "Prayer"
         var audioPath = intent?.getStringExtra("AUDIO_PATH")
 
-        // 1. Create and Start Foreground immediately
-        val notification = createNotificationBuilder(prayerName, mediaSession).build()
+        val notification = createNotificationBuilder(prayerName).build()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(NotificationHelper.NOTIFICATION_ID_ADHAN, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
         } else {
             startForeground(NotificationHelper.NOTIFICATION_ID_ADHAN, notification)
         }
 
-        // 2. Request Audio Focus and Prepare Player
         if (requestAudioFocus()) {
             if (audioPath != null) {
                 isFallbackPlaying = false
                 
-                // Fix: Check if path is raw resource
                 if (audioPath.startsWith("android.resource://")) {
-                    // It's already a full URI
+                    // Already URI
                 } else if (!audioPath.contains("://")) {
-                     // Check if it's a raw resource name like "ezan"
                      val resId = resources.getIdentifier(audioPath, "raw", packageName)
                      if (resId != 0) {
                          audioPath = "android.resource://$packageName/$resId"
@@ -196,13 +194,13 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
     override fun onAudioFocusChange(focusChange: Int) {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> player?.volume = 1.0f
-            AudioManager.AUDIOFOCUS_LOSS, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> player?.pause()
+            AudioManager.AUDIOFOCUS_LOSS, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> stopPlaybackAndService()
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> player?.volume = 0.2f
         }
     }
 
     @OptIn(UnstableApi::class)
-    private fun createNotificationBuilder(prayerName: String, session: MediaSession?): NotificationCompat.Builder {
+    private fun createNotificationBuilder(prayerName: String): NotificationCompat.Builder {
         val fullScreenIntent = Intent(this, AdhanActivity::class.java).apply {
             putExtra(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -224,7 +222,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, "STOP ADHAN", stopPendingIntent)
-            .setStyle(session?.let { MediaStyleNotificationHelper.MediaStyle(it).setShowActionsInCompactView(0) })
+            // By NOT setting MediaStyle, we avoid the progress bar and standard media controls.
     }
 
     private fun stopPlaybackAndService() {
@@ -258,7 +256,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
     override fun onDestroy() {
-        unregisterReceiver(noisyReceiver)
+        try { unregisterReceiver(noisyReceiver) } catch (e: Exception) {}
         volumeFadeRunnable?.let { handler.removeCallbacks(it) }
         mediaSession?.run { player.release(); release() }
         super.onDestroy()
