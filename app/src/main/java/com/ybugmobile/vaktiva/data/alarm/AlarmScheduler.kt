@@ -2,6 +2,7 @@ package com.ybugmobile.vaktiva.data.alarm
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -55,7 +56,7 @@ class AlarmScheduler @Inject constructor(
             val settings = runBlocking { settingsManager.settingsFlow.first() }
 
             // Schedule actual Adhan
-            Log.d("AlarmScheduler", "Scheduling ADHAN: ${type.name} at $dateTime")
+            Log.d("AlarmScheduler", "Scheduling ADHAN alarm for: ${type.name} at $dateTime")
             scheduleAlarm(epochMillis, type.name, ACTION_PRAYER_ALARM, REQUEST_CODE_ADHAN)
 
             // Schedule Pre-Adhan Notification
@@ -63,7 +64,7 @@ class AlarmScheduler @Inject constructor(
                 val preTime = dateTime.minusMinutes(settings.preAdhanWarningMinutes.toLong())
                 if (preTime.isAfter(now)) {
                     val preEpochMillis = preTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                    Log.d("AlarmScheduler", "Scheduling PRE-ADHAN: ${type.name} at $preTime")
+                    Log.d("AlarmScheduler", "Scheduling PRE-ADHAN alarm for: ${type.name} at $preTime")
                     scheduleAlarm(preEpochMillis, type.name, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_PRE_ADHAN)
                 }
             }
@@ -76,6 +77,8 @@ class AlarmScheduler @Inject constructor(
         val intent = Intent(context, PrayerAlarmReceiver::class.java).apply {
             this.action = action
             putExtra("PRAYER_NAME", prayerName)
+            // Using explicit component name for maximum reliability when app is backgrounded/killed
+            component = ComponentName(context, PrayerAlarmReceiver::class.java)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -85,21 +88,23 @@ class AlarmScheduler @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
-                alarmManager.setAlarmClock(
-                    AlarmManager.AlarmClockInfo(timeMillis, pendingIntent),
-                    pendingIntent
-                )
+        // Using setAlarmClock is the most reliable way to wake up the device from Doze mode
+        val alarmClockInfo = AlarmManager.AlarmClockInfo(timeMillis, pendingIntent)
+        
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
+                } else {
+                    Log.e("AlarmScheduler", "Exact alarm permission missing, using fallback setAndAllowWhileIdle")
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent)
+                }
             } else {
-                Log.e("AlarmScheduler", "Cannot schedule exact alarms. Using inexact fallback.")
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent)
+                alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
             }
-        } else {
-            alarmManager.setAlarmClock(
-                AlarmManager.AlarmClockInfo(timeMillis, pendingIntent),
-                pendingIntent
-            )
+        } catch (e: SecurityException) {
+            Log.e("AlarmScheduler", "SecurityException scheduling alarm", e)
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent)
         }
     }
 

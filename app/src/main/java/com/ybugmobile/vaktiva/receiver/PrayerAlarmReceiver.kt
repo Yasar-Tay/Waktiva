@@ -1,6 +1,5 @@
 package com.ybugmobile.vaktiva.receiver
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -36,8 +35,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
     companion object {
-        // Incrementing version to force channel recreation with HIGH importance
-        const val CHANNEL_ID_WARNING = "pre_adhan_warning_channel_v3"
+        const val CHANNEL_ID_WARNING = "pre_adhan_warning_channel_v1"
         const val NOTIFICATION_ID_WARNING = 2001
         const val ACTION_SKIP_ADHAN = "com.ybugmobile.vaktiva.ACTION_SKIP_ADHAN"
     }
@@ -51,8 +49,8 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         if (action == ACTION_SKIP_ADHAN) {
             runBlocking {
                 val today = LocalDate.now().toString()
-                Log.d("PrayerAlarmReceiver", "Executing SKIP for $prayerName via Notification Button")
                 settingsManager.muteNextPrayer(prayerName, today)
+                Log.d("PrayerAlarmReceiver", "SKIP SUCCESS: $prayerName muted for $today")
             }
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.cancel(NOTIFICATION_ID_WARNING)
@@ -63,15 +61,9 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         scope.launch {
             try {
                 when (action) {
-                    AlarmScheduler.ACTION_PRE_ADHAN_NOTIFICATION -> {
-                        showPreAdhanNotification(context, prayerName)
-                    }
-                    AlarmScheduler.ACTION_PRAYER_ALARM -> {
-                        handleAdhanTrigger(context, prayerName)
-                    }
+                    AlarmScheduler.ACTION_PRE_ADHAN_NOTIFICATION -> showPreAdhanNotification(context, prayerName)
+                    AlarmScheduler.ACTION_PRAYER_ALARM -> handleAdhanTrigger(context, prayerName)
                 }
-            } catch (e: Exception) {
-                Log.e("PrayerAlarmReceiver", "Error in onReceive processing", e)
             } finally {
                 pendingResult.finish()
             }
@@ -82,35 +74,27 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         val settings = settingsManager.settingsFlow.first()
         val today = LocalDate.now().toString()
 
-        Log.d("PrayerAlarmReceiver", "handleAdhanTrigger: prayer=$prayerName, today=$today, mutedName=${settings.mutedPrayerName}")
-
         if (settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && settings.mutedPrayerDate == today) {
-            Log.d("PrayerAlarmReceiver", "ADHAN SUPPRESSED: User skipped $prayerName for today.")
-            return
-        }
-
-        if (!settings.playAdhanAudio) {
-            Log.d("PrayerAlarmReceiver", "ADHAN SUPPRESSED: Audio disabled.")
+            Log.d("PrayerAlarmReceiver", "ADHAN SKIPPED: Logic recognized skip for $prayerName. Resetting mute for tomorrow.")
+            // Reset mute after it has been used once to ensure default is unmuted
+            settingsManager.clearMutedPrayer()
             return
         }
 
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
         val wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Vaktiva:AdhanWakeLock")
-        wakeLock.acquire(10 * 60 * 1000L)
+        wakeLock.acquire(5 * 60 * 1000L)
 
         try {
             val prayerType = PrayerType.fromString(prayerName)
-            val audioPath = if (settings.useSpecificAdhanForEachPrayer && prayerType != null && prayerType != PrayerType.SUNRISE) {
+            val audioPath = if (settings.useSpecificAdhanForEachPrayer && prayerType != null) {
                 settings.prayerSpecificAdhanPaths[prayerType] ?: settings.selectedAdhanPath
-            } else {
-                settings.selectedAdhanPath
-            }
+            } else settings.selectedAdhanPath
 
-            val finalAudioPath = audioPath ?: "android.resource://${context.packageName}/${R.raw.ezan}"
-
+            val finalPath = audioPath ?: "android.resource://${context.packageName}/${R.raw.ezan}"
             val serviceIntent = Intent(context, AdhanService::class.java).apply {
                 putExtra("PRAYER_NAME", prayerName)
-                putExtra("AUDIO_PATH", finalAudioPath)
+                putExtra("AUDIO_PATH", finalPath)
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -124,58 +108,33 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
     }
 
     private fun showPreAdhanNotification(context: Context, prayerName: String) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID_WARNING,
-                "Adhan Reminders",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Reminders shown before the Adhan plays"
-                enableVibration(true)
-                setBypassDnd(true)
-                lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
-            }
-            notificationManager.createNotificationChannel(channel)
-        }
-
-        val contentIntent = PendingIntent.getActivity(
-            context,
-            0,
-            Intent(context, MainActivity::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
         val skipIntent = Intent(context, PrayerAlarmReceiver::class.java).apply {
             action = ACTION_SKIP_ADHAN
             putExtra("PRAYER_NAME", prayerName)
             setClassName(context.packageName, "com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver")
         }
-        
         val skipPendingIntent = PendingIntent.getBroadcast(
-            context,
-            prayerName.hashCode() + 100, // Unique ID
-            skipIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            context, prayerName.hashCode(), skipIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val contentIntent = PendingIntent.getActivity(
+            context, 0, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID_WARNING)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Adhan Approaching")
-            .setContentText("Time for $prayerName is coming soon.")
+            .setContentText("It will be $prayerName soon.")
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setContentIntent(contentIntent)
-            // Added a standard icon (launcher foreground as fallback) for the action
+            .setFullScreenIntent(contentIntent, true) // Banner / Pop-up
             .addAction(R.drawable.ic_launcher_foreground, "SKIP ADHAN", skipPendingIntent)
             .setAutoCancel(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setOngoing(false)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .build()
 
-        Log.d("PrayerAlarmReceiver", "Displaying pre-adhan notification for $prayerName")
-        notificationManager.notify(NOTIFICATION_ID_WARNING, notification)
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.notify(NOTIFICATION_ID_WARNING, notification)
     }
 }
