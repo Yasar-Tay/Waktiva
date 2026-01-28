@@ -19,6 +19,7 @@ import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.vaktiva.data.location.LocationWrapper
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
+import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import com.ybugmobile.vaktiva.service.AdhanService
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -101,6 +102,21 @@ class HomeViewModel @Inject constructor(
         NextPrayer(nextReal.first, nextReal.second, realDateTime.toLocalDate(), Duration.between(now, realDateTime))
     }
 
+    val currentPrayerInfo: Flow<CurrentPrayer?> = combine(todayPrayerTimes, currentTime) { prayers, now ->
+        if (prayers == null) return@combine null
+        
+        val nowTime = now.toLocalTime()
+        val current = prayers.lastOrNull { it.second.isBefore(nowTime) || it.second == nowTime } 
+            ?: prayers.last()
+
+        CurrentPrayer(
+            type = current.first,
+            time = current.second,
+            date = now.toLocalDate(),
+            elapsedDuration = Duration.between(current.second.atDate(now.toLocalDate()), now)
+        )
+    }
+
     init {
         tickerFlow(1000).onEach { 
             _currentTime.value = LocalDateTime.now()
@@ -181,15 +197,16 @@ class HomeViewModel @Inject constructor(
 
     val state: StateFlow<HomeViewState> = combine(
         combine(selectedDate, currentTime, currentPrayerDay, ::Triple),
-        combine(nextPrayerInfo, isRefreshing, settings, ::Triple),
-        combine(_isAdhanPlaying, _playingPrayerName) { playing, name -> playing to name }
-    ) { (date, time, prayerDay), (nextPrayer, refreshing, currentSettings), (playing, prayerName) ->
+        combine(nextPrayerInfo, currentPrayerInfo, isRefreshing, ::Triple),
+        combine(settings, _isAdhanPlaying, _playingPrayerName, ::Triple)
+    ) { (date, time, prayerDay), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName) ->
         
         val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
 
         HomeViewState(
             selectedDate = date, currentTime = time, currentPrayerDay = prayerDay,
+            currentPrayer = currentPrayer,
             nextPrayer = nextPrayer, isRefreshing = refreshing, isLoading = !hasSettled() && prayerDay == null,
             locationName = currentSettings.locationName, isAdhanPlaying = playing, playingPrayerName = prayerName,
             isMuted = isMuted 

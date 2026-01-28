@@ -190,7 +190,8 @@ fun HomeScreenContent(
                                         NextPrayerCountdown(
                                             nextPrayer = state.nextPrayer,
                                             selectedDate = state.selectedDate,
-                                            contentColor = contentColor
+                                            contentColor = contentColor,
+                                            currentPrayer = state.currentPrayer
                                         )
                                     }
                                 )

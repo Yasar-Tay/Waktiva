@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.theme.Inter
@@ -23,6 +24,7 @@ import java.time.LocalDate
 @Composable
 fun NextPrayerCountdown(
     nextPrayer: NextPrayer?,
+    currentPrayer: CurrentPrayer?,
     selectedDate: LocalDate,
     contentColor: Color = Color.White
 ) {
@@ -31,15 +33,7 @@ fun NextPrayerCountdown(
         modifier = Modifier.size(260.dp)
     ) {
         if ((selectedDate == LocalDate.now()) && nextPrayer != null) {
-            val prayerNameRes = when (nextPrayer.type) {
-                PrayerType.FAJR -> R.string.prayer_fajr
-                PrayerType.SUNRISE -> R.string.prayer_sunrise
-                PrayerType.DHUHR -> R.string.prayer_dhuhr
-                PrayerType.ASR -> R.string.prayer_asr
-                PrayerType.MAGHRIB -> R.string.prayer_maghrib
-                PrayerType.ISHA -> R.string.prayer_isha
-            }
-
+            val prayerName = currentPrayer?.type?.displayName ?: ""
             val remainingSeconds = nextPrayer.remainingDuration.seconds
             val isUrgent = remainingSeconds < 30 * 60 // 30 minutes
             
@@ -59,9 +53,9 @@ fun NextPrayerCountdown(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                // Label: "NEXT PRAYER" or specific prayer name
+                // Display Current Prayer Name
                 Text(
-                    text = stringResource(prayerNameRes).uppercase(),
+                    text = prayerName.uppercase(),
                     color = contentColor.copy(alpha = 0.6f),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
@@ -70,7 +64,7 @@ fun NextPrayerCountdown(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // The Countdown Timer with distinct segments for better readability
+                // The Countdown Timer
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.graphicsLayer { alpha = pulseAlpha }
