@@ -92,7 +92,7 @@ fun NextPrayerCountdown(
                         letterSpacing = 1.sp
                     )
                 }
-
+                Spacer(Modifier.height(10.dp))
                 // 2. The Countdown Timer
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

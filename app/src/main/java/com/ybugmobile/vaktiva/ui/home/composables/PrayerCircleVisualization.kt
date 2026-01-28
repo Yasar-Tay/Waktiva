@@ -153,7 +153,7 @@ fun PrayerCircleVisualization(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
-            .padding(16.dp),
+            .padding(8.dp), // Reduced padding to allow the circle to be larger
         contentAlignment = Alignment.Center
     ) {
         Canvas(
@@ -163,7 +163,7 @@ fun PrayerCircleVisualization(
                 .pointerInput(day, currentTime, isSelectedDayToday, canvasSize, layoutDirection) {
                     detectTapGestures { tapOffset ->
                         val center = Offset(canvasSize.width / 2, canvasSize.height / 2)
-                        val radius = canvasSize.width / 2 - 20.dp.toPx()
+                        val radius = canvasSize.width / 2 - 12.dp.toPx() // Adjusted radius calculation
                         
                         var clicked = false
                         for (prayer in prayers) {
@@ -189,7 +189,7 @@ fun PrayerCircleVisualization(
                 }
         ) {
             val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.width / 2 - 20.dp.toPx()
+            val radius = size.width / 2 - 12.dp.toPx() // Increased radius by reducing margin
 
             // 1. Draw elegant dashed background track
             drawCircle(
@@ -356,9 +356,9 @@ fun PrayerCircleVisualization(
             }
         }
 
-        // Center Content Container - Define a proportional size for inner spreading
+        // Center Content Container - Enlarged to 75% of parent
         Box(
-            modifier = Modifier.fillMaxSize(0.65f),
+            modifier = Modifier.fillMaxSize(0.75f),
             contentAlignment = Alignment.Center
         ) {
             centerContent(currentPrayerColor)

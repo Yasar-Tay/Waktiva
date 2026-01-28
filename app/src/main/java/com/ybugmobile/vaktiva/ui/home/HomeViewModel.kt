@@ -84,6 +84,7 @@ class HomeViewModel @Inject constructor(
         val testEndTimeMillis = currentSettings.testAlarmEndTime
         if (testEndTimeMillis != null) {
             val testEndTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(testEndTimeMillis), ZoneId.systemDefault())
+            // Only show test countdown if it's actually in the future
             if (testEndTime.isAfter(now)) {
                 return@combine NextPrayer(
                     type = PrayerType.FAJR,
@@ -123,7 +124,7 @@ class HomeViewModel @Inject constructor(
             // Cleanup expired test time
             val s = settings.first()
             s.testAlarmEndTime?.let { end ->
-                if (System.currentTimeMillis() > end + 5000) {
+                if (System.currentTimeMillis() > end) { // Fixed: Remove +5000 so it clears exactly at end
                     settingsManager.setTestAlarmEndTime(null)
                     settingsManager.clearMutedPrayer()
                 }
@@ -204,11 +205,16 @@ class HomeViewModel @Inject constructor(
         val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
 
+        // logic for adhan controls visibility: only when audio is actually playing
+        val showTestControls = (nextPrayer?.isTest == true && playing)
+
         HomeViewState(
             selectedDate = date, currentTime = time, currentPrayerDay = prayerDay,
             currentPrayer = currentPrayer,
             nextPrayer = nextPrayer, isRefreshing = refreshing, isLoading = !hasSettled() && prayerDay == null,
-            locationName = currentSettings.locationName, isAdhanPlaying = playing, playingPrayerName = prayerName,
+            locationName = currentSettings.locationName, 
+            isAdhanPlaying = playing, // This comes from MediaController.isPlaying
+            playingPrayerName = prayerName,
             isMuted = isMuted 
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))

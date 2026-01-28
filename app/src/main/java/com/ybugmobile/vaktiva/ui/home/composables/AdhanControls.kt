@@ -18,26 +18,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ybugmobile.vaktiva.R
-import com.ybugmobile.vaktiva.ui.home.HomeViewState
 
 @Composable
 fun AdhanControls(
-    state: HomeViewState,
+    isAdhanPlaying: Boolean,
+    playingPrayerName: String?,
+    isTest: Boolean,
     onStopAdhan: () -> Unit,
     onStopTest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val showAdhanControls = state.isAdhanPlaying || state.nextPrayer?.isTest == true
+    // Component appears ONLY when playback has actually started
+    val visible = isAdhanPlaying
 
     AnimatedVisibility(
-        visible = showAdhanControls,
+        visible = visible,
         enter = slideInVertically { it } + fadeIn(),
         exit = slideOutVertically { it } + fadeOut(),
         modifier = modifier
     ) {
         Surface(
             modifier = Modifier
-                .padding(top = 24.dp)
                 .fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f),
@@ -54,33 +55,29 @@ fun AdhanControls(
                     modifier = Modifier
                         .size(48.dp)
                         .background(
-                            if (state.isAdhanPlaying) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                            else MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                             CircleShape
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        if (state.isAdhanPlaying) Icons.Default.NotificationsActive else Icons.Default.Notifications,
+                        Icons.Default.NotificationsActive,
                         contentDescription = null,
-                        tint = if (state.isAdhanPlaying) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = if (state.isAdhanPlaying) (state.playingPrayerName ?: stringResource(R.string.adhan_playing))
-                        else if (state.nextPrayer?.isTest == true) stringResource(R.string.adhan_test_alarm)
-                        else (state.nextPrayer?.type?.displayName ?: ""),
+                        text = if (isTest) stringResource(R.string.adhan_test_alarm) 
+                               else (playingPrayerName ?: stringResource(R.string.adhan_playing)),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = if (state.isAdhanPlaying) stringResource(R.string.adhan_sounding)
-                        else if (state.nextPrayer?.isTest == true) stringResource(R.string.adhan_test_desc)
-                        else stringResource(R.string.adhan_upcoming),
+                        text = stringResource(R.string.adhan_sounding),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
@@ -88,7 +85,10 @@ fun AdhanControls(
 
                 // STOP BUTTON
                 Surface(
-                    onClick = if (state.isAdhanPlaying) onStopAdhan else onStopTest,
+                    onClick = {
+                        onStopAdhan()
+                        if (isTest) onStopTest()
+                    },
                     color = MaterialTheme.colorScheme.error,
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -99,7 +99,7 @@ fun AdhanControls(
                         Icon(Icons.Default.Stop, null, tint = Color.White, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            "STOP",
+                            stringResource(R.string.adhan_stop),
                             color = Color.White,
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold

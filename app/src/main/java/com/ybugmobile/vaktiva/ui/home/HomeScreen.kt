@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
@@ -92,7 +91,6 @@ fun HomeScreenContent(
     val backgroundGradient =
         getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
     val scrollState = rememberScrollState()
-    var isFlipped by remember { mutableStateOf(false) }
     var showMethodDialog by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -107,9 +105,7 @@ fun HomeScreenContent(
         } else false
     } ?: false
 
-    val contentColor = /*if (isLight) Color.Black else*/ Color.White
-
-    val showAdhanControls = state.isAdhanPlaying || state.nextPrayer?.isTest == true
+    val contentColor = Color.White
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -119,7 +115,6 @@ fun HomeScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .background(brush = backgroundGradient)
-                // .padding(padding)
                 .padding(top = padding.calculateTopPadding())
         ) {
 
@@ -152,7 +147,6 @@ fun HomeScreenContent(
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Light,
                                 color = contentColor,
-                                //modifier = Modifier.graphicsLayer { shadowElevation = 2f }
                             )
                             Text(
                                 text = state.locationName.substringAfter(", ").ifEmpty { "" },
@@ -162,7 +156,7 @@ fun HomeScreenContent(
 
                             Spacer(modifier = Modifier.height(32.dp))
 
-                            // Circular Visualization - The "Weather Circle"
+                            // Circular Visualization
                             if (state.currentPrayerDay != null) {
                                 PrayerCircleVisualization(
                                     day = state.currentPrayerDay,
@@ -222,93 +216,22 @@ fun HomeScreenContent(
                                 )
                             }
 
-                            // ADHAN CONTROLS
-                            AnimatedVisibility(
-                                visible = showAdhanControls,
-                                enter = slideInVertically { it } + fadeIn(),
-                                exit = slideOutVertically { it } + fadeOut()
-                            ) {
-                                Surface(
-                                    modifier = Modifier
-                                        .padding(top = 24.dp)
-                                        .fillMaxWidth(),
-                                    shape = RoundedCornerShape(24.dp),
-                                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f),
-                                    tonalElevation = 8.dp,
-                                    shadowElevation = 12.dp
-                                ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .padding(horizontal = 20.dp, vertical = 16.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(48.dp)
-                                                .background(
-                                                    if (state.isAdhanPlaying) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                                                    else MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
-                                                    CircleShape
-                                                ),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                if (state.isAdhanPlaying) Icons.Default.NotificationsActive else Icons.Default.Notifications,
-                                                contentDescription = null,
-                                                tint = if (state.isAdhanPlaying) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
-                                                modifier = Modifier.size(24.dp)
-                                            )
-                                        }
-
-                                        Column(modifier = Modifier.weight(1f)) {
-                                            Text(
-                                                text = if (state.isAdhanPlaying) (state.playingPrayerName ?: stringResource(R.string.adhan_playing))
-                                                else if (state.nextPrayer?.isTest == true) stringResource(R.string.adhan_test_alarm)
-                                                else (state.nextPrayer?.type?.displayName ?: ""),
-                                                style = MaterialTheme.typography.titleMedium,
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                            Text(
-                                                text = if (state.isAdhanPlaying) stringResource(R.string.adhan_sounding)
-                                                else if (state.nextPrayer?.isTest == true) stringResource(R.string.adhan_test_desc)
-                                                else stringResource(R.string.adhan_upcoming),
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                                            )
-                                        }
-
-                                        // STOP BUTTON
-                                        Surface(
-                                            onClick = if (state.isAdhanPlaying) onStopAdhan else onStopTest,
-                                            color = MaterialTheme.colorScheme.error,
-                                            shape = RoundedCornerShape(12.dp)
-                                        ) {
-                                            Row(
-                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Icon(Icons.Default.Stop, null, tint = Color.White, modifier = Modifier.size(18.dp))
-                                                Spacer(Modifier.width(8.dp))
-                                                Text(
-                                                    "STOP",
-                                                    color = Color.White,
-                                                    style = MaterialTheme.typography.labelLarge,
-                                                    fontWeight = FontWeight.Bold
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            // ADHAN CONTROLS (Refactored to separate component)
+                            AdhanControls(
+                                isAdhanPlaying = state.isAdhanPlaying,
+                                playingPrayerName = state.playingPrayerName,
+                                isTest = state.nextPrayer?.isTest == true,
+                                onStopAdhan = onStopAdhan,
+                                onStopTest = onStopTest,
+                                modifier = Modifier.padding(top = 24.dp)
+                            )
                         }
 
                         // Bottom Content (Glassmorphic Container)
                         Surface(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(/*top = */10.dp),
+                                .padding(10.dp),
                             color = (if (isLight) Color.White else Color.Black).copy(alpha = 0.15f),
                             shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                             border = androidx.compose.foundation.BorderStroke(
