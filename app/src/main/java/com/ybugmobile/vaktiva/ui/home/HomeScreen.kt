@@ -96,11 +96,12 @@ fun HomeScreenContent(
     }
     val permissionState = rememberMultiplePermissionsState(permissions)
 
-    val backgroundGradient = getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
+    val backgroundGradient =
+        getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
     val scrollState = rememberScrollState()
     var isFlipped by remember { mutableStateOf(false) }
     var showMethodDialog by remember { mutableStateOf(false) }
-    
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -119,11 +120,14 @@ fun HomeScreenContent(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(brush = backgroundGradient)
-            .padding(padding)) {
-            
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(brush = backgroundGradient)
+                // .padding(padding)
+                .padding(top = padding.calculateTopPadding())
+        ) {
+
             if (state.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
@@ -148,7 +152,8 @@ fun HomeScreenContent(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = state.locationName.substringBefore(",").ifEmpty { stringResource(R.string.home_unknown_location) },
+                                text = state.locationName.substringBefore(",")
+                                    .ifEmpty { stringResource(R.string.home_unknown_location) },
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Light,
                                 color = contentColor,
@@ -159,7 +164,7 @@ fun HomeScreenContent(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = contentColor.copy(alpha = 0.7f)
                             )
-                            
+
                             Spacer(modifier = Modifier.height(32.dp))
 
                             // Circular Visualization - The "Weather Circle"
@@ -172,14 +177,20 @@ fun HomeScreenContent(
                                     contentColor = contentColor,
                                     isMuted = state.isMuted,
                                     playAdhanAudio = settings?.playAdhanAudio ?: false,
-                                    onSkipAudio = { prayerName -> 
+                                    onSkipAudio = { prayerName ->
                                         state.nextPrayer?.let { next ->
                                             onSkipNextAudio(prayerName, next.date)
                                             scope.launch {
-                                                val message = if (!state.isMuted) 
-                                                    "Adhan skipped for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}" 
-                                                else 
-                                                    "Adhan unmuted for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                val message = if (!state.isMuted)
+                                                    "Adhan skipped for ${
+                                                        prayerName.lowercase()
+                                                            .replaceFirstChar { it.uppercase() }
+                                                    }"
+                                                else
+                                                    "Adhan unmuted for ${
+                                                        prayerName.lowercase()
+                                                            .replaceFirstChar { it.uppercase() }
+                                                    }"
                                                 snackbarHostState.showSnackbar(message)
                                             }
                                         }
@@ -202,20 +213,23 @@ fun HomeScreenContent(
                                 .padding(/*top = */10.dp),
                             color = (if (isLight) Color.White else Color.Black).copy(alpha = 0.15f),
                             shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, contentColor.copy(alpha = 0.1f))
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                contentColor.copy(alpha = 0.1f)
+                            )
                         ) {
                             Column(
                                 modifier = Modifier
                                     .padding(24.dp)
-                                    .navigationBarsPadding()
                             ) {
                                 // Date Selection Strip
                                 ModernCalendarStrip(
                                     state.selectedDate,
-                                    allDays.map { it.date }.filter { !it.isBefore(LocalDate.now()) },
+                                    allDays.map { it.date }
+                                        .filter { !it.isBefore(LocalDate.now()) },
                                     onDateSelected
                                 )
-                                
+
                                 Spacer(modifier = Modifier.height(32.dp))
 
                                 // Prayer Times List
@@ -262,7 +276,11 @@ fun HomeScreenContent(
                                                     color = contentColor
                                                 )
                                             }
-                                            Icon(Icons.Default.Settings, null, tint = contentColor.copy(alpha = 0.5f))
+                                            Icon(
+                                                Icons.Default.Settings,
+                                                null,
+                                                tint = contentColor.copy(alpha = 0.5f)
+                                            )
                                         }
                                     }
                                 }
