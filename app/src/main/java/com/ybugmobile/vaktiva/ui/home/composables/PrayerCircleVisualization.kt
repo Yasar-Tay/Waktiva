@@ -2,11 +2,21 @@ package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsOff
+import androidx.compose.material.icons.filled.NightsStay
+import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.filled.WbTwilight
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -36,10 +46,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NightsStay
-import androidx.compose.material.icons.filled.WbSunny
-import androidx.compose.material.icons.filled.WbTwilight
 
 @Composable
 fun PrayerCircleVisualization(
@@ -48,7 +54,10 @@ fun PrayerCircleVisualization(
     nextPrayer: NextPrayer?,
     isSelectedDayToday: Boolean,
     centerContent: @Composable () -> Unit,
-    contentColor: Color = Color.White
+    contentColor: Color = Color.White,
+    isMuted: Boolean = false,
+    playAdhanAudio: Boolean = false,
+    onSkipAudio: (String) -> Unit = {}
 ) {
     val textMeasurer = rememberTextMeasurer()
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -278,7 +287,6 @@ fun PrayerCircleVisualization(
                     val iconSize = if (isCurrent) 20.dp.toPx() else 16.dp.toPx()
                     
                     if (isCurrent) {
-                        // Enhanced pulse effect
                         drawCircle(
                             color = color.copy(alpha = 0.1f),
                             radius = markerRadius * 2.5f * pulseScale,
@@ -294,7 +302,6 @@ fun PrayerCircleVisualization(
                             center = pos
                         )
                     } else {
-                        // More remarkable non-current markers
                         drawCircle(
                             brush = Brush.radialGradient(
                                 colors = listOf(color, color.darken(0.2f)),
@@ -306,7 +313,6 @@ fun PrayerCircleVisualization(
                         )
                     }
 
-                    // Remarkable border/glow
                     drawCircle(
                         color = Color.White.copy(alpha = 0.8f),
                         radius = markerRadius,
@@ -314,7 +320,6 @@ fun PrayerCircleVisualization(
                         style = Stroke(width = 1.5.dp.toPx())
                     )
 
-                    // Draw the prayer icon centered in the marker
                     translate(pos.x - iconSize / 2, pos.y - iconSize / 2) {
                         with(painter) {
                             draw(size = Size(iconSize, iconSize), colorFilter = ColorFilter.tint(Color.White))
@@ -353,6 +358,37 @@ fun PrayerCircleVisualization(
 
         // Center Content
         centerContent()
+
+        // 6. Mute/Skip Button - Remarkable Floating Placement
+        if (playAdhanAudio && isSelectedDayToday && nextPrayer != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 12.dp, end = 12.dp)
+            ) {
+                IconButton(
+                    onClick = { onSkipAudio(nextPrayer.type.name) },
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(
+                            brush = Brush.radialGradient(
+                                colors = if (isMuted) 
+                                    listOf(Color.Black.copy(alpha = 0.6f), Color.Black.copy(alpha = 0.4f))
+                                else 
+                                    listOf(currentPrayerColor.copy(alpha = 0.8f), currentPrayerColor.copy(alpha = 0.4f))
+                            )
+                        )
+                ) {
+                    Icon(
+                        imageVector = if (isMuted) Icons.Default.NotificationsOff else Icons.Default.Notifications,
+                        contentDescription = "Mute Adhan",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        }
 
         // Tooltip
         Canvas(modifier = Modifier.fillMaxSize()) {

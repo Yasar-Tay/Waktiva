@@ -28,10 +28,7 @@ import java.time.LocalDate
 fun NextPrayerCountdown(
     nextPrayer: NextPrayer?,
     selectedDate: LocalDate,
-    onSkipAudio: (String) -> Unit = {},
-    isMuted: Boolean = false,
-    contentColor: Color = Color.White,
-    playAdhanAudio: Boolean = false
+    contentColor: Color = Color.White
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -89,18 +86,6 @@ fun NextPrayerCountdown(
                     TimeSeparator(contentColor)
                     TimeSegment(time.third, "s", contentColor)
                 }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Modern Mute/Skip Toggle Chip
-                if (playAdhanAudio) {
-                    AudioStatusChip(
-                        isMuted = isMuted,
-                        isTest = nextPrayer.isTest,
-                        contentColor = contentColor,
-                        onClick = { onSkipAudio(nextPrayer.type.name) }
-                    )
-                }
             }
         } else {
             IdleState(contentColor)
@@ -138,74 +123,6 @@ private fun TimeSeparator(color: Color) {
         style = MaterialTheme.typography.displayLarge.copy(fontSize = 32.sp),
         modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 16.dp)
     )
-}
-
-@Composable
-private fun AudioStatusChip(
-    isMuted: Boolean,
-    isTest: Boolean,
-    contentColor: Color,
-    onClick: () -> Unit
-) {
-    val backgroundColor by animateColorAsState(
-        targetValue = if (isMuted) Color.Black.copy(alpha = 0.4f) else contentColor.copy(alpha = 0.15f),
-        label = "chipBg"
-    )
-    
-    val tintColor by animateColorAsState(
-        targetValue = if (isMuted) contentColor.copy(alpha = 0.5f) else contentColor,
-        label = "chipTint"
-    )
-
-    Surface(
-        onClick = onClick,
-        enabled = !isMuted,
-        color = backgroundColor,
-        shape = CircleShape,
-        border = if (isMuted) null else androidx.compose.foundation.BorderStroke(1.dp, contentColor.copy(alpha = 0.1f)),
-        modifier = Modifier
-            .height(44.dp)
-            .animateContentSize()
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 20.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            AnimatedContent(
-                targetState = isMuted,
-                transitionSpec = {
-                    (fadeIn() + scaleIn()).togetherWith(fadeOut() + scaleOut())
-                },
-                label = "iconAnim"
-            ) { muted ->
-                Icon(
-                    imageVector = if (muted) Icons.Default.NotificationsOff else Icons.Default.Notifications,
-                    contentDescription = null,
-                    tint = tintColor,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-            
-            Spacer(modifier = Modifier.width(10.dp))
-            
-            Column {
-                Text(
-                    text = if (isMuted) "ADHAN MUTED" else "ADHAN ON",
-                    color = tintColor,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 0.5.sp
-                )
-                Text(
-                    text = if (isMuted) "Skipped for this prayer" else if (isTest) "Tap to skip test" else "Tap to skip next",
-                    color = tintColor.copy(alpha = 0.5f),
-                    style = MaterialTheme.typography.labelSmall,
-                    fontSize = 9.sp
-                )
-            }
-        }
-    }
 }
 
 @Composable
