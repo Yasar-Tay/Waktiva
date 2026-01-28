@@ -18,9 +18,18 @@ fun PrayerDayEntity.toDomain(): PrayerDay {
 
     val hijri = try {
         val parts = hijriDate.split(" ")
-        if (parts.size >= 3) {
+        // Format: "day monthNumber monthEn year" or "day monthEn year"
+        if (parts.size >= 4) {
             HijriData(
                 day = parts[0].toInt(),
+                monthNumber = parts[1].toInt(),
+                monthEn = parts[2],
+                year = parts[3].toInt()
+            )
+        } else if (parts.size == 3) {
+            HijriData(
+                day = parts[0].toInt(),
+                monthNumber = 1, // Fallback
                 monthEn = parts[1],
                 year = parts[2].toInt()
             )

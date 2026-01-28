@@ -134,9 +134,11 @@ fun HomeScreenContent(
                             .fillMaxSize()
                             .verticalScroll(scrollState)
                     ) {
-                        // Header Section (Refactored to separate component and positioned top-left)
+                        // Header Section
                         HomeHeader(
                             locationName = state.locationName,
+                            date = state.selectedDate,
+                            hijriDate = state.currentPrayerDay?.hijriDate,
                             contentColor = contentColor
                         )
 

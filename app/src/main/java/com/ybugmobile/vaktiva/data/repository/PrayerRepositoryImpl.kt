@@ -85,7 +85,7 @@ class PrayerRepositoryImpl @Inject constructor(
         val formattedDate = "${parts[2]}-${parts[1]}-${parts[0]}"
         return PrayerDayEntity(
             date = formattedDate,
-            hijriDate = "${date.hijri.day} ${date.hijri.month.en} ${date.hijri.year}",
+            hijriDate = "${date.hijri.day} ${date.hijri.month.number} ${date.hijri.month.en} ${date.hijri.year}",
             fajr = timings.fajr.cleanTime(),
             sunrise = timings.sunrise.cleanTime(),
             dhuhr = timings.dhuhr.cleanTime(),

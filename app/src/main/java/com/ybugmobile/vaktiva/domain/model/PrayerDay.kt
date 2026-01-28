@@ -11,6 +11,7 @@ data class PrayerDay(
 
 data class HijriData(
     val day: Int,
+    val monthNumber: Int,
     val monthEn: String,
     val year: Int
 )
