@@ -113,7 +113,7 @@ fun HomeScreenContent(
         } else false
     } ?: false
 
-    val contentColor = if (isLight) Color.Black else Color.White
+    val contentColor = /*if (isLight) Color.Black else*/ Color.White
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -152,7 +152,7 @@ fun HomeScreenContent(
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Light,
                                 color = contentColor,
-                                modifier = Modifier.graphicsLayer { shadowElevation = 2f }
+                                //modifier = Modifier.graphicsLayer { shadowElevation = 2f }
                             )
                             Text(
                                 text = state.locationName.substringAfter(", ").ifEmpty { "" },
@@ -199,7 +199,7 @@ fun HomeScreenContent(
                         Surface(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 24.dp),
+                                .padding(/*top = */10.dp),
                             color = (if (isLight) Color.White else Color.Black).copy(alpha = 0.15f),
                             shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                             border = androidx.compose.foundation.BorderStroke(1.dp, contentColor.copy(alpha = 0.1f))

@@ -196,7 +196,7 @@ fun PrayerCircleVisualization(
                 color = contentColor.copy(alpha = 0.05f),
                 radius = radius,
                 center = center,
-                style = Stroke(width = 1.dp.toPx())
+                style = Stroke(width = 3.dp.toPx())
             )
 
             // Hour ticks
