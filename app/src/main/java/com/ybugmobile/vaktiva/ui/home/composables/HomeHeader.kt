@@ -1,7 +1,9 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,21 +23,34 @@ fun HomeHeader(
 ) {
     Column(
         modifier = modifier
+            .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .padding(top = 56.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(top = 16.dp), // Reduced from 56.dp to move it higher
+        horizontalAlignment = Alignment.Start
     ) {
-        Text(
-            text = locationName.substringBefore(",")
-                .ifEmpty { stringResource(R.string.home_unknown_location) },
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Light,
-            color = contentColor
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.LocationOn,
+                contentDescription = null,
+                tint = contentColor.copy(alpha = 0.6f),
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = locationName.substringBefore(",")
+                    .ifEmpty { stringResource(R.string.home_unknown_location) },
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Light,
+                color = contentColor
+            )
+        }
         Text(
             text = locationName.substringAfter(", ").ifEmpty { "" },
             style = MaterialTheme.typography.bodyLarge,
-            color = contentColor.copy(alpha = 0.7f)
+            color = contentColor.copy(alpha = 0.5f),
+            modifier = Modifier.padding(start = 26.dp) // Aligns with the text after icon
         )
     }
 }

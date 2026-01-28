@@ -134,26 +134,16 @@ fun HomeScreenContent(
                             .fillMaxSize()
                             .verticalScroll(scrollState)
                     ) {
-                        // Header Section
+                        // Header Section (Refactored to separate component and positioned top-left)
+                        HomeHeader(
+                            locationName = state.locationName,
+                            contentColor = contentColor
+                        )
+
                         Column(
-                            modifier = Modifier
-                                .padding(horizontal = 24.dp)
-                                .padding(top = 56.dp),
+                            modifier = Modifier.padding(horizontal = 24.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(
-                                text = state.locationName.substringBefore(",")
-                                    .ifEmpty { stringResource(R.string.home_unknown_location) },
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Light,
-                                color = contentColor,
-                            )
-                            Text(
-                                text = state.locationName.substringAfter(", ").ifEmpty { "" },
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = contentColor.copy(alpha = 0.7f)
-                            )
-
                             Spacer(modifier = Modifier.height(32.dp))
 
                             // Circular Visualization
@@ -216,7 +206,7 @@ fun HomeScreenContent(
                                 )
                             }
 
-                            // ADHAN CONTROLS (Refactored to separate component)
+                            // ADHAN CONTROLS
                             AdhanControls(
                                 isAdhanPlaying = state.isAdhanPlaying,
                                 playingPrayerName = state.playingPrayerName,
