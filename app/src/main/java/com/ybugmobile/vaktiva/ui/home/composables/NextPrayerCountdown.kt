@@ -3,13 +3,14 @@ package com.ybugmobile.vaktiva.ui.home.composables
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,7 @@ fun NextPrayerCountdown(
     ) {
         if ((selectedDate == LocalDate.now()) && nextPrayer != null) {
             val prayerName = currentPrayer?.type?.displayName ?: ""
+            val prayerIcon = currentPrayer?.type?.let { getPrayerIcon(it) } ?: Icons.Rounded.Notifications
             val remainingSeconds = nextPrayer.remainingDuration.seconds
             val isUrgent = remainingSeconds < 30 * 60 // 30 minutes
             
@@ -53,16 +55,38 @@ fun NextPrayerCountdown(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                // Display Current Prayer Name
+                // Header with Icon and Name
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = prayerIcon,
+                        contentDescription = null,
+                        tint = contentColor.copy(alpha = 0.9f),
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = prayerName.uppercase(),
+                        color = contentColor,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 2.sp
+                    )
+                }
+
+                // Subtitle
                 Text(
-                    text = prayerName.uppercase(),
-                    color = contentColor.copy(alpha = 0.6f),
-                    style = MaterialTheme.typography.labelLarge,
+                    text = stringResource(R.string.home_remaining_time).uppercase(),
+                    color = contentColor.copy(alpha = 0.4f),
+                    style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = 3.sp
+                    letterSpacing = 1.sp
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // The Countdown Timer
                 Row(
@@ -83,6 +107,17 @@ fun NextPrayerCountdown(
     }
 }
 
+private fun getPrayerIcon(type: PrayerType): ImageVector {
+    return when (type) {
+        PrayerType.FAJR -> Icons.Rounded.WbTwilight
+        PrayerType.SUNRISE -> Icons.Rounded.WbSunny
+        PrayerType.DHUHR -> Icons.Rounded.WbSunny
+        PrayerType.ASR -> Icons.Rounded.WbCloudy
+        PrayerType.MAGHRIB -> Icons.Rounded.WbTwilight
+        PrayerType.ISHA -> Icons.Rounded.NightsStay
+    }
+}
+
 @Composable
 private fun TimeSegment(value: String, unit: String, color: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -90,17 +125,17 @@ private fun TimeSegment(value: String, unit: String, color: Color) {
             text = value,
             color = color,
             style = MaterialTheme.typography.displayLarge.copy(
-                fontSize = 44.sp,
+                fontSize = 48.sp,
                 fontFamily = Inter,
                 fontWeight = FontWeight.Light,
                 letterSpacing = (-1).sp
             )
         )
         Text(
-            text = unit,
+            text = unit.uppercase(),
             color = color.copy(alpha = 0.4f),
             style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.ExtraBold
         )
     }
 }
@@ -109,9 +144,12 @@ private fun TimeSegment(value: String, unit: String, color: Color) {
 private fun TimeSeparator(color: Color) {
     Text(
         text = ":",
-        color = color.copy(alpha = 0.3f),
-        style = MaterialTheme.typography.displayLarge.copy(fontSize = 32.sp),
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 16.dp)
+        color = color.copy(alpha = 0.2f),
+        style = MaterialTheme.typography.displayLarge.copy(
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Thin
+        ),
+        modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
     )
 }
 
@@ -122,15 +160,15 @@ private fun IdleState(contentColor: Color) {
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = Icons.Default.Schedule,
+            imageVector = Icons.Rounded.Schedule,
             contentDescription = null,
-            tint = contentColor.copy(alpha = 0.2f),
+            tint = contentColor.copy(alpha = 0.15f),
             modifier = Modifier.size(64.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "VAKTIVA",
-            color = contentColor.copy(alpha = 0.3f),
+            color = contentColor.copy(alpha = 0.2f),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.ExtraBold,
             letterSpacing = 8.sp
