@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Vaktiva</string>
 
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Home</string>
+    <string name="nav_qibla">Qibla</string>
+    <string name="nav_settings">Settings</string>
+
     <!-- Qibla Screen -->
     <string name="qibla_compass">Compass</string>
     <string name="qibla_map">Map</string>
@@ -62,6 +67,7 @@
     <string name="settings_granted">Granted</string>
     <string name="settings_denied">Denied</string>
     <string name="settings_language">App Language</string>
+    <string name="settings_preferences">Preferences</string>
 
     <!-- Language Options -->
     <string name="lang_system">System Default</string>

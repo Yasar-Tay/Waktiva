@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Vaktiva</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Ana Sayfa</string>
+    <string name="nav_qibla">Kıble</string>
+    <string name="nav_settings">Ayarlar</string>
+
     <string name="qibla_compass">Pusula</string>
     <string name="qibla_map">Harita</string>
     <string name="qibla_mecca_aligned">Kıbleye Hizalandı</string>
@@ -53,6 +59,7 @@
     <string name="settings_granted">Verildi</string>
     <string name="settings_denied">Reddedildi</string>
     <string name="settings_language">Uygulama Dili</string>
+    <string name="settings_preferences">Tercihler</string>
     <string name="lang_system">Sistem Varsayılanı</string>
     <string name="lang_en">English</string>
     <string name="lang_tr">Türkçe</string>

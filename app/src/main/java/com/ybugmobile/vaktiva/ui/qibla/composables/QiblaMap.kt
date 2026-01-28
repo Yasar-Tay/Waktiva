@@ -4,12 +4,13 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Color as AndroidColor
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CompassCalibration
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Satellite
@@ -24,6 +25,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.data.sensor.CompassData
 import com.ybugmobile.vaktiva.ui.qibla.MapConstants
+import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
@@ -34,6 +36,7 @@ import org.maplibre.android.plugins.annotation.LineOptions
 import org.maplibre.android.plugins.annotation.SymbolManager
 import org.maplibre.android.plugins.annotation.SymbolOptions
 import org.maplibre.android.utils.ColorUtils
+import kotlin.math.abs
 
 @Composable
 fun QiblaMap(
@@ -49,110 +52,155 @@ fun QiblaMap(
     var symbolManager by remember { mutableStateOf<SymbolManager?>(null) }
     var lineManager by remember { mutableStateOf<LineManager?>(null) }
     var customPoint by remember { mutableStateOf<LatLng?>(null) }
+    
+    // State to track if the map orientation (bearing or tilt) is changed from default
+    var isMapOriented by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-    AndroidView(
-        modifier = Modifier.fillMaxSize(),
-        factory = { ctx ->
-            MapView(ctx).apply {
-                getMapAsync { map ->
-                    mapInstance = map
-                    onMapReady(map)
-                    val initialStyle = if (isSatelliteView) MapConstants.SATELLITE_STYLE_JSON else MapConstants.STREET_STYLE
-                    map.setStyle(Style.Builder().run {
-                        if (isSatelliteView) fromJson(initialStyle) else fromUri(initialStyle)
-                    }) { style ->
-                        style.addImage(MapConstants.USER_ARROW_ID, createArrowBitmap("#2196F3"))
-                        style.addImage(MapConstants.CUSTOM_ARROW_ID, createArrowBitmap("#F44336"))
-
-                        symbolManager = SymbolManager(this@apply, map, style).apply {
-                            iconAllowOverlap = true
-                            iconIgnorePlacement = true
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { ctx ->
+                MapView(ctx).apply {
+                    getMapAsync { map ->
+                        mapInstance = map
+                        onMapReady(map)
+                        
+                        // Disable the default compass UI
+                        map.uiSettings.isCompassEnabled = false
+                        
+                        // Add listener to track camera changes
+                        map.addOnCameraMoveListener {
+                            val cameraPosition = map.cameraPosition
+                            // Show compass if bearing is not 0 or tilt is not 0
+                            isMapOriented = abs(cameraPosition.bearing) > 0.1 || abs(cameraPosition.tilt) > 0.1
                         }
-                        lineManager = LineManager(this@apply, map, style)
-                        settings?.let {
-                            map.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    LatLng(it.latitude, it.longitude),
-                                    MapConstants.DEFAULT_ZOOM
+
+                        val initialStyle = if (isSatelliteView) MapConstants.SATELLITE_STYLE_JSON else MapConstants.STREET_STYLE
+                        map.setStyle(Style.Builder().run {
+                            if (isSatelliteView) fromJson(initialStyle) else fromUri(initialStyle)
+                        }) { style ->
+                            style.addImage(MapConstants.USER_ARROW_ID, createArrowBitmap("#2196F3"))
+                            style.addImage(MapConstants.CUSTOM_ARROW_ID, createArrowBitmap("#F44336"))
+
+                            symbolManager = SymbolManager(this@apply, map, style).apply {
+                                iconAllowOverlap = true
+                                iconIgnorePlacement = true
+                            }
+                            lineManager = LineManager(this@apply, map, style)
+                            settings?.let {
+                                map.moveCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        LatLng(it.latitude, it.longitude),
+                                        MapConstants.DEFAULT_ZOOM
+                                    )
                                 )
-                            )
+                            }
+                        }
+                        map.addOnMapLongClickListener { point ->
+                            customPoint = point
+                            onMapLongClick(point)
+                            true
                         }
                     }
-                    map.addOnMapLongClickListener { point ->
-                        customPoint = point
-                        onMapLongClick(point)
-                        true
-                    }
-                }
-            }
-        },
-        update = { view ->
-            mapInstance?.let { map ->
-                val currentStyle = map.style
-                val needsStyleChange = if (isSatelliteView) {
-                    currentStyle == null || currentStyle.uri.isNotEmpty()
-                } else {
-                    currentStyle == null || currentStyle.uri != MapConstants.STREET_STYLE
-                }
-                if (needsStyleChange) {
-                    symbolManager?.deleteAll()
-                    lineManager?.deleteAll()
-                    symbolManager = null
-                    lineManager = null
-                    map.setStyle(Style.Builder().run {
-                        if (isSatelliteView) fromJson(MapConstants.SATELLITE_STYLE_JSON) else fromUri(MapConstants.STREET_STYLE)
-                    }) { style ->
-                        style.addImage(MapConstants.USER_ARROW_ID, createArrowBitmap("#2196F3"))
-                        style.addImage(MapConstants.CUSTOM_ARROW_ID, createArrowBitmap("#F44336"))
-                        symbolManager = SymbolManager(view, map, style).apply {
-                            iconAllowOverlap = true
-                            iconIgnorePlacement = true
-                        }
-                        lineManager = LineManager(view, map, style)
-                    }
-                }
-            }
-        }
-    )
-
-    Column(
-        modifier = Modifier
-            .align(Alignment.CenterEnd)
-            .padding(end = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        FloatingActionButton(
-            onClick = {
-                settings?.let { loc ->
-                    mapInstance?.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            LatLng(loc.latitude, loc.longitude),
-                            MapConstants.DEFAULT_ZOOM
-                        )
-                    )
                 }
             },
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.primary
-        ) {
-            Icon(
-                imageVector = Icons.Default.MyLocation,
-                contentDescription = "Locate Me"
-            )
-        }
+            update = { view ->
+                mapInstance?.let { map ->
+                    val currentStyle = map.style
+                    val needsStyleChange = if (isSatelliteView) {
+                        currentStyle == null || currentStyle.uri.isNotEmpty()
+                    } else {
+                        currentStyle == null || currentStyle.uri != MapConstants.STREET_STYLE
+                    }
+                    if (needsStyleChange) {
+                        symbolManager?.deleteAll()
+                        lineManager?.deleteAll()
+                        symbolManager = null
+                        lineManager = null
+                        map.setStyle(Style.Builder().run {
+                            if (isSatelliteView) fromJson(MapConstants.SATELLITE_STYLE_JSON) else fromUri(MapConstants.STREET_STYLE)
+                        }) { style ->
+                            style.addImage(MapConstants.USER_ARROW_ID, createArrowBitmap("#2196F3"))
+                            style.addImage(MapConstants.CUSTOM_ARROW_ID, createArrowBitmap("#F44336"))
+                            symbolManager = SymbolManager(view, map, style).apply {
+                                iconAllowOverlap = true
+                                iconIgnorePlacement = true
+                            }
+                            lineManager = LineManager(view, map, style)
+                        }
+                    }
+                }
+            }
+        )
 
-        FloatingActionButton(
-            onClick = onToggleSatellite,
-            containerColor = if (isSatelliteView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-            contentColor = if (isSatelliteView) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
+        // Custom UI Controls
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                imageVector = if (isSatelliteView) Icons.Default.Map else Icons.Default.Satellite,
-                contentDescription = "Toggle Satellite"
-            )
+            // Custom Compass Icon
+            AnimatedVisibility(
+                visible = isMapOriented,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        mapInstance?.let { map ->
+                            val currentPos = map.cameraPosition
+                            val newPos = CameraPosition.Builder(currentPos)
+                                .bearing(0.0)
+                                .tilt(0.0)
+                                .build()
+                            map.animateCamera(CameraUpdateFactory.newCameraPosition(newPos))
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Explore,
+                        contentDescription = "Reset Orientation",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+
+            FloatingActionButton(
+                onClick = {
+                    settings?.let { loc ->
+                        mapInstance?.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                LatLng(loc.latitude, loc.longitude),
+                                MapConstants.DEFAULT_ZOOM
+                            )
+                        )
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MyLocation,
+                    contentDescription = "Locate Me"
+                )
+            }
+
+            FloatingActionButton(
+                onClick = onToggleSatellite,
+                containerColor = if (isSatelliteView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                contentColor = if (isSatelliteView) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = if (isSatelliteView) Icons.Default.Map else Icons.Default.Satellite,
+                    contentDescription = "Toggle Satellite"
+                )
+            }
         }
-    }
     }
 
     // Annotations update
