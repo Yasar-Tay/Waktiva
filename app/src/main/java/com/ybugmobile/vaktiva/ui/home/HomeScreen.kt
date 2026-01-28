@@ -190,12 +190,33 @@ fun HomeScreenContent(
                                             }
                                         }
                                     },
-                                    centerContent = {
+                                    centerContent = { accentColor ->
                                         NextPrayerCountdown(
                                             nextPrayer = state.nextPrayer,
                                             selectedDate = state.selectedDate,
                                             contentColor = contentColor,
-                                            currentPrayer = state.currentPrayer
+                                            currentPrayer = state.currentPrayer,
+                                            playAdhanAudio = settings?.playAdhanAudio ?: false,
+                                            isMuted = state.isMuted,
+                                            onSkipAudio = { prayerName ->
+                                                state.nextPrayer?.let { next ->
+                                                    onSkipNextAudio(prayerName, next.date)
+                                                    scope.launch {
+                                                        val message = if (!state.isMuted)
+                                                            "Adhan skipped for ${
+                                                                prayerName.lowercase()
+                                                                    .replaceFirstChar { it.uppercase() }
+                                                            }"
+                                                        else
+                                                            "Adhan unmuted for ${
+                                                                prayerName.lowercase()
+                                                                    .replaceFirstChar { it.uppercase() }
+                                                            }"
+                                                        snackbarHostState.showSnackbar(message)
+                                                    }
+                                                }
+                                            },
+                                            accentColor = accentColor
                                         )
                                     }
                                 )

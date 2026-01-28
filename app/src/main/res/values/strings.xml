@@ -38,6 +38,8 @@
     <string name="home_refresh_success">Prayer times updated</string>
     <string name="home_refresh_error">Failed to update times</string>
     <string name="home_prayer_provider">Provider: </string>
+    <string name="home_skip_adhan">Mute</string>
+    <string name="home_unmute_adhan">Unmute</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Fajr</string>

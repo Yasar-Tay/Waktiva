@@ -53,7 +53,7 @@ fun PrayerCircleVisualization(
     currentTime: LocalTime,
     nextPrayer: NextPrayer?,
     isSelectedDayToday: Boolean,
-    centerContent: @Composable () -> Unit,
+    centerContent: @Composable (Color) -> Unit,
     contentColor: Color = Color.White,
     isMuted: Boolean = false,
     playAdhanAudio: Boolean = false,
@@ -356,38 +356,12 @@ fun PrayerCircleVisualization(
             }
         }
 
-        // Center Content
-        centerContent()
-
-        // 6. Mute/Skip Button - Remarkable Floating Placement
-        if (playAdhanAudio && isSelectedDayToday && nextPrayer != null) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 12.dp, end = 12.dp)
-            ) {
-                IconButton(
-                    onClick = { onSkipAudio(nextPrayer.type.name) },
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors = if (isMuted) 
-                                    listOf(Color.Black.copy(alpha = 0.6f), Color.Black.copy(alpha = 0.4f))
-                                else 
-                                    listOf(currentPrayerColor.copy(alpha = 0.8f), currentPrayerColor.copy(alpha = 0.4f))
-                            )
-                        )
-                ) {
-                    Icon(
-                        imageVector = if (isMuted) Icons.Default.NotificationsOff else Icons.Default.Notifications,
-                        contentDescription = "Mute Adhan",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
+        // Center Content Container - Define a proportional size for inner spreading
+        Box(
+            modifier = Modifier.fillMaxSize(0.65f),
+            contentAlignment = Alignment.Center
+        ) {
+            centerContent(currentPrayerColor)
         }
 
         // Tooltip

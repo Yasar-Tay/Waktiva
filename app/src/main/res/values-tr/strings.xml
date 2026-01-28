@@ -26,6 +26,8 @@
     <string name="home_refresh_success">Namaz vakitleri güncellendi</string>
     <string name="home_refresh_error">Vakitler güncellenemedi</string>
     <string name="home_prayer_provider">Kaynak: </string>
+    <string name="home_skip_adhan">Sessize Al</string>
+    <string name="home_unmute_adhan">Sesi Aç</string>
 
     <!-- Qibla Screen -->
     <string name="qibla_label">Kıble</string>
