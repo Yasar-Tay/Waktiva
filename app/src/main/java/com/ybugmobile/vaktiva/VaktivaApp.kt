@@ -23,6 +23,8 @@ class VaktivaApp : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        // No need to manually apply locale here.
+        // AppCompat's autoStoreLocales="true" in AndroidManifest.xml handles persistence.
         createNotificationChannels()
     }
 

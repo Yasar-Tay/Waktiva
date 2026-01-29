@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,7 +63,7 @@ fun WelcomeScreen(
     settingsViewModel: SettingsViewModel = hiltViewModel(),
     audioViewModel: AudioSettingsViewModel = hiltViewModel()
 ) {
-    var currentStep by remember { mutableStateOf(WelcomeStep.INTRO) }
+    var currentStep by rememberSaveable { mutableStateOf(WelcomeStep.INTRO) }
     val backgroundBrush = Brush.verticalGradient(listOf(WelcomeGradientStart, WelcomeGradientEnd))
 
     Box(modifier = Modifier.fillMaxSize().background(backgroundBrush)) {
@@ -132,8 +133,8 @@ private fun IntroStep(onNext: () -> Unit) {
 private fun PermissionsStep(onNext: () -> Unit) {
     val context = LocalContext.current
     
-    var locationDenialCount by remember { mutableStateOf(0) }
-    var notificationDenialCount by remember { mutableStateOf(0) }
+    var locationDenialCount by rememberSaveable { mutableIntStateOf(0) }
+    var notificationDenialCount by rememberSaveable { mutableIntStateOf(0) }
 
     val locationPermissionState = rememberMultiplePermissionsState(
         listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -291,9 +292,9 @@ private fun PreferencesStep(
     val currentAppLocales = AppCompatDelegate.getApplicationLocales()
     val currentLanguage = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
 
-    var showMethodDialog by remember { mutableStateOf(false) }
-    var showMadhabDialog by remember { mutableStateOf(false) }
-    var showLanguageDialog by remember { mutableStateOf(false) }
+    var showMethodDialog by rememberSaveable { mutableStateOf(false) }
+    var showMadhabDialog by rememberSaveable { mutableStateOf(false) }
+    var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
     val methods = listOf(
         stringResource(R.string.method_mwl) to 3,
@@ -486,6 +487,7 @@ private fun PreferencesStep(
                     LocaleListCompat.forLanguageTags(lang)
                 }
                 AppCompatDelegate.setApplicationLocales(appLocale)
+                settingsViewModel.updateLanguage(lang)
                 showLanguageDialog = false
             },
             onDismiss = { showLanguageDialog = false }

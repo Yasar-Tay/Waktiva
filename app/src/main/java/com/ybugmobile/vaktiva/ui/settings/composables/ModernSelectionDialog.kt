@@ -46,10 +46,10 @@ fun <T> ModernSelectionDialog(
                     modifier = Modifier.heightIn(max = 400.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(options) { (name, id) ->
-                        val isSelected = id == selectedKey
+                    items(options) { (label, value) ->
+                        val isSelected = value == selectedKey
                         Surface(
-                            onClick = { onSelected(id) },
+                            onClick = { onSelected(value) },
                             shape = RoundedCornerShape(16.dp),
                             color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
                             modifier = Modifier.fillMaxWidth()
@@ -65,7 +65,7 @@ fun <T> ModernSelectionDialog(
                                 )
                                 Spacer(Modifier.width(12.dp))
                                 Text(
-                                    name, 
+                                    label,
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                                     )

@@ -1,6 +1,7 @@
 package com.ybugmobile.vaktiva.ui.settings
 
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -17,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -104,6 +106,7 @@ fun SettingsScreen(
                 LocaleListCompat.forLanguageTags(lang)
             }
             AppCompatDelegate.setApplicationLocales(appLocale)
+            viewModel.updateLanguage(lang)
             showLanguageDialog = false
         },
         onMadhabSelected = { viewModel.setMadhab(it); showMadhabDialog = false },
@@ -150,9 +153,8 @@ private fun PreferencesSection(
     onMadhabClick: () -> Unit,
     onMethodClick: () -> Unit
 ) {
-    val context = LocalContext.current
     val currentAppLocales = AppCompatDelegate.getApplicationLocales()
-    val currentLanguage = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
+    val currentLanguageCode = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
 
     val madhabOptions = listOf(
         stringResource(R.string.madhab_shafi) to 0,
@@ -165,7 +167,7 @@ private fun PreferencesSection(
         settings?.let { s ->
             SettingsClickItem(
                 title = stringResource(R.string.settings_language),
-                subtitle = getNativeLanguageName(currentLanguage, context),
+                subtitle = getNativeLanguageName(currentLanguageCode),
                 icon = Icons.Rounded.Language,
                 onClick = onLanguageClick
             )
@@ -247,20 +249,19 @@ private fun SettingsDialogs(
     onMadhabSelected: (Int) -> Unit,
     onMethodSelected: (Int) -> Unit
 ) {
-    val context = LocalContext.current
     val currentAppLocales = AppCompatDelegate.getApplicationLocales()
-    val currentLanguage = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
+    val currentLanguageCode = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
 
     if (showLanguageDialog) {
         val languageOptions = listOf(
-            "system" to getNativeLanguageName("system", context),
-            "en" to getNativeLanguageName("en", context),
-            "tr" to getNativeLanguageName("tr", context)
+            getNativeLanguageName("system") to "system",
+            getNativeLanguageName("en") to "en",
+            getNativeLanguageName("tr") to "tr"
         )
         ModernSelectionDialog(
             title = stringResource(R.string.settings_language),
             options = languageOptions,
-            selectedKey = currentLanguage,
+            selectedKey = currentLanguageCode,
             onSelected = onLanguageSelected,
             onDismiss = onDismissLanguage
         )
@@ -306,18 +307,18 @@ private fun getCalculationMethods() = listOf(
     stringResource(R.string.method_turkey) to 13
 )
 
-private fun getNativeLanguageName(languageCode: String, context: android.content.Context): String {
-    return if (languageCode == "system") {
-        val systemLocale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            context.resources.configuration.locales[0]
-        } else {
-            @Suppress("DEPRECATION")
-            context.resources.configuration.locale
+@Composable
+private fun getNativeLanguageName(languageCode: String): String {
+    return when (languageCode) {
+        "system" -> {
+            val systemLocale = ConfigurationCompat.getLocales(Resources.getSystem().configuration).get(0)
+            val displayName = systemLocale?.getDisplayName(systemLocale)?.replaceFirstChar { it.uppercase() } ?: ""
+            val systemLabel = stringResource(R.string.lang_system)
+            if (displayName.isNotEmpty()) "$systemLabel ($displayName)" else systemLabel
         }
-        val displayName = systemLocale?.getDisplayName(systemLocale) ?: ""
-        "System ($displayName)"
-    } else {
-        val locale = JavaLocale(languageCode)
-        locale.getDisplayName(locale).replaceFirstChar { it.uppercase() }
+        else -> {
+            val locale = JavaLocale(languageCode)
+            locale.getDisplayName(locale).replaceFirstChar { it.uppercase() }
+        }
     }
 }

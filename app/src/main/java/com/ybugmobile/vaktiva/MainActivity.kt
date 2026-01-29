@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             VaktivaTheme {
                 val viewModel: HomeViewModel = hiltViewModel()
-                
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
