@@ -29,8 +29,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,6 +61,7 @@ fun PrayerCircleVisualization(
     playAdhanAudio: Boolean = false,
     onSkipAudio: (String) -> Unit = {}
 ) {
+    val textMeasurer = rememberTextMeasurer()
     val context = LocalContext.current
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
     val layoutDirection = LocalLayoutDirection.current
@@ -386,12 +390,36 @@ fun PrayerCircleVisualization(
                     )
                 }
             }
+
+            // 6. Prayer Time Text
+            prayers.forEach { prayer ->
+                val prayerTime = prayer.time.format(formatter)
+                val pos = getPosition(prayer.time, radius, center)
+                val textLayoutResult = textMeasurer.measure(
+                    text = AnnotatedString(prayerTime),
+                    style = TextStyle(
+                        color = contentColor.copy(alpha = 0.7f),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+
+                val textOffset = Offset(
+                    x = pos.x - textLayoutResult.size.width / 2,
+                    y = pos.y + 18.dp.toPx()
+                )
+
+                drawText(
+                    textLayoutResult = textLayoutResult,
+                    topLeft = textOffset
+                )
+            }
         }
 
         // Center Content Overlay
         centerContent(currentPrayerColor)
 
-        // 6. Modern Sleek Info Overlay (Bottom Centered) - High Z-Index to avoid being hidden
+        // 7. Modern Sleek Info Overlay (Bottom Centered) - High Z-Index to avoid being hidden
         Box(
             modifier = Modifier
                 .fillMaxSize()
