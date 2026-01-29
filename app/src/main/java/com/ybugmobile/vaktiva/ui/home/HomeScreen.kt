@@ -237,10 +237,10 @@ fun HomeScreenContent(
                             ) {
                                 // Date Selection Strip
                                 ModernCalendarStrip(
-                                    state.selectedDate,
-                                    allDays.map { it.date }
-                                        .filter { !it.isBefore(LocalDate.now()) },
-                                    onDateSelected
+                                    selectedDate = state.selectedDate,
+                                    availableDays = allDays.filter { !it.date.isBefore(LocalDate.now()) },
+                                    onDateSelected = onDateSelected,
+                                    contentColor = contentColor
                                 )
 
                                 Spacer(modifier = Modifier.height(32.dp))

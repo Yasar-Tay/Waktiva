@@ -2,12 +2,15 @@ package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -26,7 +30,7 @@ import java.util.Locale
 @Composable
 fun ModernCalendarStrip(
     selectedDate: LocalDate,
-    availableDates: List<LocalDate>,
+    availableDays: List<PrayerDay>,
     onDateSelected: (LocalDate) -> Unit,
     contentColor: Color = Color.White
 ) {
@@ -49,12 +53,31 @@ fun ModernCalendarStrip(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 4.dp)
         ) {
-            items(availableDates) { date ->
+            items(availableDays) { prayerDay ->
+                val date = prayerDay.date
+                val hijri = prayerDay.hijriDate
                 val isSelected = date == selectedDate
                 val isToday = date == today
 
+                // Logic for Special Days
+                val isRamadan = hijri?.monthNumber == 9
+                val isEidFitr = hijri?.monthNumber == 10 && hijri.day in 1..3
+                val isEidAdha = hijri?.monthNumber == 12 && hijri.day in 10..13
+                val isEid = isEidFitr || isEidAdha
+
+                val specialColor = when {
+                    isEid -> Color(0xFFFFD700) // Gold for Eid
+                    isRamadan -> Color(0xFF81C784) // Soft Green for Ramadan
+                    else -> null
+                }
+
                 val bgColor by animateColorAsState(
-                    targetValue = if (isSelected) contentColor.copy(alpha = 0.2f) else Color.Transparent,
+                    targetValue = when {
+                        isSelected -> contentColor.copy(alpha = 0.2f)
+                        isEid -> specialColor?.copy(alpha = 0.25f) ?: Color.Transparent
+                        isRamadan -> specialColor?.copy(alpha = 0.15f) ?: Color.Transparent
+                        else -> Color.Transparent
+                    },
                     label = "bgColor"
                 )
                 
@@ -62,7 +85,17 @@ fun ModernCalendarStrip(
                     onClick = { onDateSelected(date) },
                     color = bgColor,
                     shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.width(54.dp)
+                    modifier = Modifier
+                        .width(58.dp)
+                        .then(
+                            if ((isEid || isRamadan) && !isSelected) {
+                                Modifier.border(
+                                    width = 1.5.dp,
+                                    color = specialColor?.copy(alpha = 0.4f) ?: Color.Transparent,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                            } else Modifier
+                        )
                 ) {
                     Column(
                         modifier = Modifier.padding(vertical = 12.dp),
@@ -75,19 +108,38 @@ fun ModernCalendarStrip(
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(Modifier.height(4.dp))
+                        
                         Text(
                             text = date.dayOfMonth.toString(),
-                            color = contentColor,
+                            color = if (isEid && !isSelected) specialColor!! else contentColor,
                             fontSize = 18.sp,
-                            fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium
+                            fontWeight = if (isSelected || isEid || isRamadan) FontWeight.ExtraBold else FontWeight.Medium
                         )
-                        if (isToday) {
-                            Box(
-                                Modifier
-                                    .padding(top = 4.dp)
-                                    .size(4.dp)
-                                    .background(contentColor, CircleShape)
-                            )
+
+                        Spacer(Modifier.height(6.dp))
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.height(10.dp)
+                        ) {
+                            if (isToday) {
+                                Box(
+                                    Modifier
+                                        .size(4.dp)
+                                        .background(contentColor, CircleShape)
+                                )
+                            }
+                            
+                            if (isEid || isRamadan) {
+                                if (isToday) Spacer(Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = Icons.Rounded.Star,
+                                    contentDescription = null,
+                                    tint = specialColor ?: contentColor,
+                                    modifier = Modifier.size(10.dp)
+                                )
+                            }
                         }
                     }
                 }

@@ -83,7 +83,7 @@ fun NextPrayerCountdown(
                             letterSpacing = 2.sp
                         )
                     }
-                    Spacer(Modifier.height(8.dp))
+
                     Text(
                         text = stringResource(R.string.home_remaining_time).uppercase(),
                         color = contentColor.copy(alpha = 0.4f),
@@ -92,7 +92,7 @@ fun NextPrayerCountdown(
                         letterSpacing = 1.sp
                     )
                 }
-                Spacer(Modifier.height(10.dp))
+               
                 // 2. The Countdown Timer
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -185,15 +185,40 @@ private fun TimeSegment(value: String, unit: String, color: Color) {
 
 @Composable
 private fun TimeSeparator(color: Color) {
-    Text(
-        text = ":",
-        color = color.copy(alpha = 0.2f),
-        style = MaterialTheme.typography.displayLarge.copy(
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Thin
-        ),
-        modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
-    )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(horizontal = 4.dp)
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            // Invisible digit to ensure the Box matches the height of digits in TimeSegment
+            Text(
+                text = "0",
+                color = Color.Transparent,
+                style = MaterialTheme.typography.displayLarge.copy(
+                    fontSize = 48.sp,
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.Light
+                )
+            )
+            // The actual separator centered within that space
+            Text(
+                text = ":",
+                color = color.copy(alpha = 0.8f),
+                style = MaterialTheme.typography.displayLarge.copy(
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Thin
+                ),
+                modifier = Modifier.offset(y = (-3).dp) // Slight nudge for visual center
+            )
+        }
+        // Invisible unit label to maintain vertical alignment with TimeSegment labels
+        Text(
+            text = "H",
+            color = Color.Transparent,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.ExtraBold
+        )
+    }
 }
 
 @Composable

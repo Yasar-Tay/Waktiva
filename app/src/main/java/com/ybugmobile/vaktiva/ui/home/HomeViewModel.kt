@@ -80,11 +80,9 @@ class HomeViewModel @Inject constructor(
     val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, settings) { prayers, now, currentSettings ->
         if (prayers == null) return@combine null
         
-        // Use persisted test end time if available and not expired
         val testEndTimeMillis = currentSettings.testAlarmEndTime
         if (testEndTimeMillis != null) {
             val testEndTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(testEndTimeMillis), ZoneId.systemDefault())
-            // Only show test countdown if it's actually in the future
             if (testEndTime.isAfter(now)) {
                 return@combine NextPrayer(
                     type = PrayerType.FAJR,
@@ -121,10 +119,9 @@ class HomeViewModel @Inject constructor(
     init {
         tickerFlow(1000).onEach { 
             _currentTime.value = LocalDateTime.now()
-            // Cleanup expired test time
             val s = settings.first()
             s.testAlarmEndTime?.let { end ->
-                if (System.currentTimeMillis() > end) { // Fixed: Remove +5000 so it clears exactly at end
+                if (System.currentTimeMillis() > end) {
                     settingsManager.setTestAlarmEndTime(null)
                     settingsManager.clearMutedPrayer()
                 }
@@ -145,10 +142,8 @@ class HomeViewModel @Inject constructor(
     fun triggerTestAlarm(seconds: Int) {
         val endTimeMillis = System.currentTimeMillis() + (seconds * 1000)
         viewModelScope.launch {
-            // Cancel existing alarms (including test alarms) before scheduling a new one
             alarmScheduler.cancelAllAlarms()
             settingsManager.clearMutedPrayer()
-
             settingsManager.setTestAlarmEndTime(endTimeMillis)
             alarmScheduler.scheduleTestAlarm(seconds)
         }
@@ -205,15 +200,12 @@ class HomeViewModel @Inject constructor(
         val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
 
-        // logic for adhan controls visibility: only when audio is actually playing
-        val showTestControls = (nextPrayer?.isTest == true && playing)
-
         HomeViewState(
             selectedDate = date, currentTime = time, currentPrayerDay = prayerDay,
             currentPrayer = currentPrayer,
             nextPrayer = nextPrayer, isRefreshing = refreshing, isLoading = !hasSettled() && prayerDay == null,
             locationName = currentSettings.locationName, 
-            isAdhanPlaying = playing, // This comes from MediaController.isPlaying
+            isAdhanPlaying = playing, 
             playingPrayerName = prayerName,
             isMuted = isMuted 
         )
@@ -241,7 +233,9 @@ class HomeViewModel @Inject constructor(
                 _isRefreshing.value = true
                 val s = settings.first()
                 val loc = locationWrapper.getCurrentLocation()
-                prayerRepository.refreshPrayerTimes(date.year, date.monthValue, loc?.latitude ?: s.latitude, loc?.longitude ?: s.longitude, s.calculationMethod)
+                val lat = loc?.latitude ?: s.latitude
+                val lng = loc?.longitude ?: s.longitude
+                prayerRepository.refreshPrayerTimes(date.year, date.monthValue, lat, lng, s.calculationMethod)
             } finally { _isRefreshing.value = false }
         }
     }
@@ -271,10 +265,16 @@ class HomeViewModel @Inject constructor(
         val loc = locationWrapper.getCurrentLocation()
         val s = settings.first()
         val now = LocalDate.now()
+        val nextMonth = now.plusMonths(1)
         val lat = loc?.latitude ?: s.latitude
         val lng = loc?.longitude ?: s.longitude
         if (loc != null) settingsManager.saveLocation(lat, lng, locationWrapper.getAddressFromLocation(lat, lng) ?: "Current Location")
+        
+        // Fetch Current Month
         prayerRepository.refreshPrayerTimes(now.year, now.monthValue, lat, lng, s.calculationMethod)
+        
+        // Fetch Next Month to ensure we have ~60 days of data and show Ramadan early if it's coming
+        prayerRepository.refreshPrayerTimes(nextMonth.year, nextMonth.monthValue, lat, lng, s.calculationMethod)
     }
 
     override fun onCleared() {
