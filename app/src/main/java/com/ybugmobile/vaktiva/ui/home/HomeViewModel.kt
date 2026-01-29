@@ -150,8 +150,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun debugAddHours(hours: Long) {
-        _timeOffset.value = _timeOffset.value.plusHours(hours)
+    fun debugAddHours(minutes: Long) {
+        _timeOffset.value = _timeOffset.value.plusMinutes(minutes)
     }
 
     override fun onResume(owner: LifecycleOwner) {

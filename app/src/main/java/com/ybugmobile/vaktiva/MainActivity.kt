@@ -84,8 +84,8 @@ class MainActivity : AppCompatActivity() {
                             // Time Shift Test Button
                             SmallFloatingActionButton(
                                 onClick = { 
-                                    viewModel.debugAddHours(1)
-                                    Toast.makeText(this@MainActivity, "Time shifted +1 hour", Toast.LENGTH_SHORT).show()
+                                    viewModel.debugAddHours(30)
+                                    Toast.makeText(this@MainActivity, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
                                 },
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer
                             ) {

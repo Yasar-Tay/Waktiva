@@ -31,17 +31,25 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
 
         // Dawn: Muted Indigo to Soft Steel
         currentTime.isBefore(sunrise) -> Brush.verticalGradient(
-            listOf(Color(0xFF2B3A4C), Color(0xFF4B6B93))
+            listOf(Color(0xFF0F141E), Color(0xFF374D6B))
         )
 
         // Dawn: Muted Indigo to Soft Steel
         currentTime.isBefore(dayStart) -> Brush.verticalGradient(
-            listOf(Color(0xFF3674A4), Color(0xFFA26B19))
+            colorStops = arrayOf(
+                0.0f to Color(0xFF1D405B),
+                0.5f to Color(0xFF3674A4),
+                1.0f to Color(0xFFA26B19),
+            )
         )
 
         // Midday: Sophisticated Deep Navy (Clean & Modern)
         currentTime.isBefore(sunsetStart) -> Brush.verticalGradient(
-            listOf(Color(0xFF1E3C72), Color(0xFF2A5298))
+            colorStops = arrayOf(
+                0.0f to Color(0xFF2580C7),
+                0.5f to Color(0xFF3674A4),
+                1.0f to Color(0xFF027352)
+            )
         )
 
         // Sunset: Warm Orange to Soft Pink (45 mins before Maghrib)
@@ -51,7 +59,7 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
 
         // Evening / Dusk: Deepest Oceanic Blue
         currentTime.isBefore(isha) -> Brush.verticalGradient(
-            listOf(Color(0xFF161D26), Color(0xFF0F141E))
+            listOf(Color(0xFF310F1A), Color(0xFF161D26))
         )
 
         // Late Night: Return to Midnight Slate
