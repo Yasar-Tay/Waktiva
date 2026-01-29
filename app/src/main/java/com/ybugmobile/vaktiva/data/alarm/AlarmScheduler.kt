@@ -16,6 +16,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import javax.inject.Inject
 
@@ -35,11 +36,6 @@ class AlarmScheduler @Inject constructor(
         const val REQUEST_CODE_TEST_PRE = 9998
     }
 
-    /**
-     * For Testing:
-     * We calculate the notification trigger time based on the user's settings
-     * to ensure test behavior matches real-world prayer behavior.
-     */
     fun scheduleTestAlarm(secondsFromNow: Int) {
         val adhanDelay = if (secondsFromNow < 5) 5 else secondsFromNow
         val adhanTriggerAt = System.currentTimeMillis() + (adhanDelay * 1000)
@@ -51,14 +47,9 @@ class AlarmScheduler @Inject constructor(
             val settings = settingsManager.settingsFlow.first()
             if (settings.enablePreAdhanWarning) {
                 val warningSeconds = settings.preAdhanWarningMinutes * 60
-                
-                // Calculate when the notification should appear.
-                // If warning is 60s and test is 70s, delay is 10s.
-                // If warning is 60s and test is 30s, delay is 1s (immediate).
                 val notificationDelaySeconds = (adhanDelay - warningSeconds).coerceAtLeast(1)
-                
                 val preTriggerAt = System.currentTimeMillis() + (notificationDelaySeconds * 1000)
-                Log.d("AlarmScheduler", "Scheduling TEST pre-adhan in $notificationDelaySeconds seconds (Warning Window: $warningSeconds s)")
+                Log.d("AlarmScheduler", "Scheduling TEST pre-adhan in $notificationDelaySeconds seconds")
                 scheduleAlarm(preTriggerAt, PrayerType.FAJR.name, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_TEST_PRE)
             }
         }
@@ -66,11 +57,23 @@ class AlarmScheduler @Inject constructor(
 
     fun scheduleNextAlarm(prayerDays: List<PrayerDay>, enablePreAdhan: Boolean, preAdhanMinutes: Int) {
         val now = LocalDateTime.now()
+        val settings = runBlocking { settingsManager.settingsFlow.first() }
         
         val nextPrayer = prayerDays
             .flatMap { day -> 
                 day.timings.map { (type, time) -> 
-                    Triple(type, day.date.atTime(time), day) 
+                    // Calculate trigger time
+                    var triggerDateTime = day.date.atTime(time)
+                    
+                    if (type == PrayerType.FAJR) {
+                        val isRamadan = day.hijriDate?.monthNumber == 9
+                        if (!isRamadan && settings.useFajrAlarmBeforeSunrise) {
+                            val sunriseTime = day.timings[PrayerType.SUNRISE] ?: time
+                            triggerDateTime = day.date.atTime(sunriseTime).minusMinutes(settings.fajrAlarmMinutesBeforeSunrise.toLong())
+                        }
+                    }
+
+                    Triple(type, triggerDateTime, day) 
                 }
             }
             .filter { (type, dateTime, _) -> 
@@ -91,10 +94,9 @@ class AlarmScheduler @Inject constructor(
                 val preTime = dateTime.minusMinutes(preAdhanMinutes.toLong())
                 if (preTime.isAfter(now)) {
                     val preEpochMillis = preTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                    Log.d("AlarmScheduler", "Scheduling PRE-ADHAN alarm for: ${type.name} at $preTime ($preAdhanMinutes mins before)")
+                    Log.d("AlarmScheduler", "Scheduling PRE-ADHAN alarm for: ${type.name} at $preTime")
                     scheduleAlarm(preEpochMillis, type.name, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_PRE_ADHAN)
                 } else {
-                    Log.d("AlarmScheduler", "Pre-adhan time passed, scheduling immediate warning for ${type.name}")
                     scheduleAlarm(System.currentTimeMillis() + 500, type.name, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_PRE_ADHAN)
                 }
             }

@@ -36,7 +36,9 @@ data class UserSettings(
     val preAdhanWarningMinutes: Int,
     val mutedPrayerName: String?,
     val mutedPrayerDate: String?,
-    val testAlarmEndTime: Long?
+    val testAlarmEndTime: Long?,
+    val fajrAlarmMinutesBeforeSunrise: Int,
+    val useFajrAlarmBeforeSunrise: Boolean
 )
 
 @Singleton
@@ -59,6 +61,8 @@ class SettingsManager @Inject constructor(
         val MUTED_PRAYER_NAME = stringPreferencesKey("muted_prayer_name")
         val MUTED_PRAYER_DATE = stringPreferencesKey("muted_prayer_date")
         val TEST_ALARM_END_TIME = longPreferencesKey("test_alarm_end_time")
+        val FAJR_ALARM_MINUTES_BEFORE_SUNRISE = intPreferencesKey("fajr_alarm_minutes_before_sunrise")
+        val USE_FAJR_ALARM_BEFORE_SUNRISE = booleanPreferencesKey("use_fajr_alarm_before_sunrise")
 
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
@@ -84,7 +88,9 @@ class SettingsManager @Inject constructor(
             preAdhanWarningMinutes = preferences[PRE_ADHAN_WARNING_MINUTES] ?: 5,
             mutedPrayerName = preferences[MUTED_PRAYER_NAME],
             mutedPrayerDate = preferences[MUTED_PRAYER_DATE],
-            testAlarmEndTime = preferences[TEST_ALARM_END_TIME]
+            testAlarmEndTime = preferences[TEST_ALARM_END_TIME],
+            fajrAlarmMinutesBeforeSunrise = preferences[FAJR_ALARM_MINUTES_BEFORE_SUNRISE] ?: 45,
+            useFajrAlarmBeforeSunrise = preferences[USE_FAJR_ALARM_BEFORE_SUNRISE] ?: false
         )
     }
 
@@ -188,6 +194,18 @@ class SettingsManager @Inject constructor(
             } else {
                 preferences[TEST_ALARM_END_TIME] = timeMillis
             }
+        }
+    }
+
+    suspend fun updateFajrAlarmMinutesBeforeSunrise(minutes: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[FAJR_ALARM_MINUTES_BEFORE_SUNRISE] = minutes
+        }
+    }
+
+    suspend fun updateUseFajrAlarmBeforeSunrise(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[USE_FAJR_ALARM_BEFORE_SUNRISE] = enabled
         }
     }
 }

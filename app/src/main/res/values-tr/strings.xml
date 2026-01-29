@@ -121,6 +121,10 @@
     <string name="audio_selected_description">Seçili</string>
     <string name="audio_minutes_before">Dakika önce:</string>
 
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">İmsak Alarmı (Güneşten Önce)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">İmsak alarm vaktini güneş doğuşuna göre belirleyin (Ramazan ayı hariç).</string>
+
     <!-- Battery & Reliability Settings -->
     <string name="settings_reliability">Güvenilirlik ve Optimizasyon</string>
     <string name="settings_battery_opt">Pil Optimizasyonu</string>
@@ -131,12 +135,12 @@
 
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Ezan Öncesi Uyarı</string>
-    <string name="settings_pre_adhan_warning_summary">Namaz vaktinden 5 dakika önce bildirim alın.</string>
+    <string name="settings_pre_adhan_warning_summary">Namaz vaktinden önce bildirim alın.</string>
     <string name="pre_adhan_notification_title">Yaklaşan Namaz Vakti</string>
     <string name="pre_adhan_notification_text">%s vaktine 5 dakika kaldı.</string>
     <string name="pre_adhan_cancel_action">Kapat</string>
     <string name="pre_adhan_channel_name">Ezan Öncesi Uyarılar</string>
-    <string name="pre_adhan_channel_description">Namaz vaktinden 5 dakika önce gösterilen bildirimler.</string>
+    <string name="pre_adhan_channel_description">Namaz vaktinden önce gösterilen bildirimler.</string>
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Vaktiva\'ya Hoş Geldiniz</string>

@@ -131,7 +131,7 @@
 
     <!-- Pre-Adhan Warning (from EPIC 2) -->
     <string name="settings_pre_adhan_warning">Pre-Adhan Warning</string>
-    <string name="settings_pre_adhan_warning_summary">Get a notification 5 minutes before prayer time.</string>
+    <string name="settings_pre_adhan_warning_summary">Get a notification before prayer time.</string>
     <string name="pre_adhan_notification_title">Approaching Prayer</string>
     <string name="pre_adhan_notification_text">Time for %s prayer in 5 minutes.</string>
     <string name="pre_adhan_cancel_action">Dismiss</string>
@@ -146,7 +146,7 @@
 
     <!-- Pre-Adhan Notification Channel -->
     <string name="pre_adhan_channel_name">Pre-Adhan Warnings</string>
-    <string name="pre_adhan_channel_description">Notifications shown 5 minutes before prayer time.</string>
+    <string name="pre_adhan_channel_description">Notifications shown before prayer time.</string>
 
     <!-- Audio Settings Screen -->
     <string name="cd_back">Back</string>
@@ -163,6 +163,10 @@
     <string name="audio_built_in">Built-in</string>
     <string name="audio_delete_description">Delete audio file</string>
     <string name="audio_selected_description">Selected</string>
+
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">Fajr Alarm (Before Sunrise)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">Determine Fajr alarm time based on sunrise (except in Ramadan).</string>
 
     <!-- Settings Screen Items -->
     <string name="settings_notifications_sound">Notifications &amp; Sound</string>

@@ -131,6 +131,18 @@ class AudioSettingsViewModel @Inject constructor(
         }
     }
 
+    fun toggleUseFajrAlarmBeforeSunrise(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updateUseFajrAlarmBeforeSunrise(enabled)
+        }
+    }
+
+    fun updateFajrAlarmMinutesBeforeSunrise(minutes: Int) {
+        viewModelScope.launch {
+            settingsManager.updateFajrAlarmMinutesBeforeSunrise(minutes)
+        }
+    }
+
     fun togglePreview(path: String) {
         if (_currentPlayingPath.value == path) {
             audioPlayer.stop()
