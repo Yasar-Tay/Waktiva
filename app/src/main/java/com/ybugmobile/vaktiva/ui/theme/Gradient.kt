@@ -19,7 +19,7 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
     val isha = day.timings[PrayerType.ISHA] ?: LocalTime.of(20, 0)
 
     // Transitions
-    val dawnStart = fajr.minusMinutes(45)
+    val dawnStart = fajr
     val dayStart = sunrise.plusMinutes(45)
     val sunsetStart = maghrib.minusMinutes(45)
 
@@ -30,8 +30,13 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
         )
 
         // Dawn: Muted Indigo to Soft Steel
-        currentTime.isBefore(dayStart) -> Brush.verticalGradient(
+        currentTime.isBefore(sunrise) -> Brush.verticalGradient(
             listOf(Color(0xFF2B3A4C), Color(0xFF4B6B93))
+        )
+
+        // Dawn: Muted Indigo to Soft Steel
+        currentTime.isBefore(dayStart) -> Brush.verticalGradient(
+            listOf(Color(0xFF3674A4), Color(0xFFA26B19))
         )
 
         // Midday: Sophisticated Deep Navy (Clean & Modern)
