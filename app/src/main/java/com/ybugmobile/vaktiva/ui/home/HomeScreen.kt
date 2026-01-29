@@ -71,7 +71,7 @@ fun HomeScreenContent(
     state: HomeViewState,
     settings: UserSettings?,
     allDays: List<PrayerDay>,
-    calculationMethods: List<Pair<String, Int>>,
+    calculationMethods: List<Pair<Int, Int>>,
     onRefresh: () -> Unit,
     onMethodSelected: (Int) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
@@ -283,7 +283,7 @@ fun HomeScreenContent(
                                                     letterSpacing = 1.sp
                                                 )
                                                 Text(
-                                                    calculationMethods.find { it.second == s.calculationMethod }?.first
+                                                    calculationMethods.find { it.second == s.calculationMethod }?.first?.let { stringResource(it) }
                                                         ?: "Default",
                                                     style = MaterialTheme.typography.bodyLarge,
                                                     color = contentColor
@@ -326,7 +326,7 @@ fun HomeScreenContent(
                                         onClick = null
                                     )
                                     Spacer(modifier = Modifier.width(16.dp))
-                                    Text(method.first)
+                                    Text(stringResource(method.first))
                                 }
                             }
                         }

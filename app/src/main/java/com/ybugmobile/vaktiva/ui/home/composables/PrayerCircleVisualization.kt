@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
@@ -28,15 +29,19 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
@@ -59,6 +64,7 @@ fun PrayerCircleVisualization(
     playAdhanAudio: Boolean = false,
     onSkipAudio: (String) -> Unit = {}
 ) {
+    val context = LocalContext.current
     val textMeasurer = rememberTextMeasurer()
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
     val density = LocalDensity.current
@@ -166,13 +172,28 @@ fun PrayerCircleVisualization(
                         val radius = canvasSize.width / 2 - 12.dp.toPx() // Adjusted radius calculation
                         
                         var clicked = false
-                        for (prayer in prayers) {
-                            val pos = getPosition(prayer.time, radius, center)
-                            if ((tapOffset - pos).getDistance() <= 30.dp.toPx()) {
-                                tooltipData = Triple("${prayer.type.name}: ${prayer.time.format(formatter)}", pos, prayer.color)
-                                clickedItemId = prayer.type.name
+                        
+                        // Check Current Time Dot click
+                        if (isSelectedDayToday) {
+                            val currentPos = getPosition(currentTime, radius, center)
+                            if ((tapOffset - currentPos).getDistance() <= 30.dp.toPx()) {
+                                tooltipData = Triple(currentTime.format(formatter), currentPos, currentPrayerColor)
+                                clickedItemId = "CURRENT_TIME"
                                 clicked = true
-                                break
+                            }
+                        }
+
+                        // Check Prayer Markers click if current time wasn't clicked
+                        if (!clicked) {
+                            for (prayer in prayers) {
+                                val pos = getPosition(prayer.time, radius, center)
+                                if ((tapOffset - pos).getDistance() <= 30.dp.toPx()) {
+                                    val localizedName = prayer.type.getDisplayName(context)
+                                    tooltipData = Triple("$localizedName: ${prayer.time.format(formatter)}", pos, prayer.color)
+                                    clickedItemId = prayer.type.name
+                                    clicked = true
+                                    break
+                                }
                             }
                         }
 
@@ -331,87 +352,72 @@ fun PrayerCircleVisualization(
             // 5. Current Time Indicator Dot
             if (isSelectedDayToday) {
                 val currentPos = getPosition(currentTime, radius, center)
-                
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(currentPrayerColor.copy(alpha = 0.4f), Color.Transparent),
-                        center = currentPos,
-                        radius = 20.dp.toPx()
-                    ),
-                    radius = 20.dp.toPx(),
-                    center = currentPos
-                )
+                val scale = if (clickedItemId == "CURRENT_TIME") bounceAnim.value else 1f
 
-                drawCircle(
-                    color = Color.White,
-                    radius = 6.dp.toPx(),
-                    center = currentPos
-                )
-                
-                drawCircle(
-                    color = currentPrayerColor,
-                    radius = 4.dp.toPx(),
-                    center = currentPos
-                )
+                withTransform({ scale(scale, scale, currentPos) }) {
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(currentPrayerColor.copy(alpha = 0.4f), Color.Transparent),
+                            center = currentPos,
+                            radius = 20.dp.toPx()
+                        ),
+                        radius = 20.dp.toPx(),
+                        center = currentPos
+                    )
+
+                    drawCircle(
+                        color = Color.White,
+                        radius = 6.dp.toPx(),
+                        center = currentPos
+                    )
+                }
             }
         }
 
-        // Center Content Container - Enlarged to 75% of parent
-        Box(
-            modifier = Modifier.fillMaxSize(0.75f),
-            contentAlignment = Alignment.Center
-        ) {
-            centerContent(currentPrayerColor)
-        }
+        // Center Content Overlay
+        centerContent(currentPrayerColor)
 
-        // Tooltip
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            if (tooltipAlpha.value > 0f && tooltipData != null) {
-                val (text, pos, color) = tooltipData!!
-                val alpha = tooltipAlpha.value
-                
-                val textStyle = TextStyle(
-                    color = Color.White.copy(alpha = alpha),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                val textLayout = textMeasurer.measure(text, textStyle)
-                
-                val bgWidth = textLayout.size.width + 24.dp.toPx()
-                val bgHeight = textLayout.size.height + 12.dp.toPx()
-                
-                val tooltipX = (pos.x - bgWidth / 2).coerceIn(8.dp.toPx(), size.width - bgWidth - 8.dp.toPx())
-                val tooltipY = if (pos.y < size.height / 2) pos.y + 20.dp.toPx() else pos.y - bgHeight - 20.dp.toPx()
-
-                drawRoundRect(
-                    color = Color.Black.copy(alpha = 0.7f * alpha),
-                    topLeft = Offset(tooltipX, tooltipY),
-                    size = Size(bgWidth, bgHeight),
-                    cornerRadius = CornerRadius(12.dp.toPx())
-                )
-                
-                drawText(
-                    textLayoutResult = textLayout,
-                    topLeft = Offset(tooltipX + 12.dp.toPx(), tooltipY + 6.dp.toPx())
-                )
+        // 6. Tooltip Overlay
+        tooltipData?.let { (text, pos, color) ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .offset {
+                            val x = pos.x - 50.dp.toPx()
+                            val y = pos.y - 60.dp.toPx()
+                            IntOffset(x.toInt(), y.toInt())
+                        }
+                        .graphicsLayer(alpha = tooltipAlpha.value)
+                        .clip(RoundedCornerShape(8.dp)),
+                    color = Color.Black.copy(alpha = 0.8f),
+                    contentColor = Color.White
+                ) {
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                    )
+                }
             }
         }
     }
 }
 
-// Helper to darken colors for depth
 private fun Color.darken(factor: Float): Color {
     return Color(
-        red = (red * (1f - factor)).coerceIn(0f, 1f),
-        green = (green * (1f - factor)).coerceIn(0f, 1f),
-        blue = (blue * (1f - factor)).coerceIn(0f, 1f),
+        red = red * (1 - factor),
+        green = green * (1 - factor),
+        blue = blue * (1 - factor),
         alpha = alpha
     )
 }
 
-private data class PrayerInfo(
+data class PrayerInfo(
     val type: PrayerType,
     val time: LocalTime,
     val color: Color,
-    val icon: androidx.compose.ui.graphics.vector.VectorPainter
+    val painter: androidx.compose.ui.graphics.vector.VectorPainter
 )

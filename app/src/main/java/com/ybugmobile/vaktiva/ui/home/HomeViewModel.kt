@@ -13,6 +13,7 @@ import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.MoreExecutors
+import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
@@ -289,17 +290,17 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         val CALCULATION_METHODS = listOf(
-            "Muslim World League" to 3,
-            "Islamic Society of North America (ISNA)" to 2,
-            "Egyptian General Authority of Survey" to 5,
-            "Umm al-Qura University, Makkah" to 4,
-            "University of Islamic Sciences, Karachi" to 1,
-            "Institute of Geophysics, University of Tehran" to 7,
-            "Gulf Region" to 8,
-            "Kuwait" to 9,
-            "Qatar" to 10,
-            "Majlis Ugama Islam Singapura, Singapore" to 11,
-            "Turkey" to 13
+            R.string.method_mwl to 3,
+            R.string.method_isna to 2,
+            R.string.method_egypt to 5,
+            R.string.method_makkah to 4,
+            R.string.method_karachi to 1,
+            R.string.method_tehran to 7,
+            R.string.method_gulf to 8,
+            R.string.method_kuwait to 9,
+            R.string.method_qatar to 10,
+            R.string.method_singapore to 11,
+            R.string.method_turkey to 13
         )
     }
 }
