@@ -3,6 +3,7 @@ package com.ybugmobile.vaktiva.ui.home.composables
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
@@ -60,30 +61,66 @@ fun NextPrayerCountdown(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().padding(vertical = 44.dp)
             ) {
-                // 1. Header (Icon + Name)
+                // 1. Header Column (Icon above, Name under)
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = prayerIcon,
-                            contentDescription = null,
-                            tint = contentColor.copy(alpha = 0.9f),
-                            modifier = Modifier.size(22.dp)
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = prayerName.uppercase(),
-                            color = contentColor,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            letterSpacing = 2.sp
-                        )
-                    }
+                    Icon(
+                        imageVector = prayerIcon,
+                        contentDescription = null,
+                        tint = contentColor.copy(alpha = 0.9f),
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = prayerName.uppercase(),
+                        color = contentColor,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 2.sp
+                    )
+                }
 
+                // 2. Middle Section (Clock Core + Skip Button to the side)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Left Spacer to keep core centered
+                    Spacer(modifier = Modifier.weight(1f))
+                    
+                    // Clock Core (Visual pivot for the clock handle)
+                    Surface(
+                        modifier = Modifier.size(16.dp),
+                        shape = CircleShape,
+                        color = accentColor,
+                        border = BorderStroke(3.dp, contentColor.copy(alpha = 0.6f)),
+                        tonalElevation = 4.dp
+                    ) {}
+                    
+                    // Right Area for Skip Button
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        if (playAdhanAudio) {
+                            IconButton(
+                                onClick = { onSkipAudio(nextPrayer.type.name) },
+                                modifier = Modifier.padding(start = 24.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
+                                    contentDescription = null,
+                                    tint = contentColor.copy(alpha = 0.6f),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // 3. Bottom Section (Remaining text above, Countdown under)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = stringResource(R.string.home_remaining_time).uppercase(),
                         color = contentColor.copy(alpha = 0.4f),
@@ -91,57 +128,18 @@ fun NextPrayerCountdown(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp
                     )
-                }
-               
-                // 2. The Countdown Timer
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.graphicsLayer { alpha = pulseAlpha }
-                ) {
-                    val time = formatRemainingTimeParts(remainingSeconds)
-                    TimeSegment(time.first, "h", contentColor)
-                    TimeSeparator(contentColor)
-                    TimeSegment(time.second, "m", contentColor)
-                    TimeSeparator(contentColor)
-                    TimeSegment(time.third, "s", contentColor)
-                }
-
-                // 3. Redesigned Skip/Unmute Button with Dynamic Width but Bounds
-                if (playAdhanAudio) {
-                    OutlinedButton(
-                        onClick = { onSkipAudio(nextPrayer.type.name) },
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = contentColor
-                        ),
-                        border = BorderStroke(1.dp, contentColor.copy(alpha = 0.2f)),
-                        shape = RoundedCornerShape(24.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .widthIn(min = 100.dp, max = 220.dp) // Dynamic but constrained
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.graphicsLayer { alpha = pulseAlpha }
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = (if (isMuted) stringResource(R.string.home_unmute_adhan) else stringResource(R.string.home_skip_adhan)).uppercase(),
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                letterSpacing = 0.5.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                        val time = formatRemainingTimeParts(remainingSeconds)
+                        TimeSegment(time.first, "h", contentColor)
+                        TimeSeparator(contentColor)
+                        TimeSegment(time.second, "m", contentColor)
+                        TimeSeparator(contentColor)
+                        TimeSegment(time.third, "s", contentColor)
                     }
-                } else {
-                    Spacer(modifier = Modifier.size(64.dp))
                 }
             }
         } else {
