@@ -161,12 +161,10 @@ fun HomeScreenContent(
                                             }
                                         },
                                         centerContent = { accentColor ->
-                                            // Optional: Put something minimal in the center or leave it empty
-                                            Icon(
-                                                imageVector = Icons.Default.BrightnessLow,
-                                                contentDescription = null,
-                                                tint = contentColor.copy(alpha = 0.1f),
-                                                modifier = Modifier.size(48.dp)
+                                            // Current Prayer Header in the middle of the circle
+                                            CurrentPrayerHeader(
+                                                currentPrayer = state.currentPrayer,
+                                                contentColor = contentColor
                                             )
                                         }
                                     )
@@ -174,7 +172,7 @@ fun HomeScreenContent(
 
                                 Spacer(modifier = Modifier.height(16.dp))
 
-                                // Moved Countdown outside and down
+                                // Countdown section below the circle
                                 NextPrayerCountdown(
                                     nextPrayer = state.nextPrayer,
                                     selectedDate = state.selectedDate,
@@ -194,7 +192,7 @@ fun HomeScreenContent(
                                             }
                                         }
                                     },
-                                    accentColor = Color.White, // You can derive this from current prayer if needed
+                                    accentColor = Color.White,
                                     showIdleState = false
                                 )
                             }

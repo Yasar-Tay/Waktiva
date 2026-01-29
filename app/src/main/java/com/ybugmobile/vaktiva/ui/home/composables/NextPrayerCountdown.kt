@@ -2,6 +2,7 @@ package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
@@ -10,11 +11,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -43,25 +48,54 @@ fun NextPrayerCountdown(
             val remainingSeconds = nextPrayer.remainingDuration.seconds
             val remainingTime = formatRemainingTime(remainingSeconds)
 
-            // 1. Next Prayer Name (Label style)
-            Text(
-                text = nextPrayer.type.getDisplayName(context).uppercase(),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = contentColor.copy(alpha = 0.5f),
-                letterSpacing = 4.sp
-            )
+            // 1. "REMAINING TIME" Label + Skip Button Row
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.home_remaining_time).uppercase(),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = contentColor.copy(alpha = 0.5f),
+                    letterSpacing = 2.sp
+                )
+
+                if (playAdhanAudio) {
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Surface(
+                        onClick = { onSkipAudio(nextPrayer.type.name) },
+                        color = contentColor.copy(alpha = 0.15f),
+                        shape = CircleShape,
+                        modifier = Modifier.size(38.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
+                                contentDescription = "Skip Adhan",
+                                tint = contentColor,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                }
+            }
             
-            // 2. Time Remaining (Large Countdown)
+            // 2. Countdown Timer (Bigger, uses whole row)
             Text(
                 text = remainingTime,
-                fontSize = 54.sp,
+                fontSize = 72.sp,
                 fontWeight = FontWeight.ExtraLight,
                 color = accentColor,
-                letterSpacing = (-1).sp
+                letterSpacing = (-2).sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
 
-            // 3. Next Prayer Time
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // 3. Next Prayer Info Row (Icon + Name + Time)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
@@ -74,30 +108,57 @@ fun NextPrayerCountdown(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = nextPrayer.time.format(timeFormatter),
+                    text = "${nextPrayer.type.getDisplayName(context)}  •  ${nextPrayer.time.format(timeFormatter)}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = contentColor.copy(alpha = 0.6f)
                 )
             }
-
-            // Skip Button
-            if (playAdhanAudio) {
-                Spacer(modifier = Modifier.height(12.dp))
-                IconButton(
-                    onClick = { onSkipAudio(nextPrayer.type.name) },
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Icon(
-                        imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
-                        contentDescription = "Skip Adhan",
-                        tint = contentColor.copy(alpha = 0.4f),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
         } else if (showIdleState) {
             IdleState(contentColor, accentColor)
+        }
+    }
+}
+
+@Composable
+fun CurrentPrayerHeader(
+    currentPrayer: CurrentPrayer?,
+    contentColor: Color,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        if (currentPrayer != null) {
+            // Icon exactly at the center of the Box (and thus the circle)
+            Icon(
+                imageVector = when(currentPrayer.type) {
+                    PrayerType.FAJR -> Icons.Rounded.NightsStay
+                    PrayerType.SUNRISE -> Icons.Rounded.WbTwilight
+                    PrayerType.DHUHR -> Icons.Rounded.WbSunny
+                    PrayerType.ASR -> Icons.Rounded.WbSunny
+                    PrayerType.MAGHRIB -> Icons.Rounded.WbTwilight
+                    PrayerType.ISHA -> Icons.Rounded.NightsStay
+                    else -> Icons.Rounded.WbSunny
+                },
+                contentDescription = null,
+                tint = contentColor,
+                modifier = Modifier.size(56.dp)
+            )
+
+            // Name positioned above the icon
+            Text(
+                text = currentPrayer.type.getDisplayName(context).uppercase(),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = contentColor.copy(alpha = 0.6f),
+                letterSpacing = 4.sp,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(y = (-52.dp)) // Offset upwards: half icon (28) + spacer (12) + approx text half (12)
+            )
         }
     }
 }
@@ -129,5 +190,5 @@ private fun formatRemainingTime(totalSeconds: Long): String {
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60
     val secs = totalSeconds % 60
-    return String.format("%02d:%02d:%02d", hours, minutes, secs)
+    return String.format("%02d : %02d : %02d", hours, minutes, secs)
 }
