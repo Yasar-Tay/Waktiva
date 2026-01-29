@@ -6,8 +6,12 @@ import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import java.time.LocalTime
 
+/**
+ * Provides a sleek, minimalist gradient based on the current time of day.
+ * Designed for modern UI with high contrast for white text.
+ */
 fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
-    if (day == null) return Brush.verticalGradient(listOf(Color(0xFF1e3c72), Color(0xFF2a5298)))
+    if (day == null) return Brush.verticalGradient(listOf(Color(0xFF1C1C1C), Color(0xFF2D2D2D)))
 
     val fajr = day.timings[PrayerType.FAJR] ?: LocalTime.of(5, 0)
     val sunrise = day.timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 30)
@@ -20,34 +24,34 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
     val sunsetStart = maghrib.minusMinutes(45)
 
     return when {
-        // Deep Night (Midnight to 45m before Fajr)
+        // Deep Night: Midnight Slate
         currentTime.isBefore(dawnStart) -> Brush.verticalGradient(
-            listOf(Color(0xFF0F2027), Color(0xFF203A43))
+            listOf(Color(0xFF0F141E), Color(0xFF1C2533))
         )
 
-        // Dawn (45m before Fajr to 45m after Sunrise)
+        // Dawn: Muted Indigo to Soft Steel
         currentTime.isBefore(dayStart) -> Brush.verticalGradient(
-            listOf(Color(0xFFE96443), Color(0xFF904E95)) // Darker, richer dawn for contrast
+            listOf(Color(0xFF2B3A4C), Color(0xFF4B6B93))
         )
 
-        // Midday (Morning/Afternoon until 45m before Maghrib)
+        // Midday: Sophisticated Deep Navy (Clean & Modern)
         currentTime.isBefore(sunsetStart) -> Brush.verticalGradient(
-            listOf(Color(0xFF0F4888), Color(0xFF437AA6)) // Deeper blue at top for white text contrast
+            listOf(Color(0xFF1E3C72), Color(0xFF2A5298))
         )
 
-        // Sunset (45m before Maghrib until Maghrib)
+        // Sunset: Warm Orange to Soft Pink (45 mins before Maghrib)
         currentTime.isBefore(maghrib) -> Brush.verticalGradient(
-            listOf(Color(0xFFE94057), Color(0xFFFF5722), Color(0xFF381B08))
+            listOf(Color(0xFF9D592B), Color(0xFFA43653))
         )
 
-        // Evening / Dusk (Maghrib until Isha)
+        // Evening / Dusk: Deepest Oceanic Blue
         currentTime.isBefore(isha) -> Brush.verticalGradient(
-            listOf(Color(0xFF601A23), Color(0xFF021F3F))
+            listOf(Color(0xFF161D26), Color(0xFF0F141E))
         )
 
-        // Late Night (After Isha)
+        // Late Night: Return to Midnight Slate
         else -> Brush.verticalGradient(
-            listOf(Color(0xFF0F2027), Color(0xFF2C5364))
+            listOf(Color(0xFF0F141E), Color(0xFF1C2533))
         )
     }
 }
