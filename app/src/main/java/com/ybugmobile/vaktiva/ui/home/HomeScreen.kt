@@ -142,7 +142,9 @@ fun HomeScreenContent(
                             // Circular Visualization
                             if (state.currentPrayerDay != null) {
                                 Box(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(300.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     PrayerCircleVisualization(
@@ -156,52 +158,45 @@ fun HomeScreenContent(
                                         onSkipAudio = { prayerName ->
                                             state.nextPrayer?.let { next ->
                                                 onSkipNextAudio(prayerName, next.date)
-                                                scope.launch {
-                                                    val message = if (!state.isMuted)
-                                                        "Adhan skipped for ${
-                                                            prayerName.lowercase()
-                                                                .replaceFirstChar { it.uppercase() }
-                                                        }"
-                                                    else
-                                                        "Adhan unmuted for ${
-                                                            prayerName.lowercase()
-                                                                .replaceFirstChar { it.uppercase() }
-                                                        }"
-                                                    snackbarHostState.showSnackbar(message)
-                                                }
                                             }
                                         },
                                         centerContent = { accentColor ->
-                                            NextPrayerCountdown(
-                                                nextPrayer = state.nextPrayer,
-                                                selectedDate = state.selectedDate,
-                                                contentColor = contentColor,
-                                                currentPrayer = state.currentPrayer,
-                                                playAdhanAudio = settings?.playAdhanAudio ?: false,
-                                                isMuted = state.isMuted,
-                                                onSkipAudio = { prayerName ->
-                                                    state.nextPrayer?.let { next ->
-                                                        onSkipNextAudio(prayerName, next.date)
-                                                        scope.launch {
-                                                            val message = if (!state.isMuted)
-                                                                "Adhan skipped for ${
-                                                                    prayerName.lowercase()
-                                                                        .replaceFirstChar { it.uppercase() }
-                                                                }"
-                                                            else
-                                                                "Adhan unmuted for ${
-                                                                    prayerName.lowercase()
-                                                                        .replaceFirstChar { it.uppercase() }
-                                                                }"
-                                                            snackbarHostState.showSnackbar(message)
-                                                        }
-                                                    }
-                                                },
-                                                accentColor = accentColor
+                                            // Optional: Put something minimal in the center or leave it empty
+                                            Icon(
+                                                imageVector = Icons.Default.BrightnessLow,
+                                                contentDescription = null,
+                                                tint = contentColor.copy(alpha = 0.1f),
+                                                modifier = Modifier.size(48.dp)
                                             )
                                         }
                                     )
                                 }
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                // Moved Countdown outside and down
+                                NextPrayerCountdown(
+                                    nextPrayer = state.nextPrayer,
+                                    selectedDate = state.selectedDate,
+                                    contentColor = contentColor,
+                                    currentPrayer = state.currentPrayer,
+                                    playAdhanAudio = settings?.playAdhanAudio ?: false,
+                                    isMuted = state.isMuted,
+                                    onSkipAudio = { prayerName ->
+                                        state.nextPrayer?.let { next ->
+                                            onSkipNextAudio(prayerName, next.date)
+                                            scope.launch {
+                                                val message = if (!state.isMuted)
+                                                    "Adhan skipped for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                else
+                                                    "Adhan unmuted for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                snackbarHostState.showSnackbar(message)
+                                            }
+                                        }
+                                    },
+                                    accentColor = Color.White, // You can derive this from current prayer if needed
+                                    showIdleState = false
+                                )
                             }
 
                             // ADHAN CONTROLS
