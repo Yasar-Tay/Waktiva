@@ -56,6 +56,7 @@ class HomeViewModel @Inject constructor(
         days.find { it.date == date }
     }
 
+    private val _timeOffset = MutableStateFlow(Duration.ZERO)
     private val _currentTime = MutableStateFlow(LocalDateTime.now())
     val currentTime = _currentTime.asStateFlow()
 
@@ -118,7 +119,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         tickerFlow(1000).onEach { 
-            _currentTime.value = LocalDateTime.now()
+            _currentTime.value = LocalDateTime.now().plus(_timeOffset.value)
             val s = settings.first()
             s.testAlarmEndTime?.let { end ->
                 if (System.currentTimeMillis() > end) {
@@ -147,6 +148,10 @@ class HomeViewModel @Inject constructor(
             settingsManager.setTestAlarmEndTime(endTimeMillis)
             alarmScheduler.scheduleTestAlarm(seconds)
         }
+    }
+
+    fun debugAddHours(hours: Long) {
+        _timeOffset.value = _timeOffset.value.plusHours(hours)
     }
 
     override fun onResume(owner: LifecycleOwner) {

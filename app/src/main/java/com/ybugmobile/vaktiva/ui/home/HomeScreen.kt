@@ -224,7 +224,7 @@ fun HomeScreenContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(10.dp),
-                            color = (if (isLight) Color.White else Color.Black).copy(alpha = 0.15f),
+                            color = Color.Black.copy(alpha = 0.15f),
                             shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                             border = androidx.compose.foundation.BorderStroke(
                                 1.dp,

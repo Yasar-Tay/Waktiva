@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Settings
@@ -73,18 +74,35 @@ class MainActivity : AppCompatActivity() {
                     MainNavigation(this@MainActivity, viewModel)
                     
                     Box(modifier = Modifier.fillMaxSize()) {
-                        FloatingActionButton(
-                            onClick = { 
-                                val seconds = 70
-                                viewModel.triggerTestAlarm(seconds)
-                                Toast.makeText(this@MainActivity, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
-                            },
+                        Column(
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .padding(end = 24.dp, bottom = 200.dp),
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalAlignment = Alignment.End
                         ) {
-                            Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
+                            // Time Shift Test Button
+                            SmallFloatingActionButton(
+                                onClick = { 
+                                    viewModel.debugAddHours(1)
+                                    Toast.makeText(this@MainActivity, "Time shifted +1 hour", Toast.LENGTH_SHORT).show()
+                                },
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            ) {
+                                Icon(Icons.Default.Update, contentDescription = "Shift Time")
+                            }
+
+                            // Alarm Test Button
+                            FloatingActionButton(
+                                onClick = { 
+                                    val seconds = 70
+                                    viewModel.triggerTestAlarm(seconds)
+                                    Toast.makeText(this@MainActivity, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
+                                },
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                            ) {
+                                Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
+                            }
                         }
                     }
                 }
