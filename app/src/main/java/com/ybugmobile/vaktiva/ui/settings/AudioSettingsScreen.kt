@@ -1,5 +1,6 @@
 package com.ybugmobile.vaktiva.ui.settings
 
+import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -20,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -48,6 +50,8 @@ fun AudioSettingsScreen(
     }
 
     val backgroundGradient = dynamicTimeGradient(LocalTime.now(), prayerDays)
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -88,95 +92,186 @@ fun AudioSettingsScreen(
         }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().background(brush = backgroundGradient).padding(padding)) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(20.dp)
-            ) {
-                // 1. Pre-Adhan Warning Section
-                item {
-                    SettingsCard(title = stringResource(id = R.string.settings_pre_adhan_warning).uppercase()) {
-                        PreAdhanContent(
-                            enabled = settings?.enablePreAdhanWarning ?: true,
-                            minutes = settings?.preAdhanWarningMinutes ?: 5,
-                            onToggle = { viewModel.togglePreAdhanWarning(it) },
-                            onMinutesChange = { viewModel.updatePreAdhanWarningMinutes(it) }
-                        )
-                    }
-                }
+            if (isLandscape) {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    // Left Side: Settings
+                    LazyColumn(
+                        modifier = Modifier.weight(1.2f),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(top = 20.dp, bottom = 100.dp)
+                    ) {
+                        item {
+                            SettingsCard(title = stringResource(id = R.string.settings_pre_adhan_warning).uppercase()) {
+                                PreAdhanContent(
+                                    enabled = settings?.enablePreAdhanWarning ?: true,
+                                    minutes = settings?.preAdhanWarningMinutes ?: 5,
+                                    onToggle = { viewModel.togglePreAdhanWarning(it) },
+                                    onMinutesChange = { viewModel.updatePreAdhanWarningMinutes(it) }
+                                )
+                            }
+                        }
 
-                // 2. Fajr Sunrise Alarm Section
-                item {
-                    SettingsCard(title = stringResource(R.string.audio_fajr_sunrise_alarm).uppercase()) {
-                        FajrSunriseContent(
-                            enabled = settings?.useFajrAlarmBeforeSunrise ?: false,
-                            minutes = settings?.fajrAlarmMinutesBeforeSunrise ?: 45,
-                            onToggle = { viewModel.toggleUseFajrAlarmBeforeSunrise(it) },
-                            onMinutesChange = { viewModel.updateFajrAlarmMinutesBeforeSunrise(it) }
-                        )
-                    }
-                }
+                        item {
+                            SettingsCard(title = stringResource(R.string.audio_fajr_sunrise_alarm).uppercase()) {
+                                FajrSunriseContent(
+                                    enabled = settings?.useFajrAlarmBeforeSunrise ?: false,
+                                    minutes = settings?.fajrAlarmMinutesBeforeSunrise ?: 45,
+                                    onToggle = { viewModel.toggleUseFajrAlarmBeforeSunrise(it) },
+                                    onMinutesChange = { viewModel.updateFajrAlarmMinutesBeforeSunrise(it) }
+                                )
+                            }
+                        }
 
-                // 3. Selection Mode Toggle
-                item {
-                    SettingsCard(title = stringResource(id = R.string.audio_individual_sounds_title).uppercase()) {
-                        SelectionModeContent(
-                            useSpecific = settings?.useSpecificAdhanForEachPrayer ?: false,
-                            onToggle = { viewModel.toggleUseSpecificAdhan(it) }
-                        )
-                    }
-                }
+                        item {
+                            SettingsCard(title = stringResource(id = R.string.audio_individual_sounds_title).uppercase()) {
+                                SelectionModeContent(
+                                    useSpecific = settings?.useSpecificAdhanForEachPrayer ?: false,
+                                    onToggle = { viewModel.toggleUseSpecificAdhan(it) }
+                                )
+                            }
+                        }
 
-                // 4. Redesigned Prayer Selector
-                if (settings?.useSpecificAdhanForEachPrayer == true) {
-                    item {
-                        Column {
-                            Text(
-                                text = stringResource(id = R.string.audio_select_prayer_prompt).uppercase(),
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Black,
-                                color = Color.White.copy(alpha = 0.4f),
-                                letterSpacing = 1.sp,
-                                modifier = Modifier.padding(start = 8.dp, bottom = 12.dp)
-                            )
-                            PrayerGridSelector(
-                                selectedType = selectedPrayerType,
-                                onTypeSelected = { viewModel.selectPrayerType(it) }
-                            )
+                        if (settings?.useSpecificAdhanForEachPrayer == true) {
+                            item {
+                                Column {
+                                    Text(
+                                        text = stringResource(id = R.string.audio_select_prayer_prompt).uppercase(),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Black,
+                                        color = Color.White.copy(alpha = 0.4f),
+                                        letterSpacing = 1.sp,
+                                        modifier = Modifier.padding(start = 8.dp, bottom = 12.dp)
+                                    )
+                                    PrayerGridSelector(
+                                        selectedType = selectedPrayerType,
+                                        onTypeSelected = { viewModel.selectPrayerType(it) }
+                                    )
+                                }
+                            }
                         }
                     }
-                }
 
-                // 5. Audio List Header
-                item {
-                    val headerText = if (settings?.useSpecificAdhanForEachPrayer == true) {
-                        stringResource(R.string.audio_header_specific, selectedPrayerType?.displayName ?: stringResource(R.string.audio_header_all_prayers))
-                    } else {
-                        stringResource(R.string.audio_header_global)
-                    }
-                    
-                    Column(modifier = Modifier.padding(top = 16.dp, start = 8.dp)) {
+                    // Right Side: Audio List
+                    Column(modifier = Modifier.weight(1f)) {
+                        val headerText = if (settings?.useSpecificAdhanForEachPrayer == true) {
+                            stringResource(R.string.audio_header_specific, selectedPrayerType?.displayName ?: stringResource(R.string.audio_header_all_prayers))
+                        } else {
+                            stringResource(R.string.audio_header_global)
+                        }
+                        
                         Text(
                             text = headerText.uppercase(),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Black,
                             color = Color.White.copy(alpha = 0.4f),
-                            letterSpacing = 1.sp
+                            letterSpacing = 1.sp,
+                            modifier = Modifier.padding(top = 28.dp, start = 8.dp, bottom = 12.dp)
                         )
+
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            contentPadding = PaddingValues(bottom = 100.dp)
+                        ) {
+                            items(audioItems) { item ->
+                                AudioFileItem(
+                                    item = item,
+                                    onSelect = { viewModel.selectAudio(item.path) },
+                                    onTogglePreview = { viewModel.togglePreview(item.path) },
+                                    onDelete = if (!item.isDefault) { { viewModel.deleteAudio(item.path) } } else null
+                                )
+                            }
+                        }
                     }
                 }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(20.dp)
+                ) {
+                    item {
+                        SettingsCard(title = stringResource(id = R.string.settings_pre_adhan_warning).uppercase()) {
+                            PreAdhanContent(
+                                enabled = settings?.enablePreAdhanWarning ?: true,
+                                minutes = settings?.preAdhanWarningMinutes ?: 5,
+                                onToggle = { viewModel.togglePreAdhanWarning(it) },
+                                onMinutesChange = { viewModel.updatePreAdhanWarningMinutes(it) }
+                            )
+                        }
+                    }
 
-                // 6. Audio Items
-                items(audioItems) { item ->
-                    AudioFileItem(
-                        item = item,
-                        onSelect = { viewModel.selectAudio(item.path) },
-                        onTogglePreview = { viewModel.togglePreview(item.path) },
-                        onDelete = if (!item.isDefault) { { viewModel.deleteAudio(item.path) } } else null
-                    )
+                    item {
+                        SettingsCard(title = stringResource(R.string.audio_fajr_sunrise_alarm).uppercase()) {
+                            FajrSunriseContent(
+                                enabled = settings?.useFajrAlarmBeforeSunrise ?: false,
+                                minutes = settings?.fajrAlarmMinutesBeforeSunrise ?: 45,
+                                onToggle = { viewModel.toggleUseFajrAlarmBeforeSunrise(it) },
+                                onMinutesChange = { viewModel.updateFajrAlarmMinutesBeforeSunrise(it) }
+                            )
+                        }
+                    }
+
+                    item {
+                        SettingsCard(title = stringResource(id = R.string.audio_individual_sounds_title).uppercase()) {
+                            SelectionModeContent(
+                                useSpecific = settings?.useSpecificAdhanForEachPrayer ?: false,
+                                onToggle = { viewModel.toggleUseSpecificAdhan(it) }
+                            )
+                        }
+                    }
+
+                    if (settings?.useSpecificAdhanForEachPrayer == true) {
+                        item {
+                            Column {
+                                Text(
+                                    text = stringResource(id = R.string.audio_select_prayer_prompt).uppercase(),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Black,
+                                    color = Color.White.copy(alpha = 0.4f),
+                                    letterSpacing = 1.sp,
+                                    modifier = Modifier.padding(start = 8.dp, bottom = 12.dp)
+                                )
+                                PrayerGridSelector(
+                                    selectedType = selectedPrayerType,
+                                    onTypeSelected = { viewModel.selectPrayerType(it) }
+                                )
+                            }
+                        }
+                    }
+
+                    item {
+                        val headerText = if (settings?.useSpecificAdhanForEachPrayer == true) {
+                            stringResource(R.string.audio_header_specific, selectedPrayerType?.displayName ?: stringResource(R.string.audio_header_all_prayers))
+                        } else {
+                            stringResource(R.string.audio_header_global)
+                        }
+                        
+                        Column(modifier = Modifier.padding(top = 16.dp, start = 8.dp)) {
+                            Text(
+                                text = headerText.uppercase(),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Black,
+                                color = Color.White.copy(alpha = 0.4f),
+                                letterSpacing = 1.sp
+                            )
+                        }
+                    }
+
+                    items(audioItems) { item ->
+                        AudioFileItem(
+                            item = item,
+                            onSelect = { viewModel.selectAudio(item.path) },
+                            onTogglePreview = { viewModel.togglePreview(item.path) },
+                            onDelete = if (!item.isDefault) { { viewModel.deleteAudio(item.path) } } else null
+                        )
+                    }
+
+                    item { Spacer(modifier = Modifier.height(100.dp)) }
                 }
-
-                item { Spacer(modifier = Modifier.height(100.dp)) }
             }
         }
     }

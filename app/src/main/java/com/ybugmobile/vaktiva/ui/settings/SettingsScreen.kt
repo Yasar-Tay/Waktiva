@@ -1,6 +1,7 @@
 package com.ybugmobile.vaktiva.ui.settings
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
@@ -16,6 +17,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +46,8 @@ fun SettingsScreen(
     val settings by viewModel.settings.collectAsState(initial = null)
     val prayerDays by viewModel.allPrayerDays.collectAsState()
     val scrollState = rememberScrollState()
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     var showMethodDialog by remember { mutableStateOf(false) }
     var showMadhabDialog by remember { mutableStateOf(false) }
@@ -78,34 +82,76 @@ fun SettingsScreen(
                 .background(brush = backgroundGradient)
                 .padding(padding)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(horizontal = 20.dp)
-            ) {
-                Spacer(modifier = Modifier.height(12.dp))
+            if (isLandscape) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        NotificationSoundSection(
+                            settings = settings,
+                            onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
+                            onNavigateToAudio = onNavigateToAudio
+                        )
+                        PreferencesSection(
+                            settings = settings,
+                            onLanguageClick = { showLanguageDialog = true },
+                            onMadhabClick = { showMadhabDialog = true },
+                            onMethodClick = { showMethodDialog = true }
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
 
-                NotificationSoundSection(
-                    settings = settings,
-                    onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
-                    onNavigateToAudio = onNavigateToAudio
-                )
-
-                PreferencesSection(
-                    settings = settings,
-                    onLanguageClick = { showLanguageDialog = true },
-                    onMadhabClick = { showMadhabDialog = true },
-                    onMethodClick = { showMethodDialog = true }
-                )
-
-                ReliabilitySection()
-
-                SettingsSection(title = stringResource(R.string.settings_permissions)) {
-                    PermissionManager()
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        ReliabilitySection()
+                        SettingsSection(title = stringResource(R.string.settings_permissions)) {
+                            PermissionManager()
+                        }
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
                 }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(horizontal = 20.dp)
+                ) {
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                Spacer(modifier = Modifier.height(32.dp))
+                    NotificationSoundSection(
+                        settings = settings,
+                        onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
+                        onNavigateToAudio = onNavigateToAudio
+                    )
+
+                    PreferencesSection(
+                        settings = settings,
+                        onLanguageClick = { showLanguageDialog = true },
+                        onMadhabClick = { showMadhabDialog = true },
+                        onMethodClick = { showMethodDialog = true }
+                    )
+
+                    ReliabilitySection()
+
+                    SettingsSection(title = stringResource(R.string.settings_permissions)) {
+                        PermissionManager()
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
             }
         }
     }

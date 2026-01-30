@@ -184,7 +184,7 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
                 }
             )
         }
-        
+
         Scaffold(
             modifier = Modifier.weight(1f),
             containerColor = MaterialTheme.colorScheme.background,
@@ -254,14 +254,13 @@ fun SmoothTouchNavigationRail(
     Surface(
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 3.dp,
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(88.dp)
-            .windowInsetsPadding(WindowInsets.statusBars)
+        modifier = Modifier.fillMaxHeight()
     ) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Vertical + WindowInsetsSides.Start))
+                .width(88.dp)
                 .onGloballyPositioned {
                     tabHeight = with(density) { (it.size.height / items.size).toDp() }
                 }
@@ -365,13 +364,12 @@ fun SmoothTouchNavigationBar(
     Surface(
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 3.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.navigationBars)
+        modifier = Modifier.fillMaxWidth()
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
                 .height(80.dp)
                 .onGloballyPositioned {
                     tabWidth = with(density) { (it.size.width / items.size).toDp() }
