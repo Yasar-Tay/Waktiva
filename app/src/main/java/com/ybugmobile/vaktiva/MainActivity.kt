@@ -1,6 +1,7 @@
 package com.ybugmobile.vaktiva
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -29,6 +30,7 @@ import androidx.compose.ui.draw.scale
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -143,6 +145,8 @@ class MainActivity : AppCompatActivity() {
 fun MainNavigation(context: Context, viewModel: HomeViewModel) {
     val navController = rememberNavController()
     val settings by viewModel.settings.collectAsState(initial = null)
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
     val startDestination = remember(settings) {
         if (settings == null) null
@@ -162,61 +166,191 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    val showBottomBar = items.any { it.route == currentDestination?.route }
+    val showNavigation = items.any { it.route == currentDestination?.route }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = {
-            if (showBottomBar) {
-                SmoothTouchNavigationBar(
-                    items = items,
-                    currentRoute = currentDestination?.route,
-                    onItemClick = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
+    Row(modifier = Modifier.fillMaxSize()) {
+        if (showNavigation && isLandscape) {
+            SmoothTouchNavigationRail(
+                items = items,
+                currentRoute = currentDestination?.route,
+                onItemClick = { route ->
+                    navController.navigate(route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
                         }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                )
-            }
+                }
+            )
         }
-    ) { innerPadding ->
-        NavHost(
-            navController, 
-            startDestination = startDestination, 
-            Modifier.padding(innerPadding)
-        ) {
-            composable(Screen.Welcome.route) { 
-                WelcomeScreen(
-                    onSetupComplete = {
-                        navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Welcome.route) { inclusive = true }
+        
+        Scaffold(
+            modifier = Modifier.weight(1f),
+            containerColor = MaterialTheme.colorScheme.background,
+            bottomBar = {
+                if (showNavigation && !isLandscape) {
+                    SmoothTouchNavigationBar(
+                        items = items,
+                        currentRoute = currentDestination?.route,
+                        onItemClick = { route ->
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
-            composable(Screen.Home.route) { HomeScreen(viewModel = viewModel) }
-            composable(Screen.Qibla.route) { QiblaScreen() }
-            composable(Screen.Settings.route) { 
-                SettingsScreen(
-                    onNavigateToAudio = {
-                        navController.navigate(Screen.AudioSettings.route)
-                    }
-                ) 
-            }
-            composable(Screen.AudioSettings.route) {
-                AudioSettingsScreen(
-                    onBack = { navController.popBackStack() }
-                )
+        ) { innerPadding ->
+            NavHost(
+                navController, 
+                startDestination = startDestination, 
+                Modifier.padding(innerPadding)
+            ) {
+                composable(Screen.Welcome.route) { 
+                    WelcomeScreen(
+                        onSetupComplete = {
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo(Screen.Welcome.route) { inclusive = true }
+                            }
+                        }
+                    )
+                }
+                composable(Screen.Home.route) { HomeScreen(viewModel = viewModel) }
+                composable(Screen.Qibla.route) { QiblaScreen() }
+                composable(Screen.Settings.route) { 
+                    SettingsScreen(
+                        onNavigateToAudio = {
+                            navController.navigate(Screen.AudioSettings.route)
+                        }
+                    ) 
+                }
+                composable(Screen.AudioSettings.route) {
+                    AudioSettingsScreen(
+                        onBack = { navController.popBackStack() }
+                    )
+                }
             }
         }
     }
 }
 
 data class NavigationItem(val route: String, val labelResId: Int, val icon: ImageVector)
+
+@Composable
+fun SmoothTouchNavigationRail(
+    items: List<NavigationItem>,
+    currentRoute: String?,
+    onItemClick: (String) -> Unit
+) {
+    val density = LocalDensity.current
+    val selectedIndex = items.indexOfFirst { it.route == currentRoute }
+    var tabHeight by remember { mutableStateOf(0.dp) }
+
+    Surface(
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 3.dp,
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(88.dp)
+            .windowInsetsPadding(WindowInsets.statusBars)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .onGloballyPositioned {
+                    tabHeight = with(density) { (it.size.height / items.size).toDp() }
+                }
+        ) {
+            // Smooth Sliding Indicator (Vertical)
+            if (selectedIndex != -1 && tabHeight > 0.dp) {
+                val indicatorOffset by animateDpAsState(
+                    targetValue = tabHeight * selectedIndex,
+                    animationSpec = spring(
+                        dampingRatio = 0.8f,
+                        stiffness = Spring.StiffnessMediumLow
+                    ),
+                    label = "indicatorOffset"
+                )
+
+                Box(
+                    modifier = Modifier
+                        .offset(y = indicatorOffset)
+                        .height(tabHeight)
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                    )
+                }
+            }
+
+            Column(modifier = Modifier.fillMaxSize()) {
+                items.forEach { item ->
+                    val isSelected = currentRoute == item.route
+                    
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = { onItemClick(item.route) }
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val contentColor by animateColorAsState(
+                            targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            animationSpec = tween(300),
+                            label = "contentColor"
+                        )
+                        
+                        val iconScale by animateFloatAsState(
+                            targetValue = if (isSelected) 1.15f else 1.0f,
+                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                            label = "iconScale"
+                        )
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = null,
+                                tint = contentColor,
+                                modifier = Modifier
+                                    .size(26.dp)
+                                    .scale(iconScale)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = stringResource(id = item.labelResId),
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                    fontSize = 12.sp
+                                ),
+                                color = contentColor
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun SmoothTouchNavigationBar(
