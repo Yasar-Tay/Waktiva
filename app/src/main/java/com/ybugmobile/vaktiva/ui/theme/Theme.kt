@@ -47,8 +47,12 @@ fun VaktivaTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            // Removed manual statusBarColor setting to let enableEdgeToEdge() and WindowInsets handle it properly
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            val insetsController = WindowCompat.getInsetsController(window, view)
+            
+            // Force both status bar and navigation bar icons/text to be LIGHT colored (white)
+            // suited for immersive/dark backgrounds.
+            insetsController.isAppearanceLightStatusBars = false
+            insetsController.isAppearanceLightNavigationBars = false
         }
     }
 

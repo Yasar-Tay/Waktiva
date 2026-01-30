@@ -131,7 +131,8 @@ fun HomeScreenContent(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .verticalScroll(rememberScrollState())
-                                .padding(horizontal = 24.dp, vertical = 16.dp),
+                                .padding(horizontal = 24.dp, vertical = 16.dp)
+                                .padding(start = 72.dp), // Adjust for Navigation Rail
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             HomeHeader(
@@ -264,7 +265,7 @@ fun HomeScreenContent(
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.height(32.dp))
+                            Spacer(modifier = Modifier.height(110.dp)) // Increased for floating nav bar
                         }
                     } else {
                         // Portrait Layout
@@ -407,6 +408,7 @@ fun HomeScreenContent(
                                     )
                                 }
                             }
+                            Spacer(modifier = Modifier.height(110.dp)) // Increased for floating nav bar
                         }
                     }
                 }

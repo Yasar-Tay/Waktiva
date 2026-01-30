@@ -27,8 +27,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -50,6 +54,7 @@ import com.ybugmobile.vaktiva.ui.qibla.QiblaScreen
 import com.ybugmobile.vaktiva.ui.settings.AudioSettingsScreen
 import com.ybugmobile.vaktiva.ui.settings.SettingsScreen
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
+import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import com.ybugmobile.vaktiva.ui.welcome.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
@@ -74,39 +79,6 @@ class MainActivity : AppCompatActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     MainNavigation(this@MainActivity, viewModel)
-                    
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Column(
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(end = 24.dp, bottom = 200.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            horizontalAlignment = Alignment.End
-                        ) {
-                            // Time Shift Test Button
-                            SmallFloatingActionButton(
-                                onClick = { 
-                                    viewModel.debugAddHours(30)
-                                    Toast.makeText(this@MainActivity, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
-                                },
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer
-                            ) {
-                                Icon(Icons.Default.Update, contentDescription = "Shift Time")
-                            }
-
-                            // Alarm Test Button
-                            FloatingActionButton(
-                                onClick = { 
-                                    val seconds = 5
-                                    viewModel.triggerTestAlarm(seconds)
-                                    Toast.makeText(this@MainActivity, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
-                                },
-                                containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                            ) {
-                                Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -166,74 +138,141 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    val showNavigation = items.any { it.route == currentDestination?.route }
+    val showNavigationLayout = items.any { it.route == currentDestination?.route }
 
-    Row(modifier = Modifier.fillMaxSize()) {
-        if (showNavigation && isLandscape) {
-            SmoothTouchNavigationRail(
-                items = items,
-                currentRoute = currentDestination?.route,
-                onItemClick = { route ->
-                    navController.navigate(route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+    // State to control navigation visibility based on swipe
+    var isNavVisible by remember { mutableStateOf(true) }
+    
+    // NestedScrollConnection to detect swipe direction
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (available.y > 15) {
+                    isNavVisible = true // Show when swiping DOWN
+                } else if (available.y < -15) {
+                    isNavVisible = false // Hide when swiping UP
                 }
-            )
+                return Offset.Zero
+            }
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection)) {
+        // Main Content Area
+        NavHost(
+            navController, 
+            startDestination = startDestination, 
+            modifier = Modifier.fillMaxSize()
+        ) {
+            composable(Screen.Welcome.route) { 
+                WelcomeScreen(
+                    onSetupComplete = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Welcome.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+            composable(Screen.Home.route) { HomeScreen(viewModel = viewModel) }
+            composable(Screen.Qibla.route) { QiblaScreen() }
+            composable(Screen.Settings.route) { 
+                SettingsScreen(
+                    onNavigateToAudio = {
+                        navController.navigate(Screen.AudioSettings.route)
+                    }
+                ) 
+            }
+            composable(Screen.AudioSettings.route) {
+                AudioSettingsScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
         }
 
-        Scaffold(
-            modifier = Modifier.weight(1f),
-            containerColor = MaterialTheme.colorScheme.background,
-            bottomBar = {
-                if (showNavigation && !isLandscape) {
-                    SmoothTouchNavigationBar(
-                        items = items,
-                        currentRoute = currentDestination?.route,
-                        onItemClick = { route ->
-                            navController.navigate(route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                    )
-                }
-            },
-            contentWindowInsets = WindowInsets(0, 0, 0, 0) // REMOVED UNNECESSARY GAPS
-        ) { innerPadding ->
-            NavHost(
-                navController, 
-                startDestination = startDestination, 
-                Modifier.padding(innerPadding)
+        // Overlay Navigation (Landscape Rail)
+        if (showNavigationLayout && isLandscape) {
+            AnimatedVisibility(
+                visible = isNavVisible,
+                enter = slideInHorizontally(initialOffsetX = { -it }) + fadeIn(),
+                exit = slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(),
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .displayCutoutPadding() // Avoid notch in landscape
+                    .systemBarsPadding()   // Respect status bar
             ) {
-                composable(Screen.Welcome.route) { 
-                    WelcomeScreen(
-                        onSetupComplete = {
-                            navController.navigate(Screen.Home.route) {
-                                popUpTo(Screen.Welcome.route) { inclusive = true }
+                SmoothTouchNavigationRail(
+                    items = items,
+                    currentRoute = currentDestination?.route,
+                    onItemClick = { route ->
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                    )
-                }
-                composable(Screen.Home.route) { HomeScreen(viewModel = viewModel) }
-                composable(Screen.Qibla.route) { QiblaScreen() }
-                composable(Screen.Settings.route) { 
-                    SettingsScreen(
-                        onNavigateToAudio = {
-                            navController.navigate(Screen.AudioSettings.route)
+                    }
+                )
+            }
+        }
+
+        // Overlay Navigation (Portrait Bottom Bar)
+        if (showNavigationLayout && !isLandscape) {
+            AnimatedVisibility(
+                visible = isNavVisible,
+                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding() // Respect system navigation bar (buttons/pill)
+            ) {
+                SmoothTouchNavigationBar(
+                    items = items,
+                    currentRoute = currentDestination?.route,
+                    onItemClick = { route ->
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                    ) 
+                    }
+                )
+            }
+        }
+
+        // Floating Debug Controls (If still needed, moved into MainNavigation to stay visible)
+        Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = if (showNavigationLayout && !isLandscape) 100.dp else 0.dp)
+                    .navigationBarsPadding(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                // Time Shift Test Button
+                SmallFloatingActionButton(
+                    onClick = { 
+                        viewModel.debugAddHours(30)
+                        Toast.makeText(context, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
+                    },
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                ) {
+                    Icon(Icons.Default.Update, contentDescription = "Shift Time")
                 }
-                composable(Screen.AudioSettings.route) {
-                    AudioSettingsScreen(
-                        onBack = { navController.popBackStack() }
-                    )
+
+                // Alarm Test Button
+                FloatingActionButton(
+                    onClick = { 
+                        val seconds = 5
+                        viewModel.triggerTestAlarm(seconds)
+                        Toast.makeText(context, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
+                    },
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                ) {
+                    Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
                 }
             }
         }
@@ -253,27 +292,25 @@ fun SmoothTouchNavigationRail(
     var tabHeight by remember { mutableStateOf(0.dp) }
 
     Surface(
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 3.dp,
-        modifier = Modifier.fillMaxHeight()
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+        tonalElevation = 8.dp,
+        shape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp),
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(72.dp)
+            .padding(vertical = 40.dp)
     ) {
         Box(
             modifier = Modifier
-                .fillMaxHeight()
-                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Vertical + WindowInsetsSides.Start))
-                .width(88.dp)
+                .fillMaxSize()
                 .onGloballyPositioned {
                     tabHeight = with(density) { (it.size.height / items.size).toDp() }
                 }
         ) {
-            // Smooth Sliding Indicator (Vertical)
             if (selectedIndex != -1 && tabHeight > 0.dp) {
                 val indicatorOffset by animateDpAsState(
                     targetValue = tabHeight * selectedIndex,
-                    animationSpec = spring(
-                        dampingRatio = 0.8f,
-                        stiffness = Spring.StiffnessMediumLow
-                    ),
+                    animationSpec = spring(0.8f, Spring.StiffnessMediumLow),
                     label = "indicatorOffset"
                 )
 
@@ -282,7 +319,7 @@ fun SmoothTouchNavigationRail(
                         .offset(y = indicatorOffset)
                         .height(tabHeight)
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                        .padding(horizontal = 12.dp, vertical = 12.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
@@ -299,7 +336,6 @@ fun SmoothTouchNavigationRail(
             Column(modifier = Modifier.fillMaxSize()) {
                 items.forEach { item ->
                     val isSelected = currentRoute == item.route
-                    
                     Box(
                         modifier = Modifier
                             .weight(1f)
@@ -313,38 +349,14 @@ fun SmoothTouchNavigationRail(
                     ) {
                         val contentColor by animateColorAsState(
                             targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                            animationSpec = tween(300),
                             label = "contentColor"
                         )
-                        
-                        val iconScale by animateFloatAsState(
-                            targetValue = if (isSelected) 1.15f else 1.0f,
-                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                            label = "iconScale"
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = null,
+                            tint = contentColor,
+                            modifier = Modifier.size(28.dp)
                         )
-
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = null,
-                                tint = contentColor,
-                                modifier = Modifier
-                                    .size(26.dp)
-                                    .scale(iconScale)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = stringResource(id = item.labelResId),
-                                style = MaterialTheme.typography.labelMedium.copy(
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    fontSize = 12.sp
-                                ),
-                                color = contentColor
-                            )
-                        }
                     }
                 }
             }
@@ -363,27 +375,25 @@ fun SmoothTouchNavigationBar(
     var tabWidth by remember { mutableStateOf(0.dp) }
 
     Surface(
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 3.dp,
-        modifier = Modifier.fillMaxWidth()
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+        tonalElevation = 8.dp,
+        shape = RoundedCornerShape(24.dp),
+        modifier = Modifier
+            .padding(start = 24.dp, end = 24.dp, bottom = 16.dp) // Adjusted bottom padding, system padding added in parent
+            .fillMaxWidth()
+            .height(64.dp)
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
-                .height(80.dp)
+                .fillMaxSize()
                 .onGloballyPositioned {
                     tabWidth = with(density) { (it.size.width / items.size).toDp() }
                 }
         ) {
-            // Smooth Sliding Indicator
             if (selectedIndex != -1 && tabWidth > 0.dp) {
                 val indicatorOffset by animateDpAsState(
                     targetValue = tabWidth * selectedIndex,
-                    animationSpec = spring(
-                        dampingRatio = 0.8f,
-                        stiffness = Spring.StiffnessMediumLow
-                    ),
+                    animationSpec = spring(0.8f, Spring.StiffnessMediumLow),
                     label = "indicatorOffset"
                 )
 
@@ -392,7 +402,7 @@ fun SmoothTouchNavigationBar(
                         .offset(x = indicatorOffset)
                         .width(tabWidth)
                         .fillMaxHeight()
-                        .padding(vertical = 12.dp, horizontal = 8.dp),
+                        .padding(vertical = 10.dp, horizontal = 12.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
@@ -409,7 +419,6 @@ fun SmoothTouchNavigationBar(
             Row(modifier = Modifier.fillMaxSize()) {
                 items.forEach { item ->
                     val isSelected = currentRoute == item.route
-                    
                     Box(
                         modifier = Modifier
                             .weight(1f)
@@ -423,38 +432,14 @@ fun SmoothTouchNavigationBar(
                     ) {
                         val contentColor by animateColorAsState(
                             targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                            animationSpec = tween(300),
                             label = "contentColor"
                         )
-                        
-                        val iconScale by animateFloatAsState(
-                            targetValue = if (isSelected) 1.15f else 1.0f,
-                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                            label = "iconScale"
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = null,
+                            tint = contentColor,
+                            modifier = Modifier.size(28.dp)
                         )
-
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = null,
-                                tint = contentColor,
-                                modifier = Modifier
-                                    .size(26.dp)
-                                    .scale(iconScale)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = stringResource(id = item.labelResId),
-                                style = MaterialTheme.typography.labelMedium.copy(
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    fontSize = 12.sp
-                                ),
-                                color = contentColor
-                            )
-                        }
                     }
                 }
             }
