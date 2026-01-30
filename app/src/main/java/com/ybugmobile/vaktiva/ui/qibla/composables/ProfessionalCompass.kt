@@ -150,21 +150,40 @@ fun ProfessionalCompass(
                     brush = Brush.radialGradient(
                         listOf(indicatorColor.copy(alpha = 0.6f), Color.Transparent)
                     ),
-                    radius = 20.dp.toPx(),
+                    radius = 28.dp.toPx(),
                     center = Offset(kX, kY)
                 )
                 
-                // The Marker
-                drawCircle(
-                    color = indicatorColor,
-                    radius = 6.dp.toPx(),
-                    center = Offset(kX, kY)
-                )
+                // The Marker (Elevated Style)
+                val markerRadius = 14.dp.toPx()
+                
+                // White border
                 drawCircle(
                     color = Color.White,
-                    radius = 8.dp.toPx(),
-                    center = Offset(kX, kY),
-                    style = Stroke(width = 2.dp.toPx())
+                    radius = markerRadius + 2.dp.toPx(),
+                    center = Offset(kX, kY)
+                )
+                
+                // Golden background
+                drawCircle(
+                    color = Color(0xFFFFD700),
+                    radius = markerRadius,
+                    center = Offset(kX, kY)
+                )
+                
+                // Kaaba Icon
+                val kaabaSize = 12.dp.toPx()
+                drawRect(
+                    color = Color.Black,
+                    topLeft = Offset(kX - kaabaSize / 2, kY - kaabaSize / 2),
+                    size = androidx.compose.ui.geometry.Size(kaabaSize, kaabaSize)
+                )
+                
+                // Gold Band on Kaaba icon
+                drawRect(
+                    color = Color(0xFFFFD700),
+                    topLeft = Offset(kX - kaabaSize / 2, kY - kaabaSize / 4),
+                    size = androidx.compose.ui.geometry.Size(kaabaSize, kaabaSize / 8)
                 )
             }
 

@@ -3,13 +3,13 @@ package com.ybugmobile.vaktiva.ui.qibla.composables
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.Color as AndroidColor
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CompassCalibration
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.MyLocation
@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.batoulapps.adhan.Coordinates
+import com.batoulapps.adhan.Qibla
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.data.sensor.CompassData
 import com.ybugmobile.vaktiva.ui.qibla.MapConstants
@@ -53,7 +55,6 @@ fun QiblaMap(
     var lineManager by remember { mutableStateOf<LineManager?>(null) }
     var customPoint by remember { mutableStateOf<LatLng?>(null) }
     
-    // State to track if the map orientation (bearing or tilt) is changed from default
     var isMapOriented by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -64,14 +65,10 @@ fun QiblaMap(
                     getMapAsync { map ->
                         mapInstance = map
                         onMapReady(map)
-                        
-                        // Disable the default compass UI
                         map.uiSettings.isCompassEnabled = false
                         
-                        // Add listener to track camera changes
                         map.addOnCameraMoveListener {
                             val cameraPosition = map.cameraPosition
-                            // Show compass if bearing is not 0 or tilt is not 0
                             isMapOriented = abs(cameraPosition.bearing) > 0.1 || abs(cameraPosition.tilt) > 0.1
                         }
 
@@ -79,14 +76,19 @@ fun QiblaMap(
                         map.setStyle(Style.Builder().run {
                             if (isSatelliteView) fromJson(initialStyle) else fromUri(initialStyle)
                         }) { style ->
-                            style.addImage(MapConstants.USER_ARROW_ID, createArrowBitmap("#2196F3"))
-                            style.addImage(MapConstants.CUSTOM_ARROW_ID, createArrowBitmap("#F44336"))
+                            // Custom marker colors
+                            style.addImage(MapConstants.USER_ARROW_ID, createAppleStyleMarker("#007AFF"))
+                            style.addImage(MapConstants.CUSTOM_ARROW_ID, createAppleStyleMarker("#AF52DE"))
+                            style.addImage("green_arrow", createAppleStyleMarker("#4CD964"))
+                            style.addImage("kaaba_marker", createKaabaMarker("#FFD700")) // Golden background for Kaaba
 
+                            // Create line manager FIRST so symbols appear ON TOP
+                            lineManager = LineManager(this@apply, map, style)
                             symbolManager = SymbolManager(this@apply, map, style).apply {
                                 iconAllowOverlap = true
                                 iconIgnorePlacement = true
                             }
-                            lineManager = LineManager(this@apply, map, style)
+                            
                             settings?.let {
                                 map.moveCamera(
                                     CameraUpdateFactory.newLatLngZoom(
@@ -120,20 +122,22 @@ fun QiblaMap(
                         map.setStyle(Style.Builder().run {
                             if (isSatelliteView) fromJson(MapConstants.SATELLITE_STYLE_JSON) else fromUri(MapConstants.STREET_STYLE)
                         }) { style ->
-                            style.addImage(MapConstants.USER_ARROW_ID, createArrowBitmap("#2196F3"))
-                            style.addImage(MapConstants.CUSTOM_ARROW_ID, createArrowBitmap("#F44336"))
+                            style.addImage(MapConstants.USER_ARROW_ID, createAppleStyleMarker("#007AFF"))
+                            style.addImage(MapConstants.CUSTOM_ARROW_ID, createAppleStyleMarker("#AF52DE"))
+                            style.addImage("green_arrow", createAppleStyleMarker("#4CD964"))
+                            style.addImage("kaaba_marker", createKaabaMarker("#FFD700"))
+                            
+                            lineManager = LineManager(view, map, style)
                             symbolManager = SymbolManager(view, map, style).apply {
                                 iconAllowOverlap = true
                                 iconIgnorePlacement = true
                             }
-                            lineManager = LineManager(view, map, style)
                         }
                     }
                 }
             }
         )
 
-        // Custom UI Controls
         Column(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
@@ -141,7 +145,6 @@ fun QiblaMap(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Custom Compass Icon
             AnimatedVisibility(
                 visible = isMapOriented,
                 enter = fadeIn(),
@@ -203,69 +206,215 @@ fun QiblaMap(
         }
     }
 
-    // Annotations update
     LaunchedEffect(settings, compassData.azimuth, customPoint, symbolManager, lineManager) {
         val sm = symbolManager ?: return@LaunchedEffect
         val lm = lineManager ?: return@LaunchedEffect
         sm.deleteAll()
         lm.deleteAll()
+        
+        val appleBlue = "#007AFF"
+        val appleGreen = "#4CD964"
+        val customPurple = "#AF52DE"
+        
+        // Always draw the Kaaba marker
+        sm.create(
+            SymbolOptions().withLatLng(kaabaLatLng)
+                .withIconImage("kaaba_marker")
+                .withIconSize(1.3f)
+        )
+        
         settings?.let { loc ->
             val userLatLng = LatLng(loc.latitude, loc.longitude)
+            val qiblaDir = Qibla(Coordinates(loc.latitude, loc.longitude)).direction
+            val isAligned = abs(compassData.azimuth - qiblaDir) < 2.0
             
-            // Draw casing (outline) for the Qibla line
+            val activeColor = if (isAligned) appleGreen else appleBlue
+            val activeIcon = if (isAligned) "green_arrow" else MapConstants.USER_ARROW_ID
+            
+            // Draw Qibla line shadow
             lm.create(
                 LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
                     .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.BLACK))
-                    .withLineWidth(7f)
-                    .withLineOpacity(0.5f)
+                    .withLineWidth(16f)
+                    .withLineOpacity(0.12f)
+            )
+            // Draw Qibla line white border
+            lm.create(
+                LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE))
+                    .withLineWidth(10f)
+                    .withLineJoin("round")
+            )
+            // Draw main Qibla line
+            lm.create(
+                LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
+                    .withLineWidth(6f)
+                    .withLineJoin("round")
             )
             
             sm.create(
-                SymbolOptions().withLatLng(userLatLng).withIconImage(MapConstants.USER_ARROW_ID)
-                    .withIconRotate(compassData.azimuth).withIconSize(1.5f)
-            )
-            lm.create(
-                LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor("#FFD700")))
-                    .withLineWidth(4f)
+                SymbolOptions().withLatLng(userLatLng).withIconImage(activeIcon)
+                    .withIconRotate(compassData.azimuth).withIconSize(1.2f)
             )
         }
+        
         customPoint?.let { cp ->
-            // Casing for custom point
+            val qiblaDir = Qibla(Coordinates(cp.latitude, cp.longitude)).direction
+            val isAligned = abs(compassData.azimuth - qiblaDir) < 2.0
+            
+            val activeColor = if (isAligned) appleGreen else customPurple
+            val activeIcon = if (isAligned) "green_arrow" else MapConstants.CUSTOM_ARROW_ID
+            
+            // Custom point line shadow
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
                     .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.BLACK))
-                    .withLineWidth(6f)
-                    .withLineOpacity(0.5f)
+                    .withLineWidth(16f)
+                    .withLineOpacity(0.12f)
             )
-            sm.create(
-                SymbolOptions().withLatLng(cp).withIconImage(MapConstants.CUSTOM_ARROW_ID)
-                    .withIconRotate(compassData.azimuth).withIconSize(1.5f)
-            )
+            // Custom point white border
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor("#F44336")))
-                    .withLineWidth(3f)
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE))
+                    .withLineWidth(10f)
+                    .withLineJoin("round")
+            )
+            // Custom point main line
+            lm.create(
+                LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
+                    .withLineWidth(6f)
+                    .withLineJoin("round")
+            )
+            sm.create(
+                SymbolOptions().withLatLng(cp).withIconImage(activeIcon)
+                    .withIconRotate(compassData.azimuth).withIconSize(1.2f)
             )
         }
     }
 }
 
-private fun createArrowBitmap(colorHex: String): Bitmap {
-    val bitmap = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888)
+private fun createAppleStyleMarker(colorHex: String): Bitmap {
+    val size = 160
+    val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
-    val paint = Paint().apply {
-        color = AndroidColor.parseColor(colorHex)
+    val center = size / 2f
+    
+    val markerColor = AndroidColor.parseColor(colorHex)
+    
+    // Elevated Shadow
+    val shadowPaint = Paint().apply {
+        isAntiAlias = true
+        this.color = AndroidColor.TRANSPARENT
+        setShadowLayer(16f, 0f, 8f, AndroidColor.argb(90, 0, 0, 0))
+    }
+    canvas.drawCircle(center, center, 44f, shadowPaint)
+    
+    // Subtle Pulse Outer Ring
+    val pulsePaint = Paint().apply {
+        this.color = markerColor
+        alpha = 30
         style = Paint.Style.FILL
         isAntiAlias = true
     }
-    val path = android.graphics.Path().apply {
-        moveTo(32f, 5f)
-        lineTo(55f, 55f)
-        lineTo(32f, 45f)
-        lineTo(9f, 55f)
+    canvas.drawCircle(center, center, 65f, pulsePaint)
+    
+    // Opaque White Border
+    val whitePaint = Paint().apply {
+        this.color = AndroidColor.WHITE
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+    canvas.drawCircle(center, center, 44f, whitePaint)
+    
+    // Main colored circle
+    val mainPaint = Paint().apply {
+        this.color = markerColor
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+    canvas.drawCircle(center, center, 40f, mainPaint)
+    
+    // Arrow
+    val arrowPaint = Paint().apply {
+        this.color = AndroidColor.WHITE
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+    val path = Path().apply {
+        moveTo(center, center - 26f)
+        lineTo(center + 18f, center + 20f)
+        lineTo(center, center + 12f)
+        lineTo(center - 18f, center + 20f)
         close()
     }
-    canvas.drawPath(path, paint)
+    canvas.drawPath(path, arrowPaint)
+
+    return bitmap
+}
+
+fun createKaabaMarker(colorHex: String): Bitmap {
+    val size = 160
+    val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    val center = size / 2f
+    
+    val markerColor = AndroidColor.parseColor(colorHex)
+    
+    // Elevated Shadow
+    val shadowPaint = Paint().apply {
+        isAntiAlias = true
+        this.color = AndroidColor.TRANSPARENT
+        setShadowLayer(16f, 0f, 8f, AndroidColor.argb(90, 0, 0, 0))
+    }
+    canvas.drawCircle(center, center, 44f, shadowPaint)
+    
+    // Opaque White Border
+    val whitePaint = Paint().apply {
+        this.color = AndroidColor.WHITE
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+    canvas.drawCircle(center, center, 44f, whitePaint)
+    
+    // Main colored circle (Golden)
+    val mainPaint = Paint().apply {
+        this.color = markerColor
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+    canvas.drawCircle(center, center, 40f, mainPaint)
+    
+    // Kaaba Shape (Square with gold band)
+    val kaabaPaint = Paint().apply {
+        this.color = AndroidColor.BLACK
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+    
+    val kaabaSize = 34f
+    canvas.drawRect(
+        center - kaabaSize / 2, 
+        center - kaabaSize / 2, 
+        center + kaabaSize / 2, 
+        center + kaabaSize / 2, 
+        kaabaPaint
+    )
+    
+    // Gold Band
+    val goldPaint = Paint().apply {
+        this.color = AndroidColor.parseColor("#FFD700")
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+    canvas.drawRect(
+        center - kaabaSize / 2, 
+        center - kaabaSize / 4, 
+        center + kaabaSize / 2, 
+        center - kaabaSize / 8, 
+        goldPaint
+    )
+
     return bitmap
 }
