@@ -2,11 +2,13 @@ package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MusicOff
+import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -37,7 +39,7 @@ fun AdhanControls(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .height(160.dp),
             shape = RoundedCornerShape(24.dp),
             color = Color.White.copy(alpha = 0.12f),
             border = androidx.compose.foundation.BorderStroke(
@@ -46,69 +48,80 @@ fun AdhanControls(
             )
         ) {
             Row(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Pulse Animation effect placeholder with Icon
-                Box(
+                // LEFT SIDE: Content
+                Column(
                     modifier = Modifier
-                        .size(44.dp)
-                        .background(Color.White.copy(alpha = 0.15f), CircleShape),
-                    contentAlignment = Alignment.Center
+                        .weight(1f)
+                        .padding(start = 24.dp),
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        Icons.Rounded.VolumeUp,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(Color.White.copy(alpha = 0.15f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Rounded.VolumeUp,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = if (isTest) stringResource(R.string.adhan_test_alarm).uppercase()
                                else (playingPrayerName?.uppercase() ?: stringResource(R.string.adhan_playing).uppercase()),
-                        style = MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Black,
                         color = Color.White,
-                        letterSpacing = 1.5.sp
+                        letterSpacing = 1.sp
                     )
                     Text(
                         text = stringResource(R.string.adhan_sounding).lowercase(),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.6f),
                         fontWeight = FontWeight.Medium
                     )
                 }
 
-                // SLEEK STOP BUTTON
-                FilledTonalButton(
+                // RIGHT SIDE: Large Square Stop Button
+                Surface(
                     onClick = {
                         onStopAdhan()
                         if (isTest) onStopTest()
                     },
-                    colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = Color.White.copy(alpha = 0.2f),
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(1f)
+                        .padding(10.dp),
+                    color = Color.Red.copy(alpha = 0.35f),
+                    shape = RoundedCornerShape(24.dp)
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
                         Icon(
-                            Icons.Rounded.MusicOff,
+                            Icons.Rounded.Stop,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                            tint = Color.White,
+                            modifier = Modifier.size(60.dp)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            stringResource(R.string.adhan_stop).uppercase(),
+                            text = stringResource(R.string.adhan_stop).uppercase(),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp
+                            color = Color.White,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 8.dp)
                         )
                     }
                 }

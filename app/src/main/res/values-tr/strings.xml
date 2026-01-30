@@ -174,29 +174,32 @@
     <string name="adhan_playing">Ezan</string>
     <string name="adhan_sounding">Okunuyor</string>
     <string name="adhan_upcoming">Sıradaki ezan</string>
+    <string name="adhan_test_alarm">Test Alarmı</string>
+    <string name="adhan_test_desc">Ezan tetiklemesi simüle ediliyor</string>
+    <string name="adhan_stop_test">TESTİ İPTAL ET</string>
 
     <!-- Donations -->
     <string name="settings_donate">Geliştiriciyi Destekle</string>
-    <string name="donate_title">Support Vaktiva</string>
-    <string name="donate_description">Vaktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
-    <string name="donate_button">Donate</string>
-    <string name="donate_thank_you">Thank you for your support!</string>
-    <string name="donate_error">Donation failed. Please try again.</string>
+    <string name="donate_title">Vaktiva\'yı Destekle</string>
+    <string name="donate_description">Vaktiva özenle geliştirilmiş ücretsiz bir uygulamadır. Desteğiniz uygulamanın reklamsız kalmasına ve gelecekteki geliştirmelere yardımcı olur.</string>
+    <string name="donate_button">Bağış Yap</string>
+    <string name="donate_thank_you">Desteğiniz için teşekkürler!</string>
+    <string name="donate_error">Bağış başarısız oldu. Lütfen tekrar deneyin.</string>
 
     <!-- Hijri Months -->
-    <string name="hijri_month_1">Muharram</string>
-    <string name="hijri_month_2">Safar</string>
-    <string name="hijri_month_3">Rabi‘ al-Awwal</string>
-    <string name="hijri_month_4">Rabi‘ al-Thani</string>
-    <string name="hijri_month_5">Jumada al-Ula</string>
-    <string name="hijri_month_6">Jumada al-Akhirah</string>
-    <string name="hijri_month_7">Rajab</string>
-    <string name="hijri_month_8">Sha‘ban</string>
-    <string name="hijri_month_10">Shawwal</string>
-    <string name="hijri_month_11">Dhu al-Qi‘dah</string>
-    <string name="hijri_month_12">Dhu al-Hijjah</string>
+    <string name="hijri_month_1">Muharrem</string>
+    <string name="hijri_month_2">Safer</string>
+    <string name="hijri_month_3">Rebiülevvel</string>
+    <string name="hijri_month_4">Rebiülahir</string>
+    <string name="hijri_month_5">Cemaziyelevvel</string>
+    <string name="hijri_month_6">Cemaziyelahir</string>
+    <string name="hijri_month_7">Recep</string>
+    <string name="hijri_month_8">Şaban</string>
+    <string name="hijri_month_10">Şevval</string>
+    <string name="hijri_month_11">Zilkade</string>
+    <string name="hijri_month_12">Zilhicce</string>
     <string name="hijri_month_9">Ramazan</string>
-    <string name="hijri_suffix">AH</string>
+    <string name="hijri_suffix">H</string>
 
     <!-- Religious Days -->
     <string name="rel_day_3_months">Üç Aylar Başlangıcı</string>

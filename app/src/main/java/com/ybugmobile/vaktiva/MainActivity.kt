@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                             // Alarm Test Button
                             FloatingActionButton(
                                 onClick = { 
-                                    val seconds = 70
+                                    val seconds = 5
                                     viewModel.triggerTestAlarm(seconds)
                                     Toast.makeText(this@MainActivity, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
                                 },
