@@ -34,7 +34,7 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
             listOf(Color(0xFF0F141E), Color(0xFF374D6B))
         )
 
-        // Dawn: Muted Indigo to Soft Steel
+        // Sunrise to Morning: Deep Blue to Golden Horizon
         currentTime.isBefore(dayStart) -> Brush.verticalGradient(
             colorStops = arrayOf(
                 0.0f to Color(0xFF1D405B),
@@ -42,12 +42,14 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
                 1.0f to Color(0xFFA26B19),
             )
         )
-
+        
+        // Full Day: Enriched Spectral Azure (Luminous & Deep)
         currentTime.isBefore(sunsetStart) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF2580C7),
-                0.5f to Color(0xFF3674A4),
-                1.0f to Color(0xFF027352)
+                0.0f to Color(0xFF0F172A), // Deep Slate for status bar contrast
+                0.3f to Color(0xFF1E3A8A), // Rich Indigo-Blue
+                0.7f to Color(0xFF0284C7), // Luminous Azure
+                1.0f to Color(0xFF22D3EE)  // Vibrant Cyan Glow
             )
         )
 
