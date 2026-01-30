@@ -32,6 +32,8 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
 
     val fajr = day.timings[PrayerType.FAJR] ?: LocalTime.of(5, 0)
     val sunrise = day.timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 30)
+    val dhuhur = day.timings[PrayerType.DHUHR] ?: LocalTime.of(13, 0)
+    val asr = day.timings[PrayerType.ASR] ?: LocalTime.of(17, 0)
     val maghrib = day.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 30)
     val isha = day.timings[PrayerType.ISHA] ?: LocalTime.of(20, 0)
 
@@ -66,6 +68,16 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
                 0.4f to Color(0xFF3674A4), // Original Anchor
                 0.8f to Color(0xFFA26B19), // Original Anchor
                 1.0f to Color(0xFFFCD34D)  // Golden Flare Highlight
+            )
+        )
+
+        // Full Day: Enriched Spectral Azure (Maximum Luminosity)
+        currentTime.isBefore(dhuhur) -> Brush.verticalGradient(
+            colorStops = arrayOf(
+                0.0f to Color(0xFF1E3A8A), // Deep Slate for status bar contrast
+                0.3f to Color(0xFF236DA6), // Rich Indigo-Blue
+                0.7f to Color(0xFF02C7C0), // Luminous Azure
+                1.0f to Color(0xFF18A87F)  // Vibrant Cyan Glow
             )
         )
 
