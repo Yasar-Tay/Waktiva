@@ -30,6 +30,7 @@
     <string name="qibla_kaaba_aligned">Kaaba Aligned</string>
     <string name="qibla_find_marker">Find the Golden Marker</string>
     <string name="qibla_calibrate">CALIBRATE</string>
+    <string name="qibla_interference_tip">Tip: Inside buildings, metal structures can affect the compass. For the best accuracy, perform a figure-8 calibration.</string>
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Unknown Location</string>

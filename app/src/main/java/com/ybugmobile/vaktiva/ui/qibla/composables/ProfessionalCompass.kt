@@ -2,13 +2,11 @@ package com.ybugmobile.vaktiva.ui.qibla.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,6 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
@@ -66,7 +65,6 @@ fun ProfessionalCompass(
         Canvas(modifier = Modifier.fillMaxSize()) {
             val center = this.center
             val radius = size.minDimension / 2 - 20.dp.toPx()
-            val innerRadius = radius * 0.85f
 
             // 1. Static Outer Ring (Glass Effect)
             drawCircle(
@@ -236,6 +234,48 @@ fun ProfessionalCompass(
                     letterSpacing = 1.sp
                 )
             }
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF121212)
+@Composable
+fun ProfessionalCompassPreview() {
+    MaterialTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF121212)),
+            contentAlignment = Alignment.Center
+        ) {
+            ProfessionalCompass(
+                azimuth = 45f,
+                qiblaAngle = 180f,
+                alignmentColor = Color(0xFFFFD700),
+                isAligned = false,
+                contentColor = Color.White
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF121212)
+@Composable
+fun ProfessionalCompassAlignedPreview() {
+    MaterialTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF121212)),
+            contentAlignment = Alignment.Center
+        ) {
+            ProfessionalCompass(
+                azimuth = 180f,
+                qiblaAngle = 180f,
+                alignmentColor = Color(0xFF4CAF50),
+                isAligned = true,
+                contentColor = Color.White
+            )
         }
     }
 }

@@ -8,13 +8,13 @@ import android.hardware.SensorManager
 import android.hardware.display.DisplayManager
 import android.view.Display
 import android.view.Surface
-import android.view.WindowManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.abs
 
 data class CompassData(
     val azimuth: Float,
@@ -30,13 +30,15 @@ class CompassManager @Inject constructor(
     private val rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
     val compassFlow: Flow<CompassData> = callbackFlow {
+        var lastAzimuth = 0f
+        val alpha = 0.25f // Low-pass filter smoothing factor
+
         val listener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent?) {
                 if (event?.sensor?.type == Sensor.TYPE_ROTATION_VECTOR) {
                     val rotationMatrix = FloatArray(9)
                     SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
 
-                    // Get rotation safely from DisplayManager when using ApplicationContext
                     val rotation = displayManager.getDisplay(Display.DEFAULT_DISPLAY)?.rotation ?: Surface.ROTATION_0
 
                     val adjustedRotationMatrix = FloatArray(9)
@@ -56,16 +58,28 @@ class CompassManager @Inject constructor(
                     val orientation = FloatArray(3)
                     SensorManager.getOrientation(adjustedRotationMatrix, orientation)
                     
-                    val azimuth = Math.toDegrees(orientation[0].toDouble()).toFloat()
-                    trySend(CompassData(azimuth, event.accuracy))
+                    var currentAzimuth = Math.toDegrees(orientation[0].toDouble()).toFloat()
+                    
+                    // Normalize azimuth to 0..360
+                    currentAzimuth = (currentAzimuth + 360) % 360
+
+                    // Smooth out the rotation using a low-pass filter
+                    // To handle the 360 -> 0 degree jump:
+                    var diff = currentAzimuth - lastAzimuth
+                    if (diff > 180) diff -= 360
+                    else if (diff < -180) diff += 360
+                    
+                    val smoothedAzimuth = (lastAzimuth + alpha * diff + 360) % 360
+                    lastAzimuth = smoothedAzimuth
+
+                    trySend(CompassData(smoothedAzimuth, event.accuracy))
                 }
             }
 
-            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-            }
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
 
-        sensorManager.registerListener(listener, rotationSensor, SensorManager.SENSOR_DELAY_UI)
+        sensorManager.registerListener(listener, rotationSensor, SensorManager.SENSOR_DELAY_GAME)
 
         awaitClose {
             sensorManager.unregisterListener(listener)

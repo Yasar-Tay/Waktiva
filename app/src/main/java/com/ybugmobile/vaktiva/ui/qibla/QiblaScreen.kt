@@ -59,13 +59,11 @@ fun QiblaScreen(
         MapLibre.getInstance(context)
     }
 
-    // Logic for accuracy warning
     val isAccuracyLow = state.compassData.accuracy <= SensorManager.SENSOR_STATUS_ACCURACY_LOW
     val isAccuracyUnreliable = state.compassData.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE
 
     var showCalibrationDialog by remember { mutableStateOf(false) }
 
-    // Background logic
     val backgroundGradient = getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
 
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
@@ -95,7 +93,6 @@ fun QiblaScreen(
         label = "alignmentColor"
     )
 
-    // Dynamic Color Logic
     val sunrise = state.currentPrayerDay?.timings?.get(PrayerType.SUNRISE)
     val sunset = state.currentPrayerDay?.timings?.get(PrayerType.MAGHRIB)
     val isLightBackground = if (sunrise != null && sunset != null) {
@@ -155,21 +152,31 @@ private fun QiblaContent(
     isLightBackground: Boolean,
     onCalibrationClick: () -> Unit
 ) {
-    var isMapView by remember { mutableStateOf(false) }
-    var isSatelliteView by remember { mutableStateOf(false) }
+    var isMapView by rememberSaveable { mutableStateOf(false) }
+    var isSatelliteView by rememberSaveable { mutableStateOf(false) }
     val kaabaLatLng = LatLng(21.4225, 39.8262)
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val theme = MaterialTheme.colorScheme
 
-    val effectiveContentColor = if (isMapView) {
-        if (isSatelliteView) Color.White else Color.Black
-    } else contentColor
+    // Dynamic Colors based on View Mode
+    val containerColor by animateColorAsState(
+        targetValue = when {
+            isMapView -> theme.surface // Solid surface color
+            else -> Color.White.copy(alpha = 0.1f)
+        },
+        label = "containerColor"
+    )
+    
+    val effectiveContentColor = when {
+        isMapView -> theme.onSurface // Always use onSurface (Dark/Readable) when on a solid card
+        else -> contentColor
+    }
 
-    val effectiveShadow = if (isMapView && isSatelliteView) textShadow else if (isMapView) null else textShadow
+    val effectiveShadow = if (isMapView) null else textShadow
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Background layer
         if (isMapView) {
             QiblaMap(
                 settings = state.settings,
@@ -196,9 +203,7 @@ private fun QiblaContent(
         }
 
         if (isLandscape) {
-            // LANDSCAPE LAYOUT
             Row(modifier = Modifier.fillMaxSize()) {
-                // Left Side: Compass
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -230,7 +235,6 @@ private fun QiblaContent(
                     }
                 }
 
-                // Right Side: Info and Controls
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -240,7 +244,6 @@ private fun QiblaContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Header (Location & Switcher)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -248,37 +251,41 @@ private fun QiblaContent(
                     ) {
                         state.settings?.let { s ->
                             Surface(
-                                color = if (isMapView) MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-                                        else Color.Transparent,
+                                color = containerColor,
                                 shape = RoundedCornerShape(22.dp),
                                 modifier = Modifier.weight(1f).padding(end = 8.dp),
-                                shadowElevation = if (isMapView) 4.dp else 0.dp
+                                shadowElevation = if (isMapView) 4.dp else 0.dp,
+                                border = androidx.compose.foundation.BorderStroke(
+                                    1.dp, 
+                                    if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
+                                )
                             ) {
-                                val locationTextColor = if (isMapView) MaterialTheme.colorScheme.onSurface else effectiveContentColor
                                 Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
                                     Text(
                                         text = s.locationName.substringBefore(","),
-                                        color = locationTextColor,
-                                        style = MaterialTheme.typography.titleSmall.copy(shadow = if (isMapView) null else effectiveShadow),
+                                        color = effectiveContentColor,
+                                        style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold,
                                         maxLines = 1
                                     )
                                     Text(
                                         text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
-                                        color = locationTextColor.copy(alpha = 0.6f),
-                                        style = MaterialTheme.typography.labelSmall.copy(shadow = if (isMapView) null else effectiveShadow)
+                                        color = effectiveContentColor.copy(alpha = 0.6f),
+                                        style = MaterialTheme.typography.labelSmall
                                     )
                                 }
                             }
                         }
 
                         Surface(
-                            color = if (isMapView) MaterialTheme.colorScheme.surface.copy(alpha = 0.95f) 
-                                    else if (isLightBackground) Color.Black.copy(0.1f) 
-                                    else Color.White.copy(0.15f),
+                            color = containerColor,
                             shape = RoundedCornerShape(22.dp),
                             modifier = Modifier.height(40.dp),
-                            shadowElevation = if (isMapView) 4.dp else 0.dp
+                            shadowElevation = if (isMapView) 4.dp else 0.dp,
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp, 
+                                if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
+                            )
                         ) {
                             Row(modifier = Modifier.padding(2.dp)) {
                                 SwitcherButton(isSelected = !isMapView, icon = Icons.Default.Explore, contentColor = effectiveContentColor, isMapView = isMapView, onClick = { isMapView = false })
@@ -287,7 +294,6 @@ private fun QiblaContent(
                         }
                     }
 
-                    // Info Card
                     QiblaInfoCard(
                         isAligned = isAligned,
                         alignmentColor = alignmentColor,
@@ -296,13 +302,13 @@ private fun QiblaContent(
                         compassData = state.compassData,
                         isAccuracyLow = isAccuracyLow,
                         isAccuracyUnreliable = isAccuracyUnreliable,
-                        onCalibrationClick = onCalibrationClick
+                        onCalibrationClick = onCalibrationClick,
+                        isMapView = isMapView,
+                        isSatelliteView = isSatelliteView
                     )
                 }
             }
         } else {
-            // PORTRAIT LAYOUT
-            // TOP HEADER: Location (Left) and View Switcher (Right)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -310,48 +316,50 @@ private fun QiblaContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Location Info (Improved Design & Contrast)
                 state.settings?.let { s ->
                     Surface(
-                        color = if (isMapView) MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-                                else Color.Transparent,
+                        color = containerColor,
                         shape = RoundedCornerShape(22.dp),
                         modifier = Modifier.weight(1f).padding(end = 12.dp),
                         shadowElevation = if (isMapView) 4.dp else 0.dp,
-                        tonalElevation = if (isMapView) 2.dp else 0.dp
+                        tonalElevation = if (isMapView) 2.dp else 0.dp,
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp, 
+                            if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
+                        )
                     ) {
-                        val locationTextColor = if (isMapView) MaterialTheme.colorScheme.onSurface else effectiveContentColor
                         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.LocationOn, null, tint = locationTextColor, modifier = Modifier.size(18.dp))
+                                Icon(Icons.Default.LocationOn, null, tint = effectiveContentColor, modifier = Modifier.size(18.dp))
                                 Spacer(Modifier.width(8.dp))
                                 Text(
                                     text = s.locationName.substringBefore(","),
-                                    color = locationTextColor,
-                                    style = MaterialTheme.typography.titleMedium.copy(shadow = if (isMapView) null else effectiveShadow),
+                                    color = effectiveContentColor,
+                                    style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     maxLines = 1
                                 )
                             }
                             Text(
                                 text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
-                                color = locationTextColor.copy(alpha = 0.6f),
-                                style = MaterialTheme.typography.labelSmall.copy(shadow = if (isMapView) null else effectiveShadow),
+                                color = effectiveContentColor.copy(alpha = 0.6f),
+                                style = MaterialTheme.typography.labelSmall,
                                 modifier = Modifier.padding(start = 26.dp)
                             )
                         }
                     }
                 }
 
-                // Segmented Switcher (Improved Design & Contrast)
                 Surface(
-                    color = if (isMapView) MaterialTheme.colorScheme.surface.copy(alpha = 0.95f) 
-                            else if (isLightBackground) Color.Black.copy(0.1f) 
-                            else Color.White.copy(0.15f),
+                    color = containerColor,
                     shape = RoundedCornerShape(22.dp),
                     modifier = Modifier.height(44.dp),
                     shadowElevation = if (isMapView) 4.dp else 0.dp,
-                    tonalElevation = if (isMapView) 2.dp else 0.dp
+                    tonalElevation = if (isMapView) 2.dp else 0.dp,
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp, 
+                        if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
+                    )
                 ) {
                     Row(
                         modifier = Modifier.padding(4.dp),
@@ -375,15 +383,12 @@ private fun QiblaContent(
                 }
             }
 
-            // MAIN CONTENT
             Column(
                 modifier = Modifier.fillMaxSize().padding(bottom = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Spacer for Header
                 Spacer(modifier = Modifier.height(100.dp))
 
-                // MIDDLE: Compass Area
                 Box(
                     modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.Center
@@ -413,7 +418,6 @@ private fun QiblaContent(
                     }
                 }
 
-                // BOTTOM: Info Card
                 Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                     QiblaInfoCard(
                         isAligned = isAligned,
@@ -423,7 +427,9 @@ private fun QiblaContent(
                         compassData = state.compassData,
                         isAccuracyLow = isAccuracyLow,
                         isAccuracyUnreliable = isAccuracyUnreliable,
-                        onCalibrationClick = onCalibrationClick
+                        onCalibrationClick = onCalibrationClick,
+                        isMapView = isMapView,
+                        isSatelliteView = isSatelliteView
                     )
                 }
             }

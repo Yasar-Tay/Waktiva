@@ -56,10 +56,7 @@
     <string name="qibla_kaaba_aligned">Kıbleye Hizalandı</string>
     <string name="qibla_find_marker">Altın İşareti Bulun</string>
     <string name="qibla_calibrate">KALİBRE ET</string>
-    <string name="accuracy_high">Yüksek</string>
-    <string name="accuracy_med">Orta</string>
-    <string name="accuracy_low">Düşük</string>
-    <string name="accuracy_poor">Zayıf</string>
+    <string name="qibla_interference_tip">İpucu: Binaların içindeki metal yapılar pusulayı etkileyebilir. En iyi hassasiyet için 8 çizecek şekilde kalibrasyon yapın.</string>
 
     <!-- General Settings -->
     <string name="settings_title">Ayarlar</string>
@@ -195,9 +192,23 @@
     <string name="hijri_month_6">Jumada al-Akhirah</string>
     <string name="hijri_month_7">Rajab</string>
     <string name="hijri_month_8">Sha‘ban</string>
-    <string name="hijri_month_9">Ramadan</string>
     <string name="hijri_month_10">Shawwal</string>
     <string name="hijri_month_11">Dhu al-Qi‘dah</string>
     <string name="hijri_month_12">Dhu al-Hijjah</string>
+    <string name="hijri_month_9">Ramazan</string>
     <string name="hijri_suffix">AH</string>
+
+    <!-- Religious Days -->
+    <string name="rel_day_3_months">Üç Aylar Başlangıcı</string>
+    <string name="rel_day_regaip">Regaip Kandili</string>
+    <string name="rel_day_mirac">Miraç Kandili</string>
+    <string name="rel_day_berat">Berat Kandili</string>
+    <string name="rel_day_ramadan_start">Ramazan Başlangıcı</string>
+    <string name="rel_day_kadir">Kadir Gecesi</string>
+    <string name="rel_day_arefe">Arefe Günü</string>
+    <string name="rel_day_ramadan_eid">Ramazan Bayramı</string>
+    <string name="rel_day_sacrifice_eid">Kurban Bayramı</string>
+    <string name="rel_day_hijri_new_year">Hicri Yılbaşı</string>
+    <string name="rel_day_ashura">Aşure Günü</string>
+    <string name="rel_day_mawlid">Mevlid Kandili</string>
 </resources>
