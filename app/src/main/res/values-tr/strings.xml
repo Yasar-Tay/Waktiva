@@ -179,4 +179,19 @@
     <string name="donate_button">Bağış Yap</string>
     <string name="donate_thank_you">Desteğiniz için teşekkür ederiz!</string>
     <string name="donate_error">Bağış işlemi başarısız oldu. Lütfen tekrar deneyin.</string>
+
+    <!-- Hijri Months -->
+    <string name="hijri_month_1">Muharrem</string>
+    <string name="hijri_month_2">Safer</string>
+    <string name="hijri_month_3">Rebiülevvel</string>
+    <string name="hijri_month_4">Rebiülahır</string>
+    <string name="hijri_month_5">Cemaziyelevvel</string>
+    <string name="hijri_month_6">Cemaziyelahır</string>
+    <string name="hijri_month_7">Recep</string>
+    <string name="hijri_month_8">Şaban</string>
+    <string name="hijri_month_9">Ramazan</string>
+    <string name="hijri_month_10">Şevval</string>
+    <string name="hijri_month_11">Zilkade</string>
+    <string name="hijri_month_12">Zilhicce</string>
+    <string name="hijri_suffix">H</string>
 </resources>

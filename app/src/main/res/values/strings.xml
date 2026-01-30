@@ -40,6 +40,9 @@
     <string name="home_prayer_provider">Provider: </string>
     <string name="home_skip_adhan">Mute</string>
     <string name="home_unmute_adhan">Unmute</string>
+    <string name="home_return_to_today">Return to Today</string>
+    <string name="home_tomorrow_is">Tomorrow is %s</string>
+    <string name="home_today_is">Today is %s</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Fajr</string>
@@ -191,4 +194,34 @@
     <string name="adhan_test_alarm">Test Alarm</string>
     <string name="adhan_test_desc">Simulating adhan trigger</string>
     <string name="adhan_stop_test">CANCEL TEST</string>
+
+    <!-- Hijri Months -->
+    <string name="hijri_month_1">Muharram</string>
+    <string name="hijri_month_2">Safar</string>
+    <string name="hijri_month_3">Rabi‘ al-Awwal</string>
+    <string name="hijri_month_4">Rabi‘ al-Thani</string>
+    <string name="hijri_month_5">Jumada al-Ula</string>
+    <string name="hijri_month_6">Jumada al-Akhirah</string>
+    <string name="hijri_month_7">Rajab</string>
+    <string name="hijri_month_8">Sha‘ban</string>
+    <string name="hijri_month_9">Ramadan</string>
+    <string name="hijri_month_10">Shawwal</string>
+    <string name="hijri_month_11">Dhu al-Qi‘dah</string>
+    <string name="hijri_month_12">Dhu al-Hijjah</string>
+    <string name="hijri_suffix">AH</string>
+
+    <!-- Religious Days -->
+    <string name="rel_day_3_months">Three Months Begin</string>
+    <string name="rel_day_regaip">Regaip Kandili</string>
+    <string name="rel_day_mirac">Miraç Kandili</string>
+    <string name="rel_day_berat">Berat Kandili</string>
+    <string name="rel_day_ramadan_start">Ramadan Begin</string>
+    <string name="rel_day_kadir">Laylat al-Qadr</string>
+    <string name="rel_day_arefe">Arefe</string>
+    <string name="rel_day_ramadan_eid">Eid al-Fitr</string>
+    <string name="rel_day_sacrifice_eid">Eid al-Adha</string>
+    <string name="rel_day_hijri_new_year">Hijri New Year</string>
+    <string name="rel_day_ashura">Ashura Day</string>
+    <string name="rel_day_mawlid">Mawlid Kandili</string>
+
 </resources>

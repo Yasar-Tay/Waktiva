@@ -61,7 +61,8 @@ fun HomeScreen(
         onDateSelected = { viewModel.selectDate(it) },
         onSkipNextAudio = { name, date -> viewModel.toggleSkipNextPrayerAudio(name, date) },
         onStopAdhan = { viewModel.stopAdhan() },
-        onStopTest = { viewModel.stopTestAlarm() }
+        onStopTest = { viewModel.stopTestAlarm() },
+        onResetDate = { viewModel.selectDate(LocalDate.now()) }
     )
 }
 
@@ -77,7 +78,8 @@ fun HomeScreenContent(
     onDateSelected: (LocalDate) -> Unit,
     onSkipNextAudio: (String, LocalDate) -> Unit,
     onStopAdhan: () -> Unit,
-    onStopTest: () -> Unit
+    onStopTest: () -> Unit,
+    onResetDate: () -> Unit
 ) {
     val permissions = mutableListOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -192,6 +194,7 @@ fun HomeScreenContent(
                                             }
                                         }
                                     },
+                                    onResetDate = onResetDate,
                                     accentColor = Color.White,
                                     showIdleState = false
                                 )

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
+import com.ybugmobile.vaktiva.domain.provider.ReligiousDaysProvider
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -59,7 +60,11 @@ fun ModernCalendarStrip(
                 val isSelected = date == selectedDate
                 val isToday = date == today
 
-                // Logic for Special Days
+                // Logic for Special Days using ReligiousDaysProvider
+                val religiousDay = ReligiousDaysProvider.getReligiousDay(date)
+                val isReligiousDay = religiousDay != null
+                
+                // Keep specific checks for Ramadan/Eid styling if desired
                 val isRamadan = hijri?.monthNumber == 9
                 val isEidFitr = hijri?.monthNumber == 10 && hijri.day in 1..3
                 val isEidAdha = hijri?.monthNumber == 12 && hijri.day in 10..13
@@ -68,6 +73,7 @@ fun ModernCalendarStrip(
                 val specialColor = when {
                     isEid -> Color(0xFFFFD700) // Gold for Eid
                     isRamadan -> Color(0xFF81C784) // Soft Green for Ramadan
+                    isReligiousDay -> Color(0xFF81D4FA) // Light Blue for other religious days
                     else -> null
                 }
 
@@ -76,6 +82,7 @@ fun ModernCalendarStrip(
                         isSelected -> contentColor.copy(alpha = 0.2f)
                         isEid -> specialColor?.copy(alpha = 0.25f) ?: Color.Transparent
                         isRamadan -> specialColor?.copy(alpha = 0.15f) ?: Color.Transparent
+                        isReligiousDay -> specialColor?.copy(alpha = 0.15f) ?: Color.Transparent
                         else -> Color.Transparent
                     },
                     label = "bgColor"
@@ -88,7 +95,7 @@ fun ModernCalendarStrip(
                     modifier = Modifier
                         .width(58.dp)
                         .then(
-                            if ((isEid || isRamadan) && !isSelected) {
+                            if ((isEid || isRamadan || isReligiousDay) && !isSelected) {
                                 Modifier.border(
                                     width = 1.5.dp,
                                     color = specialColor?.copy(alpha = 0.4f) ?: Color.Transparent,
@@ -113,7 +120,7 @@ fun ModernCalendarStrip(
                             text = date.dayOfMonth.toString(),
                             color = if (isEid && !isSelected) specialColor!! else contentColor,
                             fontSize = 18.sp,
-                            fontWeight = if (isSelected || isEid || isRamadan) FontWeight.ExtraBold else FontWeight.Medium
+                            fontWeight = if (isSelected || isEid || isRamadan || isReligiousDay) FontWeight.ExtraBold else FontWeight.Medium
                         )
 
                         Spacer(Modifier.height(6.dp))
@@ -131,7 +138,7 @@ fun ModernCalendarStrip(
                                 )
                             }
                             
-                            if (isEid || isRamadan) {
+                            if (isEid || isRamadan || isReligiousDay) {
                                 if (isToday) Spacer(Modifier.width(4.dp))
                                 Icon(
                                     imageVector = Icons.Rounded.Star,
