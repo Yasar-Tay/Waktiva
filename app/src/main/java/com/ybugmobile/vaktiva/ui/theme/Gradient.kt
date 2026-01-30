@@ -68,24 +68,24 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
                 1.0f to Color(0xFFFCD34D)  // Golden Flare Highlight
             )
         )
-        
-        // Full Day: Softened Spectral Azure (Reduced Saturation for a calmer feel)
+
+        // Full Day: Enriched Spectral Azure (Maximum Luminosity)
         currentTime.isBefore(sunsetStart) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF0F172A), // Deep Slate for status bar contrast
-                0.3f to Color(0xFF405D8A), // Muted Blue
-                0.7f to Color(0xFF7597B0), // Soft Blue Grey
-                1.0f to Color(0xFFA9C2D1)  // Pale Blue
+                0.0f to Color(0xFF172D69), // Deep Slate for status bar contrast
+                0.3f to Color(0xFF1E3A8A), // Rich Indigo-Blue
+                0.7f to Color(0xFF0284C7), // Luminous Azure
+                1.0f to Color(0xFF22D3EE)  // Vibrant Cyan Glow
             )
         )
 
-        // Sunset: Muted Terracotta and Soft Rose
+        // Sunset: Burnt Orange to a radiant Sunset Glow
         currentTime.isBefore(maghrib) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF4A342B), // Muted Deep Brown
-                0.4f to Color(0xFF81665C), // Soft Cocoa
-                0.7f to Color(0xFF9E7E7E), // Dusty Rose
-                1.0f to Color(0xFFD8B9A6)  // Muted Peach
+                0.0f to Color(0xFF1E3A8A), // Rich Indigo-Blue
+                0.4f to Color(0xFF9D592B), // Original Anchor
+                0.7f to Color(0xFFA43653), // Original Anchor
+                1.0f to Color(0xFFFDBA74)  // Radiant Sunset Highlight
             )
         )
 

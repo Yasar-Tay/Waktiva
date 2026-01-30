@@ -2,6 +2,7 @@ package com.ybugmobile.vaktiva.ui.welcome
 
 import android.Manifest
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -287,7 +289,6 @@ private fun PreferencesStep(
 ) {
     val settings by settingsViewModel.settings.collectAsState(null)
     val audioItems by audioViewModel.audioItems.collectAsState()
-    val context = LocalContext.current
     
     val currentAppLocales = AppCompatDelegate.getApplicationLocales()
     val currentLanguage = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
@@ -315,27 +316,10 @@ private fun PreferencesStep(
         stringResource(R.string.madhab_hanafi) to 1
     )
 
-    @Composable
-    fun getNativeLanguageName(languageCode: String): String {
-        return if (languageCode == "system") {
-            val systemLocale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                context.resources.configuration.locales[0]
-            } else {
-                @Suppress("DEPRECATION")
-                context.resources.configuration.locale
-            }
-            val displayName = systemLocale?.getDisplayName(systemLocale) ?: ""
-            "${stringResource(R.string.lang_system)} ($displayName)"
-        } else {
-            val locale = JavaLocale(languageCode)
-            locale.getDisplayName(locale).replaceFirstChar { it.uppercase() }
-        }
-    }
-
     val languageOptions = listOf(
-        "system" to getNativeLanguageName("system"),
-        "en" to getNativeLanguageName("en"),
-        "tr" to getNativeLanguageName("tr")
+        getNativeLanguageName("system") to "system",
+        getNativeLanguageName("en") to "en",
+        getNativeLanguageName("tr") to "tr"
     )
 
     Column(
@@ -354,7 +338,7 @@ private fun PreferencesStep(
             PreferenceSection(title = "General Settings") {
                 WelcomeSettingsClickItem(
                     title = stringResource(R.string.settings_language),
-                    subtitle = languageOptions.find { it.first == currentLanguage }?.second ?: getNativeLanguageName("system"),
+                    subtitle = getNativeLanguageName(currentLanguage),
                     icon = Icons.Default.Language,
                     onClick = { showLanguageDialog = true }
                 )
@@ -512,6 +496,22 @@ private fun PreferencesStep(
             onSelected = { settingsViewModel.setCalculationMethod(it); showMethodDialog = false },
             onDismiss = { showMethodDialog = false }
         )
+    }
+}
+
+@Composable
+private fun getNativeLanguageName(languageCode: String): String {
+    return when (languageCode) {
+        "system" -> {
+            val systemLocale = ConfigurationCompat.getLocales(Resources.getSystem().configuration).get(0)
+            val displayName = systemLocale?.getDisplayName(systemLocale)?.replaceFirstChar { it.uppercase() } ?: ""
+            val systemLabel = stringResource(R.string.lang_system)
+            if (displayName.isNotEmpty()) "$systemLabel ($displayName)" else systemLabel
+        }
+        else -> {
+            val locale = JavaLocale(languageCode)
+            locale.getDisplayName(locale).replaceFirstChar { it.uppercase() }
+        }
     }
 }
 
