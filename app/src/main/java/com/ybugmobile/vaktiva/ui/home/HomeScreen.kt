@@ -127,30 +127,30 @@ fun HomeScreenContent(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     if (isLandscape) {
-                        Row(modifier = Modifier.fillMaxSize()) {
-                            // Left Column: Header, Visualization, Countdown, Controls
-                            Column(
-                                modifier = Modifier
-                                    .weight(1.2f)
-                                    .fillMaxHeight()
-                                    .verticalScroll(rememberScrollState())
-                                    .padding(start = 24.dp, end = 12.dp, top = 16.dp, bottom = 16.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                HomeHeader(
-                                    locationName = state.locationName,
-                                    date = state.selectedDate,
-                                    hijriDate = state.currentPrayerDay?.hijriDate,
-                                    contentColor = contentColor
-                                )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(horizontal = 24.dp, vertical = 16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            HomeHeader(
+                                locationName = state.locationName,
+                                date = state.selectedDate,
+                                hijriDate = state.currentPrayerDay?.hijriDate,
+                                contentColor = contentColor
+                            )
 
-                                Spacer(modifier = Modifier.height(24.dp))
+                            Spacer(modifier = Modifier.height(24.dp))
 
-                                if (state.currentPrayerDay != null) {
+                            if (state.currentPrayerDay != null) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
                                     Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(260.dp),
+                                        modifier = Modifier.size(280.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         PrayerCircleVisualization(
@@ -175,31 +175,33 @@ fun HomeScreenContent(
                                         )
                                     }
 
-                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Spacer(modifier = Modifier.width(32.dp))
 
-                                    NextPrayerCountdown(
-                                        nextPrayer = state.nextPrayer,
-                                        selectedDate = state.selectedDate,
-                                        contentColor = contentColor,
-                                        currentPrayer = state.currentPrayer,
-                                        playAdhanAudio = settings?.playAdhanAudio ?: false,
-                                        isMuted = state.isMuted,
-                                        onSkipAudio = { prayerName ->
-                                            state.nextPrayer?.let { next ->
-                                                onSkipNextAudio(prayerName, next.date)
-                                                scope.launch {
-                                                    val message = if (!state.isMuted)
-                                                        "Adhan skipped for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
-                                                    else
-                                                        "Adhan unmuted for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
-                                                    snackbarHostState.showSnackbar(message)
+                                    Box(modifier = Modifier.weight(1f)) {
+                                        NextPrayerCountdown(
+                                            nextPrayer = state.nextPrayer,
+                                            selectedDate = state.selectedDate,
+                                            contentColor = contentColor,
+                                            currentPrayer = state.currentPrayer,
+                                            playAdhanAudio = settings?.playAdhanAudio ?: false,
+                                            isMuted = state.isMuted,
+                                            onSkipAudio = { prayerName ->
+                                                state.nextPrayer?.let { next ->
+                                                    onSkipNextAudio(prayerName, next.date)
+                                                    scope.launch {
+                                                        val message = if (!state.isMuted)
+                                                            "Adhan skipped for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                        else
+                                                            "Adhan unmuted for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                        snackbarHostState.showSnackbar(message)
+                                                    }
                                                 }
-                                            }
-                                        },
-                                        onResetDate = onResetDate,
-                                        accentColor = Color.White,
-                                        showIdleState = false
-                                    )
+                                            },
+                                            onResetDate = onResetDate,
+                                            accentColor = Color.White,
+                                            showIdleState = false
+                                        )
+                                    }
                                 }
 
                                 AdhanControls(
@@ -208,27 +210,21 @@ fun HomeScreenContent(
                                     isTest = state.nextPrayer?.isTest == true,
                                     onStopAdhan = onStopAdhan,
                                     onStopTest = onStopTest,
-                                    modifier = Modifier.padding(top = 24.dp)
+                                    modifier = Modifier.padding(vertical = 24.dp)
                                 )
                             }
 
-                            // Right Column: Calendar, Prayer Times, Settings
                             Surface(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxHeight(),
+                                modifier = Modifier.fillMaxWidth(),
                                 color = Color.Black.copy(alpha = 0.15f),
-                                shape = RoundedCornerShape(topStart = 32.dp, bottomStart = 32.dp),
+                                shape = RoundedCornerShape(32.dp),
                                 border = androidx.compose.foundation.BorderStroke(
                                     1.dp,
                                     contentColor.copy(alpha = 0.1f)
                                 )
                             ) {
                                 Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .verticalScroll(rememberScrollState())
-                                        .padding(24.dp)
+                                    modifier = Modifier.padding(24.dp)
                                 ) {
                                     ModernCalendarStrip(
                                         selectedDate = state.selectedDate,
@@ -258,6 +254,7 @@ fun HomeScreenContent(
                                     )
                                 }
                             }
+                            Spacer(modifier = Modifier.height(32.dp))
                         }
                     } else {
                         // Portrait Layout
