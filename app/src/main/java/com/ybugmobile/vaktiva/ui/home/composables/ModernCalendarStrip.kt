@@ -1,8 +1,11 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -16,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,13 +40,26 @@ fun ModernCalendarStrip(
     val dayNameFormatter = DateTimeFormatter.ofPattern("EEE")
     
     val listState = rememberLazyListState()
+    val density = LocalDensity.current
 
-    // Auto-scroll to selected date when it changes (e.g. clicking "Return to Today")
+    // Slower Auto-scroll to selected date
     LaunchedEffect(selectedDate) {
         val index = availableDays.indexOfFirst { it.date == selectedDate }
         if (index != -1) {
-            // Animate to the selected item
-            listState.animateScrollToItem(index)
+            val itemWidthWithSpacingPx = with(density) { 72.dp.toPx() }
+            val targetScrollPx = index * itemWidthWithSpacingPx
+            val currentScrollPx = listState.firstVisibleItemIndex * itemWidthWithSpacingPx + 
+                                 listState.firstVisibleItemScrollOffset
+            
+            val scrollDelta = targetScrollPx - currentScrollPx
+            
+            listState.animateScrollBy(
+                value = scrollDelta,
+                animationSpec = tween(
+                    durationMillis = 1000, 
+                    easing = FastOutSlowInEasing
+                )
+            )
         }
     }
 
@@ -67,10 +84,11 @@ fun ModernCalendarStrip(
                 val isEidAdha = hijri?.monthNumber == 12 && hijri.day in 10..13
                 val isEid = isEidFitr || isEidAdha
 
+                // Muted, sophisticated colors for special days
                 val accentColor = when {
-                    isEid -> Color(0xFFFFD700) // Gold
-                    isRamadan -> Color(0xFF4CAF50) // Green
-                    isReligiousDay -> Color(0xFF2196F3) // Blue
+                    isEid -> Color(0xFFFBC02D) // Soft Gold
+                    isRamadan -> Color(0xFF81C784) // Sage Green
+                    isReligiousDay -> Color(0xFF90CAF9) // Soft Blue
                     else -> contentColor.copy(alpha = 0.15f)
                 }
 
@@ -89,7 +107,7 @@ fun ModernCalendarStrip(
                             if (isSelected) {
                                 Modifier.border(1.dp, contentColor.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
                             } else if (isReligiousDay || isRamadan || isEid) {
-                                Modifier.border(1.dp, accentColor.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                                Modifier.border(1.dp, accentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
                             } else Modifier
                         )
                 ) {
@@ -102,16 +120,18 @@ fun ModernCalendarStrip(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(
-                                    if (isReligiousDay || isRamadan || isEid) accentColor.copy(alpha = 0.8f)
-                                    else if (isSelected) contentColor.copy(alpha = 0.2f)
-                                    else contentColor.copy(alpha = 0.1f)
+                                    when {
+                                        isReligiousDay || isRamadan || isEid -> accentColor.copy(alpha = 0.35f)
+                                        isSelected -> contentColor.copy(alpha = 0.2f)
+                                        else -> contentColor.copy(alpha = 0.1f)
+                                    }
                                 )
                                 .padding(vertical = 4.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = date.format(monthFormatter).uppercase(),
-                                color = if (isReligiousDay || isRamadan || isEid) Color.Black else contentColor.copy(alpha = 0.6f),
+                                color = if (isReligiousDay || isRamadan || isEid) contentColor else contentColor.copy(alpha = 0.6f),
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Black,
                                 letterSpacing = 0.5.sp
@@ -123,7 +143,7 @@ fun ModernCalendarStrip(
                         // Middle Section: Day Number
                         Text(
                             text = date.dayOfMonth.toString(),
-                            color = if (isEid && !isSelected) accentColor else contentColor,
+                            color = contentColor,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.ExtraBold,
                             lineHeight = 22.sp
@@ -154,7 +174,7 @@ fun ModernCalendarStrip(
                                 Icon(
                                     imageVector = Icons.Rounded.Star,
                                     contentDescription = null,
-                                    tint = accentColor,
+                                    tint = accentColor.copy(alpha = 0.8f),
                                     modifier = Modifier.size(8.dp)
                                 )
                             } else {
