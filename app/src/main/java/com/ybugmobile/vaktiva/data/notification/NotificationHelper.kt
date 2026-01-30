@@ -32,6 +32,7 @@ class NotificationHelper @Inject constructor(
         
         const val ACTION_SKIP_ADHAN = "com.ybugmobile.vaktiva.ACTION_SKIP_ADHAN"
         const val EXTRA_PRAYER_NAME = "PRAYER_NAME"
+        const val EXTRA_PRAYER_DATE = "PRAYER_DATE"
     }
 
     init {
@@ -65,7 +66,7 @@ class NotificationHelper @Inject constructor(
         }
     }
 
-    fun showPreAdhanWarning(prayerName: String, minutes: Int, isMuted: Boolean = false) {
+    fun showPreAdhanWarning(prayerName: String, prayerDate: String, minutes: Int, isMuted: Boolean = false) {
         val contentIntent = PendingIntent.getActivity(
             context, 0, Intent(context, MainActivity::class.java), 
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -82,14 +83,15 @@ class NotificationHelper @Inject constructor(
         if (isMuted) {
             builder.setContentTitle("Adhan Muted")
                 .setContentText("Adhan for $prayerName is skipped.")
-                .setSmallIcon(R.drawable.ic_launcher_foreground) // Use a different icon if available
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
         } else {
             val skipIntent = Intent(context, PrayerAlarmReceiver::class.java).apply {
                 action = ACTION_SKIP_ADHAN
                 putExtra(EXTRA_PRAYER_NAME, prayerName)
+                putExtra(EXTRA_PRAYER_DATE, prayerDate)
             }
             val skipPendingIntent = PendingIntent.getBroadcast(
-                context, prayerName.hashCode(), skipIntent, 
+                context, prayerName.hashCode() + prayerDate.hashCode(), skipIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 

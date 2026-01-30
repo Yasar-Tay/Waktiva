@@ -15,6 +15,7 @@ import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
@@ -39,9 +40,10 @@ class AlarmScheduler @Inject constructor(
     fun scheduleTestAlarm(secondsFromNow: Int) {
         val adhanDelay = if (secondsFromNow < 5) 5 else secondsFromNow
         val adhanTriggerAt = System.currentTimeMillis() + (adhanDelay * 1000)
+        val today = LocalDate.now().toString()
         
         Log.d("AlarmScheduler", "Scheduling TEST adhan in $adhanDelay seconds")
-        scheduleAlarm(adhanTriggerAt, PrayerType.FAJR.name, ACTION_PRAYER_ALARM, REQUEST_CODE_TEST)
+        scheduleAlarm(adhanTriggerAt, PrayerType.FAJR.name, today, ACTION_PRAYER_ALARM, REQUEST_CODE_TEST)
 
         runBlocking {
             val settings = settingsManager.settingsFlow.first()
@@ -50,7 +52,7 @@ class AlarmScheduler @Inject constructor(
                 val notificationDelaySeconds = (adhanDelay - warningSeconds).coerceAtLeast(1)
                 val preTriggerAt = System.currentTimeMillis() + (notificationDelaySeconds * 1000)
                 Log.d("AlarmScheduler", "Scheduling TEST pre-adhan in $notificationDelaySeconds seconds")
-                scheduleAlarm(preTriggerAt, PrayerType.FAJR.name, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_TEST_PRE)
+                scheduleAlarm(preTriggerAt, PrayerType.FAJR.name, today, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_TEST_PRE)
             }
         }
     }
@@ -62,7 +64,6 @@ class AlarmScheduler @Inject constructor(
         val nextPrayer = prayerDays
             .flatMap { day -> 
                 day.timings.map { (type, time) -> 
-                    // Calculate trigger time
                     var triggerDateTime = day.date.atTime(time)
                     
                     if (type == PrayerType.FAJR) {
@@ -82,12 +83,13 @@ class AlarmScheduler @Inject constructor(
             .minByOrNull { it.second }
 
         if (nextPrayer != null) {
-            val (type, dateTime, _) = nextPrayer
+            val (type, dateTime, prayerDay) = nextPrayer
             val epochMillis = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            val prayerDateStr = prayerDay.date.toString()
             
             // Schedule actual Adhan
             Log.d("AlarmScheduler", "Scheduling ADHAN alarm for: ${type.name} at $dateTime")
-            scheduleAlarm(epochMillis, type.name, ACTION_PRAYER_ALARM, REQUEST_CODE_ADHAN)
+            scheduleAlarm(epochMillis, type.name, prayerDateStr, ACTION_PRAYER_ALARM, REQUEST_CODE_ADHAN)
 
             // Schedule Pre-Adhan Notification
             if (enablePreAdhan && preAdhanMinutes > 0) {
@@ -95,9 +97,11 @@ class AlarmScheduler @Inject constructor(
                 if (preTime.isAfter(now)) {
                     val preEpochMillis = preTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
                     Log.d("AlarmScheduler", "Scheduling PRE-ADHAN alarm for: ${type.name} at $preTime")
-                    scheduleAlarm(preEpochMillis, type.name, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_PRE_ADHAN)
+                    scheduleAlarm(preEpochMillis, type.name, prayerDateStr, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_PRE_ADHAN)
                 } else {
-                    scheduleAlarm(System.currentTimeMillis() + 500, type.name, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_PRE_ADHAN)
+                    // If we are already in the warning window, trigger it shortly
+                    Log.d("AlarmScheduler", "Within warning window, scheduling PRE-ADHAN soon")
+                    scheduleAlarm(System.currentTimeMillis() + 1000, type.name, prayerDateStr, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_PRE_ADHAN)
                 }
             }
         } else {
@@ -105,10 +109,11 @@ class AlarmScheduler @Inject constructor(
         }
     }
 
-    private fun scheduleAlarm(timeMillis: Long, prayerName: String, action: String, requestCode: Int) {
+    private fun scheduleAlarm(timeMillis: Long, prayerName: String, prayerDate: String, action: String, requestCode: Int) {
         val intent = Intent(context, PrayerAlarmReceiver::class.java).apply {
             this.action = action
             putExtra(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
+            putExtra(NotificationHelper.EXTRA_PRAYER_DATE, prayerDate)
             component = ComponentName(context, PrayerAlarmReceiver::class.java)
         }
 

@@ -44,19 +44,20 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action ?: return
         val prayerName = intent.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME) ?: return
+        val prayerDate = intent.getStringExtra(NotificationHelper.EXTRA_PRAYER_DATE) ?: LocalDate.now().toString()
 
-        Log.d("PrayerAlarmReceiver", "onReceive: action=$action, prayer=$prayerName")
+        Log.d("PrayerAlarmReceiver", "onReceive: action=$action, prayer=$prayerName, date=$prayerDate")
         
         if (action == NotificationHelper.ACTION_SKIP_ADHAN) {
             runBlocking {
-                val today = LocalDate.now().toString()
-                settingsManager.muteNextPrayer(prayerName, today)
-                Log.d("PrayerAlarmReceiver", "SKIP SUCCESS: $prayerName muted for $today")
+                settingsManager.muteNextPrayer(prayerName, prayerDate)
+                Log.d("PrayerAlarmReceiver", "SKIP SUCCESS: $prayerName muted for $prayerDate")
                 
                 // Update notification immediately to show muted state
                 val settings = settingsManager.settingsFlow.first()
                 notificationHelper.showPreAdhanWarning(
                     prayerName = prayerName,
+                    prayerDate = prayerDate,
                     minutes = settings.preAdhanWarningMinutes,
                     isMuted = true
                 )
@@ -78,21 +79,26 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         }
 
                         val isMuted = settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && 
-                                     settings.mutedPrayerDate == LocalDate.now().toString()
+                                     settings.mutedPrayerDate == prayerDate
                         
                         notificationHelper.showPreAdhanWarning(
                             prayerName = prayerName,
+                            prayerDate = prayerDate,
                             minutes = settings.preAdhanWarningMinutes,
                             isMuted = isMuted
                         )
                     }
                     AlarmScheduler.ACTION_PRAYER_ALARM -> {
-                        handleAdhanTrigger(context, prayerName)
+                        handleAdhanTrigger(context, prayerName, prayerDate)
+                        // Only reschedule when a prayer time is actually reached
+                        rescheduleNextPrayer()
+                    }
+                    Intent.ACTION_BOOT_COMPLETED -> {
+                        rescheduleNextPrayer()
                     }
                 }
-                
-                rescheduleNextPrayer()
-                
+            } catch (e: Exception) {
+                Log.e("PrayerAlarmReceiver", "Error in onReceive", e)
             } finally {
                 pendingResult.finish()
             }
@@ -111,19 +117,19 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private suspend fun handleAdhanTrigger(context: Context, prayerName: String) {
+    private suspend fun handleAdhanTrigger(context: Context, prayerName: String, prayerDate: String) {
         val settings = settingsManager.settingsFlow.first()
         
-        if (!settings.playAdhanAudio) {
-            Log.d("PrayerAlarmReceiver", "ADHAN SUPPRESSED: playAdhanAudio is disabled in settings.")
-            // Clear mute state even if audio is disabled, as the "prayer time" event has occurred
+        // If it's a test alarm, we ignore some settings
+        val isTest = settings.testAlarmEndTime != null
+        
+        if (!settings.playAdhanAudio && !isTest) {
+            Log.d("PrayerAlarmReceiver", "ADHAN SUPPRESSED: playAdhanAudio is disabled.")
             settingsManager.clearMutedPrayer()
             return
         }
 
-        val today = LocalDate.now().toString()
-
-        if (settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && settings.mutedPrayerDate == today) {
+        if (settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && settings.mutedPrayerDate == prayerDate) {
             Log.d("PrayerAlarmReceiver", "ADHAN SKIPPED: Logic recognized skip for $prayerName.")
             settingsManager.clearMutedPrayer()
             notificationHelper.cancelWarningNotification()
@@ -147,7 +153,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
             val finalPath = audioPath ?: "android.resource://${context.packageName}/${R.raw.ezan}"
             val serviceIntent = Intent(context, AdhanService::class.java).apply {
-                putExtra("PRAYER_NAME", prayerName)
+                putExtra(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
                 putExtra("AUDIO_PATH", finalPath)
             }
 
