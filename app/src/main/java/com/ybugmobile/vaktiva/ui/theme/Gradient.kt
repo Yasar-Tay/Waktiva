@@ -43,7 +43,6 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
             )
         )
 
-        // Midday: Sophisticated Deep Navy (Clean & Modern)
         currentTime.isBefore(sunsetStart) -> Brush.verticalGradient(
             colorStops = arrayOf(
                 0.0f to Color(0xFF2580C7),

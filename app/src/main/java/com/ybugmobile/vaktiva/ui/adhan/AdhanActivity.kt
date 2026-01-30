@@ -10,19 +10,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.rounded.NotificationsActive
-import androidx.compose.material.icons.rounded.VolumeUp
+import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -125,9 +121,9 @@ fun AdhanScreen(prayerName: String, onDismiss: () -> Unit) {
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.15f,
+        targetValue = 1.2f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = FastOutSlowInEasing),
+            animation = tween(2000, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "pulse"
@@ -139,7 +135,8 @@ fun AdhanScreen(prayerName: String, onDismiss: () -> Unit) {
     LaunchedEffect(Unit) {
         while (true) {
             currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-            currentDate = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date())
+            currentDate = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date().apply { time += 86400000 }).uppercase() // Mocking for aesthetic consistency
+            currentDate = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date()).uppercase()
             delay(1000)
         }
     }
@@ -150,22 +147,20 @@ fun AdhanScreen(prayerName: String, onDismiss: () -> Unit) {
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.95f),
-                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
-                        MaterialTheme.colorScheme.surface
+                        Color(0xFF0F172A), // Deep Slate
+                        Color(0xFF1E293B)  // Slate
                     )
                 )
             )
     ) {
-        // Animated Background Orbs
-        Surface(
+        // Decorative Background Elements
+        Box(
             modifier = Modifier
                 .align(Alignment.Center)
-                .size(300.dp)
+                .size(400.dp)
                 .scale(pulseScale)
-                .clip(CircleShape),
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
-        ) {}
+                .background(Color.White.copy(alpha = 0.03f), CircleShape)
+        )
 
         Column(
             modifier = Modifier
@@ -174,88 +169,97 @@ fun AdhanScreen(prayerName: String, onDismiss: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Header: Time & Date
+            // 1. Time & Date Section
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(top = 40.dp)
+                modifier = Modifier.padding(top = 60.dp)
             ) {
                 Text(
                     text = currentTime,
                     style = MaterialTheme.typography.displayLarge.copy(
-                        fontSize = 80.sp,
-                        fontWeight = FontWeight.Light,
-                        letterSpacing = (-2).sp
+                        fontSize = 92.sp,
+                        fontWeight = FontWeight.ExtraLight,
+                        letterSpacing = (-4).sp
                     ),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = Color.White
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = currentDate,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.White.copy(alpha = 0.4f),
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 2.sp
                 )
             }
 
-            // Center: Icon & Prayer Info
+            // 2. Prayer Name Section
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(bottom = 32.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Surface(
-                            modifier = Modifier
-                                .size(120.dp)
-                                .scale(pulseScale)
-                                .border(2.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape),
-                            shape = CircleShape,
-                            color = Color.Transparent
-                        ) {}
-                        Surface(
-                            onClick = onDismiss,
-                            modifier = Modifier.size(80.dp),
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.errorContainer,
-                            tonalElevation = 8.dp
-                        ) {
+                Text(
+                    text = stringResource(R.string.adhan_its_time_for).uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.White.copy(alpha = 0.5f),
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 4.sp
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = prayerName.uppercase(),
+                    style = MaterialTheme.typography.displayMedium.copy(
+                        fontSize = 56.sp,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 2.sp
+                    ),
+                    color = Color.White
+                )
+            }
+
+            // 3. Action Section: STOP Button
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(bottom = 60.dp)
+            ) {
+                // Outer Pulse Ring
+                Box(contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .size(120.dp)
+                            .scale(pulseScale)
+                            .background(Color.White.copy(alpha = 0.05f), CircleShape)
+                    )
+                    
+                    Surface(
+                        onClick = onDismiss,
+                        modifier = Modifier.size(84.dp),
+                        shape = CircleShape,
+                        color = Color.White.copy(alpha = 0.1f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
                             Icon(
-                                imageVector = Icons.Default.Stop,
+                                imageVector = Icons.Rounded.Stop,
                                 contentDescription = stringResource(R.string.adhan_stop),
-                                modifier = Modifier.padding(20.dp).size(40.dp),
-                                tint = MaterialTheme.colorScheme.onErrorContainer
+                                modifier = Modifier.size(32.dp),
+                                tint = Color.White
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        text = stringResource(R.string.adhan_stop),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.Bold
-                    )
                 }
                 
+                Spacer(modifier = Modifier.height(24.dp))
+                
                 Text(
-                    text = stringResource(R.string.adhan_its_time_for),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = stringResource(R.string.adhan_stop).uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.White.copy(alpha = 0.6f),
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 2.sp
                 )
-                Text(
-                    text = prayerName,
-                    style = MaterialTheme.typography.displayMedium.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 0.sp
-                    ),
-                    color = MaterialTheme.colorScheme.primary
-                )
-
             }
-
-            // Bottom space (previously held the stop button)
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
