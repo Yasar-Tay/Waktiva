@@ -1,14 +1,17 @@
 package com.ybugmobile.vaktiva.ui.qibla
 
 import android.Manifest
+import android.content.res.Configuration
 import android.hardware.SensorManager
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -21,6 +24,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -155,6 +159,9 @@ private fun QiblaContent(
     var isSatelliteView by remember { mutableStateOf(false) }
     val kaabaLatLng = LatLng(21.4225, 39.8262)
 
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     val effectiveContentColor = if (isMapView) {
         if (isSatelliteView) Color.White else Color.Black
     } else contentColor
@@ -188,129 +195,237 @@ private fun QiblaContent(
             )
         }
 
-        // TOP HEADER: Location (Left) and View Switcher (Right)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 40.dp, start = 16.dp, end = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Location Info (Improved Design & Contrast)
-            state.settings?.let { s ->
+        if (isLandscape) {
+            // LANDSCAPE LAYOUT
+            Row(modifier = Modifier.fillMaxSize()) {
+                // Left Side: Compass
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (!isMapView) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier
+                                    .size(280.dp)
+                                    .background(
+                                        Brush.radialGradient(
+                                            colors = listOf(
+                                                if (isLightBackground) Color.White.copy(alpha = 0.4f) else Color.Black.copy(alpha = 0.4f),
+                                                Color.Transparent
+                                            )
+                                        )
+                                    )
+                            )
+                            ProfessionalCompass(
+                                azimuth = animatedAzimuth,
+                                qiblaAngle = state.qiblaDirection.toFloat(),
+                                alignmentColor = alignmentColor,
+                                isAligned = isAligned,
+                                contentColor = contentColor
+                            )
+                        }
+                    }
+                }
+
+                // Right Side: Info and Controls
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .padding(24.dp)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Header (Location & Switcher)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        state.settings?.let { s ->
+                            Surface(
+                                color = if (isMapView) MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+                                        else Color.Transparent,
+                                shape = RoundedCornerShape(22.dp),
+                                modifier = Modifier.weight(1f).padding(end = 8.dp),
+                                shadowElevation = if (isMapView) 4.dp else 0.dp
+                            ) {
+                                val locationTextColor = if (isMapView) MaterialTheme.colorScheme.onSurface else effectiveContentColor
+                                Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
+                                    Text(
+                                        text = s.locationName.substringBefore(","),
+                                        color = locationTextColor,
+                                        style = MaterialTheme.typography.titleSmall.copy(shadow = if (isMapView) null else effectiveShadow),
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1
+                                    )
+                                    Text(
+                                        text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
+                                        color = locationTextColor.copy(alpha = 0.6f),
+                                        style = MaterialTheme.typography.labelSmall.copy(shadow = if (isMapView) null else effectiveShadow)
+                                    )
+                                }
+                            }
+                        }
+
+                        Surface(
+                            color = if (isMapView) MaterialTheme.colorScheme.surface.copy(alpha = 0.95f) 
+                                    else if (isLightBackground) Color.Black.copy(0.1f) 
+                                    else Color.White.copy(0.15f),
+                            shape = RoundedCornerShape(22.dp),
+                            modifier = Modifier.height(40.dp),
+                            shadowElevation = if (isMapView) 4.dp else 0.dp
+                        ) {
+                            Row(modifier = Modifier.padding(2.dp)) {
+                                SwitcherButton(isSelected = !isMapView, icon = Icons.Default.Explore, contentColor = effectiveContentColor, isMapView = isMapView, onClick = { isMapView = false })
+                                SwitcherButton(isSelected = isMapView, icon = Icons.Default.Map, contentColor = effectiveContentColor, isMapView = isMapView, onClick = { isMapView = true })
+                            }
+                        }
+                    }
+
+                    // Info Card
+                    QiblaInfoCard(
+                        isAligned = isAligned,
+                        alignmentColor = alignmentColor,
+                        settings = state.settings,
+                        qiblaDirection = state.qiblaDirection,
+                        compassData = state.compassData,
+                        isAccuracyLow = isAccuracyLow,
+                        isAccuracyUnreliable = isAccuracyUnreliable,
+                        onCalibrationClick = onCalibrationClick
+                    )
+                }
+            }
+        } else {
+            // PORTRAIT LAYOUT
+            // TOP HEADER: Location (Left) and View Switcher (Right)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 40.dp, start = 16.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Location Info (Improved Design & Contrast)
+                state.settings?.let { s ->
+                    Surface(
+                        color = if (isMapView) MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+                                else Color.Transparent,
+                        shape = RoundedCornerShape(22.dp),
+                        modifier = Modifier.weight(1f).padding(end = 12.dp),
+                        shadowElevation = if (isMapView) 4.dp else 0.dp,
+                        tonalElevation = if (isMapView) 2.dp else 0.dp
+                    ) {
+                        val locationTextColor = if (isMapView) MaterialTheme.colorScheme.onSurface else effectiveContentColor
+                        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.LocationOn, null, tint = locationTextColor, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = s.locationName.substringBefore(","),
+                                    color = locationTextColor,
+                                    style = MaterialTheme.typography.titleMedium.copy(shadow = if (isMapView) null else effectiveShadow),
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1
+                                )
+                            }
+                            Text(
+                                text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
+                                color = locationTextColor.copy(alpha = 0.6f),
+                                style = MaterialTheme.typography.labelSmall.copy(shadow = if (isMapView) null else effectiveShadow),
+                                modifier = Modifier.padding(start = 26.dp)
+                            )
+                        }
+                    }
+                }
+
+                // Segmented Switcher (Improved Design & Contrast)
                 Surface(
-                    color = if (isMapView) MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-                            else Color.Transparent,
+                    color = if (isMapView) MaterialTheme.colorScheme.surface.copy(alpha = 0.95f) 
+                            else if (isLightBackground) Color.Black.copy(0.1f) 
+                            else Color.White.copy(0.15f),
                     shape = RoundedCornerShape(22.dp),
-                    modifier = Modifier.weight(1f).padding(end = 12.dp),
+                    modifier = Modifier.height(44.dp),
                     shadowElevation = if (isMapView) 4.dp else 0.dp,
                     tonalElevation = if (isMapView) 2.dp else 0.dp
                 ) {
-                    val locationTextColor = if (isMapView) MaterialTheme.colorScheme.onSurface else effectiveContentColor
-                    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.LocationOn, null, tint = locationTextColor, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                text = s.locationName.substringBefore(","),
-                                color = locationTextColor,
-                                style = MaterialTheme.typography.titleMedium.copy(shadow = if (isMapView) null else effectiveShadow),
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1
-                            )
-                        }
-                        Text(
-                            text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
-                            color = locationTextColor.copy(alpha = 0.6f),
-                            style = MaterialTheme.typography.labelSmall.copy(shadow = if (isMapView) null else effectiveShadow),
-                            modifier = Modifier.padding(start = 26.dp)
+                    Row(
+                        modifier = Modifier.padding(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SwitcherButton(
+                            isSelected = !isMapView,
+                            icon = Icons.Default.Explore,
+                            contentColor = effectiveContentColor,
+                            isMapView = isMapView,
+                            onClick = { isMapView = false }
+                        )
+                        SwitcherButton(
+                            isSelected = isMapView,
+                            icon = Icons.Default.Map,
+                            contentColor = effectiveContentColor,
+                            isMapView = isMapView,
+                            onClick = { isMapView = true }
                         )
                     }
                 }
             }
 
-            // Segmented Switcher (Improved Design & Contrast)
-            Surface(
-                color = if (isMapView) MaterialTheme.colorScheme.surface.copy(alpha = 0.95f) 
-                        else if (isLightBackground) Color.Black.copy(0.1f) 
-                        else Color.White.copy(0.15f),
-                shape = RoundedCornerShape(22.dp),
-                modifier = Modifier.height(44.dp),
-                shadowElevation = if (isMapView) 4.dp else 0.dp,
-                tonalElevation = if (isMapView) 2.dp else 0.dp
+            // MAIN CONTENT
+            Column(
+                modifier = Modifier.fillMaxSize().padding(bottom = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                    modifier = Modifier.padding(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                // Spacer for Header
+                Spacer(modifier = Modifier.height(100.dp))
+
+                // MIDDLE: Compass Area
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
                 ) {
-                    SwitcherButton(
-                        isSelected = !isMapView,
-                        icon = Icons.Default.Explore,
-                        contentColor = effectiveContentColor,
-                        isMapView = isMapView,
-                        onClick = { isMapView = false }
-                    )
-                    SwitcherButton(
-                        isSelected = isMapView,
-                        icon = Icons.Default.Map,
-                        contentColor = effectiveContentColor,
-                        isMapView = isMapView,
-                        onClick = { isMapView = true }
-                    )
-                }
-            }
-        }
-
-        // MAIN CONTENT
-        Column(
-            modifier = Modifier.fillMaxSize().padding(bottom = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Spacer for Header
-            Spacer(modifier = Modifier.height(100.dp))
-
-            // MIDDLE: Compass Area
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                if (!isMapView) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Box(
-                            modifier = Modifier
-                                .size(320.dp)
-                                .background(
-                                    Brush.radialGradient(
-                                        colors = listOf(
-                                            if (isLightBackground) Color.White.copy(alpha = 0.4f) else Color.Black.copy(alpha = 0.4f),
-                                            Color.Transparent
+                    if (!isMapView) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier
+                                    .size(320.dp)
+                                    .background(
+                                        Brush.radialGradient(
+                                            colors = listOf(
+                                                if (isLightBackground) Color.White.copy(alpha = 0.4f) else Color.Black.copy(alpha = 0.4f),
+                                                Color.Transparent
+                                            )
                                         )
                                     )
-                                )
-                        )
-                        ProfessionalCompass(
-                            azimuth = animatedAzimuth,
-                            qiblaAngle = state.qiblaDirection.toFloat(),
-                            alignmentColor = alignmentColor,
-                            isAligned = isAligned,
-                            contentColor = contentColor
-                        )
+                            )
+                            ProfessionalCompass(
+                                azimuth = animatedAzimuth,
+                                qiblaAngle = state.qiblaDirection.toFloat(),
+                                alignmentColor = alignmentColor,
+                                isAligned = isAligned,
+                                contentColor = contentColor
+                            )
+                        }
                     }
                 }
-            }
 
-            // BOTTOM: Info Card
-            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                QiblaInfoCard(
-                    isAligned = isAligned,
-                    alignmentColor = alignmentColor,
-                    settings = state.settings,
-                    qiblaDirection = state.qiblaDirection,
-                    compassData = state.compassData,
-                    isAccuracyLow = isAccuracyLow,
-                    isAccuracyUnreliable = isAccuracyUnreliable,
-                    onCalibrationClick = onCalibrationClick
-                )
+                // BOTTOM: Info Card
+                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                    QiblaInfoCard(
+                        isAligned = isAligned,
+                        alignmentColor = alignmentColor,
+                        settings = state.settings,
+                        qiblaDirection = state.qiblaDirection,
+                        compassData = state.compassData,
+                        isAccuracyLow = isAccuracyLow,
+                        isAccuracyUnreliable = isAccuracyUnreliable,
+                        onCalibrationClick = onCalibrationClick
+                    )
+                }
             }
         }
     }
