@@ -27,6 +27,9 @@
     <string name="qibla_got_it">Got it</string>
     <string name="qibla_aligned_badge">ALIGNED</string>
     <string name="qibla_magnetic_interference">Magnetic Interference Detected - Calibrate Device</string>
+    <string name="qibla_kaaba_aligned">Kaaba Aligned</string>
+    <string name="qibla_find_marker">Find the Golden Marker</string>
+    <string name="qibla_calibrate">CALIBRATE</string>
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Unknown Location</string>

@@ -3,9 +3,10 @@ package com.ybugmobile.vaktiva.ui.qibla.composables
 import android.hardware.SensorManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.data.sensor.CompassData
@@ -29,17 +31,14 @@ fun QiblaInfoCard(
     isAccuracyUnreliable: Boolean,
     onCalibrationClick: () -> Unit
 ) {
-    Card(
+    Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(
-                alpha = 0.95f
-            )
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        shape = RoundedCornerShape(32.dp),
+        color = Color.White.copy(alpha = 0.1f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.15f))
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(24.dp)) {
+            // Top Section: Alignment Status
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -47,91 +46,113 @@ fun QiblaInfoCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = if (isAligned) stringResource(R.string.qibla_mecca_aligned) else stringResource(
-                            R.string.qibla_rotate_phone
-                        ),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = alignmentColor
-                    )
-                    Text(
-                        text = settings?.let {
-                            stringResource(
-                                R.string.qibla_direction,
-                                qiblaDirection.toInt()
-                            )
-                        } ?: stringResource(R.string.qibla_locating),
+                        text = if (isAligned) stringResource(R.string.qibla_mecca_aligned).uppercase()
+                               else stringResource(R.string.qibla_rotate_phone).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        fontWeight = FontWeight.Black,
+                        color = if (isAligned) Color(0xFF4CAF50) else Color.White,
+                        letterSpacing = 1.5.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = if (isAligned) stringResource(R.string.qibla_kaaba_aligned) 
+                               else stringResource(R.string.qibla_find_marker),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(alpha = 0.6f)
                     )
                 }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (isAccuracyLow) {
-                        FilledIconButton(
-                            onClick = onCalibrationClick,
-                            modifier = Modifier.size(40.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = IconButtonDefaults.filledIconButtonColors(
-                                containerColor = MaterialTheme.colorScheme.errorContainer,
-                                contentColor = MaterialTheme.colorScheme.error
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Warning,
-                                contentDescription = "Calibration Needed",
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(alignmentColor.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
-                        contentAlignment = Alignment.Center
+                if (isAccuracyLow) {
+                    FilledTonalButton(
+                        onClick = onCalibrationClick,
+                        modifier = Modifier.height(40.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.filledTonalButtonColors(
+                            containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.2f),
+                            contentColor = Color.White
+                        ),
+                        contentPadding = PaddingValues(horizontal = 12.dp)
                     ) {
-                        Icon(
-                            imageVector = if (isAligned) Icons.Default.CheckCircle else Icons.Default.NearMe,
-                            contentDescription = null,
-                            tint = alignmentColor,
-                            modifier = Modifier.size(24.dp)
+                        Icon(Icons.Rounded.CompassCalibration, null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.qibla_calibrate).uppercase(), 
+                            style = MaterialTheme.typography.labelLarge, 
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Metrics Grid
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                CompactMetric(
-                    label = stringResource(R.string.qibla_label),
+                MetricItem(
+                    label = stringResource(R.string.qibla_label).uppercase(),
                     value = "${qiblaDirection.toInt()}°",
-                    icon = Icons.Default.Place
+                    icon = Icons.Rounded.MyLocation,
+                    modifier = Modifier.weight(1f)
                 )
-                VerticalDivider(
-                    modifier = Modifier.height(32.dp),
-                    color = MaterialTheme.colorScheme.outlineVariant
-                )
-                CompactMetric(
-                    label = stringResource(R.string.qibla_heading),
+                
+                Box(modifier = Modifier.width(1.dp).height(40.dp).background(Color.White.copy(alpha = 0.1f)).align(Alignment.CenterVertically))
+                
+                MetricItem(
+                    label = stringResource(R.string.qibla_heading).uppercase(),
                     value = "${(compassData.azimuth.toInt() + 360) % 360}°",
-                    icon = Icons.Default.Explore
+                    icon = Icons.Rounded.Explore,
+                    modifier = Modifier.weight(1f)
                 )
-                VerticalDivider(
-                    modifier = Modifier.height(32.dp),
-                    color = MaterialTheme.colorScheme.outlineVariant
-                )
-                CompactMetric(
-                    label = stringResource(R.string.qibla_signal),
-                    value = getAccuracyLabel(compassData.accuracy),
-                    icon = Icons.Default.Wifi,
-                    color = if (isAccuracyLow) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+
+                Box(modifier = Modifier.width(1.dp).height(40.dp).background(Color.White.copy(alpha = 0.1f)).align(Alignment.CenterVertically))
+
+                MetricItem(
+                    label = stringResource(R.string.qibla_signal).uppercase(),
+                    value = getAccuracyLabel(compassData.accuracy).uppercase(),
+                    icon = Icons.Rounded.WifiTethering,
+                    color = if (isAccuracyLow) Color(0xFFF87171) else Color(0xFF4CAF50),
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun MetricItem(
+    label: String,
+    value: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    color: Color = Color.White,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = color.copy(alpha = 0.5f),
+            modifier = Modifier.size(20.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = color
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = Color.White.copy(alpha = 0.4f),
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 1.sp
+        )
     }
 }
 

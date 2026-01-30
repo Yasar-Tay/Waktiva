@@ -28,6 +28,9 @@
     <string name="home_prayer_provider">Kaynak: </string>
     <string name="home_skip_adhan">Sessize Al</string>
     <string name="home_unmute_adhan">Sesi Aç</string>
+    <string name="home_return_to_today">Bugüne Dön</string>
+    <string name="home_tomorrow_is">Yarın %s</string>
+    <string name="home_today_is">Bugün %s</string>
 
     <!-- Qibla Screen -->
     <string name="qibla_label">Kıble</string>
@@ -50,6 +53,9 @@
     <string name="qibla_got_it">Anladım</string>
     <string name="qibla_aligned_badge">HİZALANDI</string>
     <string name="qibla_magnetic_interference">Manyetik Müdahale Algılandı - Cihazı Kalibre Edin</string>
+    <string name="qibla_kaaba_aligned">Kıbleye Hizalandı</string>
+    <string name="qibla_find_marker">Altın İşareti Bulun</string>
+    <string name="qibla_calibrate">KALİBRE ET</string>
     <string name="accuracy_high">Yüksek</string>
     <string name="accuracy_med">Orta</string>
     <string name="accuracy_low">Düşük</string>
@@ -174,24 +180,24 @@
 
     <!-- Donations -->
     <string name="settings_donate">Geliştiriciyi Destekle</string>
-    <string name="donate_title">Vaktiva\'yı Destekleyin</string>
-    <string name="donate_description">Vaktiva özenle geliştirilmiş ücretsiz bir uygulamadır. Desteğiniz, uygulamanın reklamsız kalmasına ve gelecekteki geliştirmelere olanak tanır.</string>
-    <string name="donate_button">Bağış Yap</string>
-    <string name="donate_thank_you">Desteğiniz için teşekkür ederiz!</string>
-    <string name="donate_error">Bağış işlemi başarısız oldu. Lütfen tekrar deneyin.</string>
+    <string name="donate_title">Support Vaktiva</string>
+    <string name="donate_description">Vaktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
+    <string name="donate_button">Donate</string>
+    <string name="donate_thank_you">Thank you for your support!</string>
+    <string name="donate_error">Donation failed. Please try again.</string>
 
     <!-- Hijri Months -->
-    <string name="hijri_month_1">Muharrem</string>
-    <string name="hijri_month_2">Safer</string>
-    <string name="hijri_month_3">Rebiülevvel</string>
-    <string name="hijri_month_4">Rebiülahır</string>
-    <string name="hijri_month_5">Cemaziyelevvel</string>
-    <string name="hijri_month_6">Cemaziyelahır</string>
-    <string name="hijri_month_7">Recep</string>
-    <string name="hijri_month_8">Şaban</string>
-    <string name="hijri_month_9">Ramazan</string>
-    <string name="hijri_month_10">Şevval</string>
-    <string name="hijri_month_11">Zilkade</string>
-    <string name="hijri_month_12">Zilhicce</string>
-    <string name="hijri_suffix">H</string>
+    <string name="hijri_month_1">Muharram</string>
+    <string name="hijri_month_2">Safar</string>
+    <string name="hijri_month_3">Rabi‘ al-Awwal</string>
+    <string name="hijri_month_4">Rabi‘ al-Thani</string>
+    <string name="hijri_month_5">Jumada al-Ula</string>
+    <string name="hijri_month_6">Jumada al-Akhirah</string>
+    <string name="hijri_month_7">Rajab</string>
+    <string name="hijri_month_8">Sha‘ban</string>
+    <string name="hijri_month_9">Ramadan</string>
+    <string name="hijri_month_10">Shawwal</string>
+    <string name="hijri_month_11">Dhu al-Qi‘dah</string>
+    <string name="hijri_month_12">Dhu al-Hijjah</string>
+    <string name="hijri_suffix">AH</string>
 </resources>
