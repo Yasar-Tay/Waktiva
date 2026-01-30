@@ -1,8 +1,6 @@
 package com.ybugmobile.vaktiva.ui.theme
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
@@ -71,23 +69,23 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
             )
         )
         
-        // Full Day: Enriched Spectral Azure (Maximum Luminosity)
+        // Full Day: Softened Spectral Azure (Reduced Saturation for a calmer feel)
         currentTime.isBefore(sunsetStart) -> Brush.verticalGradient(
             colorStops = arrayOf(
                 0.0f to Color(0xFF0F172A), // Deep Slate for status bar contrast
-                0.3f to Color(0xFF1E3A8A), // Rich Indigo-Blue
-                0.7f to Color(0xFF0284C7), // Luminous Azure
-                1.0f to Color(0xFF22D3EE)  // Vibrant Cyan Glow
+                0.3f to Color(0xFF405D8A), // Muted Blue
+                0.7f to Color(0xFF7597B0), // Soft Blue Grey
+                1.0f to Color(0xFFA9C2D1)  // Pale Blue
             )
         )
 
-        // Sunset: Burnt Orange to a radiant Sunset Glow
+        // Sunset: Muted Terracotta and Soft Rose
         currentTime.isBefore(maghrib) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF7C2D12), // Deep Burnt Orange
-                0.4f to Color(0xFF9D592B), // Original Anchor
-                0.7f to Color(0xFFA43653), // Original Anchor
-                1.0f to Color(0xFFFDBA74)  // Radiant Sunset Highlight
+                0.0f to Color(0xFF4A342B), // Muted Deep Brown
+                0.4f to Color(0xFF81665C), // Soft Cocoa
+                0.7f to Color(0xFF9E7E7E), // Dusty Rose
+                1.0f to Color(0xFFD8B9A6)  // Muted Peach
             )
         )
 
