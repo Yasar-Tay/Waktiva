@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.ybugmobile.vaktiva.data.local.VaktivaDatabase
 import com.ybugmobile.vaktiva.data.local.dao.PrayerDao
+import com.ybugmobile.vaktiva.data.local.dao.PrayerStatusDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,7 +29,14 @@ object DatabaseModule {
     }
 
     @Provides
+    @Singleton
     fun providePrayerDao(database: VaktivaDatabase): PrayerDao {
         return database.prayerDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providePrayerStatusDao(database: VaktivaDatabase): PrayerStatusDao {
+        return database.prayerStatusDao()
     }
 }
