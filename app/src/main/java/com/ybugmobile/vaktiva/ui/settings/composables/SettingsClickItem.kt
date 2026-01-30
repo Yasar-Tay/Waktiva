@@ -16,39 +16,61 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun SettingsClickItem(
     title: String,
     subtitle: String,
     icon: ImageVector,
-    iconColor: Color = MaterialTheme.colorScheme.primary,
+    iconColor: Color = Color.White,
     onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(44.dp)
                 .background(iconColor.copy(alpha = 0.1f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, contentDescription = null, tint = iconColor, modifier = Modifier.size(22.dp))
+            Icon(
+                imageVector = icon, 
+                contentDescription = null, 
+                tint = iconColor.copy(alpha = 0.8f), 
+                modifier = Modifier.size(22.dp)
+            )
         }
+        
         Spacer(modifier = Modifier.width(16.dp))
+        
         Column(modifier = Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold))
-            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                text = title, 
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            )
+            Text(
+                text = subtitle, 
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = Color.White.copy(alpha = 0.5f),
+                    letterSpacing = 0.5.sp
+                )
+            )
         }
+        
         Icon(
-            Icons.Rounded.ChevronRight,
+            imageVector = Icons.Rounded.ChevronRight,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+            tint = Color.White.copy(alpha = 0.2f),
+            modifier = Modifier.size(20.dp)
         )
     }
 }

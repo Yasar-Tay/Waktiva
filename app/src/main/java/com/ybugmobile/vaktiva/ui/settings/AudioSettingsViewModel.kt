@@ -9,13 +9,17 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.audio.AdhanAudioManager
 import com.ybugmobile.vaktiva.data.audio.AudioPlayer
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
+import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
+import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -33,7 +37,8 @@ class AudioSettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val audioManager: AdhanAudioManager,
     private val settingsManager: SettingsManager,
-    private val audioPlayer: AudioPlayer
+    private val audioPlayer: AudioPlayer,
+    private val prayerRepository: PrayerRepository
 ) : ViewModel() {
 
     private val _currentPlayingPath = MutableStateFlow<String?>(null)
@@ -41,6 +46,9 @@ class AudioSettingsViewModel @Inject constructor(
     val selectedPrayerType: StateFlow<PrayerType?> = _selectedPrayerType.asStateFlow()
 
     val settings = settingsManager.settingsFlow
+
+    val allPrayerDays: StateFlow<List<PrayerDay>> = prayerRepository.getPrayerDays()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val audioItems: StateFlow<List<AdhanAudioItem>> = combine(
         settingsManager.settingsFlow,

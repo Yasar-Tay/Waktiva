@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,10 +15,12 @@ import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -27,7 +30,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.ui.settings.composables.*
+import com.ybugmobile.vaktiva.ui.theme.dynamicTimeGradient
 import com.ybugmobile.vaktiva.utils.PermissionUtils
+import java.time.LocalTime
 import java.util.Locale as JavaLocale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,56 +42,71 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.settings.collectAsState(initial = null)
+    val prayerDays by viewModel.allPrayerDays.collectAsState()
     val scrollState = rememberScrollState()
 
     var showMethodDialog by remember { mutableStateOf(false) }
     var showMadhabDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
 
+    val backgroundGradient = dynamicTimeGradient(LocalTime.now(), prayerDays)
+
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             CenterAlignedTopAppBar(
                 title = { 
                     Text(
-                        stringResource(R.string.settings_title),
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                        text = stringResource(R.string.settings_title).uppercase(),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Black,
+                            letterSpacing = 2.sp
+                        ),
+                        color = Color.White
                     ) 
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent
                 )
             )
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
-                .padding(padding)
                 .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(horizontal = 20.dp)
+                .background(brush = backgroundGradient)
+                .padding(padding)
         ) {
-            Spacer(modifier = Modifier.height(12.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = 20.dp)
+            ) {
+                Spacer(modifier = Modifier.height(12.dp))
 
-            NotificationSoundSection(
-                settings = settings,
-                onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
-                onNavigateToAudio = onNavigateToAudio
-            )
+                NotificationSoundSection(
+                    settings = settings,
+                    onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
+                    onNavigateToAudio = onNavigateToAudio
+                )
 
-            PreferencesSection(
-                settings = settings,
-                onLanguageClick = { showLanguageDialog = true },
-                onMadhabClick = { showMadhabDialog = true },
-                onMethodClick = { showMethodDialog = true }
-            )
+                PreferencesSection(
+                    settings = settings,
+                    onLanguageClick = { showLanguageDialog = true },
+                    onMadhabClick = { showMadhabDialog = true },
+                    onMethodClick = { showMethodDialog = true }
+                )
 
-            ReliabilitySection()
+                ReliabilitySection()
 
-            SettingsSection(title = stringResource(R.string.settings_permissions)) {
-                PermissionManager()
+                SettingsSection(title = stringResource(R.string.settings_permissions)) {
+                    PermissionManager()
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 
@@ -213,7 +233,7 @@ private fun ReliabilitySection() {
                 stringResource(R.string.settings_battery_opt_enabled)
                 else stringResource(R.string.settings_battery_opt_disabled),
             icon = Icons.Rounded.BatteryChargingFull,
-            iconColor = if (isIgnoringBatteryOptimizations) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+            iconColor = if (isIgnoringBatteryOptimizations) Color(0xFF4CAF50) else Color(0xFFF87171),
             onClick = {
                 try {
                     if (!isIgnoringBatteryOptimizations) {
