@@ -2,14 +2,11 @@ package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.MusicOff
-import androidx.compose.material.icons.rounded.Stop
-import androidx.compose.material.icons.rounded.VolumeUp
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 
 @Composable
 fun AdhanControls(
@@ -30,6 +28,18 @@ fun AdhanControls(
     onStopTest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val prayerType = playingPrayerName?.let { PrayerType.fromString(it) }
+    
+    val prayerIcon = when (prayerType) {
+        PrayerType.FAJR -> Icons.Rounded.NightsStay
+        PrayerType.SUNRISE -> Icons.Rounded.WbTwilight
+        PrayerType.DHUHR -> Icons.Rounded.WbSunny
+        PrayerType.ASR -> Icons.Rounded.WbSunny
+        PrayerType.MAGHRIB -> Icons.Rounded.WbTwilight
+        PrayerType.ISHA -> Icons.Rounded.NightsStay
+        else -> Icons.Rounded.VolumeUp
+    }
+
     AnimatedVisibility(
         visible = isAdhanPlaying,
         enter = expandVertically() + fadeIn(),
@@ -65,7 +75,7 @@ fun AdhanControls(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            Icons.Rounded.VolumeUp,
+                            imageVector = prayerIcon,
                             contentDescription = null,
                             tint = Color.White,
                             modifier = Modifier.size(28.dp)
