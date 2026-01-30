@@ -178,40 +178,50 @@ fun HomeScreenContent(
                                     Spacer(modifier = Modifier.width(32.dp))
 
                                     Box(modifier = Modifier.weight(1f)) {
-                                        NextPrayerCountdown(
-                                            nextPrayer = state.nextPrayer,
-                                            selectedDate = state.selectedDate,
-                                            contentColor = contentColor,
-                                            currentPrayer = state.currentPrayer,
-                                            playAdhanAudio = settings?.playAdhanAudio ?: false,
-                                            isMuted = state.isMuted,
-                                            onSkipAudio = { prayerName ->
-                                                state.nextPrayer?.let { next ->
-                                                    onSkipNextAudio(prayerName, next.date)
-                                                    scope.launch {
-                                                        val message = if (!state.isMuted)
-                                                            "Adhan skipped for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
-                                                        else
-                                                            "Adhan unmuted for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
-                                                        snackbarHostState.showSnackbar(message)
-                                                    }
-                                                }
+                                        AnimatedContent(
+                                            targetState = state.isAdhanPlaying,
+                                            transitionSpec = {
+                                                fadeIn() togetherWith fadeOut()
                                             },
-                                            onResetDate = onResetDate,
-                                            accentColor = Color.White,
-                                            showIdleState = false
-                                        )
+                                            label = "NextPrayerOrAdhan"
+                                        ) { playing ->
+                                            if (playing) {
+                                                AdhanControls(
+                                                    isAdhanPlaying = true,
+                                                    playingPrayerName = state.playingPrayerName,
+                                                    isTest = state.nextPrayer?.isTest == true,
+                                                    onStopAdhan = onStopAdhan,
+                                                    onStopTest = onStopTest,
+                                                    modifier = Modifier.fillMaxWidth()
+                                                )
+                                            } else {
+                                                NextPrayerCountdown(
+                                                    nextPrayer = state.nextPrayer,
+                                                    selectedDate = state.selectedDate,
+                                                    contentColor = contentColor,
+                                                    currentPrayer = state.currentPrayer,
+                                                    playAdhanAudio = settings?.playAdhanAudio ?: false,
+                                                    isMuted = state.isMuted,
+                                                    onSkipAudio = { prayerName ->
+                                                        state.nextPrayer?.let { next ->
+                                                            onSkipNextAudio(prayerName, next.date)
+                                                            scope.launch {
+                                                                val message = if (!state.isMuted)
+                                                                    "Adhan skipped for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                                else
+                                                                    "Adhan unmuted for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                                snackbarHostState.showSnackbar(message)
+                                                            }
+                                                        }
+                                                    },
+                                                    onResetDate = onResetDate,
+                                                    accentColor = Color.White,
+                                                    showIdleState = false
+                                                )
+                                            }
+                                        }
                                     }
                                 }
-
-                                AdhanControls(
-                                    isAdhanPlaying = state.isAdhanPlaying,
-                                    playingPrayerName = state.playingPrayerName,
-                                    isTest = state.nextPrayer?.isTest == true,
-                                    onStopAdhan = onStopAdhan,
-                                    onStopTest = onStopTest,
-                                    modifier = Modifier.padding(vertical = 24.dp)
-                                )
                             }
 
                             Surface(
@@ -307,39 +317,51 @@ fun HomeScreenContent(
 
                                     Spacer(modifier = Modifier.height(16.dp))
 
-                                    NextPrayerCountdown(
-                                        nextPrayer = state.nextPrayer,
-                                        selectedDate = state.selectedDate,
-                                        contentColor = contentColor,
-                                        currentPrayer = state.currentPrayer,
-                                        playAdhanAudio = settings?.playAdhanAudio ?: false,
-                                        isMuted = state.isMuted,
-                                        onSkipAudio = { prayerName ->
-                                            state.nextPrayer?.let { next ->
-                                                onSkipNextAudio(prayerName, next.date)
-                                                scope.launch {
-                                                    val message = if (!state.isMuted)
-                                                        "Adhan skipped for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
-                                                    else
-                                                        "Adhan unmuted for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
-                                                    snackbarHostState.showSnackbar(message)
-                                                }
-                                            }
+                                    AnimatedContent(
+                                        targetState = state.isAdhanPlaying,
+                                        transitionSpec = {
+                                            fadeIn() togetherWith fadeOut()
                                         },
-                                        onResetDate = onResetDate,
-                                        accentColor = Color.White,
-                                        showIdleState = false
-                                    )
+                                        label = "NextPrayerOrAdhan"
+                                    ) { playing ->
+                                        if (playing) {
+                                            AdhanControls(
+                                                isAdhanPlaying = true,
+                                                playingPrayerName = state.playingPrayerName,
+                                                isTest = state.nextPrayer?.isTest == true,
+                                                onStopAdhan = onStopAdhan,
+                                                onStopTest = onStopTest,
+                                                modifier = Modifier.fillMaxWidth()
+                                            )
+                                        } else {
+                                            NextPrayerCountdown(
+                                                nextPrayer = state.nextPrayer,
+                                                selectedDate = state.selectedDate,
+                                                contentColor = contentColor,
+                                                currentPrayer = state.currentPrayer,
+                                                playAdhanAudio = settings?.playAdhanAudio ?: false,
+                                                isMuted = state.isMuted,
+                                                onSkipAudio = { prayerName ->
+                                                    state.nextPrayer?.let { next ->
+                                                        onSkipNextAudio(prayerName, next.date)
+                                                        scope.launch {
+                                                            val message = if (!state.isMuted)
+                                                                "Adhan skipped for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                            else
+                                                                "Adhan unmuted for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                            snackbarHostState.showSnackbar(message)
+                                                        }
+                                                    }
+                                                },
+                                                onResetDate = onResetDate,
+                                                accentColor = Color.White,
+                                                showIdleState = false
+                                            )
+                                        }
+                                    }
                                 }
 
-                                AdhanControls(
-                                    isAdhanPlaying = state.isAdhanPlaying,
-                                    playingPrayerName = state.playingPrayerName,
-                                    isTest = state.nextPrayer?.isTest == true,
-                                    onStopAdhan = onStopAdhan,
-                                    onStopTest = onStopTest,
-                                    modifier = Modifier.padding(top = 24.dp)
-                                )
+                                Spacer(modifier = Modifier.height(24.dp))
                             }
 
                             Surface(
