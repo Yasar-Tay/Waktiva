@@ -177,7 +177,8 @@ private fun QiblaContent(
     val effectiveShadow = if (isMapView) null else textShadow
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (isMapView) {
+        // Only show background Map in Portrait. In Landscape, it's moved to the side Box.
+        if (isMapView && !isLandscape) {
             QiblaMap(
                 settings = state.settings,
                 compassData = state.compassData,
@@ -187,7 +188,7 @@ private fun QiblaContent(
                 onMapLongClick = { },
                 onToggleSatellite = { isSatelliteView = !isSatelliteView }
             )
-        } else if (isAccuracyLow) {
+        } else if (isAccuracyLow && !isLandscape) { // Background glow only in portrait if accuracy is low
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -206,12 +207,38 @@ private fun QiblaContent(
             Row(modifier = Modifier.fillMaxSize()) {
                 Box(
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(1.3f) // Give more weight to map/compass area
                         .fillMaxHeight(),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (!isMapView) {
+                    if (isMapView) {
+                        QiblaMap(
+                            settings = state.settings,
+                            compassData = state.compassData,
+                            isSatelliteView = isSatelliteView,
+                            kaabaLatLng = kaabaLatLng,
+                            onMapReady = { },
+                            onMapLongClick = { },
+                            onToggleSatellite = { isSatelliteView = !isSatelliteView }
+                        )
+                    } else {
                         Box(contentAlignment = Alignment.Center) {
+                            // Accuracy glow for landscape compass
+                            if (isAccuracyLow) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(300.dp)
+                                        .background(
+                                            Brush.radialGradient(
+                                                colors = listOf(
+                                                    MaterialTheme.colorScheme.error.copy(alpha = pulseAlpha),
+                                                    Color.Transparent
+                                                )
+                                            )
+                                        )
+                                )
+                            }
+                            
                             Box(
                                 modifier = Modifier
                                     .size(280.dp)
@@ -239,7 +266,8 @@ private fun QiblaContent(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .padding(24.dp)
+                        .background(if (isMapView) theme.surface else Color.Transparent)
+                        .padding(horizontal = 24.dp, vertical = 24.dp)
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -251,10 +279,9 @@ private fun QiblaContent(
                     ) {
                         state.settings?.let { s ->
                             Surface(
-                                color = containerColor,
+                                color = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else containerColor,
                                 shape = RoundedCornerShape(22.dp),
                                 modifier = Modifier.weight(1f).padding(end = 8.dp),
-                                shadowElevation = if (isMapView) 4.dp else 0.dp,
                                 border = androidx.compose.foundation.BorderStroke(
                                     1.dp, 
                                     if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
@@ -278,10 +305,9 @@ private fun QiblaContent(
                         }
 
                         Surface(
-                            color = containerColor,
+                            color = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else containerColor,
                             shape = RoundedCornerShape(22.dp),
                             modifier = Modifier.height(40.dp),
-                            shadowElevation = if (isMapView) 4.dp else 0.dp,
                             border = androidx.compose.foundation.BorderStroke(
                                 1.dp, 
                                 if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
@@ -309,6 +335,7 @@ private fun QiblaContent(
                 }
             }
         } else {
+            // Portrait Layout (remains largely the same, map in background)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

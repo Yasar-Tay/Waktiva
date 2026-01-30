@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
@@ -75,7 +74,8 @@ fun SettingsScreen(
                     scrolledContainerColor = Color.Transparent
                 )
             )
-        }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0) // REMOVE UNNECESSARY GAPS
     ) { padding ->
         Box(
             modifier = Modifier

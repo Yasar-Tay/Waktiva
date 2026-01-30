@@ -136,6 +136,15 @@
     <string name="settings_exact_alarm_title">Tam Zamanlı Alarmlar</string>
     <string name="settings_exact_alarm_desc">Hassas namaz vakti bildirimleri için gereklidir</string>
 
+    <!-- Data Management -->
+    <string name="settings_data_management">Veri Yönetimi</string>
+    <string name="settings_delete_history">Namaz Geçmişini Sil</string>
+    <string name="settings_delete_history_desc">Yer açmak için geçmişteki tüm namaz verilerini sil</string>
+    <string name="settings_delete_history_confirm_title">Geçmiş Silinsin mi?</string>
+    <string name="settings_delete_history_confirm_desc">Bu işlem bugünden önceki tüm namaz kayıtlarını kalıcı olarak silecektir. Bu işlem geri alınamaz.</string>
+    <string name="settings_cancel">İptal</string>
+    <string name="settings_confirm">Onayla</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Ezan Öncesi Uyarı</string>
     <string name="settings_pre_adhan_warning_summary">Namaz vaktinden önce bildirim alın.</string>

@@ -48,7 +48,8 @@ fun QiblaMap(
     kaabaLatLng: LatLng,
     onMapReady: (MapLibreMap) -> Unit,
     onMapLongClick: (LatLng) -> Unit,
-    onToggleSatellite: () -> Unit
+    onToggleSatellite: () -> Unit,
+    fabAlignment: Alignment = Alignment.CenterEnd
 ) {
     var mapInstance by remember { mutableStateOf<MapLibreMap?>(null) }
     var symbolManager by remember { mutableStateOf<SymbolManager?>(null) }
@@ -80,7 +81,7 @@ fun QiblaMap(
                             style.addImage(MapConstants.USER_ARROW_ID, createAppleStyleMarker("#007AFF"))
                             style.addImage(MapConstants.CUSTOM_ARROW_ID, createAppleStyleMarker("#AF52DE"))
                             style.addImage("green_arrow", createAppleStyleMarker("#4CD964"))
-                            style.addImage("kaaba_marker", createKaabaMarker("#FFD700")) // Golden background for Kaaba
+                            style.addImage("kaaba_marker", createKaabaMarker("#FFD700"))
 
                             // Create line manager FIRST so symbols appear ON TOP
                             lineManager = LineManager(this@apply, map, style)
@@ -140,8 +141,8 @@ fun QiblaMap(
 
         Column(
             modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 16.dp),
+                .align(fabAlignment)
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

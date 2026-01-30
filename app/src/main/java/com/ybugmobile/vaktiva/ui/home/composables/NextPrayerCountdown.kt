@@ -1,8 +1,5 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,11 +9,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
@@ -92,14 +91,11 @@ fun NextPrayerCountdown(
                     }
                 }
                 
-                // 2. Countdown Timer (Bigger, uses whole row)
-                Text(
+                // 2. Countdown Timer (Responsive Width)
+                ResponsiveCountdownText(
                     text = remainingTime,
-                    fontSize = 72.sp,
-                    fontWeight = FontWeight.ExtraLight,
-                    color = accentColor,
-                    letterSpacing = (-2).sp,
-                    textAlign = TextAlign.Center,
+                    targetFontSize = 72.sp,
+                    accentColor = accentColor,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -161,6 +157,38 @@ fun NextPrayerCountdown(
             IdleState(contentColor, accentColor)
         }
     }
+}
+
+@Composable
+private fun ResponsiveCountdownText(
+    text: String,
+    targetFontSize: TextUnit,
+    accentColor: Color,
+    modifier: Modifier = Modifier
+) {
+    var fontSize by remember { mutableStateOf(targetFontSize) }
+    var readyToDraw by remember { mutableStateOf(false) }
+
+    Text(
+        text = text,
+        fontSize = fontSize,
+        fontWeight = FontWeight.ExtraLight,
+        color = accentColor,
+        letterSpacing = (-2).sp,
+        textAlign = TextAlign.Center,
+        maxLines = 1,
+        softWrap = false,
+        onTextLayout = { textLayoutResult ->
+            if (textLayoutResult.didOverflowWidth && fontSize.value > 12f) {
+                fontSize = (fontSize.value * 0.9f).sp
+            } else {
+                readyToDraw = true
+            }
+        },
+        modifier = modifier.drawWithContent {
+            if (readyToDraw) drawContent()
+        }
+    )
 }
 
 @Composable

@@ -204,7 +204,8 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
                         }
                     )
                 }
-            }
+            },
+            contentWindowInsets = WindowInsets(0, 0, 0, 0) // REMOVED UNNECESSARY GAPS
         ) { innerPadding ->
             NavHost(
                 navController, 
