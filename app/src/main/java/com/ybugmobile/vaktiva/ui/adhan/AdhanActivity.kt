@@ -12,9 +12,8 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Stop
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,15 +31,26 @@ import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.domain.model.PrayerDay
+import com.ybugmobile.vaktiva.domain.model.PrayerType
+import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import com.ybugmobile.vaktiva.service.AdhanService
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
+import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AdhanActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var prayerRepository: PrayerRepository
 
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var controller: MediaController? = null
@@ -52,9 +62,13 @@ class AdhanActivity : ComponentActivity() {
         val prayerName = intent.getStringExtra("PRAYER_NAME") ?: "Prayer"
 
         setContent {
+            val prayerDays by prayerRepository.getPrayerDays().collectAsState(initial = emptyList())
+            val currentDay = prayerDays.find { it.date == LocalDate.now() }
+
             VaktivaTheme {
                 AdhanScreen(
-                    prayerName = prayerName, 
+                    prayerName = prayerName,
+                    currentPrayerDay = currentDay,
                     onDismiss = { 
                         controller?.stop()
                         finish() 
@@ -117,7 +131,15 @@ class AdhanActivity : ComponentActivity() {
 }
 
 @Composable
-fun AdhanScreen(prayerName: String, onDismiss: () -> Unit) {
+fun AdhanScreen(
+    prayerName: String, 
+    currentPrayerDay: PrayerDay?,
+    onDismiss: () -> Unit
+) {
+    val prayerType = PrayerType.fromString(prayerName)
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val displayedPrayerName = prayerType?.getDisplayName(context) ?: prayerName
+
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -129,29 +151,26 @@ fun AdhanScreen(prayerName: String, onDismiss: () -> Unit) {
         label = "pulse"
     )
 
-    var currentTime by remember { mutableStateOf("") }
-    var currentDate by remember { mutableStateOf("") }
+    var currentTimeStr by remember { mutableStateOf("") }
+    var currentDateStr by remember { mutableStateOf("") }
+    var currentTime by remember { mutableStateOf(LocalTime.now()) }
 
     LaunchedEffect(Unit) {
         while (true) {
-            currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-            currentDate = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date().apply { time += 86400000 }).uppercase() // Mocking for aesthetic consistency
-            currentDate = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date()).uppercase()
+            val now = Date()
+            currentTimeStr = SimpleDateFormat("HH:mm", Locale.getDefault()).format(now)
+            currentDateStr = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(now).uppercase()
+            currentTime = LocalTime.now()
             delay(1000)
         }
     }
 
+    val backgroundGradient = getGradientForTime(currentTime, currentPrayerDay)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF0F172A), // Deep Slate
-                        Color(0xFF1E293B)  // Slate
-                    )
-                )
-            )
+            .background(brush = backgroundGradient)
     ) {
         // Decorative Background Elements
         Box(
@@ -175,7 +194,7 @@ fun AdhanScreen(prayerName: String, onDismiss: () -> Unit) {
                 modifier = Modifier.padding(top = 60.dp)
             ) {
                 Text(
-                    text = currentTime,
+                    text = currentTimeStr,
                     style = MaterialTheme.typography.displayLarge.copy(
                         fontSize = 92.sp,
                         fontWeight = FontWeight.ExtraLight,
@@ -185,7 +204,7 @@ fun AdhanScreen(prayerName: String, onDismiss: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = currentDate,
+                    text = currentDateStr,
                     style = MaterialTheme.typography.labelLarge,
                     color = Color.White.copy(alpha = 0.4f),
                     fontWeight = FontWeight.Bold,
@@ -199,6 +218,24 @@ fun AdhanScreen(prayerName: String, onDismiss: () -> Unit) {
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
+                // Relevant Icon
+                Icon(
+                    imageVector = when(prayerType) {
+                        PrayerType.FAJR -> Icons.Rounded.NightsStay
+                        PrayerType.SUNRISE -> Icons.Rounded.WbTwilight
+                        PrayerType.DHUHR -> Icons.Rounded.WbSunny
+                        PrayerType.ASR -> Icons.Rounded.WbSunny
+                        PrayerType.MAGHRIB -> Icons.Rounded.WbTwilight
+                        PrayerType.ISHA -> Icons.Rounded.NightsStay
+                        else -> Icons.Rounded.NotificationsActive
+                    },
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.15f),
+                    modifier = Modifier.size(80.dp)
+                )
+                
+                Spacer(modifier = Modifier.height(32.dp))
+
                 Text(
                     text = stringResource(R.string.adhan_its_time_for).uppercase(),
                     style = MaterialTheme.typography.labelLarge,
@@ -208,7 +245,7 @@ fun AdhanScreen(prayerName: String, onDismiss: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = prayerName.uppercase(),
+                    text = displayedPrayerName.uppercase(),
                     style = MaterialTheme.typography.displayMedium.copy(
                         fontSize = 56.sp,
                         fontWeight = FontWeight.Black,
