@@ -52,6 +52,7 @@ fun SettingsScreen(
     var showMethodDialog by remember { mutableStateOf(false) }
     var showMadhabDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
+    var showDeleteHistoryDialog by remember { mutableStateOf(false) }
 
     val backgroundGradient = dynamicTimeGradient(LocalTime.now(), prayerDays)
 
@@ -116,6 +117,7 @@ fun SettingsScreen(
                     ) {
                         Spacer(modifier = Modifier.height(12.dp))
                         ReliabilitySection()
+                        DataManagementSection(onDeleteHistoryClick = { showDeleteHistoryDialog = true })
                         SettingsSection(title = stringResource(R.string.settings_permissions)) {
                             PermissionManager()
                         }
@@ -146,6 +148,8 @@ fun SettingsScreen(
 
                     ReliabilitySection()
 
+                    DataManagementSection(onDeleteHistoryClick = { showDeleteHistoryDialog = true })
+
                     SettingsSection(title = stringResource(R.string.settings_permissions)) {
                         PermissionManager()
                     }
@@ -162,9 +166,11 @@ fun SettingsScreen(
         showLanguageDialog = showLanguageDialog,
         showMadhabDialog = showMadhabDialog,
         showMethodDialog = showMethodDialog,
+        showDeleteHistoryDialog = showDeleteHistoryDialog,
         onDismissLanguage = { showLanguageDialog = false },
         onDismissMadhab = { showMadhabDialog = false },
         onDismissMethod = { showMethodDialog = false },
+        onDismissDeleteHistory = { showDeleteHistoryDialog = false },
         onLanguageSelected = { lang ->
             val appLocale: LocaleListCompat = if (lang == "system") {
                 LocaleListCompat.getEmptyLocaleList()
@@ -176,7 +182,11 @@ fun SettingsScreen(
             showLanguageDialog = false
         },
         onMadhabSelected = { viewModel.setMadhab(it); showMadhabDialog = false },
-        onMethodSelected = { viewModel.setCalculationMethod(it); showMethodDialog = false }
+        onMethodSelected = { viewModel.setCalculationMethod(it); showMethodDialog = false },
+        onDeleteHistoryConfirm = {
+            viewModel.deletePastData()
+            showDeleteHistoryDialog = false
+        }
     )
 }
 
@@ -303,17 +313,33 @@ private fun ReliabilitySection() {
 }
 
 @Composable
+private fun DataManagementSection(onDeleteHistoryClick: () -> Unit) {
+    SettingsSection(title = stringResource(R.string.settings_data_management)) {
+        SettingsClickItem(
+            title = stringResource(R.string.settings_delete_history),
+            subtitle = stringResource(R.string.settings_delete_history_desc),
+            icon = Icons.Rounded.DeleteSweep,
+            iconColor = Color(0xFFF87171),
+            onClick = onDeleteHistoryClick
+        )
+    }
+}
+
+@Composable
 private fun SettingsDialogs(
     settings: UserSettings?,
     showLanguageDialog: Boolean,
     showMadhabDialog: Boolean,
     showMethodDialog: Boolean,
+    showDeleteHistoryDialog: Boolean,
     onDismissLanguage: () -> Unit,
     onDismissMadhab: () -> Unit,
     onDismissMethod: () -> Unit,
+    onDismissDeleteHistory: () -> Unit,
     onLanguageSelected: (String) -> Unit,
     onMadhabSelected: (Int) -> Unit,
-    onMethodSelected: (Int) -> Unit
+    onMethodSelected: (Int) -> Unit,
+    onDeleteHistoryConfirm: () -> Unit
 ) {
     val currentAppLocales = AppCompatDelegate.getApplicationLocales()
     val currentLanguageCode = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
@@ -354,6 +380,27 @@ private fun SettingsDialogs(
             selectedKey = settings?.calculationMethod ?: 3,
             onSelected = onMethodSelected,
             onDismiss = onDismissMethod
+        )
+    }
+
+    if (showDeleteHistoryDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissDeleteHistory,
+            title = { Text(stringResource(R.string.settings_delete_history_confirm_title)) },
+            text = { Text(stringResource(R.string.settings_delete_history_confirm_desc)) },
+            confirmButton = {
+                TextButton(
+                    onClick = onDeleteHistoryConfirm,
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFF87171))
+                ) {
+                    Text(stringResource(R.string.settings_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissDeleteHistory) {
+                    Text(stringResource(R.string.settings_cancel))
+                }
+            }
         )
     }
 }

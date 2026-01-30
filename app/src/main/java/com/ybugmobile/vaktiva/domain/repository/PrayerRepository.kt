@@ -15,4 +15,6 @@ interface PrayerRepository {
     ): Result<Unit>
     
     suspend fun getRemainingDaysCount(currentDate: String): Int
+
+    suspend fun deletePastData(currentDate: String)
 }

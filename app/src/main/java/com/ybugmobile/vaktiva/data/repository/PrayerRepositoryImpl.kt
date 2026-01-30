@@ -2,6 +2,7 @@ package com.ybugmobile.vaktiva.data.repository
 
 import com.ybugmobile.vaktiva.data.local.LocalPrayerCalculator
 import com.ybugmobile.vaktiva.data.local.dao.PrayerDao
+import com.ybugmobile.vaktiva.data.local.dao.PrayerStatusDao
 import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.vaktiva.data.mapper.toDomain
 import com.ybugmobile.vaktiva.data.remote.AladhanApiService
@@ -18,7 +19,8 @@ class PrayerRepositoryImpl @Inject constructor(
     private val aladhanApi: AladhanApiService,
     private val ummahApi: UmmahApiService,
     private val localCalculator: LocalPrayerCalculator,
-    private val dao: PrayerDao
+    private val dao: PrayerDao,
+    private val statusDao: PrayerStatusDao
 ) : PrayerRepository {
 
     override fun getPrayerDays(): Flow<List<PrayerDay>> {
@@ -78,6 +80,11 @@ class PrayerRepositoryImpl @Inject constructor(
 
     override suspend fun getRemainingDaysCount(currentDate: String): Int {
         return dao.getFutureDaysCount(currentDate)
+    }
+
+    override suspend fun deletePastData(currentDate: String) {
+        dao.deletePastDays(currentDate)
+        statusDao.deletePastStatuses(currentDate)
     }
 
     private fun PrayerDayDto.toEntity(): PrayerDayEntity {
