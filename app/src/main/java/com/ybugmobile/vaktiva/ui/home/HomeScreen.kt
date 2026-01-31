@@ -106,15 +106,20 @@ fun HomeScreenContent(
 
     Scaffold(
         containerColor = Color.Transparent,
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { 
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.navigationBarsPadding() // Ensure snackbar doesn't overlap nav bar
+            ) 
+        },
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal) // Only horizontal insets for scaffold, vertical handled manually for better control
     ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(brush = backgroundGradient)
-                .padding(top = padding.calculateTopPadding())
+                // We don't apply padding from scaffold here to keep background full screen
         ) {
-
             if (state.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
@@ -130,9 +135,11 @@ fun HomeScreenContent(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
+                                .statusBarsPadding() // Handle status bar
+                                .displayCutoutPadding() // Handle camera notch in landscape
                                 .verticalScroll(rememberScrollState())
                                 .padding(horizontal = 24.dp, vertical = 16.dp)
-                                .padding(start = 72.dp), // Adjust for Navigation Rail
+                                .padding(start = 72.dp), // Adjust for Navigation Rail (Manual offset as Rail is overlay)
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             HomeHeader(
@@ -265,13 +272,16 @@ fun HomeScreenContent(
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.height(110.dp)) // Increased for floating nav bar
+                            // Bottom padding to avoid overlap with navigation pill in gesture navigation
+                            Spacer(modifier = Modifier.navigationBarsPadding())
+                            Spacer(modifier = Modifier.height(80.dp)) // Floating bar height
                         }
                     } else {
                         // Portrait Layout
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
+                                .statusBarsPadding()
                                 .verticalScroll(rememberScrollState())
                         ) {
                             HomeHeader(
@@ -408,7 +418,9 @@ fun HomeScreenContent(
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.height(110.dp)) // Increased for floating nav bar
+                            // Bottom padding for system bars and floating navigation
+                            Spacer(modifier = Modifier.navigationBarsPadding())
+                            Spacer(modifier = Modifier.height(80.dp)) // Floating bar height
                         }
                     }
                 }

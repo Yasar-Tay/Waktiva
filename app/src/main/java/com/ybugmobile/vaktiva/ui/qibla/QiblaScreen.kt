@@ -204,7 +204,7 @@ private fun QiblaContent(
         }
 
         if (isLandscape) {
-            Row(modifier = Modifier.fillMaxSize()) {
+            Row(modifier = Modifier.fillMaxSize().displayCutoutPadding()) {
                 Box(
                     modifier = Modifier
                         .weight(1.3f) // Give more weight to map/compass area
@@ -267,6 +267,7 @@ private fun QiblaContent(
                         .weight(1f)
                         .fillMaxHeight()
                         .background(if (isMapView) theme.surface else Color.Transparent)
+                        .statusBarsPadding()
                         .padding(horizontal = 24.dp, vertical = 24.dp)
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -332,14 +333,17 @@ private fun QiblaContent(
                         isMapView = isMapView,
                         isSatelliteView = isSatelliteView
                     )
+                    
+                    Spacer(modifier = Modifier.navigationBarsPadding())
                 }
             }
         } else {
-            // Portrait Layout (remains largely the same, map in background)
+            // Portrait Layout
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 40.dp, start = 16.dp, end = 16.dp),
+                    .statusBarsPadding()
+                    .padding(top = 16.dp, start = 16.dp, end = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -411,10 +415,10 @@ private fun QiblaContent(
             }
 
             Column(
-                modifier = Modifier.fillMaxSize().padding(bottom = 16.dp),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(100.dp))
+                Spacer(modifier = Modifier.height(60.dp))
 
                 Box(
                     modifier = Modifier.weight(1f),
@@ -459,6 +463,9 @@ private fun QiblaContent(
                         isSatelliteView = isSatelliteView
                     )
                 }
+                
+                Spacer(modifier = Modifier.navigationBarsPadding())
+                Spacer(modifier = Modifier.height(80.dp)) // Floating bar height
             }
         }
     }

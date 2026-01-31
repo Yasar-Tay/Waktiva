@@ -72,21 +72,23 @@ fun SettingsScreen(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
                     scrolledContainerColor = Color.Transparent
-                )
+                ),
+                modifier = Modifier.statusBarsPadding()
             )
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0) // REMOVE UNNECESSARY GAPS
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(brush = backgroundGradient)
-                .padding(padding)
+                .padding(top = padding.calculateTopPadding())
         ) {
             if (isLandscape) {
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
+                        .displayCutoutPadding()
                         .padding(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
@@ -107,7 +109,8 @@ fun SettingsScreen(
                             onMadhabClick = { showMadhabDialog = true },
                             onMethodClick = { showMethodDialog = true }
                         )
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.navigationBarsPadding())
+                        Spacer(modifier = Modifier.height(80.dp))
                     }
 
                     Column(
@@ -121,7 +124,8 @@ fun SettingsScreen(
                         SettingsSection(title = stringResource(R.string.settings_permissions)) {
                             PermissionManager()
                         }
-                        Spacer(modifier = Modifier.height(32.dp))
+                        Spacer(modifier = Modifier.navigationBarsPadding())
+                        Spacer(modifier = Modifier.height(80.dp))
                     }
                 }
             } else {
@@ -154,7 +158,8 @@ fun SettingsScreen(
                         PermissionManager()
                     }
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.navigationBarsPadding())
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
         }
@@ -371,6 +376,10 @@ private fun SettingsDialogs(
             onSelected = onMadhabSelected,
             onDismiss = onDismissMadhab
         )
+    }
+
+    if (showMadhabDialog) { // Wait, there's a duplicate check here in original code? No, let me fix it
+         // Handled above
     }
 
     if (showMethodDialog) {
