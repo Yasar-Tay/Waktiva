@@ -335,6 +335,7 @@ private fun QiblaContent(
                     )
                     
                     Spacer(modifier = Modifier.navigationBarsPadding())
+
                 }
             }
         } else {
@@ -465,7 +466,7 @@ private fun QiblaContent(
                 }
                 
                 Spacer(modifier = Modifier.navigationBarsPadding())
-                Spacer(modifier = Modifier.height(80.dp)) // Floating bar height
+                Spacer(modifier = Modifier.height(100.dp)) // Floating bar height
             }
         }
     }
