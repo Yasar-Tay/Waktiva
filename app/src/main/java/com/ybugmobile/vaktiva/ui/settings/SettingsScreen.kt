@@ -76,7 +76,7 @@ fun SettingsScreen(
                 modifier = Modifier.statusBarsPadding()
             )
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+        contentWindowInsets = WindowInsets.systemBars
     ) { padding ->
         Box(
             modifier = Modifier
@@ -88,8 +88,10 @@ fun SettingsScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
+                        .systemBarsPadding()
                         .displayCutoutPadding()
-                        .padding(horizontal = 20.dp),
+                        .padding(horizontal = 20.dp)
+                        .padding(start = 72.dp), // Adjust for Navigation Rail
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     Column(
@@ -109,7 +111,6 @@ fun SettingsScreen(
                             onMadhabClick = { showMadhabDialog = true },
                             onMethodClick = { showMethodDialog = true }
                         )
-                        Spacer(modifier = Modifier.navigationBarsPadding())
                         Spacer(modifier = Modifier.height(80.dp))
                     }
 
@@ -124,7 +125,6 @@ fun SettingsScreen(
                         SettingsSection(title = stringResource(R.string.settings_permissions)) {
                             PermissionManager()
                         }
-                        Spacer(modifier = Modifier.navigationBarsPadding())
                         Spacer(modifier = Modifier.height(80.dp))
                     }
                 }
@@ -132,6 +132,7 @@ fun SettingsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .systemBarsPadding()
                         .verticalScroll(scrollState)
                         .padding(horizontal = 20.dp)
                 ) {
@@ -158,7 +159,6 @@ fun SettingsScreen(
                         PermissionManager()
                     }
 
-                    Spacer(modifier = Modifier.navigationBarsPadding())
                     Spacer(modifier = Modifier.height(80.dp))
                 }
             }
@@ -376,10 +376,6 @@ private fun SettingsDialogs(
             onSelected = onMadhabSelected,
             onDismiss = onDismissMadhab
         )
-    }
-
-    if (showMadhabDialog) { // Wait, there's a duplicate check here in original code? No, let me fix it
-         // Handled above
     }
 
     if (showMethodDialog) {

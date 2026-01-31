@@ -204,7 +204,7 @@ private fun QiblaContent(
         }
 
         if (isLandscape) {
-            Row(modifier = Modifier.fillMaxSize().displayCutoutPadding()) {
+            Row(modifier = Modifier.fillMaxSize().systemBarsPadding().displayCutoutPadding()) {
                 Box(
                     modifier = Modifier
                         .weight(1.3f) // Give more weight to map/compass area
@@ -267,7 +267,6 @@ private fun QiblaContent(
                         .weight(1f)
                         .fillMaxHeight()
                         .background(if (isMapView) theme.surface else Color.Transparent)
-                        .statusBarsPadding()
                         .padding(horizontal = 24.dp, vertical = 24.dp)
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -334,7 +333,7 @@ private fun QiblaContent(
                         isSatelliteView = isSatelliteView
                     )
                     
-                    Spacer(modifier = Modifier.navigationBarsPadding())
+                    Spacer(modifier = Modifier.height(80.dp))
 
                 }
             }
@@ -343,7 +342,7 @@ private fun QiblaContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .statusBarsPadding()
+                    .systemBarsPadding()
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -465,7 +464,6 @@ private fun QiblaContent(
                     )
                 }
                 
-                Spacer(modifier = Modifier.navigationBarsPadding())
                 Spacer(modifier = Modifier.height(100.dp)) // Floating bar height
             }
         }

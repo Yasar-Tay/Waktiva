@@ -143,14 +143,22 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
     // State to control navigation visibility based on swipe
     var isNavVisible by remember { mutableStateOf(true) }
     
+    // Force visibility in landscape
+    LaunchedEffect(isLandscape) {
+        if (isLandscape) isNavVisible = true
+    }
+    
     // NestedScrollConnection to detect swipe direction
-    val nestedScrollConnection = remember {
+    val nestedScrollConnection = remember(isLandscape) {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                if (available.y > 15) {
-                    isNavVisible = true // Show when swiping DOWN
-                } else if (available.y < -15) {
-                    isNavVisible = false // Hide when swiping UP
+                // Only toggle visibility in portrait mode
+                if (!isLandscape) {
+                    if (available.y > 15) {
+                        isNavVisible = true // Show when swiping DOWN
+                    } else if (available.y < -15) {
+                        isNavVisible = false // Hide when swiping UP
+                    }
                 }
                 return Offset.Zero
             }
@@ -189,16 +197,13 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
             }
         }
 
-        // Overlay Navigation (Landscape Rail)
+        // Overlay Navigation (Landscape Rail) - No animation in landscape
         if (showNavigationLayout && isLandscape) {
-            AnimatedVisibility(
-                visible = isNavVisible,
-                enter = slideInHorizontally(initialOffsetX = { -it }) + fadeIn(),
-                exit = slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(),
+            Box(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .displayCutoutPadding() // Avoid notch in landscape
-                    .systemBarsPadding()   // Respect status bar
+                    .systemBarsPadding()   // Respect system-level controls
             ) {
                 SmoothTouchNavigationRail(
                     items = items,
@@ -216,7 +221,7 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
             }
         }
 
-        // Overlay Navigation (Portrait Bottom Bar)
+        // Overlay Navigation (Portrait Bottom Bar) - Animated
         if (showNavigationLayout && !isLandscape) {
             AnimatedVisibility(
                 visible = isNavVisible,
@@ -242,7 +247,7 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
             }
         }
 
-        // Floating Debug Controls (If still needed, moved into MainNavigation to stay visible)
+        // Floating Debug Controls
         Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Column(
                 modifier = Modifier
@@ -379,7 +384,7 @@ fun SmoothTouchNavigationBar(
         tonalElevation = 8.dp,
         shape = RoundedCornerShape(24.dp),
         modifier = Modifier
-            .padding(start = 24.dp, end = 24.dp, bottom = 16.dp) // Adjusted bottom padding, system padding added in parent
+            .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
             .fillMaxWidth()
             .height(64.dp)
     ) {

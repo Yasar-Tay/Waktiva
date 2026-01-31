@@ -112,13 +112,12 @@ fun HomeScreenContent(
                 modifier = Modifier.navigationBarsPadding() // Ensure snackbar doesn't overlap nav bar
             ) 
         },
-        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal) // Only horizontal insets for scaffold, vertical handled manually for better control
+        contentWindowInsets = WindowInsets.systemBars // Let scaffold handle system bars insets
     ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(brush = backgroundGradient)
-                // We don't apply padding from scaffold here to keep background full screen
         ) {
             if (state.isLoading) {
                 CircularProgressIndicator(
@@ -135,7 +134,7 @@ fun HomeScreenContent(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .statusBarsPadding() // Handle status bar
+                                .systemBarsPadding() // Use systemBarsPadding to avoid all system-level controls
                                 .displayCutoutPadding() // Handle camera notch in landscape
                                 .verticalScroll(rememberScrollState())
                                 .padding(horizontal = 24.dp, vertical = 16.dp)
@@ -272,8 +271,6 @@ fun HomeScreenContent(
                                     )
                                 }
                             }
-                            // Bottom padding to avoid overlap with navigation pill in gesture navigation
-                            Spacer(modifier = Modifier.navigationBarsPadding())
                             Spacer(modifier = Modifier.height(80.dp)) // Floating bar height
                         }
                     } else {
@@ -281,7 +278,7 @@ fun HomeScreenContent(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .statusBarsPadding()
+                                .systemBarsPadding() // Use systemBarsPadding instead of statusBarsPadding
                                 .verticalScroll(rememberScrollState())
                         ) {
                             HomeHeader(
@@ -418,8 +415,6 @@ fun HomeScreenContent(
                                     )
                                 }
                             }
-                            // Bottom padding for system bars and floating navigation
-                            Spacer(modifier = Modifier.navigationBarsPadding())
                             Spacer(modifier = Modifier.height(80.dp)) // Floating bar height
                         }
                     }
