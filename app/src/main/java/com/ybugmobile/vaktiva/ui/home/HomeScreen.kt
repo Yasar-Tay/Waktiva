@@ -380,7 +380,7 @@ fun HomeScreenContent(
                                     .fillMaxWidth()
                                     .padding(10.dp),
                                 color = Color.Black.copy(alpha = 0.15f),
-                                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                                shape = RoundedCornerShape(32.dp),
                                 border = androidx.compose.foundation.BorderStroke(
                                     1.dp,
                                     contentColor.copy(alpha = 0.1f)
