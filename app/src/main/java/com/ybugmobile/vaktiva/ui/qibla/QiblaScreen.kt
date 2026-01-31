@@ -464,7 +464,7 @@ private fun QiblaContent(
                     )
                 }
                 
-                Spacer(modifier = Modifier.height(100.dp)) // Floating bar height
+                Spacer(modifier = Modifier.height(150.dp)) // Floating bar height
             }
         }
     }
