@@ -2,7 +2,7 @@ package com.ybugmobile.vaktiva.ui.qibla.composables
 
 import android.hardware.SensorManager
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,8 +40,8 @@ fun QiblaInfoCard(
     // Dynamic Colors based on View Mode
     val containerColor by animateColorAsState(
         targetValue = when {
-            isMapView -> theme.surface // Totally solid in Map View
-            else -> Color.White.copy(alpha = 0.1f)
+            isMapView -> theme.surface
+            else -> Color.Black.copy(alpha = 0.4f) // Sleeker dark transparency for compass view
         },
         label = "containerColor"
     )
@@ -50,125 +51,104 @@ fun QiblaInfoCard(
         else -> Color.White
     }
 
-    val labelColor = contentColor.copy(alpha = 0.6f)
-    val dividerColor = contentColor.copy(alpha = 0.15f)
+    val dividerColor = contentColor.copy(alpha = 0.1f)
 
     Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(32.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(24.dp),
         color = containerColor,
-        border = androidx.compose.foundation.BorderStroke(
+        border = BorderStroke(
             width = 1.dp,
-            color = if (isMapView) contentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
+            color = contentColor.copy(alpha = 0.12f)
         ),
-        shadowElevation = if (isMapView) 8.dp else 0.dp
+        shadowElevation = if (isMapView) 6.dp else 0.dp
     ) {
-        Column(modifier = Modifier.padding(24.dp)) {
-            // Top Section: Alignment Status
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Top Section: Status & Calibration
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = if (isAligned) stringResource(R.string.qibla_mecca_aligned).uppercase()
-                               else stringResource(R.string.qibla_rotate_phone).uppercase(),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Black,
-                        color = if (isAligned) Color(0xFF4CAF50) else contentColor,
-                        letterSpacing = 1.5.sp
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                    Icon(
+                        imageVector = if (isAligned) Icons.Rounded.Verified else Icons.Rounded.RotateRight,
+                        contentDescription = null,
+                        tint = if (isAligned) alignmentColor else contentColor.copy(alpha = 0.6f),
+                        modifier = Modifier.size(20.dp)
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = if (isAligned) stringResource(R.string.qibla_kaaba_aligned) 
-                               else stringResource(R.string.qibla_find_marker),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = labelColor
+                        text = if (isAligned) stringResource(R.string.qibla_mecca_aligned)
+                               else stringResource(R.string.qibla_rotate_phone),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = contentColor,
+                        letterSpacing = 0.2.sp
                     )
                 }
 
                 if (isAccuracyLow || isAccuracyUnreliable) {
-                    FilledTonalButton(
+                    TextButton(
                         onClick = onCalibrationClick,
-                        modifier = Modifier.height(40.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = theme.error.copy(alpha = 0.2f),
-                            contentColor = if (isMapView) theme.error else Color.White
-                        ),
-                        contentPadding = PaddingValues(horizontal = 12.dp)
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+                        modifier = Modifier.height(32.dp),
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = if (isMapView) theme.error else Color(0xFFF87171)
+                        )
                     ) {
-                        Icon(Icons.Rounded.CompassCalibration, null, modifier = Modifier.size(18.dp))
-                        Spacer(Modifier.width(8.dp))
+                        Icon(Icons.Rounded.CompassCalibration, null, modifier = Modifier.size(16.dp))
+                        Spacer(Modifier.width(6.dp))
                         Text(
-                            text = stringResource(R.string.qibla_calibrate).uppercase(), 
-                            style = MaterialTheme.typography.labelLarge, 
-                            fontWeight = FontWeight.Bold
+                            text = stringResource(R.string.qibla_calibrate),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Black
                         )
                     }
                 }
             }
 
-            // Interference Tip Section
-            if (isAccuracyLow || isAccuracyUnreliable) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Surface(
-                    color = theme.errorContainer.copy(alpha = if (isMapView) 0.1f else 0.2f),
-                    shape = RoundedCornerShape(16.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, theme.error.copy(alpha = 0.2f))
-                ) {
-                    Row(
-                        modifier = Modifier.padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Rounded.Info,
-                            null,
-                            tint = if (isMapView) theme.error else Color(0xFFF87171),
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(Modifier.width(12.dp))
-                        Text(
-                            text = stringResource(R.string.qibla_interference_tip),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = contentColor.copy(alpha = 0.8f),
-                            lineHeight = 16.sp
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider(color = dividerColor)
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Metrics Grid
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                MetricItem(
-                    label = stringResource(R.string.qibla_label).uppercase(),
+                CompactMetricItem(
+                    label = stringResource(R.string.qibla_label),
                     value = "${qiblaDirection.toInt()}°",
                     icon = Icons.Rounded.MyLocation,
                     contentColor = contentColor,
                     modifier = Modifier.weight(1f)
                 )
                 
-                Box(modifier = Modifier.width(1.dp).height(40.dp).background(dividerColor).align(Alignment.CenterVertically))
+                VerticalDivider(
+                    modifier = Modifier.height(24.dp),
+                    color = dividerColor
+                )
                 
-                MetricItem(
-                    label = stringResource(R.string.qibla_heading).uppercase(),
+                CompactMetricItem(
+                    label = stringResource(R.string.qibla_heading),
                     value = "${(compassData.azimuth.toInt() + 360) % 360}°",
                     icon = Icons.Rounded.Explore,
                     contentColor = contentColor,
                     modifier = Modifier.weight(1f)
                 )
 
-                Box(modifier = Modifier.width(1.dp).height(40.dp).background(dividerColor).align(Alignment.CenterVertically))
+                VerticalDivider(
+                    modifier = Modifier.height(24.dp),
+                    color = dividerColor
+                )
 
-                MetricItem(
-                    label = stringResource(R.string.qibla_signal).uppercase(),
-                    value = getAccuracyLabel(compassData.accuracy).uppercase(),
+                CompactMetricItem(
+                    label = stringResource(R.string.qibla_signal),
+                    value = getAccuracyLabel(compassData.accuracy),
                     icon = Icons.Rounded.WifiTethering,
                     color = if (isAccuracyLow) Color(0xFFF87171) else Color(0xFF4CAF50),
                     contentColor = contentColor,
@@ -180,10 +160,10 @@ fun QiblaInfoCard(
 }
 
 @Composable
-private fun MetricItem(
+private fun CompactMetricItem(
     label: String,
     value: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     color: Color? = null,
     contentColor: Color,
     modifier: Modifier = Modifier
@@ -193,25 +173,28 @@ private fun MetricItem(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = effectiveColor.copy(alpha = 0.5f),
-            modifier = Modifier.size(20.dp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = effectiveColor.copy(alpha = 0.5f),
+                modifier = Modifier.size(14.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                color = effectiveColor
+            )
+        }
         Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = effectiveColor
-        )
-        Text(
-            text = label,
+            text = label.uppercase(),
             style = MaterialTheme.typography.labelSmall,
             color = contentColor.copy(alpha = 0.4f),
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp
+            fontSize = 9.sp,
+            letterSpacing = 0.5.sp
         )
     }
 }

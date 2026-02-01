@@ -100,7 +100,7 @@ fun QiblaScreen(
         t.isAfter(sunrise) && t.isBefore(sunset)
     } else false
 
-    val contentColor = if (isLightBackground) Color.Black else Color.White
+    val contentColor = /*if (isLightBackground) Color.Black else */Color.White
     val textShadow = if (!isLightBackground) Shadow(
         color = Color.Black.copy(alpha = 0.5f),
         offset = Offset(0f, 2f),

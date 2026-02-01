@@ -99,7 +99,9 @@ fun ModernCalendarStrip(
                 }
             }
 
-            ReligiousBadge(date = selectedDate, contentColor = contentColor)
+            // Find current hijri for selected date to pass to badge
+            val selectedHijri = availableDays.find { it.date == selectedDate }?.hijriDate
+            ReligiousBadge(date = selectedDate, contentColor = contentColor, hijriDate = selectedHijri)
         }
 
         LazyRow(
@@ -120,10 +122,9 @@ fun ModernCalendarStrip(
                 val hijriMonth = hijri?.monthNumber
                 val hijriDayNum = hijri?.day
                 
-                val isRamadan = hijriMonth == 9
-                val isEidFitr = hijriMonth == 10 && hijriDayNum in 1..3
-                val isEidAdha = hijriMonth == 12 && hijriDayNum in 10..13
-                val isEid = isEidFitr || isEidAdha
+                // Use unified detection logic from ReligiousBadge
+                val isRamadan = isRamadan(hijriMonth, religiousDay)
+                val isEid = isEid(hijriMonth, hijriDayNum, religiousDay)
                 
                 // Use shared accent color logic
                 val accentColor = getCalendarAccentColor(date, hijriMonth, hijriDayNum, contentColor)

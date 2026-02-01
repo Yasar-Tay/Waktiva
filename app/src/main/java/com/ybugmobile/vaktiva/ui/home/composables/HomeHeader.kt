@@ -54,7 +54,7 @@ fun HomeHeader(
                 LocationSection(locationName, contentColor)
                 
                 Column(horizontalAlignment = Alignment.End) {
-                    ReligiousBadge(date = date, contentColor = contentColor)
+                    ReligiousBadge(date = date, contentColor = contentColor, hijriDate = hijriDate)
                     Spacer(modifier = Modifier.height(8.dp))
                     DatesSection(date, hijriDate, contentColor, context)
                 }
@@ -68,7 +68,7 @@ fun HomeHeader(
             
             // Floating badge for portrait
             Box(modifier = Modifier.align(Alignment.TopEnd)) {
-                ReligiousBadge(date = date, contentColor = contentColor)
+                ReligiousBadge(date = date, contentColor = contentColor, hijriDate = hijriDate)
             }
         }
     }
