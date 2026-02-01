@@ -27,7 +27,7 @@ fun ModernPermissionItem(title: String, isGranted: Boolean, icon: ImageVector) {
             modifier = Modifier
                 .size(36.dp)
                 .background(
-                    if (isGranted) Color(0xFF4CAF50).copy(alpha = 0.1f) 
+                    if (isGranted) Color(0xFF81C784).copy(alpha = 0.1f)
                     else Color(0xFFF87171).copy(alpha = 0.1f), 
                     CircleShape
                 ),
@@ -36,7 +36,7 @@ fun ModernPermissionItem(title: String, isGranted: Boolean, icon: ImageVector) {
             Icon(
                 imageVector = icon, 
                 contentDescription = null, 
-                tint = if (isGranted) Color(0xFF4CAF50) else Color(0xFFF87171),
+                tint = if (isGranted) Color(0xFF81C784) else Color(0xFFF87171),
                 modifier = Modifier.size(18.dp)
             )
         }
@@ -70,7 +70,7 @@ fun ModernPermissionItem(title: String, isGranted: Boolean, icon: ImageVector) {
                     fontWeight = FontWeight.Black,
                     letterSpacing = 1.sp
                 ),
-                color = if (isGranted) Color(0xFF4CAF50) else Color(0xFFF87171)
+                color = Color.White
             )
         }
     }
