@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerType
+import com.ybugmobile.vaktiva.ui.settings.composables.SettingsToggleItem
 import com.ybugmobile.vaktiva.ui.theme.dynamicTimeGradient
 import java.time.LocalTime
 
@@ -294,7 +295,7 @@ private fun SettingsCard(title: String, content: @Composable ColumnScope.() -> U
             border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f)),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(20.dp)) {
+            Column(modifier = Modifier.padding(vertical = 8.dp)) {
                 content()
             }
         }
@@ -309,44 +310,24 @@ fun PreAdhanContent(
     onMinutesChange: (Int) -> Unit
 ) {
     Column {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    stringResource(id = R.string.settings_pre_adhan_warning),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                Text(
-                    stringResource(id = R.string.settings_pre_adhan_warning_summary),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.5f)
-                )
-            }
-            Switch(
-                checked = enabled, 
-                onCheckedChange = onToggle,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color.White,
-                    checkedTrackColor = Color.White.copy(alpha = 0.3f),
-                    uncheckedThumbColor = Color.White.copy(alpha = 0.4f),
-                    uncheckedTrackColor = Color.White.copy(alpha = 0.1f)
-                )
-            )
-        }
+        SettingsToggleItem(
+            title = stringResource(id = R.string.settings_pre_adhan_warning),
+            subtitle = stringResource(id = R.string.settings_pre_adhan_warning_summary),
+            icon = Icons.Rounded.NotificationsActive,
+            checked = enabled,
+            onCheckedChange = onToggle
+        )
         
         if (enabled) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             SliderWithLabel(
                 label = stringResource(id = R.string.audio_minutes_before),
                 value = minutes,
                 onValueChange = onMinutesChange,
-                valueRange = 1f..30f
+                valueRange = 1f..30f,
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
             )
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -359,51 +340,37 @@ fun FajrSunriseContent(
     onMinutesChange: (Int) -> Unit
 ) {
     Column {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    stringResource(R.string.audio_fajr_sunrise_alarm),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                Text(
-                    stringResource(R.string.audio_fajr_sunrise_alarm_desc),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.5f)
-                )
-            }
-            Switch(
-                checked = enabled, 
-                onCheckedChange = onToggle,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color.White,
-                    checkedTrackColor = Color.White.copy(alpha = 0.3f),
-                    uncheckedThumbColor = Color.White.copy(alpha = 0.4f),
-                    uncheckedTrackColor = Color.White.copy(alpha = 0.1f)
-                )
-            )
-        }
+        SettingsToggleItem(
+            title = stringResource(R.string.audio_fajr_sunrise_alarm),
+            subtitle = stringResource(R.string.audio_fajr_sunrise_alarm_desc),
+            icon = Icons.Rounded.WbTwilight,
+            checked = enabled,
+            onCheckedChange = onToggle
+        )
         
         if (enabled) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             SliderWithLabel(
                 label = stringResource(id = R.string.audio_minutes_before),
                 value = minutes,
                 onValueChange = onMinutesChange,
-                valueRange = 1f..120f
+                valueRange = 1f..120f,
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
             )
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
 @Composable
-private fun SliderWithLabel(label: String, value: Int, onValueChange: (Int) -> Unit, valueRange: ClosedFloatingPointRange<Float>) {
-    Column {
+private fun SliderWithLabel(
+    label: String, 
+    value: Int, 
+    onValueChange: (Int) -> Unit, 
+    valueRange: ClosedFloatingPointRange<Float>,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Text(label, style = MaterialTheme.typography.labelMedium, color = Color.White.copy(alpha = 0.6f))
             Text("$value", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Black, color = Color.White)
@@ -426,35 +393,13 @@ fun SelectionModeContent(
     useSpecific: Boolean,
     onToggle: (Boolean) -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                stringResource(id = R.string.audio_individual_sounds_title),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Text(
-                stringResource(id = R.string.audio_individual_sounds_desc),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.5f)
-            )
-        }
-        Switch(
-            checked = useSpecific, 
-            onCheckedChange = onToggle,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = Color.White,
-                checkedTrackColor = Color.White.copy(alpha = 0.3f),
-                uncheckedThumbColor = Color.White.copy(alpha = 0.4f),
-                uncheckedTrackColor = Color.White.copy(alpha = 0.1f)
-            )
-        )
-    }
+    SettingsToggleItem(
+        title = stringResource(id = R.string.audio_individual_sounds_title),
+        subtitle = stringResource(id = R.string.audio_individual_sounds_desc),
+        icon = Icons.Rounded.LibraryMusic,
+        checked = useSpecific,
+        onCheckedChange = onToggle
+    )
 }
 
 @Composable

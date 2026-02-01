@@ -45,7 +45,7 @@
     <string name="home_skip_adhan">Mute</string>
     <string name="home_unmute_adhan">Unmute</string>
     <string name="home_return_to_today">Return to Today</string>
-    <string name="home_tomorrow_is">Tomorrow is %s</string>
+    <string name="home_tomorrow_is">Tomorrow: %s</string>
     <string name="home_today_is">Today is %s</string>
     <string name="home_adhan_muted">Adhan muted for %s</string>
     <string name="home_adhan_unmuted">Adhan unmuted for %s</string>
@@ -225,13 +225,13 @@
 
     <!-- Religious Days -->
     <string name="rel_day_3_months">Three Months Begin</string>
-    <string name="rel_day_regaip">Regaip Kandili</string>
-    <string name="rel_day_mirac">Miraç Kandili</string>
-    <string name="rel_day_berat">Berat Kandili</string>
+    <string name="rel_day_regaip">Laylat al-Raghaib</string>
+    <string name="rel_day_mirac">Laylat al-Mi‘raj</string>
+    <string name="rel_day_berat">Laylat al-Bara’ah</string>
     <string name="rel_day_first_tarawih">First Tarawih</string>
     <string name="rel_day_ramadan_start">Ramadan Begins</string>
     <string name="rel_day_kadir">Laylat al-Qadr</string>
-    <string name="rel_day_arefe">Arefe</string>
+    <string name="rel_day_eid_eve">Eid Eve</string>
     <string name="rel_day_ramadan_eid">Eid al-Fitr</string>
     <string name="rel_day_sacrifice_eid">Eid al-Adha</string>
     <string name="rel_day_hijri_new_year">Hijri New Year</string>

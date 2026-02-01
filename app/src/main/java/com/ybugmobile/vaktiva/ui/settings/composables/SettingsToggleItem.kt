@@ -65,7 +65,7 @@ fun SettingsToggleItem(
             onCheckedChange = onCheckedChange,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
-                checkedTrackColor = Color.White.copy(alpha = 0.3f),
+                checkedTrackColor = Color(0xFF81C784).copy(alpha = 0.5f),
                 uncheckedThumbColor = Color.White.copy(alpha = 0.4f),
                 uncheckedTrackColor = Color.White.copy(alpha = 0.1f),
                 uncheckedBorderColor = Color.White.copy(alpha = 0.2f)

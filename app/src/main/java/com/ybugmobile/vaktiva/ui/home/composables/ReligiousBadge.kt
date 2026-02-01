@@ -121,7 +121,7 @@ fun isEid(hijriMonth: Int?, hijriDay: Int?, religiousDay: ReligiousDay?): Boolea
            (hijriMonth == 12 && hijriDay in 10..13) ||
            religiousDay?.nameResId == R.string.rel_day_ramadan_eid ||
            religiousDay?.nameResId == R.string.rel_day_sacrifice_eid ||
-           religiousDay?.nameResId == R.string.rel_day_arefe
+           religiousDay?.nameResId == R.string.rel_day_eid_eve
 }
 
 // Overload for simpler calls

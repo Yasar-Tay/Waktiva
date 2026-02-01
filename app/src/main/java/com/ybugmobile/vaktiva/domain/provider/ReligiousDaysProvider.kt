@@ -14,12 +14,11 @@ object ReligiousDaysProvider {
 
 
         ReligiousDay(LocalDate.of(2026, 3, 16), R.string.rel_day_kadir),
-        ReligiousDay(LocalDate.of(2026, 3, 19), R.string.rel_day_arefe),
         ReligiousDay(LocalDate.of(2026, 3, 20), R.string.rel_day_ramadan_eid),
         ReligiousDay(LocalDate.of(2026, 3, 21), R.string.rel_day_ramadan_eid),
         ReligiousDay(LocalDate.of(2026, 3, 22), R.string.rel_day_ramadan_eid),
 
-        ReligiousDay(LocalDate.of(2026, 5, 26), R.string.rel_day_arefe),
+        ReligiousDay(LocalDate.of(2026, 5, 26), R.string.rel_day_eid_eve),
         ReligiousDay(LocalDate.of(2026, 5, 27), R.string.rel_day_sacrifice_eid),
         ReligiousDay(LocalDate.of(2026, 5, 28), R.string.rel_day_sacrifice_eid),
         ReligiousDay(LocalDate.of(2026, 5, 29), R.string.rel_day_sacrifice_eid),

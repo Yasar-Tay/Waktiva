@@ -226,7 +226,7 @@
     <string name="rel_day_first_tarawih">İlk Teravih</string>
     <string name="rel_day_ramadan_start">Ramazan Başlangıcı</string>
     <string name="rel_day_kadir">Kadir Gecesi</string>
-    <string name="rel_day_arefe">Arefe Günü</string>
+    <string name="rel_day_eid_eve">Arefe Günü</string>
     <string name="rel_day_ramadan_eid">Ramazan Bayramı</string>
     <string name="rel_day_sacrifice_eid">Kurban Bayramı</string>
     <string name="rel_day_hijri_new_year">Hicri Yılbaşı</string>
