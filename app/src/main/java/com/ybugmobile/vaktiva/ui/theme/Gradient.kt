@@ -74,27 +74,37 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
         // Full Day: Enriched Spectral Azure (Maximum Luminosity)
         currentTime.isBefore(dhuhur) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF1E3A8A), // Deep Slate for status bar contrast
-                0.3f to Color(0xFF236DA6), // Rich Indigo-Blue
-                0.7f to Color(0xFF02C7C0), // Luminous Azure
-                1.0f to Color(0xFF18A87F)  // Vibrant Cyan Glow
+                0.0f to Color(0xFF4593E5),  // Vibrant Cyan Glow
+                0.3f to Color(0xFF236FBE), // Deep Slate for status bar contrast
+                0.7f to Color(0xFF68B298), // Rich Indigo-Blue
+                1.0f to Color(0xFF4593E5), // Luminous Azure
             )
         )
 
-        // Full Day: Enriched Spectral Azure (Maximum Luminosity)
+        // High Afternoon: Crisp Azure to a Luminous Sky
+        currentTime.isBefore(asr) -> Brush.verticalGradient(
+            colorStops = arrayOf(
+                0.0f to Color(0xFF1E40AF), // Deep Cobalt
+                0.3f to Color(0xFF3B82F6), // Luminous Royal Blue
+                0.7f to Color(0xFF60A5FA), // Soft Cerulean
+                1.0f to Color(0xFF93C5FD)  // Ethereal Light Blue
+            )
+        )
+
+        // Late Afternoon: Transitioning toward Golden Hour
         currentTime.isBefore(sunsetStart) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF172D69), // Deep Slate for status bar contrast
-                0.3f to Color(0xFF1E3A8A), // Rich Indigo-Blue
-                0.7f to Color(0xFF0284C7), // Luminous Azure
-                1.0f to Color(0xFF22D3EE)  // Vibrant Cyan Glow
+                0.0f to Color(0xFF4593E5), // Deep Slate for status bar contrast
+                0.3f to Color(0xFF0284C7), // Rich Indigo-Blue
+                0.7f to Color(0xFF1E3A8A), // Luminous Azure
+                1.0f to Color(0xFF3D226C)  // Vibrant Cyan Glow
             )
         )
 
         // Sunset: Burnt Orange to a radiant Sunset Glow
         currentTime.isBefore(maghrib) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF1E3A8A), // Rich Indigo-Blue
+                0.0f to Color(0xFF4E3D88), // Rich Indigo-Blue
                 0.4f to Color(0xFF9D592B), // Original Anchor
                 0.7f to Color(0xFFA43653), // Original Anchor
                 1.0f to Color(0xFFFDBA74)  // Radiant Sunset Highlight
