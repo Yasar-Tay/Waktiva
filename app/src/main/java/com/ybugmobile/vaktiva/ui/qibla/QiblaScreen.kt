@@ -203,9 +203,9 @@ private fun QiblaContent(
             Row(modifier = Modifier.fillMaxSize().systemBarsPadding().displayCutoutPadding()) {
                 Box(
                     modifier = Modifier
-                        .weight(1.3f) // Give more weight to map/compass area
+                        .weight(1.7f) // Give more weight to map/compass area
                         .fillMaxHeight(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.CenterEnd
                 ) {
                     if (isMapView) {
                         QiblaMap(
@@ -263,7 +263,7 @@ private fun QiblaContent(
                         .weight(1f)
                         .fillMaxHeight()
                         .background(if (isMapView) theme.surface else Color.Transparent)
-                        .padding(horizontal = 24.dp, vertical = 24.dp)
+                        .padding(horizontal = 16.dp, vertical = 24.dp)
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)

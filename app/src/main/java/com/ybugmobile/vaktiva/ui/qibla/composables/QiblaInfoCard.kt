@@ -42,8 +42,8 @@ fun QiblaInfoCard(
     // Dynamic Colors based on View Mode and Orientation
     val containerColor by animateColorAsState(
         targetValue = when {
-            isMapView -> theme.surface // Solid surface color
-            else -> Color.White.copy(alpha = 0.1f)
+            isMapView && !isLandscape -> theme.surface
+            else -> Color.Black.copy(alpha = 0.45f) // Slightly deeper dark transparency for better contrast
         },
         label = "containerColor"
     )
