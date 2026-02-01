@@ -113,21 +113,23 @@ fun ModernCalendarStrip(
                 val religiousDay = ReligiousDaysProvider.getReligiousDay(date)
                 val isReligiousDay = religiousDay != null
                 
-                val isRamadan = hijri?.monthNumber == 9
-                val isEidFitr = hijri?.monthNumber == 10 && hijri.day in 1..3
-                val isEidAdha = hijri?.monthNumber == 12 && hijri.day in 10..13
+                val hijriMonth = hijri?.monthNumber
+                val hijriDayNum = hijri?.day
+                
+                val isRamadan = hijriMonth == 9
+                val isEidFitr = hijriMonth == 10 && hijriDayNum in 1..3
+                val isEidAdha = hijriMonth == 12 && hijriDayNum in 10..13
                 val isEid = isEidFitr || isEidAdha
-
-                // Muted, sophisticated colors for special days
-                val accentColor = when {
-                    isEid -> Color(0xFFFBC02D) // Soft Gold
-                    isRamadan -> Color(0xFF81C784) // Sage Green
-                    isReligiousDay -> Color(0xFF90CAF9) // Soft Blue
-                    else -> contentColor.copy(alpha = 0.15f)
-                }
+                
+                // Use shared accent color logic
+                val accentColor = getCalendarAccentColor(date, hijriMonth, hijriDayNum, contentColor)
 
                 val cardBgColor by animateColorAsState(
-                    targetValue = if (isSelected) contentColor.copy(alpha = 0.15f) else Color.Transparent,
+                    targetValue = when {
+                        isSelected -> contentColor.copy(alpha = 0.15f)
+                        isToday -> accentColor.copy(alpha = 0.15f)
+                        else -> Color.Transparent
+                    },
                     label = "cardBg"
                 )
 
@@ -138,11 +140,12 @@ fun ModernCalendarStrip(
                     modifier = Modifier
                         .width(62.dp)
                         .then(
-                            if (isSelected) {
-                                Modifier.border(1.dp, contentColor.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
-                            } else if (isReligiousDay || isRamadan || isEid) {
-                                Modifier.border(1.dp, accentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
-                            } else Modifier
+                            when {
+                                isSelected -> Modifier.border(1.5.dp, contentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
+                                isToday -> Modifier.border(2.dp, accentColor.copy(alpha = 0.6f), RoundedCornerShape(12.dp))
+                                isReligiousDay || isRamadan || isEid -> Modifier.border(1.dp, accentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
+                                else -> Modifier
+                            }
                         )
                 ) {
                     Column(
@@ -155,6 +158,7 @@ fun ModernCalendarStrip(
                                 .fillMaxWidth()
                                 .background(
                                     when {
+                                        isToday -> accentColor.copy(alpha = 0.4f)
                                         isReligiousDay || isRamadan || isEid -> accentColor.copy(alpha = 0.35f)
                                         isSelected -> contentColor.copy(alpha = 0.2f)
                                         else -> contentColor.copy(alpha = 0.1f)
@@ -170,7 +174,7 @@ fun ModernCalendarStrip(
                             }
                             Text(
                                 text = monthText,
-                                color = if (isReligiousDay || isRamadan || isEid) contentColor else contentColor.copy(alpha = 0.6f),
+                                color = if (isToday || isReligiousDay || isRamadan || isEid) contentColor else contentColor.copy(alpha = 0.6f),
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Black,
                                 letterSpacing = 0.5.sp
@@ -196,7 +200,7 @@ fun ModernCalendarStrip(
                         // Bottom Section: Day Name
                         Text(
                             text = date.format(dayNameFormatter).uppercase(),
-                            color = contentColor.copy(alpha = if (isSelected) 1f else 0.4f),
+                            color = contentColor.copy(alpha = if (isSelected || isToday) 1f else 0.4f),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(bottom = 6.dp)
@@ -212,7 +216,7 @@ fun ModernCalendarStrip(
                                 Box(
                                     Modifier
                                         .size(4.dp)
-                                        .background(if (isSelected) contentColor else accentColor, CircleShape)
+                                        .background(contentColor, CircleShape)
                                 )
                             } else if (isReligiousDay || isRamadan || isEid) {
                                 Icon(

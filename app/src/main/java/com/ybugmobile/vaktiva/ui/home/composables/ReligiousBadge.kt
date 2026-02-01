@@ -40,31 +40,68 @@ fun ReligiousBadge(
     } else {
         stringResource(R.string.home_tomorrow_is, stringResource(holidayToShow.nameResId))
     }
+
+    // Get the color for the holiday (either today's or tomorrow's)
+    val holidayDate = if (religiousDay != null) date else date.plusDays(1)
+    val accentColor = getCalendarAccentColor(holidayDate, null, contentColor)
     
     Surface(
-        color = contentColor.copy(alpha = 0.35f), // Increased opacity
+        color = accentColor.copy(alpha = 0.25f),
         shape = CircleShape,
-        modifier = modifier.border(1.5.dp, contentColor.copy(alpha = 0.5f), CircleShape) // Thicker border
+        modifier = modifier.border(1.5.dp, accentColor.copy(alpha = 0.5f), CircleShape)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp), // More padding
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Rounded.Star,
                 contentDescription = null,
-                tint = contentColor,
-                modifier = Modifier.size(16.dp) // Slightly larger icon
+                tint = accentColor,
+                modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = holidayLabel,
                 style = MaterialTheme.typography.labelSmall,
                 color = contentColor,
-                fontWeight = FontWeight.Black, // Extra bold
-                letterSpacing = 1.2.sp, // More spacing
+                fontWeight = FontWeight.Black,
+                letterSpacing = 1.2.sp,
                 fontSize = 12.sp
             )
         }
     }
+}
+
+/**
+ * Shared logic for calendar accent colors.
+ * Note: hijriData is optional here because ReligiousDaysProvider only uses the LocalDate.
+ * But we can use it for Ramadan/Eid checks if available.
+ */
+fun getCalendarAccentColor(
+    date: LocalDate,
+    hijriMonth: Int?,
+    hijriDay: Int?,
+    contentColor: Color
+): Color {
+    val isToday = date == LocalDate.now()
+    val isReligiousDay = ReligiousDaysProvider.getReligiousDay(date) != null
+    
+    val isRamadan = hijriMonth == 9
+    val isEidFitr = hijriMonth == 10 && hijriDay in 1..3
+    val isEidAdha = hijriMonth == 12 && hijriDay in 10..13
+    val isEid = isEidFitr || isEidAdha
+
+    return when {
+        isToday -> Color(0xFF42A5F5) // Remarkable Vibrant Blue
+        isEid -> Color(0xFFFFD54F) // Soft Gold
+        isRamadan -> Color(0xFF81C784) // Sage Green
+        isReligiousDay -> Color(0xFFBA68C8) // Soft Purple
+        else -> contentColor.copy(alpha = 0.15f)
+    }
+}
+
+// Overload for simpler calls
+fun getCalendarAccentColor(date: LocalDate, hijriData: com.ybugmobile.vaktiva.domain.model.HijriData?, contentColor: Color): Color {
+    return getCalendarAccentColor(date, hijriData?.monthNumber, hijriData?.day, contentColor)
 }
