@@ -228,7 +228,8 @@
     <string name="rel_day_regaip">Regaip Kandili</string>
     <string name="rel_day_mirac">Miraç Kandili</string>
     <string name="rel_day_berat">Berat Kandili</string>
-    <string name="rel_day_ramadan_start">Ramadan Begin</string>
+    <string name="rel_day_first_tarawih">First Tarawih</string>
+    <string name="rel_day_ramadan_start">Ramadan Begins</string>
     <string name="rel_day_kadir">Laylat al-Qadr</string>
     <string name="rel_day_arefe">Arefe</string>
     <string name="rel_day_ramadan_eid">Eid al-Fitr</string>

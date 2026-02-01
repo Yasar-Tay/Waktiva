@@ -54,20 +54,13 @@ fun ReligiousBadge(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Rounded.Star,
-                contentDescription = null,
-                tint = accentColor,
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+
             Text(
                 text = holidayLabel,
                 style = MaterialTheme.typography.labelSmall,
                 color = contentColor,
-                fontWeight = FontWeight.Black,
                 letterSpacing = 1.2.sp,
-                fontSize = 12.sp
+                fontSize = 10.sp
             )
         }
     }

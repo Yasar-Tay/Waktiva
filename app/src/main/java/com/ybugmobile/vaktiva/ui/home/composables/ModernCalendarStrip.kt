@@ -11,16 +11,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
+
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Star
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,6 +45,7 @@ fun ModernCalendarStrip(
     
     val listState = rememberLazyListState()
     val density = LocalDensity.current
+    val context = LocalContext.current
 
     // Slower Auto-scroll to selected date
     LaunchedEffect(selectedDate) {
@@ -168,7 +170,13 @@ fun ModernCalendarStrip(
                             contentAlignment = Alignment.Center
                         ) {
                             val monthText = if (isHijriSelected && hijri != null) {
-                                hijri.monthEn.take(3).uppercase()
+                                val resId = context.resources.getIdentifier(
+                                    "hijri_month_${hijri.monthNumber}",
+                                    "string",
+                                    context.packageName
+                                )
+                                val translated = if (resId != 0) stringResource(resId) else hijri.monthEn
+                                translated.take(3).uppercase()
                             } else {
                                 date.format(monthFormatter).uppercase()
                             }
@@ -205,30 +213,6 @@ fun ModernCalendarStrip(
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(bottom = 6.dp)
                         )
-
-                        // Visual indicator for today or special days
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        ) {
-                            if (isToday) {
-                                Box(
-                                    Modifier
-                                        .size(4.dp)
-                                        .background(contentColor, CircleShape)
-                                )
-                            } else if (isReligiousDay || isRamadan || isEid) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Star,
-                                    contentDescription = null,
-                                    tint = accentColor.copy(alpha = 0.8f),
-                                    modifier = Modifier.size(8.dp)
-                                )
-                            } else {
-                                Spacer(modifier = Modifier.height(4.dp))
-                            }
-                        }
                     }
                 }
             }

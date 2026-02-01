@@ -9,6 +9,7 @@ object ReligiousDaysProvider {
         ReligiousDay(LocalDate.of(2026, 1, 15), R.string.rel_day_mirac),
 
         ReligiousDay(LocalDate.of(2026, 2, 2), R.string.rel_day_berat),
+        ReligiousDay(LocalDate.of(2026, 2, 18), R.string.rel_day_first_tarawih),
         ReligiousDay(LocalDate.of(2026, 2, 19), R.string.rel_day_ramadan_start),
 
 
