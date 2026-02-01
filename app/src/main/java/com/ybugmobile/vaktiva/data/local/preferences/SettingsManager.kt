@@ -38,7 +38,8 @@ data class UserSettings(
     val mutedPrayerDate: String?,
     val testAlarmEndTime: Long?,
     val fajrAlarmMinutesBeforeSunrise: Int,
-    val useFajrAlarmBeforeSunrise: Boolean
+    val useFajrAlarmBeforeSunrise: Boolean,
+    val isHijriSelected: Boolean = false
 )
 
 @Singleton
@@ -63,6 +64,7 @@ class SettingsManager @Inject constructor(
         val TEST_ALARM_END_TIME = longPreferencesKey("test_alarm_end_time")
         val FAJR_ALARM_MINUTES_BEFORE_SUNRISE = intPreferencesKey("fajr_alarm_minutes_before_sunrise")
         val USE_FAJR_ALARM_BEFORE_SUNRISE = booleanPreferencesKey("use_fajr_alarm_before_sunrise")
+        val IS_HIJRI_SELECTED = booleanPreferencesKey("is_hijri_selected")
 
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
@@ -90,7 +92,8 @@ class SettingsManager @Inject constructor(
             mutedPrayerDate = preferences[MUTED_PRAYER_DATE],
             testAlarmEndTime = preferences[TEST_ALARM_END_TIME],
             fajrAlarmMinutesBeforeSunrise = preferences[FAJR_ALARM_MINUTES_BEFORE_SUNRISE] ?: 45,
-            useFajrAlarmBeforeSunrise = preferences[USE_FAJR_ALARM_BEFORE_SUNRISE] ?: false
+            useFajrAlarmBeforeSunrise = preferences[USE_FAJR_ALARM_BEFORE_SUNRISE] ?: false,
+            isHijriSelected = preferences[IS_HIJRI_SELECTED] ?: false
         )
     }
 
@@ -194,6 +197,12 @@ class SettingsManager @Inject constructor(
             } else {
                 preferences[TEST_ALARM_END_TIME] = timeMillis
             }
+        }
+    }
+
+    override suspend fun updateCalendarType(isHijri: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[IS_HIJRI_SELECTED] = isHijri
         }
     }
 

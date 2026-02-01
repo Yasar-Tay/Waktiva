@@ -213,7 +213,8 @@ class HomeViewModel @Inject constructor(
             locationName = currentSettings.locationName, 
             isAdhanPlaying = playing, 
             playingPrayerName = prayerName,
-            isMuted = isMuted 
+            isMuted = isMuted,
+            isHijriSelected = currentSettings.isHijriSelected
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))
 
@@ -263,6 +264,10 @@ class HomeViewModel @Inject constructor(
         } else {
             settingsManager.muteNextPrayer(prayerName, prayerDate.toString())
         }
+    }
+
+    fun toggleCalendarType(isHijri: Boolean) = viewModelScope.launch {
+        settingsManager.updateCalendarType(isHijri)
     }
 
     fun onPermissionsGranted() = viewModelScope.launch { try { fetchPrayerData() } finally { _hasSettled.value = true } }

@@ -62,6 +62,7 @@ fun HomeScreen(
         onRefresh = { viewModel.refresh() },
         onMethodSelected = { viewModel.updateCalculationMethod(it) },
         onDateSelected = { viewModel.selectDate(it) },
+        onToggleCalendarType = { viewModel.toggleCalendarType(it) },
         onSkipNextAudio = { name, date -> viewModel.toggleSkipNextPrayerAudio(name, date) },
         onStopAdhan = { viewModel.stopAdhan() },
         onStopTest = { viewModel.stopTestAlarm() },
@@ -79,6 +80,7 @@ fun HomeScreenContent(
     onRefresh: () -> Unit,
     onMethodSelected: (Int) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
+    onToggleCalendarType: (Boolean) -> Unit,
     onSkipNextAudio: (String, LocalDate) -> Unit,
     onStopAdhan: () -> Unit,
     onStopTest: () -> Unit,
@@ -246,6 +248,8 @@ fun HomeScreenContent(
                                     ModernCalendarStrip(
                                         selectedDate = state.selectedDate,
                                         availableDays = allDays.filter { !it.date.isBefore(LocalDate.now()) },
+                                        isHijriSelected = state.isHijriSelected,
+                                        onToggleCalendarType = onToggleCalendarType,
                                         onDateSelected = onDateSelected,
                                         contentColor = contentColor
                                     )
@@ -393,6 +397,8 @@ fun HomeScreenContent(
                                     ModernCalendarStrip(
                                         selectedDate = state.selectedDate,
                                         availableDays = allDays.filter { !it.date.isBefore(LocalDate.now()) },
+                                        isHijriSelected = state.isHijriSelected,
+                                        onToggleCalendarType = onToggleCalendarType,
                                         onDateSelected = onDateSelected,
                                         contentColor = contentColor
                                     )

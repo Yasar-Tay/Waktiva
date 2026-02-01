@@ -5,6 +5,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -32,6 +33,8 @@ import java.time.format.DateTimeFormatter
 fun ModernCalendarStrip(
     selectedDate: LocalDate,
     availableDays: List<PrayerDay>,
+    isHijriSelected: Boolean,
+    onToggleCalendarType: (Boolean) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     contentColor: Color = Color.White
 ) {
@@ -64,6 +67,34 @@ fun ModernCalendarStrip(
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
+        // Toggle at the top
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Surface(
+                color = contentColor.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Row(modifier = Modifier.padding(4.dp)) {
+                    CalendarToggleOption(
+                        text = "Greg",
+                        isSelected = !isHijriSelected,
+                        onClick = { onToggleCalendarType(false) },
+                        contentColor = contentColor
+                    )
+                    CalendarToggleOption(
+                        text = "Hijri",
+                        isSelected = isHijriSelected,
+                        onClick = { onToggleCalendarType(true) },
+                        contentColor = contentColor
+                    )
+                }
+            }
+        }
+
         LazyRow(
             state = listState,
             modifier = Modifier.fillMaxWidth(),
@@ -129,8 +160,13 @@ fun ModernCalendarStrip(
                                 .padding(vertical = 4.dp),
                             contentAlignment = Alignment.Center
                         ) {
+                            val monthText = if (isHijriSelected && hijri != null) {
+                                hijri.monthEn.take(3).uppercase()
+                            } else {
+                                date.format(monthFormatter).uppercase()
+                            }
                             Text(
-                                text = date.format(monthFormatter).uppercase(),
+                                text = monthText,
                                 color = if (isReligiousDay || isRamadan || isEid) contentColor else contentColor.copy(alpha = 0.6f),
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Black,
@@ -141,8 +177,13 @@ fun ModernCalendarStrip(
                         Spacer(Modifier.height(8.dp))
 
                         // Middle Section: Day Number
+                        val dayNumber = if (isHijriSelected && hijri != null) {
+                            hijri.day.toString()
+                        } else {
+                            date.dayOfMonth.toString()
+                        }
                         Text(
-                            text = date.dayOfMonth.toString(),
+                            text = dayNumber,
                             color = contentColor,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.ExtraBold,
@@ -185,5 +226,27 @@ fun ModernCalendarStrip(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CalendarToggleOption(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    contentColor: Color
+) {
+    Surface(
+        color = if (isSelected) contentColor.copy(alpha = 0.2f) else Color.Transparent,
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.clickable { onClick() }
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+            style = MaterialTheme.typography.labelMedium,
+            color = if (isSelected) contentColor else contentColor.copy(alpha = 0.5f),
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+        )
     }
 }
