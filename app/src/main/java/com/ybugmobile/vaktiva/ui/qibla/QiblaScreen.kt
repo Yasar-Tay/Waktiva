@@ -37,6 +37,7 @@ import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.qibla.composables.ProfessionalCompass
 import com.ybugmobile.vaktiva.ui.qibla.composables.QiblaInfoCard
 import com.ybugmobile.vaktiva.ui.qibla.composables.QiblaMap
+import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import org.maplibre.android.MapLibre
 import org.maplibre.android.geometry.LatLng
@@ -63,6 +64,7 @@ fun QiblaScreen(
     var showCalibrationDialog by remember { mutableStateOf(false) }
 
     val backgroundGradient = getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
+    val glassTheme = getGlassTheme(state.currentTime.toLocalTime(), state.currentPrayerDay)
 
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseAlpha by infiniteTransition.animateFloat(
@@ -91,19 +93,12 @@ fun QiblaScreen(
         label = "alignmentColor"
     )
 
-    val sunrise = state.currentPrayerDay?.timings?.get(PrayerType.SUNRISE)
-    val sunset = state.currentPrayerDay?.timings?.get(PrayerType.MAGHRIB)
-    val isLightBackground = if (sunrise != null && sunset != null) {
-        val t = state.currentTime.toLocalTime()
-        t.isAfter(sunrise) && t.isBefore(sunset)
-    } else false
-
-    val contentColor = Color.White
-    val textShadow = if (!isLightBackground) Shadow(
-        color = Color.Black.copy(alpha = 0.5f),
+    val contentColor = glassTheme.contentColor
+    val textShadow = Shadow(
+        color = Color.Black.copy(alpha = 0.3f),
         offset = Offset(0f, 2f),
         blurRadius = 4f
-    ) else null
+    )
 
     Box(modifier = Modifier.fillMaxSize().background(brush = backgroundGradient)) {
         if (state.isLoading) {
@@ -122,7 +117,7 @@ fun QiblaScreen(
                     alignmentColor = alignmentColor,
                     contentColor = contentColor,
                     textShadow = textShadow,
-                    isLightBackground = isLightBackground,
+                    glassTheme = glassTheme,
                     onCalibrationClick = { showCalibrationDialog = true }
                 )
             } else {
@@ -147,7 +142,7 @@ private fun QiblaContent(
     alignmentColor: Color,
     contentColor: Color,
     textShadow: Shadow?,
-    isLightBackground: Boolean,
+    glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme,
     onCalibrationClick: () -> Unit
 ) {
     var isMapView by rememberSaveable { mutableStateOf(false) }
@@ -161,19 +156,18 @@ private fun QiblaContent(
     // Dynamic Colors based on View Mode
     val containerColor by animateColorAsState(
         targetValue = when {
-            isMapView -> theme.surface // Solid surface color
-            else -> Color.White.copy(alpha = 0.1f)
+            isMapView -> theme.surface
+            else -> glassTheme.containerColor
         },
         label = "containerColor"
     )
     
     val effectiveContentColor = when {
-        isMapView -> theme.onSurface // Always use onSurface (Dark/Readable) when on a solid card
-        else -> contentColor
+        isMapView -> theme.onSurface
+        else -> glassTheme.contentColor
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Only show background Map in Portrait. In Landscape, it's moved to the side Box.
         if (isMapView && !isLandscape) {
             QiblaMap(
                 settings = state.settings,
@@ -184,7 +178,7 @@ private fun QiblaContent(
                 onMapLongClick = { },
                 onToggleSatellite = { isSatelliteView = !isSatelliteView }
             )
-        } else if (isAccuracyLow && !isLandscape) { // Background glow only in portrait if accuracy is low
+        } else if (isAccuracyLow && !isLandscape) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -203,7 +197,7 @@ private fun QiblaContent(
             Row(modifier = Modifier.fillMaxSize().systemBarsPadding().displayCutoutPadding()) {
                 Box(
                     modifier = Modifier
-                        .weight(1.5f) // Give more weight to map/compass area
+                        .weight(1.5f)
                         .fillMaxHeight(),
                     contentAlignment = Alignment.CenterEnd
                 ) {
@@ -219,7 +213,6 @@ private fun QiblaContent(
                         )
                     } else {
                         Box(contentAlignment = Alignment.Center) {
-                            // Accuracy glow for landscape compass
                             if (isAccuracyLow) {
                                 Box(
                                     modifier = Modifier
@@ -241,7 +234,7 @@ private fun QiblaContent(
                                     .background(
                                         Brush.radialGradient(
                                             colors = listOf(
-                                                if (isLightBackground) Color.White.copy(alpha = 0.4f) else Color.Black.copy(alpha = 0.4f),
+                                                glassTheme.containerColor.copy(alpha = 0.4f),
                                                 Color.Transparent
                                             )
                                         )
@@ -252,7 +245,7 @@ private fun QiblaContent(
                                 qiblaAngle = state.qiblaDirection.toFloat(),
                                 alignmentColor = alignmentColor,
                                 isAligned = isAligned,
-                                contentColor = contentColor
+                                contentColor = glassTheme.contentColor
                             )
                         }
                     }
@@ -275,12 +268,12 @@ private fun QiblaContent(
                     ) {
                         state.settings?.let { s ->
                             Surface(
-                                color = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else containerColor,
+                                color = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else glassTheme.containerColor,
                                 shape = RoundedCornerShape(22.dp),
                                 modifier = Modifier.weight(1f).padding(end = 8.dp),
                                 border = androidx.compose.foundation.BorderStroke(
                                     1.dp, 
-                                    if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
+                                    if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
                                 )
                             ) {
                                 Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
@@ -301,12 +294,12 @@ private fun QiblaContent(
                         }
 
                         Surface(
-                            color = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else containerColor,
+                            color = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else glassTheme.containerColor,
                             shape = RoundedCornerShape(22.dp),
                             modifier = Modifier.height(40.dp),
                             border = androidx.compose.foundation.BorderStroke(
                                 1.dp, 
-                                if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
+                                if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
                             )
                         ) {
                             Row(modifier = Modifier.padding(2.dp)) {
@@ -326,12 +319,11 @@ private fun QiblaContent(
                         onCalibrationClick = onCalibrationClick,
                         isMapView = isMapView,
                         isSatelliteView = isSatelliteView,
-                        containerColor = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else containerColor,
+                        containerColor = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else glassTheme.containerColor,
                         contentColor = effectiveContentColor
                     )
                     
                     Spacer(modifier = Modifier.height(80.dp))
-
                 }
             }
         } else {
@@ -353,7 +345,7 @@ private fun QiblaContent(
                         tonalElevation = if (isMapView) 2.dp else 0.dp,
                         border = androidx.compose.foundation.BorderStroke(
                             1.dp, 
-                            if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
+                            if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
                         )
                     ) {
                         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
@@ -386,7 +378,7 @@ private fun QiblaContent(
                     tonalElevation = if (isMapView) 2.dp else 0.dp,
                     border = androidx.compose.foundation.BorderStroke(
                         1.dp, 
-                        if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
+                        if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
                     )
                 ) {
                     Row(
@@ -429,7 +421,7 @@ private fun QiblaContent(
                                     .background(
                                         Brush.radialGradient(
                                             colors = listOf(
-                                                (if (isLightBackground) Color.White.copy(alpha = 0.4f) else Color.Black.copy(alpha = 0.4f)),
+                                                glassTheme.containerColor.copy(alpha = 0.4f),
                                                 Color.Transparent
                                             )
                                         )
@@ -440,7 +432,7 @@ private fun QiblaContent(
                                 qiblaAngle = state.qiblaDirection.toFloat(),
                                 alignmentColor = alignmentColor,
                                 isAligned = isAligned,
-                                contentColor = contentColor
+                                contentColor = glassTheme.contentColor
                             )
                         }
                     }
@@ -462,7 +454,7 @@ private fun QiblaContent(
                     )
                 }
                 
-                Spacer(modifier = Modifier.height(150.dp)) // Floating bar height
+                Spacer(modifier = Modifier.height(150.dp))
             }
         }
     }

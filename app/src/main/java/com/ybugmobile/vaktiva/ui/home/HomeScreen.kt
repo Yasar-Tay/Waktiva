@@ -34,6 +34,7 @@ import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.ui.home.composables.*
+import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import java.time.LocalDate
 import java.time.LocalTime
@@ -101,17 +102,18 @@ fun HomeScreenContent(
 
     val backgroundGradient =
         getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
+    val glassTheme = getGlassTheme(state.currentTime.toLocalTime(), state.currentPrayerDay)
     var showMethodDialog by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val contentColor = Color.White
+    val contentColor = glassTheme.contentColor
 
     Scaffold(
         containerColor = Color.Transparent,
         snackbarHost = { },
-        contentWindowInsets = WindowInsets.systemBars // Let scaffold handle system bars insets
+        contentWindowInsets = WindowInsets.systemBars
     ) { padding ->
         Box(
             modifier = Modifier
@@ -133,11 +135,11 @@ fun HomeScreenContent(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .systemBarsPadding() // Use systemBarsPadding to avoid all system-level controls
-                                .displayCutoutPadding() // Handle camera notch in landscape
+                                .systemBarsPadding()
+                                .displayCutoutPadding()
                                 .verticalScroll(rememberScrollState())
                                 .padding(horizontal = 24.dp, vertical = 16.dp)
-                                .padding(start = 72.dp), // Adjust for Navigation Rail (Manual offset as Rail is overlay)
+                                .padding(start = 72.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             HomeHeader(
@@ -235,11 +237,11 @@ fun HomeScreenContent(
 
                             Surface(
                                 modifier = Modifier.fillMaxWidth(),
-                                color = Color.Black.copy(alpha = 0.15f),
+                                color = glassTheme.containerColor,
                                 shape = RoundedCornerShape(32.dp),
                                 border = androidx.compose.foundation.BorderStroke(
                                     1.dp,
-                                    contentColor.copy(alpha = 0.1f)
+                                    glassTheme.borderColor
                                 )
                             ) {
                                 Column(
@@ -271,18 +273,19 @@ fun HomeScreenContent(
                                         settings = settings,
                                         calculationMethods = calculationMethods,
                                         onClick = { showMethodDialog = true },
-                                        contentColor = contentColor
+                                        contentColor = contentColor,
+                                        glassTheme = glassTheme
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.height(80.dp)) // Floating bar height
+                            Spacer(modifier = Modifier.height(80.dp))
                         }
                     } else {
                         // Portrait Layout
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .systemBarsPadding() // Use systemBarsPadding instead of statusBarsPadding
+                                .systemBarsPadding()
                                 .verticalScroll(rememberScrollState())
                         ) {
                             HomeHeader(
@@ -383,11 +386,11 @@ fun HomeScreenContent(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(10.dp),
-                                color = Color.Black.copy(alpha = 0.15f),
+                                color = glassTheme.containerColor,
                                 shape = RoundedCornerShape(32.dp),
                                 border = androidx.compose.foundation.BorderStroke(
                                     1.dp,
-                                    contentColor.copy(alpha = 0.1f)
+                                    glassTheme.borderColor
                                 )
                             ) {
                                 Column(
@@ -420,11 +423,12 @@ fun HomeScreenContent(
                                         settings = settings,
                                         calculationMethods = calculationMethods,
                                         onClick = { showMethodDialog = true },
-                                        contentColor = contentColor
+                                        contentColor = contentColor,
+                                        glassTheme = glassTheme
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.height(80.dp)) // Floating bar height
+                            Spacer(modifier = Modifier.height(80.dp))
                         }
                     }
                 }
@@ -508,13 +512,14 @@ private fun CalculationMethodCard(
     settings: UserSettings?,
     calculationMethods: List<Pair<Int, Int>>,
     onClick: () -> Unit,
-    contentColor: Color
+    contentColor: Color,
+    glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme
 ) {
     settings?.let { s ->
         Card(
             onClick = onClick,
             colors = CardDefaults.cardColors(
-                containerColor = contentColor.copy(alpha = 0.05f)
+                containerColor = glassTheme.secondaryContentColor.copy(alpha = 0.1f)
             ),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.fillMaxWidth()
@@ -530,7 +535,7 @@ private fun CalculationMethodCard(
                     Text(
                         stringResource(R.string.settings_method).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
-                        color = contentColor.copy(alpha = 0.5f),
+                        color = glassTheme.secondaryContentColor,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp
                     )
@@ -544,7 +549,7 @@ private fun CalculationMethodCard(
                 Icon(
                     Icons.Default.Settings,
                     null,
-                    tint = contentColor.copy(alpha = 0.5f)
+                    tint = glassTheme.secondaryContentColor
                 )
             }
         }
