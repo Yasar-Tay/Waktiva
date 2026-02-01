@@ -460,7 +460,7 @@ private fun QiblaContent(
                         isAccuracyUnreliable = isAccuracyUnreliable,
                         onCalibrationClick = onCalibrationClick,
                         isMapView = isMapView,
-                        isSatelliteView = isSatelliteView
+                        isSatelliteView = isSatelliteView,
                     )
                 }
                 

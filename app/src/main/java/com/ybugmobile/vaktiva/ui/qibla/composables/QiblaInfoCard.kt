@@ -36,16 +36,16 @@ fun QiblaInfoCard(
     isSatelliteView: Boolean = false
 ) {
     val theme = MaterialTheme.colorScheme
-    
+
     // Dynamic Colors based on View Mode
     val containerColor by animateColorAsState(
         targetValue = when {
-            isMapView -> theme.surface
-            else -> Color.Black.copy(alpha = 0.4f) // Sleeker dark transparency for compass view
+            isMapView -> theme.surface // Solid surface color
+            else -> Color.White.copy(alpha = 0.1f)
         },
         label = "containerColor"
     )
-    
+
     val contentColor = when {
         isMapView -> theme.onSurface
         else -> Color.White
@@ -56,7 +56,7 @@ fun QiblaInfoCard(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 8.dp),
+            ,
         shape = RoundedCornerShape(24.dp),
         color = containerColor,
         border = BorderStroke(
