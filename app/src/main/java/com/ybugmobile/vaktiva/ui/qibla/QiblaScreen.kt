@@ -203,7 +203,7 @@ private fun QiblaContent(
             Row(modifier = Modifier.fillMaxSize().systemBarsPadding().displayCutoutPadding()) {
                 Box(
                     modifier = Modifier
-                        .weight(1.7f) // Give more weight to map/compass area
+                        .weight(1.5f) // Give more weight to map/compass area
                         .fillMaxHeight(),
                     contentAlignment = Alignment.CenterEnd
                 ) {
@@ -263,7 +263,7 @@ private fun QiblaContent(
                         .weight(1f)
                         .fillMaxHeight()
                         .background(if (isMapView) theme.surface else Color.Transparent)
-                        .padding(horizontal = 16.dp, vertical = 24.dp)
+                        .padding(horizontal = 24.dp, vertical = 24.dp)
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -325,7 +325,9 @@ private fun QiblaContent(
                         isAccuracyUnreliable = isAccuracyUnreliable,
                         onCalibrationClick = onCalibrationClick,
                         isMapView = isMapView,
-                        isSatelliteView = isSatelliteView
+                        isSatelliteView = isSatelliteView,
+                        containerColor = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else containerColor,
+                        contentColor = effectiveContentColor
                     )
                     
                     Spacer(modifier = Modifier.height(80.dp))
@@ -427,7 +429,7 @@ private fun QiblaContent(
                                     .background(
                                         Brush.radialGradient(
                                             colors = listOf(
-                                                if (isLightBackground) Color.White.copy(alpha = 0.4f) else Color.Black.copy(alpha = 0.4f),
+                                                (if (isLightBackground) Color.White.copy(alpha = 0.4f) else Color.Black.copy(alpha = 0.4f)),
                                                 Color.Transparent
                                             )
                                         )
@@ -455,6 +457,8 @@ private fun QiblaContent(
                         onCalibrationClick = onCalibrationClick,
                         isMapView = isMapView,
                         isSatelliteView = isSatelliteView,
+                        containerColor = containerColor,
+                        contentColor = effectiveContentColor
                     )
                 }
                 

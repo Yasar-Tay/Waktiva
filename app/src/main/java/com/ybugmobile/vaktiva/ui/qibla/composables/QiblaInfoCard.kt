@@ -33,37 +33,26 @@ fun QiblaInfoCard(
     isAccuracyUnreliable: Boolean,
     onCalibrationClick: () -> Unit,
     isMapView: Boolean = false,
-    isSatelliteView: Boolean = false
+    isSatelliteView: Boolean = false,
+    containerColor: Color,
+    contentColor: Color
 ) {
     val theme = MaterialTheme.colorScheme
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    // Dynamic Colors based on View Mode and Orientation
-    val containerColor by animateColorAsState(
-        targetValue = when {
-            isMapView && !isLandscape -> theme.surface
-            else -> Color.Black.copy(alpha = 0.45f) // Slightly deeper dark transparency for better contrast
-        },
-        label = "containerColor"
-    )
-    
-    val contentColor = when {
-        isMapView && !isLandscape -> theme.onSurface
-        else -> Color.White
-    }
-
     val dividerColor = contentColor.copy(alpha = 0.1f)
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(22.dp),
         color = containerColor,
         border = BorderStroke(
             width = 1.dp,
-            color = contentColor.copy(alpha = 0.12f)
+            color = if (isMapView) contentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.15f)
         ),
-        shadowElevation = if (isMapView && !isLandscape) 6.dp else 0.dp
+        shadowElevation = if (isMapView && !isLandscape) 4.dp else 0.dp,
+        tonalElevation = if (isMapView && !isLandscape) 2.dp else 0.dp
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Top Section: Status & Calibration
