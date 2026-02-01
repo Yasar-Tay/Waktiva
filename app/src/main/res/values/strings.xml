@@ -47,6 +47,8 @@
     <string name="home_return_to_today">Return to Today</string>
     <string name="home_tomorrow_is">Tomorrow is %s</string>
     <string name="home_today_is">Today is %s</string>
+    <string name="home_adhan_muted">Adhan muted for %s</string>
+    <string name="home_adhan_unmuted">Adhan unmuted for %s</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Fajr</string>

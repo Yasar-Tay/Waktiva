@@ -1,7 +1,6 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
@@ -45,7 +44,7 @@ fun NextPrayerCountdown(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(160.dp), // Fixed height to prevent layout jumps
+            .height(180.dp), // Increased height slightly to accommodate the new button with text
         contentAlignment = Alignment.Center
     ) {
         if ((selectedDate == LocalDate.now()) && nextPrayer != null) {
@@ -57,7 +56,7 @@ fun NextPrayerCountdown(
                 val remainingSeconds = nextPrayer.remainingDuration.seconds
                 val remainingTime = formatRemainingTime(remainingSeconds)
 
-                // 1. "REMAINING TIME" Label + Skip Button Row
+                // 1. "REMAINING TIME" Label
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
@@ -70,28 +69,9 @@ fun NextPrayerCountdown(
                         color = contentColor.copy(alpha = 0.5f),
                         letterSpacing = 2.sp
                     )
-
-                    if (playAdhanAudio) {
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Surface(
-                            onClick = { onSkipAudio(nextPrayer.type.name) },
-                            color = contentColor.copy(alpha = 0.15f),
-                            shape = CircleShape,
-                            modifier = Modifier.size(38.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
-                                    contentDescription = "Skip Adhan",
-                                    tint = contentColor,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                        }
-                    }
                 }
                 
-                // 2. Countdown Timer (Responsive Width)
+                // 2. Countdown Timer
                 ResponsiveCountdownText(
                     text = remainingTime,
                     targetFontSize = 72.sp,
@@ -99,26 +79,34 @@ fun NextPrayerCountdown(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // 3. Next Prayer Info Row (Icon + Name + Time)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.NotificationsActive,
-                        contentDescription = null,
-                        tint = contentColor.copy(alpha = 0.4f),
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "${nextPrayer.type.getDisplayName(context)}  •  ${nextPrayer.time.format(timeFormatter)}",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = contentColor.copy(alpha = 0.6f)
-                    )
+                // 3. Skip/Mute Adhan Button
+                if (playAdhanAudio) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Surface(
+                        onClick = { onSkipAudio(nextPrayer.type.name) },
+                        color = contentColor.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(24.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
+                                contentDescription = null,
+                                tint = contentColor,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = (if (isMuted) stringResource(R.string.home_unmute_adhan) else stringResource(R.string.home_skip_adhan)).uppercase(),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = contentColor,
+                                letterSpacing = 1.sp
+                            )
+                        }
+                    }
                 }
             }
         } else if (selectedDate.isAfter(LocalDate.now())) {
