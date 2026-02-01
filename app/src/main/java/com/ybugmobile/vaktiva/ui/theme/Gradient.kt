@@ -55,9 +55,10 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
         // Dawn: Midnight Slate transitioning to an Atmospheric Steel Blue
         currentTime.isBefore(sunrise) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF0F141E), // Original Anchor
-                0.5f to Color(0xFF1E293B), // Intermediate Slate
-                1.0f to Color(0xFF374D6B)  // Steel Blue Glow
+                0.0f to Color(0xFF020617), // Absolute Night (OLED-friendly)
+                0.45f to Color(0xFF0A1024), // Deep Indigo Void
+                0.75f to Color(0xFF1E1B4B), // Soft Indigo Presence
+                1.0f to Color(0xFF2B2A6F)  // Faint Pre-Dawn Glow
             )
         )
 
@@ -104,10 +105,10 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
         // Sunset: Burnt Orange to a radiant Sunset Glow
         currentTime.isBefore(maghrib) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF4E3D88), // Rich Indigo-Blue
-                0.4f to Color(0xFF9D592B), // Original Anchor
-                0.7f to Color(0xFFA43653), // Original Anchor
-                1.0f to Color(0xFFFDBA74)  // Radiant Sunset Highlight
+                0.0f to Color(0xFF0B1D33),
+                0.3f to Color(0xFF134E8A),
+                0.7f to Color(0xFFA26B19), // Original Anchor
+                1.0f to Color(0xFFA43653)  // Radiant Sunset Highlight
             )
         )
 
