@@ -67,12 +67,13 @@ fun ModernCalendarStrip(
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        // Toggle at the top
+        // Toggle and Religious Day Info at the top
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
                 color = contentColor.copy(alpha = 0.1f),
@@ -93,6 +94,8 @@ fun ModernCalendarStrip(
                     )
                 }
             }
+
+            ReligiousBadge(date = selectedDate, contentColor = contentColor)
         }
 
         LazyRow(

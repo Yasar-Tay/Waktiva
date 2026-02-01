@@ -4,13 +4,10 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.LocationOn
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.HijriData
-import com.ybugmobile.vaktiva.domain.provider.ReligiousDaysProvider
 import com.ybugmobile.vaktiva.ui.theme.Inter
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -43,11 +39,6 @@ fun HomeHeader(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
-    val religiousDay = ReligiousDaysProvider.getReligiousDay(date)
-    val tomorrowReligiousDay = if (religiousDay == null) {
-        ReligiousDaysProvider.getReligiousDay(date.plusDays(1))
-    } else null
-    
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -63,7 +54,7 @@ fun HomeHeader(
                 LocationSection(locationName, contentColor)
                 
                 Column(horizontalAlignment = Alignment.End) {
-                    ReligiousBadge(religiousDay, tomorrowReligiousDay, contentColor)
+                    ReligiousBadge(date = date, contentColor = contentColor)
                     Spacer(modifier = Modifier.height(8.dp))
                     DatesSection(date, hijriDate, contentColor, context)
                 }
@@ -77,7 +68,7 @@ fun HomeHeader(
             
             // Floating badge for portrait
             Box(modifier = Modifier.align(Alignment.TopEnd)) {
-                ReligiousBadge(religiousDay, tomorrowReligiousDay, contentColor)
+                ReligiousBadge(date = date, contentColor = contentColor)
             }
         }
     }
@@ -189,46 +180,6 @@ private fun DatesSection(
                 color = contentColor.copy(alpha = 0.3f),
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp
-            )
-        }
-    }
-}
-
-@Composable
-private fun ReligiousBadge(
-    religiousDay: com.ybugmobile.vaktiva.domain.model.ReligiousDay?,
-    tomorrowReligiousDay: com.ybugmobile.vaktiva.domain.model.ReligiousDay?,
-    contentColor: Color
-) {
-    val holidayToShow = religiousDay ?: tomorrowReligiousDay ?: return
-    
-    val holidayLabel = if (religiousDay != null) {
-        stringResource(holidayToShow.nameResId).uppercase()
-    } else {
-        stringResource(R.string.home_tomorrow_is, stringResource(holidayToShow.nameResId))
-    }
-    
-    Surface(
-        color = contentColor.copy(alpha = 0.15f),
-        shape = CircleShape
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Star,
-                contentDescription = null,
-                tint = contentColor,
-                modifier = Modifier.size(12.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = holidayLabel,
-                style = MaterialTheme.typography.labelSmall,
-                color = contentColor,
-                fontWeight = FontWeight.Black,
-                letterSpacing = 0.5.sp
             )
         }
     }
