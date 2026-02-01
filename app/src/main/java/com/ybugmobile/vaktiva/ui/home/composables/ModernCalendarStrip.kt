@@ -11,14 +11,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-
 import androidx.compose.foundation.shape.RoundedCornerShape
-
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NightsStay
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -83,13 +85,13 @@ fun ModernCalendarStrip(
             ) {
                 Row(modifier = Modifier.padding(4.dp)) {
                     CalendarToggleOption(
-                        text = "Greg",
+                        icon = Icons.Default.WbSunny,
                         isSelected = !isHijriSelected,
                         onClick = { onToggleCalendarType(false) },
                         contentColor = contentColor
                     )
                     CalendarToggleOption(
-                        text = "Hijri",
+                        icon = Icons.Default.NightsStay,
                         isSelected = isHijriSelected,
                         onClick = { onToggleCalendarType(true) },
                         contentColor = contentColor
@@ -222,7 +224,7 @@ fun ModernCalendarStrip(
 
 @Composable
 private fun CalendarToggleOption(
-    text: String,
+    icon: ImageVector,
     isSelected: Boolean,
     onClick: () -> Unit,
     contentColor: Color
@@ -232,12 +234,11 @@ private fun CalendarToggleOption(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.clickable { onClick() }
     ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-            style = MaterialTheme.typography.labelMedium,
-            color = if (isSelected) contentColor else contentColor.copy(alpha = 0.5f),
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp).size(20.dp),
+            tint = if (isSelected) contentColor else contentColor.copy(alpha = 0.5f)
         )
     }
 }
