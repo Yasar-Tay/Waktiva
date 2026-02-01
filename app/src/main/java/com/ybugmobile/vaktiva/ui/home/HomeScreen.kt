@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -83,6 +84,7 @@ fun HomeScreenContent(
     onStopTest: () -> Unit,
     onResetDate: () -> Unit
 ) {
+    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -106,12 +108,7 @@ fun HomeScreenContent(
 
     Scaffold(
         containerColor = Color.Transparent,
-        snackbarHost = { 
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.navigationBarsPadding() // Ensure snackbar doesn't overlap nav bar
-            ) 
-        },
+        snackbarHost = { },
         contentWindowInsets = WindowInsets.systemBars // Let scaffold handle system bars insets
     ) { padding ->
         Box(
@@ -213,10 +210,13 @@ fun HomeScreenContent(
                                                         state.nextPrayer?.let { next ->
                                                             onSkipNextAudio(prayerName, next.date)
                                                             scope.launch {
+                                                                val localizedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context)
+                                                                    ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
+
                                                                 val message = if (!state.isMuted)
-                                                                    "Adhan skipped for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                                    "MUTED:" + context.getString(R.string.home_adhan_muted, localizedPrayerName)
                                                                 else
-                                                                    "Adhan unmuted for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                                    "UNMUTED:" + context.getString(R.string.home_adhan_unmuted, localizedPrayerName)
                                                                 snackbarHostState.showSnackbar(message)
                                                             }
                                                         }
@@ -353,10 +353,13 @@ fun HomeScreenContent(
                                                     state.nextPrayer?.let { next ->
                                                         onSkipNextAudio(prayerName, next.date)
                                                         scope.launch {
+                                                            val localizedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context)
+                                                                    ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
+
                                                             val message = if (!state.isMuted)
-                                                                "Adhan skipped for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                                "MUTED:" + context.getString(R.string.home_adhan_muted, localizedPrayerName)
                                                             else
-                                                                "Adhan unmuted for ${prayerName.lowercase().replaceFirstChar { it.uppercase() }}"
+                                                                "UNMUTED:" + context.getString(R.string.home_adhan_unmuted, localizedPrayerName)
                                                             snackbarHostState.showSnackbar(message)
                                                         }
                                                     }
@@ -420,6 +423,41 @@ fun HomeScreenContent(
                     }
                 }
             }
+
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.Center),
+                snackbar = { data ->
+                    val parts = data.visuals.message.split(":", limit = 2)
+                    val type = parts.getOrNull(0)
+                    val message = parts.getOrNull(1) ?: data.visuals.message
+
+                    val icon = when (type) {
+                        "MUTED" -> Icons.Filled.VolumeOff
+                        "UNMUTED" -> Icons.Filled.VolumeUp
+                        else -> null
+                    }
+
+                    Surface(
+                        modifier = Modifier.padding(16.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.9f),
+                        contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                        shadowElevation = 4.dp
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (icon != null) {
+                                Icon(icon, contentDescription = null)
+                                Spacer(Modifier.width(12.dp))
+                            }
+                            Text(message, style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                }
+            )
 
             if (showMethodDialog) {
                 AlertDialog(

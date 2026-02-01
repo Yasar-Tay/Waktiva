@@ -31,6 +31,14 @@
     <string name="home_return_to_today">Bugüne Dön</string>
     <string name="home_tomorrow_is">Yarın %s</string>
     <string name="home_today_is">Bugün %s</string>
+    <string name="home_adhan_muted">%s için ezan sessize alındı</string>
+    <string name="home_adhan_unmuted">%s için ezan okunacak</string>
+
+    <!-- Accuracy Labels -->
+    <string name="accuracy_high">Yüksek</string>
+    <string name="accuracy_med">Orta</string>
+    <string name="accuracy_low">Düşük</string>
+    <string name="accuracy_poor">Zayıf</string>
 
     <!-- Qibla Screen -->
     <string name="qibla_label">Kıble</string>
