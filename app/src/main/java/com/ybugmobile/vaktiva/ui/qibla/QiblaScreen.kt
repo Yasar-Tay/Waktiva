@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -30,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
@@ -100,7 +98,7 @@ fun QiblaScreen(
         t.isAfter(sunrise) && t.isBefore(sunset)
     } else false
 
-    val contentColor = /*if (isLightBackground) Color.Black else */Color.White
+    val contentColor = Color.White
     val textShadow = if (!isLightBackground) Shadow(
         color = Color.Black.copy(alpha = 0.5f),
         offset = Offset(0f, 2f),
@@ -173,8 +171,6 @@ private fun QiblaContent(
         isMapView -> theme.onSurface // Always use onSurface (Dark/Readable) when on a solid card
         else -> contentColor
     }
-
-    val effectiveShadow = if (isMapView) null else textShadow
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Only show background Map in Portrait. In Landscape, it's moved to the side Box.
@@ -323,7 +319,6 @@ private fun QiblaContent(
                     QiblaInfoCard(
                         isAligned = isAligned,
                         alignmentColor = alignmentColor,
-                        settings = state.settings,
                         qiblaDirection = state.qiblaDirection,
                         compassData = state.compassData,
                         isAccuracyLow = isAccuracyLow,
@@ -453,7 +448,6 @@ private fun QiblaContent(
                     QiblaInfoCard(
                         isAligned = isAligned,
                         alignmentColor = alignmentColor,
-                        settings = state.settings,
                         qiblaDirection = state.qiblaDirection,
                         compassData = state.compassData,
                         isAccuracyLow = isAccuracyLow,
