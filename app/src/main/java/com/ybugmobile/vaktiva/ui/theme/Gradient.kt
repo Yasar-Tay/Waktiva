@@ -74,8 +74,8 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
         // Full Day: Enriched Spectral Azure (Maximum Luminosity)
         currentTime.isBefore(dhuhur) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF4593E5),  // Vibrant Cyan Glow
-                0.3f to Color(0xFF236FBE), // Deep Slate for status bar contrast
+                0.0f to Color(0xFF0F2A44), // Deep Steel Navy (anchors glass)
+                0.3f to Color(0xFF1E5DA8), // Sunlit Azure
                 0.7f to Color(0xFF68B298), // Rich Indigo-Blue
                 1.0f to Color(0xFF4593E5), // Luminous Azure
             )
@@ -84,20 +84,20 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
         // High Afternoon: Crisp Azure to a Luminous Sky
         currentTime.isBefore(asr) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF1E40AF), // Deep Cobalt
-                0.3f to Color(0xFF3B82F6), // Luminous Royal Blue
-                0.7f to Color(0xFF60A5FA), // Soft Cerulean
-                1.0f to Color(0xFF93C5FD)  // Ethereal Light Blue
+                0.0f to Color(0xFF0F2A44), // Deep Steel Navy (anchors glass)
+                0.3f to Color(0xFF1E5DA8), // Sunlit Azure
+                0.65f to Color(0xFF4FA3C7), // Atmospheric Cyan
+                1.0f to Color(0xFFE8D5A7)  // Soft Solar Haze (very subtle warmth)
             )
         )
 
         // Late Afternoon: Transitioning toward Golden Hour
         currentTime.isBefore(sunsetStart) -> Brush.verticalGradient(
             colorStops = arrayOf(
-                0.0f to Color(0xFF4593E5), // Deep Slate for status bar contrast
-                0.3f to Color(0xFF0284C7), // Rich Indigo-Blue
-                0.7f to Color(0xFF1E3A8A), // Luminous Azure
-                1.0f to Color(0xFF3D226C)  // Vibrant Cyan Glow
+                0.0f to Color(0xFF081A2F), // Deep Space Blue
+                0.35f to Color(0xFF123E7C), // Saturated Cobalt
+                0.7f to Color(0xFF3F8FD2), // Luminous Sky Blue
+                1.0f to Color(0xFF9FD3F6)  // Diffused Sunlight
             )
         )
 
