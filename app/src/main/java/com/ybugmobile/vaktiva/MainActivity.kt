@@ -13,7 +13,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NotificationsActive
@@ -25,10 +24,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
-
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -36,11 +32,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
@@ -54,6 +46,7 @@ import com.ybugmobile.vaktiva.ui.navigation.Screen
 import com.ybugmobile.vaktiva.ui.qibla.QiblaScreen
 import com.ybugmobile.vaktiva.ui.settings.AudioSettingsScreen
 import com.ybugmobile.vaktiva.ui.settings.SettingsScreen
+import com.ybugmobile.vaktiva.ui.theme.VaktivaBackgroundWrapper
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
 import com.ybugmobile.vaktiva.ui.welcome.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -121,6 +114,7 @@ class MainActivity : AppCompatActivity() {
 fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: TimeManager) {
     val navController = rememberNavController()
     val settings by homeViewModel.settings.collectAsState(initial = null)
+    val homeState by homeViewModel.state.collectAsState()
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
@@ -169,121 +163,126 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection)) {
-        // Main Content Area
-        NavHost(
-            navController, 
-            startDestination = startDestination, 
-            modifier = Modifier.fillMaxSize()
-        ) {
-            composable(Screen.Welcome.route) { 
-                WelcomeScreen(
-                    onSetupComplete = {
-                        navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Welcome.route) { inclusive = true }
-                        }
-                    }
-                )
-            }
-            composable(Screen.Home.route) { 
-                HomeScreen(viewModel = homeViewModel) 
-            }
-            composable(Screen.Qibla.route) { QiblaScreen() }
-            composable(Screen.Settings.route) { 
-                SettingsScreen(
-                    onNavigateToAudio = {
-                        navController.navigate(Screen.AudioSettings.route)
-                    }
-                ) 
-            }
-            composable(Screen.AudioSettings.route) {
-                AudioSettingsScreen(
-                    onBack = { navController.popBackStack() }
-                )
-            }
-        }
-
-        // Overlay Navigation (Landscape Rail) - No animation in landscape
-        if (showNavigationLayout && isLandscape) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .displayCutoutPadding() // Avoid notch in landscape
-                    .systemBarsPadding()   // Respect system-level controls
+    VaktivaBackgroundWrapper(
+        currentTime = homeState.currentTime.toLocalTime(),
+        prayerDay = homeState.currentPrayerDay
+    ) {
+        Box(modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection)) {
+            // Main Content Area
+            NavHost(
+                navController, 
+                startDestination = startDestination, 
+                modifier = Modifier.fillMaxSize()
             ) {
-                SmoothTouchNavigationRail(
-                    items = items,
-                    currentRoute = currentDestination?.route,
-                    onItemClick = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+                composable(Screen.Welcome.route) { 
+                    WelcomeScreen(
+                        onSetupComplete = {
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo(Screen.Welcome.route) { inclusive = true }
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
-                    }
-                )
-            }
-        }
-
-        // Overlay Navigation (Portrait Bottom Bar) - Animated
-        if (showNavigationLayout && !isLandscape) {
-            AnimatedVisibility(
-                visible = isNavVisible,
-                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-                exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .navigationBarsPadding() // Respect system navigation bar (buttons/pill)
-            ) {
-                SmoothTouchNavigationBar(
-                    items = items,
-                    currentRoute = currentDestination?.route,
-                    onItemClick = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
-        }
-
-        // Floating Debug Controls
-        Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = if (showNavigationLayout && !isLandscape) 100.dp else 0.dp)
-                    .navigationBarsPadding(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.End
-            ) {
-                // Time Shift Test Button
-                SmallFloatingActionButton(
-                    onClick = { 
-                        timeManager.addMinutes(30)
-                        Toast.makeText(context, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
-                    },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
-                ) {
-                    Icon(Icons.Default.Update, contentDescription = "Shift Time")
+                    )
                 }
+                composable(Screen.Home.route) { 
+                    HomeScreen(viewModel = homeViewModel) 
+                }
+                composable(Screen.Qibla.route) { QiblaScreen() }
+                composable(Screen.Settings.route) { 
+                    SettingsScreen(
+                        onNavigateToAudio = {
+                            navController.navigate(Screen.AudioSettings.route)
+                        }
+                    ) 
+                }
+                composable(Screen.AudioSettings.route) {
+                    AudioSettingsScreen(
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+            }
 
-                // Alarm Test Button
-                FloatingActionButton(
-                    onClick = { 
-                        val seconds = 5
-                        homeViewModel.triggerTestAlarm(seconds)
-                        Toast.makeText(context, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
-                    },
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+            // Overlay Navigation (Landscape Rail) - No animation in landscape
+            if (showNavigationLayout && isLandscape) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .displayCutoutPadding() // Avoid notch in landscape
+                        .systemBarsPadding()   // Respect system-level controls
                 ) {
-                    Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
+                    SmoothTouchNavigationRail(
+                        items = items,
+                        currentRoute = currentDestination?.route,
+                        onItemClick = { route ->
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    )
+                }
+            }
+
+            // Overlay Navigation (Portrait Bottom Bar) - Animated
+            if (showNavigationLayout && !isLandscape) {
+                AnimatedVisibility(
+                    visible = isNavVisible,
+                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding() // Respect system navigation bar (buttons/pill)
+                ) {
+                    SmoothTouchNavigationBar(
+                        items = items,
+                        currentRoute = currentDestination?.route,
+                        onItemClick = { route ->
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    )
+                }
+            }
+
+            // Floating Debug Controls
+            Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = if (showNavigationLayout && !isLandscape) 100.dp else 0.dp)
+                        .navigationBarsPadding(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    // Time Shift Test Button
+                    SmallFloatingActionButton(
+                        onClick = { 
+                            timeManager.addMinutes(30)
+                            Toast.makeText(context, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
+                        },
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    ) {
+                        Icon(Icons.Default.Update, contentDescription = "Shift Time")
+                    }
+
+                    // Alarm Test Button
+                    FloatingActionButton(
+                        onClick = { 
+                            val seconds = 5
+                            homeViewModel.triggerTestAlarm(seconds)
+                            Toast.makeText(context, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
+                        },
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                    ) {
+                        Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
+                    }
                 }
             }
         }

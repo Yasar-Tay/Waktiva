@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ybugmobile.vaktiva.ui.theme.GlassTheme
+import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 
 @Composable
 fun SettingsToggleItem(
@@ -20,9 +20,10 @@ fun SettingsToggleItem(
     subtitle: String,
     icon: ImageVector,
     checked: Boolean,
-    glassTheme: GlassTheme,
     onCheckedChange: (Boolean) -> Unit
 ) {
+    val glassTheme = LocalGlassTheme.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()

@@ -1,6 +1,8 @@
 package com.ybugmobile.vaktiva.ui.theme
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
@@ -12,6 +14,14 @@ data class GlassTheme(
     val borderColor: Color,
     val secondaryContentColor: Color
 )
+
+val LocalGlassTheme = staticCompositionLocalOf<GlassTheme> {
+    error("No GlassTheme provided")
+}
+
+val LocalBackgroundGradient = staticCompositionLocalOf<Brush> {
+    error("No BackgroundGradient provided")
+}
 
 @Composable
 fun getGlassTheme(
@@ -31,7 +41,7 @@ fun getGlassTheme(
     } else {
         // Dark semi-transparent for Sunrise, Dhuhur, Asr (Day-time gradients)
         GlassTheme(
-            containerColor = Color.Black.copy(alpha = 0.25f),
+            containerColor = Color.Black.copy(alpha = 0.15f),
             contentColor = Color.White,
             borderColor = Color.White.copy(alpha = 0.1f),
             secondaryContentColor = Color.White.copy(alpha = 0.5f)

@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,9 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.settings.composables.SettingsToggleItem
-import com.ybugmobile.vaktiva.ui.theme.GlassTheme
-import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
-import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
+import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,8 +40,6 @@ fun AudioSettingsScreen(
     val audioItems by viewModel.audioItems.collectAsState()
     val settings by viewModel.settings.collectAsState(initial = null)
     val selectedPrayerType by viewModel.selectedPrayerType.collectAsState()
-    val prayerDays by viewModel.allPrayerDays.collectAsState()
-    val currentTime by viewModel.currentTime.collectAsState()
     
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -52,10 +47,7 @@ fun AudioSettingsScreen(
         uri?.let { viewModel.addCustomAudio(it) }
     }
 
-    val currentDay = prayerDays.find { it.date == currentTime.toLocalDate() }
-    val backgroundGradient = getGradientForTime(currentTime.toLocalTime(), currentDay)
-    val glassTheme = getGlassTheme(currentTime.toLocalTime(), currentDay)
-    
+    val glassTheme = LocalGlassTheme.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -97,7 +89,7 @@ fun AudioSettingsScreen(
             )
         }
     ) { padding ->
-        Box(modifier = Modifier.fillMaxSize().background(brush = backgroundGradient).padding(padding)) {
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             if (isLandscape) {
                 Row(
                     modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
@@ -111,13 +103,11 @@ fun AudioSettingsScreen(
                     ) {
                         item {
                             SettingsCard(
-                                title = stringResource(id = R.string.settings_pre_adhan_warning).uppercase(),
-                                glassTheme = glassTheme
+                                title = stringResource(id = R.string.settings_pre_adhan_warning).uppercase()
                             ) {
                                 PreAdhanContent(
                                     enabled = settings?.enablePreAdhanWarning ?: true,
                                     minutes = settings?.preAdhanWarningMinutes ?: 5,
-                                    glassTheme = glassTheme,
                                     onToggle = { viewModel.togglePreAdhanWarning(it) },
                                     onMinutesChange = { viewModel.updatePreAdhanWarningMinutes(it) }
                                 )
@@ -126,13 +116,11 @@ fun AudioSettingsScreen(
 
                         item {
                             SettingsCard(
-                                title = stringResource(R.string.audio_fajr_sunrise_alarm).uppercase(),
-                                glassTheme = glassTheme
+                                title = stringResource(R.string.audio_fajr_sunrise_alarm).uppercase()
                             ) {
                                 FajrSunriseContent(
                                     enabled = settings?.useFajrAlarmBeforeSunrise ?: false,
                                     minutes = settings?.fajrAlarmMinutesBeforeSunrise ?: 45,
-                                    glassTheme = glassTheme,
                                     onToggle = { viewModel.toggleUseFajrAlarmBeforeSunrise(it) },
                                     onMinutesChange = { viewModel.updateFajrAlarmMinutesBeforeSunrise(it) }
                                 )
@@ -141,12 +129,10 @@ fun AudioSettingsScreen(
 
                         item {
                             SettingsCard(
-                                title = stringResource(id = R.string.audio_individual_sounds_title).uppercase(),
-                                glassTheme = glassTheme
+                                title = stringResource(id = R.string.audio_individual_sounds_title).uppercase()
                             ) {
                                 SelectionModeContent(
                                     useSpecific = settings?.useSpecificAdhanForEachPrayer ?: false,
-                                    glassTheme = glassTheme,
                                     onToggle = { viewModel.toggleUseSpecificAdhan(it) }
                                 )
                             }
@@ -197,7 +183,6 @@ fun AudioSettingsScreen(
                             items(audioItems) { item ->
                                 AudioFileItem(
                                     item = item,
-                                    glassTheme = glassTheme,
                                     onSelect = { viewModel.selectAudio(item.path) },
                                     onTogglePreview = { viewModel.togglePreview(item.path) },
                                     onDelete = if (!item.isDefault) { { viewModel.deleteAudio(item.path) } } else null
@@ -214,13 +199,11 @@ fun AudioSettingsScreen(
                 ) {
                     item {
                         SettingsCard(
-                            title = stringResource(id = R.string.settings_pre_adhan_warning).uppercase(),
-                            glassTheme = glassTheme
+                            title = stringResource(id = R.string.settings_pre_adhan_warning).uppercase()
                         ) {
                             PreAdhanContent(
                                 enabled = settings?.enablePreAdhanWarning ?: true,
                                 minutes = settings?.preAdhanWarningMinutes ?: 5,
-                                glassTheme = glassTheme,
                                 onToggle = { viewModel.togglePreAdhanWarning(it) },
                                 onMinutesChange = { viewModel.updatePreAdhanWarningMinutes(it) }
                             )
@@ -229,13 +212,11 @@ fun AudioSettingsScreen(
 
                     item {
                         SettingsCard(
-                            title = stringResource(R.string.audio_fajr_sunrise_alarm).uppercase(),
-                            glassTheme = glassTheme
+                            title = stringResource(R.string.audio_fajr_sunrise_alarm).uppercase()
                         ) {
                             FajrSunriseContent(
                                 enabled = settings?.useFajrAlarmBeforeSunrise ?: false,
                                 minutes = settings?.fajrAlarmMinutesBeforeSunrise ?: 45,
-                                glassTheme = glassTheme,
                                 onToggle = { viewModel.toggleUseFajrAlarmBeforeSunrise(it) },
                                 onMinutesChange = { viewModel.updateFajrAlarmMinutesBeforeSunrise(it) }
                             )
@@ -244,12 +225,10 @@ fun AudioSettingsScreen(
 
                     item {
                         SettingsCard(
-                            title = stringResource(id = R.string.audio_individual_sounds_title).uppercase(),
-                            glassTheme = glassTheme
+                            title = stringResource(id = R.string.audio_individual_sounds_title).uppercase()
                         ) {
                             SelectionModeContent(
                                 useSpecific = settings?.useSpecificAdhanForEachPrayer ?: false,
-                                glassTheme = glassTheme,
                                 onToggle = { viewModel.toggleUseSpecificAdhan(it) }
                             )
                         }
@@ -295,7 +274,6 @@ fun AudioSettingsScreen(
                     items(audioItems) { item ->
                         AudioFileItem(
                             item = item,
-                            glassTheme = glassTheme,
                             onSelect = { viewModel.selectAudio(item.path) },
                             onTogglePreview = { viewModel.togglePreview(item.path) },
                             onDelete = if (!item.isDefault) { { viewModel.deleteAudio(item.path) } } else null
@@ -312,9 +290,9 @@ fun AudioSettingsScreen(
 @Composable
 private fun SettingsCard(
     title: String, 
-    glassTheme: GlassTheme,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val glassTheme = LocalGlassTheme.current
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         Text(
             text = title,
@@ -341,7 +319,6 @@ private fun SettingsCard(
 fun PreAdhanContent(
     enabled: Boolean,
     minutes: Int,
-    glassTheme: GlassTheme,
     onToggle: (Boolean) -> Unit,
     onMinutesChange: (Int) -> Unit
 ) {
@@ -351,7 +328,6 @@ fun PreAdhanContent(
             subtitle = stringResource(id = R.string.settings_pre_adhan_warning_summary),
             icon = Icons.Rounded.NotificationsActive,
             checked = enabled,
-            glassTheme = glassTheme,
             onCheckedChange = onToggle
         )
         
@@ -373,7 +349,6 @@ fun PreAdhanContent(
 fun FajrSunriseContent(
     enabled: Boolean,
     minutes: Int,
-    glassTheme: GlassTheme,
     onToggle: (Boolean) -> Unit,
     onMinutesChange: (Int) -> Unit
 ) {
@@ -383,7 +358,6 @@ fun FajrSunriseContent(
             subtitle = stringResource(R.string.audio_fajr_sunrise_alarm_desc),
             icon = Icons.Rounded.WbTwilight,
             checked = enabled,
-            glassTheme = glassTheme,
             onCheckedChange = onToggle
         )
         
@@ -430,7 +404,6 @@ private fun SliderWithLabel(
 @Composable
 fun SelectionModeContent(
     useSpecific: Boolean,
-    glassTheme: GlassTheme,
     onToggle: (Boolean) -> Unit
 ) {
     SettingsToggleItem(
@@ -438,7 +411,6 @@ fun SelectionModeContent(
         subtitle = stringResource(id = R.string.audio_individual_sounds_desc),
         icon = Icons.Rounded.LibraryMusic,
         checked = useSpecific,
-        glassTheme = glassTheme,
         onCheckedChange = onToggle
     )
 }
@@ -486,11 +458,11 @@ private fun PrayerItem(name: String, isSelected: Boolean, onClick: () -> Unit, m
 @Composable
 fun AudioFileItem(
     item: AdhanAudioItem,
-    glassTheme: GlassTheme,
     onSelect: () -> Unit,
     onTogglePreview: () -> Unit,
     onDelete: (() -> Unit)?
 ) {
+    val glassTheme = LocalGlassTheme.current
     Surface(
         modifier = Modifier.fillMaxWidth().clickable { onSelect() },
         shape = RoundedCornerShape(20.dp),

@@ -17,17 +17,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ybugmobile.vaktiva.ui.theme.GlassTheme
+import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 
 @Composable
 fun SettingsClickItem(
     title: String,
     subtitle: String,
     icon: ImageVector,
-    glassTheme: GlassTheme,
     iconColor: Color = Color.White,
     onClick: () -> Unit
 ) {
+    val glassTheme = LocalGlassTheme.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
