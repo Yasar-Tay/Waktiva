@@ -31,6 +31,7 @@ import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.data.notification.NotificationHelper
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
@@ -59,7 +60,7 @@ class AdhanActivity : ComponentActivity() {
         showOnLockScreen()
         super.onCreate(savedInstanceState)
         
-        val prayerName = intent.getStringExtra("PRAYER_NAME") ?: "Prayer"
+        val prayerName = intent.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME) ?: "Prayer"
 
         setContent {
             val prayerDays by prayerRepository.getPrayerDays().collectAsState(initial = emptyList())
