@@ -1,6 +1,8 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -8,16 +10,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerType
+import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 
 @Composable
 fun AdhanControls(
@@ -28,6 +33,7 @@ fun AdhanControls(
     onStopTest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val glassTheme = LocalGlassTheme.current
     val prayerType = playingPrayerName?.let { PrayerType.fromString(it) }
     
     val prayerIcon = when (prayerType) {
@@ -40,98 +46,127 @@ fun AdhanControls(
         else -> Icons.Rounded.VolumeUp
     }
 
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.08f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseScale"
+    )
+
     AnimatedVisibility(
         visible = isAdhanPlaying,
-        enter = expandVertically() + fadeIn(),
-        exit = shrinkVertically() + fadeOut(),
+        enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+        exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
         modifier = modifier
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(160.dp),
-            shape = RoundedCornerShape(24.dp),
-            color = Color.White.copy(alpha = 0.12f),
-            border = androidx.compose.foundation.BorderStroke(
-                1.dp,
-                Color.White.copy(alpha = 0.15f)
-            )
+                .padding(vertical = 8.dp),
+            shape = RoundedCornerShape(28.dp),
+            color = glassTheme.containerColor,
+            border = BorderStroke(1.dp, glassTheme.borderColor)
         ) {
             Row(
-                modifier = Modifier.fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // LEFT SIDE: Content
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 24.dp),
-                    verticalArrangement = Arrangement.Center
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
                 ) {
+                    // Pulsing Icon
                     Box(
                         modifier = Modifier
                             .size(48.dp)
-                            .background(Color.White.copy(alpha = 0.15f), CircleShape),
+                            .scale(pulseScale)
+                            .background(glassTheme.contentColor.copy(alpha = 0.1f), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = prayerIcon,
                             contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(28.dp)
+                            tint = glassTheme.contentColor,
+                            modifier = Modifier.size(24.dp)
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
 
-                    Text(
-                        text = if (isTest) stringResource(R.string.adhan_test_alarm).uppercase()
-                               else (playingPrayerName?.uppercase() ?: stringResource(R.string.adhan_playing).uppercase()),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Black,
-                        color = Color.White,
-                        letterSpacing = 1.sp
-                    )
-                    Text(
-                        text = stringResource(R.string.adhan_sounding).lowercase(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White.copy(alpha = 0.6f),
-                        fontWeight = FontWeight.Medium
-                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        val title = if (isTest) stringResource(R.string.adhan_test_alarm).uppercase()
+                                   else (playingPrayerName?.uppercase() ?: stringResource(R.string.adhan_playing).uppercase())
+                        
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Black,
+                            color = glassTheme.contentColor,
+                            letterSpacing = 0.5.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .background(Color(0xFF4CAF50), CircleShape)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(R.string.adhan_sounding).uppercase(),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = glassTheme.secondaryContentColor,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.5.sp
+                            )
+                        }
+                    }
                 }
 
-                // RIGHT SIDE: Large Square Stop Button
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Reversed Stop Button
+                // Calculate if glass is Light (Night) or Dark (Day) to invert the button
+                val isLightGlass = glassTheme.containerColor.red > 0.5f
+                val buttonBgColor = if (isLightGlass) Color.Red.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.4f)
+                val buttonContentColor = if (isLightGlass) Color.White else Color.Black.copy(0.7f)
+                val iconContentColor = if (isLightGlass) Color.White else Color.Red.copy(0.4f)
+
                 Surface(
                     onClick = {
                         onStopAdhan()
                         if (isTest) onStopTest()
                     },
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .aspectRatio(1f)
-                        .padding(10.dp),
-                    color = Color.Red.copy(alpha = 0.35f),
-                    shape = RoundedCornerShape(24.dp)
+                    shape = RoundedCornerShape(16.dp),
+                    color = buttonBgColor,
+                    modifier = Modifier.height(48.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
                         Icon(
                             Icons.Rounded.Stop,
                             contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(60.dp)
+                            tint = iconContentColor,
+                            modifier = Modifier.size(28.dp)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = stringResource(R.string.adhan_stop).uppercase(),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                            modifier = Modifier.padding(horizontal = 8.dp)
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Black,
+                            color = buttonContentColor,
+                            letterSpacing = 0.5.sp
                         )
                     }
                 }
