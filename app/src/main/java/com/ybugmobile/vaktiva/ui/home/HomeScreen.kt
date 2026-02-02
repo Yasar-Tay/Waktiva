@@ -259,7 +259,7 @@ fun HomeScreenContent(
                                     if (state.currentPrayerDay != null) {
                                         PrayerTimeList(
                                             day = state.currentPrayerDay,
-                                            nextPrayerType = if (state.selectedDate == LocalDate.now()) state.nextPrayer?.type else null,
+                                            currentPrayerType = if (state.selectedDate == LocalDate.now()) state.currentPrayer?.type else null,
                                             contentColor = contentColor,
                                             highlightColor = contentColor.copy(alpha = 0.15f)
                                         )
@@ -410,7 +410,7 @@ fun HomeScreenContent(
                                     if (state.currentPrayerDay != null) {
                                         PrayerTimeList(
                                             day = state.currentPrayerDay,
-                                            nextPrayerType = if (state.selectedDate == LocalDate.now()) state.nextPrayer?.type else null,
+                                            currentPrayerType = if (state.selectedDate == LocalDate.now()) state.currentPrayer?.type else null,
                                             contentColor = contentColor,
                                             highlightColor = contentColor.copy(alpha = 0.15f)
                                         )

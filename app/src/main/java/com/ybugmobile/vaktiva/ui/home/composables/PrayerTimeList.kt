@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun PrayerTimeList(
     day: PrayerDay,
-    nextPrayerType: PrayerType?,
+    currentPrayerType: PrayerType?,
     contentColor: Color = Color.White,
     highlightColor: Color = Color.Black.copy(alpha = 0.2f)
 ) {
@@ -55,12 +55,12 @@ fun PrayerTimeList(
             .padding(horizontal = 8.dp)
     ) {
         prayers.forEach { item ->
-            val isNext = item.type == nextPrayerType
+            val isCurrent = item.type == currentPrayerType
             
-            // Highlight container for next prayer
-            val itemContainerColor = if (isNext) highlightColor else Color.Transparent
-            val itemContentColor = if (isNext) contentColor else contentColor.copy(alpha = 0.7f)
-            val fontWeight = if (isNext) FontWeight.Bold else FontWeight.Medium
+            // Highlight container for current prayer
+            val itemContainerColor = if (isCurrent) highlightColor else Color.Transparent
+            val itemContentColor = if (isCurrent) contentColor else contentColor.copy(alpha = 0.7f)
+            val fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium
 
             Row(
                 modifier = Modifier
