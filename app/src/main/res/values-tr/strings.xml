@@ -5,6 +5,7 @@
     <string name="nav_home">Ana Sayfa</string>
     <string name="nav_qibla">Kıble</string>
     <string name="nav_settings">Ayarlar</string>
+    <string name="nav_donate">Bağış Yap</string>
     <string name="cd_back">Geri</string>
 
     <!-- Prayer Names -->
@@ -178,12 +179,17 @@
     <string name="welcome_grant_btn">İzinleri Ver</string>
     <string name="welcome_continue_btn">Devam Et</string>
     <string name="welcome_personalize">Kişiselleştir</string>
+    <string name="welcome_personalize_desc">Namaz ve hesaplama ayarlarınızı yapılandırın</string>
     <string name="welcome_audio_desc">Ezan sesi tercihlerinizi belirleyin</string>
     <string name="welcome_adhan_audio">Ezan Sesi</string>
     <string name="welcome_adhan_audio_desc">Namaz vakitlerinde sesli ezan oku</string>
     <string name="welcome_select_sound">Ses Seçin</string>
     <string name="welcome_skip_btn">Yine de devam et</string>
     <string name="welcome_permission_later_info">Bu izinleri dilediğiniz zaman Ayarlar ekranından yönetebilirsiniz.</string>
+    <string name="welcome_general_settings">Genel Ayarlar</string>
+    <string name="welcome_adhan_audio_header">Ezan ve Ses</string>
+    <string name="welcome_battery_optimized">Güvenilirlik için optimize edildi</string>
+    <string name="welcome_battery_optimize_desc">Güvenilir Ezanlar için optimizasyonu kapatın</string>
 
     <!-- Adhan Playing Screen -->
     <string name="adhan_its_time_for">Vakti Geldi:</string>
@@ -199,9 +205,13 @@
     <string name="settings_donate">Geliştiriciyi Destekle</string>
     <string name="donate_title">Vaktiva\'yı Destekle</string>
     <string name="donate_description">Vaktiva özenle geliştirilmiş ücretsiz bir uygulamadır. Desteğiniz uygulamanın reklamsız kalmasına ve gelecekteki geliştirmelere yardımcı olur.</string>
+    <string name="donate_header">Vaktiva Gelişimine Destek Olun</string>
+    <string name="donate_desc">Vaktiva açık kaynaklı ve reklamsızdır. Katkılarınız sunucu maliyetlerini karşılamaya ve herkes için en iyi namaz deneyimini sunmaya yardımcı olur.</string>
+    <string name="donate_footer">Cömertliğiniz bu projenin yaşamasına yardımcı oluyor. Sürekli bir hayır kaynağı olması dileğiyle.</string>
     <string name="donate_button">Bağış Yap</string>
     <string name="donate_thank_you">Desteğiniz için teşekkürler!</string>
     <string name="donate_error">Bağış başarısız oldu. Lütfen tekrar deneyin.</string>
+    <string name="donate_billing_error">Ödeme servisine bağlanılamadı</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharrem</string>

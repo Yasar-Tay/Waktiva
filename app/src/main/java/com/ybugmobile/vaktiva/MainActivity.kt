@@ -15,6 +15,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.rounded.Home
@@ -42,6 +43,7 @@ import com.ybugmobile.vaktiva.data.worker.PrayerUpdateWorker
 import com.ybugmobile.vaktiva.domain.manager.TimeManager
 import com.ybugmobile.vaktiva.ui.home.HomeScreen
 import com.ybugmobile.vaktiva.ui.home.HomeViewModel
+import com.ybugmobile.vaktiva.ui.navigation.DonateScreen
 import com.ybugmobile.vaktiva.ui.navigation.Screen
 import com.ybugmobile.vaktiva.ui.qibla.QiblaScreen
 import com.ybugmobile.vaktiva.ui.settings.AudioSettingsScreen
@@ -131,6 +133,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
     val items = listOf(
         NavigationItem(Screen.Home.route, R.string.nav_home, Icons.Rounded.Home),
         NavigationItem(Screen.Qibla.route, R.string.nav_qibla, Icons.Rounded.LocationOn),
+        NavigationItem(Screen.Donate.route, R.string.nav_donate, Icons.Default.Favorite),
         NavigationItem(Screen.Settings.route, R.string.nav_settings, Icons.Rounded.Settings)
     )
 
@@ -187,6 +190,9 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                     HomeScreen(viewModel = homeViewModel) 
                 }
                 composable(Screen.Qibla.route) { QiblaScreen() }
+                composable(Screen.Donate.route) { 
+                    DonateScreen(onBack = { navController.popBackStack() }) 
+                }
                 composable(Screen.Settings.route) { 
                     SettingsScreen(
                         onNavigateToAudio = {

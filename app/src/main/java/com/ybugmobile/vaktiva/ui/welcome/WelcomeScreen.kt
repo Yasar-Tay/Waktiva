@@ -239,7 +239,7 @@ private fun PermissionsStep(onNext: () -> Unit) {
             PermissionCard(
                 icon = Icons.Default.BatteryChargingFull,
                 title = stringResource(R.string.settings_battery_opt),
-                description = if (batteryOptimizationIgnored) "Optimized for reliability" else "Disable optimization for reliable Adhans",
+                description = if (batteryOptimizationIgnored) stringResource(R.string.welcome_battery_optimized) else stringResource(R.string.welcome_battery_optimize_desc),
                 isGranted = batteryOptimizationIgnored,
                 onClick = {
                     if (!batteryOptimizationIgnored) {
@@ -326,7 +326,7 @@ private fun PreferencesStep(
         modifier = Modifier.fillMaxSize().padding(24.dp).systemBarsPadding()
     ) {
         Text(stringResource(R.string.welcome_personalize), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = Color.White)
-        Text("Configure your prayer and calculation settings", style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(alpha = 0.6f))
+        Text(stringResource(R.string.welcome_personalize_desc), style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(alpha = 0.6f))
         
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -335,7 +335,7 @@ private fun PreferencesStep(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // General Preferences
-            PreferenceSection(title = "General Settings") {
+            PreferenceSection(title = stringResource(R.string.welcome_general_settings)) {
                 WelcomeSettingsClickItem(
                     title = stringResource(R.string.settings_language),
                     subtitle = getNativeLanguageName(currentLanguage),
@@ -359,7 +359,7 @@ private fun PreferencesStep(
             }
 
             // Adhan Audio
-            PreferenceSection(title = "Adhan & Audio") {
+            PreferenceSection(title = stringResource(R.string.welcome_adhan_audio_header)) {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
@@ -673,7 +673,7 @@ private fun <T> WelcomeSelectionDialog(
                     onClick = onDismiss,
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text("Cancel", color = AccentColor, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.settings_cancel), color = AccentColor, fontWeight = FontWeight.Bold)
                 }
             }
         }

@@ -105,6 +105,9 @@ dependencies {
     // Accompanist Permissions
     implementation(libs.accompanist.permissions)
 
+    // Billing
+    implementation(libs.billing.ktx)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.rules)

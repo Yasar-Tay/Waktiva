@@ -5,6 +5,7 @@
     <string name="nav_home">Home</string>
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Settings</string>
+    <string name="nav_donate">Donate</string>
 
     <!-- Qibla Screen -->
     <string name="qibla_compass">Compass</string>
@@ -125,12 +126,17 @@
     <string name="welcome_grant_btn">Grant Permissions</string>
     <string name="welcome_continue_btn">Continue</string>
     <string name="welcome_personalize">Personalize</string>
+    <string name="welcome_personalize_desc">Configure your prayer and calculation settings</string>
     <string name="welcome_audio_desc">Set your prayer call preferences</string>
     <string name="welcome_adhan_audio">Adhan Audio</string>
     <string name="welcome_adhan_audio_desc">Play audio call for prayers</string>
     <string name="welcome_select_sound">Select Sound</string>
     <string name="welcome_skip_btn">Continue Anyway</string>
     <string name="welcome_permission_later_info">You can always manage these permissions in the Settings screen later.</string>
+    <string name="welcome_general_settings">General Settings</string>
+    <string name="welcome_adhan_audio_header">Adhan &amp; Audio</string>
+    <string name="welcome_battery_optimized">Optimized for reliability</string>
+    <string name="welcome_battery_optimize_desc">Disable optimization for reliable Adhans</string>
 
     <!-- Adhan Audio per prayer (from EPIC 2) -->
     <string name="audio_setting_fajr">Fajr Adhan</string>
@@ -151,9 +157,13 @@
     <string name="settings_donate">Support the Developer</string>
     <string name="donate_title">Support Vaktiva</string>
     <string name="donate_description">Vaktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
+    <string name="donate_header">Empower Vaktiva Development</string>
+    <string name="donate_desc">Vaktiva is open-source and ad-free. Your contributions help cover server costs and ongoing development to provide the best prayer experience for everyone.</string>
+    <string name="donate_footer">Your generosity keeps this project alive. May it be a source of continuous blessing.</string>
     <string name="donate_button">Donate</string>
     <string name="donate_thank_you">Thank you for your support!</string>
     <string name="donate_error">Donation failed. Please try again.</string>
+    <string name="donate_billing_error">Failed to connect to billing service</string>
 
     <!-- Pre-Adhan Notification Channel -->
     <string name="pre_adhan_channel_name">Pre-Adhan Warnings</string>

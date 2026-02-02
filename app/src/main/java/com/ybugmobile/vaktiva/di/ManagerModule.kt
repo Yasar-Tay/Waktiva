@@ -1,6 +1,8 @@
 package com.ybugmobile.vaktiva.di
 
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
+import com.ybugmobile.vaktiva.data.manager.BillingManagerImpl
+import com.ybugmobile.vaktiva.domain.manager.BillingManager
 import com.ybugmobile.vaktiva.domain.manager.SettingsManagerInterface
 import dagger.Binds
 import dagger.Module
@@ -17,4 +19,10 @@ abstract class ManagerModule {
     abstract fun bindSettingsManager(
         settingsManager: SettingsManager
     ): SettingsManagerInterface
+
+    @Binds
+    @Singleton
+    abstract fun bindBillingManager(
+        billingManager: BillingManagerImpl
+    ): BillingManager
 }
