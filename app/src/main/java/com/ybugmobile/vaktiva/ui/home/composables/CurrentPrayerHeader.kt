@@ -29,6 +29,8 @@ fun CurrentPrayerHeader(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val locale = context.resources.configuration.locales[0]
+
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -52,7 +54,7 @@ fun CurrentPrayerHeader(
 
             // Name positioned above the icon
             Text(
-                text = currentPrayer.type.getDisplayName(context).uppercase(),
+                text = currentPrayer.type.getDisplayName(context).uppercase(locale),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = contentColor.copy(alpha = 0.6f),
