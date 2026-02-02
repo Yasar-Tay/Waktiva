@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -31,9 +32,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.ui.settings.composables.*
-import com.ybugmobile.vaktiva.ui.theme.dynamicTimeGradient
+import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import com.ybugmobile.vaktiva.utils.PermissionUtils
-import java.time.LocalTime
 import java.util.Locale as JavaLocale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,6 +44,8 @@ fun SettingsScreen(
 ) {
     val settings by viewModel.settings.collectAsState(initial = null)
     val prayerDays by viewModel.allPrayerDays.collectAsState()
+    val currentTime by viewModel.currentTime.collectAsState()
+    
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -53,7 +55,8 @@ fun SettingsScreen(
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showDeleteHistoryDialog by remember { mutableStateOf(false) }
 
-    val backgroundGradient = dynamicTimeGradient(LocalTime.now(), prayerDays)
+    val currentDay = prayerDays.find { it.date == currentTime.toLocalDate() }
+    val backgroundGradient = getGradientForTime(currentTime.toLocalTime(), currentDay)
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -91,7 +94,7 @@ fun SettingsScreen(
                         .systemBarsPadding()
                         .displayCutoutPadding()
                         .padding(horizontal = 20.dp)
-                        .padding(start = 72.dp), // Adjust for Navigation Rail
+                        .padding(start = 72.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     Column(
@@ -206,7 +209,7 @@ private fun NotificationSoundSection(
         SettingsToggleItem(
             title = stringResource(R.string.settings_play_adhan),
             subtitle = stringResource(R.string.settings_play_adhan_desc),
-            icon = Icons.Rounded.VolumeUp,
+            icon = Icons.AutoMirrored.Rounded.VolumeUp,
             checked = settings?.playAdhanAudio ?: true,
             onCheckedChange = { enabled ->
                 if (enabled && !PermissionUtils.canScheduleExactAlarms(context)) {

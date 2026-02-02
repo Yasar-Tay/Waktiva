@@ -9,6 +9,7 @@ import com.ybugmobile.vaktiva.data.sensor.CompassData
 import com.ybugmobile.vaktiva.data.sensor.CompassManager
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
+import com.ybugmobile.vaktiva.domain.manager.TimeManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class QiblaViewModel @Inject constructor(
     settingsManager: SettingsManager,
     compassManager: CompassManager,
-    prayerRepository: PrayerRepository
+    prayerRepository: PrayerRepository,
+    timeManager: TimeManager
 ) : ViewModel() {
 
     val settings = settingsManager.settingsFlow
@@ -33,8 +35,7 @@ class QiblaViewModel @Inject constructor(
 
     val compassData: Flow<CompassData> = compassManager.compassFlow
 
-    private val _currentTime = MutableStateFlow(LocalDateTime.now())
-    val currentTime = _currentTime.asStateFlow()
+    val currentTime = timeManager.currentTime
 
     val currentPrayerDay: Flow<PrayerDay?> = prayerRepository.getPrayerDays().map { days ->
         val today = LocalDate.now()
@@ -62,15 +63,6 @@ class QiblaViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), QiblaViewState(isLoading = true))
 
     init {
-        // Ticker for current time
-        flow {
-            while (true) {
-                emit(LocalDateTime.now())
-                delay(1000)
-            }
-        }.onEach { _currentTime.value = it }
-            .launchIn(viewModelScope)
-
         // Mark as settled after a small delay to allow flows to emit their first values
         viewModelScope.launch {
             delay(300) // Small buffer to let flows settle

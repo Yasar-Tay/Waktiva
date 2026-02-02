@@ -47,6 +47,7 @@ import androidx.navigation.compose.*
 import androidx.work.*
 import com.ybugmobile.vaktiva.data.worker.LocationUpdateWorker
 import com.ybugmobile.vaktiva.data.worker.PrayerUpdateWorker
+import com.ybugmobile.vaktiva.domain.manager.TimeManager
 import com.ybugmobile.vaktiva.ui.home.HomeScreen
 import com.ybugmobile.vaktiva.ui.home.HomeViewModel
 import com.ybugmobile.vaktiva.ui.navigation.Screen
@@ -54,13 +55,16 @@ import com.ybugmobile.vaktiva.ui.qibla.QiblaScreen
 import com.ybugmobile.vaktiva.ui.settings.AudioSettingsScreen
 import com.ybugmobile.vaktiva.ui.settings.SettingsScreen
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
-import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import com.ybugmobile.vaktiva.ui.welcome.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var timeManager: TimeManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,13 +76,13 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             VaktivaTheme {
-                val viewModel: HomeViewModel = hiltViewModel()
+                val homeViewModel: HomeViewModel = hiltViewModel()
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainNavigation(this@MainActivity, viewModel)
+                    MainNavigation(this@MainActivity, homeViewModel, timeManager)
                 }
             }
         }
@@ -114,9 +118,9 @@ class MainActivity : AppCompatActivity() {
 }
 
 @Composable
-fun MainNavigation(context: Context, viewModel: HomeViewModel) {
+fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: TimeManager) {
     val navController = rememberNavController()
-    val settings by viewModel.settings.collectAsState(initial = null)
+    val settings by homeViewModel.settings.collectAsState(initial = null)
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
@@ -181,7 +185,9 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
                     }
                 )
             }
-            composable(Screen.Home.route) { HomeScreen(viewModel = viewModel) }
+            composable(Screen.Home.route) { 
+                HomeScreen(viewModel = homeViewModel) 
+            }
             composable(Screen.Qibla.route) { QiblaScreen() }
             composable(Screen.Settings.route) { 
                 SettingsScreen(
@@ -260,7 +266,7 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
                 // Time Shift Test Button
                 SmallFloatingActionButton(
                     onClick = { 
-                        viewModel.debugAddHours(30)
+                        timeManager.addMinutes(30)
                         Toast.makeText(context, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
                     },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer
@@ -272,7 +278,7 @@ fun MainNavigation(context: Context, viewModel: HomeViewModel) {
                 FloatingActionButton(
                     onClick = { 
                         val seconds = 5
-                        viewModel.triggerTestAlarm(seconds)
+                        homeViewModel.triggerTestAlarm(seconds)
                         Toast.makeText(context, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
                     },
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer

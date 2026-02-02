@@ -5,21 +5,25 @@ import androidx.lifecycle.viewModelScope
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
+import com.ybugmobile.vaktiva.domain.manager.TimeManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settingsManager: SettingsManager,
-    private val prayerRepository: PrayerRepository
+    private val prayerRepository: PrayerRepository,
+    private val timeManager: TimeManager
 ) : ViewModel() {
 
     val settings = settingsManager.settingsFlow
+    val currentTime = timeManager.currentTime
 
     val allPrayerDays: StateFlow<List<PrayerDay>> = prayerRepository.getPrayerDays()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())

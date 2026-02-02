@@ -22,6 +22,7 @@ import com.ybugmobile.vaktiva.data.location.LocationWrapper
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
+import com.ybugmobile.vaktiva.domain.manager.TimeManager
 import com.ybugmobile.vaktiva.service.AdhanService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -42,6 +43,7 @@ class HomeViewModel @Inject constructor(
     private val settingsManager: SettingsManagerInterface,
     private val locationWrapper: LocationWrapper,
     private val alarmScheduler: AlarmScheduler,
+    private val timeManager: TimeManager,
     @ApplicationContext private val context: Context
 ) : ViewModel(), DefaultLifecycleObserver {
 
@@ -57,9 +59,7 @@ class HomeViewModel @Inject constructor(
         days.find { it.date == date }
     }
 
-    private val _timeOffset = MutableStateFlow(Duration.ZERO)
-    private val _currentTime = MutableStateFlow(LocalDateTime.now())
-    val currentTime = _currentTime.asStateFlow()
+    val currentTime = timeManager.currentTime
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
@@ -119,8 +119,7 @@ class HomeViewModel @Inject constructor(
     }
 
     init {
-        tickerFlow(1000).onEach { 
-            _currentTime.value = LocalDateTime.now().plus(_timeOffset.value)
+        currentTime.onEach { now ->
             val s = settings.first()
             s.testAlarmEndTime?.let { end ->
                 if (System.currentTimeMillis() > end) {
@@ -152,7 +151,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun debugAddHours(minutes: Long) {
-        _timeOffset.value = _timeOffset.value.plusMinutes(minutes)
+        timeManager.addMinutes(minutes)
     }
 
     override fun onResume(owner: LifecycleOwner) {
@@ -192,8 +191,6 @@ class HomeViewModel @Inject constructor(
         _isAdhanPlaying.value = false
         _playingPrayerName.value = null
     }
-
-    private fun tickerFlow(periodMillis: Long) = flow { while (true) { emit(Unit); delay(periodMillis) } }
 
     private val _hasSettled = MutableStateFlow(false)
 

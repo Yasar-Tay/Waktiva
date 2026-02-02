@@ -30,7 +30,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.settings.composables.SettingsToggleItem
-import com.ybugmobile.vaktiva.ui.theme.dynamicTimeGradient
+import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
+import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,6 +44,7 @@ fun AudioSettingsScreen(
     val settings by viewModel.settings.collectAsState(initial = null)
     val selectedPrayerType by viewModel.selectedPrayerType.collectAsState()
     val prayerDays by viewModel.allPrayerDays.collectAsState()
+    val currentTime by viewModel.currentTime.collectAsState()
     
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -50,7 +52,10 @@ fun AudioSettingsScreen(
         uri?.let { viewModel.addCustomAudio(it) }
     }
 
-    val backgroundGradient = dynamicTimeGradient(LocalTime.now(), prayerDays)
+    val currentDay = prayerDays.find { it.date == currentTime.toLocalDate() }
+    val backgroundGradient = getGradientForTime(currentTime.toLocalTime(), currentDay)
+    val glassTheme = getGlassTheme(currentTime.toLocalTime(), currentDay)
+    
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -105,7 +110,10 @@ fun AudioSettingsScreen(
                         contentPadding = PaddingValues(top = 20.dp, bottom = 100.dp)
                     ) {
                         item {
-                            SettingsCard(title = stringResource(id = R.string.settings_pre_adhan_warning).uppercase()) {
+                            SettingsCard(
+                                title = stringResource(id = R.string.settings_pre_adhan_warning).uppercase(),
+                                glassTheme = glassTheme
+                            ) {
                                 PreAdhanContent(
                                     enabled = settings?.enablePreAdhanWarning ?: true,
                                     minutes = settings?.preAdhanWarningMinutes ?: 5,
@@ -116,7 +124,10 @@ fun AudioSettingsScreen(
                         }
 
                         item {
-                            SettingsCard(title = stringResource(R.string.audio_fajr_sunrise_alarm).uppercase()) {
+                            SettingsCard(
+                                title = stringResource(R.string.audio_fajr_sunrise_alarm).uppercase(),
+                                glassTheme = glassTheme
+                            ) {
                                 FajrSunriseContent(
                                     enabled = settings?.useFajrAlarmBeforeSunrise ?: false,
                                     minutes = settings?.fajrAlarmMinutesBeforeSunrise ?: 45,
@@ -127,7 +138,10 @@ fun AudioSettingsScreen(
                         }
 
                         item {
-                            SettingsCard(title = stringResource(id = R.string.audio_individual_sounds_title).uppercase()) {
+                            SettingsCard(
+                                title = stringResource(id = R.string.audio_individual_sounds_title).uppercase(),
+                                glassTheme = glassTheme
+                            ) {
                                 SelectionModeContent(
                                     useSpecific = settings?.useSpecificAdhanForEachPrayer ?: false,
                                     onToggle = { viewModel.toggleUseSpecificAdhan(it) }
@@ -142,7 +156,7 @@ fun AudioSettingsScreen(
                                         text = stringResource(id = R.string.audio_select_prayer_prompt).uppercase(),
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Black,
-                                        color = Color.White.copy(alpha = 0.4f),
+                                        color = glassTheme.secondaryContentColor,
                                         letterSpacing = 1.sp,
                                         modifier = Modifier.padding(start = 8.dp, bottom = 12.dp)
                                     )
@@ -167,7 +181,7 @@ fun AudioSettingsScreen(
                             text = headerText.uppercase(),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Black,
-                            color = Color.White.copy(alpha = 0.4f),
+                            color = glassTheme.secondaryContentColor,
                             letterSpacing = 1.sp,
                             modifier = Modifier.padding(top = 28.dp, start = 8.dp, bottom = 12.dp)
                         )
@@ -180,6 +194,7 @@ fun AudioSettingsScreen(
                             items(audioItems) { item ->
                                 AudioFileItem(
                                     item = item,
+                                    glassTheme = glassTheme,
                                     onSelect = { viewModel.selectAudio(item.path) },
                                     onTogglePreview = { viewModel.togglePreview(item.path) },
                                     onDelete = if (!item.isDefault) { { viewModel.deleteAudio(item.path) } } else null
@@ -195,7 +210,10 @@ fun AudioSettingsScreen(
                     contentPadding = PaddingValues(20.dp)
                 ) {
                     item {
-                        SettingsCard(title = stringResource(id = R.string.settings_pre_adhan_warning).uppercase()) {
+                        SettingsCard(
+                            title = stringResource(id = R.string.settings_pre_adhan_warning).uppercase(),
+                            glassTheme = glassTheme
+                        ) {
                             PreAdhanContent(
                                 enabled = settings?.enablePreAdhanWarning ?: true,
                                 minutes = settings?.preAdhanWarningMinutes ?: 5,
@@ -206,7 +224,10 @@ fun AudioSettingsScreen(
                     }
 
                     item {
-                        SettingsCard(title = stringResource(R.string.audio_fajr_sunrise_alarm).uppercase()) {
+                        SettingsCard(
+                            title = stringResource(R.string.audio_fajr_sunrise_alarm).uppercase(),
+                            glassTheme = glassTheme
+                        ) {
                             FajrSunriseContent(
                                 enabled = settings?.useFajrAlarmBeforeSunrise ?: false,
                                 minutes = settings?.fajrAlarmMinutesBeforeSunrise ?: 45,
@@ -217,7 +238,10 @@ fun AudioSettingsScreen(
                     }
 
                     item {
-                        SettingsCard(title = stringResource(id = R.string.audio_individual_sounds_title).uppercase()) {
+                        SettingsCard(
+                            title = stringResource(id = R.string.audio_individual_sounds_title).uppercase(),
+                            glassTheme = glassTheme
+                        ) {
                             SelectionModeContent(
                                 useSpecific = settings?.useSpecificAdhanForEachPrayer ?: false,
                                 onToggle = { viewModel.toggleUseSpecificAdhan(it) }
@@ -232,7 +256,7 @@ fun AudioSettingsScreen(
                                     text = stringResource(id = R.string.audio_select_prayer_prompt).uppercase(),
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Black,
-                                    color = Color.White.copy(alpha = 0.4f),
+                                    color = glassTheme.secondaryContentColor,
                                     letterSpacing = 1.sp,
                                     modifier = Modifier.padding(start = 8.dp, bottom = 12.dp)
                                 )
@@ -256,7 +280,7 @@ fun AudioSettingsScreen(
                                 text = headerText.uppercase(),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Black,
-                                color = Color.White.copy(alpha = 0.4f),
+                                color = glassTheme.secondaryContentColor,
                                 letterSpacing = 1.sp
                             )
                         }
@@ -265,6 +289,7 @@ fun AudioSettingsScreen(
                     items(audioItems) { item ->
                         AudioFileItem(
                             item = item,
+                            glassTheme = glassTheme,
                             onSelect = { viewModel.selectAudio(item.path) },
                             onTogglePreview = { viewModel.togglePreview(item.path) },
                             onDelete = if (!item.isDefault) { { viewModel.deleteAudio(item.path) } } else null
@@ -279,20 +304,24 @@ fun AudioSettingsScreen(
 }
 
 @Composable
-private fun SettingsCard(title: String, content: @Composable ColumnScope.() -> Unit) {
+private fun SettingsCard(
+    title: String, 
+    glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme,
+    content: @Composable ColumnScope.() -> Unit
+) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         Text(
             text = title,
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Black,
-            color = Color.White.copy(alpha = 0.4f),
+            color = glassTheme.secondaryContentColor,
             letterSpacing = 1.5.sp,
             modifier = Modifier.padding(start = 8.dp, bottom = 12.dp)
         )
         Surface(
             shape = RoundedCornerShape(28.dp),
-            color = Color.White.copy(alpha = 0.12f),
-            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f)),
+            color = glassTheme.containerColor,
+            border = BorderStroke(1.dp, glassTheme.borderColor),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -445,6 +474,7 @@ private fun PrayerItem(name: String, isSelected: Boolean, onClick: () -> Unit, m
 @Composable
 fun AudioFileItem(
     item: AdhanAudioItem,
+    glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme,
     onSelect: () -> Unit,
     onTogglePreview: () -> Unit,
     onDelete: (() -> Unit)?
@@ -452,8 +482,8 @@ fun AudioFileItem(
     Surface(
         modifier = Modifier.fillMaxWidth().clickable { onSelect() },
         shape = RoundedCornerShape(20.dp),
-        color = if (item.isSelected) Color.White.copy(alpha = 0.15f) else Color.White.copy(alpha = 0.05f),
-        border = BorderStroke(1.dp, if (item.isSelected) Color.White.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.1f))
+        color = if (item.isSelected) glassTheme.containerColor.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.05f),
+        border = BorderStroke(1.dp, if (item.isSelected) glassTheme.borderColor else Color.White.copy(alpha = 0.1f))
     ) {
         Row(
             modifier = Modifier.padding(12.dp).fillMaxWidth(),
@@ -462,14 +492,14 @@ fun AudioFileItem(
             Surface(
                 onClick = onTogglePreview,
                 shape = CircleShape,
-                color = if (item.isPlaying) Color.White else Color.White.copy(alpha = 0.1f),
+                color = if (item.isPlaying) glassTheme.contentColor else Color.White.copy(alpha = 0.1f),
                 modifier = Modifier.size(44.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = if (item.isPlaying) Icons.Rounded.Stop else Icons.Rounded.PlayArrow,
                         contentDescription = null,
-                        tint = if (item.isPlaying) Color.Black else Color.White,
+                        tint = if (item.isPlaying) Color.Black else glassTheme.contentColor,
                         modifier = Modifier.size(22.dp)
                     )
                 }
@@ -480,14 +510,14 @@ fun AudioFileItem(
                     text = item.name,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = if (item.isSelected) FontWeight.Black else FontWeight.Bold,
-                    color = if (item.isSelected) Color.White else Color.White.copy(alpha = 0.7f),
+                    color = if (item.isSelected) glassTheme.contentColor else glassTheme.contentColor.copy(alpha = 0.7f),
                     maxLines = 1
                 )
                 if (item.isDefault) {
                     Text(
                         text = stringResource(id = R.string.audio_built_in).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color.White.copy(alpha = 0.4f),
+                        color = glassTheme.secondaryContentColor,
                         fontWeight = FontWeight.Black,
                         letterSpacing = 1.sp
                     )
