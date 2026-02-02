@@ -30,17 +30,23 @@ fun PrayerTimeList(
     contentColor: Color = Color.White,
     highlightColor: Color = Color.Black.copy(alpha = 0.2f)
 ) {
-    data class PrayerItem(val type: PrayerType, val resId: Int, val time: String, val icon: ImageVector)
+    data class PrayerItem(
+        val type: PrayerType,
+        val resId: Int,
+        val time: String,
+        val icon: ImageVector,
+        val color: Color
+    )
 
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-    
+
     val prayers = listOf(
-        PrayerItem(PrayerType.FAJR, R.string.prayer_fajr, day.timings[PrayerType.FAJR]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.water_lux_rotated)),
-        PrayerItem(PrayerType.SUNRISE, R.string.prayer_sunrise, day.timings[PrayerType.SUNRISE]?.format(timeFormatter) ?: "", Icons.Default.WbTwilight),
-        PrayerItem(PrayerType.DHUHR, R.string.prayer_dhuhr, day.timings[PrayerType.DHUHR]?.format(timeFormatter) ?: "", Icons.Default.WbSunny),
-        PrayerItem(PrayerType.ASR, R.string.prayer_asr, day.timings[PrayerType.ASR]?.format(timeFormatter) ?: "", Icons.Default.WbSunny),
-        PrayerItem(PrayerType.MAGHRIB, R.string.prayer_maghrib, day.timings[PrayerType.MAGHRIB]?.format(timeFormatter) ?: "", Icons.Default.WbTwilight),
-        PrayerItem(PrayerType.ISHA, R.string.prayer_isha, day.timings[PrayerType.ISHA]?.format(timeFormatter) ?: "", Icons.Default.NightsStay)
+        PrayerItem(PrayerType.FAJR, R.string.prayer_fajr, day.timings[PrayerType.FAJR]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.water_lux_rotated), Color(0xFF81D4FA)),
+        PrayerItem(PrayerType.SUNRISE, R.string.prayer_sunrise, day.timings[PrayerType.SUNRISE]?.format(timeFormatter) ?: "", Icons.Default.WbTwilight, Color(0xFFFFE082)),
+        PrayerItem(PrayerType.DHUHR, R.string.prayer_dhuhr, day.timings[PrayerType.DHUHR]?.format(timeFormatter) ?: "", Icons.Default.WbSunny, Color(0xFFFFF59D)),
+        PrayerItem(PrayerType.ASR, R.string.prayer_asr, day.timings[PrayerType.ASR]?.format(timeFormatter) ?: "", Icons.Default.WbSunny, Color(0xFFFFCC80)),
+        PrayerItem(PrayerType.MAGHRIB, R.string.prayer_maghrib, day.timings[PrayerType.MAGHRIB]?.format(timeFormatter) ?: "", Icons.Default.WbTwilight, Color(0xFFCE93D8)),
+        PrayerItem(PrayerType.ISHA, R.string.prayer_isha, day.timings[PrayerType.ISHA]?.format(timeFormatter) ?: "", Icons.Default.NightsStay, Color(0xFF9FA8DA))
     )
 
     val commonShadow = if (contentColor.red > 0.5f) Shadow(
@@ -60,6 +66,7 @@ fun PrayerTimeList(
             // Highlight container for current prayer
             val itemContainerColor = if (isCurrent) highlightColor else Color.Transparent
             val itemContentColor = if (isCurrent) contentColor else contentColor.copy(alpha = 0.7f)
+            val iconTint = if (isCurrent) item.color else itemContentColor
             val fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium
 
             Row(
@@ -75,7 +82,7 @@ fun PrayerTimeList(
                     Icon(
                         imageVector = item.icon,
                         contentDescription = null,
-                        tint = itemContentColor,
+                        tint = iconTint,
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))
