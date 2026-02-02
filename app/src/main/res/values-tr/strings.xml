@@ -212,6 +212,9 @@
     <string name="donate_thank_you">Desteğiniz için teşekkürler!</string>
     <string name="donate_error">Bağış başarısız oldu. Lütfen tekrar deneyin.</string>
     <string name="donate_billing_error">Ödeme servisine bağlanılamadı</string>
+    <string name="rate_title">Vaktiva\'yı Puanlayın</string>
+    <string name="rate_desc">Vaktiva\'yı seviyorsanız, lütfen Google Play\'de 5 yıldız verin. Daha fazla kişiye ulaşmamıza yardımcı olur!</string>
+    <string name="rate_button">5 Yıldız Ver</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharrem</string>

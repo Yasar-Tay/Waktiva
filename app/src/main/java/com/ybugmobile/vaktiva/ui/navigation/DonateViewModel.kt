@@ -1,12 +1,13 @@
 package com.ybugmobile.vaktiva.ui.navigation
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.manager.BillingManager
 import com.ybugmobile.vaktiva.domain.manager.DonationProduct
-import com.ybugmobile.vaktiva.domain.manager.PurchaseResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,6 +40,23 @@ class DonateViewModel @Inject constructor(
     fun onDonateClick(product: DonationProduct) {
         viewModelScope.launch {
             billingManager.purchaseProduct(product)
+        }
+    }
+
+    fun onRateClick() {
+        val packageName = context.packageName
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse("market://details?id=$packageName")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        try {
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            val webIntent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(webIntent)
         }
     }
 

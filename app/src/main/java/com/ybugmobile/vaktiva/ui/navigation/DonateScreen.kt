@@ -1,14 +1,13 @@
 package com.ybugmobile.vaktiva.ui.navigation
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -139,8 +138,18 @@ fun DonateScreen(
 
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    // Google Play Rating Option
+                    RatingOption(
+                        glassTheme = glassTheme,
+                        onClick = { viewModel.onRateClick() }
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     if (products.isEmpty()) {
-                        CircularProgressIndicator(color = Color.White)
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = Color.White)
+                        }
                     } else {
                         products.forEach { product ->
                             DonateOption(
@@ -163,6 +172,46 @@ fun DonateScreen(
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun RatingOption(
+    glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        color = Color(0xFFFFD700).copy(alpha = 0.15f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFD700).copy(alpha = 0.3f))
+    ) {
+        Row(
+            modifier = Modifier.padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.rate_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    text = stringResource(R.string.rate_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.7f)
+                )
+            }
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
+                tint = Color(0xFFFFD700),
+                modifier = Modifier.size(32.dp).padding(start = 8.dp)
+            )
         }
     }
 }

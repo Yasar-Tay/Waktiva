@@ -164,6 +164,9 @@
     <string name="donate_thank_you">Thank you for your support!</string>
     <string name="donate_error">Donation failed. Please try again.</string>
     <string name="donate_billing_error">Failed to connect to billing service</string>
+    <string name="rate_title">Rate Vaktiva</string>
+    <string name="rate_desc">If you enjoy Vaktiva, please take a moment to rate it 5 stars on Google Play. It helps us reach more people!</string>
+    <string name="rate_button">Rate 5 Stars</string>
 
     <!-- Pre-Adhan Notification Channel -->
     <string name="pre_adhan_channel_name">Pre-Adhan Warnings</string>
