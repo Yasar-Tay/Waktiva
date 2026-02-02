@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Color as AndroidColor
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.*
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
@@ -20,6 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.batoulapps.adhan.Coordinates
@@ -45,6 +48,7 @@ fun QiblaMap(
     settings: UserSettings?,
     compassData: CompassData,
     isSatelliteView: Boolean,
+    isAligned: Boolean,
     kaabaLatLng: LatLng,
     onMapReady: (MapLibreMap) -> Unit,
     onMapLongClick: (LatLng) -> Unit,
@@ -57,6 +61,49 @@ fun QiblaMap(
     var customPoint by remember { mutableStateOf<LatLng?>(null) }
     
     var isMapOriented by remember { mutableStateOf(false) }
+    val haptic = LocalHapticFeedback.current
+
+    // Pulsing Animation for the Qibla Line
+    val infiniteTransition = rememberInfiniteTransition(label = "linePulse")
+    val linePulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "linePulseAlpha"
+    )
+
+    // Immersive 3D Tilt and Haptic Effect
+    LaunchedEffect(isAligned) {
+        if (isAligned) {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            mapInstance?.let { map ->
+                if (map.cameraPosition.tilt < 40.0) {
+                    map.animateCamera(
+                        CameraUpdateFactory.newCameraPosition(
+                            CameraPosition.Builder(map.cameraPosition)
+                                .tilt(50.0)
+                                .build()
+                        ), 1000
+                    )
+                }
+            }
+        } else {
+            mapInstance?.let { map ->
+                if (map.cameraPosition.tilt > 10.0) {
+                    map.animateCamera(
+                        CameraUpdateFactory.newCameraPosition(
+                            CameraPosition.Builder(map.cameraPosition)
+                                .tilt(0.0)
+                                .build()
+                        ), 1000
+                    )
+                }
+            }
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
@@ -207,7 +254,7 @@ fun QiblaMap(
         }
     }
 
-    LaunchedEffect(settings, compassData.azimuth, customPoint, symbolManager, lineManager) {
+    LaunchedEffect(settings, compassData.azimuth, customPoint, symbolManager, lineManager, linePulseAlpha) {
         val sm = symbolManager ?: return@LaunchedEffect
         val lm = lineManager ?: return@LaunchedEffect
         sm.deleteAll()
@@ -227,18 +274,20 @@ fun QiblaMap(
         settings?.let { loc ->
             val userLatLng = LatLng(loc.latitude, loc.longitude)
             val qiblaDir = Qibla(Coordinates(loc.latitude, loc.longitude)).direction
-            val isAligned = abs(compassData.azimuth - qiblaDir) < 2.0
+            val isUserAligned = abs(compassData.azimuth - qiblaDir) < 2.0
             
-            val activeColor = if (isAligned) appleGreen else appleBlue
-            val activeIcon = if (isAligned) "green_arrow" else MapConstants.USER_ARROW_ID
+            val activeColor = if (isUserAligned) appleGreen else appleBlue
+            val activeIcon = if (isUserAligned) "green_arrow" else MapConstants.USER_ARROW_ID
             
-            // Draw Qibla line shadow
+            // Draw Qibla line glow (Pulsing)
             lm.create(
                 LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.BLACK))
-                    .withLineWidth(16f)
-                    .withLineOpacity(0.12f)
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
+                    .withLineWidth(18f)
+                    .withLineOpacity(linePulseAlpha * 0.4f)
+                    .withLineBlur(5f)
             )
+
             // Draw Qibla line white border
             lm.create(
                 LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
@@ -262,18 +311,20 @@ fun QiblaMap(
         
         customPoint?.let { cp ->
             val qiblaDir = Qibla(Coordinates(cp.latitude, cp.longitude)).direction
-            val isAligned = abs(compassData.azimuth - qiblaDir) < 2.0
+            val isCustomAligned = abs(compassData.azimuth - qiblaDir) < 2.0
             
-            val activeColor = if (isAligned) appleGreen else customPurple
-            val activeIcon = if (isAligned) "green_arrow" else MapConstants.CUSTOM_ARROW_ID
+            val activeColor = if (isCustomAligned) appleGreen else customPurple
+            val activeIcon = if (isCustomAligned) "green_arrow" else MapConstants.CUSTOM_ARROW_ID
             
-            // Custom point line shadow
+            // Custom point line glow (Pulsing)
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.BLACK))
-                    .withLineWidth(16f)
-                    .withLineOpacity(0.12f)
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
+                    .withLineWidth(18f)
+                    .withLineOpacity(linePulseAlpha * 0.4f)
+                    .withLineBlur(5f)
             )
+
             // Custom point white border
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
