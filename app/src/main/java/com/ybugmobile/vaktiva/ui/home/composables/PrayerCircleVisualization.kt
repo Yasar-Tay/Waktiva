@@ -22,11 +22,13 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -119,11 +121,13 @@ fun PrayerCircleVisualization(
 
     val moonPainter = rememberVectorPainter(Icons.Default.NightsStay)
     val sunPainter = rememberVectorPainter(Icons.Default.WbSunny)
+    val fajrIcon = ImageVector.vectorResource(R.drawable.water_lux_rotated)
+    val fajrPainter = rememberVectorPainter(fajrIcon)
     val sunrisePainter = rememberVectorPainter(Icons.Default.WbTwilight)
     
     val prayers = remember(day) {
         listOf(
-            PrayerInfo(PrayerType.FAJR, day.timings[PrayerType.FAJR] ?: LocalTime.MIN, Color(0xFF81D4FA), moonPainter),
+            PrayerInfo(PrayerType.FAJR, day.timings[PrayerType.FAJR] ?: LocalTime.MIN, Color(0xFF81D4FA), fajrPainter),
             PrayerInfo(PrayerType.SUNRISE, day.timings[PrayerType.SUNRISE] ?: LocalTime.MIN, Color(0xFFFFE082), sunrisePainter),
             PrayerInfo(PrayerType.DHUHR, day.timings[PrayerType.DHUHR] ?: LocalTime.MIN, Color(0xFFFFF59D), sunPainter),
             PrayerInfo(PrayerType.ASR, day.timings[PrayerType.ASR] ?: LocalTime.MIN, Color(0xFFFFCC80), sunPainter),
@@ -205,7 +209,7 @@ fun PrayerCircleVisualization(
                                         time = prayer.time.format(formatter),
                                         color = prayer.color,
                                         icon = when(prayer.type) {
-                                            PrayerType.FAJR -> Icons.Default.NightsStay
+                                            PrayerType.FAJR -> fajrIcon
                                             PrayerType.SUNRISE -> Icons.Default.WbTwilight
                                             PrayerType.DHUHR -> Icons.Default.WbSunny
                                             PrayerType.ASR -> Icons.Default.WbSunny
@@ -316,7 +320,7 @@ fun PrayerCircleVisualization(
                 withTransform({ scale(scale, scale, pos) }) {
                     val markerRadius = if (isCurrent) 15.dp.toPx() else 13.dp.toPx()
                     val iconSize = if (isCurrent) 18.dp.toPx() else 15.dp.toPx()
-                    
+
                     if (isCurrent) {
                         drawCircle(
                             color = color.copy(alpha = 0.15f),
@@ -352,9 +356,13 @@ fun PrayerCircleVisualization(
 
                     translate(pos.x - iconSize / 2, pos.y - iconSize / 2) {
                         with(painter) {
-                            draw(size = Size(iconSize, iconSize), colorFilter = ColorFilter.tint(Color.White))
+                            draw(
+                                size = Size(iconSize, iconSize),
+                                colorFilter = ColorFilter.tint(Color.White)
+                            )
                         }
                     }
+
                 }
             }
 

@@ -4,14 +4,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
@@ -194,13 +197,13 @@ fun CurrentPrayerHeader(
             // Icon exactly at the center of the Box (and thus the circle)
             Icon(
                 imageVector = when(currentPrayer.type) {
-                    PrayerType.FAJR -> Icons.Rounded.NightsStay
-                    PrayerType.SUNRISE -> Icons.Rounded.WbTwilight
-                    PrayerType.DHUHR -> Icons.Rounded.WbSunny
-                    PrayerType.ASR -> Icons.Rounded.WbSunny
-                    PrayerType.MAGHRIB -> Icons.Rounded.WbTwilight
-                    PrayerType.ISHA -> Icons.Rounded.NightsStay
-                    else -> Icons.Rounded.WbSunny
+                    PrayerType.FAJR -> ImageVector.vectorResource(R.drawable.water_lux_rotated)
+                    PrayerType.SUNRISE -> Icons.Default.WbTwilight
+                    PrayerType.DHUHR -> Icons.Default.WbSunny
+                    PrayerType.ASR -> Icons.Default.WbSunny
+                    PrayerType.MAGHRIB -> Icons.Default.WbTwilight
+                    PrayerType.ISHA -> Icons.Default.NightsStay
+                    else -> Icons.Default.WbSunny
                 },
                 contentDescription = null,
                 tint = contentColor,
