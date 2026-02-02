@@ -42,6 +42,7 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
+import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.delay
@@ -54,8 +55,8 @@ fun PrayerCircleVisualization(
     day: PrayerDay,
     currentTime: LocalTime,
     nextPrayer: NextPrayer?,
+    currentPrayer: CurrentPrayer?,
     isSelectedDayToday: Boolean,
-    centerContent: @Composable (Color) -> Unit,
     contentColor: Color = Color.White,
     isMuted: Boolean = false,
     playAdhanAudio: Boolean = false,
@@ -423,7 +424,10 @@ fun PrayerCircleVisualization(
         }
 
         // Center Content Overlay
-        centerContent(currentPrayerColor)
+        CurrentPrayerHeader(
+            currentPrayer = currentPrayer,
+            contentColor = contentColor
+        )
 
         // 7. Modern Sleek Info Overlay (Bottom Centered) - High Z-Index to avoid being hidden
         Box(
