@@ -426,7 +426,8 @@ fun PrayerCircleVisualization(
         // Center Content Overlay
         CurrentPrayerHeader(
             currentPrayer = currentPrayer,
-            contentColor = contentColor
+            contentColor = contentColor,
+            iconColor = currentPrayerColor
         )
 
         // 7. Modern Sleek Info Overlay (Bottom Centered) - High Z-Index to avoid being hidden

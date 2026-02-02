@@ -25,6 +25,7 @@ import com.ybugmobile.vaktiva.domain.model.PrayerType
 fun CurrentPrayerHeader(
     currentPrayer: CurrentPrayer?,
     contentColor: Color,
+    iconColor: Color = contentColor,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -45,7 +46,7 @@ fun CurrentPrayerHeader(
                     else -> Icons.Rounded.WbSunny
                 },
                 contentDescription = null,
-                tint = contentColor,
+                tint = iconColor,
                 modifier = Modifier.size(56.dp)
             )
 
