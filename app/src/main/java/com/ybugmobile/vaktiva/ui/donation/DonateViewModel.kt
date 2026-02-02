@@ -1,4 +1,4 @@
-package com.ybugmobile.vaktiva.ui.navigation
+package com.ybugmobile.vaktiva.ui.donation
 
 import android.content.Context
 import android.content.Intent

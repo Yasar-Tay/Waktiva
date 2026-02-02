@@ -1,6 +1,7 @@
-package com.ybugmobile.vaktiva.ui.navigation
+package com.ybugmobile.vaktiva.ui.donation
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -27,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.manager.DonationProduct
 import com.ybugmobile.vaktiva.domain.manager.PurchaseResult
+import com.ybugmobile.vaktiva.ui.theme.GlassTheme
 import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -178,7 +180,7 @@ fun DonateScreen(
 
 @Composable
 fun RatingOption(
-    glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme,
+    glassTheme: GlassTheme,
     onClick: () -> Unit
 ) {
     Surface(
@@ -186,7 +188,7 @@ fun RatingOption(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         color = Color(0xFFFFD700).copy(alpha = 0.15f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFD700).copy(alpha = 0.3f))
+        border = BorderStroke(1.dp, Color(0xFFFFD700).copy(alpha = 0.3f))
     ) {
         Row(
             modifier = Modifier.padding(20.dp),
@@ -219,7 +221,7 @@ fun RatingOption(
 @Composable
 fun DonateOption(
     product: DonationProduct,
-    glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme,
+    glassTheme: GlassTheme,
     onClick: () -> Unit
 ) {
     Surface(
@@ -227,7 +229,7 @@ fun DonateOption(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         color = glassTheme.containerColor,
-        border = androidx.compose.foundation.BorderStroke(1.dp, glassTheme.borderColor)
+        border = BorderStroke(1.dp, glassTheme.borderColor)
     ) {
         Row(
             modifier = Modifier.padding(20.dp),
