@@ -285,6 +285,7 @@ fun HomeScreenContent(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
+                                .padding(top = 16.dp)
                                 .systemBarsPadding()
                                 .verticalScroll(rememberScrollState())
                         ) {
