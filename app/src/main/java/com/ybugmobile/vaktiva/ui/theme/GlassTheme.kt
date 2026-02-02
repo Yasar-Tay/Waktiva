@@ -54,8 +54,9 @@ private fun isLightGlassMode(currentTime: LocalTime, day: PrayerDay?): Boolean {
 
     val sunrise = day.timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 0)
     val maghrib = day.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
+    val sunsetStart = maghrib.minusMinutes(45)
 
     // Dark mode (Dark glass) during daylight: between sunrise and maghrib
     // Light mode (Light glass) during night: before sunrise or after maghrib
-    return currentTime.isBefore(sunrise) || currentTime.isAfter(maghrib)
+    return currentTime.isBefore(sunrise) || currentTime.isAfter(sunsetStart)
 }
