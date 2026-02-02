@@ -19,7 +19,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,7 +39,6 @@ import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalTime
