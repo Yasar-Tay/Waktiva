@@ -149,8 +149,6 @@ fun HomeScreenContent(
                                 contentColor = contentColor
                             )
 
-                            Spacer(modifier = Modifier.height(24.dp))
-
                             if (state.currentPrayerDay != null) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),

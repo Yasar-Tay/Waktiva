@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material3.Icon
@@ -38,7 +39,7 @@ fun HomeHeader(
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -52,11 +53,12 @@ fun HomeHeader(
                 verticalAlignment = Alignment.Top
             ) {
                 LocationSection(locationName, contentColor)
-                
-                Column(horizontalAlignment = Alignment.End) {
+
+                Row(horizontalArrangement = Arrangement.End) {
                     ReligiousBadge(date = date, contentColor = contentColor, hijriDate = hijriDate)
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
                     DatesSection(date, hijriDate, contentColor, context)
+
                 }
             }
         } else {
@@ -65,7 +67,7 @@ fun HomeHeader(
                 Spacer(modifier = Modifier.height(12.dp))
                 DatesSection(date, hijriDate, contentColor, context)
             }
-            
+
             // Floating badge for portrait
             Box(modifier = Modifier.align(Alignment.TopEnd)) {
                 ReligiousBadge(date = date, contentColor = contentColor, hijriDate = hijriDate)
@@ -117,10 +119,10 @@ private fun DatesSection(
     val currentLocale = Locale.getDefault()
     val dateFormatter = DateTimeFormatter.ofPattern("d MMM", currentLocale)
     val dayFormatter = DateTimeFormatter.ofPattern("EEEE", currentLocale)
-    
+
     val hijriMonthResId = context.resources.getIdentifier(
-        "hijri_month_${hijriDate.monthNumber}", 
-        "string", 
+        "hijri_month_${hijriDate.monthNumber}",
+        "string",
         context.packageName
     )
     val translatedMonth = if (hijriMonthResId != 0) stringResource(hijriMonthResId) else hijriDate.monthEn
