@@ -30,9 +30,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.settings.composables.SettingsToggleItem
+import com.ybugmobile.vaktiva.ui.theme.GlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
-import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,6 +117,7 @@ fun AudioSettingsScreen(
                                 PreAdhanContent(
                                     enabled = settings?.enablePreAdhanWarning ?: true,
                                     minutes = settings?.preAdhanWarningMinutes ?: 5,
+                                    glassTheme = glassTheme,
                                     onToggle = { viewModel.togglePreAdhanWarning(it) },
                                     onMinutesChange = { viewModel.updatePreAdhanWarningMinutes(it) }
                                 )
@@ -131,6 +132,7 @@ fun AudioSettingsScreen(
                                 FajrSunriseContent(
                                     enabled = settings?.useFajrAlarmBeforeSunrise ?: false,
                                     minutes = settings?.fajrAlarmMinutesBeforeSunrise ?: 45,
+                                    glassTheme = glassTheme,
                                     onToggle = { viewModel.toggleUseFajrAlarmBeforeSunrise(it) },
                                     onMinutesChange = { viewModel.updateFajrAlarmMinutesBeforeSunrise(it) }
                                 )
@@ -144,6 +146,7 @@ fun AudioSettingsScreen(
                             ) {
                                 SelectionModeContent(
                                     useSpecific = settings?.useSpecificAdhanForEachPrayer ?: false,
+                                    glassTheme = glassTheme,
                                     onToggle = { viewModel.toggleUseSpecificAdhan(it) }
                                 )
                             }
@@ -217,6 +220,7 @@ fun AudioSettingsScreen(
                             PreAdhanContent(
                                 enabled = settings?.enablePreAdhanWarning ?: true,
                                 minutes = settings?.preAdhanWarningMinutes ?: 5,
+                                glassTheme = glassTheme,
                                 onToggle = { viewModel.togglePreAdhanWarning(it) },
                                 onMinutesChange = { viewModel.updatePreAdhanWarningMinutes(it) }
                             )
@@ -231,6 +235,7 @@ fun AudioSettingsScreen(
                             FajrSunriseContent(
                                 enabled = settings?.useFajrAlarmBeforeSunrise ?: false,
                                 minutes = settings?.fajrAlarmMinutesBeforeSunrise ?: 45,
+                                glassTheme = glassTheme,
                                 onToggle = { viewModel.toggleUseFajrAlarmBeforeSunrise(it) },
                                 onMinutesChange = { viewModel.updateFajrAlarmMinutesBeforeSunrise(it) }
                             )
@@ -244,6 +249,7 @@ fun AudioSettingsScreen(
                         ) {
                             SelectionModeContent(
                                 useSpecific = settings?.useSpecificAdhanForEachPrayer ?: false,
+                                glassTheme = glassTheme,
                                 onToggle = { viewModel.toggleUseSpecificAdhan(it) }
                             )
                         }
@@ -306,7 +312,7 @@ fun AudioSettingsScreen(
 @Composable
 private fun SettingsCard(
     title: String, 
-    glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme,
+    glassTheme: GlassTheme,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
@@ -335,6 +341,7 @@ private fun SettingsCard(
 fun PreAdhanContent(
     enabled: Boolean,
     minutes: Int,
+    glassTheme: GlassTheme,
     onToggle: (Boolean) -> Unit,
     onMinutesChange: (Int) -> Unit
 ) {
@@ -344,6 +351,7 @@ fun PreAdhanContent(
             subtitle = stringResource(id = R.string.settings_pre_adhan_warning_summary),
             icon = Icons.Rounded.NotificationsActive,
             checked = enabled,
+            glassTheme = glassTheme,
             onCheckedChange = onToggle
         )
         
@@ -365,6 +373,7 @@ fun PreAdhanContent(
 fun FajrSunriseContent(
     enabled: Boolean,
     minutes: Int,
+    glassTheme: GlassTheme,
     onToggle: (Boolean) -> Unit,
     onMinutesChange: (Int) -> Unit
 ) {
@@ -374,6 +383,7 @@ fun FajrSunriseContent(
             subtitle = stringResource(R.string.audio_fajr_sunrise_alarm_desc),
             icon = Icons.Rounded.WbTwilight,
             checked = enabled,
+            glassTheme = glassTheme,
             onCheckedChange = onToggle
         )
         
@@ -420,6 +430,7 @@ private fun SliderWithLabel(
 @Composable
 fun SelectionModeContent(
     useSpecific: Boolean,
+    glassTheme: GlassTheme,
     onToggle: (Boolean) -> Unit
 ) {
     SettingsToggleItem(
@@ -427,6 +438,7 @@ fun SelectionModeContent(
         subtitle = stringResource(id = R.string.audio_individual_sounds_desc),
         icon = Icons.Rounded.LibraryMusic,
         checked = useSpecific,
+        glassTheme = glassTheme,
         onCheckedChange = onToggle
     )
 }
@@ -474,7 +486,7 @@ private fun PrayerItem(name: String, isSelected: Boolean, onClick: () -> Unit, m
 @Composable
 fun AudioFileItem(
     item: AdhanAudioItem,
-    glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme,
+    glassTheme: GlassTheme,
     onSelect: () -> Unit,
     onTogglePreview: () -> Unit,
     onDelete: (() -> Unit)?

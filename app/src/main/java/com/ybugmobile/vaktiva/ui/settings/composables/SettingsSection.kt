@@ -9,11 +9,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ybugmobile.vaktiva.ui.theme.GlassTheme
 
 @Composable
 fun SettingsSection(
-    title: String, 
-    contentColor: Color = Color.White,
+    title: String,
+    glassTheme: GlassTheme,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier = Modifier.padding(vertical = 16.dp)) {
@@ -23,13 +24,13 @@ fun SettingsSection(
                 fontWeight = FontWeight.Black,
                 letterSpacing = 1.5.sp
             ),
-            color = contentColor.copy(alpha = 0.4f),
+            color = glassTheme.contentColor.copy(alpha = 0.4f),
             modifier = Modifier.padding(start = 8.dp, bottom = 12.dp)
         )
         Surface(
             shape = RoundedCornerShape(28.dp),
-            color = Color.White.copy(alpha = 0.08f),
-            border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.1f)),
+            color = glassTheme.containerColor,
+            border = androidx.compose.foundation.BorderStroke(1.dp, glassTheme.borderColor),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(vertical = 8.dp)) {

@@ -17,12 +17,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ybugmobile.vaktiva.ui.theme.GlassTheme
 
 @Composable
 fun SettingsClickItem(
     title: String,
     subtitle: String,
     icon: ImageVector,
+    glassTheme: GlassTheme,
     iconColor: Color = Color.White,
     onClick: () -> Unit
 ) {
@@ -54,13 +56,13 @@ fun SettingsClickItem(
                 text = title, 
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = glassTheme.contentColor
                 )
             )
             Text(
                 text = subtitle, 
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = Color.White.copy(alpha = 0.5f),
+                    color = glassTheme.secondaryContentColor,
                     letterSpacing = 0.5.sp
                 )
             )
@@ -69,7 +71,7 @@ fun SettingsClickItem(
         Icon(
             imageVector = Icons.Rounded.ChevronRight,
             contentDescription = null,
-            tint = Color.White.copy(alpha = 0.2f),
+            tint = glassTheme.contentColor.copy(alpha = 0.2f),
             modifier = Modifier.size(20.dp)
         )
     }

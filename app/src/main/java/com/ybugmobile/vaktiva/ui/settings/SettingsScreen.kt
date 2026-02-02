@@ -33,6 +33,8 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.ui.settings.composables.*
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
+import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
+import com.ybugmobile.vaktiva.ui.theme.GlassTheme
 import com.ybugmobile.vaktiva.utils.PermissionUtils
 import java.util.Locale as JavaLocale
 
@@ -57,6 +59,7 @@ fun SettingsScreen(
 
     val currentDay = prayerDays.find { it.date == currentTime.toLocalDate() }
     val backgroundGradient = getGradientForTime(currentTime.toLocalTime(), currentDay)
+    val glassTheme = getGlassTheme(currentTime.toLocalTime(), currentDay)
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -105,11 +108,13 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                         NotificationSoundSection(
                             settings = settings,
+                            glassTheme = glassTheme,
                             onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
                             onNavigateToAudio = onNavigateToAudio
                         )
                         PreferencesSection(
                             settings = settings,
+                            glassTheme = glassTheme,
                             onLanguageClick = { showLanguageDialog = true },
                             onMadhabClick = { showMadhabDialog = true },
                             onMethodClick = { showMethodDialog = true }
@@ -123,9 +128,15 @@ fun SettingsScreen(
                             .verticalScroll(rememberScrollState())
                     ) {
                         Spacer(modifier = Modifier.height(12.dp))
-                        ReliabilitySection()
-                        DataManagementSection(onDeleteHistoryClick = { showDeleteHistoryDialog = true })
-                        SettingsSection(title = stringResource(R.string.settings_permissions)) {
+                        ReliabilitySection(glassTheme = glassTheme)
+                        DataManagementSection(
+                            glassTheme = glassTheme,
+                            onDeleteHistoryClick = { showDeleteHistoryDialog = true }
+                        )
+                        SettingsSection(
+                            title = stringResource(R.string.settings_permissions),
+                            glassTheme = glassTheme
+                        ) {
                             PermissionManager()
                         }
                         Spacer(modifier = Modifier.height(80.dp))
@@ -143,22 +154,30 @@ fun SettingsScreen(
 
                     NotificationSoundSection(
                         settings = settings,
+                        glassTheme = glassTheme,
                         onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
                         onNavigateToAudio = onNavigateToAudio
                     )
 
                     PreferencesSection(
                         settings = settings,
+                        glassTheme = glassTheme,
                         onLanguageClick = { showLanguageDialog = true },
                         onMadhabClick = { showMadhabDialog = true },
                         onMethodClick = { showMethodDialog = true }
                     )
 
-                    ReliabilitySection()
+                    ReliabilitySection(glassTheme = glassTheme)
 
-                    DataManagementSection(onDeleteHistoryClick = { showDeleteHistoryDialog = true })
+                    DataManagementSection(
+                        glassTheme = glassTheme,
+                        onDeleteHistoryClick = { showDeleteHistoryDialog = true }
+                    )
 
-                    SettingsSection(title = stringResource(R.string.settings_permissions)) {
+                    SettingsSection(
+                        title = stringResource(R.string.settings_permissions),
+                        glassTheme = glassTheme
+                    ) {
                         PermissionManager()
                     }
 
@@ -201,16 +220,21 @@ fun SettingsScreen(
 @Composable
 private fun NotificationSoundSection(
     settings: UserSettings?,
+    glassTheme: GlassTheme,
     onPlayAdhanChange: (Boolean) -> Unit,
     onNavigateToAudio: () -> Unit
 ) {
     val context = LocalContext.current
-    SettingsSection(title = stringResource(R.string.settings_notifications_sound)) {
+    SettingsSection(
+        title = stringResource(R.string.settings_notifications_sound),
+        glassTheme = glassTheme
+    ) {
         SettingsToggleItem(
             title = stringResource(R.string.settings_play_adhan),
             subtitle = stringResource(R.string.settings_play_adhan_desc),
             icon = Icons.AutoMirrored.Rounded.VolumeUp,
             checked = settings?.playAdhanAudio ?: true,
+            glassTheme = glassTheme,
             onCheckedChange = { enabled ->
                 if (enabled && !PermissionUtils.canScheduleExactAlarms(context)) {
                     PermissionUtils.getExactAlarmSettingIntent(context)?.let {
@@ -225,6 +249,7 @@ private fun NotificationSoundSection(
             title = stringResource(R.string.settings_adhan_sound_selection),
             subtitle = stringResource(R.string.settings_adhan_sound_selection_desc),
             icon = Icons.Rounded.MusicNote,
+            glassTheme = glassTheme,
             onClick = onNavigateToAudio
         )
     }
@@ -233,6 +258,7 @@ private fun NotificationSoundSection(
 @Composable
 private fun PreferencesSection(
     settings: UserSettings?,
+    glassTheme: GlassTheme,
     onLanguageClick: () -> Unit,
     onMadhabClick: () -> Unit,
     onMethodClick: () -> Unit
@@ -247,12 +273,16 @@ private fun PreferencesSection(
 
     val methods = getCalculationMethods()
 
-    SettingsSection(title = stringResource(R.string.settings_preferences)) {
+    SettingsSection(
+        title = stringResource(R.string.settings_preferences),
+        glassTheme = glassTheme
+    ) {
         settings?.let { s ->
             SettingsClickItem(
                 title = stringResource(R.string.settings_language),
                 subtitle = getNativeLanguageName(currentLanguageCode),
                 icon = Icons.Rounded.Language,
+                glassTheme = glassTheme,
                 onClick = onLanguageClick
             )
             
@@ -260,6 +290,7 @@ private fun PreferencesSection(
                 title = stringResource(R.string.settings_madhab),
                 subtitle = madhabOptions.find { it.second == s.madhab }?.first ?: "",
                 icon = Icons.Rounded.School,
+                glassTheme = glassTheme,
                 onClick = onMadhabClick
             )
             
@@ -267,6 +298,7 @@ private fun PreferencesSection(
                 title = stringResource(R.string.settings_method),
                 subtitle = methods.find { it.second == s.calculationMethod }?.first ?: "",
                 icon = Icons.Rounded.Functions,
+                glassTheme = glassTheme,
                 onClick = onMethodClick
             )
         }
@@ -274,7 +306,7 @@ private fun PreferencesSection(
 }
 
 @Composable
-private fun ReliabilitySection() {
+private fun ReliabilitySection(glassTheme: GlassTheme) {
     val context = LocalContext.current
     var isIgnoringBatteryOptimizations by remember {
         mutableStateOf(PermissionUtils.isIgnoringBatteryOptimizations(context))
@@ -290,13 +322,17 @@ private fun ReliabilitySection() {
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    SettingsSection(title = stringResource(R.string.settings_reliability)) {
+    SettingsSection(
+        title = stringResource(R.string.settings_reliability),
+        glassTheme = glassTheme
+    ) {
         SettingsClickItem(
             title = stringResource(R.string.settings_battery_opt),
             subtitle = if (isIgnoringBatteryOptimizations) 
                 stringResource(R.string.settings_battery_opt_enabled)
                 else stringResource(R.string.settings_battery_opt_disabled),
             icon = Icons.Rounded.BatteryChargingFull,
+            glassTheme = glassTheme,
             iconColor = if (isIgnoringBatteryOptimizations) Color(0xFF4CAF50) else Color(0xFFF87171),
             onClick = {
                 try {
@@ -321,12 +357,19 @@ private fun ReliabilitySection() {
 }
 
 @Composable
-private fun DataManagementSection(onDeleteHistoryClick: () -> Unit) {
-    SettingsSection(title = stringResource(R.string.settings_data_management)) {
+private fun DataManagementSection(
+    glassTheme: GlassTheme,
+    onDeleteHistoryClick: () -> Unit
+) {
+    SettingsSection(
+        title = stringResource(R.string.settings_data_management),
+        glassTheme = glassTheme
+    ) {
         SettingsClickItem(
             title = stringResource(R.string.settings_delete_history),
             subtitle = stringResource(R.string.settings_delete_history_desc),
             icon = Icons.Rounded.DeleteSweep,
+            glassTheme = glassTheme,
             iconColor = Color(0xFFF87171),
             onClick = onDeleteHistoryClick
         )
