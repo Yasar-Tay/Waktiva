@@ -1,0 +1,271 @@
+<resources>
+    <string name="app_name">Vaktiva</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">হোম</string>
+    <string name="nav_qibla">কিবলা</string>
+    <string name="nav_settings">সেটিংস</string>
+    <string name="nav_donate">দান করুন</string>
+
+    <!-- Qibla Screen -->
+    <string name="qibla_compass">কম্পাস</string>
+    <string name="qibla_map">মানচিত্র</string>
+    <string name="qibla_mecca_aligned">মক্কার দিকে সঠিক</string>
+    <string name="qibla_rotate_phone">ফোন ঘোরান</string>
+    <string name="qibla_direction">কিবালা: %d°</string>
+    <string name="qibla_locating">অবস্থান খোঁজা হচ্ছে...</string>
+    <string name="qibla_label">কিবলা</string>
+    <string name="qibla_heading">দিকনির্দেশ</string>
+    <string name="qibla_signal">সংকেত</string>
+    <string name="qibla_standard">সাধারণ</string>
+    <string name="qibla_satellite">স্যাটেলাইট</string>
+    <string name="qibla_recenter">পুনরায় মাঝখানে আনুন</string>
+    <string name="qibla_location_required">লোকেশন পারমিশন প্রয়োজন</string>
+    <string name="qibla_location_required_desc">সঠিক কিবলা গণনার জন্য প্রয়োজন।</string>
+    <string name="qibla_grant_permission">অনুমতি দিন</string>
+    <string name="qibla_calibration_needed">ক্যালিব্রেশন প্রয়োজন</string>
+    <string name="qibla_calibration_desc">নির্ভুলতার উন্নতির জন্য আপনার ফোনটি ৮ (∞) আকারে ঘোরান।</string>
+    <string name="qibla_got_it">বুঝেছি</string>
+    <string name="qibla_aligned_badge">সঠিক দিকে</string>
+    <string name="qibla_magnetic_interference">চুম্বকীয় হস্তক্ষেপ শনাক্ত করা হয়েছে - ডিভাইস ক্যালিব্রেট করুন</string>
+    <string name="qibla_kaaba_aligned">কাবা বরাবর</string>
+    <string name="qibla_find_marker">সোনালী মার্কারটি খুঁজুন</string>
+    <string name="qibla_calibrate">ক্যালিব্রেট</string>
+    <string name="qibla_interference_tip">টিপ: ভবনের ভেতরে ধাতব কাঠামো কম্পাসকে প্রভাবিত করতে পারে। সেরা নির্ভুলতার জন্য ৮ আকারে ক্যালিব্রেট করুন।</string>
+
+    <!-- Home Screen -->
+    <string name="home_unknown_location">অজানা অবস্থান</string>
+    <string name="home_next_prayer">%s</string>
+    <string name="home_remaining_time">বাকি সময়</string>
+    <string name="home_permissions_required">অনুমতি প্রয়োজন</string>
+    <string name="home_permissions_desc">অ্যাপটি সঠিকভাবে কাজ করার জন্য লোকেশন এবং নোটিফিকেশন অনুমতি প্রয়োজন।</string>
+    <string name="home_grant_permissions">অনুমতি দিন</string>
+    <string name="home_refresh_success">নামাজের সময় আপডেট করা হয়েছে</string>
+    <string name="home_refresh_error">সময় আপডেট করতে ব্যর্থ</string>
+    <string name="home_prayer_provider">উৎস: </string>
+    <string name="home_skip_adhan">মিউট</string>
+    <string name="home_unmute_adhan">আনমিউট</string>
+    <string name="home_return_to_today">আজকের সময়ে ফিরে যান</string>
+    <string name="home_tomorrow_is">আগামীকাল: %s</string>
+    <string name="home_today_is">আজ %s</string>
+    <string name="home_adhan_muted">%s এর আজান মিউট করা হয়েছে</string>
+    <string name="home_adhan_unmuted">%s এর আজান আনমিউট করা হয়েছে</string>
+
+    <!-- Prayer Names -->
+    <string name="prayer_fajr">ফজর</string>
+    <string name="prayer_sunrise">সূর্যোদয়</string>
+    <string name="prayer_dhuhr">যোহর</string>
+    <string name="prayer_asr">আসর</string>
+    <string name="prayer_maghrib">মাগরিব</string>
+    <string name="prayer_isha">এশা</string>
+
+    <!-- Accuracy Labels -->
+    <string name="accuracy_high">উচ্চ</string>
+    <string name="accuracy_med">মাঝারি</string>
+    <string name="accuracy_low">নিম্ন</string>
+    <string name="accuracy_poor">দুর্বল</string>
+
+    <!-- Settings -->
+    <string name="settings_title">সেটিংস</string>
+    <string name="settings_permissions">অনুমতিসমূহ</string>
+    <string name="settings_calculation">গণনা সেটিংস</string>
+    <string name="settings_madhab">মাযহাব</string>
+    <string name="settings_method">গণনা পদ্ধতি</string>
+    <string name="settings_manage_system">সিস্টেম সেটিংসে পরিচালনা করুন</string>
+    <string name="settings_location_access">লোকেশন অ্যাক্সেস</string>
+    <string name="settings_location_desc">সঠিক নামাজের সময় এবং কিবলা দিকের জন্য প্রয়োজন।</string>
+    <string name="settings_notifications">নোটিফিকেশন</string>
+    <string name="settings_notifications_desc">নামাজের সময়ের অ্যালার্ট দেখানোর জন্য প্রয়োজন।</string>
+    <string name="settings_granted">অনুমোদিত</string>
+    <string name="settings_denied">প্রত্যাখ্যাত</string>
+    <string name="settings_language">অ্যাপের ভাষা</string>
+    <string name="settings_preferences">পছন্দসমূহ</string>
+    <string name="settings_cancel">বাতিল</string>
+    <string name="settings_confirm">নিশ্চিত করুন</string>
+
+    <!-- Language Options -->
+    <string name="lang_system">সিস্টেম ডিফল্ট</string>
+    <string name="lang_en">English</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_in">Bahasa Indonesia</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_bn">বাংলা</string>
+    <string name="lang_fa">فارسی</string>
+
+    <!-- Madhab Options -->
+    <string name="madhab_shafi">শাফেয়ী / সাধারণ (মালিকি, হাম্বলি)</string>
+    <string name="madhab_hanafi">হানাফি</string>
+
+    <!-- Methods -->
+    <string name="method_mwl">মুসলিম ওয়ার্ল্ড লীগ</string>
+    <string name="method_isna">ইসলামিক সোসাইটি অফ নর্থ আমেরিকা (ISNA)</string>
+    <string name="method_egypt">মিশরীয় জেনারেল অথরিটি অফ সার্ভে</string>
+    <string name="method_makkah">উম্মুল কুরা বিশ্ববিদ্যালয়, মক্কা</string>
+    <string name="method_karachi">ইউনিভার্সিটি অফ ইসলামিক সায়েন্সেস, করাচি</string>
+    <string name="method_tehran">ইনস্টিটিউট অফ জিওফিজিক্স, তেহরান বিশ্ববিদ্যালয়</string>
+    <string name="method_gulf">উপসাগরীয় অঞ্চল</string>
+    <string name="method_kuwait">কুয়েত</string>
+    <string name="method_qatar">কাতার</string>
+    <string name="method_singapore">মজলিস উগামা ইসলাম সিঙ্গাপুরা</string>
+    <string name="method_turkey">তুরস্ক (দিয়ানত)</string>
+
+    <!-- Audio Settings -->
+    <string name="audio_settings_title">আজানের শব্দ</string>
+    <string name="audio_add_custom">কাস্টম অডিও যোগ করুন</string>
+    <string name="audio_delete_confirm">অডিও ফাইলটি মুছে ফেলবেন?</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome_title">Vaktiva-তে স্বাগতম</string>
+    <string name="welcome_desc">নামাজের সময়ের জন্য আপনার পেশাদার সঙ্গী, নির্ভুলতা এবং আধুনিক ডিজাইনে তৈরি।</string>
+    <string name="welcome_begin">সেটআপ শুরু করুন</string>
+    <string name="welcome_finish">সেটআপ শেষ করুন</string>
+    <string name="welcome_precision_settings">নির্ভুলতা সেটিংস</string>
+    <string name="welcome_precision_desc">আপনাকে আরও ভালো সেবা দিতে Vaktiva-র এগুলো প্রয়োজন</string>
+    <string name="welcome_loc_title">সঠিক অবস্থান</string>
+    <string name="welcome_loc_desc">আপনার স্থানাঙ্কের ভিত্তিতে সঠিক নামাজের সময় গণনা করতে ব্যবহৃত হয়।</string>
+    <string name="welcome_notif_title">আজান অ্যালার্ট</string>
+    <string name="welcome_notif_desc">নামাজের সময় নোটিফিকেশন পাঠানোর জন্য প্রয়োজন।</string>
+    <string name="welcome_alarm_title">সঠিক সময়ের অ্যালার্ম</string>
+    <string name="welcome_alarm_desc">আজান কোনো বিলম্ব ছাড়াই সঠিক সময়ে বাজার জন্য প্রয়োজন।</string>
+    <string name="welcome_grant_btn">অনুমতি দিন</string>
+    <string name="welcome_continue_btn">চালিয়ে যান</string>
+    <string name="welcome_personalize">পছন্দমতো সাজান</string>
+    <string name="welcome_personalize_desc">আপনার নামাজ এবং গণনা সেটিংস কনফিগার করুন</string>
+    <string name="welcome_audio_desc">আপনার আজানের পছন্দের শব্দ সেট করুন</string>
+    <string name="welcome_adhan_audio">আজান অডিও</string>
+    <string name="welcome_adhan_audio_desc">নামাজের জন্য আজান বাজান</string>
+    <string name="welcome_select_sound">শব্দ নির্বাচন করুন</string>
+    <string name="welcome_skip_btn">তবুও এগিয়ে যান</string>
+    <string name="welcome_permission_later_info">আপনি চাইলে পরে সেটিংস স্ক্রিন থেকে এই অনুমতিগুলো পরিচালনা করতে পারেন।</string>
+    <string name="welcome_general_settings">সাধারণ সেটিংস</string>
+    <string name="welcome_adhan_audio_header">আজান এবং অডিও</string>
+    <string name="welcome_battery_optimized">নির্ভুলতার জন্য অপ্টিমাইজ করা</string>
+    <string name="welcome_battery_optimize_desc">নির্ভরযোগ্য আজানের জন্য অপ্টিমাইজেশন বন্ধ করুন</string>
+
+    <!-- Adhan Audio per prayer -->
+    <string name="audio_setting_fajr">ফজরের আজান</string>
+    <string name="audio_setting_dhuhr">যোহরের আজান</string>
+    <string name="audio_setting_asr">আসরের আজান</string>
+    <string name="audio_setting_maghrib">মাগরিবের আজান</string>
+    <string name="audio_setting_isha">এশার আজান</string>
+    <string name="audio_setting_default">ডিফল্ট আজান</string>
+
+    <!-- Pre-Adhan Warning -->
+    <string name="settings_pre_adhan_warning">আজানের পূর্ব সতর্কবার্তা</string>
+    <string name="settings_pre_adhan_warning_summary">নামাজের সময়ের আগে নোটিফিকেশন পান।</string>
+    <string name="pre_adhan_notification_title">নামাজের সময় নিকটবর্তী</string>
+    <string name="pre_adhan_notification_text">৫ মিনিটের মধ্যে %s নামাজের সময় শুরু হবে।</string>
+    <string name="pre_adhan_cancel_action">বন্ধ করুন</string>
+
+    <!-- Donations -->
+    <string name="settings_donate">ডেভেলপারকে সমর্থন করুন</string>
+    <string name="donate_title">Vaktiva-কে সমর্থন করুন</string>
+    <string name="donate_description">Vaktiva একটি ফ্রি অ্যাপ, যা অনেক যত্নে তৈরি করা হয়েছে। আপনার সমর্থন এটিকে বিজ্ঞাপনমুক্ত রাখতে এবং ভবিষ্যতে উন্নত করতে সাহায্য করবে।</string>
+    <string name="donate_header">Vaktiva-র উন্নয়নে সহায়তা করুন</string>
+    <string name="donate_desc">Vaktiva ওপেন সোর্স এবং বিজ্ঞাপনমুক্ত। আপনার অবদান সার্ভার খরচ মেটাতে এবং সবার জন্য সেরা নামাজের অভিজ্ঞতা প্রদান করতে সাহায্য করে।</string>
+    <string name="donate_footer">আপনার উদারতা এই প্রজেক্টটিকে বাঁচিয়ে রেখেছে। এটি আপনার জন্য সদকায়ে জারিয়া হিসেবে গণ্য হোক।</string>
+    <string name="donate_button">দান করুন</string>
+    <string name="donate_thank_you">আপনার সমর্থনের জন্য ধন্যবাদ!</string>
+    <string name="donate_error">দান সফল হয়নি। আবার চেষ্টা করুন।</string>
+    <string name="donate_billing_error">পেমেন্ট সার্ভিসের সাথে সংযোগ করা যায়নি</string>
+    <string name="rate_title">Vaktiva-কে রেটিং দিন</string>
+    <string name="rate_desc">Vaktiva ভালো লাগলে গুগল প্লে-তে ৫ স্টার দিন। এটি আমাদের আরও মানুষের কাছে পৌঁছাতে সাহায্য করবে!</string>
+    <string name="rate_button">৫ স্টার দিন</string>
+
+    <!-- Pre-Adhan Notification Channel -->
+    <string name="pre_adhan_channel_name">আজান পূর্ব সতর্কবার্তা</string>
+    <string name="pre_adhan_channel_description">নামাজের সময়ের আগে দেখানো নোটিফিকেশনসমূহ।</string>
+
+    <!-- Audio Settings Screen -->
+    <string name="cd_back">পিছনে</string>
+    <string name="audio_select_prayer_prompt">কনফিগার করতে নামাজ নির্বাচন করুন</string>
+    <string name="audio_header_specific">%1$s এর আজান</string>
+    <string name="audio_header_all_prayers">সকল নামাজ</string>
+    <string name="audio_header_global">আজানের শব্দ নির্বাচন করুন (গ্লোবাল)</string>
+    <string name="audio_supported_formats">সমর্থিত: MP3, AAC, WAV, OGG</string>
+    <string name="audio_minutes_before">মিনিট আগে:</string>
+    <string name="audio_individual_sounds_title">আলাদা নামাজের শব্দ</string>
+    <string name="audio_individual_sounds_desc">প্রতিটি নামাজের জন্য আলাদা আজান সেট করুন</string>
+    <string name="audio_preview_stop">প্রিভিউ বন্ধ করুন</string>
+    <string name="audio_preview_play">প্রিভিউ চালান</string>
+    <string name="audio_built_in">বিল্ট-ইন</string>
+    <string name="audio_delete_description">অডিও ফাইল মুছুন</string>
+    <string name="audio_selected_description">নির্বাচিত</string>
+
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">ফজর অ্যালার্ম (সূর্যোদয়ের আগে)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">সূর্যোদয়ের সময়ের ভিত্তিতে ফজরের অ্যালার্ম সেট করুন (রমজান মাস বাদে)।</string>
+
+    <!-- Settings Screen Items -->
+    <string name="settings_notifications_sound">নোটিফিকেশন এবং শব্দ</string>
+    <string name="settings_play_adhan">আজান বাজান</string>
+    <string name="settings_play_adhan_desc">নামাজের সময় আজান বাজান</string>
+    <string name="settings_adhan_sound_selection">আজানের শব্দ নির্বাচন</string>
+    <string name="settings_adhan_sound_selection_desc">নামাজের সময় কোন শব্দ বাজবে তা নির্বাচন করুন</string>
+    <string name="settings_reliability">নির্ভরযোগ্যতা এবং অপ্টিমাইজেশন</string>
+    <string name="settings_battery_opt">ব্যাটারি অপ্টিমাইজেশন</string>
+    <string name="settings_battery_opt_enabled">নির্ভরযোগ্যতার জন্য অপ্টিমাইজ করা</string>
+    <string name="settings_battery_opt_disabled">নির্ভরযোগ্য আজানের জন্য অপ্টিমাইজেশন বন্ধ করতে ক্লিক করুন</string>
+    <string name="settings_exact_alarm_title">সঠিক সময়ের অ্যালার্ম</string>
+    <string name="settings_exact_alarm_desc">নির্ভুল নামাজের সময় নোটিফিকেশনের জন্য প্রয়োজন</string>
+    <string name="settings_data_management">ডেটা ম্যানেজমেন্ট</string>
+    <string name="settings_delete_history">নামাজের ইতিহাস মুছুন</string>
+    <string name="settings_delete_history_desc">জায়গা খালি করতে পূর্বের সকল ডেটা মুছে ফেলুন</string>
+    <string name="settings_delete_history_confirm_title">ইতিহাস মুছবেন?</string>
+    <string name="settings_delete_history_confirm_desc">এটি আজকের আগের সকল নামাজ রেকর্ড স্থায়ীভাবে মুছে ফেলবে। এটি আর ফিরে পাওয়া যাবে না।</string>
+
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">সময় হয়েছে</string>
+    <string name="adhan_stop">আজান বন্ধ করুন</string>
+    <string name="adhan_default_prayer">নামাজ</string>
+    <string name="adhan_playing">আজান</string>
+    <string name="adhan_sounding">আজান চলছে</string>
+    <string name="adhan_upcoming">পরবর্তী আজান</string>
+    <string name="adhan_test_alarm">টেস্ট অ্যালার্ম</string>
+    <string name="adhan_test_desc">আজান ট্রিগার সিমুলেট করা হচ্ছে</string>
+    <string name="adhan_stop_test">টেস্ট বাতিল করুন</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">আজান মিউট করা হয়েছে</string>
+    <string name="notification_adhan_skipped_text">%s এর আজান এড়িয়ে যাওয়া হয়েছে।</string>
+    <string name="notification_upcoming_adhan_title">পরবর্তী আজান: %s</string>
+    <string name="notification_upcoming_adhan_text">আজান %d মিনিটের মধ্যে বাজানো হবে।</string>
+    <string name="notification_skip_action">এই নামাজের জন্য এড়িয়ে যান</string>
+    <string name="notification_adhan_title">আজান: %s</string>
+    <string name="notification_adhan_content">নামাজের সময় হয়েছে</string>
+
+    <!-- Hijri Months -->
+    <string name="hijri_month_1">মুহররম</string>
+    <string name="hijri_month_2">সফর</string>
+    <string name="hijri_month_3">রবিউল আউয়াল</string>
+    <string name="hijri_month_4">রবিউস সানি</string>
+    <string name="hijri_month_5">জমাদিউল আউয়াল</string>
+    <string name="hijri_month_6">জমাদিউস সানি</string>
+    <string name="hijri_month_7">রজব</string>
+    <string name="hijri_month_8">শাবান</string>
+    <string name="hijri_month_9">রমজান</string>
+    <string name="hijri_month_10">শাওয়াল</string>
+    <string name="hijri_month_11">জিলকদ</string>
+    <string name="hijri_month_12">জিলহজ</string>
+    <string name="hijri_suffix">হিজরি</string>
+
+    <!-- Religious Days -->
+    <string name="rel_day_3_months">তিন মাস শুরু</string>
+    <string name="rel_day_regaip">লাইলাতুর রাগায়েব</string>
+    <string name="rel_day_mirac">লাইলাতুল মেরাজ</string>
+    <string name="rel_day_berat">লাইলাতুল বরাত</string>
+    <string name="rel_day_first_tarawih">প্রথম তারাবি</string>
+    <string name="rel_day_ramadan_start">রমজান শুরু</string>
+    <string name="rel_day_kadir">লাইলাতুল কদর</string>
+    <string name="rel_day_eid_eve">ঈদের রাত</string>
+    <string name="rel_day_ramadan_eid">ঈদুল ফিতর</string>
+    <string name="rel_day_sacrifice_eid">ঈদুল আজহা</string>
+    <string name="rel_day_hijri_new_year">হিজরি নববর্ষ</string>
+    <string name="rel_day_ashura">আশুরা</string>
+    <string name="rel_day_mawlid">ঈদে মিলাদুন্নবী</string>
+</resources>

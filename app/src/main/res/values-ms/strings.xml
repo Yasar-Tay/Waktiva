@@ -1,0 +1,273 @@
+<resources>
+    <string name="app_name">Vaktiva</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Utama</string>
+    <string name="nav_qibla">Kiblat</string>
+    <string name="nav_settings">Tetapan</string>
+    <string name="nav_donate">Derma</string>
+
+    <!-- Qibla Screen -->
+    <string name="qibla_compass">Kompas</string>
+    <string name="qibla_map">Peta</string>
+    <string name="qibla_mecca_aligned">Selari dengan Mekah</string>
+    <string name="qibla_rotate_phone">Putar Telefon</string>
+    <string name="qibla_direction">Kiblat: %d°</string>
+    <string name="qibla_locating">Mencari Lokasi...</string>
+    <string name="qibla_label">Kiblat</string>
+    <string name="qibla_heading">Arah</string>
+    <string name="qibla_signal">Isyarat</string>
+    <string name="qibla_standard">Standard</string>
+    <string name="qibla_satellite">Satelit</string>
+    <string name="qibla_recenter">Tengah</string>
+    <string name="qibla_location_required">Akses Lokasi Diperlukan</string>
+    <string name="qibla_location_required_desc">Diperlukan untuk pengiraan Kiblat yang tepat.</string>
+    <string name="qibla_grant_permission">Berikan Kebenaran</string>
+    <string name="qibla_calibration_needed">Kalibrasi Diperlukan</string>
+    <string name="qibla_calibration_desc">Gerakkan telefon anda dalam corak angka 8 (∞) untuk meningkatkan ketepatan.</string>
+    <string name="qibla_got_it">Faham</string>
+    <string name="qibla_aligned_badge">SELARI</string>
+    <string name="qibla_magnetic_interference">Gangguan Magnetik Dikesan - Kalibrasi Peranti</string>
+    <string name="qibla_kaaba_aligned">Selari dengan Kaabah</string>
+    <string name="qibla_find_marker">Cari Penanda Emas</string>
+    <string name="qibla_calibrate">KALIBRASI</string>
+    <string name="qibla_interference_tip">Tip: Di dalam bangunan, struktur logam boleh menjejaskan kompas. Untuk ketepatan terbaik, lakukan kalibrasi angka 8.</string>
+
+    <!-- Home Screen -->
+    <string name="home_unknown_location">Lokasi Tidak Diketahui</string>
+    <string name="home_next_prayer">%s</string>
+    <string name="home_remaining_time">Masa Berbaki</string>
+    <string name="home_permissions_required">Kebenaran Diperlukan</string>
+    <string name="home_permissions_desc">Kebenaran Lokasi dan Notifikasi diperlukan agar aplikasi berfungsi dengan betul.</string>
+    <string name="home_grant_permissions">Berikan Kebenaran</string>
+    <string name="home_refresh_success">Waktu solat dikemas kini</string>
+    <string name="home_refresh_error">Gagal mengemas kini waktu solat</string>
+    <string name="home_prayer_provider">Penyedia: </string>
+    <string name="home_skip_adhan">Senyap</string>
+    <string name="home_unmute_adhan">Bunyi</string>
+    <string name="home_return_to_today">Kembali ke Hari Ini</string>
+    <string name="home_tomorrow_is">Esok: %s</string>
+    <string name="home_today_is">Hari ini %s</string>
+    <string name="home_adhan_muted">Azan disenyapkan untuk %s</string>
+    <string name="home_adhan_unmuted">Azan dibunyikan untuk %s</string>
+
+    <!-- Prayer Names -->
+    <string name="prayer_fajr">Subuh</string>
+    <string name="prayer_sunrise">Syuruk</string>
+    <string name="prayer_dhuhr">Zohor</string>
+    <string name="prayer_asr">Asar</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isyak</string>
+
+    <!-- Accuracy Labels -->
+    <string name="accuracy_high">Tinggi</string>
+    <string name="accuracy_med">Sederhana</string>
+    <string name="accuracy_low">Rendah</string>
+    <string name="accuracy_poor">Lemah</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Tetapan</string>
+    <string name="settings_permissions">Kebenaran</string>
+    <string name="settings_calculation">Tetapan Pengiraan</string>
+    <string name="settings_madhab">Mazhab</string>
+    <string name="settings_method">Kaedah Pengiraan</string>
+    <string name="settings_manage_system">Urus dalam Tetapan Sistem</string>
+    <string name="settings_location_access">Akses Lokasi</string>
+    <string name="settings_location_desc">Diperlukan untuk waktu solat dan arah Kiblat yang tepat.</string>
+    <string name="settings_notifications">Notifikasi</string>
+    <string name="settings_notifications_desc">Diperlukan untuk menunjukkan amaran waktu solat.</string>
+    <string name="settings_granted">Dibenarkan</string>
+    <string name="settings_denied">Dinafikan</string>
+    <string name="settings_language">Bahasa Aplikasi</string>
+    <string name="settings_preferences">Pilihan</string>
+    <string name="settings_cancel">Batal</string>
+    <string name="settings_confirm">Sahkan</string>
+
+    <!-- Language Options -->
+    <string name="lang_system">Sistem Lalai</string>
+    <string name="lang_en">English</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_in">Bahasa Indonesia</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_bn">বাংলা</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_ms">Bahasa Melayu</string>
+    <string name="lang_ru">Русский</string>
+
+    <!-- Madhab Options -->
+    <string name="madhab_shafi">Syafi\'i / Standard (Maliki, Hanbali)</string>
+    <string name="madhab_hanafi">Hanafi</string>
+
+    <!-- Methods -->
+    <string name="method_mwl">Liga Dunia Muslim</string>
+    <string name="method_isna">Persatuan Islam Amerika Utara (ISNA)</string>
+    <string name="method_egypt">Lembaga Ukur Mesir</string>
+    <string name="method_makkah">Universiti Umm al-Qura, Makkah</string>
+    <string name="method_karachi">Universiti Sains Islam, Karachi</string>
+    <string name="method_tehran">Institut Geofizik, Univ. Tehran</string>
+    <string name="method_gulf">Wilayah Teluk</string>
+    <string name="method_kuwait">Kuwait</string>
+    <string name="method_qatar">Qatar</string>
+    <string name="method_singapore">Majlis Ugama Islam Singapura</string>
+    <string name="method_turkey">Turki (Diyanet)</string>
+
+    <!-- Audio Settings -->
+    <string name="audio_settings_title">Bunyi Azan</string>
+    <string name="audio_add_custom">Tambah Audio Tersuai</string>
+    <string name="audio_delete_confirm">Padam fail audio?</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome_title">Selamat Datang ke Vaktiva</string>
+    <string name="welcome_desc">Teman profesional anda untuk waktu solat, dibina dengan ketepatan dan reka bentuk moden.</string>
+    <string name="welcome_begin">Mulakan Persediaan</string>
+    <string name="welcome_finish">Tamat Persediaan</string>
+    <string name="welcome_precision_settings">Tetapan Ketepatan</string>
+    <string name="welcome_precision_desc">Vaktiva memerlukan ini untuk melayani anda dengan lebih baik</string>
+    <string name="welcome_loc_title">Lokasi Tepat</string>
+    <string name="welcome_loc_desc">Digunakan untuk mengira waktu solat yang tepat berdasarkan koordinat anda.</string>
+    <string name="welcome_notif_title">Amaran Azan</string>
+    <string name="welcome_notif_desc">Diperlukan untuk menghantar notifikasi apabila tiba waktu solat.</string>
+    <string name="welcome_alarm_title">Penggera Tepat</string>
+    <string name="welcome_alarm_desc">Diperlukan supaya Azan dimainkan tepat pada masanya tanpa sebarang kelewatan.</string>
+    <string name="welcome_grant_btn">Berikan Kebenaran</string>
+    <string name="welcome_continue_btn">Teruskan</string>
+    <string name="welcome_personalize">Peribadikan</string>
+    <string name="welcome_personalize_desc">Konfigurasikan tetapan solat dan pengiraan anda</string>
+    <string name="welcome_audio_desc">Tetapkan pilihan panggilan solat anda</string>
+    <string name="welcome_adhan_audio">Audio Azan</string>
+    <string name="welcome_adhan_audio_desc">Mainkan panggilan audio untuk solat</string>
+    <string name="welcome_select_sound">Pilih Bunyi</string>
+    <string name="welcome_skip_btn">Teruskan Jua</string>
+    <string name="welcome_permission_later_info">Anda sentiasa boleh menguruskan kebenaran ini dalam skrin Tetapan kemudian.</string>
+    <string name="welcome_general_settings">Tetapan Umum</string>
+    <string name="welcome_adhan_audio_header">Azan &amp; Audio</string>
+    <string name="welcome_battery_optimized">Dioptimumkan untuk kebolehpercayaan</string>
+    <string name="welcome_battery_optimize_desc">Matikan pengoptimuman untuk Azan yang boleh dipercayai</string>
+
+    <!-- Adhan Audio per prayer -->
+    <string name="audio_setting_fajr">Azan Subuh</string>
+    <string name="audio_setting_dhuhr">Azan Zohor</string>
+    <string name="audio_setting_asr">Azan Asar</string>
+    <string name="audio_setting_maghrib">Azan Maghrib</string>
+    <string name="audio_setting_isha">Azan Isyak</string>
+    <string name="audio_setting_default">Azan Lalai</string>
+
+    <!-- Pre-Adhan Warning -->
+    <string name="settings_pre_adhan_warning">Amaran Pra-Azan</string>
+    <string name="settings_pre_adhan_warning_summary">Dapatkan notifikasi sebelum waktu solat.</string>
+    <string name="pre_adhan_notification_title">Solat Menjelang</string>
+    <string name="pre_adhan_notification_text">Waktu solat %s dalam 5 minit.</string>
+    <string name="pre_adhan_cancel_action">Tutup</string>
+
+    <!-- Donations -->
+    <string name="settings_donate">Sokong Pembangun</string>
+    <string name="donate_title">Sokong Vaktiva</string>
+    <string name="donate_description">Vaktiva adalah aplikasi percuma, dibangunkan dengan penuh teliti. Sokongan anda membantu memastikannya bebas iklan dan membolehkan pembangunan masa hadapan.</string>
+    <string name="donate_header">Perkasakan Pembangunan Vaktiva</string>
+    <string name="donate_desc">Vaktiva adalah sumber terbuka dan bebas iklan. Sumbangan anda membantu menampung kos pelayan dan pembangunan berterusan untuk menyediakan pengalaman solat terbaik untuk semua orang.</string>
+    <string name="donate_footer">Kemurahan hati anda mengekalkan projek ini hidup. Semoga ia menjadi punca rahmat yang berterusan.</string>
+    <string name="donate_button">Derma</string>
+    <string name="donate_thank_you">Terima kasih atas sokongan anda!</string>
+    <string name="donate_error">Derma gagal. Sila cuba lagi.</string>
+    <string name="donate_billing_error">Gagal menyambung ke perkhidmatan pengebilan</string>
+    <string name="rate_title">Nilaikan Vaktiva</string>
+    <string name="rate_desc">Jika anda menikmati Vaktiva, sila luangkan masa seketika untuk menilaikan ia 5 bintang di Google Play. Ia membantu kami menjangkau lebih ramai orang!</string>
+    <string name="rate_button">Nilai 5 Bintang</string>
+
+    <!-- Pre-Adhan Notification Channel -->
+    <string name="pre_adhan_channel_name">Amaran Pra-Azan</string>
+    <string name="pre_adhan_channel_description">Notifikasi yang ditunjukkan sebelum waktu solat.</string>
+
+    <!-- Audio Settings Screen -->
+    <string name="cd_back">Kembali</string>
+    <string name="audio_select_prayer_prompt">Pilih Solat untuk Dikonfigurasikan</string>
+    <string name="audio_header_specific">Azan untuk %1$s</string>
+    <string name="audio_header_all_prayers">Semua Solat</string>
+    <string name="audio_header_global">Pilih Bunyi Azan (Global)</string>
+    <string name="audio_supported_formats">Disokong: MP3, AAC, WAV, OGG</string>
+    <string name="audio_minutes_before">Minit sebelum:</string>
+    <string name="audio_individual_sounds_title">Bunyi Solat Individu</string>
+    <string name="audio_individual_sounds_desc">Tetapkan Azan berbeza untuk setiap waktu solat</string>
+    <string name="audio_preview_stop">Hentikan pratonton</string>
+    <string name="audio_preview_play">Mainkan pratonton</string>
+    <string name="audio_built_in">Sedia ada</string>
+    <string name="audio_delete_description">Padam fail audio</string>
+    <string name="audio_selected_description">Dipilih</string>
+
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">Penggera Subuh (Sebelum Syuruk)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">Tentukan masa penggera Subuh berdasarkan syuruk (kecuali pada bulan Ramadan).</string>
+
+    <!-- Settings Screen Items -->
+    <string name="settings_notifications_sound">Notifikasi &amp; Bunyi</string>
+    <string name="settings_play_adhan">Mainkan Audio Azan</string>
+    <string name="settings_play_adhan_desc">Mainkan bunyi azan apabila tiba waktu solat</string>
+    <string name="settings_adhan_sound_selection">Pemilihan Bunyi Azan</string>
+    <string name="settings_adhan_sound_selection_desc">Pilih bunyi yang dimainkan semasa waktu solat</string>
+    <string name="settings_reliability">Kebolehpercayaan &amp; Pengoptimuman</string>
+    <string name="settings_battery_opt">Pengoptimuman Bateri</string>
+    <string name="settings_battery_opt_enabled">Dioptimumkan untuk kebolehpercayaan</string>
+    <string name="settings_battery_opt_disabled">Klik untuk mematikan pengoptimuman bagi Azan yang boleh dipercayai</string>
+    <string name="settings_exact_alarm_title">Penggera Tepat</string>
+    <string name="settings_exact_alarm_desc">Diperlukan untuk notifikasi waktu solat yang tepat</string>
+    <string name="settings_data_management">Pengurusan Data</string>
+    <string name="settings_delete_history">Padam Sejarah Solat</string>
+    <string name="settings_delete_history_desc">Padam semua data solat masa lalu untuk mengosongkan ruang</string>
+    <string name="settings_delete_history_confirm_title">Padam Sejarah?</string>
+    <string name="settings_delete_history_confirm_desc">Ini akan memadamkan secara kekal semua rekod solat sebelum hari ini. Tindakan ini tidak boleh diubah.</string>
+
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">Sudah tiba waktu untuk</string>
+    <string name="adhan_stop">HENTIKAN AZAN</string>
+    <string name="adhan_default_prayer">Solat</string>
+    <string name="adhan_playing">Azan</string>
+    <string name="adhan_sounding">Berkumandang sekarang</string>
+    <string name="adhan_upcoming">Azan seterusnya</string>
+    <string name="adhan_test_alarm">Uji Penggera</string>
+    <string name="adhan_test_desc">Mensimulasikan pencetus azan</string>
+    <string name="adhan_stop_test">BATALKAN UJIAN</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">Azan Disenyapkan</string>
+    <string name="notification_adhan_skipped_text">Azan untuk %s dilangkau.</string>
+    <string name="notification_upcoming_adhan_title">Azan Akan Datang: %s</string>
+    <string name="notification_upcoming_adhan_text">Azan akan dimainkan dalam %d minit.</string>
+    <string name="notification_skip_action">LANGKAU UNTUK SOLAT INI</string>
+    <string name="notification_adhan_title">Azan: %s</string>
+    <string name="notification_adhan_content">Sudah tiba waktu solat</string>
+
+    <!-- Hijri Months -->
+    <string name="hijri_month_1">Muharram</string>
+    <string name="hijri_month_2">Safar</string>
+    <string name="hijri_month_3">Rabiulawal</string>
+    <string name="hijri_month_4">Rabiulakhir</string>
+    <string name="hijri_month_5">Jamadilawal</string>
+    <string name="hijri_month_6">Jamadilakhir</string>
+    <string name="hijri_month_7">Rejab</string>
+    <string name="hijri_month_8">Syaaban</string>
+    <string name="hijri_month_9">Ramadan</string>
+    <string name="hijri_month_10">Syawal</string>
+    <string name="hijri_month_11">Zulkaedah</string>
+    <string name="hijri_month_12">Zulhijjah</string>
+    <string name="hijri_suffix">H</string>
+
+    <!-- Religious Days -->
+    <string name="rel_day_3_months">Awal Tiga Bulan</string>
+    <string name="rel_day_regaip">Laylat al-Raghaib</string>
+    <string name="rel_day_mirac">Israk dan Mikraj</string>
+    <string name="rel_day_berat">Malam Nisfu Syaaban</string>
+    <string name="rel_day_first_tarawih">Tarawih Pertama</string>
+    <string name="rel_day_ramadan_start">Awal Ramadan</string>
+    <string name="rel_day_kadir">Malam Lailatulqadar</string>
+    <string name="rel_day_eid_eve">Malam Raya</string>
+    <string name="rel_day_ramadan_eid">Hari Raya Aidilfitri</string>
+    <string name="rel_day_sacrifice_eid">Hari Raya Aidiladha</string>
+    <string name="rel_day_hijri_new_year">Awal Muharram</string>
+    <string name="rel_day_ashura">Hari Asyura</string>
+    <string name="rel_day_mawlid">Maulidur Rasul</string>
+</resources>

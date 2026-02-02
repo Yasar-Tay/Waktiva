@@ -16,7 +16,13 @@ object LanguageUtils {
         "de",
         "es",
         "it",
-        "ar"
+        "ar",
+        "in",
+        "ur",
+        "bn",
+        "fa",
+        "ms",
+        "ru"
     )
 
     @Composable

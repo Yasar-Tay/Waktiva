@@ -1,0 +1,271 @@
+<resources>
+    <string name="app_name">Vaktiva</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">خانه</string>
+    <string name="nav_qibla">قبله</string>
+    <string name="nav_settings">تنظیمات</string>
+    <string name="nav_donate">حمایت مالی</string>
+
+    <!-- Qibla Screen -->
+    <string name="qibla_compass">قطب‌نما</string>
+    <string name="qibla_map">نقشه</string>
+    <string name="qibla_mecca_aligned">در جهت مکه</string>
+    <string name="qibla_rotate_phone">گوشی را بچرخانید</string>
+    <string name="qibla_direction">قبله: %d°</string>
+    <string name="qibla_locating">در حال مکان‌یابی...</string>
+    <string name="qibla_label">قبله</string>
+    <string name="qibla_heading">جهت</string>
+    <string name="qibla_signal">سیگنال</string>
+    <string name="qibla_standard">استاندارد</string>
+    <string name="qibla_satellite">ماهواره</string>
+    <string name="qibla_recenter">مرکز گذاری مجدد</string>
+    <string name="qibla_location_required">دسترسی به مکان لازم است</string>
+    <string name="qibla_location_required_desc">برای محاسبه دقیق قبله لازم است.</string>
+    <string name="qibla_grant_permission">دادن اجازه</string>
+    <string name="qibla_calibration_needed">کالیبراسیون لازم است</string>
+    <string name="qibla_calibration_desc">گوشی خود را به شکل عدد ۸ انگلیسی (∞) حرکت دهید تا دقت بهبود یابد.</string>
+    <string name="qibla_got_it">متوجه شدم</string>
+    <string name="qibla_aligned_badge">تراز شده</string>
+    <string name="qibla_magnetic_interference">تداخل مغناطیسی شناسایی شد - دستگاه را کالیبره کنید</string>
+    <string name="qibla_kaaba_aligned">در جهت کعبه</string>
+    <string name="qibla_find_marker">نشانگر طلایی را پیدا کنید</string>
+    <string name="qibla_calibrate">کالیبره کردن</string>
+    <string name="qibla_interference_tip">نکته: در داخل ساختمان‌ها، سازه‌های فلزی می‌توانند بر قطب‌نما تأثیر بگذارند. برای بهترین دقت، کالیبراسیون عدد ۸ را انجام دهید.</string>
+
+    <!-- Home Screen -->
+    <string name="home_unknown_location">مکان ناشناخته</string>
+    <string name="home_next_prayer">%s</string>
+    <string name="home_remaining_time">زمان باقی‌مانده</string>
+    <string name="home_permissions_required">مجوزها لازم است</string>
+    <string name="home_permissions_desc">مجوزهای مکان و اعلان برای عملکرد صحیح برنامه لازم است.</string>
+    <string name="home_grant_permissions">دادن مجوزها</string>
+    <string name="home_refresh_success">اوقات شرعی به‌روز شد</string>
+    <string name="home_refresh_error">خطا در به‌روزرسانی اوقات</string>
+    <string name="home_prayer_provider">منبع: </string>
+    <string name="home_skip_adhan">بی‌صدا</string>
+    <string name="home_unmute_adhan">باصدا</string>
+    <string name="home_return_to_today">بازگشت به امروز</string>
+    <string name="home_tomorrow_is">فردا: %s</string>
+    <string name="home_today_is">امروز %s است</string>
+    <string name="home_adhan_muted">اذان برای %s بی‌صدا شد</string>
+    <string name="home_adhan_unmuted">اذان برای %s فعال شد</string>
+
+    <!-- Prayer Names -->
+    <string name="prayer_fajr">اذان صبح</string>
+    <string name="prayer_sunrise">طلوع آفتاب</string>
+    <string name="prayer_dhuhr">اذان ظهر</string>
+    <string name="prayer_asr">اذان عصر</string>
+    <string name="prayer_maghrib">اذان مغرب</string>
+    <string name="prayer_isha">اذان عشا</string>
+
+    <!-- Accuracy Labels -->
+    <string name="accuracy_high">بالا</string>
+    <string name="accuracy_med">متوسط</string>
+    <string name="accuracy_low">پایین</string>
+    <string name="accuracy_poor">ضعیف</string>
+
+    <!-- Settings -->
+    <string name="settings_title">تنظیمات</string>
+    <string name="settings_permissions">مجوزها</string>
+    <string name="settings_calculation">تنظیمات محاسباتی</string>
+    <string name="settings_madhab">مذهب</string>
+    <string name="settings_method">روش محاسبه</string>
+    <string name="settings_manage_system">مدیریت در تنظیمات سیستم</string>
+    <string name="settings_location_access">دسترسی به مکان</string>
+    <string name="settings_location_desc">برای اوقات شرعی و جهت قبله دقیق لازم است.</string>
+    <string name="settings_notifications">اعلان‌ها</string>
+    <string name="settings_notifications_desc">برای نمایش هشدارهای اوقات شرعی لازم است.</string>
+    <string name="settings_granted">اجازه داده شده</string>
+    <string name="settings_denied">رد شده</string>
+    <string name="settings_language">زبان برنامه</string>
+    <string name="settings_preferences">ترجیحات</string>
+    <string name="settings_cancel">لغو</string>
+    <string name="settings_confirm">تأیید</string>
+
+    <!-- Language Options -->
+    <string name="lang_system">پیش‌فرض سیستم</string>
+    <string name="lang_en">English</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_in">Bahasa Indonesia</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_bn">বাংলা</string>
+    <string name="lang_fa">فارسی</string>
+
+    <!-- Madhab Options -->
+    <string name="madhab_shafi">شافعی / استاندارد (مالکی، حنبلی)</string>
+    <string name="madhab_hanafi">حنفی</string>
+
+    <!-- Methods -->
+    <string name="method_mwl">رابطه العالم الاسلامی</string>
+    <string name="method_isna">انجمن اسلامی آمریکای شمالی (ISNA)</string>
+    <string name="method_egypt">سازمان نقشه‌برداری مصر</string>
+    <string name="method_makkah">دانشگاه ام‌القری، مکه</string>
+    <string name="method_karachi">دانشگاه علوم اسلامی، کراچی</string>
+    <string name="method_tehran">مؤسسه ژئوفیزیک دانشگاه تهران</string>
+    <string name="method_gulf">منطقه خلیج</string>
+    <string name="method_kuwait">کویت</string>
+    <string name="method_qatar">قطر</string>
+    <string name="method_singapore">شورای مذهبی اسلامی سنگاپور</string>
+    <string name="method_turkey">ترکیه (دیانت)</string>
+
+    <!-- Audio Settings -->
+    <string name="audio_settings_title">صداهای اذان</string>
+    <string name="audio_add_custom">افزودن فایل صوتی دلخواه</string>
+    <string name="audio_delete_confirm">فایل صوتی حذف شود؟</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome_title">به Vaktiva خوش آمدید</string>
+    <string name="welcome_desc">همراه حرفه‌ای شما برای اوقات شرعی، ساخته شده با دقت و طراحی مدرن.</string>
+    <string name="welcome_begin">شروع راه‌اندازی</string>
+    <string name="welcome_finish">پایان راه‌اندازی</string>
+    <string name="welcome_precision_settings">تنظیمات دقت</string>
+    <string name="welcome_precision_desc">Vaktiva برای خدمت‌رسانی بهتر به این مجوزها نیاز دارد</string>
+    <string name="welcome_loc_title">مکان دقیق</string>
+    <string name="welcome_loc_desc">برای محاسبه اوقات شرعی دقیق بر اساس مختصات شما استفاده می‌شود.</string>
+    <string name="welcome_notif_title">هشدارهای اذان</string>
+    <string name="welcome_notif_desc">برای ارسال اعلان در زمان شرعی لازم است.</string>
+    <string name="welcome_alarm_title">هشدارهای دقیق</string>
+    <string name="welcome_alarm_desc">برای پخش اذان دقیقاً در زمان خود بدون تأخیر لازم است.</string>
+    <string name="welcome_grant_btn">دادن مجوزها</string>
+    <string name="welcome_continue_btn">ادامه</string>
+    <string name="welcome_personalize">شخصی‌سازی</string>
+    <string name="welcome_personalize_desc">تنظیمات نماز و محاسبات خود را پیکربندی کنید</string>
+    <string name="welcome_audio_desc">ترجیحات صدای اذان خود را تنظیم کنید</string>
+    <string name="welcome_adhan_audio">صوت اذان</string>
+    <string name="welcome_adhan_audio_desc">پخش اذان صوتی برای نمازها</string>
+    <string name="welcome_select_sound">انتخاب صدا</string>
+    <string name="welcome_skip_btn">در هر صورت ادامه بده</string>
+    <string name="welcome_permission_later_info">همیشه می‌توانید این مجوزها را بعداً در صفحه تنظیمات مدیریت کنید.</string>
+    <string name="welcome_general_settings">تنظیمات عمومی</string>
+    <string name="welcome_adhan_audio_header">اذان و صوت</string>
+    <string name="welcome_battery_optimized">بهینه‌سازی شده برای پایداری</string>
+    <string name="welcome_battery_optimize_desc">بهینه‌سازی باتری را برای اذان‌های دقیق غیرفعال کنید</string>
+
+    <!-- Adhan Audio per prayer -->
+    <string name="audio_setting_fajr">اذان صبح</string>
+    <string name="audio_setting_dhuhr">اذان ظهر</string>
+    <string name="audio_setting_asr">اذان عصر</string>
+    <string name="audio_setting_maghrib">اذان مغرب</string>
+    <string name="audio_setting_isha">اذان عشا</string>
+    <string name="audio_setting_default">اذان پیش‌فرض</string>
+
+    <!-- Pre-Adhan Warning -->
+    <string name="settings_pre_adhan_warning">هشدار پیش از اذان</string>
+    <string name="settings_pre_adhan_warning_summary">پیش از رسیدن وقت شرعی، اعلان دریافت کنید.</string>
+    <string name="pre_adhan_notification_title">نزدیک شدن به وقت شرعی</string>
+    <string name="pre_adhan_notification_text">۵ دقیقه تا وقت %s باقی‌مانده است.</string>
+    <string name="pre_adhan_cancel_action">بستن</string>
+
+    <!-- Donations -->
+    <string name="settings_donate">حمایت از توسعه‌دهنده</string>
+    <string name="donate_title">حمایت از Vaktiva</string>
+    <string name="donate_description">برنامه Vaktiva رایگان است و با دقت توسعه یافته است. حمایت شما به بدون تبلیغات ماندن برنامه و توسعه آینده آن کمک می‌کند.</string>
+    <string name="donate_header">تقویت توسعه Vaktiva</string>
+    <string name="donate_desc">Vaktiva متن‌باز و بدون تبلیغات است. مشارکت‌های شما به پوشش هزینه‌های سرور و توسعه مداوم برای ارائه بهترین تجربه اوقات شرعی کمک می‌کند.</string>
+    <string name="donate_footer">سخاوت شما این پروژه را زنده نگه می‌دارد. امیدواریم این یک منبع خیر مستمر باشد.</string>
+    <string name="donate_button">حمایت مالی</string>
+    <string name="donate_thank_you">از حمایت شما سپاسگزاریم!</string>
+    <string name="donate_error">خطا در حمایت مالی. لطفاً دوباره تلاش کنید.</string>
+    <string name="donate_billing_error">خطا در اتصال به سرویس پرداخت</string>
+    <string name="rate_title">امتیاز به Vaktiva</string>
+    <string name="rate_desc">اگر از Vaktiva لذت می‌برید، لطفاً در گوگل پلی ۵ ستاره بدهید. این کار به ما کمک می‌کند تا به افراد بیشتری برسیم!</string>
+    <string name="rate_button">دادن ۵ ستاره</string>
+
+    <!-- Pre-Adhan Notification Channel -->
+    <string name="pre_adhan_channel_name">هشدارهای پیش از اذان</string>
+    <string name="pre_adhan_channel_description">اعلان‌هایی که پیش از وقت شرعی نمایش داده می‌شوند.</string>
+
+    <!-- Audio Settings Screen -->
+    <string name="cd_back">بازگشت</string>
+    <string name="audio_select_prayer_prompt">نماز را برای پیکربندی انتخاب کنید</string>
+    <string name="audio_header_specific">اذان برای %1$s</string>
+    <string name="audio_header_all_prayers">همه نمازها</string>
+    <string name="audio_header_global">انتخاب صدای اذان (کلی)</string>
+    <string name="audio_supported_formats">پشتیبانی شده: MP3, AAC, WAV, OGG</string>
+    <string name="audio_minutes_before">دقیقه پیش از آن:</string>
+    <string name="audio_individual_sounds_title">صداهای جداگانه برای هر نماز</string>
+    <string name="audio_individual_sounds_desc">برای هر وقت شرعی اذان متفاوتی تنظیم کنید</string>
+    <string name="audio_preview_stop">توقف پیش‌نمایش</string>
+    <string name="audio_preview_play">پخش پیش‌نمایش</string>
+    <string name="audio_built_in">داخلی</string>
+    <string name="audio_delete_description">حذف فایل صوتی</string>
+    <string name="audio_selected_description">انتخاب شده</string>
+
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">هشدار صبح (پیش از طلوع)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">زمان هشدار صبح را بر اساس طلوع آفتاب تعیین کنید (به جز در ماه رمضان).</string>
+
+    <!-- Settings Screen Items -->
+    <string name="settings_notifications_sound">اعلان‌ها و صدا</string>
+    <string name="settings_play_adhan">پخش صوت اذان</string>
+    <string name="settings_play_adhan_desc">هنگام رسیدن وقت شرعی اذان پخش شود</string>
+    <string name="settings_adhan_sound_selection">انتخاب صدای اذان</string>
+    <string name="settings_adhan_sound_selection_desc">صدایی که در اوقات شرعی پخش می‌شود را انتخاب کنید</string>
+    <string name="settings_reliability">پایداری و بهینه‌سازی</string>
+    <string name="settings_battery_opt">بهینه‌سازی باتری</string>
+    <string name="settings_battery_opt_enabled">بهینه‌سازی شده برای پایداری</string>
+    <string name="settings_battery_opt_disabled">برای غیرفعال کردن بهینه‌سازی جهت اذان دقیق کلیک کنید</string>
+    <string name="settings_exact_alarm_title">هشدارهای دقیق</string>
+    <string name="settings_exact_alarm_desc">برای اعلان‌های اوقات شرعی دقیق لازم است</string>
+    <string name="settings_data_management">مدیریت داده‌ها</string>
+    <string name="settings_delete_history">پاک کردن تاریخچه نماز</string>
+    <string name="settings_delete_history_desc">تمام داده‌های نماز گذشته را برای آزاد کردن فضا پاک کنید</string>
+    <string name="settings_delete_history_confirm_title">حذف تاریخچه؟</string>
+    <string name="settings_delete_history_confirm_desc">این کار تمام رکوردهای نماز پیش از امروز را برای همیشه پاک می‌کند. این عمل قابل بازگشت نیست.</string>
+
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">زمان شرعی است برای</string>
+    <string name="adhan_stop">قطع اذان</string>
+    <string name="adhan_default_prayer">نماز</string>
+    <string name="adhan_playing">اذان</string>
+    <string name="adhan_sounding">در حال پخش</string>
+    <string name="adhan_upcoming">اذان بعدی</string>
+    <string name="adhan_test_alarm">تست هشدار</string>
+    <string name="adhan_test_desc">شبیه‌سازی پخش اذان</string>
+    <string name="adhan_stop_test">لغو تست</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">اذان بی‌صدا شد</string>
+    <string name="notification_adhan_skipped_text">اذان برای %s رد شد.</string>
+    <string name="notification_upcoming_adhan_title">اذان نزدیک: %s</string>
+    <string name="notification_upcoming_adhan_text">اذان تا %d دقیقه دیگر پخش خواهد شد.</string>
+    <string name="notification_skip_action">برای این نوبت رد شود</string>
+    <string name="notification_adhan_title">اذان: %s</string>
+    <string name="notification_adhan_content">زمان شرعی فرا رسیده است</string>
+
+    <!-- Hijri Months -->
+    <string name="hijri_month_1">محرم</string>
+    <string name="hijri_month_2">صفر</string>
+    <string name="hijri_month_3">ربیع‌الاول</string>
+    <string name="hijri_month_4">ربیع‌الثانی</string>
+    <string name="hijri_month_5">جمادی‌الاولی</string>
+    <string name="hijri_month_6">جمادی‌الثانی</string>
+    <string name="hijri_month_7">رجب</string>
+    <string name="hijri_month_8">شعبان</string>
+    <string name="hijri_month_9">رمضان</string>
+    <string name="hijri_month_10">شوال</string>
+    <string name="hijri_month_11">ذی‌القعده</string>
+    <string name="hijri_month_12">ذی‌الحجه</string>
+    <string name="hijri_suffix">هجری</string>
+
+    <!-- Religious Days -->
+    <string name="rel_day_3_months">آغاز ماه‌های رجب، شعبان و رمضان</string>
+    <string name="rel_day_regaip">لیله الرغائب</string>
+    <string name="rel_day_mirac">شب معراج</string>
+    <string name="rel_day_berat">شب برات</string>
+    <string name="rel_day_first_tarawih">اولین تراویح</string>
+    <string name="rel_day_ramadan_start">آغاز رمضان</string>
+    <string name="rel_day_kadir">شب قدر</string>
+    <string name="rel_day_eid_eve">شب عید</string>
+    <string name="rel_day_ramadan_eid">عید فطر</string>
+    <string name="rel_day_sacrifice_eid">عید قربان</string>
+    <string name="rel_day_hijri_new_year">سال نو هجری</string>
+    <string name="rel_day_ashura">روز عاشورا</string>
+    <string name="rel_day_mawlid">میلاد پیامبر (ص)</string>
+</resources>
