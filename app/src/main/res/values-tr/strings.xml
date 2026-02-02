@@ -82,6 +82,11 @@
     <string name="lang_system">Sistem Varsayılanı</string>
     <string name="lang_en">English</string>
     <string name="lang_tr">Türkçe</string>
+    <string name="lang_fr">Fransızca</string>
+    <string name="lang_de">Almanca</string>
+    <string name="lang_es">İspanyolca</string>
+    <string name="lang_it">İtalyanca</string>
+    <string name="lang_ar">Arapça</string>
 
     <!-- Calculation Settings -->
     <string name="settings_calculation">Hesaplama Ayarları</string>

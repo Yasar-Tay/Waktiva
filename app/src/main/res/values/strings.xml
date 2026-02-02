@@ -87,6 +87,11 @@
     <string name="lang_system">System Default</string>
     <string name="lang_en">English</string>
     <string name="lang_tr">Türkçe</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_ar">العربية</string>
 
     <!-- Madhab Options -->
     <string name="madhab_shafi">Shafi / Standard (Maliki, Hanbali)</string>

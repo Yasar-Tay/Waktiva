@@ -1,0 +1,259 @@
+<resources>
+    <string name="app_name">Vaktiva</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Accueil</string>
+    <string name="nav_qibla">Qibla</string>
+    <string name="nav_settings">Paramètres</string>
+    <string name="nav_donate">Faire un don</string>
+
+    <!-- Qibla Screen -->
+    <string name="qibla_compass">Boussole</string>
+    <string name="qibla_map">Carte</string>
+    <string name="qibla_mecca_aligned">Aligné sur la Mecque</string>
+    <string name="qibla_rotate_phone">Tournez le téléphone</string>
+    <string name="qibla_direction">Qibla : %d°</string>
+    <string name="qibla_locating">Localisation...</string>
+    <string name="qibla_label">Qibla</string>
+    <string name="qibla_heading">Cap</string>
+    <string name="qibla_signal">Signal</string>
+    <string name="qibla_standard">Standard</string>
+    <string name="qibla_satellite">Satellite</string>
+    <string name="qibla_recenter">Recalibrer</string>
+    <string name="qibla_location_required">Accès à la localisation requis</string>
+    <string name="qibla_location_required_desc">Requis pour un calcul précis de la Qibla.</string>
+    <string name="qibla_grant_permission">Autoriser</string>
+    <string name="qibla_calibration_needed">Calibrage nécessaire</string>
+    <string name="qibla_calibration_desc">Déplacez votre téléphone en formant un 8 pour améliorer la précision.</string>
+    <string name="qibla_got_it">Compris</string>
+    <string name="qibla_aligned_badge">ALIGNÉ</string>
+    <string name="qibla_magnetic_interference">Interférence magnétique détectée - Calibrez l\'appareil</string>
+    <string name="qibla_kaaba_aligned">Aligné sur la Kaaba</string>
+    <string name="qibla_find_marker">Trouvez le marqueur doré</string>
+    <string name="qibla_calibrate">CALIBRER</string>
+    <string name="qibla_interference_tip">Astuce : À l\'intérieur des bâtiments, les structures métalliques peuvent affecter la boussole. Pour une meilleure précision, effectuez un calibrage en forme de 8.</string>
+
+    <!-- Home Screen -->
+    <string name="home_unknown_location">Lieu inconnu</string>
+    <string name="home_next_prayer">%s</string>
+    <string name="home_remaining_time">Temps restant</string>
+    <string name="home_permissions_required">Permissions requises</string>
+    <string name="home_permissions_desc">La localisation et les notifications sont nécessaires pour le bon fonctionnement de l\'application.</string>
+    <string name="home_grant_permissions">Autoriser les permissions</string>
+    <string name="home_refresh_success">Heures de prière mises à jour</string>
+    <string name="home_refresh_error">Échec de la mise à jour des heures</string>
+    <string name="home_prayer_provider">Fournisseur : </string>
+    <string name="home_skip_adhan">Muet</string>
+    <string name="home_unmute_adhan">Réactiver le son</string>
+    <string name="home_return_to_today">Retour à aujourd\'hui</string>
+    <string name="home_tomorrow_is">Demain : %s</string>
+    <string name="home_today_is">Aujourd\'hui c\'est %s</string>
+    <string name="home_adhan_muted">Adhan désactivé pour %s</string>
+    <string name="home_adhan_unmuted">Adhan activé pour %s</string>
+
+    <!-- Prayer Names -->
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_sunrise">Lever du soleil</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+
+    <!-- Accuracy Labels -->
+    <string name="accuracy_high">Haute</string>
+    <string name="accuracy_med">Moyenne</string>
+    <string name="accuracy_low">Basse</string>
+    <string name="accuracy_poor">Faible</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_permissions">Permissions</string>
+    <string name="settings_calculation">Paramètres de calcul</string>
+    <string name="settings_madhab">Madhab</string>
+    <string name="settings_method">Méthode de calcul</string>
+    <string name="settings_manage_system">Gérer dans les paramètres système</string>
+    <string name="settings_location_access">Accès à la localisation</string>
+    <string name="settings_location_desc">Requis pour des heures de prière et une direction de la Qibla précises.</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_desc">Requis pour afficher les alertes d\'heures de prière.</string>
+    <string name="settings_granted">Autorisé</string>
+    <string name="settings_denied">Refusé</string>
+    <string name="settings_language">Langue de l\'application</string>
+    <string name="settings_preferences">Préférences</string>
+    <string name="settings_cancel">Annuler</string>
+    <string name="settings_confirm">Confirmer</string>
+
+    <!-- Language Options -->
+    <string name="lang_system">Par défaut du système</string>
+    <string name="lang_en">English</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_ar">العربية</string>
+
+    <!-- Madhab Options -->
+    <string name="madhab_shafi">Shafi / Standard (Maliki, Hanbali)</string>
+    <string name="madhab_hanafi">Hanafi</string>
+
+    <!-- Methods -->
+    <string name="method_mwl">Ligue Islamique Mondiale</string>
+    <string name="method_isna">Islamic Society of North America (ISNA)</string>
+    <string name="method_egypt">Autorité Générale Égyptienne de l\'Enquête</string>
+    <string name="method_makkah">Université Umm al-Qura, Makkah</string>
+    <string name="method_karachi">Université des Sciences Islamiques, Karachi</string>
+    <string name="method_tehran">Institut de Géophysique, Univ. de Téhéran</string>
+    <string name="method_gulf">Région du Golfe</string>
+    <string name="method_kuwait">Koweït</string>
+    <string name="method_qatar">Qatar</string>
+    <string name="method_singapore">Majlis Ugama Islam Singapura</string>
+    <string name="method_turkey">Turquie (Diyanet)</string>
+
+    <!-- Audio Settings -->
+    <string name="audio_settings_title">Sons de l\'Adhan</string>
+    <string name="audio_add_custom">Ajouter un audio personnalisé</string>
+    <string name="audio_delete_confirm">Supprimer le fichier audio ?</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome_title">Bienvenue sur Vaktiva</string>
+    <string name="welcome_desc">Votre compagnon professionnel pour les heures de prière, conçu avec précision et modernité.</string>
+    <string name="welcome_begin">Commencer la configuration</string>
+    <string name="welcome_finish">Terminer la configuration</string>
+    <string name="welcome_precision_settings">Paramètres de précision</string>
+    <string name="welcome_precision_desc">Vaktiva en a besoin pour mieux vous servir</string>
+    <string name="welcome_loc_title">Localisation précise</string>
+    <string name="welcome_loc_desc">Utilisée pour calculer les heures de prière précises basées sur vos coordonnées.</string>
+    <string name="welcome_notif_title">Alertes Adhan</string>
+    <string name="welcome_notif_desc">Nécessaires pour envoyer des notifications au moment de la prière.</string>
+    <string name="welcome_alarm_title">Alarmes exactes</string>
+    <string name="welcome_alarm_desc">Requises pour que l\'Adhan soit joué exactement à l\'heure sans délai.</string>
+    <string name="welcome_grant_btn">Autoriser les permissions</string>
+    <string name="welcome_continue_btn">Continuer</string>
+    <string name="welcome_personalize">Personnaliser</string>
+    <string name="welcome_personalize_desc">Configurez vos paramètres de prière et de calcul</string>
+    <string name="welcome_audio_desc">Définissez vos préférences d\'appel à la prière</string>
+    <string name="welcome_adhan_audio">Audio de l\'Adhan</string>
+    <string name="welcome_adhan_audio_desc">Jouer l\'appel audio pour les prières</string>
+    <string name="welcome_select_sound">Sélectionner un son</string>
+    <string name="welcome_skip_btn">Continuer quand même</string>
+    <string name="welcome_permission_later_info">Vous pouvez toujours gérer ces permissions ultérieurement dans les paramètres.</string>
+    <string name="welcome_general_settings">Paramètres généraux</string>
+    <string name="welcome_adhan_audio_header">Adhan et Audio</string>
+    <string name="welcome_battery_optimized">Optimisé pour la fiabilité</string>
+    <string name="welcome_battery_optimize_desc">Désactiver l\'optimisation pour des Adhans fiables</string>
+
+    <!-- Adhan Audio per prayer (from EPIC 2) -->
+    <string name="audio_setting_fajr">Adhan Fajr</string>
+    <string name="audio_setting_dhuhr">Adhan Dhuhr</string>
+    <string name="audio_setting_asr">Adhan Asr</string>
+    <string name="audio_setting_maghrib">Adhan Maghrib</string>
+    <string name="audio_setting_isha">Adhan Isha</string>
+    <string name="audio_setting_default">Adhan par défaut</string>
+
+    <!-- Pre-Adhan Warning (from EPIC 2) -->
+    <string name="settings_pre_adhan_warning">Avertissement pré-Adhan</string>
+    <string name="settings_pre_adhan_warning_summary">Recevoir une notification avant l\'heure de la prière.</string>
+    <string name="pre_adhan_notification_title">Prière approchant</string>
+    <string name="pre_adhan_notification_text">Heure de la prière %s dans 5 minutes.</string>
+    <string name="pre_adhan_cancel_action">Ignorer</string>
+
+    <!-- Donations (from EPIC 6) -->
+    <string name="settings_donate">Soutenir le développeur</string>
+    <string name="donate_title">Soutenir Vaktiva</string>
+    <string name="donate_description">Vaktiva est une application gratuite, développée avec soin. Votre soutien aide à la garder sans publicité et permet son développement futur.</string>
+    <string name="donate_header">Soutenir le développement de Vaktiva</string>
+    <string name="donate_desc">Vaktiva est open-source et sans publicité. Vos contributions aident à couvrir les frais de serveur et le développement continu pour offrir la meilleure expérience de prière à tous.</string>
+    <string name="donate_footer">Votre générosité fait vivre ce projet. Puisse-t-elle être une source de bénédiction continue.</string>
+    <string name="donate_button">Faire un don</string>
+    <string name="donate_thank_you">Merci pour votre soutien !</string>
+    <string name="donate_error">Échec du don. Veuillez réessayer.</string>
+    <string name="donate_billing_error">Échec de la connexion au service de facturation</string>
+    <string name="rate_title">Évaluer Vaktiva</string>
+    <string name="rate_desc">Si vous appréciez Vaktiva, prenez un moment pour lui donner 5 étoiles sur Google Play. Cela nous aide à toucher plus de monde !</string>
+    <string name="rate_button">Donner 5 étoiles</string>
+
+    <!-- Pre-Adhan Notification Channel -->
+    <string name="pre_adhan_channel_name">Avertissements pré-Adhan</string>
+    <string name="pre_adhan_channel_description">Notifications affichées avant l\'heure de la prière.</string>
+
+    <!-- Audio Settings Screen -->
+    <string name="cd_back">Retour</string>
+    <string name="audio_select_prayer_prompt">Sélectionner la prière à configurer</string>
+    <string name="audio_header_specific">Adhan pour %1$s</string>
+    <string name="audio_header_all_prayers">Toutes les prières</string>
+    <string name="audio_header_global">Sélectionner le son de l\'Adhan (Global)</string>
+    <string name="audio_supported_formats">Supporté : MP3, AAC, WAV, OGG</string>
+    <string name="audio_minutes_before">Minutes avant :</string>
+    <string name="audio_individual_sounds_title">Sons de prière individuels</string>
+    <string name="audio_individual_sounds_desc">Définir des Adhans différents pour chaque heure de prière</string>
+    <string name="audio_preview_stop">Arrêter l\'aperçu</string>
+    <string name="audio_preview_play">Lire l\'aperçu</string>
+    <string name="audio_built_in">Intégré</string>
+    <string name="audio_delete_description">Supprimer le fichier audio</string>
+    <string name="audio_selected_description">Sélectionné</string>
+
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">Alarme Fajr (Avant le lever du soleil)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">Déterminer l\'heure de l\'alarme Fajr basée sur le lever du soleil (sauf pendant le Ramadan).</string>
+
+    <!-- Settings Screen Items -->
+    <string name="settings_notifications_sound">Notifications et son</string>
+    <string name="settings_play_adhan">Jouer l\'audio de l\'Adhan</string>
+    <string name="settings_play_adhan_desc">Jouer le son de l\'adhan au moment de la prière</string>
+    <string name="settings_adhan_sound_selection">Sélection du son de l\'Adhan</string>
+    <string name="settings_adhan_sound_selection_desc">Sélectionner le son joué au moment de la prière</string>
+    <string name="settings_reliability">Fiabilité et optimisation</string>
+    <string name="settings_battery_opt">Optimisation de la batterie</string>
+    <string name="settings_battery_opt_enabled">Optimisé pour la fiabilité</string>
+    <string name="settings_battery_opt_disabled">Cliquez pour désactiver l\'optimisation pour des Adhans fiables</string>
+    <string name="settings_exact_alarm_title">Alarmes exactes</string>
+    <string name="settings_exact_alarm_desc">Nécessaire pour des notifications d\'heures de prière précises</string>
+    <string name="settings_data_management">Gestion des données</string>
+    <string name="settings_delete_history">Supprimer l\'historique des prières</string>
+    <string name="settings_delete_history_desc">Supprimer toutes les données de prière passées pour libérer de l\'espace</string>
+    <string name="settings_delete_history_confirm_title">Supprimer l\'historique ?</string>
+    <string name="settings_delete_history_confirm_desc">Cela supprimera définitivement tous les enregistrements de prière avant aujourd\'hui. Cette action est irréversible.</string>
+
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">C\'est l\'heure pour</string>
+    <string name="adhan_stop">ARRÊTER L\'ADHAN</string>
+    <string name="adhan_default_prayer">Prière</string>
+    <string name="adhan_playing">Adhan</string>
+    <string name="adhan_sounding">Sonne actuellement</string>
+    <string name="adhan_upcoming">Adhan à venir</string>
+    <string name="adhan_test_alarm">Tester l\'alarme</string>
+    <string name="adhan_test_desc">Simulation du déclenchement de l\'adhan</string>
+    <string name="adhan_stop_test">ANNULER LE TEST</string>
+
+    <!-- Hijri Months -->
+    <string name="hijri_month_1">Mouharram</string>
+    <string name="hijri_month_2">Safar</string>
+    <string name="hijri_month_3">Rabi‘ al-Awwal</string>
+    <string name="hijri_month_4">Rabi‘ al-Thani</string>
+    <string name="hijri_month_5">Joumada al-Oula</string>
+    <string name="hijri_month_6">Joumada al-Akhirah</string>
+    <string name="hijri_month_7">Rajab</string>
+    <string name="hijri_month_8">Cha‘ban</string>
+    <string name="hijri_month_9">Ramadan</string>
+    <string name="hijri_month_10">Chawwal</string>
+    <string name="hijri_month_11">Dhou al-Qi‘dah</string>
+    <string name="hijri_month_12">Dhou al-Hijjah</string>
+    <string name="hijri_suffix">AH</string>
+
+    <!-- Religious Days -->
+    <string name="rel_day_3_months">Début des trois mois</string>
+    <string name="rel_day_regaip">Laylat al-Raghaib</string>
+    <string name="rel_day_mirac">Laylat al-Mi‘raj</string>
+    <string name="rel_day_berat">Laylat al-Bara’ah</string>
+    <string name="rel_day_first_tarawih">Premier Tarawih</string>
+    <string name="rel_day_ramadan_start">Début du Ramadan</string>
+    <string name="rel_day_kadir">Laylat al-Qadr</string>
+    <string name="rel_day_eid_eve">Veille de l\'Aïd</string>
+    <string name="rel_day_ramadan_eid">Aïd el-Fitr</string>
+    <string name="rel_day_sacrifice_eid">Aïd el-Adha</string>
+    <string name="rel_day_hijri_new_year">Nouvel an de l\'Hégire</string>
+    <string name="rel_day_ashura">Jour d\'Achoura</string>
+    <string name="rel_day_mawlid">Mawlid Kandili</string>
+
+</resources>

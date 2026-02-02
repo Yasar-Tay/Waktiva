@@ -367,7 +367,12 @@ private fun SettingsDialogs(
         val languageOptions = listOf(
             getNativeLanguageName("system") to "system",
             getNativeLanguageName("en") to "en",
-            getNativeLanguageName("tr") to "tr"
+            getNativeLanguageName("tr") to "tr",
+            getNativeLanguageName("fr") to "fr",
+            getNativeLanguageName("de") to "de",
+            getNativeLanguageName("es") to "es",
+            getNativeLanguageName("it") to "it",
+            getNativeLanguageName("ar") to "ar"
         )
         ModernSelectionDialog(
             title = stringResource(R.string.settings_language),
