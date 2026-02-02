@@ -1,6 +1,8 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Icon
@@ -53,9 +55,9 @@ fun ReligiousBadge(
     val accentColor = getCalendarAccentColor(holidayDate, holidayHijriMonth, holidayHijriDay, contentColor)
 
     Surface(
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = RoundedCornerShape(12.dp),
         color = accentColor.copy(alpha = 0.15f),
-        modifier = modifier
+        modifier = modifier.border(1.5.dp, contentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp)),
     ) {
         Row(
             modifier = Modifier

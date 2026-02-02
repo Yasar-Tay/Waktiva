@@ -22,7 +22,6 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Composable
 fun PrayerTimeList(
@@ -33,7 +32,7 @@ fun PrayerTimeList(
 ) {
     data class PrayerItem(val type: PrayerType, val resId: Int, val time: String, val icon: ImageVector)
 
-    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.US)
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     
     val prayers = listOf(
         PrayerItem(PrayerType.FAJR, R.string.prayer_fajr, day.timings[PrayerType.FAJR]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.water_lux_rotated)),
