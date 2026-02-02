@@ -14,10 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.preferences.SettingsManager
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +40,7 @@ class SkipAdhanActivity : ComponentActivity() {
         showOnLockScreen()
         super.onCreate(savedInstanceState)
         
-        val prayerName = intent.getStringExtra("PRAYER_NAME") ?: "Prayer"
+        val prayerName = intent.getStringExtra("PRAYER_NAME") ?: "FAJR"
 
         setContent {
             VaktivaTheme {
@@ -75,6 +79,9 @@ class SkipAdhanActivity : ComponentActivity() {
 
 @Composable
 fun SkipAdhanScreen(prayerName: String, onSkip: () -> Unit, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val translatedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context) ?: prayerName
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -86,13 +93,13 @@ fun SkipAdhanScreen(prayerName: String, onSkip: () -> Unit, onDismiss: () -> Uni
             modifier = Modifier.padding(24.dp)
         ) {
             Text(
-                text = "Adhan is approaching",
+                text = stringResource(R.string.pre_adhan_notification_title),
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.White.copy(alpha = 0.7f)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = prayerName,
+                text = translatedPrayerName,
                 style = MaterialTheme.typography.displayLarge,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
@@ -104,13 +111,13 @@ fun SkipAdhanScreen(prayerName: String, onSkip: () -> Unit, onDismiss: () -> Uni
                 modifier = Modifier.fillMaxWidth().height(64.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                Text("SKIP THIS ADHAN", fontSize = 18.sp)
+                Text(stringResource(R.string.home_skip_adhan).uppercase(), fontSize = 18.sp)
             }
             
             Spacer(modifier = Modifier.height(16.dp))
             
             TextButton(onClick = onDismiss) {
-                Text("DISMISS", color = Color.White.copy(alpha = 0.5f))
+                Text(stringResource(R.string.pre_adhan_cancel_action).uppercase(), color = Color.White.copy(alpha = 0.5f))
             }
         }
     }

@@ -10,6 +10,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.ybugmobile.vaktiva.MainActivity
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
 import com.ybugmobile.vaktiva.ui.adhan.AdhanActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -43,10 +44,10 @@ class NotificationHelper @Inject constructor(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val adhanChannel = NotificationChannel(
                 CHANNEL_ID_ADHAN,
-                "Adhan Playback",
+                context.getString(R.string.adhan_playing),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Notification for active Adhan playback"
+                description = context.getString(R.string.adhan_sounding)
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
                 setSound(null, null) 
                 enableVibration(true)
@@ -54,10 +55,10 @@ class NotificationHelper @Inject constructor(
 
             val warningChannel = NotificationChannel(
                 CHANNEL_ID_WARNING,
-                "Prayer Reminders",
+                context.getString(R.string.pre_adhan_channel_name),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Notifications for upcoming prayers"
+                description = context.getString(R.string.pre_adhan_channel_description)
                 setShowBadge(true)
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
@@ -67,6 +68,9 @@ class NotificationHelper @Inject constructor(
     }
 
     fun showPreAdhanWarning(prayerName: String, prayerDate: String, minutes: Int, isMuted: Boolean = false) {
+        val prayerType = PrayerType.fromString(prayerName)
+        val displayedPrayerName = prayerType?.getDisplayName(context) ?: prayerName
+
         val contentIntent = PendingIntent.getActivity(
             context, 0, Intent(context, MainActivity::class.java), 
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -81,8 +85,8 @@ class NotificationHelper @Inject constructor(
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         if (isMuted) {
-            builder.setContentTitle("Adhan Muted")
-                .setContentText("Adhan for $prayerName is skipped.")
+            builder.setContentTitle(context.getString(R.string.notification_adhan_muted))
+                .setContentText(context.getString(R.string.notification_adhan_skipped_text, displayedPrayerName))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
         } else {
             val skipIntent = Intent(context, PrayerAlarmReceiver::class.java).apply {
@@ -95,9 +99,9 @@ class NotificationHelper @Inject constructor(
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            builder.setContentTitle("Upcoming Adhan: $prayerName")
-                .setContentText("Adhan will be played in $minutes minutes.")
-                .addAction(R.drawable.ic_launcher_foreground, "SKIP FOR THIS PRAYER", skipPendingIntent)
+            builder.setContentTitle(context.getString(R.string.notification_upcoming_adhan_title, displayedPrayerName))
+                .setContentText(context.getString(R.string.notification_upcoming_adhan_text, minutes))
+                .addAction(R.drawable.ic_launcher_foreground, context.getString(R.string.notification_skip_action), skipPendingIntent)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
         }
 

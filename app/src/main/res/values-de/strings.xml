@@ -101,7 +101,7 @@
     <string name="method_mwl">Islamische Weltliga</string>
     <string name="method_isna">Islamische Gesellschaft Nordamerikas (ISNA)</string>
     <string name="method_egypt">Ägyptische Generalbehörde für Vermessungswesen</string>
-    <string name="method_makkah">Umm al-Qura Universität, Mekka</string>
+    <string name="method_makkah">Umm al-Qura Universität, Mekke</string>
     <string name="method_karachi">Universität für Islamische Wissenschaften, Karatschi</string>
     <string name="method_tehran">Institut für Geophysik, Univ. Teheran</string>
     <string name="method_gulf">Golfregion</string>
@@ -256,4 +256,12 @@
     <string name="rel_day_ashura">Aschura-Tag</string>
     <string name="rel_day_mawlid">Maulid an-Nabi</string>
 
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">Adhan stummgeschaltet</string>
+    <string name="notification_adhan_skipped_text">Adhan für %s wurde übersprungen.</string>
+    <string name="notification_upcoming_adhan_title">Bevorstehender Adhan: %s</string>
+    <string name="notification_upcoming_adhan_text">Adhan wird in %d Minuten abgespielt.</string>
+    <string name="notification_skip_action">FÜR DIESES GEBET ÜBERSPRINGEN</string>
+    <string name="notification_adhan_title">Adhan: %s</string>
+    <string name="notification_adhan_content">Es ist Zeit zum Gebet</string>
 </resources>

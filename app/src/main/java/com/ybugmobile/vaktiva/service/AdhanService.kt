@@ -1,6 +1,5 @@
 package com.ybugmobile.vaktiva.service
 
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -38,6 +37,7 @@ import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.notification.NotificationHelper
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.adhan.AdhanActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -122,7 +122,9 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
 
         setMediaNotificationProvider(object : MediaNotification.Provider {
             override fun createNotification(s: MediaSession, cl: ImmutableList<CommandButton>, af: MediaNotification.ActionFactory, cb: MediaNotification.Provider.Callback): MediaNotification {
-                val prayerName = s.player.currentMediaItem?.mediaMetadata?.title?.toString()?.replace("Adhan: ", "") ?: "Prayer"
+                val mediaMetadata = s.player.currentMediaItem?.mediaMetadata
+                val prayerName = mediaMetadata?.extras?.getString(NotificationHelper.EXTRA_PRAYER_NAME) ?: 
+                                 mediaMetadata?.title?.toString() ?: this@AdhanService.getString(R.string.adhan_default_prayer)
                 return MediaNotification(NotificationHelper.NOTIFICATION_ID_ADHAN, createNotificationBuilder(prayerName).build())
             }
             override fun handleCustomCommand(s: MediaSession, a: String, e: Bundle) = false
@@ -137,7 +139,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
             return START_NOT_STICKY
         }
 
-        val prayerName = intent?.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME) ?: "Prayer"
+        val prayerName = intent?.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME) ?: getString(R.string.adhan_default_prayer)
         var audioPath = intent?.getStringExtra("AUDIO_PATH")
 
         val notification = createNotificationBuilder(prayerName).build()
@@ -160,8 +162,22 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
                      }
                 }
 
-                val metadata = MediaMetadata.Builder().setTitle("Adhan: $prayerName").build()
-                val mediaItem = MediaItem.Builder().setUri(audioPath.toUri()).setMediaMetadata(metadata).build()
+                val prayerType = PrayerType.fromString(prayerName)
+                val displayedPrayerName = prayerType?.getDisplayName(this) ?: prayerName
+                
+                val extras = Bundle().apply {
+                    putString(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
+                }
+                
+                val metadata = MediaMetadata.Builder()
+                    .setTitle(getString(R.string.notification_adhan_title, displayedPrayerName))
+                    .setExtras(extras)
+                    .build()
+                    
+                val mediaItem = MediaItem.Builder()
+                    .setUri(audioPath.toUri())
+                    .setMediaMetadata(metadata)
+                    .build()
                 
                 player?.setMediaItem(mediaItem)
                 player?.prepare()
@@ -201,6 +217,9 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
 
     @OptIn(UnstableApi::class)
     private fun createNotificationBuilder(prayerName: String): NotificationCompat.Builder {
+        val prayerType = PrayerType.fromString(prayerName)
+        val displayedPrayerName = prayerType?.getDisplayName(this) ?: prayerName
+
         val fullScreenIntent = Intent(this, AdhanActivity::class.java).apply {
             putExtra(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -213,16 +232,15 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         val stopPendingIntent = PendingIntent.getService(this, 1, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         return NotificationCompat.Builder(this, NotificationHelper.CHANNEL_ID_ADHAN)
-            .setContentTitle("Adhan: $prayerName")
-            .setContentText("It's time for prayer")
+            .setContentTitle(getString(R.string.notification_adhan_title, displayedPrayerName))
+            .setContentText(getString(R.string.notification_adhan_content))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setFullScreenIntent(fullScreenPendingIntent, true) 
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .addAction(android.R.drawable.ic_menu_close_clear_cancel, "STOP ADHAN", stopPendingIntent)
-            // By NOT setting MediaStyle, we avoid the progress bar and standard media controls.
+            .addAction(android.R.drawable.ic_menu_close_clear_cancel, getString(R.string.adhan_stop), stopPendingIntent)
     }
 
     private fun stopPlaybackAndService() {

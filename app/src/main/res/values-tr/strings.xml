@@ -250,4 +250,13 @@
     <string name="rel_day_hijri_new_year">Hicri Yılbaşı</string>
     <string name="rel_day_ashura">Aşure Günü</string>
     <string name="rel_day_mawlid">Mevlid Kandili</string>
+
+    <!-- Missing Notification Strings -->
+    <string name="notification_adhan_muted">Ezan Sessize Alındı</string>
+    <string name="notification_adhan_skipped_text">%s için ezan geçildi.</string>
+    <string name="notification_upcoming_adhan_title">Yaklaşan Ezan: %s</string>
+    <string name="notification_upcoming_adhan_text">Ezan %d dakika içinde okunacak.</string>
+    <string name="notification_skip_action">BU VAKİT İÇİN ATLA</string>
+    <string name="notification_adhan_title">Ezan: %s</string>
+    <string name="notification_adhan_content">Namaz vakti geldi</string>
 </resources>

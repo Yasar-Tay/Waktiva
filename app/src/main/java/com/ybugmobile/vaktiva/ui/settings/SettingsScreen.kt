@@ -2,7 +2,6 @@ package com.ybugmobile.vaktiva.ui.settings
 
 import android.content.Intent
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.net.Uri
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
@@ -22,18 +21,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.ConfigurationCompat
+import androidx.core.os.LocaleListCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.core.os.LocaleListCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.ui.settings.composables.*
-import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.vaktiva.utils.LanguageUtils
 import com.ybugmobile.vaktiva.utils.PermissionUtils
-import java.util.Locale as JavaLocale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -256,7 +253,7 @@ private fun PreferencesSection(
         settings?.let { s ->
             SettingsClickItem(
                 title = stringResource(R.string.settings_language),
-                subtitle = getNativeLanguageName(currentLanguageCode),
+                subtitle = LanguageUtils.getNativeLanguageName(currentLanguageCode),
                 icon = Icons.Rounded.Language,
                 onClick = onLanguageClick
             )
@@ -364,19 +361,9 @@ private fun SettingsDialogs(
     val currentLanguageCode = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
 
     if (showLanguageDialog) {
-        val languageOptions = listOf(
-            getNativeLanguageName("system") to "system",
-            getNativeLanguageName("en") to "en",
-            getNativeLanguageName("tr") to "tr",
-            getNativeLanguageName("fr") to "fr",
-            getNativeLanguageName("de") to "de",
-            getNativeLanguageName("es") to "es",
-            getNativeLanguageName("it") to "it",
-            getNativeLanguageName("ar") to "ar"
-        )
         ModernSelectionDialog(
             title = stringResource(R.string.settings_language),
-            options = languageOptions,
+            options = LanguageUtils.getLanguageOptions(),
             selectedKey = currentLanguageCode,
             onSelected = onLanguageSelected,
             onDismiss = onDismissLanguage
@@ -443,19 +430,3 @@ private fun getCalculationMethods() = listOf(
     stringResource(R.string.method_singapore) to 11,
     stringResource(R.string.method_turkey) to 13
 )
-
-@Composable
-private fun getNativeLanguageName(languageCode: String): String {
-    return when (languageCode) {
-        "system" -> {
-            val systemLocale = ConfigurationCompat.getLocales(Resources.getSystem().configuration).get(0)
-            val displayName = systemLocale?.getDisplayName(systemLocale)?.replaceFirstChar { it.uppercase() } ?: ""
-            val systemLabel = stringResource(R.string.lang_system)
-            if (displayName.isNotEmpty()) "$systemLabel ($displayName)" else systemLabel
-        }
-        else -> {
-            val locale = JavaLocale(languageCode)
-            locale.getDisplayName(locale).replaceFirstChar { it.uppercase() }
-        }
-    }
-}

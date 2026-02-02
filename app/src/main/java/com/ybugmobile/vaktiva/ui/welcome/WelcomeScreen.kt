@@ -2,7 +2,6 @@ package com.ybugmobile.vaktiva.ui.welcome
 
 import android.Manifest
 import android.content.Intent
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -37,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -46,8 +44,8 @@ import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.ui.settings.AudioSettingsViewModel
 import com.ybugmobile.vaktiva.ui.settings.SettingsViewModel
+import com.ybugmobile.vaktiva.utils.LanguageUtils
 import com.ybugmobile.vaktiva.utils.PermissionUtils
-import java.util.Locale as JavaLocale
 
 private val WelcomeGradientStart = Color(0xFF0F172A)
 private val WelcomeGradientEnd = Color(0xFF1E293B)
@@ -316,12 +314,6 @@ private fun PreferencesStep(
         stringResource(R.string.madhab_hanafi) to 1
     )
 
-    val languageOptions = listOf(
-        getNativeLanguageName("system") to "system",
-        getNativeLanguageName("en") to "en",
-        getNativeLanguageName("tr") to "tr"
-    )
-
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp).systemBarsPadding()
     ) {
@@ -338,7 +330,7 @@ private fun PreferencesStep(
             PreferenceSection(title = stringResource(R.string.welcome_general_settings)) {
                 WelcomeSettingsClickItem(
                     title = stringResource(R.string.settings_language),
-                    subtitle = getNativeLanguageName(currentLanguage),
+                    subtitle = LanguageUtils.getNativeLanguageName(currentLanguage),
                     icon = Icons.Default.Language,
                     onClick = { showLanguageDialog = true }
                 )
@@ -462,7 +454,7 @@ private fun PreferencesStep(
     if (showLanguageDialog) {
         WelcomeSelectionDialog(
             title = stringResource(R.string.settings_language),
-            options = languageOptions,
+            options = LanguageUtils.getLanguageOptions(),
             selectedKey = currentLanguage,
             onSelected = { lang ->
                 val appLocale: LocaleListCompat = if (lang == "system") {
@@ -496,22 +488,6 @@ private fun PreferencesStep(
             onSelected = { settingsViewModel.setCalculationMethod(it); showMethodDialog = false },
             onDismiss = { showMethodDialog = false }
         )
-    }
-}
-
-@Composable
-private fun getNativeLanguageName(languageCode: String): String {
-    return when (languageCode) {
-        "system" -> {
-            val systemLocale = ConfigurationCompat.getLocales(Resources.getSystem().configuration).get(0)
-            val displayName = systemLocale?.getDisplayName(systemLocale)?.replaceFirstChar { it.uppercase() } ?: ""
-            val systemLabel = stringResource(R.string.lang_system)
-            if (displayName.isNotEmpty()) "$systemLabel ($displayName)" else systemLabel
-        }
-        else -> {
-            val locale = JavaLocale(languageCode)
-            locale.getDisplayName(locale).replaceFirstChar { it.uppercase() }
-        }
     }
 }
 

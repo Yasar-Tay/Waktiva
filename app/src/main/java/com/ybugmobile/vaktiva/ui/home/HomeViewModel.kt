@@ -15,6 +15,7 @@ import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.MoreExecutors
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.alarm.AlarmScheduler
+import com.ybugmobile.vaktiva.data.notification.NotificationHelper
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.manager.SettingsManagerInterface
@@ -171,7 +172,7 @@ class HomeViewModel @Inject constructor(
                 mediaController?.addListener(object : Player.Listener {
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
                         _isAdhanPlaying.value = isPlaying
-                        _playingPrayerName.value = if (isPlaying) mediaController?.currentMediaItem?.mediaMetadata?.title?.toString()?.replace("Adhan: ", "") else null
+                        updatePlayingPrayerName()
                     }
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
@@ -181,9 +182,15 @@ class HomeViewModel @Inject constructor(
                     }
                 })
                 _isAdhanPlaying.value = mediaController?.isPlaying == true
-                _playingPrayerName.value = if (mediaController?.isPlaying == true) mediaController?.currentMediaItem?.mediaMetadata?.title?.toString()?.replace("Adhan: ", "") else null
+                updatePlayingPrayerName()
             } catch (e: Exception) { e.printStackTrace() }
         }, MoreExecutors.directExecutor())
+    }
+
+    private fun updatePlayingPrayerName() {
+        val metadata = mediaController?.currentMediaItem?.mediaMetadata
+        val name = metadata?.extras?.getString(NotificationHelper.EXTRA_PRAYER_NAME)
+        _playingPrayerName.value = name
     }
 
     fun stopAdhan() {

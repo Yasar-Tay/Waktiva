@@ -47,7 +47,7 @@
     <string name="home_unmute_adhan">إلغاء الكتم</string>
     <string name="home_return_to_today">العودة إلى اليوم</string>
     <string name="home_tomorrow_is">غداً هو: %s</string>
-    <string name="home_today_is">اليوم هو %s</string>
+    <string name="home_today_is">اليو هو %s</string>
     <string name="home_adhan_muted">تم كتم الأذان لـ %s</string>
     <string name="home_adhan_unmuted">تم تفعيل الأذان لـ %s</string>
 
@@ -256,4 +256,12 @@
     <string name="rel_day_ashura">يوم عاشوراء</string>
     <string name="rel_day_mawlid">المولد النبوي الشريف</string>
 
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">تم كتم الأذان</string>
+    <string name="notification_adhan_skipped_text">تم تخطي أذان %s.</string>
+    <string name="notification_upcoming_adhan_title">الأذان القادم: %s</string>
+    <string name="notification_upcoming_adhan_text">سيتم تشغيل الأذان خلال %d دقائق.</string>
+    <string name="notification_skip_action">تخطي هذه الصلاة</string>
+    <string name="notification_adhan_title">الأذان: %s</string>
+    <string name="notification_adhan_content">حان وقت الصلاة</string>
 </resources>

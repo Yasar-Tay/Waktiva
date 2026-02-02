@@ -226,6 +226,15 @@
     <string name="adhan_test_desc">Simulating adhan trigger</string>
     <string name="adhan_stop_test">CANCEL TEST</string>
 
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">Adhan Muted</string>
+    <string name="notification_adhan_skipped_text">Adhan for %s is skipped.</string>
+    <string name="notification_upcoming_adhan_title">Upcoming Adhan: %s</string>
+    <string name="notification_upcoming_adhan_text">Adhan will be played in %d minutes.</string>
+    <string name="notification_skip_action">SKIP FOR THIS PRAYER</string>
+    <string name="notification_adhan_title">Adhan: %s</string>
+    <string name="notification_adhan_content">It\'s time for prayer</string>
+
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>
     <string name="hijri_month_2">Safar</string>
