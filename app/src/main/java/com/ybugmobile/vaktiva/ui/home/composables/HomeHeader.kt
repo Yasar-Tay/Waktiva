@@ -114,7 +114,7 @@ private fun DatesSection(
 ) {
     if (hijriDate == null) return
 
-    val dateFormatter = DateTimeFormatter.ofPattern("d MMM", Locale.getDefault())
+    val dateFormatter = DateTimeFormatter.ofPattern("d MMM", Locale.US)
     val dayFormatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault())
     
     val hijriMonthResId = context.resources.getIdentifier(
@@ -158,7 +158,7 @@ private fun DatesSection(
         Column(horizontalAlignment = Alignment.Start) {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
-                    text = hijriDate.day.toString(),
+                    text = String.format(Locale.US, "%d", hijriDate.day),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontFamily = Inter,
                         fontWeight = FontWeight.Light
@@ -175,7 +175,7 @@ private fun DatesSection(
                 )
             }
             Text(
-                text = "${hijriDate.year} AH",
+                text = String.format(Locale.US, "%d AH", hijriDate.year),
                 style = MaterialTheme.typography.labelSmall,
                 color = contentColor.copy(alpha = 0.3f),
                 fontWeight = FontWeight.Bold,

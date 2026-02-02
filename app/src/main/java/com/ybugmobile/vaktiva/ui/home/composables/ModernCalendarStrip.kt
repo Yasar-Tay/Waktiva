@@ -31,6 +31,7 @@ import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.provider.ReligiousDaysProvider
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun ModernCalendarStrip(
@@ -42,8 +43,8 @@ fun ModernCalendarStrip(
     contentColor: Color = Color.White
 ) {
     val today = LocalDate.now()
-    val monthFormatter = DateTimeFormatter.ofPattern("MMM")
-    val dayNameFormatter = DateTimeFormatter.ofPattern("EEE")
+    val monthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.US)
+    val dayNameFormatter = DateTimeFormatter.ofPattern("EEE", Locale.getDefault())
     
     val listState = rememberLazyListState()
     val density = LocalDensity.current
@@ -196,9 +197,9 @@ fun ModernCalendarStrip(
 
                         // Middle Section: Day Number
                         val dayNumber = if (isHijriSelected && hijri != null) {
-                            hijri.day.toString()
+                            String.format(Locale.US, "%d", hijri.day)
                         } else {
-                            date.dayOfMonth.toString()
+                            String.format(Locale.US, "%d", date.dayOfMonth)
                         }
                         Text(
                             text = dayNumber,

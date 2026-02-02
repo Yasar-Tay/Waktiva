@@ -13,10 +13,12 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +28,7 @@ import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun NextPrayerCountdown(
@@ -42,7 +45,7 @@ fun NextPrayerCountdown(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val timeFormatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
+    val timeFormatter = remember { DateTimeFormatter.ofPattern("HH:mm", Locale.US) }
 
     Box(
         modifier = modifier
@@ -75,12 +78,14 @@ fun NextPrayerCountdown(
                 }
                 
                 // 2. Countdown Timer
-                ResponsiveCountdownText(
-                    text = remainingTime,
-                    targetFontSize = 72.sp,
-                    accentColor = accentColor,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                    ResponsiveCountdownText(
+                        text = remainingTime,
+                        targetFontSize = 72.sp,
+                        accentColor = accentColor,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
 
                 // 3. Skip/Mute Adhan Button
                 if (playAdhanAudio) {
@@ -252,5 +257,5 @@ private fun formatRemainingTime(totalSeconds: Long): String {
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60
     val secs = totalSeconds % 60
-    return String.format("%02d : %02d : %02d", hours, minutes, secs)
+    return String.format(Locale.US, "%02d : %02d : %02d", hours, minutes, secs)
 }
