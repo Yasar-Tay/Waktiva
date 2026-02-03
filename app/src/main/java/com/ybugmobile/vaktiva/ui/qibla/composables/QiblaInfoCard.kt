@@ -126,7 +126,7 @@ fun QiblaInfoCard(
                         label = stringResource(R.string.qibla_signal),
                         value = getAccuracyLabel(compassData.accuracy),
                         icon = Icons.Rounded.WifiTethering,
-                        color = if (isAccuracyLow) Color(0xFFF87171) else Color(0xFF4CAF50),
+                        color = if (isAccuracyLow) Color(0xFFF87171) else contentColor,
                         contentColor = contentColor
                     )
                 }
