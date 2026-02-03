@@ -22,7 +22,6 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable

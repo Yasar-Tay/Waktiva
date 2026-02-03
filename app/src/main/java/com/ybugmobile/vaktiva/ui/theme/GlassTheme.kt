@@ -12,7 +12,8 @@ data class GlassTheme(
     val containerColor: Color,
     val contentColor: Color,
     val borderColor: Color,
-    val secondaryContentColor: Color
+    val secondaryContentColor: Color,
+    val isLightMode: Boolean
 )
 
 val LocalGlassTheme = staticCompositionLocalOf<GlassTheme> {
@@ -36,7 +37,8 @@ fun getGlassTheme(
             containerColor = Color.White.copy(alpha = 0.12f),
             contentColor = Color.White,
             borderColor = Color.White.copy(alpha = 0.15f),
-            secondaryContentColor = Color.White.copy(alpha = 0.6f)
+            secondaryContentColor = Color.White.copy(alpha = 0.6f),
+            isLightMode = true
         )
     } else {
         // Dark semi-transparent for Sunrise, Dhuhur, Asr (Day-time gradients)
@@ -44,7 +46,8 @@ fun getGlassTheme(
             containerColor = Color.Black.copy(alpha = 0.15f),
             contentColor = Color.White,
             borderColor = Color.White.copy(alpha = 0.1f),
-            secondaryContentColor = Color.White.copy(alpha = 0.5f)
+            secondaryContentColor = Color.White.copy(alpha = 0.5f),
+            isLightMode = false
         )
     }
 }

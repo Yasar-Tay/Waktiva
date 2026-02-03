@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.VolumeOff
+import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
@@ -30,9 +32,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
-import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.ui.home.composables.*
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
@@ -350,7 +352,7 @@ fun HomeScreenContent(
                                                         onSkipNextAudio(prayerName, next.date)
                                                         scope.launch {
                                                             val localizedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context)
-                                                                    ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
+                                                                ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
 
                                                             val message = if (!state.isMuted)
                                                                 "MUTED:" + context.getString(R.string.home_adhan_muted, localizedPrayerName)
@@ -432,27 +434,58 @@ fun HomeScreenContent(
                     val message = parts.getOrNull(1) ?: data.visuals.message
 
                     val icon = when (type) {
-                        "MUTED" -> Icons.Filled.VolumeOff
-                        "UNMUTED" -> Icons.Filled.VolumeUp
+                        "MUTED" -> Icons.Rounded.VolumeOff
+                        "UNMUTED" -> Icons.Rounded.VolumeUp
                         else -> null
                     }
 
+                    val snackbarBackgroundColor = if (glassTheme.isLightMode) {
+                        Color.White.copy(alpha = 0.9f)
+                    } else {
+                        Color(0xFF1C1B1F).copy(alpha = 0.8f)
+                    }
+
+                    val snackbarContentColor = if (glassTheme.isLightMode) {
+                        Color(0xFF1C1B1F)
+                    } else {
+                        Color.White
+                    }
+
                     Surface(
-                        modifier = Modifier.padding(16.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.9f),
-                        contentColor = MaterialTheme.colorScheme.inverseOnSurface,
-                        shadowElevation = 4.dp
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                            .wrapContentWidth(),
+                        shape = RoundedCornerShape(percent = 50),
+                        color = snackbarBackgroundColor,
+                        contentColor = snackbarContentColor,
+                        border = androidx.compose.foundation.BorderStroke(
+                            0.5.dp,
+                            snackbarContentColor.copy(alpha = 0.12f)
+                        ),
+                        shadowElevation = 12.dp
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
                         ) {
                             if (icon != null) {
-                                Icon(icon, contentDescription = null)
-                                Spacer(Modifier.width(12.dp))
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = snackbarContentColor,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(Modifier.width(10.dp))
                             }
-                            Text(message, style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                text = message,
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    letterSpacing = 0.3.sp
+                                ),
+                                color = snackbarContentColor
+                            )
                         }
                     }
                 }
