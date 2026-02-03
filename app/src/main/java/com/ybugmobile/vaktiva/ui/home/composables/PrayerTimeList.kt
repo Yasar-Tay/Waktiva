@@ -26,14 +26,20 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun PrayerTimeList(
     day: PrayerDay,
-    nextPrayerType: PrayerType?,
+    currentPrayerType: PrayerType?,
     contentColor: Color = Color.White,
     highlightColor: Color = Color.Black.copy(alpha = 0.2f)
 ) {
-    data class PrayerItem(val type: PrayerType, val resId: Int, val time: String, val icon: ImageVector, val markerColor: Color)
+    data class PrayerItem(
+        val type: PrayerType,
+        val resId: Int,
+        val time: String,
+        val icon: ImageVector,
+        val color: Color
+    )
 
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-    
+
     val prayers = listOf(
         PrayerItem(PrayerType.FAJR, R.string.prayer_fajr, day.timings[PrayerType.FAJR]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.water_lux_rotated), Color(0xFF81D4FA)),
         PrayerItem(PrayerType.SUNRISE, R.string.prayer_sunrise, day.timings[PrayerType.SUNRISE]?.format(timeFormatter) ?: "", Icons.Default.WbTwilight, Color(0xFFFFE082)),
@@ -55,12 +61,13 @@ fun PrayerTimeList(
             .padding(horizontal = 8.dp)
     ) {
         prayers.forEach { item ->
-            val isNext = item.type == nextPrayerType
+            val isCurrent = item.type == currentPrayerType
             
-            // Highlight container for next prayer
-            val itemContainerColor = if (isNext) highlightColor else Color.Transparent
-            val itemContentColor = if (isNext) contentColor else contentColor.copy(alpha = 0.7f)
-            val fontWeight = if (isNext) FontWeight.Bold else FontWeight.Medium
+            // Highlight container for current prayer
+            val itemContainerColor = if (isCurrent) highlightColor else Color.Transparent
+            val itemContentColor = if (isCurrent) contentColor else contentColor.copy(alpha = 0.7f)
+            val iconTint = if (isCurrent) item.color else itemContentColor
+            val fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium
 
             Row(
                 modifier = Modifier
@@ -75,7 +82,7 @@ fun PrayerTimeList(
                     Icon(
                         imageVector = item.icon,
                         contentDescription = null,
-                        tint = item.markerColor,
+                        tint = iconTint,
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))

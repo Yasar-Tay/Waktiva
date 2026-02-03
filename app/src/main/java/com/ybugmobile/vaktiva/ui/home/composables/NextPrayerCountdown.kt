@@ -4,18 +4,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
@@ -25,7 +21,6 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
-import com.ybugmobile.vaktiva.domain.model.PrayerType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -44,13 +39,10 @@ fun NextPrayerCountdown(
     showIdleState: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val timeFormatter = remember { DateTimeFormatter.ofPattern("HH:mm", Locale.US) }
-
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(180.dp), // Increased height slightly to accommodate the new button with text
+            .height(180.dp),
         contentAlignment = Alignment.Center
     ) {
         if ((selectedDate == LocalDate.now()) && nextPrayer != null) {
@@ -185,49 +177,6 @@ private fun ResponsiveCountdownText(
             if (readyToDraw) drawContent()
         }
     )
-}
-
-@Composable
-fun CurrentPrayerHeader(
-    currentPrayer: CurrentPrayer?,
-    contentColor: Color,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-        if (currentPrayer != null) {
-            // Icon exactly at the center of the Box (and thus the circle)
-            Icon(
-                imageVector = when(currentPrayer.type) {
-                    PrayerType.FAJR -> ImageVector.vectorResource(R.drawable.water_lux_rotated)
-                    PrayerType.SUNRISE -> Icons.Default.WbTwilight
-                    PrayerType.DHUHR -> Icons.Default.WbSunny
-                    PrayerType.ASR -> Icons.Default.WbSunny
-                    PrayerType.MAGHRIB -> Icons.Default.WbTwilight
-                    PrayerType.ISHA -> Icons.Default.NightsStay
-                    else -> Icons.Default.WbSunny
-                },
-                contentDescription = null,
-                tint = contentColor,
-                modifier = Modifier.size(56.dp)
-            )
-
-            // Name positioned above the icon
-            Text(
-                text = currentPrayer.type.getDisplayName(context).uppercase(),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = contentColor.copy(alpha = 0.6f),
-                letterSpacing = 4.sp,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .offset(y = (-52.dp)) // Offset upwards: half icon (28) + spacer (12) + approx text half (12)
-            )
-        }
-    }
 }
 
 @Composable

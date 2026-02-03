@@ -43,7 +43,7 @@ import com.ybugmobile.vaktiva.data.worker.PrayerUpdateWorker
 import com.ybugmobile.vaktiva.domain.manager.TimeManager
 import com.ybugmobile.vaktiva.ui.home.HomeScreen
 import com.ybugmobile.vaktiva.ui.home.HomeViewModel
-import com.ybugmobile.vaktiva.ui.navigation.DonateScreen
+import com.ybugmobile.vaktiva.ui.donation.DonateScreen
 import com.ybugmobile.vaktiva.ui.navigation.Screen
 import com.ybugmobile.vaktiva.ui.qibla.QiblaScreen
 import com.ybugmobile.vaktiva.ui.settings.AudioSettingsScreen

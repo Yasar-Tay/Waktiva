@@ -163,6 +163,7 @@ fun HomeScreenContent(
                                             day = state.currentPrayerDay,
                                             currentTime = if (state.selectedDate == LocalDate.now()) state.currentTime.toLocalTime() else LocalTime.MIDNIGHT,
                                             nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
+                                            currentPrayer = if (state.selectedDate == LocalDate.now()) state.currentPrayer else null,
                                             isSelectedDayToday = state.selectedDate == LocalDate.now(),
                                             contentColor = contentColor,
                                             isMuted = state.isMuted,
@@ -171,12 +172,6 @@ fun HomeScreenContent(
                                                 state.nextPrayer?.let { next ->
                                                     onSkipNextAudio(prayerName, next.date)
                                                 }
-                                            },
-                                            centerContent = { accentColor ->
-                                                CurrentPrayerHeader(
-                                                    currentPrayer = state.currentPrayer,
-                                                    contentColor = contentColor
-                                                )
                                             }
                                         )
                                     }
@@ -259,7 +254,7 @@ fun HomeScreenContent(
                                     if (state.currentPrayerDay != null) {
                                         PrayerTimeList(
                                             day = state.currentPrayerDay,
-                                            nextPrayerType = if (state.selectedDate == LocalDate.now()) state.nextPrayer?.type else null,
+                                            currentPrayerType = if (state.selectedDate == LocalDate.now()) state.currentPrayer?.type else null,
                                             contentColor = contentColor,
                                             highlightColor = contentColor.copy(alpha = 0.15f)
                                         )
@@ -311,6 +306,7 @@ fun HomeScreenContent(
                                             day = state.currentPrayerDay,
                                             currentTime = if (state.selectedDate == LocalDate.now()) state.currentTime.toLocalTime() else LocalTime.MIDNIGHT,
                                             nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
+                                            currentPrayer = if (state.selectedDate == LocalDate.now()) state.currentPrayer else null,
                                             isSelectedDayToday = state.selectedDate == LocalDate.now(),
                                             contentColor = contentColor,
                                             isMuted = state.isMuted,
@@ -319,12 +315,6 @@ fun HomeScreenContent(
                                                 state.nextPrayer?.let { next ->
                                                     onSkipNextAudio(prayerName, next.date)
                                                 }
-                                            },
-                                            centerContent = { accentColor ->
-                                                CurrentPrayerHeader(
-                                                    currentPrayer = state.currentPrayer,
-                                                    contentColor = contentColor
-                                                )
                                             }
                                         )
                                     }
@@ -410,7 +400,7 @@ fun HomeScreenContent(
                                     if (state.currentPrayerDay != null) {
                                         PrayerTimeList(
                                             day = state.currentPrayerDay,
-                                            nextPrayerType = if (state.selectedDate == LocalDate.now()) state.nextPrayer?.type else null,
+                                            currentPrayerType = if (state.selectedDate == LocalDate.now()) state.currentPrayer?.type else null,
                                             contentColor = contentColor,
                                             highlightColor = contentColor.copy(alpha = 0.15f)
                                         )
