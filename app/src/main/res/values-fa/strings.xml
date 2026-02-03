@@ -96,6 +96,8 @@
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
     <string name="lang_fa">فارسی</string>
+    <string name="lang_ms">Bahasa Melayu</string>
+    <string name="lang_ru">Русский</string>
 
     <!-- Madhab Options -->
     <string name="madhab_shafi">شافعی / استاندارد (مالکی، حنبلی)</string>

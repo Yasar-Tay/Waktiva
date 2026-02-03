@@ -94,6 +94,10 @@
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
+    <string name="lang_bn">বাংলা</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_ms">Bahasa Melayu</string>
+    <string name="lang_ru">Русский</string>
 
     <!-- Madhab Options -->
     <string name="madhab_shafi">Syafi\'i / Standar (Maliki, Hambali)</string>
