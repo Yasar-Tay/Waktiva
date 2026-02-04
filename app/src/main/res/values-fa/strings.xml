@@ -44,13 +44,23 @@
     <string name="home_refresh_success">اوقات شرعی به‌روز شد</string>
     <string name="home_refresh_error">خطا در به‌روزرسانی اوقات</string>
     <string name="home_prayer_provider">منبع: </string>
-    <string name="home_skip_adhan">بی‌صدا کردن اذان برای %s</string>
-    <string name="home_unmute_adhan">باصدا کردن اذان برای %s</string>
+    <string name="home_skip_adhan">بی‌صدا کردن</string>
+    <string name="home_unmute_adhan">باصدا کردن</string>
     <string name="home_return_to_today">بازگشت به امروز</string>
     <string name="home_tomorrow_is">فردا: %s</string>
     <string name="home_today_is">امروز %s است</string>
     <string name="home_adhan_muted">اذان برای %s بی‌صدا شد</string>
     <string name="home_adhan_unmuted">اذان برای %s فعال شد</string>
+
+    <!-- System Health & Warnings -->
+    <string name="health_title">سلامت سیستم</string>
+    <string name="health_issues_detected">مشکلات شناسایی شد</string>
+    <string name="health_gps_off">GPS در سطح جهانی غیرفعال است. برای به‌روزرسانی اوقات شرعی، خدمات مکان را فعال کنید.</string>
+    <string name="health_channels_muted">کانال‌های اعلان اذان در تنظیمات سیستم بی‌صدا هستند.</string>
+    <string name="health_dnd_active">حالت «مزاحم نشوید» فعال است. ممکن است صداهای اذان مسدود شوند.</string>
+    <string name="health_fix_now">اکنون اصلاح کنید</string>
+    <string name="health_no_internet">اتصال اینترنت برقرار نیست. Vaktiva از داده‌های ذخیره شده استفاده می‌کند. لطفاً برای تازه‌سازی اوقات شرعی متصل شوید.</string>
+    <string name="health_status_ok">همه سیستم‌ها فعال هستند</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">اذان صبح</string>
@@ -73,9 +83,9 @@
     <string name="settings_permissions">مجوزها</string>
     <string name="settings_manage_system">مدیریت در تنظیمات سیستم</string>
     <string name="settings_location_access">دسترسی به مکان</string>
-    <string name="settings_location_desc">برای اوقات شرعی و جهت قبله دقیق لازم است.</string>
+    <string name="settings_location_desc">برای محاسبه اوقات شرعی حیاتی است. بدون این، برنامه نمی‌تواند اوقات را برای مکان شما واکشی کند و بی‌فایده می‌شود.</string>
     <string name="settings_notifications">اعلان‌ها</string>
-    <string name="settings_notifications_desc">برای نمایش هشدارهای اوقات شرعی لازم است.</string>
+    <string name="settings_notifications_desc">برای نمایش هشدارهای اوقات شرعی و اعلان‌های اذان لازم است.</string>
     <string name="settings_granted">اجازه داده شده</string>
     <string name="settings_denied">رد شده</string>
     <string name="settings_language">زبان برنامه</string>
@@ -156,9 +166,9 @@
     <string name="settings_reliability">پایداری و بهینه‌سازی</string>
     <string name="settings_battery_opt">بهینه‌سازی باتری</string>
     <string name="settings_battery_opt_enabled">بهینه‌سازی شده برای پایداری</string>
-    <string name="settings_battery_opt_disabled">برای غیرفعال کردن بهینه‌سازی جهت اذان دقیق کلیک کنید</string>
+    <string name="settings_battery_opt_disabled">برای پخش به موقع اذان ضروری است. بهینه‌سازی‌های باتری می‌توانند هشدارهای برنامه‌ریزی شده را به تأخیر بیندازند یا مسدود کنند.</string>
     <string name="settings_exact_alarm_title">هشدارهای دقیق</string>
-    <string name="settings_exact_alarm_desc">برای اعلان‌های اوقات شرعی دقیق لازم است</string>
+    <string name="settings_exact_alarm_desc">برای اعلان‌های اوقات شرعی دقیق و اذان‌های به موقع لازم است.</string>
 
     <!-- Data Management -->
     <string name="settings_data_management">مدیریت داده‌ها</string>
@@ -184,9 +194,9 @@
     <string name="welcome_precision_settings">تنظیمات دقت</string>
     <string name="welcome_precision_desc">Vaktiva برای خدمت‌رسانی بهتر به این مجوزها نیاز دارد</string>
     <string name="welcome_loc_title">مکان دقیق</string>
-    <string name="welcome_loc_desc">برای محاسبه اوقات شرعی دقیق بر اساس مختصات شما استفاده می‌شود.</string>
+    <string name="welcome_loc_desc">برای محاسبه اوقات شرعی حیاتی است. بدون این، برنامه نمی‌تواند اوقات را برای مکان شما واکشی کند و بی‌فایده می‌شود.</string>
     <string name="welcome_notif_title">هشدارهای اذان</string>
-    <string name="welcome_notif_desc">برای ارسال اعلان در زمان شرعی لازم است.</string>
+    <string name="welcome_notif_desc">برای ارسال اعلان و پخش اذان در زمان شرعی لازم است.</string>
     <string name="welcome_alarm_title">هشدارهای دقیق</string>
     <string name="welcome_alarm_desc">برای پخش اذان دقیقاً در زمان خود بدون تأخیر لازم است.</string>
     <string name="welcome_grant_btn">دادن مجوزها</string>
@@ -202,7 +212,7 @@
     <string name="welcome_general_settings">تنظیمات عمومی</string>
     <string name="welcome_adhan_audio_header">اذان و صوت</string>
     <string name="welcome_battery_optimized">بهینه‌سازی شده برای پایداری</string>
-    <string name="welcome_battery_optimize_desc">بهینه‌سازی باتری را برای اذان‌های دقیق غیرفعال کنید</string>
+    <string name="welcome_battery_optimize_desc">برای پخش به موقع اذان ضروری است. بهینه‌سازی‌های باتری می‌توانند هشدارهای برنامه‌ریزی شده را به تأخیر بیندازند یا مسدود کنند.</string>
 
     <!-- Adhan Screen -->
     <string name="adhan_its_time_for">زمان شرعی است برای</string>
@@ -213,6 +223,7 @@
     <string name="adhan_test_alarm">تست هشدار</string>
     <string name="adhan_test_desc">شبیه‌سازی پخش اذان</string>
     <string name="adhan_stop_test">لغو تست</string>
+    <string name="adhan_metadata_title_format">اذان %s</string>
 
     <!-- Donations -->
     <string name="settings_donate">حمایت از توسعه‌دهنده</string>

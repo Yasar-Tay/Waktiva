@@ -1,24 +1,28 @@
 package com.ybugmobile.vaktiva.ui.home
 
 import android.Manifest
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.rounded.VolumeOff
-import androidx.compose.material.icons.rounded.VolumeUp
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +41,7 @@ import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.home.composables.*
+import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import java.time.LocalDate
@@ -100,12 +106,17 @@ fun HomeScreenContent(
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         permissions.add(Manifest.permission.POST_NOTIFICATIONS)
     }
-    val permissionState = rememberMultiplePermissionsState(permissions)
+    val permissionState = rememberMultiplePermissionsState(permissions) { permissionsResult ->
+        if (permissionsResult.values.all { it }) {
+            onRefresh()
+        }
+    }
 
     val backgroundGradient =
         getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
     val glassTheme = getGlassTheme(state.currentTime.toLocalTime(), state.currentPrayerDay)
     var showMethodDialog by remember { mutableStateOf(false) }
+    var showHealthOverlay by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -122,7 +133,9 @@ fun HomeScreenContent(
                 .fillMaxSize()
                 .background(brush = backgroundGradient)
         ) {
-            if (state.isLoading) {
+            if (!permissionState.allPermissionsGranted) {
+                PermissionRequiredFallback(permissionState = permissionState)
+            } else if (state.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
                     color = contentColor
@@ -425,6 +438,42 @@ fun HomeScreenContent(
                 }
             }
 
+            // Status FAB (Top Right)
+            if (permissionState.allPermissionsGranted && (!state.isNetworkAvailable || state.hasSystemIssues)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .systemBarsPadding()
+                        .padding(top = 8.dp, end = 16.dp),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    val color = if (!state.isNetworkAvailable) Color(0xFFFACC15) else Color(0xFFFF5252)
+                    Surface(
+                        onClick = { showHealthOverlay = true },
+                        shape = CircleShape,
+                        color = color.copy(alpha = 0.15f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.4f)),
+                        modifier = Modifier.size(44.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = if (!state.isNetworkAvailable) Icons.Rounded.WifiOff else Icons.Rounded.PriorityHigh,
+                                contentDescription = "Status",
+                                tint = color,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (showHealthOverlay) {
+                SystemHealthOverlay(
+                    isNetworkAvailable = state.isNetworkAvailable,
+                    onDismiss = { showHealthOverlay = false }
+                )
+            }
+
             SnackbarHost(
                 hostState = snackbarHostState,
                 modifier = Modifier.align(Alignment.Center),
@@ -524,6 +573,69 @@ fun HomeScreenContent(
                         }
                     }
                 )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun PermissionRequiredFallback(permissionState: MultiplePermissionsState) {
+    val context = LocalContext.current
+    var denialCount by rememberSaveable { mutableIntStateOf(0) }
+
+    fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", context.packageName, null)
+        }
+        context.startActivity(intent)
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .systemBarsPadding()
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                Icons.Default.LocationOn,
+                contentDescription = null,
+                modifier = Modifier.size(80.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = stringResource(R.string.home_permissions_required),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = stringResource(R.string.home_permissions_desc),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                onClick = {
+                    if (denialCount >= 2 || permissionState.shouldShowRationale) {
+                        openAppSettings()
+                    } else {
+                        permissionState.launchMultiplePermissionRequest()
+                        denialCount++
+                    }
+                },
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text(stringResource(R.string.home_grant_permissions))
             }
         }
     }

@@ -48,9 +48,19 @@
     <string name="home_unmute_adhan">إلغاء كتم الأذان لـ %s</string>
     <string name="home_return_to_today">العودة إلى اليوم</string>
     <string name="home_tomorrow_is">غداً هو: %s</string>
-    <string name="home_today_is">اليو هو %s</string>
+    <string name="home_today_is">اليوم هو %s</string>
     <string name="home_adhan_muted">تم كتم الأذان لـ %s</string>
     <string name="home_adhan_unmuted">تم تفعيل الأذان لـ %s</string>
+
+    <!-- System Health & Warnings -->
+    <string name="health_title">صحة النظام</string>
+    <string name="health_issues_detected">تم اكتشاف مشكلات</string>
+    <string name="health_gps_off">تم تعطيل نظام تحديد المواقع العالمي (GPS) بشكل عام. قم بتمكين خدمات الموقع لتحديث مواقيت الصلاة.</string>
+    <string name="health_channels_muted">قنوات إشعار الأذان مكتومة في إعدادات النظام.</string>
+    <string name="health_dnd_active">وضع عدم الإزعاج نشط. قد يتم حظر أصوات الأذان.</string>
+    <string name="health_fix_now">إصلاح الآن</string>
+    <string name="health_no_internet">لا يوجد اتصال بالإنترنت. يستخدم Vaktiva البيانات المخزنة. يرجى الاتصال لتحديث مواقيت الصلاة.</string>
+    <string name="health_status_ok">جميع الأنظمة تعمل بشكل طبيعي</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">الفجر</string>
@@ -73,9 +83,9 @@
     <string name="settings_permissions">الأذونات</string>
     <string name="settings_manage_system">إدارة في إعدادات النظام</string>
     <string name="settings_location_access">الوصول إلى الموقع</string>
-    <string name="settings_location_desc">مطلوب لمواقيت صلاة واتجاه قبلة دقيقين.</string>
+    <string name="settings_location_desc">مهم جداً لحساب مواقيت الصلاة. بدون هذا، لا يمكن للتطبيق جلب المواعيد لموقعك ويصبح عديم الفائدة.</string>
     <string name="settings_notifications">الإشعارات</string>
-    <string name="settings_notifications_desc">مطلوب لإظهار تنبيهات مواقيت الصلاة.</string>
+    <string name="settings_notifications_desc">مطلوب لإظهار تنبيهات مواقيت الصلاة وإشعارات الأذان.</string>
     <string name="settings_granted">ممنوح</string>
     <string name="settings_denied">مرفوض</string>
     <string name="settings_language">لغة التطبيق</string>
@@ -156,9 +166,9 @@
     <string name="settings_reliability">الموثوقية والتحسين</string>
     <string name="settings_battery_opt">تحسين البطارية</string>
     <string name="settings_battery_opt_enabled">محسن للموثوقية</string>
-    <string name="settings_battery_opt_disabled">انقر لتعطيل التحسين للأذان الموثوق</string>
+    <string name="settings_battery_opt_disabled">ضروري لتشغيل الأذان في الوقت المحدد. يمكن لتحسينات البطارية تأخير أو حظر التنبيهات المجدولة.</string>
     <string name="settings_exact_alarm_title">منبهات دقيقة</string>
-    <string name="settings_exact_alarm_desc">مطلوبة لإشعارات مواقيت صلاة دقيقة</string>
+    <string name="settings_exact_alarm_desc">مطلوبة لإشعارات مواقيت صلاة دقيقة وأذان في الوقت المحدد.</string>
 
     <!-- Data Management -->
     <string name="settings_data_management">إدارة البيانات</string>
@@ -184,9 +194,9 @@
     <string name="welcome_precision_settings">إعدادات الدقة</string>
     <string name="welcome_precision_desc">يحتاج Vaktiva إليها لخدمتك بشكل أفضل</string>
     <string name="welcome_loc_title">موقع دقيق</string>
-    <string name="welcome_loc_desc">يُستخدم لحساب مواقيت صلاة دقيقة بناءً على إحداثياتك.</string>
+    <string name="welcome_loc_desc">مهم جداً لحساب مواقيت الصلاة. بدون هذا، لا يمكن للتطبيق جلب المواعيد لموقعك ويصبح عديم الفائدة.</string>
     <string name="welcome_notif_title">تنبيهات الأذان</string>
-    <string name="welcome_notif_desc">مطلوبة لإرسال إشعارات عندما يحين وقت الصلاة.</string>
+    <string name="welcome_notif_desc">مطلوبة لإرسال إشعارات وتشغيل صوت الأذان عندما يحين وقت الصلاة.</string>
     <string name="welcome_alarm_title">منبهات دقيقة</string>
     <string name="welcome_alarm_desc">مطلوبة ليتم تشغيل الأذان في الوقت المحدد تماماً دون تأخير.</string>
     <string name="welcome_grant_btn">منح الأذونات</string>
@@ -202,7 +212,7 @@
     <string name="welcome_general_settings">إعدادات عامة</string>
     <string name="welcome_adhan_audio_header">الأذان والصوت</string>
     <string name="welcome_battery_optimized">محسن للموثوقية</string>
-    <string name="welcome_battery_optimize_desc">تعطيل التحسين للأذان الموثوق</string>
+    <string name="welcome_battery_optimize_desc">ضروري لتشغيل الأذان في الوقت المحدد. يمكن لتحسينات البطارية تأخير أو حظر التنبيهات المجدولة.</string>
 
     <!-- Adhan Screen -->
     <string name="adhan_its_time_for">حان وقت</string>
@@ -213,6 +223,7 @@
     <string name="adhan_test_alarm">اختبار المنبه</string>
     <string name="adhan_test_desc">محاكاة تشغيل الأذان</string>
     <string name="adhan_stop_test">إلغاء الاختبار</string>
+    <string name="adhan_metadata_title_format">أذان %s</string>
 
     <!-- Donations -->
     <string name="settings_donate">ادعم المطور</string>

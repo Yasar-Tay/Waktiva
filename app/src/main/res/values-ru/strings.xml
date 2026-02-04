@@ -5,51 +5,62 @@
     <string name="nav_home">Главная</string>
     <string name="nav_qibla">Кибла</string>
     <string name="nav_settings">Настройки</string>
-    <string name="nav_donate">Поддержать</string>
+    <string name="nav_donate">Пожертвовать</string>
+    <string name="cd_back">Назад</string>
 
     <!-- Qibla Screen -->
+    <string name="qibla_label">Кибла</string>
     <string name="qibla_compass">Компас</string>
     <string name="qibla_map">Карта</string>
     <string name="qibla_mecca_aligned">Направлено на Мекку</string>
     <string name="qibla_rotate_phone">Поверните телефон</string>
     <string name="qibla_direction">Кибла: %d°</string>
     <string name="qibla_locating">Определение местоположения...</string>
-    <string name="qibla_label">Кибла</string>
-    <string name="qibla_heading">Направление</string>
+    <string name="qibla_heading">Курс</string>
     <string name="qibla_signal">Сигнал</string>
     <string name="qibla_standard">Стандарт</string>
     <string name="qibla_satellite">Спутник</string>
     <string name="qibla_recenter">Центрировать</string>
-    <string name="qibla_location_required">Требуется доступ к местоположению</string>
+    <string name="qibla_location_required">Требуется доступ к геопозиции</string>
     <string name="qibla_location_required_desc">Необходимо для точного расчета Киблы.</string>
     <string name="qibla_grant_permission">Разрешить</string>
     <string name="qibla_calibration_needed">Требуется калибровка</string>
-    <string name="qibla_calibration_desc">Повращайте телефон в воздухе по траектории восьмерки (∞) для повышения точности.</string>
+    <string name="qibla_calibration_desc">Двигайте телефон по траектории «восьмерки» (∞) для повышения точности.</string>
     <string name="qibla_got_it">Понятно</string>
     <string name="qibla_aligned_badge">НАПРАВЛЕНО</string>
     <string name="qibla_magnetic_interference">Обнаружены магнитные помехи — откалибруйте устройство</string>
     <string name="qibla_kaaba_aligned">Направлено на Каабу</string>
     <string name="qibla_find_marker">Найдите золотой маркер</string>
     <string name="qibla_calibrate">КАЛИБРОВАТЬ</string>
-    <string name="qibla_interference_tip">Совет: внутри зданий металлические конструкции могут влиять на компас. Для лучшей точности выполните калибровку «восьмеркой».</string>
+    <string name="qibla_interference_tip">Совет: Внутри зданий металлические конструкции могут влиять на компас. Для лучшей точности выполните калибровку «восьмеркой».</string>
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Неизвестное местоположение</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">Оставшееся время</string>
     <string name="home_permissions_required">Требуются разрешения</string>
-    <string name="home_permissions_desc">Для корректной работы приложения требуются разрешения на доступ к местоположению и уведомлениям.</string>
-    <string name="home_grant_permissions">Разрешить</string>
-    <string name="home_refresh_success">Время намаза обновлено</string>
+    <string name="home_permissions_desc">Для корректной работы приложения необходимы разрешения на геопозицию и уведомления.</string>
+    <string name="home_grant_permissions">Предоставить разрешения</string>
+    <string name="home_refresh_success">Время молитв обновлено</string>
     <string name="home_refresh_error">Не удалось обновить время</string>
     <string name="home_prayer_provider">Источник: </string>
     <string name="home_skip_adhan">Без звука</string>
-    <string name="home_unmute_adhan">Со звуком</string>
-    <string name="home_return_to_today">Вернуться к сегодня</string>
+    <string name="home_unmute_adhan">Включить звук</string>
+    <string name="home_return_to_today">Вернуться к сегодняшнему дню</string>
     <string name="home_tomorrow_is">Завтра: %s</string>
     <string name="home_today_is">Сегодня %s</string>
-    <string name="home_adhan_muted">Азан для %s отключен</string>
-    <string name="home_adhan_unmuted">Азан для %s включен</string>
+    <string name="home_adhan_muted">Азан отключен для %s</string>
+    <string name="home_adhan_unmuted">Азан включен для %s</string>
+
+    <!-- System Health & Warnings -->
+    <string name="health_title">Состояние системы</string>
+    <string name="health_issues_detected">Обнаружены проблемы</string>
+    <string name="health_gps_off">GPS отключен. Включите службы геолокации для обновления времени молитв.</string>
+    <string name="health_channels_muted">Каналы уведомлений об Азане отключены в системных настройках.</string>
+    <string name="health_dnd_active">Режим «Не беспокоить» активен. Звуки Азана могут быть заблокированы.</string>
+    <string name="health_fix_now">Исправить сейчас</string>
+    <string name="health_no_internet">Нет подключения к Интернету. Vaktiva использует сохраненные данные. Пожалуйста, подключитесь для обновления времени молитв.</string>
+    <string name="health_status_ok">Все системы работают нормально</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Фаджр</string>
@@ -58,6 +69,7 @@
     <string name="prayer_asr">Аср</string>
     <string name="prayer_maghrib">Магриб</string>
     <string name="prayer_isha">Иша</string>
+    <string name="adhan_default_prayer">Молитва</string>
 
     <!-- Accuracy Labels -->
     <string name="accuracy_high">Высокая</string>
@@ -65,23 +77,20 @@
     <string name="accuracy_low">Низкая</string>
     <string name="accuracy_poor">Плохая</string>
 
-    <!-- Settings -->
+    <!-- General Settings -->
     <string name="settings_title">Настройки</string>
-    <string name="settings_permissions">Разрешения</string>
-    <string name="settings_calculation">Настройки расчета</string>
-    <string name="settings_madhab">Мазхаб</string>
-    <string name="settings_method">Метод расчета</string>
-    <string name="settings_manage_system">Управление в настройках системы</string>
-    <string name="settings_location_access">Доступ к местоположению</string>
-    <string name="settings_location_desc">Требуется для точного времени намаза и направления Киблы.</string>
-    <string name="settings_notifications">Уведомления</string>
-    <string name="settings_notifications_desc">Требуется для отображения оповещений о времени намаза.</string>
-    <string name="settings_granted">Разрешено</string>
-    <string name="settings_denied">Отклонено</string>
-    <string name="settings_language">Язык приложения</string>
     <string name="settings_preferences">Предпочтения</string>
+    <string name="settings_permissions">Разрешения</string>
+    <string name="settings_manage_system">Управление в настройках системы</string>
+    <string name="settings_location_access">Доступ к геопозиции</string>
+    <string name="settings_location_desc">Критически важно для расчета времени молитв. Без этого приложение не сможет получать время для вашего местоположения и станет бесполезным.</string>
+    <string name="settings_notifications">Уведомления</string>
+    <string name="settings_notifications_desc">Требуется для показа оповещений о времени молитв и уведомлений об Азане.</string>
+    <string name="settings_granted">Разрешено</string>
+    <string name="settings_denied">Отказано</string>
+    <string name="settings_language">Язык приложения</string>
     <string name="settings_cancel">Отмена</string>
-    <string name="settings_confirm">ОК</string>
+    <string name="settings_confirm">Подтвердить</string>
 
     <!-- Language Options -->
     <string name="lang_system">Системный по умолчанию</string>
@@ -99,11 +108,12 @@
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
-    <!-- Madhab Options -->
-    <string name="madhab_shafi">Шафиитский / Стандарт (Малики, Ханбали)</string>
+    <!-- Calculation Settings -->
+    <string name="settings_calculation">Настройки расчета</string>
+    <string name="settings_madhab">Мазхаб</string>
+    <string name="settings_method">Метод расчета</string>
+    <string name="madhab_shafi">Шафиитский / Стандартный (Малики, Ханбали)</string>
     <string name="madhab_hanafi">Ханафитский</string>
-
-    <!-- Methods -->
     <string name="method_mwl">Всемирная исламская лига</string>
     <string name="method_isna">Исламское общество Северной Америки (ISNA)</string>
     <string name="method_egypt">Египетское генеральное управление геодезии</string>
@@ -113,139 +123,128 @@
     <string name="method_gulf">Регион Персидского залива</string>
     <string name="method_kuwait">Кувейт</string>
     <string name="method_qatar">Катар</string>
-    <string name="method_singapore">Исламский религиозный совет Сингапура</string>
+    <string name="method_singapore">Совет исламской религии Сингапура</string>
     <string name="method_turkey">Турция (Diyanet)</string>
 
-    <!-- Audio Settings -->
+    <!-- Audio & Notification Settings -->
+    <string name="settings_notifications_sound">Уведомления и звук</string>
+    <string name="settings_play_adhan">Проигрывать аудио Азана</string>
+    <string name="settings_play_adhan_desc">Проигрывать звук азана, когда наступает время молитвы</string>
+    <string name="settings_adhan_sound_selection">Выбор звука Азана</string>
+    <string name="settings_adhan_sound_selection_desc">Выберите звук, который будет воспроизводиться во время молитвы</string>
+
     <string name="audio_settings_title">Звуки Азана</string>
-    <string name="audio_add_custom">Добавить свой звук</string>
-    <string name="audio_delete_confirm">Удалить аудиофайл?</string>
+    <string name="audio_header_global">Выберите звук Азана (общий)</string>
+    <string name="audio_header_all_prayers">Все молитвы</string>
+    <string name="audio_header_specific">Азан для %1$s</string>
+    <string name="audio_select_prayer_prompt">Выберите молитву для настройки</string>
+    <string name="audio_individual_sounds_title">Индивидуальные звуки молитв</string>
+    <string name="audio_individual_sounds_desc">Установите разные Азаны для каждого времени молитвы</string>
 
-    <!-- Welcome Screen -->
-    <string name="welcome_title">Добро пожаловать в Vaktiva</string>
-    <string name="welcome_desc">Ваш профессиональный помощник для времени намаза, созданный с высокой точностью и в современном дизайне.</string>
-    <string name="welcome_begin">Начать настройку</string>
-    <string name="welcome_finish">Завершить настройку</string>
-    <string name="welcome_precision_settings">Настройки точности</string>
-    <string name="welcome_precision_desc">Они необходимы приложению для наилучшей работы</string>
-    <string name="welcome_loc_title">Точное местоположение</string>
-    <string name="welcome_loc_desc">Используется для расчета точного времени намаза на основе ваших координат.</string>
-    <string name="welcome_notif_title">Оповещения Азана</string>
-    <string name="welcome_notif_desc">Необходимы для отправки уведомлений о наступлении времени молитвы.</string>
-    <string name="welcome_alarm_title">Точные будильники</string>
-    <string name="welcome_alarm_desc">Необходимы для того, чтобы Азан воспроизводился вовремя без задержек.</string>
-    <string name="welcome_grant_btn">Разрешить</string>
-    <string name="welcome_continue_btn">Продолжить</string>
-    <string name="welcome_personalize">Персонализация</string>
-    <string name="welcome_personalize_desc">Настройте параметры молитвы и методы расчета</string>
-    <string name="welcome_audio_desc">Выберите предпочтения для призыва к молитве</string>
-    <string name="welcome_adhan_audio">Звук Азана</string>
-    <string name="welcome_adhan_audio_desc">Воспроизводить звуковой призыв к молитве</string>
-    <string name="welcome_select_sound">Выбрать звук</string>
-    <string name="welcome_skip_btn">Все равно продолжить</string>
-    <string name="welcome_permission_later_info">Вы всегда можете изменить эти разрешения позже в настройках.</string>
-    <string name="welcome_general_settings">Общие настройки</string>
-    <string name="welcome_adhan_audio_header">Азан и аудио</string>
-    <string name="welcome_battery_optimized">Оптимизировано для надежности</string>
-    <string name="welcome_battery_optimize_desc">Отключите оптимизацию для надежной работы Азана</string>
-
-    <!-- Adhan Audio per prayer -->
-    <string name="audio_setting_fajr">Азан на Фаджр</string>
-    <string name="audio_setting_dhuhr">Азан на Зухр</string>
-    <string name="audio_setting_asr">Азан на Аср</string>
-    <string name="audio_setting_maghrib">Азан на Магриб</string>
-    <string name="audio_setting_isha">Азан на Иша</string>
     <string name="audio_setting_default">Азан по умолчанию</string>
+    <string name="audio_setting_fajr">Азан Фаджр</string>
+    <string name="audio_setting_dhuhr">Азан Зухр</string>
+    <string name="audio_setting_asr">Азан Аср</string>
+    <string name="audio_setting_maghrib">Азан Магриб</string>
+    <string name="audio_setting_isha">Азан Иша</string>
+
+    <string name="audio_add_custom">Добавить свой аудиофайл</string>
+    <string name="audio_delete_confirm">Удалить аудиофайл?</string>
+    <string name="audio_delete_description">Удалить аудиофайл</string>
+    <string name="audio_supported_formats">Поддерживаются: MP3, AAC, WAV, OGG</string>
+    <string name="audio_preview_play">Прослушать</string>
+    <string name="audio_preview_stop">Остановить</string>
+    <string name="audio_built_in">Встроенный</string>
+    <string name="audio_selected_description">Выбрано</string>
+    <string name="audio_minutes_before">Минут до:</string>
+
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">Будильник Фаджр (до восхода)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">Определять время будильника Фаджр на основе восхода солнца (кроме Рамадана).</string>
+
+    <!-- Battery & Reliability Settings -->
+    <string name="settings_reliability">Надежность и оптимизация</string>
+    <string name="settings_battery_opt">Оптимизация батареи</string>
+    <string name="settings_battery_opt_enabled">Оптимизировано для надежности</string>
+    <string name="settings_battery_opt_disabled">Критически важно для своевременного воспроизведения Азана. Оптимизация батареи может задерживать или блокировать запланированные оповещения.</string>
+    <string name="settings_exact_alarm_title">Точные будильники</string>
+    <string name="settings_exact_alarm_desc">Требуется для точных уведомлений о времени молитв и своевременного Азана.</string>
+
+    <!-- Data Management -->
+    <string name="settings_data_management">Управление данными</string>
+    <string name="settings_delete_history">Удалить историю молитв</string>
+    <string name="settings_delete_history_desc">Удалить все прошлые данные о молитвах, чтобы освободить место</string>
+    <string name="settings_delete_history_confirm_title">Удалить историю?</string>
+    <string name="settings_delete_history_confirm_desc">Это навсегда удалит все записи о молитвах до сегодняшнего дня. Это действие нельзя отменить.</string>
 
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Предупреждение перед Азаном</string>
-    <string name="settings_pre_adhan_warning_summary">Получайте уведомление до начала времени намаза.</string>
-    <string name="pre_adhan_notification_title">Близится время намаза</string>
-    <string name="pre_adhan_notification_text">Время намаза %s наступит через 5 минут.</string>
-    <string name="pre_adhan_cancel_action">Скрыть</string>
+    <string name="settings_pre_adhan_warning_summary">Получать уведомление перед временем молитвы.</string>
+    <string name="pre_adhan_notification_title">Приближение молитвы</string>
+    <string name="pre_adhan_notification_text">Время молитвы %s через 5 минут.</string>
+    <string name="pre_adhan_cancel_action">Закрыть</string>
+    <string name="pre_adhan_channel_name">Предупреждения перед Азаном</string>
+    <string name="pre_adhan_channel_description">Уведомления, показываемые перед временем молитвы.</string>
+
+    <!-- Welcome / Onboarding -->
+    <string name="welcome_title">Добро пожаловать в Vaktiva</string>
+    <string name="welcome_desc">Ваш профессиональный помощник для времени молитв, созданный с точностью и современным дизайном.</string>
+    <string name="welcome_begin">Начать настройку</string>
+    <string name="welcome_finish">Завершить настройку</string>
+    <string name="welcome_precision_settings">Настройки точности</string>
+    <string name="welcome_precision_desc">Vaktiva нуждается в этом для лучшего обслуживания</string>
+    <string name="welcome_loc_title">Точное местоположение</string>
+    <string name="welcome_loc_desc">Критически важно для расчета времени молитв. Без этого приложение не сможет получать время для вашего местоположения и станет бесполезным.</string>
+    <string name="welcome_notif_title">Оповещения об Азане</string>
+    <string name="welcome_notif_desc">Требуется для отправки уведомлений и воспроизведения Азана, когда наступает время молитвы.</string>
+    <string name="welcome_alarm_title">Точные будильники</string>
+    <string name="welcome_alarm_desc">Требуется для того, чтобы Азан воспроизводился точно вовремя без задержек.</string>
+    <string name="welcome_grant_btn">Предоставить разрешения</string>
+    <string name="welcome_continue_btn">Продолжить</string>
+    <string name="welcome_personalize">Персонализация</string>
+    <string name="welcome_personalize_desc">Настройте свои параметры молитв и расчетов</string>
+    <string name="welcome_audio_desc">Установите свои предпочтения для призыва к молитве</string>
+    <string name="welcome_adhan_audio">Аудио Азана</string>
+    <string name="welcome_adhan_audio_desc">Воспроизводить аудиопризыв к молитве</string>
+    <string name="welcome_select_sound">Выберите звук</string>
+    <string name="welcome_skip_btn">Все равно продолжить</string>
+    <string name="welcome_permission_later_info">Вы всегда можете управлять этими разрешениями позже в настройках.</string>
+    <string name="welcome_general_settings">Общие настройки</string>
+    <string name="welcome_adhan_audio_header">Азан и аудио</string>
+    <string name="welcome_battery_optimized">Оптимизировано для надежности</string>
+    <string name="welcome_battery_optimize_desc">Критически важно для своевременного воспроизведения Азана. Оптимизация батареи может задерживать или блокировать запланированные оповещения.</string>
+
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">Время для</string>
+    <string name="adhan_stop">ОСТАНОВИТЬ АЗАН</string>
+    <string name="adhan_playing">Азан</string>
+    <string name="adhan_sounding">Звучит сейчас</string>
+    <string name="adhan_upcoming">Следующий азан</string>
+    <string name="adhan_test_alarm">Проверить будильник</string>
+    <string name="adhan_test_desc">Имитация срабатывания азана</string>
+    <string name="adhan_stop_test">ОТМЕНИТЬ ПРОВЕРКУ</string>
+    <string name="adhan_metadata_title_format">Азан: %s</string>
 
     <!-- Donations -->
     <string name="settings_donate">Поддержать разработчика</string>
     <string name="donate_title">Поддержать Vaktiva</string>
-    <string name="donate_description">Vaktiva — это бесплатное приложение, созданное с заботой. Ваша поддержка помогает нам оставаться без рекламы и развиваться дальше.</string>
-    <string name="donate_header">Развивайте Vaktiva вместе с нами</string>
-    <string name="donate_desc">Vaktiva — это проект с открытым исходным кодом без рекламы. Ваша помощь идет на оплату серверов и разработку новых функций для всех мусульман.</string>
-    <string name="donate_footer">Ваша щедрость поддерживает жизнь этого проекта. Пусть это станет благом для всех.</string>
-    <string name="donate_button">Поддержать</string>
+    <string name="donate_description">Vaktiva — бесплатное приложение, разработанное с заботой. Ваша поддержка помогает ему оставаться без рекламы и позволяет развиваться в будущем.</string>
+    <string name="donate_header">Развитие Vaktiva</string>
+    <string name="donate_desc">Vaktiva имеет открытый исходный код и не содержит рекламы. Ваши пожертвования помогают покрывать расходы на сервер и продолжать разработку, чтобы предоставить лучший опыт молитв для всех.</string>
+    <string name="donate_footer">Ваша щедрость поддерживает этот проект. Пусть это будет источником постоянного благословения.</string>
+    <string name="donate_button">Пожертвовать</string>
     <string name="donate_thank_you">Спасибо за вашу поддержку!</string>
-    <string name="donate_error">Ошибка оплаты. Пожалуйста, попробуйте еще раз.</string>
+    <string name="donate_error">Ошибка пожертвования. Пожалуйста, попробуйте еще раз.</string>
     <string name="donate_billing_error">Не удалось подключиться к платежному сервису</string>
-    <string name="rate_title">Оцените Vaktiva</string>
-    <string name="rate_desc">Если вам нравится Vaktiva, пожалуйста, поставьте нам 5 звезд в Google Play. Это поможет большему числу людей узнать о приложении!</string>
+    <string name="rate_title">Оценить Vaktiva</string>
+    <string name="rate_desc">Если вам нравится Vaktiva, пожалуйста, найдите минутку, чтобы оценить его на 5 звезд в Google Play. Это помогает нам охватить больше людей!</string>
     <string name="rate_button">Поставить 5 звезд</string>
-
-    <!-- Pre-Adhan Notification Channel -->
-    <string name="pre_adhan_channel_name">Предупреждения перед Азаном</string>
-    <string name="pre_adhan_channel_description">Уведомления, показываемые до наступления времени намаза.</string>
-
-    <!-- Audio Settings Screen -->
-    <string name="cd_back">Назад</string>
-    <string name="audio_select_prayer_prompt">Выберите время намаза для настройки</string>
-    <string name="audio_header_specific">Азан для: %1$s</string>
-    <string name="audio_header_all_prayers">Все намазы</string>
-    <string name="audio_header_global">Выберите звук Азана (общий)</string>
-    <string name="audio_supported_formats">Поддерживаются: MP3, AAC, WAV, OGG</string>
-    <string name="audio_minutes_before">Минут до начала:</string>
-    <string name="audio_individual_sounds_title">Звуки для каждого намаза</string>
-    <string name="audio_individual_sounds_desc">Установите разные звуки Азана для каждого времени намаза</string>
-    <string name="audio_preview_stop">Остановить</string>
-    <string name="audio_preview_play">Прослушать</string>
-    <string name="audio_built_in">Встроенный</string>
-    <string name="audio_delete_description">Удалить аудиофайл</string>
-    <string name="audio_selected_description">Выбрано</string>
-
-    <!-- Fajr Sunrise Alarm -->
-    <string name="audio_fajr_sunrise_alarm">Будильник на Фаджр (до восхода)</string>
-    <string name="audio_fajr_sunrise_alarm_desc">Определять время будильника на Фаджр относительно времени восхода (кроме Рамадана).</string>
-
-    <!-- Settings Screen Items -->
-    <string name="settings_notifications_sound">Уведомления и звук</string>
-    <string name="settings_play_adhan">Воспроизводить Азан</string>
-    <string name="settings_play_adhan_desc">Проигрывать звук азана, когда наступает время намаза</string>
-    <string name="settings_adhan_sound_selection">Выбор звука Азана</string>
-    <string name="settings_adhan_sound_selection_desc">Выберите звук, который будет проигрываться во время намаза</string>
-    <string name="settings_reliability">Надежность и оптимизация</string>
-    <string name="settings_battery_opt">Оптимизация батареи</string>
-    <string name="settings_battery_opt_enabled">Оптимизировано для надежности</string>
-    <string name="settings_battery_opt_disabled">Нажмите, чтобы отключить оптимизацию для точной работы Азана</string>
-    <string name="settings_exact_alarm_title">Точные будильники</string>
-    <string name="settings_exact_alarm_desc">Необходимо для своевременных оповещений о времени намаза</string>
-    <string name="settings_data_management">Управление данными</string>
-    <string name="settings_delete_history">Удалить историю намазов</string>
-    <string name="settings_delete_history_desc">Удалить все прошлые данные о намазах для очистки места</string>
-    <string name="settings_delete_history_confirm_title">Удалить историю?</string>
-    <string name="settings_delete_history_confirm_desc">Это навсегда удалит все записи о намазах до сегодняшнего дня. Это действие нельзя отменить.</string>
-
-    <!-- Adhan Screen -->
-    <string name="adhan_its_time_for">Пришло время для</string>
-    <string name="adhan_stop">ОСТАНОВИТЬ АЗАН</string>
-    <string name="adhan_default_prayer">Намаз</string>
-    <string name="adhan_playing">Азан</string>
-    <string name="adhan_sounding">Звучит сейчас</string>
-    <string name="adhan_upcoming">Следующий азан</string>
-    <string name="adhan_test_alarm">Проверка будильника</string>
-    <string name="adhan_test_desc">Симуляция срабатывания азана</string>
-    <string name="adhan_stop_test">ОТМЕНИТЬ ТЕСТ</string>
-
-    <!-- Notification Strings -->
-    <string name="notification_adhan_muted">Азан отключен</string>
-    <string name="notification_adhan_skipped_text">Азан для намаза %s пропущен.</string>
-    <string name="notification_upcoming_adhan_title">Ближайший азан: %s</string>
-    <string name="notification_upcoming_adhan_text">Азан прозвучит через %d мин.</string>
-    <string name="notification_skip_action">ПРОПУСТИТЬ В ЭТОТ РАЗ</string>
-    <string name="notification_adhan_title">Азан: %s</string>
-    <string name="notification_adhan_content">Пришло время намаза</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Мухаррам</string>
     <string name="hijri_month_2">Сафар</string>
     <string name="hijri_month_3">Раби аль-авваль</string>
-    <string name="hijri_month_4">Раби ас-сани</string>
+    <string name="hijri_month_4">Раби аль-ахир</string>
     <string name="hijri_month_5">Джумада аль-уля</string>
     <string name="hijri_month_6">Джумада аль-ахира</string>
     <string name="hijri_month_7">Раджаб</string>
@@ -254,20 +253,29 @@
     <string name="hijri_month_10">Шавваль</string>
     <string name="hijri_month_11">Зу-ль-када</string>
     <string name="hijri_month_12">Зу-ль-хиджа</string>
-    <string name="hijri_suffix">г.х.</string>
+    <string name="hijri_suffix">г. х.</string>
 
     <!-- Religious Days -->
-    <string name="rel_day_3_months">Начало трех священных месяцев</string>
+    <string name="rel_day_3_months">Начало трех месяцев</string>
     <string name="rel_day_regaip">Ночь Рагаиб</string>
-    <string name="rel_day_mirac">Исра и Мирадж</string>
+    <string name="rel_day_mirac">Ночь Мирадж</string>
     <string name="rel_day_berat">Ночь Бараат</string>
-    <string name="rel_day_first_tarawih">Первый таравих</string>
+    <string name="rel_day_first_tarawih">Первый Таравих</string>
     <string name="rel_day_ramadan_start">Начало Рамадана</string>
     <string name="rel_day_kadir">Ночь Предопределения</string>
     <string name="rel_day_eid_eve">Канун праздника</string>
     <string name="rel_day_ramadan_eid">Ураза-байрам</string>
     <string name="rel_day_sacrifice_eid">Курбан-байрам</string>
-    <string name="rel_day_hijri_new_year">Новый год по Хиджре</string>
+    <string name="rel_day_hijri_new_year">Мусульманский Новый год</string>
     <string name="rel_day_ashura">День Ашура</string>
     <string name="rel_day_mawlid">Мавлид ан-Наби</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">Азан отключен</string>
+    <string name="notification_adhan_skipped_text">Азан для %s пропущен.</string>
+    <string name="notification_upcoming_adhan_title">Следующий Азан: %s</string>
+    <string name="notification_upcoming_adhan_text">Азан будет воспроизведен через %d мин.</string>
+    <string name="notification_skip_action">ПРОПУСТИТЬ ЭТУ МОЛИТВУ</string>
+    <string name="notification_adhan_title">Азан: %s</string>
+    <string name="notification_adhan_content">Время молитвы</string>
 </resources>

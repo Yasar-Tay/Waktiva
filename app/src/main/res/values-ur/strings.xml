@@ -6,15 +6,16 @@
     <string name="nav_qibla">قبلہ</string>
     <string name="nav_settings">ترتیبات</string>
     <string name="nav_donate">عطیہ کریں</string>
+    <string name="cd_back">واپس</string>
 
     <!-- Qibla Screen -->
+    <string name="qibla_label">قبلہ</string>
     <string name="qibla_compass">کمپاس</string>
     <string name="qibla_map">نقشہ</string>
     <string name="qibla_mecca_aligned">مکہ کی سمت میں</string>
     <string name="qibla_rotate_phone">فون گھمائیں</string>
     <string name="qibla_direction">قبلہ: %d°</string>
     <string name="qibla_locating">مقام تلاش کیا جا رہا ہے...</string>
-    <string name="qibla_label">قبلہ</string>
     <string name="qibla_heading">رخ</string>
     <string name="qibla_signal">سگنل</string>
     <string name="qibla_standard">معیاری</string>
@@ -51,6 +52,16 @@
     <string name="home_adhan_muted">%s کے لیے اذان خاموش کر دی گئی</string>
     <string name="home_adhan_unmuted">%s کے لیے اذان سنائی دے گی</string>
 
+    <!-- System Health & Warnings -->
+    <string name="health_title">سسٹم کی صحت</string>
+    <string name="health_issues_detected">مسائل پائے گئے</string>
+    <string name="health_gps_off">GPS عالمی سطح پر غیر فعال ہے۔ نماز کے اوقات اپ ڈیٹ کرنے کے لیے مقام کی خدمات فعال کریں۔</string>
+    <string name="health_channels_muted">سسٹم سیٹنگز میں اذان نوٹیفکیشن چینلز خاموش ہیں۔</string>
+    <string name="health_dnd_active">Do Not Disturb فعال ہے۔ اذان کی آوازیں بلاک ہو سکتی ہیں۔</string>
+    <string name="health_fix_now">ابھی ٹھیک کریں</string>
+    <string name="health_no_internet">انٹرنیٹ کنکشن نہیں ہے۔ Vaktiva ذخیرہ شدہ ڈیٹا استعمال کر رہا ہے۔ براہ کرم نماز کے اوقات کو تازہ کرنے کے لیے منسلک ہوں۔</string>
+    <string name="health_status_ok">تمام سسٹم فعال ہیں</string>
+
     <!-- Prayer Names -->
     <string name="prayer_fajr">فجر</string>
     <string name="prayer_sunrise">طلوع آفتاب</string>
@@ -58,6 +69,7 @@
     <string name="prayer_asr">عصر</string>
     <string name="prayer_maghrib">مغرب</string>
     <string name="prayer_isha">عشاء</string>
+    <string name="adhan_default_prayer">نماز</string>
 
     <!-- Accuracy Labels -->
     <string name="accuracy_high">بہترین</string>
@@ -65,21 +77,18 @@
     <string name="accuracy_low">کم</string>
     <string name="accuracy_poor">ناقص</string>
 
-    <!-- Settings -->
+    <!-- General Settings -->
     <string name="settings_title">ترتیبات</string>
+    <string name="settings_preferences">ترجیحات</string>
     <string name="settings_permissions">اجازتیں</string>
-    <string name="settings_calculation">حساب کی ترتیبات</string>
-    <string name="settings_madhab">مذہب</string>
-    <string name="settings_method">طریقہ حساب</string>
     <string name="settings_manage_system">سسٹم سیٹنگز میں انتظام کریں</string>
     <string name="settings_location_access">مقام تک رسائی</string>
-    <string name="settings_location_desc">نماز کے درست اوقات اور قبلہ کی سمت کے لیے ضروری ہے۔</string>
+    <string name="settings_location_desc">نماز کے اوقات کے حساب کتاب کے لیے انتہائی اہم ہے۔ اس کے بغیر، ایپ آپ کے مقام کے اوقات حاصل نہیں کر سکتی اور بیکار ہو جاتی ہے۔</string>
     <string name="settings_notifications">اطلاعات</string>
-    <string name="settings_notifications_desc">نماز کے وقت کے الرٹس دکھانے کے لیے ضروری ہے۔</string>
+    <string name="settings_notifications_desc">نماز کے وقت کے الرٹس اور اذان کے نوٹیفکیشن دکھانے کے لیے ضروری ہے۔</string>
     <string name="settings_granted">دی گئی</string>
     <string name="settings_denied">منع کی گئی</string>
     <string name="settings_language">ایپ کی زبان</string>
-    <string name="settings_preferences">ترجیحات</string>
     <string name="settings_cancel">منسوخ</string>
     <string name="settings_confirm">تصدیق</string>
 
@@ -99,11 +108,12 @@
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
-    <!-- Madhab Options -->
+    <!-- Calculation Settings -->
+    <string name="settings_calculation">حساب کی ترتیبات</string>
+    <string name="settings_madhab">مذہب</string>
+    <string name="settings_method">طریقہ حساب</string>
     <string name="madhab_shafi">شافعی / معیاری (مالکی، حنبلی)</string>
     <string name="madhab_hanafi">حنفی</string>
-
-    <!-- Methods -->
     <string name="method_mwl">رابطہ عالم اسلامی</string>
     <string name="method_isna">اسلامک سوسائٹی آف نارتھ امریکہ (ISNA)</string>
     <string name="method_egypt">مصری جنرل اتھارٹی آف سروے</string>
@@ -116,12 +126,67 @@
     <string name="method_singapore">مجلس علماء اسلام سنگاپور</string>
     <string name="method_turkey">ترکی (دیانت)</string>
 
-    <!-- Audio Settings -->
+    <!-- Audio & Notification Settings -->
+    <string name="settings_notifications_sound">اطلاعات اور آواز</string>
+    <string name="settings_play_adhan">اذان کی آڈیو چلائیں</string>
+    <string name="settings_play_adhan_desc">نماز کا وقت ہونے پر اذان کی آواز چلائیں</string>
+    <string name="settings_adhan_sound_selection">اذان کی آواز کا انتخاب</string>
+    <string name="settings_adhan_sound_selection_desc">نماز کے اوقات میں چلنے والی آواز منتخب کریں</string>
+
     <string name="audio_settings_title">اذان کی آوازیں</string>
+    <string name="audio_header_global">اذان کی آواز منتخب کریں (عمومی)</string>
+    <string name="audio_header_all_prayers">تمام نمازیں</string>
+    <string name="audio_header_specific">%1$s کے لیے اذان</string>
+    <string name="audio_select_prayer_prompt">نماز منتخب کریں</string>
+    <string name="audio_individual_sounds_title">نمازوں کی الگ الگ آوازیں</string>
+    <string name="audio_individual_sounds_desc">ہر نماز کے لیے الگ اذان ترتیب دیں</string>
+
+    <string name="audio_setting_default">ڈیفالٹ اذان</string>
+    <string name="audio_setting_fajr">فجر کی اذان</string>
+    <string name="audio_setting_dhuhr">ظہر کی اذان</string>
+    <string name="audio_setting_asr">عصر کی اذان</string>
+    <string name="audio_setting_maghrib">مغرب کی اذان</string>
+    <string name="audio_setting_isha">عشاء کی اذان</string>
+
     <string name="audio_add_custom">اپنی آواز شامل کریں</string>
     <string name="audio_delete_confirm">آڈیو فائل حذف کریں؟</string>
+    <string name="audio_delete_description">آڈیو فائل حذف کریں</string>
+    <string name="audio_supported_formats">سپورٹڈ: MP3, AAC, WAV, OGG</string>
+    <string name="audio_preview_play">آواز سنیں</string>
+    <string name="audio_preview_stop">آواز بند کریں</string>
+    <string name="audio_built_in">بلٹ ان</string>
+    <string name="audio_selected_description">منتخب کردہ</string>
+    <string name="audio_minutes_before">منٹ پہلے:</string>
 
-    <!-- Welcome Screen -->
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">فجر کا الارم (طلوع آفتاب سے پہلے)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">طلوع آفتاب کے وقت کے مطابق فجر کے الارم کا وقت طے کریں (رمضان کے علاوہ)۔</string>
+
+    <!-- Battery & Reliability Settings -->
+    <string name="settings_reliability">کارکردگی اور بہتری</string>
+    <string name="settings_battery_opt">بیٹری آپٹیمائزیشن</string>
+    <string name="settings_battery_opt_enabled">بہترین کارکردگی کے لیے تیار</string>
+    <string name="settings_battery_opt_disabled">اذان کو وقت پر چلانے کے لیے ضروری ہے۔ بیٹری آپٹیمائزیشن مقررہ الرٹس میں تاخیر یا انہیں بلاک کر سکتی ہے۔</string>
+    <string name="settings_exact_alarm_title">بر وقت الارم</string>
+    <string name="settings_exact_alarm_desc">نماز کے اوقات کی درست نوٹیفکیشن اور بر وقت اذان کے لیے ضروری ہے۔</string>
+
+    <!-- Data Management -->
+    <string name="settings_data_management">ڈیٹا مینجمنٹ</string>
+    <string name="settings_delete_history">نماز کی ہسٹری حذف کریں</string>
+    <string name="settings_delete_history_desc">جگہ بنانے کے لیے گزشتہ تمام ڈیٹا حذف کریں</string>
+    <string name="settings_delete_history_confirm_title">ہسٹری حذف کریں؟</string>
+    <string name="settings_delete_history_confirm_desc">اس سے آج سے پہلے کا تمام ریکارڈ ہمیشہ کے لیے ختم ہو جائے گا۔ یہ عمل واپس نہیں لیا جا سکتا۔</string>
+
+    <!-- Pre-Adhan Warning -->
+    <string name="settings_pre_adhan_warning">اذان سے پہلے اطلاع</string>
+    <string name="settings_pre_adhan_warning_summary">نماز کے وقت سے پہلے اطلاع حاصل کریں۔</string>
+    <string name="pre_adhan_notification_title">نماز کا وقت قریب ہے</string>
+    <string name="pre_adhan_notification_text">%s نماز کا وقت 5 منٹ میں شروع ہو رہا ہے۔</string>
+    <string name="pre_adhan_cancel_action">ختم کریں</string>
+    <string name="pre_adhan_channel_name">اذان سے پہلے کی اطلاعات</string>
+    <string name="pre_adhan_channel_description">نماز کے وقت سے پہلے دکھائی جانے والی اطلاع۔</string>
+
+    <!-- Welcome / Onboarding -->
     <string name="welcome_title">وقت ایوا میں خوش آمدید</string>
     <string name="welcome_desc">نماز کے اوقات کے لیے آپ کا پیشہ ور ساتھی، جو درستگی اور جدید ڈیزائن کے ساتھ تیار کیا گیا ہے۔</string>
     <string name="welcome_begin">سیٹ اپ شروع کریں</string>
@@ -129,9 +194,9 @@
     <string name="welcome_precision_settings">درستگی کی ترتیبات</string>
     <string name="welcome_precision_desc">آپ کی بہتر خدمت کے لیے ایپ کو ان کی ضرورت ہے</string>
     <string name="welcome_loc_title">درست مقام</string>
-    <string name="welcome_loc_desc">آپ کے مقام کے مطابق نماز کے درست اوقات معلوم کرنے کے لیے استعمال ہوتا ہے۔</string>
+    <string name="welcome_loc_desc">نماز کے اوقات کے حساب کتاب کے لیے انتہائی اہم ہے۔ اس کے بغیر، ایپ آپ کے مقام کے اوقات حاصل نہیں کر سکتی اور بیکار ہو جاتی ہے۔</string>
     <string name="welcome_notif_title">اذان کے الرٹس</string>
-    <string name="welcome_notif_desc">نماز کے وقت اطلاع بھیجنے کے لیے ضروری ہے۔</string>
+    <string name="welcome_notif_desc">نماز کے وقت اطلاع بھیجنے اور اذان سنانے کے لیے ضروری ہے۔</string>
     <string name="welcome_alarm_title">درست الارم</string>
     <string name="welcome_alarm_desc">اذان کو بغیر کسی تاخیر کے بالکل وقت پر چلانے کے لیے ضروری ہے۔</string>
     <string name="welcome_grant_btn">اجازتیں دیں</string>
@@ -143,28 +208,24 @@
     <string name="welcome_adhan_audio_desc">نماز کے وقت اذان چلائیں</string>
     <string name="welcome_select_sound">آواز منتخب کریں</string>
     <string name="welcome_skip_btn">ویسے ہی جاری رکھیں</string>
-    <string name="welcome_permission_later_info">آپ کسی بھی وقت سیٹنگز اسکرین میں جا کر ان اجازتوں کا انتظام کر سکتے ہیں۔</string>
+    <string name="welcome_permission_later_info">آپ کسی भी وقت سیٹنگز اسکرین میں جا کر ان اجازتوں کا انتظام کر سکتے ہیں۔</string>
     <string name="welcome_general_settings">عمومی ترتیبات</string>
     <string name="welcome_adhan_audio_header">اذان اور آواز</string>
     <string name="welcome_battery_optimized">بہترین کارکردگی کے لیے تیار</string>
-    <string name="welcome_battery_optimize_desc">بر وقت اذان کے لیے بیٹری آپٹیمائزیشن بند کریں</string>
+    <string name="welcome_battery_optimize_desc">اذان کو وقت پر چلانے کے لیے ضروری ہے۔ بیٹری آپٹیمائزیشن مقررہ الرٹس میں تاخیر یا انہیں بلاک کر سکتی ہے۔</string>
 
-    <!-- Adhan Audio per prayer (from EPIC 2) -->
-    <string name="audio_setting_fajr">فجر کی اذان</string>
-    <string name="audio_setting_dhuhr">ظہر کی اذان</string>
-    <string name="audio_setting_asr">عصر کی اذان</string>
-    <string name="audio_setting_maghrib">مغرب کی اذان</string>
-    <string name="audio_setting_isha">عشاء کی اذان</string>
-    <string name="audio_setting_default">ڈیفالٹ اذان</string>
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">وقت ہو گیا ہے</string>
+    <string name="adhan_stop">اذان بند کریں</string>
+    <string name="adhan_playing">اذان</string>
+    <string name="adhan_sounding">اذان ہو رہی ہے</string>
+    <string name="adhan_upcoming">اگلی اذان</string>
+    <string name="adhan_test_alarm">ٹیسٹ الارم</string>
+    <string name="adhan_test_desc">اذان کے عمل کی جانچ کی جا رہی ہے</string>
+    <string name="adhan_stop_test">ٹیسٹ منسوخ کریں</string>
+    <string name="adhan_metadata_title_format">%s اذان</string>
 
-    <!-- Pre-Adhan Warning (from EPIC 2) -->
-    <string name="settings_pre_adhan_warning">اذان سے پہلے اطلاع</string>
-    <string name="settings_pre_adhan_warning_summary">نماز کے وقت سے پہلے اطلاع حاصل کریں۔</string>
-    <string name="pre_adhan_notification_title">نماز کا وقت قریب ہے</string>
-    <string name="pre_adhan_notification_text">%s نماز کا وقت 5 منٹ میں شروع ہو رہا ہے۔</string>
-    <string name="pre_adhan_cancel_action">ختم کریں</string>
-
-    <!-- Donations (from EPIC 6) -->
+    <!-- Donations -->
     <string name="settings_donate">ڈویلپر کی حمایت کریں</string>
     <string name="donate_title">وقت ایوا کی حمایت کریں</string>
     <string name="donate_description">وقت ایوا ایک مفت ایپ ہے، جسے بڑی محنت سے تیار کیا گیا ہے۔ آپ کا تعاون اسے اشتہارات سے پاک رکھنے اور مستقبل کی ترقی میں مدد دیتا ہے۔</string>
@@ -178,68 +239,6 @@
     <string name="rate_title">وقت ایوا کی درجہ بندی کریں</string>
     <string name="rate_desc">اگر آپ کو ایپ پسند آئی ہے تو براہ کرم اسے گوگل پلے پر 5 اسٹار دیں۔ اس سے ہمیں مزید لوگوں تک پہنچنے میں مدد ملتی ہے!</string>
     <string name="rate_button">5 اسٹار دیں</string>
-
-    <!-- Pre-Adhan Notification Channel -->
-    <string name="pre_adhan_channel_name">اذان سے پہلے کی اطلاعات</string>
-    <string name="pre_adhan_channel_description">نماز کے وقت سے پہلے دکھائی جانے والی اطلاع۔</string>
-
-    <!-- Audio Settings Screen -->
-    <string name="cd_back">واپس</string>
-    <string name="audio_select_prayer_prompt">نماز منتخب کریں</string>
-    <string name="audio_header_specific">%1$s کے لیے اذان</string>
-    <string name="audio_header_all_prayers">تمام نمازیں</string>
-    <string name="audio_header_global">اذان کی آواز منتخب کریں (عمومی)</string>
-    <string name="audio_supported_formats">سپورٹڈ: MP3, AAC, WAV, OGG</string>
-    <string name="audio_minutes_before">منٹ پہلے:</string>
-    <string name="audio_individual_sounds_title">نمازوں کی الگ الگ آوازیں</string>
-    <string name="audio_individual_sounds_desc">ہر نماز کے لیے الگ اذان ترتیب دیں</string>
-    <string name="audio_preview_stop">آواز بند کریں</string>
-    <string name="audio_preview_play">آواز سنیں</string>
-    <string name="audio_built_in">بلٹ ان</string>
-    <string name="audio_delete_description">آڈیو فائل حذف کریں</string>
-    <string name="audio_selected_description">منتخب کردہ</string>
-
-    <!-- Fajr Sunrise Alarm -->
-    <string name="audio_fajr_sunrise_alarm">فجر کا الارم (طلوع آفتاب سے پہلے)</string>
-    <string name="audio_fajr_sunrise_alarm_desc">طلوع آفتاب کے وقت کے مطابق فجر کے الارم کا وقت طے کریں (رمضان کے علاوہ)۔</string>
-
-    <!-- Settings Screen Items -->
-    <string name="settings_notifications_sound">اطلاعات اور آواز</string>
-    <string name="settings_play_adhan">اذان چلائیں</string>
-    <string name="settings_play_adhan_desc">نماز کے وقت اذان کی آواز چلائیں</string>
-    <string name="settings_adhan_sound_selection">اذان کی آواز کا انتخاب</string>
-    <string name="settings_adhan_sound_selection_desc">نماز کے اوقات میں چلنے والی آواز منتخب کریں</string>
-    <string name="settings_reliability">کارکردگی اور بہتری</string>
-    <string name="settings_battery_opt">بیٹری آپٹیمائزیشن</string>
-    <string name="settings_battery_opt_enabled">بہترین کارکردگی کے لیے تیار</string>
-    <string name="settings_battery_opt_disabled">بر وقت اذان کے لیے آپٹیمائزیشن بند کرنے کے لیے کلک کریں</string>
-    <string name="settings_exact_alarm_title">بر وقت الارم</string>
-    <string name="settings_exact_alarm_desc">نماز کے اوقات کی درست اطلاع کے لیے ضروری ہے</string>
-    <string name="settings_data_management">ڈیٹا مینجمنٹ</string>
-    <string name="settings_delete_history">نماز کی ہسٹری حذف کریں</string>
-    <string name="settings_delete_history_desc">جگہ بنانے کے لیے گزشتہ تمام ڈیٹا حذف کریں</string>
-    <string name="settings_delete_history_confirm_title">ہسٹری حذف کریں؟</string>
-    <string name="settings_delete_history_confirm_desc">اس سے آج سے پہلے کا تمام ریکارڈ ہمیشہ کے لیے ختم ہو جائے گا۔ یہ عمل واپس نہیں لیا جا سکتا۔</string>
-
-    <!-- Adhan Screen -->
-    <string name="adhan_its_time_for">وقت ہو گیا ہے</string>
-    <string name="adhan_stop">اذان بند کریں</string>
-    <string name="adhan_default_prayer">نماز</string>
-    <string name="adhan_playing">اذان</string>
-    <string name="adhan_sounding">اذان ہو رہی ہے</string>
-    <string name="adhan_upcoming">اگلی اذان</string>
-    <string name="adhan_test_alarm">ٹیسٹ الارم</string>
-    <string name="adhan_test_desc">اذان کے عمل کی جانچ کی جا رہی ہے</string>
-    <string name="adhan_stop_test">ٹیسٹ منسوخ کریں</string>
-
-    <!-- Notification Strings -->
-    <string name="notification_adhan_muted">اذان خاموش کر دی گئی</string>
-    <string name="notification_adhan_skipped_text">%s کے لیے اذان چھوڑ دی گئی ہے۔</string>
-    <string name="notification_upcoming_adhan_title">اگلی اذان: %s</string>
-    <string name="notification_upcoming_adhan_text">اذان %d منٹ میں چلے گی۔</string>
-    <string name="notification_skip_action">صرف اس نماز کے لیے چھوڑ دیں</string>
-    <string name="notification_adhan_title">اذان: %s</string>
-    <string name="notification_adhan_content">نماز کا وقت ہو گیا ہے</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">محرم</string>
@@ -271,4 +270,12 @@
     <string name="rel_day_ashura">یوم عاشورہ</string>
     <string name="rel_day_mawlid">عید میلاد النبی ﷺ</string>
 
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">اذان خاموش کر دی گئی</string>
+    <string name="notification_adhan_skipped_text">%s کے لیے اذان چھوڑ دی گئی ہے۔</string>
+    <string name="notification_upcoming_adhan_title">اگلی اذان: %s</string>
+    <string name="notification_upcoming_adhan_text">اذان %d منٹ میں چلے گی۔</string>
+    <string name="notification_skip_action">صرف اس نماز کے لیے چھوڑ دیں</string>
+    <string name="notification_adhan_title">اذان: %s</string>
+    <string name="notification_adhan_content">نماز کا وقت ہو گیا ہے</string>
 </resources>

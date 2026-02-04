@@ -1,8 +1,11 @@
 package com.ybugmobile.vaktiva.ui.qibla
 
 import android.Manifest
+import android.content.Intent
 import android.content.res.Configuration
 import android.hardware.SensorManager
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -120,7 +123,7 @@ fun QiblaScreen(
                     onCalibrationClick = { showCalibrationDialog = true }
                 )
             } else {
-                LocationRequiredFallback(onGrantClick = { locationPermissionState.launchPermissionRequest() })
+                LocationRequiredFallback(permissionState = locationPermissionState)
             }
         }
 
@@ -504,16 +507,62 @@ fun SwitcherButton(
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun LocationRequiredFallback(onGrantClick: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(32.dp)) {
-            Icon(Icons.Default.LocationOn, null, modifier = Modifier.size(80.dp), tint = MaterialTheme.colorScheme.primary)
+private fun LocationRequiredFallback(permissionState: PermissionState) {
+    val context = LocalContext.current
+    var denialCount by rememberSaveable { mutableIntStateOf(0) }
+
+    fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", context.packageName, null)
+        }
+        context.startActivity(intent)
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                Icons.Default.LocationOn,
+                contentDescription = null,
+                modifier = Modifier.size(80.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
             Spacer(modifier = Modifier.height(24.dp))
-            Text(text = stringResource(R.string.qibla_location_required), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-            Text(text = stringResource(R.string.qibla_location_required_desc), style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                text = stringResource(R.string.qibla_location_required),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = stringResource(R.string.qibla_location_required_desc),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             Spacer(modifier = Modifier.height(32.dp))
-            Button(onClick = onGrantClick, shape = RoundedCornerShape(16.dp)) {
+            Button(
+                onClick = {
+                    if (denialCount >= 2 || (permissionState.status as? PermissionStatus.Denied)?.shouldShowRationale == true) {
+                        openAppSettings()
+                    } else {
+                        permissionState.launchPermissionRequest()
+                        denialCount++
+                    }
+                },
+                shape = RoundedCornerShape(16.dp)
+            ) {
                 Text(stringResource(R.string.qibla_grant_permission))
             }
         }

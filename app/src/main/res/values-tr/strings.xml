@@ -1,45 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App & Navigation -->
     <string name="app_name">Vaktiva</string>
+
+    <!-- Navigation Tabs -->
     <string name="nav_home">Ana Sayfa</string>
     <string name="nav_qibla">Kıble</string>
     <string name="nav_settings">Ayarlar</string>
     <string name="nav_donate">Bağış Yap</string>
     <string name="cd_back">Geri</string>
-
-    <!-- Prayer Names -->
-    <string name="prayer_fajr">İmsak</string>
-    <string name="prayer_sunrise">Güneş</string>
-    <string name="prayer_dhuhr">Öğle</string>
-    <string name="prayer_asr">İkindi</string>
-    <string name="prayer_maghrib">Akşam</string>
-    <string name="prayer_isha">Yatsı</string>
-    <string name="adhan_default_prayer">Namaz</string>
-
-    <!-- Home Screen -->
-    <string name="home_unknown_location">Bilinmeyen Konum</string>
-    <string name="home_next_prayer">%s</string>
-    <string name="home_remaining_time">Vaktin Çıkmasına</string>
-    <string name="home_permissions_required">İzinler Gerekli</string>
-    <string name="home_permissions_desc">Uygulamanın doğru çalışması için Konum ve Bildirim izinleri gereklidir.</string>
-    <string name="home_grant_permissions">İzinleri Ver</string>
-    <string name="home_refresh_success">Namaz vakitleri güncellendi</string>
-    <string name="home_refresh_error">Vakitler güncellenemedi</string>
-    <string name="home_prayer_provider">Kaynak: </string>
-    <string name="home_skip_adhan">Sessize Al</string>
-    <string name="home_unmute_adhan">Sesi Aç</string>
-    <string name="home_return_to_today">Bugüne Dön</string>
-    <string name="home_tomorrow_is">Yarın %s</string>
-    <string name="home_today_is">Bugün %s</string>
-    <string name="home_adhan_muted">%s için ezan sessize alındı</string>
-    <string name="home_adhan_unmuted">%s için ezan okunacak</string>
-
-    <!-- Accuracy Labels -->
-    <string name="accuracy_high">Yüksek</string>
-    <string name="accuracy_med">Orta</string>
-    <string name="accuracy_low">Düşük</string>
-    <string name="accuracy_poor">Zayıf</string>
 
     <!-- Qibla Screen -->
     <string name="qibla_label">Kıble</string>
@@ -67,18 +34,63 @@
     <string name="qibla_calibrate">KALİBRE ET</string>
     <string name="qibla_interference_tip">İpucu: Binaların içindeki metal yapılar pusulayı etkileyebilir. En iyi hassasiyet için 8 çizecek şekilde kalibrasyon yapın.</string>
 
+    <!-- Home Screen -->
+    <string name="home_unknown_location">Bilinmeyen Konum</string>
+    <string name="home_next_prayer">%s</string>
+    <string name="home_remaining_time">Vaktin Çıkmasına</string>
+    <string name="home_permissions_required">İzinler Gerekli</string>
+    <string name="home_permissions_desc">Uygulamanın doğru çalışması için Konum ve Bildirim izinleri gereklidir.</string>
+    <string name="home_grant_permissions">İzinleri Ver</string>
+    <string name="home_refresh_success">Namaz vakitleri güncellendi</string>
+    <string name="home_refresh_error">Vakitler güncellenemedi</string>
+    <string name="home_prayer_provider">Kaynak: </string>
+    <string name="home_skip_adhan">Sessize Al</string>
+    <string name="home_unmute_adhan">Sesi Aç</string>
+    <string name="home_return_to_today">Bugüne Dön</string>
+    <string name="home_tomorrow_is">Yarın: %s</string>
+    <string name="home_today_is">Bugün %s</string>
+    <string name="home_adhan_muted">%s için ezan sessize alındı</string>
+    <string name="home_adhan_unmuted">%s için ezan okunacak</string>
+
+    <!-- System Health & Warnings -->
+    <string name="health_title">Sistem Sağlığı</string>
+    <string name="health_issues_detected">Sorunlar Tespit Edildi</string>
+    <string name="health_gps_off">GPS kapalı. Vakitleri güncellemek için konum servislerini açın.</string>
+    <string name="health_channels_muted">Ezan bildirim kanalları sistem ayarlarında sessize alınmış.</string>
+    <string name="health_dnd_active">Rahatsız Etmeyin modu açık. Ezan sesleri engellenebilir.</string>
+    <string name="health_fix_now">Hemen Düzelt</string>
+    <string name="health_no_internet">İnternet Bağlantısı Yok. Vaktiva kayıtlı verileri kullanıyor. Vakitleri güncellemek için lütfen internete bağlanın.</string>
+    <string name="health_status_ok">Tüm sistemler çalışıyor</string>
+
+    <!-- Prayer Names -->
+    <string name="prayer_fajr">İmsak</string>
+    <string name="prayer_sunrise">Güneş</string>
+    <string name="prayer_dhuhr">Öğle</string>
+    <string name="prayer_asr">İkindi</string>
+    <string name="prayer_maghrib">Akşam</string>
+    <string name="prayer_isha">Yatsı</string>
+    <string name="adhan_default_prayer">Namaz</string>
+
+    <!-- Accuracy Labels -->
+    <string name="accuracy_high">Yüksek</string>
+    <string name="accuracy_med">Orta</string>
+    <string name="accuracy_low">Düşük</string>
+    <string name="accuracy_poor">Zayıf</string>
+
     <!-- General Settings -->
     <string name="settings_title">Ayarlar</string>
     <string name="settings_preferences">Tercihler</string>
     <string name="settings_permissions">İzinler</string>
     <string name="settings_manage_system">Sistem Ayarlarından Yönet</string>
     <string name="settings_location_access">Konum Erişimi</string>
-    <string name="settings_location_desc">Doğru namaz vakitleri ve Kıble yönü için gereklidir.</string>
+    <string name="settings_location_desc">Namaz vakitlerinin hesaplanması için kritiktir. Bu izin olmadan uygulama konumunuzu belirleyemez ve vakitleri getiremez.</string>
     <string name="settings_notifications">Bildirimler</string>
-    <string name="settings_notifications_desc">Namaz vakti uyarılarını göstermek için gereklidir.</string>
+    <string name="settings_notifications_desc">Namaz vakti uyarılarını ve Ezan bildirimlerini göstermek için gereklidir.</string>
     <string name="settings_granted">Verildi</string>
     <string name="settings_denied">Reddedildi</string>
     <string name="settings_language">Uygulama Dili</string>
+    <string name="settings_cancel">İptal</string>
+    <string name="settings_confirm">Onayla</string>
 
     <!-- Language Options -->
     <string name="lang_system">Sistem Varsayılanı</string>
@@ -92,7 +104,7 @@
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">فarsı</string>
+    <string name="lang_fa">فارسی</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -112,7 +124,7 @@
     <string name="method_kuwait">Kuveyt</string>
     <string name="method_qatar">Katar</string>
     <string name="method_singapore">Singapur İslami Dini Meclisi</string>
-    <string name="method_turkey">Türkiye (Diyanet İşleri Başkanlığı)</string>
+    <string name="method_turkey">Türkiye (Diyanet)</string>
 
     <!-- Audio & Notification Settings -->
     <string name="settings_notifications_sound">Bildirimler ve Ses</string>
@@ -154,9 +166,9 @@
     <string name="settings_reliability">Güvenilirlik ve Optimizasyon</string>
     <string name="settings_battery_opt">Pil Optimizasyonu</string>
     <string name="settings_battery_opt_enabled">Güvenilirlik için optimize edildi</string>
-    <string name="settings_battery_opt_disabled">Güvenilir ezanlar için optimizasyonu kapatmak üzere tıklayın</string>
+    <string name="settings_battery_opt_disabled">Ezanın vaktinde okunması için kritiktir. Pil optimizasyonları alarmları geciktirebilir veya engelleyebilir.</string>
     <string name="settings_exact_alarm_title">Tam Zamanlı Alarmlar</string>
-    <string name="settings_exact_alarm_desc">Hassas namaz vakti bildirimleri için gereklidir</string>
+    <string name="settings_exact_alarm_desc">Hassas namaz vakti bildirimleri ve ezanın zamanında okunması için gereklidir.</string>
 
     <!-- Data Management -->
     <string name="settings_data_management">Veri Yönetimi</string>
@@ -164,8 +176,6 @@
     <string name="settings_delete_history_desc">Yer açmak için geçmişteki tüm namaz verilerini sil</string>
     <string name="settings_delete_history_confirm_title">Geçmiş Silinsin mi?</string>
     <string name="settings_delete_history_confirm_desc">Bu işlem bugünden önceki tüm namaz kayıtlarını kalıcı olarak silecektir. Bu işlem geri alınamaz.</string>
-    <string name="settings_cancel">İptal</string>
-    <string name="settings_confirm">Onayla</string>
 
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Ezan Öncesi Uyarı</string>
@@ -184,9 +194,9 @@
     <string name="welcome_precision_settings">Hassasiyet Ayarları</string>
     <string name="welcome_precision_desc">Vaktiva size daha iyi hizmet verebilmek için bunlara ihtiyaç duyar</string>
     <string name="welcome_loc_title">Doğru Konum</string>
-    <string name="welcome_loc_desc">Koordinatlarınıza göre kesin namaz vakitlerini hesaplamak için kullanılır.</string>
+    <string name="welcome_loc_desc">Namaz vakitlerinin hesaplanması için kritiktir. Bu izin olmadan uygulama vakitleri getiremez.</string>
     <string name="welcome_notif_title">Ezan Uyarıları</string>
-    <string name="welcome_notif_desc">Namaz vakti geldiğinde bildirim göndermek için gereklidir.</string>
+    <string name="welcome_notif_desc">Namaz vakti geldiğinde bildirim göndermek ve ezanı çalmak için gereklidir.</string>
     <string name="welcome_alarm_title">Tam Zamanında Alarmlar</string>
     <string name="welcome_alarm_desc">Ezanın gecikme olmadan tam vaktinde okunması için gereklidir.</string>
     <string name="welcome_grant_btn">İzinleri Ver</string>
@@ -202,9 +212,9 @@
     <string name="welcome_general_settings">Genel Ayarlar</string>
     <string name="welcome_adhan_audio_header">Ezan ve Ses</string>
     <string name="welcome_battery_optimized">Güvenilirlik için optimize edildi</string>
-    <string name="welcome_battery_optimize_desc">Güvenilir Ezanlar için optimizasyonu kapatın</string>
+    <string name="welcome_battery_optimize_desc">Ezanın vaktinde okunması için kritiktir. Pil optimizasyonları alarmları engelleyebilir.</string>
 
-    <!-- Adhan Playing Screen -->
+    <!-- Adhan Screen -->
     <string name="adhan_its_time_for">Vakti Geldi:</string>
     <string name="adhan_stop">EZANI DURDUR</string>
     <string name="adhan_playing">Ezan</string>
@@ -239,10 +249,10 @@
     <string name="hijri_month_6">Cemaziyelahir</string>
     <string name="hijri_month_7">Recep</string>
     <string name="hijri_month_8">Şaban</string>
+    <string name="hijri_month_9">Ramazan</string>
     <string name="hijri_month_10">Şevval</string>
     <string name="hijri_month_11">Zilkade</string>
     <string name="hijri_month_12">Zilhicce</string>
-    <string name="hijri_month_9">Ramazan</string>
     <string name="hijri_suffix">H</string>
 
     <!-- Religious Days -->
@@ -260,7 +270,7 @@
     <string name="rel_day_ashura">Aşure Günü</string>
     <string name="rel_day_mawlid">Mevlid Kandili</string>
 
-    <!-- Missing Notification Strings -->
+    <!-- Notification Strings -->
     <string name="notification_adhan_muted">Ezan Sessize Alındı</string>
     <string name="notification_adhan_skipped_text">%s için ezan geçildi.</string>
     <string name="notification_upcoming_adhan_title">Yaklaşan Ezan: %s</string>

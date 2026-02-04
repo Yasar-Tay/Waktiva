@@ -52,6 +52,16 @@
     <string name="home_adhan_muted">Adhan stummgeschaltet für %s</string>
     <string name="home_adhan_unmuted">Adhan aktiviert für %s</string>
 
+    <!-- System Health & Warnings -->
+    <string name="health_title">Systemstatus</string>
+    <string name="health_issues_detected">Probleme erkannt</string>
+    <string name="health_gps_off">GPS ist global deaktiviert. Aktivieren Sie die Standortdienste, um die Gebetszeiten zu aktualisieren.</string>
+    <string name="health_channels_muted">Adhan-Benachrichtigungskanäle sind in den Systemeinstellungen stummgeschaltet.</string>
+    <string name="health_dnd_active">„Nicht stören“ ist aktiv. Adhan-Töne könnten blockiert werden.</string>
+    <string name="health_fix_now">Jetzt beheben</string>
+    <string name="health_no_internet">Keine Internetverbindung. Vaktiva verwendet gespeicherte Daten. Bitte verbinden Sie sich, um die Gebetszeiten zu aktualisieren.</string>
+    <string name="health_status_ok">Alle Systeme funktionsfähig</string>
+
     <!-- Prayer Names -->
     <string name="prayer_fajr">Fajr</string>
     <string name="prayer_sunrise">Sonnenaufgang</string>
@@ -73,9 +83,9 @@
     <string name="settings_permissions">Berechtigungen</string>
     <string name="settings_manage_system">In den Systemeinstellungen verwalten</string>
     <string name="settings_location_access">Standortzugriff</string>
-    <string name="settings_location_desc">Erforderlich für genaue Gebetszeiten und Qibla-Richtung.</string>
+    <string name="settings_location_desc">Entscheidend für die Berechnung der Gebetszeiten. Ohne diese kann die App keine Zeiten für Ihren Standort abrufen und wird unbrauchbar.</string>
     <string name="settings_notifications">Benachrichtigungen</string>
-    <string name="settings_notifications_desc">Erforderlich, um Gebetszeit-Warnungen anzuzeigen.</string>
+    <string name="settings_notifications_desc">Erforderlich, um Gebetszeit-Warnungen und Adhan-Benachrichtigungen anzuzeigen.</string>
     <string name="settings_granted">Erteilt</string>
     <string name="settings_denied">Abgelehnt</string>
     <string name="settings_language">App-Sprache</string>
@@ -156,9 +166,9 @@
     <string name="settings_reliability">Zuverlässigkeit &amp; Optimierung</string>
     <string name="settings_battery_opt">Akku-Optimierung</string>
     <string name="settings_battery_opt_enabled">Auf Zuverlässigkeit optimiert</string>
-    <string name="settings_battery_opt_disabled">Klicken, um die Optimierung für zuverlässige Adhans zu deaktivieren</string>
+    <string name="settings_battery_opt_disabled">Unerlässlich, um den Adhan pünktlich abzuspielen. Akku-Optimierungen können geplante Warnungen verzögern oder blockieren.</string>
     <string name="settings_exact_alarm_title">Exakte Alarme</string>
-    <string name="settings_exact_alarm_desc">Erforderlich für präzise Gebetszeit-Benachrichtigungen</string>
+    <string name="settings_exact_alarm_desc">Erforderlich für präzise Gebetszeit-Benachrichtigungen und pünktliche Adhans.</string>
 
     <!-- Data Management -->
     <string name="settings_data_management">Datenverwaltung</string>
@@ -184,9 +194,9 @@
     <string name="welcome_precision_settings">Präzisionseinstellungen</string>
     <string name="welcome_precision_desc">Vaktiva benötigt diese, um Ihnen besser zu dienen</string>
     <string name="welcome_loc_title">Genauer Standort</string>
-    <string name="welcome_loc_desc">Wird verwendet, um präzise Gebetszeiten basierend auf Ihren Koordinaten zu berechnen.</string>
+    <string name="welcome_loc_desc">Entscheidend für die Berechnung der Gebetszeiten. Ohne diese kann die App keine Zeiten für Ihren Standort abrufen und wird unbrauchbar.</string>
     <string name="welcome_notif_title">Adhan-Warnungen</string>
-    <string name="welcome_notif_desc">Wird benötigt, um Benachrichtigungen zu senden, wenn es Zeit zum Beten ist.</string>
+    <string name="welcome_notif_desc">Erforderlich, um Benachrichtigungen zu senden und den Adhan abzuspielen, wenn es Zeit zum Beten ist.</string>
     <string name="welcome_alarm_title">Exakte Alarme</string>
     <string name="welcome_alarm_desc">Erforderlich, damit der Adhan exakt pünktlich ohne Verzögerung abgespielt wird.</string>
     <string name="welcome_grant_btn">Berechtigungen erteilen</string>
@@ -202,7 +212,7 @@
     <string name="welcome_general_settings">Allgemeine Einstellungen</string>
     <string name="welcome_adhan_audio_header">Adhan &amp; Audio</string>
     <string name="welcome_battery_optimized">Auf Zuverlässigkeit optimiert</string>
-    <string name="welcome_battery_optimize_desc">Optimierung für zuverlässige Adhans deaktivieren</string>
+    <string name="welcome_battery_optimize_desc">Unerlässlich, um den Adhan pünktlich abzuspielen. Akku-Optimierungen können geplante Warnungen verzögern oder blockieren.</string>
 
     <!-- Adhan Screen -->
     <string name="adhan_its_time_for">Es ist Zeit für</string>
@@ -213,6 +223,7 @@
     <string name="adhan_test_alarm">Test-Alarm</string>
     <string name="adhan_test_desc">Adhan-Auslösung simulieren</string>
     <string name="adhan_stop_test">TEST ABBRECHEN</string>
+    <string name="adhan_metadata_title_format">%s Adhan</string>
 
     <!-- Donations -->
     <string name="settings_donate">Den Entwickler unterstützen</string>

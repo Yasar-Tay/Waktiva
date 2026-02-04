@@ -25,6 +25,7 @@ import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import com.ybugmobile.vaktiva.domain.manager.TimeManager
 import com.ybugmobile.vaktiva.service.AdhanService
+import com.ybugmobile.vaktiva.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -68,6 +69,9 @@ class HomeViewModel @Inject constructor(
     private val _isAdhanPlaying = MutableStateFlow(false)
     private val _playingPrayerName = MutableStateFlow<String?>(null)
     
+    private val _isNetworkAvailable = MutableStateFlow(PermissionUtils.isNetworkAvailable(context))
+    private val _hasSystemIssues = MutableStateFlow(checkSystemIssues())
+
     private var mediaController: MediaController? = null
 
     val calculationMethods = CALCULATION_METHODS
@@ -128,6 +132,11 @@ class HomeViewModel @Inject constructor(
                     settingsManager.clearMutedPrayer()
                 }
             }
+            // Periodically check health
+            if (now.second % 30 == 0) {
+                _isNetworkAvailable.value = PermissionUtils.isNetworkAvailable(context)
+                _hasSystemIssues.value = checkSystemIssues()
+            }
         }.launchIn(viewModelScope)
 
         onPermissionsGranted()
@@ -139,6 +148,12 @@ class HomeViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
         setupMediaController()
+    }
+
+    private fun checkSystemIssues(): Boolean {
+        return !PermissionUtils.isLocationEnabled(context) || 
+               PermissionUtils.isDoNotDisturbActive(context) || 
+               PermissionUtils.areNotificationChannelsMuted(context)
     }
 
     fun triggerTestAlarm(seconds: Int) {
@@ -159,6 +174,9 @@ class HomeViewModel @Inject constructor(
         val status = isLocationPermissionGranted()
         if (status && !lastPermissionStatus) refresh()
         lastPermissionStatus = status
+        
+        _isNetworkAvailable.value = PermissionUtils.isNetworkAvailable(context)
+        _hasSystemIssues.value = checkSystemIssues()
     }
 
     private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -204,8 +222,9 @@ class HomeViewModel @Inject constructor(
     val state: StateFlow<HomeViewState> = combine(
         combine(selectedDate, currentTime, currentPrayerDay, ::Triple),
         combine(nextPrayerInfo, currentPrayerInfo, isRefreshing, ::Triple),
-        combine(settings, _isAdhanPlaying, _playingPrayerName, ::Triple)
-    ) { (date, time, prayerDay), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName) ->
+        combine(settings, _isAdhanPlaying, _playingPrayerName, ::Triple),
+        combine(_isNetworkAvailable, _hasSystemIssues, { a, b -> a to b })
+    ) { (date, time, prayerDay), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, issues) ->
         
         val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
@@ -218,7 +237,9 @@ class HomeViewModel @Inject constructor(
             isAdhanPlaying = playing, 
             playingPrayerName = prayerName,
             isMuted = isMuted,
-            isHijriSelected = currentSettings.isHijriSelected
+            isHijriSelected = currentSettings.isHijriSelected,
+            isNetworkAvailable = network,
+            hasSystemIssues = issues
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))
 

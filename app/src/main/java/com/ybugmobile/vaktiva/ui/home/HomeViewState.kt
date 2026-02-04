@@ -19,5 +19,7 @@ data class HomeViewState(
     val playingPrayerName: String? = null,
     val isMuted: Boolean = false,
     val isHijriSelected: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val isNetworkAvailable: Boolean = true,
+    val hasSystemIssues: Boolean = false
 )

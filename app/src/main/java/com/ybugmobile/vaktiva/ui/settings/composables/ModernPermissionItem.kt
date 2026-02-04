@@ -16,7 +16,12 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 
 @Composable
-fun ModernPermissionItem(title: String, isGranted: Boolean, icon: ImageVector) {
+fun ModernPermissionItem(
+    title: String,
+    subtitle: String? = null,
+    isGranted: Boolean,
+    icon: ImageVector
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,14 +48,27 @@ fun ModernPermissionItem(title: String, isGranted: Boolean, icon: ImageVector) {
         
         Spacer(modifier = Modifier.width(16.dp))
         
-        Text(
-            text = title, 
-            style = MaterialTheme.typography.bodyLarge.copy(
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            ),
-            modifier = Modifier.weight(1f)
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title, 
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            )
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = Color.White.copy(alpha = 0.6f),
+                        lineHeight = 16.sp
+                    ),
+                    modifier = Modifier.padding(top = 2.dp)
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.width(8.dp))
         
         Surface(
             shape = CircleShape,
