@@ -6,15 +6,16 @@
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_donate">Donate</string>
+    <string name="cd_back">Back</string>
 
     <!-- Qibla Screen -->
+    <string name="qibla_label">Qibla</string>
     <string name="qibla_compass">Compass</string>
     <string name="qibla_map">Map</string>
     <string name="qibla_mecca_aligned">Mecca Aligned</string>
     <string name="qibla_rotate_phone">Rotate Phone</string>
     <string name="qibla_direction">Qibla: %d°</string>
     <string name="qibla_locating">Locating...</string>
-    <string name="qibla_label">Qibla</string>
     <string name="qibla_heading">Heading</string>
     <string name="qibla_signal">Signal</string>
     <string name="qibla_standard">Standard</string>
@@ -58,6 +59,7 @@
     <string name="prayer_asr">Asr</string>
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Isha</string>
+    <string name="adhan_default_prayer">Prayer</string>
 
     <!-- Accuracy Labels -->
     <string name="accuracy_high">High</string>
@@ -65,12 +67,10 @@
     <string name="accuracy_low">Low</string>
     <string name="accuracy_poor">Poor</string>
 
-    <!-- Settings -->
+    <!-- General Settings -->
     <string name="settings_title">Settings</string>
+    <string name="settings_preferences">Preferences</string>
     <string name="settings_permissions">Permissions</string>
-    <string name="settings_calculation">Calculation Settings</string>
-    <string name="settings_madhab">Madhab</string>
-    <string name="settings_method">Calculation Method</string>
     <string name="settings_manage_system">Manage in System Settings</string>
     <string name="settings_location_access">Location Access</string>
     <string name="settings_location_desc">Required for accurate prayer times and Qibla direction.</string>
@@ -79,11 +79,9 @@
     <string name="settings_granted">Granted</string>
     <string name="settings_denied">Denied</string>
     <string name="settings_language">App Language</string>
-    <string name="settings_preferences">Preferences</string>
     <string name="settings_cancel">Cancel</string>
     <string name="settings_confirm">Confirm</string>
 
-    <!-- Language Options -->
     <!-- Language Options -->
     <string name="lang_system">System Default</string>
     <string name="lang_en">English</string>
@@ -100,11 +98,12 @@
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
-    <!-- Madhab Options -->
+    <!-- Calculation Settings -->
+    <string name="settings_calculation">Calculation Settings</string>
+    <string name="settings_madhab">Madhab</string>
+    <string name="settings_method">Calculation Method</string>
     <string name="madhab_shafi">Shafi / Standard (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanafi</string>
-
-    <!-- Methods -->
     <string name="method_mwl">Muslim World League</string>
     <string name="method_isna">Islamic Society of North America (ISNA)</string>
     <string name="method_egypt">Egyptian General Authority of Survey</string>
@@ -117,12 +116,67 @@
     <string name="method_singapore">Majlis Ugama Islam Singapura</string>
     <string name="method_turkey">Turkey (Diyanet)</string>
 
-    <!-- Audio Settings -->
+    <!-- Audio & Notification Settings -->
+    <string name="settings_notifications_sound">Notifications &amp; Sound</string>
+    <string name="settings_play_adhan">Play Adhan Audio</string>
+    <string name="settings_play_adhan_desc">Play adhan sound when it\'s time for prayer</string>
+    <string name="settings_adhan_sound_selection">Adhan Sound Selection</string>
+    <string name="settings_adhan_sound_selection_desc">Select the sound played during prayer times</string>
+
     <string name="audio_settings_title">Adhan Sounds</string>
+    <string name="audio_header_global">Select Adhan Sound (Global)</string>
+    <string name="audio_header_all_prayers">All Prayers</string>
+    <string name="audio_header_specific">Adhan for %1$s</string>
+    <string name="audio_select_prayer_prompt">Select Prayer to Configure</string>
+    <string name="audio_individual_sounds_title">Individual Prayer Sounds</string>
+    <string name="audio_individual_sounds_desc">Set different Adhans for each prayer time</string>
+
+    <string name="audio_setting_default">Default Adhan</string>
+    <string name="audio_setting_fajr">Fajr Adhan</string>
+    <string name="audio_setting_dhuhr">Dhuhr Adhan</string>
+    <string name="audio_setting_asr">Asr Adhan</string>
+    <string name="audio_setting_maghrib">Maghrib Adhan</string>
+    <string name="audio_setting_isha">Isha Adhan</string>
+
     <string name="audio_add_custom">Add Custom Audio</string>
     <string name="audio_delete_confirm">Delete audio file?</string>
+    <string name="audio_delete_description">Delete audio file</string>
+    <string name="audio_supported_formats">Supported: MP3, AAC, WAV, OGG</string>
+    <string name="audio_preview_play">Play preview</string>
+    <string name="audio_preview_stop">Stop preview</string>
+    <string name="audio_built_in">Built-in</string>
+    <string name="audio_selected_description">Selected</string>
+    <string name="audio_minutes_before">Minutes before:</string>
 
-    <!-- Welcome Screen -->
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">Fajr Alarm (Before Sunrise)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">Determine Fajr alarm time based on sunrise (except in Ramadan).</string>
+
+    <!-- Battery & Reliability Settings -->
+    <string name="settings_reliability">Reliability &amp; Optimization</string>
+    <string name="settings_battery_opt">Battery Optimization</string>
+    <string name="settings_battery_opt_enabled">Optimized for reliability</string>
+    <string name="settings_battery_opt_disabled">Click to disable optimization for reliable Adhans</string>
+    <string name="settings_exact_alarm_title">Exact Alarms</string>
+    <string name="settings_exact_alarm_desc">Needed for precise prayer time notifications</string>
+
+    <!-- Data Management -->
+    <string name="settings_data_management">Data Management</string>
+    <string name="settings_delete_history">Delete Prayer History</string>
+    <string name="settings_delete_history_desc">Delete all prayer data from the past to free up space</string>
+    <string name="settings_delete_history_confirm_title">Delete History?</string>
+    <string name="settings_delete_history_confirm_desc">This will permanently delete all prayer records before today. This action cannot be undone.</string>
+
+    <!-- Pre-Adhan Warning -->
+    <string name="settings_pre_adhan_warning">Pre-Adhan Warning</string>
+    <string name="settings_pre_adhan_warning_summary">Get a notification before prayer time.</string>
+    <string name="pre_adhan_notification_title">Approaching Prayer</string>
+    <string name="pre_adhan_notification_text">Time for %s prayer in 5 minutes.</string>
+    <string name="pre_adhan_cancel_action">Dismiss</string>
+    <string name="pre_adhan_channel_name">Pre-Adhan Warnings</string>
+    <string name="pre_adhan_channel_description">Notifications shown before prayer time.</string>
+
+    <!-- Welcome / Onboarding -->
     <string name="welcome_title">Welcome to Vaktiva</string>
     <string name="welcome_desc">Your professional companion for prayer times, built with precision and modern design.</string>
     <string name="welcome_begin">Begin Setup</string>
@@ -150,22 +204,17 @@
     <string name="welcome_battery_optimized">Optimized for reliability</string>
     <string name="welcome_battery_optimize_desc">Disable optimization for reliable Adhans</string>
 
-    <!-- Adhan Audio per prayer (from EPIC 2) -->
-    <string name="audio_setting_fajr">Fajr Adhan</string>
-    <string name="audio_setting_dhuhr">Dhuhr Adhan</string>
-    <string name="audio_setting_asr">Asr Adhan</string>
-    <string name="audio_setting_maghrib">Maghrib Adhan</string>
-    <string name="audio_setting_isha">Isha Adhan</string>
-    <string name="audio_setting_default">Default Adhan</string>
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">It\'s time for</string>
+    <string name="adhan_stop">STOP ADHAN</string>
+    <string name="adhan_playing">Adhan</string>
+    <string name="adhan_sounding">Sounding now</string>
+    <string name="adhan_upcoming">Upcoming adhan</string>
+    <string name="adhan_test_alarm">Test Alarm</string>
+    <string name="adhan_test_desc">Simulating adhan trigger</string>
+    <string name="adhan_stop_test">CANCEL TEST</string>
 
-    <!-- Pre-Adhan Warning (from EPIC 2) -->
-    <string name="settings_pre_adhan_warning">Pre-Adhan Warning</string>
-    <string name="settings_pre_adhan_warning_summary">Get a notification before prayer time.</string>
-    <string name="pre_adhan_notification_title">Approaching Prayer</string>
-    <string name="pre_adhan_notification_text">Time for %s prayer in 5 minutes.</string>
-    <string name="pre_adhan_cancel_action">Dismiss</string>
-
-    <!-- Donations (from EPIC 6) -->
+    <!-- Donations -->
     <string name="settings_donate">Support the Developer</string>
     <string name="donate_title">Support Vaktiva</string>
     <string name="donate_description">Vaktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
@@ -179,68 +228,6 @@
     <string name="rate_title">Rate Vaktiva</string>
     <string name="rate_desc">If you enjoy Vaktiva, please take a moment to rate it 5 stars on Google Play. It helps us reach more people!</string>
     <string name="rate_button">Rate 5 Stars</string>
-
-    <!-- Pre-Adhan Notification Channel -->
-    <string name="pre_adhan_channel_name">Pre-Adhan Warnings</string>
-    <string name="pre_adhan_channel_description">Notifications shown before prayer time.</string>
-
-    <!-- Audio Settings Screen -->
-    <string name="cd_back">Back</string>
-    <string name="audio_select_prayer_prompt">Select Prayer to Configure</string>
-    <string name="audio_header_specific">Adhan for %1$s</string>
-    <string name="audio_header_all_prayers">All Prayers</string>
-    <string name="audio_header_global">Select Adhan Sound (Global)</string>
-    <string name="audio_supported_formats">Supported: MP3, AAC, WAV, OGG</string>
-    <string name="audio_minutes_before">Minutes before:</string>
-    <string name="audio_individual_sounds_title">Individual Prayer Sounds</string>
-    <string name="audio_individual_sounds_desc">Set different Adhans for each prayer time</string>
-    <string name="audio_preview_stop">Stop preview</string>
-    <string name="audio_preview_play">Play preview</string>
-    <string name="audio_built_in">Built-in</string>
-    <string name="audio_delete_description">Delete audio file</string>
-    <string name="audio_selected_description">Selected</string>
-
-    <!-- Fajr Sunrise Alarm -->
-    <string name="audio_fajr_sunrise_alarm">Fajr Alarm (Before Sunrise)</string>
-    <string name="audio_fajr_sunrise_alarm_desc">Determine Fajr alarm time based on sunrise (except in Ramadan).</string>
-
-    <!-- Settings Screen Items -->
-    <string name="settings_notifications_sound">Notifications &amp; Sound</string>
-    <string name="settings_play_adhan">Play Adhan Audio</string>
-    <string name="settings_play_adhan_desc">Play adhan sound when it\'s time for prayer</string>
-    <string name="settings_adhan_sound_selection">Adhan Sound Selection</string>
-    <string name="settings_adhan_sound_selection_desc">Select the sound played during prayer times</string>
-    <string name="settings_reliability">Reliability &amp; Optimization</string>
-    <string name="settings_battery_opt">Battery Optimization</string>
-    <string name="settings_battery_opt_enabled">Optimized for reliability</string>
-    <string name="settings_battery_opt_disabled">Click to disable optimization for reliable Adhans</string>
-    <string name="settings_exact_alarm_title">Exact Alarms</string>
-    <string name="settings_exact_alarm_desc">Needed for precise prayer time notifications</string>
-    <string name="settings_data_management">Data Management</string>
-    <string name="settings_delete_history">Delete Prayer History</string>
-    <string name="settings_delete_history_desc">Delete all prayer data from the past to free up space</string>
-    <string name="settings_delete_history_confirm_title">Delete History?</string>
-    <string name="settings_delete_history_confirm_desc">This will permanently delete all prayer records before today. This action cannot be undone.</string>
-
-    <!-- Adhan Screen -->
-    <string name="adhan_its_time_for">It\'s time for</string>
-    <string name="adhan_stop">STOP ADHAN</string>
-    <string name="adhan_default_prayer">Prayer</string>
-    <string name="adhan_playing">Adhan</string>
-    <string name="adhan_sounding">Sounding now</string>
-    <string name="adhan_upcoming">Upcoming adhan</string>
-    <string name="adhan_test_alarm">Test Alarm</string>
-    <string name="adhan_test_desc">Simulating adhan trigger</string>
-    <string name="adhan_stop_test">CANCEL TEST</string>
-
-    <!-- Notification Strings -->
-    <string name="notification_adhan_muted">Adhan Muted</string>
-    <string name="notification_adhan_skipped_text">Adhan for %s is skipped.</string>
-    <string name="notification_upcoming_adhan_title">Upcoming Adhan: %s</string>
-    <string name="notification_upcoming_adhan_text">Adhan will be played in %d minutes.</string>
-    <string name="notification_skip_action">SKIP FOR THIS PRAYER</string>
-    <string name="notification_adhan_title">Adhan: %s</string>
-    <string name="notification_adhan_content">It\'s time for prayer</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>
@@ -272,4 +259,12 @@
     <string name="rel_day_ashura">Ashura Day</string>
     <string name="rel_day_mawlid">Mawlid Kandili</string>
 
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">Adhan Muted</string>
+    <string name="notification_adhan_skipped_text">Adhan for %s is skipped.</string>
+    <string name="notification_upcoming_adhan_title">Upcoming Adhan: %s</string>
+    <string name="notification_upcoming_adhan_text">Adhan will be played in %d minutes.</string>
+    <string name="notification_skip_action">SKIP FOR THIS PRAYER</string>
+    <string name="notification_adhan_title">Adhan: %s</string>
+    <string name="notification_adhan_content">It\'s time for prayer</string>
 </resources>

@@ -430,13 +430,12 @@ fun PrayerCircleVisualization(
             iconColor = currentPrayerColor
         )
 
-        // 7. Modern Sleek Info Overlay (Bottom Centered) - High Z-Index to avoid being hidden
+        // 7. Modern Sleek Info Overlay (Centered under the icon) - High Z-Index to avoid being hidden
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .zIndex(10f)
-                .padding(bottom = 8.dp),
-            contentAlignment = Alignment.BottomCenter
+                .zIndex(10f),
+            contentAlignment = Alignment.Center
         ) {
             AnimatedContent(
                 targetState = selectedInfo,
@@ -444,7 +443,8 @@ fun PrayerCircleVisualization(
                     (slideInVertically { it / 2 } + fadeIn(tween(300)))
                         .togetherWith(slideOutVertically { it / 2 } + fadeOut(tween(200)))
                 },
-                label = "info_card"
+                label = "info_card",
+                modifier = Modifier.offset(y = 70.dp) // Positioned exactly under the 56dp central icon
             ) { info ->
                 if (info != null) {
                     InfoGlassCard(info)

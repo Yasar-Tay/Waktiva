@@ -6,15 +6,16 @@
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Einstellungen</string>
     <string name="nav_donate">Spenden</string>
+    <string name="cd_back">Zurück</string>
 
     <!-- Qibla Screen -->
+    <string name="qibla_label">Qibla</string>
     <string name="qibla_compass">Kompass</string>
     <string name="qibla_map">Karte</string>
     <string name="qibla_mecca_aligned">Nach Mekka ausgerichtet</string>
     <string name="qibla_rotate_phone">Telefon drehen</string>
     <string name="qibla_direction">Qibla: %d°</string>
     <string name="qibla_locating">Ortung...</string>
-    <string name="qibla_label">Qibla</string>
     <string name="qibla_heading">Kurs</string>
     <string name="qibla_signal">Signal</string>
     <string name="qibla_standard">Standard</string>
@@ -43,8 +44,8 @@
     <string name="home_refresh_success">Gebetszeiten aktualisiert</string>
     <string name="home_refresh_error">Fehler beim Aktualisieren der Zeiten</string>
     <string name="home_prayer_provider">Anbieter: </string>
-    <string name="home_skip_adhan">Stumm</string>
-    <string name="home_unmute_adhan">Stummschaltung aufheben</string>
+    <string name="home_skip_adhan">Adhan für %s stummschalten</string>
+    <string name="home_unmute_adhan">Stummschaltung für %s aufheben</string>
     <string name="home_return_to_today">Zurück zu Heute</string>
     <string name="home_tomorrow_is">Morgen: %s</string>
     <string name="home_today_is">Heute ist %s</string>
@@ -58,6 +59,7 @@
     <string name="prayer_asr">Asr</string>
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Isha</string>
+    <string name="adhan_default_prayer">Gebet</string>
 
     <!-- Accuracy Labels -->
     <string name="accuracy_high">Hoch</string>
@@ -65,12 +67,10 @@
     <string name="accuracy_low">Niedrig</string>
     <string name="accuracy_poor">Schlecht</string>
 
-    <!-- Settings -->
+    <!-- General Settings -->
     <string name="settings_title">Einstellungen</string>
+    <string name="settings_preferences">Präferenzen</string>
     <string name="settings_permissions">Berechtigungen</string>
-    <string name="settings_calculation">Berechnungseinstellungen</string>
-    <string name="settings_madhab">Madhhab</string>
-    <string name="settings_method">Berechnungsmethode</string>
     <string name="settings_manage_system">In den Systemeinstellungen verwalten</string>
     <string name="settings_location_access">Standortzugriff</string>
     <string name="settings_location_desc">Erforderlich für genaue Gebetszeiten und Qibla-Richtung.</string>
@@ -79,7 +79,6 @@
     <string name="settings_granted">Erteilt</string>
     <string name="settings_denied">Abgelehnt</string>
     <string name="settings_language">App-Sprache</string>
-    <string name="settings_preferences">Präferenzen</string>
     <string name="settings_cancel">Abbrechen</string>
     <string name="settings_confirm">Bestätigen</string>
 
@@ -99,11 +98,12 @@
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
-    <!-- Madhab Options -->
+    <!-- Calculation Settings -->
+    <string name="settings_calculation">Berechnungseinstellungen</string>
+    <string name="settings_madhab">Madhhab</string>
+    <string name="settings_method">Berechnungsmethode</string>
     <string name="madhab_shafi">Schafii / Standard (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanafi</string>
-
-    <!-- Methods -->
     <string name="method_mwl">Islamische Weltliga</string>
     <string name="method_isna">Islamische Gesellschaft Nordamerikas (ISNA)</string>
     <string name="method_egypt">Ägyptische Generalbehörde für Vermessungswesen</string>
@@ -116,12 +116,67 @@
     <string name="method_singapore">Majlis Ugama Islam Singapura</string>
     <string name="method_turkey">Türkei (Diyanet)</string>
 
-    <!-- Audio Settings -->
+    <!-- Audio & Notification Settings -->
+    <string name="settings_notifications_sound">Benachrichtigungen &amp; Ton</string>
+    <string name="settings_play_adhan">Adhan-Audio abspielen</string>
+    <string name="settings_play_adhan_desc">Adhan-Ton abspielen, wenn es Zeit zum Gebet ist</string>
+    <string name="settings_adhan_sound_selection">Adhan-Tonauswahl</string>
+    <string name="settings_adhan_sound_selection_desc">Wählen Sie den Ton aus, der während der Gebetszeiten abgespielt wird</string>
+
     <string name="audio_settings_title">Adhan-Töne</string>
+    <string name="audio_header_global">Adhan-Ton auswählen (Global)</string>
+    <string name="audio_header_all_prayers">Alle Gebete</string>
+    <string name="audio_header_specific">Adhan für %1$s</string>
+    <string name="audio_select_prayer_prompt">Gebet zum Konfigurieren auswählen</string>
+    <string name="audio_individual_sounds_title">Individuelle Gebetstöne</string>
+    <string name="audio_individual_sounds_desc">Verschiedene Adhans für jede Gebetszeit festlegen</string>
+
+    <string name="audio_setting_default">Standard-Adhan</string>
+    <string name="audio_setting_fajr">Fajr-Adhan</string>
+    <string name="audio_setting_dhuhr">Dhuhr-Adhan</string>
+    <string name="audio_setting_asr">Asr-Adhan</string>
+    <string name="audio_setting_maghrib">Maghrib-Adhan</string>
+    <string name="audio_setting_isha">Isha-Adhan</string>
+
     <string name="audio_add_custom">Benutzerdefiniertes Audio hinzufügen</string>
     <string name="audio_delete_confirm">Audiodatei löschen?</string>
+    <string name="audio_delete_description">Audiodatei löschen</string>
+    <string name="audio_supported_formats">Unterstützt: MP3, AAC, WAV, OGG</string>
+    <string name="audio_preview_play">Vorschau abspielen</string>
+    <string name="audio_preview_stop">Vorschau stoppen</string>
+    <string name="audio_built_in">Eingebaut</string>
+    <string name="audio_selected_description">Ausgewählt</string>
+    <string name="audio_minutes_before">Minuten vorher:</string>
 
-    <!-- Welcome Screen -->
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">Fajr-Alarm (Vor Sonnenaufgang)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">Fajr-Alarmzeit basierend auf dem Sonnenaufgang bestimmen (außer im Ramadan).</string>
+
+    <!-- Battery & Reliability Settings -->
+    <string name="settings_reliability">Zuverlässigkeit &amp; Optimierung</string>
+    <string name="settings_battery_opt">Akku-Optimierung</string>
+    <string name="settings_battery_opt_enabled">Auf Zuverlässigkeit optimiert</string>
+    <string name="settings_battery_opt_disabled">Klicken, um die Optimierung für zuverlässige Adhans zu deaktivieren</string>
+    <string name="settings_exact_alarm_title">Exakte Alarme</string>
+    <string name="settings_exact_alarm_desc">Erforderlich für präzise Gebetszeit-Benachrichtigungen</string>
+
+    <!-- Data Management -->
+    <string name="settings_data_management">Datenverwaltung</string>
+    <string name="settings_delete_history">Gebetsverlauf löschen</string>
+    <string name="settings_delete_history_desc">Alle vergangenen Gebetsdaten löschen, um Platz freizugeben</string>
+    <string name="settings_delete_history_confirm_title">Verlauf löschen?</string>
+    <string name="settings_delete_history_confirm_desc">Dies wird alle Gebetsaufzeichnungen vor heute dauerhaft löschen. Diese Aktion kann nicht rückgängig gemacht werden.</string>
+
+    <!-- Pre-Adhan Warning -->
+    <string name="settings_pre_adhan_warning">Vor-Adhan-Warnung</string>
+    <string name="settings_pre_adhan_warning_summary">Erhalten Sie eine Benachrichtigung vor der Gebetszeit.</string>
+    <string name="pre_adhan_notification_title">Gebet nähert sich</string>
+    <string name="pre_adhan_notification_text">Zeit für das %s-Gebet in 5 Minuten.</string>
+    <string name="pre_adhan_cancel_action">Verwerfen</string>
+    <string name="pre_adhan_channel_name">Vor-Adhan-Warnungen</string>
+    <string name="pre_adhan_channel_description">Benachrichtigungen, die vor der Gebetszeit angezeigt werden.</string>
+
+    <!-- Welcome / Onboarding -->
     <string name="welcome_title">Willkommen bei Vaktiva</string>
     <string name="welcome_desc">Ihr professioneller Begleiter für Gebetszeiten, entwickelt mit Präzision und modernem Design.</string>
     <string name="welcome_begin">Einrichtung beginnen</string>
@@ -149,22 +204,17 @@
     <string name="welcome_battery_optimized">Auf Zuverlässigkeit optimiert</string>
     <string name="welcome_battery_optimize_desc">Optimierung für zuverlässige Adhans deaktivieren</string>
 
-    <!-- Adhan Audio per prayer (from EPIC 2) -->
-    <string name="audio_setting_fajr">Fajr-Adhan</string>
-    <string name="audio_setting_dhuhr">Dhuhr-Adhan</string>
-    <string name="audio_setting_asr">Asr-Adhan</string>
-    <string name="audio_setting_maghrib">Maghrib-Adhan</string>
-    <string name="audio_setting_isha">Isha-Adhan</string>
-    <string name="audio_setting_default">Standard-Adhan</string>
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">Es ist Zeit für</string>
+    <string name="adhan_stop">ADHAN STOPPEN</string>
+    <string name="adhan_playing">Adhan</string>
+    <string name="adhan_sounding">Ertönt jetzt</string>
+    <string name="adhan_upcoming">Bevorstehender Adhan</string>
+    <string name="adhan_test_alarm">Test-Alarm</string>
+    <string name="adhan_test_desc">Adhan-Auslösung simulieren</string>
+    <string name="adhan_stop_test">TEST ABBRECHEN</string>
 
-    <!-- Pre-Adhan Warning (from EPIC 2) -->
-    <string name="settings_pre_adhan_warning">Vor-Adhan-Warnung</string>
-    <string name="settings_pre_adhan_warning_summary">Erhalten Sie eine Benachrichtigung vor der Gebetszeit.</string>
-    <string name="pre_adhan_notification_title">Gebet nähert sich</string>
-    <string name="pre_adhan_notification_text">Zeit für das %s-Gebet in 5 Minuten.</string>
-    <string name="pre_adhan_cancel_action">Verwerfen</string>
-
-    <!-- Donations (from EPIC 6) -->
+    <!-- Donations -->
     <string name="settings_donate">Den Entwickler unterstützen</string>
     <string name="donate_title">Vaktiva unterstützen</string>
     <string name="donate_description">Vaktiva ist eine kostenlose App, die mit Sorgfalt entwickelt wurde. Ihre Unterstützung hilft dabei, sie werbefrei zu halten und ermöglicht die zukünftige Entwicklung.</string>
@@ -178,59 +228,6 @@
     <string name="rate_title">Vaktiva bewerten</string>
     <string name="rate_desc">Wenn Ihnen Vaktiva gefällt, nehmen Sie sich bitte einen Moment Zeit, um es mit 5 Sternen im Google Play Store zu bewerten. Es hilft uns, mehr Menschen zu erreichen!</string>
     <string name="rate_button">5 Sterne geben</string>
-
-    <!-- Pre-Adhan Notification Channel -->
-    <string name="pre_adhan_channel_name">Vor-Adhan-Warnungen</string>
-    <string name="pre_adhan_channel_description">Benachrichtigungen, die vor der Gebetszeit angezeigt werden.</string>
-
-    <!-- Audio Settings Screen -->
-    <string name="cd_back">Zurück</string>
-    <string name="audio_select_prayer_prompt">Gebet zum Konfigurieren auswählen</string>
-    <string name="audio_header_specific">Adhan für %1$s</string>
-    <string name="audio_header_all_prayers">Alle Gebete</string>
-    <string name="audio_header_global">Adhan-Ton auswählen (Global)</string>
-    <string name="audio_supported_formats">Unterstützt: MP3, AAC, WAV, OGG</string>
-    <string name="audio_minutes_before">Minuten vorher:</string>
-    <string name="audio_individual_sounds_title">Individuelle Gebetstöne</string>
-    <string name="audio_individual_sounds_desc">Verschiedene Adhans für jede Gebetszeit festlegen</string>
-    <string name="audio_preview_stop">Vorschau stoppen</string>
-    <string name="audio_preview_play">Vorschau abspielen</string>
-    <string name="audio_built_in">Eingebaut</string>
-    <string name="audio_delete_description">Audiodatei löschen</string>
-    <string name="audio_selected_description">Ausgewählt</string>
-
-    <!-- Fajr Sunrise Alarm -->
-    <string name="audio_fajr_sunrise_alarm">Fajr-Alarm (Vor Sonnenaufgang)</string>
-    <string name="audio_fajr_sunrise_alarm_desc">Fajr-Alarmzeit basierend auf dem Sonnenaufgang bestimmen (außer im Ramadan).</string>
-
-    <!-- Settings Screen Items -->
-    <string name="settings_notifications_sound">Benachrichtigungen &amp; Ton</string>
-    <string name="settings_play_adhan">Adhan-Audio abspielen</string>
-    <string name="settings_play_adhan_desc">Adhan-Ton abspielen, wenn es Zeit zum Gebet ist</string>
-    <string name="settings_adhan_sound_selection">Adhan-Tonauswahl</string>
-    <string name="settings_adhan_sound_selection_desc">Wählen Sie den Ton aus, der während der Gebetszeiten abgespielt wird</string>
-    <string name="settings_reliability">Zuverlässigkeit &amp; Optimierung</string>
-    <string name="settings_battery_opt">Akku-Optimierung</string>
-    <string name="settings_battery_opt_enabled">Auf Zuverlässigkeit optimiert</string>
-    <string name="settings_battery_opt_disabled">Klicken, um die Optimierung für zuverlässige Adhans zu deaktivieren</string>
-    <string name="settings_exact_alarm_title">Exakte Alarme</string>
-    <string name="settings_exact_alarm_desc">Erforderlich für präzise Gebetszeit-Benachrichtigungen</string>
-    <string name="settings_data_management">Datenverwaltung</string>
-    <string name="settings_delete_history">Gebetsverlauf löschen</string>
-    <string name="settings_delete_history_desc">Alle vergangenen Gebetsdaten löschen, um Platz freizugeben</string>
-    <string name="settings_delete_history_confirm_title">Verlauf löschen?</string>
-    <string name="settings_delete_history_confirm_desc">Dies wird alle Gebetsaufzeichnungen vor heute dauerhaft löschen. Diese Aktion kann nicht rückgängig gemacht werden.</string>
-
-    <!-- Adhan Screen -->
-    <string name="adhan_its_time_for">Es ist Zeit für</string>
-    <string name="adhan_stop">ADHAN STOPPEN</string>
-    <string name="adhan_default_prayer">Gebet</string>
-    <string name="adhan_playing">Adhan</string>
-    <string name="adhan_sounding">Ertönt jetzt</string>
-    <string name="adhan_upcoming">Bevorstehender Adhan</string>
-    <string name="adhan_test_alarm">Test-Alarm</string>
-    <string name="adhan_test_desc">Adhan-Auslösung simulieren</string>
-    <string name="adhan_stop_test">TEST ABBRECHEN</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>

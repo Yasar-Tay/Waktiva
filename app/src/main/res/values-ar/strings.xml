@@ -6,15 +6,16 @@
     <string name="nav_qibla">القبلة</string>
     <string name="nav_settings">الإعدادات</string>
     <string name="nav_donate">تبرع</string>
+    <string name="cd_back">رجوع</string>
 
     <!-- Qibla Screen -->
+    <string name="qibla_label">القبلة</string>
     <string name="qibla_compass">بوصلة</string>
     <string name="qibla_map">الخريطة</string>
     <string name="qibla_mecca_aligned">محاذاة لمكة</string>
     <string name="qibla_rotate_phone">قم بتدوير الهاتف</string>
     <string name="qibla_direction">القبلة: %d°</string>
     <string name="qibla_locating">تحديد الموقع...</string>
-    <string name="qibla_label">القبلة</string>
     <string name="qibla_heading">الاتجاه</string>
     <string name="qibla_signal">الإشارة</string>
     <string name="qibla_standard">قياسي</string>
@@ -43,8 +44,8 @@
     <string name="home_refresh_success">تم تحديث مواقيت الصلاة</string>
     <string name="home_refresh_error">فشل تحديث المواقيت</string>
     <string name="home_prayer_provider">المزود: </string>
-    <string name="home_skip_adhan">صامت</string>
-    <string name="home_unmute_adhan">إلغاء الكتم</string>
+    <string name="home_skip_adhan">كتم الأذان لـ %s</string>
+    <string name="home_unmute_adhan">إلغاء كتم الأذان لـ %s</string>
     <string name="home_return_to_today">العودة إلى اليوم</string>
     <string name="home_tomorrow_is">غداً هو: %s</string>
     <string name="home_today_is">اليو هو %s</string>
@@ -58,6 +59,7 @@
     <string name="prayer_asr">العصر</string>
     <string name="prayer_maghrib">المغرب</string>
     <string name="prayer_isha">العشاء</string>
+    <string name="adhan_default_prayer">صلاة</string>
 
     <!-- Accuracy Labels -->
     <string name="accuracy_high">عالية</string>
@@ -65,12 +67,10 @@
     <string name="accuracy_low">منخفضة</string>
     <string name="accuracy_poor">ضعيفة</string>
 
-    <!-- Settings -->
+    <!-- General Settings -->
     <string name="settings_title">الإعدادات</string>
+    <string name="settings_preferences">التفضيلات</string>
     <string name="settings_permissions">الأذونات</string>
-    <string name="settings_calculation">إعدادات الحساب</string>
-    <string name="settings_madhab">المذهب</string>
-    <string name="settings_method">طريقة الحساب</string>
     <string name="settings_manage_system">إدارة في إعدادات النظام</string>
     <string name="settings_location_access">الوصول إلى الموقع</string>
     <string name="settings_location_desc">مطلوب لمواقيت صلاة واتجاه قبلة دقيقين.</string>
@@ -79,7 +79,6 @@
     <string name="settings_granted">ممنوح</string>
     <string name="settings_denied">مرفوض</string>
     <string name="settings_language">لغة التطبيق</string>
-    <string name="settings_preferences">التفضيلات</string>
     <string name="settings_cancel">إلغاء</string>
     <string name="settings_confirm">تأكيد</string>
 
@@ -99,11 +98,12 @@
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
-    <!-- Madhab Options -->
+    <!-- Calculation Settings -->
+    <string name="settings_calculation">إعدادات الحساب</string>
+    <string name="settings_madhab">المذهب</string>
+    <string name="settings_method">طريقة الحساب</string>
     <string name="madhab_shafi">شافعي / قياسي (مالكي، حنبلي)</string>
     <string name="madhab_hanafi">حنفي</string>
-
-    <!-- Methods -->
     <string name="method_mwl">رابطة العالم الإسلامي</string>
     <string name="method_isna">الجمعية الإسلامية لأمريكا الشمالية (ISNA)</string>
     <string name="method_egypt">الهيئة المصرية العامة للمساحة</string>
@@ -116,12 +116,67 @@
     <string name="method_singapore">المجلس الإسلامي لسنغافورة</string>
     <string name="method_turkey">تركيا (Diyanet)</string>
 
-    <!-- Audio Settings -->
+    <!-- Audio & Notification Settings -->
+    <string name="settings_notifications_sound">الإشعارات والصوت</string>
+    <string name="settings_play_adhan">تشغيل صوت الأذان</string>
+    <string name="settings_play_adhan_desc">تشغيل صوت الأذان عندما يحين وقت الصلاة</string>
+    <string name="settings_adhan_sound_selection">اختيار صوت الأذان</string>
+    <string name="settings_adhan_sound_selection_desc">اختر الصوت الذي يتم تشغيله خلال أوقات الصلاة</string>
+
     <string name="audio_settings_title">أصوات الأذان</string>
+    <string name="audio_header_global">اختر صوت الأذان (عام)</string>
+    <string name="audio_header_all_prayers">جميع الصلوات</string>
+    <string name="audio_header_specific">أذان لـ %1$s</string>
+    <string name="audio_select_prayer_prompt">اختر الصلاة لتكوينها</string>
+    <string name="audio_individual_sounds_title">أصوات صلاة فردية</string>
+    <string name="audio_individual_sounds_desc">تعيين أذان مختلف لكل وقت صلاة</string>
+
+    <string name="audio_setting_default">الأذان الافتراضي</string>
+    <string name="audio_setting_fajr">أذان الفجر</string>
+    <string name="audio_setting_dhuhr">أذان الظهر</string>
+    <string name="audio_setting_asr">أذان العصر</string>
+    <string name="audio_setting_maghrib">أذان المغرب</string>
+    <string name="audio_setting_isha">أذان العشاء</string>
+
     <string name="audio_add_custom">إضافة صوت مخصص</string>
     <string name="audio_delete_confirm">حذف ملف الصوت؟</string>
+    <string name="audio_delete_description">حذف ملف الصوت</string>
+    <string name="audio_supported_formats">المدعوم: MP3, AAC, WAV, OGG</string>
+    <string name="audio_preview_play">تشغيل المعاينة</string>
+    <string name="audio_preview_stop">إيقاف المعاينة</string>
+    <string name="audio_built_in">مدمج</string>
+    <string name="audio_selected_description">تم الاختيار</string>
+    <string name="audio_minutes_before">دقائق قبل:</string>
 
-    <!-- Welcome Screen -->
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">منبه الفجر (قبل الشروق)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">تحديد وقت منبه الفجر بناءً على الشروق (باستثناء شهر رمضان).</string>
+
+    <!-- Battery & Reliability Settings -->
+    <string name="settings_reliability">الموثوقية والتحسين</string>
+    <string name="settings_battery_opt">تحسين البطارية</string>
+    <string name="settings_battery_opt_enabled">محسن للموثوقية</string>
+    <string name="settings_battery_opt_disabled">انقر لتعطيل التحسين للأذان الموثوق</string>
+    <string name="settings_exact_alarm_title">منبهات دقيقة</string>
+    <string name="settings_exact_alarm_desc">مطلوبة لإشعارات مواقيت صلاة دقيقة</string>
+
+    <!-- Data Management -->
+    <string name="settings_data_management">إدارة البيانات</string>
+    <string name="settings_delete_history">حذف سجل الصلاة</string>
+    <string name="settings_delete_history_desc">حذف جميع بيانات الصلاة السابقة لتفريغ مساحة</string>
+    <string name="settings_delete_history_confirm_title">حذف السجل؟</string>
+    <string name="settings_delete_history_confirm_desc">سيؤدي هذا إلى حذف جميع سجلات الصلاة قبل اليوم نهائياً. لا يمكن التراجع عن هذا الإجراء.</string>
+
+    <!-- Pre-Adhan Warning -->
+    <string name="settings_pre_adhan_warning">تنبيه قبل الأذان</string>
+    <string name="settings_pre_adhan_warning_summary">احصل على إشعار قبل وقت الصلاة.</string>
+    <string name="pre_adhan_notification_title">اقتراب موعد الصلاة</string>
+    <string name="pre_adhan_notification_text">وقت صلاة %s بعد 5 دقائق.</string>
+    <string name="pre_adhan_cancel_action">تجاهل</string>
+    <string name="pre_adhan_channel_name">تنبيهات ما قبل الأذان</string>
+    <string name="pre_adhan_channel_description">الإشعارات المعروضة قبل وقت الصلاة.</string>
+
+    <!-- Welcome / Onboarding -->
     <string name="welcome_title">مرحباً بك في Vaktiva</string>
     <string name="welcome_desc">رفيقك المهني لمواقيت الصلاة، صُمم بدقة وتصميم عصري.</string>
     <string name="welcome_begin">بدء الإعداد</string>
@@ -149,22 +204,17 @@
     <string name="welcome_battery_optimized">محسن للموثوقية</string>
     <string name="welcome_battery_optimize_desc">تعطيل التحسين للأذان الموثوق</string>
 
-    <!-- Adhan Audio per prayer (from EPIC 2) -->
-    <string name="audio_setting_fajr">أذان الفجر</string>
-    <string name="audio_setting_dhuhr">أذان الظهر</string>
-    <string name="audio_setting_asr">أذان العصر</string>
-    <string name="audio_setting_maghrib">أذان المغرب</string>
-    <string name="audio_setting_isha">أذان العشاء</string>
-    <string name="audio_setting_default">الأذان الافتراضي</string>
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">حان وقت</string>
+    <string name="adhan_stop">إيقاف الأذان</string>
+    <string name="adhan_playing">أذان</string>
+    <string name="adhan_sounding">يصدح الآن</string>
+    <string name="adhan_upcoming">الأذان القادم</string>
+    <string name="adhan_test_alarm">اختبار المنبه</string>
+    <string name="adhan_test_desc">محاكاة تشغيل الأذان</string>
+    <string name="adhan_stop_test">إلغاء الاختبار</string>
 
-    <!-- Pre-Adhan Warning (from EPIC 2) -->
-    <string name="settings_pre_adhan_warning">تنبيه قبل الأذان</string>
-    <string name="settings_pre_adhan_warning_summary">احصل على إشعار قبل وقت الصلاة.</string>
-    <string name="pre_adhan_notification_title">اقتراب موعد الصلاة</string>
-    <string name="pre_adhan_notification_text">وقت صلاة %s بعد 5 دقائق.</string>
-    <string name="pre_adhan_cancel_action">تجاهل</string>
-
-    <!-- Donations (from EPIC 6) -->
+    <!-- Donations -->
     <string name="settings_donate">ادعم المطور</string>
     <string name="donate_title">ادعم Vaktiva</string>
     <string name="donate_description">Vaktiva تطبيق مجاني، تم تطويره بعناية. يساعد دعمك في بقائه خالياً من الإعلانات ويسمح بالتطوير المستقبلي.</string>
@@ -178,59 +228,6 @@
     <string name="rate_title">قيم Vaktiva</string>
     <string name="rate_desc">إذا كنت تستمتع بـ Vaktiva، يرجى تخصيص لحظة لتقييمه بـ 5 نجوم على Google Play. يساعدنا ذلك في الوصول لمزيد من الناس!</string>
     <string name="rate_button">قيم بـ 5 نجوم</string>
-
-    <!-- Pre-Adhan Notification Channel -->
-    <string name="pre_adhan_channel_name">تنبيهات ما قبل الأذان</string>
-    <string name="pre_adhan_channel_description">الإشعارات المعروضة قبل وقت الصلاة.</string>
-
-    <!-- Audio Settings Screen -->
-    <string name="cd_back">رجوع</string>
-    <string name="audio_select_prayer_prompt">اختر الصلاة لتكوينها</string>
-    <string name="audio_header_specific">أذان لـ %1$s</string>
-    <string name="audio_header_all_prayers">جميع الصلوات</string>
-    <string name="audio_header_global">اختر صوت الأذان (عام)</string>
-    <string name="audio_supported_formats">المدعوم: MP3, AAC, WAV, OGG</string>
-    <string name="audio_minutes_before">دقائق قبل:</string>
-    <string name="audio_individual_sounds_title">أصوات صلاة فردية</string>
-    <string name="audio_individual_sounds_desc">تعيين أذان مختلف لكل وقت صلاة</string>
-    <string name="audio_preview_stop">إيقاف المعاينة</string>
-    <string name="audio_preview_play">تشغيل المعاينة</string>
-    <string name="audio_built_in">مدمج</string>
-    <string name="audio_delete_description">حذف ملف الصوت</string>
-    <string name="audio_selected_description">تم الاختيار</string>
-
-    <!-- Fajr Sunrise Alarm -->
-    <string name="audio_fajr_sunrise_alarm">منبه الفجر (قبل الشروق)</string>
-    <string name="audio_fajr_sunrise_alarm_desc">تحديد وقت منبه الفجر بناءً على الشروق (باستثناء شهر رمضان).</string>
-
-    <!-- Settings Screen Items -->
-    <string name="settings_notifications_sound">الإشعارات والصوت</string>
-    <string name="settings_play_adhan">تشغيل صوت الأذان</string>
-    <string name="settings_play_adhan_desc">تشغيل صوت الأذان عندما يحين وقت الصلاة</string>
-    <string name="settings_adhan_sound_selection">اختيار صوت الأذان</string>
-    <string name="settings_adhan_sound_selection_desc">اختر الصوت الذي يتم تشغيله خلال أوقات الصلاة</string>
-    <string name="settings_reliability">الموثوقية والتحسين</string>
-    <string name="settings_battery_opt">تحسين البطارية</string>
-    <string name="settings_battery_opt_enabled">محسن للموثوقية</string>
-    <string name="settings_battery_opt_disabled">انقر لتعطيل التحسين للأذان الموثوق</string>
-    <string name="settings_exact_alarm_title">منبهات دقيقة</string>
-    <string name="settings_exact_alarm_desc">مطلوبة لإشعارات مواقيت صلاة دقيقة</string>
-    <string name="settings_data_management">إدارة البيانات</string>
-    <string name="settings_delete_history">حذف سجل الصلاة</string>
-    <string name="settings_delete_history_desc">حذف جميع بيانات الصلاة السابقة لتفريغ مساحة</string>
-    <string name="settings_delete_history_confirm_title">حذف السجل؟</string>
-    <string name="settings_delete_history_confirm_desc">سيؤدي هذا إلى حذف جميع سجلات الصلاة قبل اليوم نهائياً. لا يمكن التراجع عن هذا الإجراء.</string>
-
-    <!-- Adhan Screen -->
-    <string name="adhan_its_time_for">حان وقت</string>
-    <string name="adhan_stop">إيقاف الأذان</string>
-    <string name="adhan_default_prayer">صلاة</string>
-    <string name="adhan_playing">أذان</string>
-    <string name="adhan_sounding">يصدح الآن</string>
-    <string name="adhan_upcoming">الأذان القادم</string>
-    <string name="adhan_test_alarm">اختبار المنبه</string>
-    <string name="adhan_test_desc">محاكاة تشغيل الأذان</string>
-    <string name="adhan_stop_test">إلغاء الاختبار</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">محرم</string>
