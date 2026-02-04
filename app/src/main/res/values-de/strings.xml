@@ -36,6 +36,7 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Unbekannter Standort</string>
+    <string name="home_last_known_location">Zuletzt bekannt: %s</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">Verbleibende Zeit</string>
     <string name="home_permissions_required">Berechtigungen erforderlich</string>
@@ -191,7 +192,7 @@
     <string name="welcome_desc">Ihr professioneller Begleiter für Gebetszeiten, entwickelt mit Präzision und modernem Design.</string>
     <string name="welcome_begin">Einrichtung beginnen</string>
     <string name="welcome_finish">Einrichtung abschließen</string>
-    <string name="welcome_precision_settings">Präzisionseinstellungen</string>
+    <string name="welcome_precision_settings">Präcisionseinstellungen</string>
     <string name="welcome_precision_desc">Vaktiva benötigt diese, um Ihnen besser zu dienen</string>
     <string name="welcome_loc_title">Genauer Standort</string>
     <string name="welcome_loc_desc">Entscheidend für die Berechnung der Gebetszeiten. Ohne diese kann die App keine Zeiten für Ihren Standort abrufen und wird unbrauchbar.</string>
@@ -199,7 +200,7 @@
     <string name="welcome_notif_desc">Erforderlich, um Benachrichtigungen zu senden und den Adhan abzuspielen, wenn es Zeit zum Beten ist.</string>
     <string name="welcome_alarm_title">Exakte Alarme</string>
     <string name="welcome_alarm_desc">Erforderlich, damit der Adhan exakt pünktlich ohne Verzögerung abgespielt wird.</string>
-    <string name="welcome_grant_btn">Berechtigungen erteilen</string>
+    <string name="welcome_grant_btn">Berechtigungen erتهilen</string>
     <string name="welcome_continue_btn">Weiter</string>
     <string name="welcome_personalize">Personalisieren</string>
     <string name="welcome_personalize_desc">Konfigurieren Sie Ihre Gebets- und Berechnungseinstellungen</string>
@@ -223,7 +224,7 @@
     <string name="adhan_test_alarm">Test-Alarm</string>
     <string name="adhan_test_desc">Adhan-Auslösung simulieren</string>
     <string name="adhan_stop_test">TEST ABBRECHEN</string>
-    <string name="adhan_metadata_title_format">%s Adhan</string>
+    <string name="adhan_metadata_title_format">Adhan %s</string>
 
     <!-- Donations -->
     <string name="settings_donate">Den Entwickler unterstützen</string>

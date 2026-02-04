@@ -36,6 +36,7 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Bilinmeyen Konum</string>
+    <string name="home_last_known_location">Son Bilinen: %s</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">Vaktin Çıkmasına</string>
     <string name="home_permissions_required">İzinler Gerekli</string>
@@ -124,7 +125,7 @@
     <string name="method_kuwait">Kuveyt</string>
     <string name="method_qatar">Katar</string>
     <string name="method_singapore">Singapur İslami Dini Meclisi</string>
-    <string name="method_turkey">Türkiye (Diyanet)</string>
+    <string name="method_turkey">Türkiye (Diyanet İşleri Başkanlığı)</string>
 
     <!-- Audio & Notification Settings -->
     <string name="settings_notifications_sound">Bildirimler ve Ses</string>
@@ -249,10 +250,10 @@
     <string name="hijri_month_6">Cemaziyelahir</string>
     <string name="hijri_month_7">Recep</string>
     <string name="hijri_month_8">Şaban</string>
-    <string name="hijri_month_9">Ramazan</string>
     <string name="hijri_month_10">Şevval</string>
     <string name="hijri_month_11">Zilkade</string>
     <string name="hijri_month_12">Zilhicce</string>
+    <string name="hijri_month_9">Ramazan</string>
     <string name="hijri_suffix">H</string>
 
     <!-- Religious Days -->
@@ -270,12 +271,12 @@
     <string name="rel_day_ashura">Aşure Günü</string>
     <string name="rel_day_mawlid">Mevlid Kandili</string>
 
-    <!-- Notification Strings -->
+    <!-- Missing Notification Strings -->
     <string name="notification_adhan_muted">Ezan Sessize Alındı</string>
     <string name="notification_adhan_skipped_text">%s için ezan geçildi.</string>
     <string name="notification_upcoming_adhan_title">Yaklaşan Ezan: %s</string>
     <string name="notification_upcoming_adhan_text">Ezan %d dakika içinde okunacak.</string>
-    <string name="notification_skip_action">BU VAKİT İÇİN ATLA</string>
+    <string name="notification_skip_action">BU VAKİT İÇِن ATLA</string>
     <string name="notification_adhan_title">Ezan: %s</string>
     <string name="notification_adhan_content">Namaz vakti geldi</string>
 </resources>

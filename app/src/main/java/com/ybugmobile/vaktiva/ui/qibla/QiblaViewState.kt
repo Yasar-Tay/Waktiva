@@ -11,5 +11,7 @@ data class QiblaViewState(
     val compassData: CompassData = CompassData(0f, 0),
     val currentPrayerDay: PrayerDay? = null,
     val currentTime: LocalDateTime = LocalDateTime.now(),
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val isNetworkAvailable: Boolean = true,
+    val hasSystemIssues: Boolean = false
 )

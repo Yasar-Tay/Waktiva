@@ -36,6 +36,7 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Ubicación desconocida</string>
+    <string name="home_last_known_location">Última conocida: %s</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">Tiempo restante</string>
     <string name="home_permissions_required">Permisos necesarios</string>
@@ -119,7 +120,7 @@
     <string name="method_egypt">Autoridad General de Topografía de Egipto</string>
     <string name="method_makkah">Universidad Umm al-Qura, Meca</string>
     <string name="method_karachi">Universidad de Ciencias Islámicas, Karachi</string>
-    <string name="method_tehran">Instituto de Geofísica, Univ. de Teherán</string>
+    <string name="method_tehran">Instituto de Geofisica, Univ. de Teherán</string>
     <string name="method_gulf">Región del Golfo</string>
     <string name="method_kuwait">Kuwait</string>
     <string name="method_qatar">Catar</string>

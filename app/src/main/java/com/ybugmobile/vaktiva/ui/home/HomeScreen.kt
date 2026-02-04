@@ -123,6 +123,28 @@ fun HomeScreenContent(
 
     val contentColor = glassTheme.contentColor
 
+    val statusIcon: @Composable (() -> Unit)? = if (permissionState.allPermissionsGranted && (!state.isNetworkAvailable || state.hasSystemIssues)) {
+        {
+            val color = if (!state.isNetworkAvailable) Color(0xFFFACC15) else Color(0xFFFF5252)
+            Surface(
+                onClick = { showHealthOverlay = true },
+                shape = CircleShape,
+                color = color.copy(alpha = 0.15f),
+                border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.4f)),
+                modifier = Modifier.size(44.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = if (!state.isNetworkAvailable) Icons.Rounded.WifiOff else Icons.Rounded.PriorityHigh,
+                        contentDescription = "Status",
+                        tint = color,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        }
+    } else null
+
     Scaffold(
         containerColor = Color.Transparent,
         snackbarHost = { },
@@ -161,7 +183,8 @@ fun HomeScreenContent(
                                 locationName = state.locationName,
                                 date = state.selectedDate,
                                 hijriDate = state.currentPrayerDay?.hijriDate,
-                                contentColor = contentColor
+                                contentColor = contentColor,
+                                statusIcon = statusIcon
                             )
 
                             if (state.currentPrayerDay != null) {
@@ -301,7 +324,8 @@ fun HomeScreenContent(
                                 locationName = state.locationName,
                                 date = state.selectedDate,
                                 hijriDate = state.currentPrayerDay?.hijriDate,
-                                contentColor = contentColor
+                                contentColor = contentColor,
+                                statusIcon = statusIcon
                             )
 
                             Column(
@@ -433,35 +457,6 @@ fun HomeScreenContent(
                                 }
                             }
                             Spacer(modifier = Modifier.height(80.dp))
-                        }
-                    }
-                }
-            }
-
-            // Status FAB (Top Right)
-            if (permissionState.allPermissionsGranted && (!state.isNetworkAvailable || state.hasSystemIssues)) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .systemBarsPadding()
-                        .padding(top = 8.dp, end = 16.dp),
-                    contentAlignment = Alignment.TopEnd
-                ) {
-                    val color = if (!state.isNetworkAvailable) Color(0xFFFACC15) else Color(0xFFFF5252)
-                    Surface(
-                        onClick = { showHealthOverlay = true },
-                        shape = CircleShape,
-                        color = color.copy(alpha = 0.15f),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.4f)),
-                        modifier = Modifier.size(44.dp)
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                imageVector = if (!state.isNetworkAvailable) Icons.Rounded.WifiOff else Icons.Rounded.PriorityHigh,
-                                contentDescription = "Status",
-                                tint = color,
-                                modifier = Modifier.size(24.dp)
-                            )
                         }
                     }
                 }

@@ -34,7 +34,9 @@ fun HomeHeader(
     date: LocalDate,
     hijriDate: HijriData?,
     contentColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    statusIcon: (@Composable () -> Unit)? = null,
+    isNetworkAvailable: Boolean = true
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
@@ -52,24 +54,40 @@ fun HomeHeader(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                LocationSection(locationName, contentColor)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    LocationSection(locationName, contentColor, isNetworkAvailable)
+                    if (statusIcon != null) {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        statusIcon()
+                    }
+                }
 
-                Row(horizontalArrangement = Arrangement.End) {
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.Top
+                ) {
                     ReligiousBadge(date = date, contentColor = contentColor, hijriDate = hijriDate)
                     Spacer(modifier = Modifier.width(12.dp))
                     DatesSection(date, hijriDate, contentColor, context)
-
                 }
             }
         } else {
             Column(horizontalAlignment = Alignment.Start) {
-                LocationSection(locationName, contentColor)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    LocationSection(locationName, contentColor, isNetworkAvailable)
+                    if (statusIcon != null) {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        statusIcon()
+                    }
+                }
                 Spacer(modifier = Modifier.height(12.dp))
                 DatesSection(date, hijriDate, contentColor, context)
             }
 
             // Floating badge for portrait
-            Box(modifier = Modifier.align(Alignment.TopEnd)) {
+            Box(
+                modifier = Modifier.align(Alignment.TopEnd)
+            ) {
                 ReligiousBadge(date = date, contentColor = contentColor, hijriDate = hijriDate)
             }
         }
@@ -77,7 +95,7 @@ fun HomeHeader(
 }
 
 @Composable
-private fun LocationSection(locationName: String, contentColor: Color) {
+private fun LocationSection(locationName: String, contentColor: Color, isNetworkAvailable: Boolean) {
     Column(horizontalAlignment = Alignment.Start) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
@@ -87,9 +105,16 @@ private fun LocationSection(locationName: String, contentColor: Color) {
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
+
+            val displayLocation = if (!isNetworkAvailable && locationName.isNotEmpty() && locationName != "Current Location") {
+                stringResource(R.string.home_last_known_location, locationName.substringBefore(","))
+            } else {
+                locationName.substringBefore(",")
+                    .ifEmpty { stringResource(R.string.home_unknown_location) }
+            }
+
             Text(
-                text = locationName.substringBefore(",")
-                    .ifEmpty { stringResource(R.string.home_unknown_location) },
+                text = displayLocation,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = contentColor,

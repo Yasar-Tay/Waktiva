@@ -1,5 +1,6 @@
 package com.ybugmobile.vaktiva.ui.qibla
 
+import android.content.Context
 import android.hardware.GeomagneticField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +12,9 @@ import com.ybugmobile.vaktiva.data.sensor.CompassManager
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import com.ybugmobile.vaktiva.domain.manager.TimeManager
+import com.ybugmobile.vaktiva.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -24,7 +27,8 @@ class QiblaViewModel @Inject constructor(
     settingsManager: SettingsManager,
     private val compassManager: CompassManager,
     prayerRepository: PrayerRepository,
-    timeManager: TimeManager
+    timeManager: TimeManager,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     val settings = settingsManager.settingsFlow
@@ -43,15 +47,27 @@ class QiblaViewModel @Inject constructor(
         days.find { it.date == today }
     }
 
+    private val _isNetworkAvailable = MutableStateFlow(PermissionUtils.isNetworkAvailable(context))
+    private val _hasSystemIssues = MutableStateFlow(checkSystemIssues())
     private val _hasSettled = MutableStateFlow(false)
+
+    // Grouping status flows to stay within the 5-parameter limit of combine
+    private val statusFlow = combine(
+        _hasSettled,
+        _isNetworkAvailable,
+        _hasSystemIssues
+    ) { settled, network, issues ->
+        Triple(settled, network, issues)
+    }
 
     val state: StateFlow<QiblaViewState> = combine(
         settings,
         compassData,
         currentPrayerDay,
         currentTime,
-        _hasSettled
-    ) { s, c, d, t, settled ->
+        statusFlow
+    ) { s, c, d, t, status ->
+        val (settled, network, issues) = status
         val qiblaDir = Qibla(Coordinates(s.latitude, s.longitude)).direction
         QiblaViewState(
             settings = s,
@@ -59,11 +75,21 @@ class QiblaViewModel @Inject constructor(
             compassData = c,
             currentPrayerDay = d,
             currentTime = t,
-            isLoading = !settled
+            isLoading = !settled,
+            isNetworkAvailable = network,
+            hasSystemIssues = issues
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), QiblaViewState(isLoading = true))
 
     init {
+        // Update health status periodically
+        currentTime.onEach { now ->
+            if (now.second % 30 == 0) {
+                _isNetworkAvailable.value = PermissionUtils.isNetworkAvailable(context)
+                _hasSystemIssues.value = checkSystemIssues()
+            }
+        }.launchIn(viewModelScope)
+
         // Update magnetic declination whenever location changes
         viewModelScope.launch {
             settings.collectLatest { s ->
@@ -82,5 +108,11 @@ class QiblaViewModel @Inject constructor(
             delay(300) // Small buffer to let flows settle
             _hasSettled.value = true
         }
+    }
+
+    private fun checkSystemIssues(): Boolean {
+        return !PermissionUtils.isLocationEnabled(context) || 
+               PermissionUtils.isDoNotDisturbActive(context) || 
+               PermissionUtils.areNotificationChannelsMuted(context)
     }
 }

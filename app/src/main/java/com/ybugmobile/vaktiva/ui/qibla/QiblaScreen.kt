@@ -12,10 +12,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.PriorityHigh
+import androidx.compose.material.icons.rounded.WifiOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -39,6 +42,7 @@ import com.ybugmobile.vaktiva.ui.qibla.composables.CalibrationDialog
 import com.ybugmobile.vaktiva.ui.qibla.composables.ProfessionalCompass
 import com.ybugmobile.vaktiva.ui.qibla.composables.QiblaInfoCard
 import com.ybugmobile.vaktiva.ui.qibla.composables.QiblaMap
+import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import org.maplibre.android.MapLibre
@@ -64,6 +68,7 @@ fun QiblaScreen(
     val isAccuracyUnreliable = state.compassData.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE
 
     var showCalibrationDialog by remember { mutableStateOf(false) }
+    var showHealthOverlay by remember { mutableStateOf(false) }
 
     val backgroundGradient = getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
     val glassTheme = getGlassTheme(state.currentTime.toLocalTime(), state.currentPrayerDay)
@@ -120,7 +125,8 @@ fun QiblaScreen(
                     contentColor = contentColor,
                     textShadow = textShadow,
                     glassTheme = glassTheme,
-                    onCalibrationClick = { showCalibrationDialog = true }
+                    onCalibrationClick = { showCalibrationDialog = true },
+                    onStatusClick = { showHealthOverlay = true }
                 )
             } else {
                 LocationRequiredFallback(permissionState = locationPermissionState)
@@ -129,6 +135,13 @@ fun QiblaScreen(
 
         if (showCalibrationDialog) {
             CalibrationDialog(onDismiss = { showCalibrationDialog = false })
+        }
+
+        if (showHealthOverlay) {
+            SystemHealthOverlay(
+                isNetworkAvailable = state.isNetworkAvailable,
+                onDismiss = { showHealthOverlay = false }
+            )
         }
     }
 }
@@ -145,7 +158,8 @@ private fun QiblaContent(
     contentColor: Color,
     textShadow: Shadow?,
     glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme,
-    onCalibrationClick: () -> Unit
+    onCalibrationClick: () -> Unit,
+    onStatusClick: () -> Unit
 ) {
     var isMapView by rememberSaveable { mutableStateOf(false) }
     var isSatelliteView by rememberSaveable { mutableStateOf(false) }
@@ -168,6 +182,28 @@ private fun QiblaContent(
         isMapView -> theme.onSurface
         else -> glassTheme.contentColor
     }
+
+    val statusIcon = if (!state.isNetworkAvailable || state.hasSystemIssues) {
+        @Composable {
+            val color = if (!state.isNetworkAvailable) Color(0xFFFACC15) else Color(0xFFFF5252)
+            Surface(
+                onClick = onStatusClick,
+                shape = CircleShape,
+                color = color.copy(alpha = 0.15f),
+                border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.4f)),
+                modifier = Modifier.size(40.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = if (!state.isNetworkAvailable) Icons.Rounded.WifiOff else Icons.Rounded.PriorityHigh,
+                        contentDescription = "Status",
+                        tint = color,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+        }
+    } else null
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (isMapView && !isLandscape) {
@@ -280,19 +316,31 @@ private fun QiblaContent(
                                     if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
                                 )
                             ) {
-                                Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
-                                    Text(
-                                        text = s.locationName.substringBefore(","),
-                                        color = effectiveContentColor,
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        maxLines = 1
-                                    )
-                                    Text(
-                                        text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
-                                        color = effectiveContentColor.copy(alpha = 0.6f),
-                                        style = MaterialTheme.typography.labelSmall
-                                    )
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        val displayLocation = if (!state.isNetworkAvailable && s.locationName.isNotEmpty() && s.locationName != "Current Location") {
+                                            stringResource(R.string.home_last_known_location, s.locationName.substringBefore(","))
+                                        } else {
+                                            s.locationName.substringBefore(",")
+                                                .ifEmpty { stringResource(R.string.home_unknown_location) }
+                                        }
+                                        Text(
+                                            text = displayLocation,
+                                            color = effectiveContentColor,
+                                            style = MaterialTheme.typography.titleSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            maxLines = 1
+                                        )
+                                        Text(
+                                            text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
+                                            color = effectiveContentColor.copy(alpha = 0.6f),
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
+                                    }
+                                    statusIcon?.invoke()
                                 }
                             }
                         }
@@ -352,24 +400,38 @@ private fun QiblaContent(
                             if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
                         )
                     ) {
-                        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.LocationOn, null, tint = effectiveContentColor, modifier = Modifier.size(18.dp))
-                                Spacer(Modifier.width(8.dp))
+                        Row(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.LocationOn, null, tint = effectiveContentColor, modifier = Modifier.size(18.dp))
+                                    Spacer(Modifier.width(8.dp))
+                                    
+                                    val displayLocation = if (!state.isNetworkAvailable && s.locationName.isNotEmpty() && s.locationName != "Current Location") {
+                                        stringResource(R.string.home_last_known_location, s.locationName.substringBefore(","))
+                                    } else {
+                                        s.locationName.substringBefore(",")
+                                            .ifEmpty { stringResource(R.string.home_unknown_location) }
+                                    }
+
+                                    Text(
+                                        text = displayLocation,
+                                        color = effectiveContentColor,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1
+                                    )
+                                }
                                 Text(
-                                    text = s.locationName.substringBefore(","),
-                                    color = effectiveContentColor,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = 1
+                                    text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
+                                    color = effectiveContentColor.copy(alpha = 0.6f),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    modifier = Modifier.padding(start = 26.dp)
                                 )
                             }
-                            Text(
-                                text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
-                                color = effectiveContentColor.copy(alpha = 0.6f),
-                                style = MaterialTheme.typography.labelSmall,
-                                modifier = Modifier.padding(start = 26.dp)
-                            )
+                            statusIcon?.invoke()
                         }
                     }
                 }
