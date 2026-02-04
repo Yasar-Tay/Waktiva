@@ -9,6 +9,7 @@ import android.content.pm.ServiceInfo
 import android.media.AudioAttributes as AndroidAudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
+import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -160,24 +161,41 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
 
                 val prayerType = PrayerType.fromString(prayerName)
                 val displayedPrayerName = prayerType?.getDisplayName(this) ?: prayerName
+                val metadataTitle = getString(R.string.adhan_metadata_title_format, displayedPrayerName)
                 
+                val retriever = MediaMetadataRetriever()
+                var adhanArtist: String? = null
+                try {
+                    if (audioPath!!.startsWith("android.resource://")) {
+                        retriever.setDataSource(this, audioPath.toUri())
+                    } else {
+                        retriever.setDataSource(audioPath)
+                    }
+                    adhanArtist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    try { retriever.release() } catch (e: Exception) {}
+                }
+
                 val extras = Bundle().apply {
                     putString(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
                 }
                 
                 val metadata = MediaMetadata.Builder()
-                    .setTitle(getString(R.string.notification_adhan_title, displayedPrayerName))
+                    .setTitle(metadataTitle)
+                    .setArtist(adhanArtist)
                     .setExtras(extras)
                     .build()
                     
                 val mediaItem = MediaItem.Builder()
-                    .setUri(audioPath.toUri())
+                    .setUri(audioPath!!.toUri())
                     .setMediaMetadata(metadata)
                     .build()
                 
                 player?.setMediaItem(mediaItem)
                 player?.prepare()
-                player?.volume = 1.0f
+                player?.volume = 1.0f // Set full volume immediately, removing fade-in
                 player?.play()
             }
         }

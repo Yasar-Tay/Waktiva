@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.Player
@@ -63,16 +64,40 @@ class AdhanActivity : ComponentActivity() {
         setContent {
             val prayerDays by prayerRepository.getPrayerDays().collectAsState(initial = emptyList())
             val currentDay = prayerDays.find { it.date == LocalDate.now() }
+            
+            var adhanTitle by remember { mutableStateOf<String?>(null) }
+            var adhanArtist by remember { mutableStateOf<String?>(null) }
 
             VaktivaTheme {
                 AdhanScreen(
                     prayerName = prayerName,
+                    adhanTitle = adhanTitle,
+                    adhanArtist = adhanArtist,
                     currentPrayerDay = currentDay,
                     onDismiss = { 
                         controller?.stop()
                         finish() 
                     }
                 )
+            }
+            
+            // Listen for metadata changes from the controller
+            LaunchedEffect(controller) {
+                controller?.let { c ->
+                    fun updateMetadata() {
+                        adhanTitle = c.currentMediaItem?.mediaMetadata?.title?.toString()
+                        adhanArtist = c.currentMediaItem?.mediaMetadata?.artist?.toString()
+                    }
+                    updateMetadata()
+                    c.addListener(object : Player.Listener {
+                        override fun onMediaItemTransition(mediaItem: androidx.media3.common.MediaItem?, reason: Int) {
+                            updateMetadata()
+                        }
+                        override fun onMetadata(metadata: androidx.media3.common.Metadata) {
+                            updateMetadata()
+                        }
+                    })
+                }
             }
         }
     }
@@ -132,6 +157,8 @@ class AdhanActivity : ComponentActivity() {
 @Composable
 fun AdhanScreen(
     prayerName: String, 
+    adhanTitle: String?,
+    adhanArtist: String?,
     currentPrayerDay: PrayerDay?,
     onDismiss: () -> Unit
 ) {
@@ -242,16 +269,41 @@ fun AdhanScreen(
                     fontWeight = FontWeight.Black,
                     letterSpacing = 4.sp
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = displayedPrayerName.uppercase(),
                     style = MaterialTheme.typography.displayMedium.copy(
-                        fontSize = 56.sp,
+                        fontSize = 48.sp,
                         fontWeight = FontWeight.Black,
                         letterSpacing = 2.sp
                     ),
                     color = Color.White
                 )
+                
+                // Track Metadata (Title & Artist)
+                if (adhanTitle != null || adhanArtist != null) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        if (adhanTitle != null) {
+                            Text(
+                                text = adhanTitle,
+                                style = MaterialTheme.typography.titleLarge,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        if (adhanArtist != null) {
+                            Text(
+                                text = adhanArtist,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.White.copy(alpha = 0.7f),
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
             }
 
             // 3. Action Section: STOP Button

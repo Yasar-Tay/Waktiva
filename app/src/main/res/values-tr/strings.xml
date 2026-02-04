@@ -92,7 +92,7 @@
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">فارسی</string>
+    <string name="lang_fa">فarsı</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -213,6 +213,7 @@
     <string name="adhan_test_alarm">Test Alarmı</string>
     <string name="adhan_test_desc">Ezan tetiklemesi simüle ediliyor</string>
     <string name="adhan_stop_test">TESTİ İPTAL ET</string>
+    <string name="adhan_metadata_title_format">%s Ezanı</string>
 
     <!-- Donations -->
     <string name="settings_donate">Geliştiriciyi Destekle</string>

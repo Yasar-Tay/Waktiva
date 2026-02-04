@@ -213,6 +213,7 @@
     <string name="adhan_test_alarm">Test Alarm</string>
     <string name="adhan_test_desc">Simulating adhan trigger</string>
     <string name="adhan_stop_test">CANCEL TEST</string>
+    <string name="adhan_metadata_title_format">%s Adhan</string>
 
     <!-- Donations -->
     <string name="settings_donate">Support the Developer</string>
