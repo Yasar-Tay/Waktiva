@@ -11,8 +11,6 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
@@ -49,8 +47,6 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
     private lateinit var audioManager: AudioManager
     private var focusRequest: AudioFocusRequest? = null
     
-    private val handler = Handler(Looper.getMainLooper())
-    private var volumeFadeRunnable: Runnable? = null
     private var isFallbackPlaying = false
 
     private val noisyReceiver = object : BroadcastReceiver() {
@@ -181,7 +177,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
                 
                 player?.setMediaItem(mediaItem)
                 player?.prepare()
-                startFadeIn()
+                player?.volume = 1.0f
                 player?.play()
             }
         }
@@ -255,27 +251,10 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         stopSelf()
     }
 
-    private fun startFadeIn() {
-        volumeFadeRunnable?.let { handler.removeCallbacks(it) }
-        var currentVolume = 0.05f
-        player?.volume = currentVolume
-        volumeFadeRunnable = object : Runnable {
-            override fun run() {
-                currentVolume += 0.05f
-                if (currentVolume <= 1.0f) {
-                    player?.volume = currentVolume
-                    handler.postDelayed(this, 1000)
-                }
-            }
-        }
-        handler.post(volumeFadeRunnable!!)
-    }
-
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
     override fun onDestroy() {
         try { unregisterReceiver(noisyReceiver) } catch (e: Exception) {}
-        volumeFadeRunnable?.let { handler.removeCallbacks(it) }
         mediaSession?.run { player.release(); release() }
         super.onDestroy()
     }

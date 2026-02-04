@@ -1,6 +1,7 @@
 package com.ybugmobile.vaktiva.ui.settings
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.lifecycle.ViewModel
@@ -23,11 +24,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 data class AdhanAudioItem(
     val name: String,
+    val artist: String? = null,
     val path: String,
     val isDefault: Boolean = false,
     val isSelected: Boolean = false,
@@ -45,7 +46,7 @@ class AudioSettingsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _currentPlayingPath = MutableStateFlow<String?>(null)
-    private val _selectedPrayerType = MutableStateFlow<PrayerType?>(null) // null means global selection
+    private val _selectedPrayerType = MutableStateFlow<PrayerType?>(null)
     val selectedPrayerType: StateFlow<PrayerType?> = _selectedPrayerType.asStateFlow()
 
     val settings = settingsManager.settingsFlow
@@ -61,28 +62,39 @@ class AudioSettingsViewModel @Inject constructor(
     ) { settings, playingPath, selectedPrayer ->
         val items = mutableListOf<AdhanAudioItem>()
 
-        // 1. Add Default Adhan
-        val defaultPath = "android.resource://${context.packageName}/${R.raw.ezan}"
-        val isSelected = if (selectedPrayer != null) {
-            settings.prayerSpecificAdhanPaths[selectedPrayer] == defaultPath || 
-            (settings.prayerSpecificAdhanPaths[selectedPrayer] == null && settings.selectedAdhanPath == defaultPath)
-        } else {
-            settings.selectedAdhanPath == defaultPath || settings.selectedAdhanPath == null
-        }
-
-        items.add(
-            AdhanAudioItem(
-                name = context.getString(R.string.audio_setting_default),
-                path = defaultPath,
-                isDefault = true,
-                isSelected = isSelected,
-                isPlaying = playingPath == defaultPath
-            )
+        // Built-in Adhans
+        val rawAdhans = listOf(
+            R.raw.muhsinkara_muhayyerkurdi_ezan to true, // New default
         )
 
-        // 2. Add Custom Adhans
+        rawAdhans.forEach { (resId, isDefaultFile) ->
+            val path = "android.resource://${context.packageName}/$resId"
+            val metadata = getAudioMetadata(path)
+            
+            val isSelected = if (selectedPrayer != null) {
+                settings.prayerSpecificAdhanPaths[selectedPrayer] == path || 
+                (settings.prayerSpecificAdhanPaths[selectedPrayer] == null && settings.selectedAdhanPath == path) ||
+                (settings.prayerSpecificAdhanPaths[selectedPrayer] == null && settings.selectedAdhanPath == null && isDefaultFile)
+            } else {
+                settings.selectedAdhanPath == path || (settings.selectedAdhanPath == null && isDefaultFile)
+            }
+
+            items.add(
+                AdhanAudioItem(
+                    name = metadata.first ?: context.getString(if (isDefaultFile) R.string.audio_setting_default else R.string.audio_setting_fajr),
+                    artist = metadata.second,
+                    path = path,
+                    isDefault = true,
+                    isSelected = isSelected,
+                    isPlaying = playingPath == path
+                )
+            )
+        }
+
+        // Custom Adhans
         audioManager.getCustomAdhans().forEach { file ->
             val path = file.absolutePath
+            val metadata = getAudioMetadata(path)
             val isCustomSelected = if (selectedPrayer != null) {
                 settings.prayerSpecificAdhanPaths[selectedPrayer] == path
             } else {
@@ -91,7 +103,8 @@ class AudioSettingsViewModel @Inject constructor(
 
             items.add(
                 AdhanAudioItem(
-                    name = file.name,
+                    name = metadata.first ?: file.name,
+                    artist = metadata.second,
                     path = path,
                     isSelected = isCustomSelected,
                     isPlaying = playingPath == path
@@ -99,15 +112,24 @@ class AudioSettingsViewModel @Inject constructor(
             )
         }
         items
-    }.asStateFlow(emptyList())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    private fun <T> kotlinx.coroutines.flow.Flow<T>.asStateFlow(initialValue: T): StateFlow<T> {
-        val flow = this
-        val state = MutableStateFlow(initialValue)
-        viewModelScope.launch {
-            flow.collect { state.value = it }
+    private fun getAudioMetadata(path: String): Pair<String?, String?> {
+        val retriever = MediaMetadataRetriever()
+        return try {
+            if (path.startsWith("android.resource")) {
+                retriever.setDataSource(context, Uri.parse(path))
+            } else {
+                retriever.setDataSource(path)
+            }
+            val title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
+            val artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
+            Pair(title, artist)
+        } catch (e: Exception) {
+            Pair(null, null)
+        } finally {
+            try { retriever.release() } catch (e: Exception) {}
         }
-        return state.asStateFlow()
     }
 
     fun selectPrayerType(type: PrayerType?) {

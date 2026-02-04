@@ -151,7 +151,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 settings.prayerSpecificAdhanPaths[prayerType] ?: settings.selectedAdhanPath
             } else settings.selectedAdhanPath
 
-            val finalPath = audioPath ?: "android.resource://${context.packageName}/${R.raw.ezan}"
+            val finalPath = audioPath ?: "android.resource://${context.packageName}/${R.raw.muhsinkara_muhayyerkurdi_ezan}"
             val serviceIntent = Intent(context, AdhanService::class.java).apply {
                 putExtra(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
                 putExtra("AUDIO_PATH", finalPath)
