@@ -311,6 +311,38 @@ private fun QiblaContent(
                         }
                     }
 
+                    // Interference Warning
+                    AnimatedVisibility(
+                        visible = isAccuracyLow || isAccuracyUnreliable,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.8f),
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = onCalibrationClick
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                                Text(
+                                    text = stringResource(R.string.qibla_magnetic_interference),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+
                     QiblaInfoCard(
                         isAligned = isAligned,
                         alignmentColor = alignmentColor,
@@ -417,6 +449,21 @@ private fun QiblaContent(
                 ) {
                     if (!isMapView) {
                         Box(contentAlignment = Alignment.Center) {
+                            if (isAccuracyLow) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(340.dp)
+                                        .background(
+                                            Brush.radialGradient(
+                                                colors = listOf(
+                                                    MaterialTheme.colorScheme.error.copy(alpha = pulseAlpha),
+                                                    Color.Transparent
+                                                )
+                                            )
+                                        )
+                                )
+                            }
+                            
                             Box(
                                 modifier = Modifier
                                     .size(320.dp)
@@ -440,7 +487,42 @@ private fun QiblaContent(
                     }
                 }
 
-                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Interference Warning
+                    AnimatedVisibility(
+                        visible = isAccuracyLow || isAccuracyUnreliable,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.8f),
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = onCalibrationClick
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                                Text(
+                                    text = stringResource(R.string.qibla_magnetic_interference),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+
                     QiblaInfoCard(
                         isAligned = isAligned,
                         alignmentColor = alignmentColor,

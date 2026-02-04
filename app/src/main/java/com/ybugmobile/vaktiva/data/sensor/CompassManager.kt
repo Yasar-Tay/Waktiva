@@ -11,10 +11,11 @@ import android.view.Surface
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.abs
 
 data class CompassData(
     val azimuth: Float,
@@ -29,7 +30,16 @@ class CompassManager @Inject constructor(
     private val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
     private val rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
-    val compassFlow: Flow<CompassData> = callbackFlow {
+    private val declination = MutableStateFlow(0f)
+
+    /**
+     * Set the magnetic declination for the current location to convert Magnetic North to True North.
+     */
+    fun setDeclination(value: Float) {
+        declination.value = value
+    }
+
+    private val rawCompassFlow: Flow<CompassData> = callbackFlow {
         var lastAzimuth = 0f
         val alpha = 0.25f // Low-pass filter smoothing factor
 
@@ -64,7 +74,6 @@ class CompassManager @Inject constructor(
                     currentAzimuth = (currentAzimuth + 360) % 360
 
                     // Smooth out the rotation using a low-pass filter
-                    // To handle the 360 -> 0 degree jump:
                     var diff = currentAzimuth - lastAzimuth
                     if (diff > 180) diff -= 360
                     else if (diff < -180) diff += 360
@@ -84,5 +93,11 @@ class CompassManager @Inject constructor(
         awaitClose {
             sensorManager.unregisterListener(listener)
         }
+    }
+
+    val compassFlow: Flow<CompassData> = combine(rawCompassFlow, declination) { data, dec ->
+        // Adjust Magnetic North to True North
+        val trueAzimuth = (data.azimuth + dec + 360) % 360
+        data.copy(azimuth = trueAzimuth)
     }
 }

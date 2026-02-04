@@ -1,5 +1,6 @@
 package com.ybugmobile.vaktiva.ui.qibla
 
+import android.hardware.GeomagneticField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.batoulapps.adhan.Qibla
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class QiblaViewModel @Inject constructor(
     settingsManager: SettingsManager,
-    compassManager: CompassManager,
+    private val compassManager: CompassManager,
     prayerRepository: PrayerRepository,
     timeManager: TimeManager
 ) : ViewModel() {
@@ -63,6 +64,19 @@ class QiblaViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), QiblaViewState(isLoading = true))
 
     init {
+        // Update magnetic declination whenever location changes
+        viewModelScope.launch {
+            settings.collectLatest { s ->
+                val geomagneticField = GeomagneticField(
+                    s.latitude.toFloat(),
+                    s.longitude.toFloat(),
+                    0f, // Altitude - approximate as 0 for declination
+                    System.currentTimeMillis()
+                )
+                compassManager.setDeclination(geomagneticField.declination)
+            }
+        }
+
         // Mark as settled after a small delay to allow flows to emit their first values
         viewModelScope.launch {
             delay(300) // Small buffer to let flows settle
