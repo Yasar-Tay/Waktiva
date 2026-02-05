@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
@@ -207,16 +208,61 @@ private fun QiblaContent(
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (isMapView && !isLandscape) {
-            QiblaMap(
-                settings = state.settings,
-                compassData = state.compassData,
-                isSatelliteView = isSatelliteView,
-                isAligned = isAligned,
-                kaabaLatLng = kaabaLatLng,
-                onMapReady = { },
-                onMapLongClick = { },
-                onToggleSatellite = { isSatelliteView = !isSatelliteView }
-            )
+            Box(modifier = Modifier.fillMaxSize()) {
+                QiblaMap(
+                    settings = state.settings,
+                    compassData = state.compassData,
+                    isSatelliteView = isSatelliteView,
+                    isAligned = isAligned,
+                    kaabaLatLng = kaabaLatLng,
+                    onMapReady = { },
+                    onMapLongClick = { },
+                    onToggleSatellite = { isSatelliteView = !isSatelliteView }
+                )
+                
+                if (!state.isNetworkAvailable) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.4f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                            shape = RoundedCornerShape(24.dp),
+                            modifier = Modifier.padding(32.dp),
+                            tonalElevation = 8.dp
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    Icons.Rounded.WifiOff,
+                                    null,
+                                    tint = Color(0xFFFACC15),
+                                    modifier = Modifier.size(48.dp)
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                Text(
+                                    text = stringResource(R.string.health_no_internet),
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(Modifier.height(24.dp))
+                                Button(
+                                    onClick = onStatusClick,
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Text(stringResource(R.string.health_title))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         } else if (isAccuracyLow && !isLandscape) {
             Box(
                 modifier = Modifier
@@ -241,16 +287,48 @@ private fun QiblaContent(
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     if (isMapView) {
-                        QiblaMap(
-                            settings = state.settings,
-                            compassData = state.compassData,
-                            isSatelliteView = isSatelliteView,
-                            isAligned = isAligned,
-                            kaabaLatLng = kaabaLatLng,
-                            onMapReady = { },
-                            onMapLongClick = { },
-                            onToggleSatellite = { isSatelliteView = !isSatelliteView }
-                        )
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            QiblaMap(
+                                settings = state.settings,
+                                compassData = state.compassData,
+                                isSatelliteView = isSatelliteView,
+                                isAligned = isAligned,
+                                kaabaLatLng = kaabaLatLng,
+                                onMapReady = { },
+                                onMapLongClick = { },
+                                onToggleSatellite = { isSatelliteView = !isSatelliteView }
+                            )
+                            
+                            if (!state.isNetworkAvailable) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(Color.Black.copy(alpha = 0.4f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                                        shape = RoundedCornerShape(24.dp),
+                                        modifier = Modifier.padding(32.dp),
+                                        tonalElevation = 8.dp
+                                    ) {
+                                        Column(
+                                            modifier = Modifier.padding(24.dp),
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Icon(Icons.Rounded.WifiOff, null, tint = Color(0xFFFACC15), modifier = Modifier.size(40.dp))
+                                            Spacer(Modifier.height(12.dp))
+                                            Text(
+                                                text = stringResource(R.string.health_no_internet),
+                                                textAlign = TextAlign.Center,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     } else {
                         Box(contentAlignment = Alignment.Center) {
                             if (isAccuracyLow) {

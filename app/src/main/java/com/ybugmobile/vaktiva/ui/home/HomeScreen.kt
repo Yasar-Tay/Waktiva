@@ -184,7 +184,8 @@ fun HomeScreenContent(
                                 date = state.selectedDate,
                                 hijriDate = state.currentPrayerDay?.hijriDate,
                                 contentColor = contentColor,
-                                statusIcon = statusIcon
+                                statusIcon = statusIcon,
+                                isNetworkAvailable = state.isNetworkAvailable
                             )
 
                             if (state.currentPrayerDay != null) {
@@ -325,7 +326,8 @@ fun HomeScreenContent(
                                 date = state.selectedDate,
                                 hijriDate = state.currentPrayerDay?.hijriDate,
                                 contentColor = contentColor,
-                                statusIcon = statusIcon
+                                statusIcon = statusIcon,
+                                isNetworkAvailable = state.isNetworkAvailable
                             )
 
                             Column(

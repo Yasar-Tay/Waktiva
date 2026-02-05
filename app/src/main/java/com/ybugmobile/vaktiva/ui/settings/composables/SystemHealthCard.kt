@@ -24,16 +24,19 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.notification.NotificationHelper
+import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.vaktiva.utils.PermissionUtils
 
 @Composable
 fun SystemHealthCard() {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val glassTheme = LocalGlassTheme.current
 
     var isGpsOff by remember { mutableStateOf(!PermissionUtils.isLocationEnabled(context)) }
     var isDndActive by remember { mutableStateOf(PermissionUtils.isDoNotDisturbActive(context)) }
     var areChannelsMuted by remember { mutableStateOf(PermissionUtils.areNotificationChannelsMuted(context)) }
+    var isNetworkOffline by remember { mutableStateOf(!PermissionUtils.isNetworkAvailable(context)) }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -41,6 +44,7 @@ fun SystemHealthCard() {
                 isGpsOff = !PermissionUtils.isLocationEnabled(context)
                 isDndActive = PermissionUtils.isDoNotDisturbActive(context)
                 areChannelsMuted = PermissionUtils.areNotificationChannelsMuted(context)
+                isNetworkOffline = !PermissionUtils.isNetworkAvailable(context)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -48,20 +52,33 @@ fun SystemHealthCard() {
     }
 
     val issues = mutableListOf<HealthIssue>()
+    
+    // Critical System Issues
     if (isGpsOff) issues.add(HealthIssue(
         stringResource(R.string.health_gps_off),
         Icons.Rounded.LocationOff,
-        Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+        Color(0xFFFF5252)
     ))
     if (areChannelsMuted) issues.add(HealthIssue(
         stringResource(R.string.health_channels_muted),
         Icons.Rounded.NotificationsPaused,
-        PermissionUtils.getChannelSettingsIntent(context, NotificationHelper.CHANNEL_ID_ADHAN)
+        PermissionUtils.getChannelSettingsIntent(context, NotificationHelper.CHANNEL_ID_ADHAN),
+        Color(0xFFFF5252)
     ))
     if (isDndActive) issues.add(HealthIssue(
         stringResource(R.string.health_dnd_active),
         Icons.Rounded.DoNotDisturbOn,
-        Intent(Settings.ACTION_ZEN_MODE_PRIORITY_SETTINGS)
+        Intent(Settings.ACTION_ZEN_MODE_PRIORITY_SETTINGS),
+        Color(0xFFFF5252)
+    ))
+
+    // Connectivity Warning
+    if (isNetworkOffline) issues.add(HealthIssue(
+        stringResource(R.string.health_no_internet),
+        Icons.Rounded.WifiOff,
+        Intent(Settings.ACTION_WIFI_SETTINGS),
+        Color(0xFFFACC15)
     ))
 
     AnimatedVisibility(
@@ -73,19 +90,27 @@ fun SystemHealthCard() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 20.dp)
-                .background(Color(0xFFFF5252).copy(alpha = 0.1f), RoundedCornerShape(24.dp))
+                .background(
+                    color = glassTheme.containerColor.copy(alpha = 0.9f),
+                    shape = RoundedCornerShape(24.dp)
+                )
                 .padding(20.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Rounded.ErrorOutline, null, tint = Color(0xFFFF5252), modifier = Modifier.size(24.dp))
+                Icon(
+                    imageVector = Icons.Rounded.HealthAndSafety, 
+                    contentDescription = null, 
+                    tint = glassTheme.contentColor, 
+                    modifier = Modifier.size(24.dp)
+                )
                 Spacer(Modifier.width(12.dp))
                 Text(
-                    text = stringResource(R.string.health_issues_detected).uppercase(),
+                    text = stringResource(R.string.health_title).uppercase(),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.Black,
                         letterSpacing = 1.sp
                     ),
-                    color = Color(0xFFFF5252)
+                    color = glassTheme.contentColor
                 )
             }
 
@@ -101,28 +126,36 @@ fun SystemHealthCard() {
 @Composable
 private fun HealthIssueItem(issue: HealthIssue) {
     val context = LocalContext.current
+    val glassTheme = LocalGlassTheme.current
+    
     Surface(
-        color = Color.White.copy(alpha = 0.05f),
+        color = issue.accentColor.copy(alpha = 0.1f),
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier.padding(bottom = 8.dp)
+        modifier = Modifier.padding(bottom = 8.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, issue.accentColor.copy(alpha = 0.2f))
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(issue.icon, null, tint = Color.White, modifier = Modifier.size(20.dp))
+            Icon(issue.icon, null, tint = issue.accentColor, modifier = Modifier.size(20.dp))
             Spacer(Modifier.width(12.dp))
             Text(
                 text = issue.message,
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.8f),
-                modifier = Modifier.weight(1f)
+                color = glassTheme.contentColor.copy(alpha = 0.9f),
+                modifier = Modifier.weight(1f),
+                lineHeight = 16.sp
             )
             TextButton(
                 onClick = { context.startActivity(issue.intent) },
-                colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFFF5252))
+                colors = ButtonDefaults.textButtonColors(contentColor = issue.accentColor)
             ) {
-                Text(stringResource(R.string.health_fix_now), fontWeight = FontWeight.Bold)
+                Text(
+                    text = if (issue.accentColor == Color(0xFFFACC15)) stringResource(R.string.nav_settings) else stringResource(R.string.health_fix_now), 
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp
+                )
             }
         }
     }
@@ -131,5 +164,6 @@ private fun HealthIssueItem(issue: HealthIssue) {
 private data class HealthIssue(
     val message: String,
     val icon: ImageVector,
-    val intent: Intent
+    val intent: Intent,
+    val accentColor: Color
 )
