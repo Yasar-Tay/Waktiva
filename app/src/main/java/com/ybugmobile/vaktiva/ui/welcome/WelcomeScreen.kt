@@ -94,7 +94,11 @@ fun WelcomeScreen(
 @Composable
 private fun IntroStep(onNext: () -> Unit) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(32.dp).systemBarsPadding(),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(32.dp)
+            .systemBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -168,97 +172,102 @@ private fun PermissionsStep(onNext: () -> Unit) {
 
     val isLocationGranted = locationPermissionState.allPermissionsGranted
     val isNotificationGranted = notificationPermissionState?.status?.isGranted ?: true
-    val allGranted = isLocationGranted && isNotificationGranted && alarmGranted
+    val alarmPermissionRequired = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val allGranted = isLocationGranted && isNotificationGranted && (!alarmPermissionRequired || alarmGranted)
 
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp).systemBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(stringResource(R.string.welcome_precision_settings), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = Color.White)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(stringResource(R.string.welcome_precision_desc), style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(alpha = 0.6f))
-        
-        Spacer(modifier = Modifier.height(32.dp))
-        
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            PermissionCard(
-                icon = Icons.Default.LocationOn,
-                title = stringResource(R.string.welcome_loc_title),
-                description = stringResource(R.string.welcome_loc_desc),
-                isGranted = isLocationGranted,
-                onClick = {
-                    if (!isLocationGranted) {
-                        if (locationDenialCount >= 2 || locationPermissionState.shouldShowRationale) {
-                            openAppSettings()
-                        } else {
-                            locationPermissionState.launchMultiplePermissionRequest()
-                            locationDenialCount++
-                        }
-                    }
-                }
-            )
+        Column(
+            modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(stringResource(R.string.welcome_precision_settings), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(stringResource(R.string.welcome_precision_desc), style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(alpha = 0.6f), textAlign = TextAlign.Center)
             
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 PermissionCard(
-                    icon = Icons.Default.Notifications,
-                    title = stringResource(R.string.welcome_notif_title),
-                    description = stringResource(R.string.welcome_notif_desc),
-                    isGranted = isNotificationGranted,
+                    icon = Icons.Default.LocationOn,
+                    title = stringResource(R.string.welcome_loc_title),
+                    description = stringResource(R.string.welcome_loc_desc),
+                    isGranted = isLocationGranted,
                     onClick = {
-                        if (!isNotificationGranted) {
-                            if (notificationDenialCount >= 2 || (notificationPermissionState?.status as? PermissionStatus.Denied)?.shouldShowRationale == true) {
+                        if (!isLocationGranted) {
+                            if (locationDenialCount >= 2 || locationPermissionState.shouldShowRationale) {
                                 openAppSettings()
                             } else {
-                                notificationPermissionState?.launchPermissionRequest()
-                                notificationDenialCount++
+                                locationPermissionState.launchMultiplePermissionRequest()
+                                locationDenialCount++
                             }
                         }
                     }
                 )
-            }
-            
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                PermissionCard(
-                    icon = Icons.Default.Alarm,
-                    title = stringResource(R.string.welcome_alarm_title),
-                    description = stringResource(R.string.welcome_alarm_desc),
-                    isGranted = alarmGranted,
-                    onClick = {
-                        if (!alarmGranted) {
-                            PermissionUtils.getExactAlarmSettingIntent(context)?.let {
-                                context.startActivity(it)
+                
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    PermissionCard(
+                        icon = Icons.Default.Notifications,
+                        title = stringResource(R.string.welcome_notif_title),
+                        description = stringResource(R.string.welcome_notif_desc),
+                        isGranted = isNotificationGranted,
+                        onClick = {
+                            if (!isNotificationGranted) {
+                                if (notificationDenialCount >= 2 || (notificationPermissionState?.status as? PermissionStatus.Denied)?.shouldShowRationale == true) {
+                                    openAppSettings()
+                                } else {
+                                    notificationPermissionState?.launchPermissionRequest()
+                                    notificationDenialCount++
+                                }
                             }
                         }
-                    }
-                )
-            }
-
-            PermissionCard(
-                icon = Icons.Default.BatteryChargingFull,
-                title = stringResource(R.string.settings_battery_opt),
-                description = if (batteryOptimizationIgnored) stringResource(R.string.welcome_battery_optimized) else stringResource(R.string.welcome_battery_optimize_desc),
-                isGranted = batteryOptimizationIgnored,
-                onClick = {
-                    if (!batteryOptimizationIgnored) {
-                        context.startActivity(PermissionUtils.getIgnoreBatteryOptimizationIntent(context))
-                    }
+                    )
                 }
-            )
-        }
+                
+                if (alarmPermissionRequired) {
+                    PermissionCard(
+                        icon = Icons.Default.Alarm,
+                        title = stringResource(R.string.welcome_alarm_title),
+                        description = stringResource(R.string.welcome_alarm_desc),
+                        isGranted = alarmGranted,
+                        onClick = {
+                            if (!alarmGranted) {
+                                PermissionUtils.getExactAlarmSettingIntent(context)?.let {
+                                    context.startActivity(it)
+                                }
+                            }
+                        }
+                    )
+                }
 
-        if (!allGranted) {
+                PermissionCard(
+                    icon = Icons.Default.BatteryChargingFull,
+                    title = stringResource(R.string.settings_battery_opt),
+                    description = if (batteryOptimizationIgnored) stringResource(R.string.welcome_battery_optimized) else stringResource(R.string.welcome_battery_optimize_desc),
+                    isGranted = batteryOptimizationIgnored,
+                    onClick = {
+                        if (!batteryOptimizationIgnored) {
+                            context.startActivity(PermissionUtils.getIgnoreBatteryOptimizationIntent(context))
+                        }
+                    }
+                )
+            }
+
+            if (!allGranted) {
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = stringResource(R.string.welcome_permission_later_info),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.5f),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = stringResource(R.string.welcome_permission_later_info),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.5f),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
         }
-
-        Spacer(modifier = Modifier.weight(1f))
 
         Button(
             onClick = {

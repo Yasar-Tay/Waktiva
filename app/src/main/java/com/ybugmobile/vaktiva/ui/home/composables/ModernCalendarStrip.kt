@@ -1,8 +1,11 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,10 +30,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.domain.model.HijriData
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.provider.ReligiousDaysProvider
 import java.time.LocalDate
+import java.time.chrono.HijrahChronology
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoField
 
 @Composable
 fun ModernCalendarStrip(
@@ -48,6 +55,10 @@ fun ModernCalendarStrip(
     val listState = rememberLazyListState()
     val density = LocalDensity.current
     val context = LocalContext.current
+
+    val isUsingCalculatedHijri = remember(availableDays, isHijriSelected) {
+        isHijriSelected && availableDays.any { it.hijriDate == null }
+    }
 
     // Slower Auto-scroll to selected date
     LaunchedEffect(selectedDate) {
@@ -71,6 +82,20 @@ fun ModernCalendarStrip(
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
+        AnimatedVisibility(
+            visible = isUsingCalculatedHijri,
+            enter = expandVertically(),
+            exit = shrinkVertically()
+        ) {
+            Text(
+                text = stringResource(R.string.home_hijri_offline_note),
+                style = MaterialTheme.typography.labelSmall,
+                color = contentColor.copy(alpha = 0.5f),
+                modifier = Modifier.padding(bottom = 8.dp, start = 4.dp),
+                lineHeight = 14.sp
+            )
+        }
+
         // Toggle and Religious Day Info at the top
         Row(
             modifier = Modifier
@@ -100,7 +125,17 @@ fun ModernCalendarStrip(
             }
 
             // Find current hijri for selected date to pass to badge
-            val selectedHijri = availableDays.find { it.date == selectedDate }?.hijriDate
+            val selectedDay = availableDays.find { it.date == selectedDate }
+            val selectedHijri = selectedDay?.hijriDate ?: try {
+                val hDate = HijrahChronology.INSTANCE.date(selectedDate)
+                HijriData(
+                    day = hDate.get(ChronoField.DAY_OF_MONTH),
+                    monthNumber = hDate.get(ChronoField.MONTH_OF_YEAR),
+                    monthEn = "",
+                    year = hDate.get(ChronoField.YEAR)
+                )
+            } catch (e: Exception) { null }
+
             ReligiousBadge(date = selectedDate, contentColor = contentColor, hijriDate = selectedHijri)
         }
 
@@ -112,7 +147,20 @@ fun ModernCalendarStrip(
         ) {
             itemsIndexed(availableDays) { index, prayerDay ->
                 val date = prayerDay.date
-                val hijri = prayerDay.hijriDate
+                
+                // Fallback Hijri calculation if network data is missing
+                val hijri = prayerDay.hijriDate ?: try {
+                    val hDate = HijrahChronology.INSTANCE.date(date)
+                    HijriData(
+                        day = hDate.get(ChronoField.DAY_OF_MONTH),
+                        monthNumber = hDate.get(ChronoField.MONTH_OF_YEAR),
+                        monthEn = "", // Will be translated via resource ID
+                        year = hDate.get(ChronoField.YEAR)
+                    )
+                } catch (e: Exception) {
+                    null
+                }
+
                 val isSelected = date == selectedDate
                 val isToday = date == today
 

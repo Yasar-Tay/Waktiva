@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +26,9 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.HijriData
 import com.ybugmobile.vaktiva.ui.theme.Inter
 import java.time.LocalDate
+import java.time.chrono.HijrahChronology
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoField
 import java.util.Locale
 
 @Composable
@@ -41,6 +44,21 @@ fun HomeHeader(
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    // Fallback Hijri calculation if network data is missing
+    val effectiveHijri = remember(hijriDate, date) {
+        hijriDate ?: try {
+            val hDate = HijrahChronology.INSTANCE.date(date)
+            HijriData(
+                day = hDate.get(ChronoField.DAY_OF_MONTH),
+                monthNumber = hDate.get(ChronoField.MONTH_OF_YEAR),
+                monthEn = "", // Will be translated via resource ID
+                year = hDate.get(ChronoField.YEAR)
+            )
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     Box(
         modifier = modifier
@@ -66,9 +84,9 @@ fun HomeHeader(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.Top
                 ) {
-                    ReligiousBadge(date = date, contentColor = contentColor, hijriDate = hijriDate)
+                    ReligiousBadge(date = date, contentColor = contentColor, hijriDate = effectiveHijri)
                     Spacer(modifier = Modifier.width(12.dp))
-                    DatesSection(date, hijriDate, contentColor, context)
+                    DatesSection(date, effectiveHijri, contentColor, context, isOffline = hijriDate == null)
                 }
             }
         } else {
@@ -81,14 +99,14 @@ fun HomeHeader(
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-                DatesSection(date, hijriDate, contentColor, context)
+                DatesSection(date, effectiveHijri, contentColor, context, isOffline = hijriDate == null)
             }
 
             // Floating badge for portrait
             Box(
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
-                ReligiousBadge(date = date, contentColor = contentColor, hijriDate = hijriDate)
+                ReligiousBadge(date = date, contentColor = contentColor, hijriDate = effectiveHijri)
             }
         }
     }
@@ -137,20 +155,12 @@ private fun DatesSection(
     date: LocalDate,
     hijriDate: HijriData?,
     contentColor: Color,
-    context: Context
+    context: Context,
+    isOffline: Boolean = false
 ) {
-    if (hijriDate == null) return
-
     val currentLocale = Locale.getDefault()
     val dateFormatter = DateTimeFormatter.ofPattern("d MMM", currentLocale)
     val dayFormatter = DateTimeFormatter.ofPattern("EEEE", currentLocale)
-
-    val hijriMonthResId = context.resources.getIdentifier(
-        "hijri_month_${hijriDate.monthNumber}",
-        "string",
-        context.packageName
-    )
-    val translatedMonth = if (hijriMonthResId != 0) stringResource(hijriMonthResId) else hijriDate.monthEn
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -173,42 +183,52 @@ private fun DatesSection(
             )
         }
 
-        // Elegant Vertical Divider
-        Box(
-            modifier = Modifier
-                .padding(horizontal = 12.dp)
-                .width(1.dp)
-                .height(24.dp)
-                .background(contentColor.copy(alpha = 0.15f))
-        )
+        if (hijriDate != null) {
+            // Elegant Vertical Divider
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .width(1.dp)
+                    .height(24.dp)
+                    .background(contentColor.copy(alpha = 0.15f))
+            )
 
-        // Hijri Date Group
-        Column(horizontalAlignment = Alignment.Start) {
-            Row(verticalAlignment = Alignment.Bottom) {
+            val hijriMonthResId = context.resources.getIdentifier(
+                "hijri_month_${hijriDate.monthNumber}",
+                "string",
+                context.packageName
+            )
+            val translatedMonth = if (hijriMonthResId != 0) stringResource(hijriMonthResId) else hijriDate.monthEn
+
+            // Hijri Date Group
+            Column(horizontalAlignment = Alignment.Start) {
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Text(
+                        text = String.format(currentLocale, "%d", hijriDate.day),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontFamily = Inter,
+                            fontWeight = FontWeight.Light
+                        ),
+                        color = contentColor
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = translatedMonth.uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Black,
+                        color = if (isOffline) contentColor.copy(alpha = 0.7f) else contentColor,
+                        modifier = Modifier.padding(bottom = 3.dp)
+                    )
+                }
                 Text(
-                    text = String.format(currentLocale, "%d", hijriDate.day),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontFamily = Inter,
-                        fontWeight = FontWeight.Light
-                    ),
-                    color = contentColor
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = translatedMonth.uppercase(),
+                    text = String.format(currentLocale, "%d %s", hijriDate.year, stringResource(R.string.hijri_suffix)) + 
+                           if (isOffline) " (*)" else "",
                     style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Black,
-                    color = contentColor,
-                    modifier = Modifier.padding(bottom = 3.dp)
+                    color = contentColor.copy(alpha = 0.3f),
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
                 )
             }
-            Text(
-                text = String.format(currentLocale, "%d %s", hijriDate.year, stringResource(R.string.hijri_suffix)),
-                style = MaterialTheme.typography.labelSmall,
-                color = contentColor.copy(alpha = 0.3f),
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
-            )
         }
     }
 }
