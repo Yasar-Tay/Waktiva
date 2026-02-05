@@ -53,14 +53,8 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 settingsManager.muteNextPrayer(prayerName, prayerDate)
                 Log.d("PrayerAlarmReceiver", "SKIP SUCCESS: $prayerName muted for $prayerDate")
                 
-                // Update notification immediately to show muted state
-                val settings = settingsManager.settingsFlow.first()
-                notificationHelper.showPreAdhanWarning(
-                    prayerName = prayerName,
-                    prayerDate = prayerDate,
-                    minutes = settings.preAdhanWarningMinutes,
-                    isMuted = true
-                )
+                // Just dismiss the notification immediately
+                notificationHelper.cancelWarningNotification()
             }
             return
         }
@@ -72,25 +66,29 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                     AlarmScheduler.ACTION_PRE_ADHAN_NOTIFICATION -> {
                         val settings = settingsManager.settingsFlow.first()
                         
-                        // If adhan audio is disabled, do not show the skip notification as there's nothing to skip
-                        if (!settings.playAdhanAudio) {
-                            Log.d("PrayerAlarmReceiver", "PRE-ADHAN SUPPRESSED: playAdhanAudio is disabled.")
+                        // If adhan audio or warnings are disabled, do not show the skip notification (even for tests)
+                        if (!settings.playAdhanAudio || !settings.enablePreAdhanWarning) {
+                            Log.d("PrayerAlarmReceiver", "PRE-ADHAN SUPPRESSED: Setting disabled.")
                             return@launch
                         }
 
                         val isMuted = settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && 
                                      settings.mutedPrayerDate == prayerDate
                         
+                        // If specifically muted/skipped, do not show the warning (even for tests)
+                        if (isMuted) {
+                            Log.d("PrayerAlarmReceiver", "PRE-ADHAN SUPPRESSED: Prayer is already muted.")
+                            return@launch
+                        }
+                        
                         notificationHelper.showPreAdhanWarning(
                             prayerName = prayerName,
                             prayerDate = prayerDate,
-                            minutes = settings.preAdhanWarningMinutes,
-                            isMuted = isMuted
+                            minutes = settings.preAdhanWarningMinutes
                         )
                     }
                     AlarmScheduler.ACTION_PRAYER_ALARM -> {
                         handleAdhanTrigger(context, prayerName, prayerDate)
-                        // Only reschedule when a prayer time is actually reached
                         rescheduleNextPrayer()
                     }
                     Intent.ACTION_BOOT_COMPLETED -> {
@@ -120,16 +118,15 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
     private suspend fun handleAdhanTrigger(context: Context, prayerName: String, prayerDate: String) {
         val settings = settingsManager.settingsFlow.first()
         
-        // If it's a test alarm, we ignore some settings
-        val isTest = settings.testAlarmEndTime != null
-        
-        if (!settings.playAdhanAudio && !isTest) {
+        // strictly honor the playAdhanAudio switch for all alarms including tests
+        if (!settings.playAdhanAudio) {
             Log.d("PrayerAlarmReceiver", "ADHAN SUPPRESSED: playAdhanAudio is disabled.")
             settingsManager.clearMutedPrayer()
             notificationHelper.cancelWarningNotification()
             return
         }
 
+        // strictly honor the muted/skipped state for all alarms including tests
         if (settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && settings.mutedPrayerDate == prayerDate) {
             Log.d("PrayerAlarmReceiver", "ADHAN SKIPPED: Logic recognized skip for $prayerName.")
             settingsManager.clearMutedPrayer()
@@ -137,7 +134,6 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        // Always clear muted prayer state when an alarm triggers (and is not skipped)
         settingsManager.clearMutedPrayer()
 
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
