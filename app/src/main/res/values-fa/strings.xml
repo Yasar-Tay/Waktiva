@@ -36,6 +36,7 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">مکان ناشناخته</string>
+    <string name="home_last_known_location">آخرین موقعیت: %s</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">زمان باقی‌مانده</string>
     <string name="home_permissions_required">مجوزها لازم است</string>
@@ -51,6 +52,8 @@
     <string name="home_today_is">امروز %s است</string>
     <string name="home_adhan_muted">اذان برای %s بی‌صدا شد</string>
     <string name="home_adhan_unmuted">اذان برای %s فعال شد</string>
+    <string name="home_hijri_offline_note">در حال استفاده از محاسبات هجری آفلاین</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">سلامت سیستم</string>

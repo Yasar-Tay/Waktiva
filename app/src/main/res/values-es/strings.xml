@@ -52,6 +52,8 @@
     <string name="home_today_is">Hoy es %s</string>
     <string name="home_adhan_muted">Adhan silenciado para %s</string>
     <string name="home_adhan_unmuted">Adhan activado para %s</string>
+    <string name="home_hijri_offline_note">Usando cálculo Hijri fuera de línea</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">Salud del sistema</string>

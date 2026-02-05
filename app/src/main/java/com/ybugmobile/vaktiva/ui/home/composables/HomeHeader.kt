@@ -222,7 +222,7 @@ private fun DatesSection(
                 }
                 Text(
                     text = String.format(currentLocale, "%d %s", hijriDate.year, stringResource(R.string.hijri_suffix)) + 
-                           if (isOffline) " (*)" else "",
+                           if (isOffline) stringResource(R.string.home_hijri_offline_indicator) else "",
                     style = MaterialTheme.typography.labelSmall,
                     color = contentColor.copy(alpha = 0.3f),
                     fontWeight = FontWeight.Bold,

@@ -52,6 +52,8 @@
     <string name="home_today_is">Bugün %s</string>
     <string name="home_adhan_muted">%s için ezan sessize alındı</string>
     <string name="home_adhan_unmuted">%s için ezan okunacak</string>
+    <string name="home_hijri_offline_note">Çevrimdışı Hicri takvim hesabı kullanılıyor</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">Sistem Sağlığı</string>
@@ -105,7 +107,7 @@
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">فارسی</string>
+    <string name="lang_fa">فarsı</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -276,7 +278,7 @@
     <string name="notification_adhan_skipped_text">%s için ezan geçildi.</string>
     <string name="notification_upcoming_adhan_title">Yaklaşan Ezan: %s</string>
     <string name="notification_upcoming_adhan_text">Ezan %d dakika içinde okunacak.</string>
-    <string name="notification_skip_action">BU VAKİT İÇِن ATLA</string>
+    <string name="notification_skip_action">BU VAKİT İÇİN ATLA</string>
     <string name="notification_adhan_title">Ezan: %s</string>
     <string name="notification_adhan_content">Namaz vakti geldi</string>
 </resources>

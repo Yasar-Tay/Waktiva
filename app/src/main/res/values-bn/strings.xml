@@ -52,6 +52,8 @@
     <string name="home_today_is">আজ %s</string>
     <string name="home_adhan_muted">%s এর আজান মিউট করা হয়েছে</string>
     <string name="home_adhan_unmuted">%s এর আজান আনমিউট করা হয়েছে</string>
+    <string name="home_hijri_offline_note">অফলাইন হিজরি গণনা ব্যবহার করা হচ্ছে</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">সিস্টেম হেলথ</string>

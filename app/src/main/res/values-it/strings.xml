@@ -51,6 +51,8 @@
     <string name="home_today_is">Oggi è %s</string>
     <string name="home_adhan_muted">Adhan silenziato per %s</string>
     <string name="home_adhan_unmuted">Adhan attivato per %s</string>
+    <string name="home_hijri_offline_note">Utilizzo del calcolo Hijri offline</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">Salute del sistema</string>
@@ -111,7 +113,7 @@
     <!-- Calculation Settings -->
     <string name="settings_calculation">Impostazioni di calcolo</string>
     <string name="settings_madhab">Madhab</string>
-    <string name="settings_method">Metodo di calcolo</string>
+    <string name="settings_method">Metode di calcolo</string>
     <string name="madhab_shafi">Shafi / Standard (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanafi</string>
     <string name="method_mwl">Lega Mondiale Musulmana</string>
@@ -230,7 +232,7 @@
     <string name="donate_title">Sostieni Vaktiva</string>
     <string name="donate_description">Vaktiva è un\'app gratuita, sviluppata con cura. Il tuo supporto aiuta a mantenerla senza pubblicità e ne consente lo sviluppo futuro.</string>
     <string name="donate_header">Potenzia lo sviluppo di Vaktiva</string>
-    <string name="donate_desc">Vaktiva è open-source e senza pubblicità. I tuoi contributi aiutano a coprire i costi del server e lo sviluppo continuo per fornire a tutti la migliore esperienza di preghiera.</string>
+    <string name="donate_desc">Vaktiva è open-source and senza pubblicità. I tuoi contributi aiutano a coprire i costi del server e lo sviluppo continuo per fornire a tutti la migliore esperienza di preghiera.</string>
     <string name="donate_footer">La tua generosità mantiene vivo questo progetto. Possa essere una fonte di benedizione continua.</string>
     <string name="donate_button">Dona</string>
     <string name="donate_thank_you">Grazie per il tuo supporto!</string>

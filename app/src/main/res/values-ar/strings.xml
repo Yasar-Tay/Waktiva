@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">الرئيسية</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">الرئيسية</string>
@@ -52,6 +52,8 @@
     <string name="home_today_is">اليوم هو %s</string>
     <string name="home_adhan_muted">تم كتم الأذان لـ %s</string>
     <string name="home_adhan_unmuted">تم تفعيل الأذان لـ %s</string>
+    <string name="home_hijri_offline_note">استخدام حساب هجري غير متصل</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">صحة النظام</string>

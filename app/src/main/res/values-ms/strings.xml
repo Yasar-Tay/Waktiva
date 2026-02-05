@@ -51,6 +51,8 @@
     <string name="home_today_is">Hari ini %s</string>
     <string name="home_adhan_muted">Azan disenyapkan untuk %s</string>
     <string name="home_adhan_unmuted">Azan dibunyikan untuk %s</string>
+    <string name="home_hijri_offline_note">Menggunakan pengiraan Hijrah luar talian</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">Kesihatan Sistem</string>

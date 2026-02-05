@@ -36,6 +36,7 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Lokasi Tidak Diketahui</string>
+    <string name="home_last_known_location">Lokasi Terakhir: %s</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">Waktu Tersisa</string>
     <string name="home_permissions_required">Izin Diperlukan</string>
@@ -51,6 +52,8 @@
     <string name="home_today_is">Hari ini %s</string>
     <string name="home_adhan_muted">Adzan disenyapkan untuk %s</string>
     <string name="home_adhan_unmuted">Adzan dibunyikan untuk %s</string>
+    <string name="home_hijri_offline_note">Menggunakan perhitungan Hijriah offline</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">Kesehatan Sistem</string>
@@ -121,7 +124,7 @@
     <string name="method_karachi">Universitas Ilmu Islam, Karachi</string>
     <string name="method_tehran">Institut Geofisika, Univ. Teheran</string>
     <string name="method_gulf">Wilayah Teluk</string>
-    <string name="method_kuwait">Kuwait</string>
+    <string name="method_kuwait">Kuveyt</string>
     <string name="method_qatar">Qatar</string>
     <string name="method_singapore">Majlis Ugama Islam Singapura</string>
     <string name="method_turkey">Turki (Diyanet)</string>
