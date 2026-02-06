@@ -1,6 +1,7 @@
 package com.ybugmobile.vaktiva.ui.settings.composables
 
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -66,20 +67,36 @@ fun SystemHealthCard() {
         PermissionUtils.getChannelSettingsIntent(context, NotificationHelper.CHANNEL_ID_ADHAN),
         Color(0xFFFF5252)
     ))
-    if (isDndActive) issues.add(HealthIssue(
-        stringResource(R.string.health_dnd_active),
-        Icons.Rounded.DoNotDisturbOn,
-        Intent(Settings.ACTION_ZEN_MODE_PRIORITY_SETTINGS),
-        Color(0xFFFF5252)
-    ))
+    
+    if (isDndActive) {
+        val dndIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent(Settings.ACTION_ZEN_MODE_PRIORITY_SETTINGS)
+        } else {
+            Intent(Settings.ACTION_SETTINGS)
+        }
+        issues.add(HealthIssue(
+            stringResource(R.string.health_dnd_active),
+            Icons.Rounded.DoNotDisturbOn,
+            dndIntent,
+            Color(0xFFFF5252)
+        ))
+    }
 
     // Connectivity Warning
-    if (isNetworkOffline) issues.add(HealthIssue(
-        stringResource(R.string.health_no_internet),
-        Icons.Rounded.WifiOff,
-        Intent(Settings.ACTION_WIFI_SETTINGS),
-        Color(0xFFFACC15)
-    ))
+    if (isNetworkOffline) {
+        val connectivityIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+        } else {
+            Intent(Settings.ACTION_WIRELESS_SETTINGS)
+        }
+        
+        issues.add(HealthIssue(
+            stringResource(R.string.health_no_internet),
+            Icons.Rounded.CloudOff,
+            connectivityIntent,
+            Color(0xFFFACC15)
+        ))
+    }
 
     AnimatedVisibility(
         visible = issues.isNotEmpty(),
