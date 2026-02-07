@@ -107,7 +107,7 @@
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">فarsı</string>
+    <string name="lang_fa">Farsça</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -125,7 +125,7 @@
     <string name="method_tehran">Tahran Üniversitesi Jeofizik Enstitüsü</string>
     <string name="method_gulf">Körfez Bölgesi</string>
     <string name="method_kuwait">Kuveyt</string>
-    <string name="method_qatar">Katar</string>
+    <string name="method_qatar">Qatar</string>
     <string name="method_singapore">Singapur İslami Dini Meclisi</string>
     <string name="method_turkey">Türkiye (Diyanet İşleri Başkanlığı)</string>
 
@@ -273,7 +273,7 @@
     <string name="rel_day_ashura">Aşure Günü</string>
     <string name="rel_day_mawlid">Mevlid Kandili</string>
 
-    <!-- Missing Notification Strings -->
+    <!-- Notification Strings -->
     <string name="notification_adhan_muted">Ezan Sessize Alındı</string>
     <string name="notification_adhan_skipped_text">%s için ezan geçildi.</string>
     <string name="notification_upcoming_adhan_title">Yaklaşan Ezan: %s</string>
@@ -281,4 +281,7 @@
     <string name="notification_skip_action">BU VAKİT İÇİN ATLA</string>
     <string name="notification_adhan_title">Ezan: %s</string>
     <string name="notification_adhan_content">Namaz vakti geldi</string>
+    <string name="notification_adhan_disabled_title">Ezan Devre Dışı</string>
+    <string name="notification_adhan_skipped_title">Ezan Atlandı</string>
+    <string name="notification_prayer_time_content">%s vakti geldi.</string>
 </resources>

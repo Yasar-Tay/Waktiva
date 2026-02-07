@@ -281,4 +281,7 @@
     <string name="notification_skip_action">ПРОПУСТИТЬ ЭТУ МОЛИТВУ</string>
     <string name="notification_adhan_title">Азан: %s</string>
     <string name="notification_adhan_content">Время молитвы</string>
+    <string name="notification_adhan_disabled_title">Азан отключен</string>
+    <string name="notification_adhan_skipped_title">Азан пропущен</string>
+    <string name="notification_prayer_time_content">Пришло время молитвы %s.</string>
 </resources>

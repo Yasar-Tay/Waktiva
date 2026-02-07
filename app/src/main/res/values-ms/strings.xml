@@ -281,4 +281,7 @@
     <string name="notification_skip_action">LANGKAU UNTUK SOLAT INI</string>
     <string name="notification_adhan_title">Azan: %s</string>
     <string name="notification_adhan_content">Sudah tiba waktu solat</string>
+    <string name="notification_adhan_disabled_title">Azan Dilumpuhkan</string>
+    <string name="notification_adhan_skipped_title">Azan Dilangkau</string>
+    <string name="notification_prayer_time_content">Sudah tiba waktu %s.</string>
 </resources>

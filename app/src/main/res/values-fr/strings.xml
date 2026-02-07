@@ -281,4 +281,7 @@
     <string name="notification_skip_action">IGNORER POUR CETTE PRIÈRE</string>
     <string name="notification_adhan_title">Adhan : %s</string>
     <string name="notification_adhan_content">C\'est l\'heure de la prière</string>
+    <string name="notification_adhan_disabled_title">Adhan désactivé</string>
+    <string name="notification_adhan_skipped_title">Adhan ignoré</string>
+    <string name="notification_prayer_time_content">C\'est l\'heure de la prière %s.</string>
 </resources>

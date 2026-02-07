@@ -281,4 +281,7 @@
     <string name="notification_skip_action">SKIP FOR THIS PRAYER</string>
     <string name="notification_adhan_title">Adhan: %s</string>
     <string name="notification_adhan_content">It\'s time for prayer</string>
+    <string name="notification_adhan_disabled_title">Adhan Disabled</string>
+    <string name="notification_adhan_skipped_title">Adhan Skipped</string>
+    <string name="notification_prayer_time_content">It is time for %s.</string>
 </resources>

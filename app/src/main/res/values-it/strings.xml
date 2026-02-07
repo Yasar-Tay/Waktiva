@@ -215,7 +215,7 @@
     <string name="welcome_general_settings">Impostazioni generali</string>
     <string name="welcome_adhan_audio_header">Adhan e Audio</string>
     <string name="welcome_battery_optimized">Ottimizzato per l\'affidabilità</string>
-    <string name="welcome_battery_optimize_desc">Essenziale per riprodurre l\'Adhan in tempo. Le ottimizzazioni della batteria possono ritardare o bloccare gli avvisi programmati.</string>
+    <string name="welcome_battery_optimize_desc">Essenziale per riprodurre l\'Adhan in tempo. Le ottimizzazioni della batteria peuvento ritardare o bloccare gli avvisi programmati.</string>
 
     <!-- Adhan Screen -->
     <string name="adhan_its_time_for">È ora di</string>
@@ -281,4 +281,7 @@
     <string name="notification_skip_action">IGNORA PER QUESTA PREGHIERA</string>
     <string name="notification_adhan_title">Adhan: %s</string>
     <string name="notification_adhan_content">È ora di pregare</string>
+    <string name="notification_adhan_disabled_title">Adhan disattivato</string>
+    <string name="notification_adhan_skipped_title">Adhan ignorato</string>
+    <string name="notification_prayer_time_content">È ora della preghiera %s.</string>
 </resources>

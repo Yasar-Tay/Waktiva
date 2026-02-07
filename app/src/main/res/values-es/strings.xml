@@ -107,7 +107,7 @@
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">فارسی</string>
+    <string name="lang_fa">Farsça</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -281,4 +281,7 @@
     <string name="notification_skip_action">OMITIR PARA ESTA ORACIÓN</string>
     <string name="notification_adhan_title">Adhan: %s</string>
     <string name="notification_adhan_content">Es hora de rezar</string>
+    <string name="notification_adhan_disabled_title">Adhan desactivado</string>
+    <string name="notification_adhan_skipped_title">Adhan omitido</string>
+    <string name="notification_prayer_time_content">Es hora de la oración %s.</string>
 </resources>

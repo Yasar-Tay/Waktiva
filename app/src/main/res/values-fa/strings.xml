@@ -123,7 +123,7 @@
     <string name="method_makkah">دانشگاه ام‌القری، مکه</string>
     <string name="method_karachi">دانشگاه علوم اسلامی، کراچی</string>
     <string name="method_tehran">مؤسسه ژئوفیزیک دانشگاه تهران</string>
-    <string name="method_gulf">منطقه خلیج</string>
+    <string name="method_gulf">منطقة الخلیج</string>
     <string name="method_kuwait">کویت</string>
     <string name="method_qatar">قطر</string>
     <string name="method_singapore">شورای مذهبی اسلامی سنگاپور</string>
@@ -281,4 +281,7 @@
     <string name="notification_skip_action">برای این نوبت رد شود</string>
     <string name="notification_adhan_title">اذان: %s</string>
     <string name="notification_adhan_content">زمان شرعی فرا رسیده است</string>
+    <string name="notification_adhan_disabled_title">اذان غیرفعال است</string>
+    <string name="notification_adhan_skipped_title">اذان رد شد</string>
+    <string name="notification_prayer_time_content">زمان %s فرا رسیده است.</string>
 </resources>

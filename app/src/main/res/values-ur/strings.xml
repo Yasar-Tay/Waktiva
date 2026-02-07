@@ -281,4 +281,7 @@
     <string name="notification_skip_action">صرف اس نماز کے لیے چھوڑ دیں</string>
     <string name="notification_adhan_title">اذان: %s</string>
     <string name="notification_adhan_content">نماز کا وقت ہو گیا ہے</string>
+    <string name="notification_adhan_disabled_title">اذان غیر فعال ہے</string>
+    <string name="notification_adhan_skipped_title">اذان چھوڑ دی گئی</string>
+    <string name="notification_prayer_time_content">اب %s کا وقت ہے۔</string>
 </resources>

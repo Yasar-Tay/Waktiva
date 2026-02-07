@@ -281,4 +281,7 @@
     <string name="notification_skip_action">تخطي هذه الصلاة</string>
     <string name="notification_adhan_title">الأذان: %s</string>
     <string name="notification_adhan_content">حان وقت الصلاة</string>
+    <string name="notification_adhan_disabled_title">تم تعطيل الأذان</string>
+    <string name="notification_adhan_skipped_title">تم تخطي الأذان</string>
+    <string name="notification_prayer_time_content">حان وقت صلاة %s.</string>
 </resources>

@@ -96,7 +96,7 @@
     <string name="settings_confirm">নিশ্চিত করুন</string>
 
     <!-- Language Options -->
-    <string name="lang_system">সিস্টেম ডিফল্ট</string>
+    <string name="lang_system">সিস্টেম ডিফাল্ট</string>
     <string name="lang_en">English</string>
     <string name="lang_tr">Türkçe</string>
     <string name="lang_fr">Français</string>
@@ -281,4 +281,7 @@
     <string name="notification_skip_action">এই নামাজের জন্য এড়িয়ে যান</string>
     <string name="notification_adhan_title">আজান: %s</string>
     <string name="notification_adhan_content">নামাজের সময় হয়েছে</string>
+    <string name="notification_adhan_disabled_title">আজান নিষ্ক্রিয়</string>
+    <string name="notification_adhan_skipped_title">আজান এড়িয়ে যাওয়া হয়েছে</string>
+    <string name="notification_prayer_time_content">এখন %s এর সময়।</string>
 </resources>

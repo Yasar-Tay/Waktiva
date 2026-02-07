@@ -45,8 +45,8 @@
     <string name="home_refresh_success">Gebetszeiten aktualisiert</string>
     <string name="home_refresh_error">Fehler beim Aktualisieren der Zeiten</string>
     <string name="home_prayer_provider">Anbieter: </string>
-    <string name="home_skip_adhan">Adhan für %s stummschalten</string>
-    <string name="home_unmute_adhan">Stummschaltung für %s aufheben</string>
+    <string name="home_skip_adhan">Stummschalten</string>
+    <string name="home_unmute_adhan">Stummschaltung aufheben</string>
     <string name="home_return_to_today">Zurück zu Heute</string>
     <string name="home_tomorrow_is">Morgen: %s</string>
     <string name="home_today_is">Heute ist %s</string>
@@ -107,7 +107,7 @@
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">فارسی</string>
+    <string name="lang_fa">Farsça</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -281,4 +281,7 @@
     <string name="notification_skip_action">FÜR DIESES GEBET ÜBERSPRINGEN</string>
     <string name="notification_adhan_title">Adhan: %s</string>
     <string name="notification_adhan_content">Es ist Zeit zum Gebet</string>
+    <string name="notification_adhan_disabled_title">Adhan Deaktiviert</string>
+    <string name="notification_adhan_skipped_title">Adhan Übersprungen</string>
+    <string name="notification_prayer_time_content">Es ist Zeit für das %s-Gebet.</string>
 </resources>
