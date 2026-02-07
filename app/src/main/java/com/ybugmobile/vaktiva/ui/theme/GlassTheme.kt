@@ -17,7 +17,14 @@ data class GlassTheme(
 )
 
 val LocalGlassTheme = staticCompositionLocalOf<GlassTheme> {
-    error("No GlassTheme provided")
+    // Default fallback theme to avoid crashes when not provided (e.g., in Previews)
+    GlassTheme(
+        containerColor = Color.Black.copy(alpha = 0.15f),
+        contentColor = Color.White,
+        borderColor = Color.White.copy(alpha = 0.1f),
+        secondaryContentColor = Color.White.copy(alpha = 0.5f),
+        isLightMode = false
+    )
 }
 
 val LocalBackgroundGradient = staticCompositionLocalOf<Brush> {

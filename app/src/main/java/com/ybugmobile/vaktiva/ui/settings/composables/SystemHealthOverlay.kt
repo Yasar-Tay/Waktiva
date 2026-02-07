@@ -2,16 +2,13 @@ package com.ybugmobile.vaktiva.ui.settings.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.HealthAndSafety
-import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -53,12 +50,12 @@ fun SystemHealthOverlay(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(52.dp)
                         .background(
                             brush = Brush.linearGradient(
                                 colors = listOf(accentColor, accentColor.copy(alpha = 0.7f))
                             ),
-                            shape = RoundedCornerShape(14.dp)
+                            shape = RoundedCornerShape(16.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -66,7 +63,7 @@ fun SystemHealthOverlay(
                         imageVector = Icons.Rounded.HealthAndSafety,
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(26.dp)
                     )
                 }
                 
@@ -75,45 +72,34 @@ fun SystemHealthOverlay(
                 Column {
                     Text(
                         text = stringResource(R.string.health_title),
-                        style = MaterialTheme.typography.titleLarge.copy(
+                        style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.ExtraBold,
-                            letterSpacing = (-0.5).sp
+                            letterSpacing = (-1).sp,
+                            lineHeight = 28.sp
                         ),
                         color = textColor
                     )
                     Text(
                         text = stringResource(R.string.health_overlay_subtitle),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Medium,
+                            letterSpacing = 0.sp
+                        ),
                         color = secondaryText
                     )
                 }
             }
 
-            // Info Banner
-            Surface(
-                color = accentColor.copy(alpha = 0.05f),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.padding(bottom = 24.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Icon(
-                        Icons.Rounded.Info,
-                        null,
-                        tint = accentColor,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Text(
-                        text = stringResource(R.string.health_overlay_description),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = textColor.copy(alpha = 0.8f),
-                        lineHeight = 18.sp
-                    )
-                }
-            }
+            // Section Title for Issues
+            Text(
+                text = "Detected Issues".uppercase(),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 1.2.sp
+                ),
+                color = secondaryText.copy(alpha = 0.6f),
+                modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
+            )
 
             // SystemHealthCard content (List of issues)
             SystemHealthCard(
@@ -121,26 +107,7 @@ fun SystemHealthOverlay(
                 showTitle = false,
                 contentColor = textColor
             )
-            
-            Spacer(Modifier.height(16.dp))
-            
-            // Dismiss Button
-            Button(
-                onClick = onDismiss,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = textColor
-                ),
-                shape = RoundedCornerShape(16.dp),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE2E8F0))
-            ) {
-                Text(
-                    stringResource(R.string.health_overlay_dismiss),
-                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
-                )
-            }
+
         }
     }
 }

@@ -26,16 +26,22 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.notification.NotificationHelper
+import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.vaktiva.utils.PermissionUtils
 
 @Composable
 fun SystemHealthCard(
     showBackground: Boolean = true,
     showTitle: Boolean = true,
-    contentColor: Color = Color.White
+    contentColor: Color = Color.Unspecified
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val glassTheme = LocalGlassTheme.current
+
+    val isLightMode = glassTheme.isLightMode
+    val resolvedContentColor = if (contentColor != Color.Unspecified) contentColor 
+        else if (isLightMode) Color.White else Color.White
 
     var isGpsOff by remember { mutableStateOf(!PermissionUtils.isLocationEnabled(context)) }
     var isDndActive by remember { mutableStateOf(PermissionUtils.isDoNotDisturbActive(context)) }
@@ -115,12 +121,15 @@ fun SystemHealthCard(
                 .padding(bottom = 20.dp)
                 .then(
                     if (showBackground) {
+                        val cardBackgroundColor = if (isLightMode) Color.White.copy(alpha = 0.12f) else Color.Black.copy(alpha = 0.2f)
+                        val cardBorderColor = if (isLightMode) Color.White.copy(alpha = 0.15f) else Color.White.copy(alpha = 0.1f)
+                        
                         Modifier
                             .background(
-                                color = Color.Black.copy(alpha = 0.2f),
+                                color = cardBackgroundColor,
                                 shape = RoundedCornerShape(24.dp)
                             )
-                            .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(24.dp))
+                            .border(1.dp, cardBorderColor, RoundedCornerShape(24.dp))
                             .padding(20.dp)
                     } else {
                         Modifier
@@ -132,7 +141,7 @@ fun SystemHealthCard(
                     Icon(
                         imageVector = Icons.Rounded.HealthAndSafety, 
                         contentDescription = null, 
-                        tint = contentColor,
+                        tint = resolvedContentColor,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(Modifier.width(12.dp))
@@ -142,14 +151,14 @@ fun SystemHealthCard(
                             fontWeight = FontWeight.Black,
                             letterSpacing = 1.sp
                         ),
-                        color = contentColor
+                        color = resolvedContentColor
                     )
                 }
                 Spacer(Modifier.height(16.dp))
             }
 
             issues.forEach { issue ->
-                HealthIssueItem(issue, contentColor)
+                HealthIssueItem(issue, resolvedContentColor)
             }
         }
     }

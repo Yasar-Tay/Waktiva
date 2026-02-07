@@ -67,6 +67,7 @@
     <string name="health_overlay_subtitle">Optimizing your app experience</string>
     <string name="health_overlay_description">Address the issues below to ensure notifications and location services work reliably in the background.</string>
     <string name="health_overlay_dismiss">Got it</string>
+    <string name="health_overlay_issues_title">Detected Issues</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Fajr</string>
