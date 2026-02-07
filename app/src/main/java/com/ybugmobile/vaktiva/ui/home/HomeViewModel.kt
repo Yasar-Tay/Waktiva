@@ -304,7 +304,16 @@ class HomeViewModel @Inject constructor(
         val nextMonth = now.plusMonths(1)
         val lat = loc?.latitude ?: s.latitude
         val lng = loc?.longitude ?: s.longitude
-        if (loc != null) settingsManager.saveLocation(lat, lng, locationWrapper.getAddressFromLocation(lat, lng) ?: "Current Location")
+        
+        if (loc != null) {
+            val address = locationWrapper.getAddressFromLocation(lat, lng)
+            if (address != null) {
+                settingsManager.saveLocation(lat, lng, address)
+            } else {
+                // Keep the existing location name if we can't resolve a new one (e.g., offline)
+                settingsManager.saveLocation(lat, lng, s.locationName)
+            }
+        }
         
         // Fetch Current Month
         prayerRepository.refreshPrayerTimes(now.year, now.monthValue, lat, lng, s.calculationMethod)

@@ -36,6 +36,7 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">نامعلوم مقام</string>
+    <string name="home_last_known_location">آخری معلوم مقام</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">باقی وقت</string>
     <string name="home_permissions_required">اجازتیں ضروری ہیں</string>
@@ -51,6 +52,8 @@
     <string name="home_today_is">آج %s ہے</string>
     <string name="home_adhan_muted">%s کے لیے اذان خاموش کر دی گئی</string>
     <string name="home_adhan_unmuted">%s کے لیے اذان سنائی دے گی</string>
+    <string name="home_hijri_offline_note">آف لائن ہجری حساب کا استعمال</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">سسٹم کی صحت</string>
@@ -208,7 +211,7 @@
     <string name="welcome_adhan_audio_desc">نماز کے وقت اذان چلائیں</string>
     <string name="welcome_select_sound">آواز منتخب کریں</string>
     <string name="welcome_skip_btn">ویسے ہی جاری رکھیں</string>
-    <string name="welcome_permission_later_info">آپ کسی भी وقت سیٹنگز اسکرین میں جا کر ان اجازتوں کا انتظام کر سکتے ہیں۔</string>
+    <string name="welcome_permission_later_info">آپ کسی بھی وقت سیٹنگز اسکرین میں جا کر ان اجازتوں کا انتظام کر سکتے ہیں۔</string>
     <string name="welcome_general_settings">عمومی ترتیبات</string>
     <string name="welcome_adhan_audio_header">اذان اور آواز</string>
     <string name="welcome_battery_optimized">بہترین کارکردگی کے لیے تیار</string>
