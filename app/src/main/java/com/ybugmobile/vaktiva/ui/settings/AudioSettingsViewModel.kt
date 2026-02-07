@@ -79,10 +79,21 @@ class AudioSettingsViewModel @Inject constructor(
                 settings.selectedAdhanPath == path || (settings.selectedAdhanPath == null && isDefaultFile)
             }
 
+            // Provide a better default name if metadata fails
+            val displayName = metadata.first ?: if (resId == R.raw.muhsinkara_muhayyerkurdi_ezan) {
+                "Muhayyer Kürdi Ezan"
+            } else {
+                context.getString(R.string.audio_setting_default)
+            }
+            
+            val artistName = metadata.second ?: if (resId == R.raw.muhsinkara_muhayyerkurdi_ezan) {
+                "Muhsin Kara"
+            } else null
+
             items.add(
                 AdhanAudioItem(
-                    name = metadata.first ?: context.getString(if (isDefaultFile) R.string.audio_setting_default else R.string.audio_setting_fajr),
-                    artist = metadata.second,
+                    name = displayName,
+                    artist = artistName,
                     path = path,
                     isDefault = true,
                     isSelected = isSelected,
