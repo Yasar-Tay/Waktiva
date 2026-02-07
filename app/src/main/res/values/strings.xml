@@ -64,6 +64,9 @@
     <string name="health_fix_now">Fix Now</string>
     <string name="health_no_internet">No Internet Connection. Vaktiva is using stored data. Please connect to refresh prayer times.</string>
     <string name="health_status_ok">All systems functional</string>
+    <string name="health_overlay_subtitle">Optimizing your app experience</string>
+    <string name="health_overlay_description">Address the issues below to ensure notifications and location services work reliably in the background.</string>
+    <string name="health_overlay_dismiss">Got it</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Fajr</string>

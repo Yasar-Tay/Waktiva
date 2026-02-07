@@ -31,6 +31,7 @@ import com.ybugmobile.vaktiva.utils.PermissionUtils
 @Composable
 fun SystemHealthCard(
     showBackground: Boolean = true,
+    showTitle: Boolean = true,
     contentColor: Color = Color.White
 ) {
     val context = LocalContext.current
@@ -126,25 +127,26 @@ fun SystemHealthCard(
                     }
                 )
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Rounded.HealthAndSafety, 
-                    contentDescription = null, 
-                    tint = contentColor,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(Modifier.width(12.dp))
-                Text(
-                    text = stringResource(R.string.health_title).uppercase(),
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 1.sp
-                    ),
-                    color = contentColor
-                )
+            if (showTitle) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Rounded.HealthAndSafety, 
+                        contentDescription = null, 
+                        tint = contentColor,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        text = stringResource(R.string.health_title).uppercase(),
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Black,
+                            letterSpacing = 1.sp
+                        ),
+                        color = contentColor
+                    )
+                }
+                Spacer(Modifier.height(16.dp))
             }
-
-            Spacer(Modifier.height(16.dp))
 
             issues.forEach { issue ->
                 HealthIssueItem(issue, contentColor)
