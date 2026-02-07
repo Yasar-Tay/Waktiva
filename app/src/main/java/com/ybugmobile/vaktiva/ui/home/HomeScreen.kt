@@ -130,7 +130,7 @@ fun HomeScreenContent(
                 onClick = { showHealthOverlay = true },
                 shape = CircleShape,
                 color = color.copy(alpha = 0.15f),
-                border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.4f)),
+                border = androidx.compose.foundation.BorderStroke(2.dp, color.copy(alpha = 0.7f)),
                 modifier = Modifier.size(44.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
