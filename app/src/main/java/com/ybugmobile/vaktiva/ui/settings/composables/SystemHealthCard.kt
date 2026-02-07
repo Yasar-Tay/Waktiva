@@ -5,6 +5,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -53,19 +54,23 @@ fun SystemHealthCard() {
     }
 
     val issues = mutableListOf<HealthIssue>()
-    
-    // Critical System Issues
+
+    // Use solid colors for guaranteed visibility
+    val criticalColor = Color(0xFFFF5252)
+    val warningColor = Color(0xFFFACC15)
+    val contentColor = Color.White
+
     if (isGpsOff) issues.add(HealthIssue(
         stringResource(R.string.health_gps_off),
         Icons.Rounded.LocationOff,
         Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
-        Color(0xFFFF5252)
+        criticalColor
     ))
     if (areChannelsMuted) issues.add(HealthIssue(
         stringResource(R.string.health_channels_muted),
         Icons.Rounded.NotificationsPaused,
         PermissionUtils.getChannelSettingsIntent(context, NotificationHelper.CHANNEL_ID_ADHAN),
-        Color(0xFFFF5252)
+        criticalColor
     ))
     
     if (isDndActive) {
@@ -78,11 +83,11 @@ fun SystemHealthCard() {
             stringResource(R.string.health_dnd_active),
             Icons.Rounded.DoNotDisturbOn,
             dndIntent,
-            Color(0xFFFF5252)
+            criticalColor
         ))
     }
 
-    // Connectivity Warning
+    // Connectivity Warning (Yellow)
     if (isNetworkOffline) {
         val connectivityIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
@@ -94,7 +99,7 @@ fun SystemHealthCard() {
             stringResource(R.string.health_no_internet),
             Icons.Rounded.CloudOff,
             connectivityIntent,
-            Color(0xFFFACC15)
+            warningColor
         ))
     }
 
@@ -108,16 +113,17 @@ fun SystemHealthCard() {
                 .fillMaxWidth()
                 .padding(bottom = 20.dp)
                 .background(
-                    color = glassTheme.containerColor.copy(alpha = 0.9f),
+                    color = Color.Black.copy(alpha = 0.2f),
                     shape = RoundedCornerShape(24.dp)
                 )
+                .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(24.dp))
                 .padding(20.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Rounded.HealthAndSafety, 
                     contentDescription = null, 
-                    tint = glassTheme.contentColor, 
+                    tint = contentColor,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(Modifier.width(12.dp))
@@ -127,29 +133,28 @@ fun SystemHealthCard() {
                         fontWeight = FontWeight.Black,
                         letterSpacing = 1.sp
                     ),
-                    color = glassTheme.contentColor
+                    color = contentColor
                 )
             }
 
             Spacer(Modifier.height(16.dp))
 
             issues.forEach { issue ->
-                HealthIssueItem(issue)
+                HealthIssueItem(issue, contentColor)
             }
         }
     }
 }
 
 @Composable
-private fun HealthIssueItem(issue: HealthIssue) {
+private fun HealthIssueItem(issue: HealthIssue, textColor: Color) {
     val context = LocalContext.current
-    val glassTheme = LocalGlassTheme.current
-    
+
     Surface(
-        color = issue.accentColor.copy(alpha = 0.1f),
+        color = issue.accentColor.copy(alpha = 0.15f),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.padding(bottom = 8.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, issue.accentColor.copy(alpha = 0.2f))
+        border = androidx.compose.foundation.BorderStroke(1.dp, issue.accentColor.copy(alpha = 0.3f))
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -160,7 +165,7 @@ private fun HealthIssueItem(issue: HealthIssue) {
             Text(
                 text = issue.message,
                 style = MaterialTheme.typography.bodySmall,
-                color = glassTheme.contentColor.copy(alpha = 0.9f),
+                color = textColor.copy(alpha = 0.9f),
                 modifier = Modifier.weight(1f),
                 lineHeight = 16.sp
             )
@@ -169,7 +174,7 @@ private fun HealthIssueItem(issue: HealthIssue) {
                 colors = ButtonDefaults.textButtonColors(contentColor = issue.accentColor)
             ) {
                 Text(
-                    text = if (issue.accentColor == Color(0xFFFACC15)) stringResource(R.string.nav_settings) else stringResource(R.string.health_fix_now), 
+                    text = if (issue.accentColor == Color(0xFFFACC15)) stringResource(R.string.nav_settings) else stringResource(R.string.health_fix_now),
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp
                 )

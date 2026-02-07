@@ -1,10 +1,9 @@
 package com.ybugmobile.vaktiva.ui.settings.composables
 
+import android.os.Build
 import android.content.Intent
 import android.provider.Settings
-import androidx.compose.animation.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -17,11 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
-import com.ybugmobile.vaktiva.utils.PermissionUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,61 +28,27 @@ fun SystemHealthOverlay(
 ) {
     val context = LocalContext.current
     
+    // Using solid dark theme for guaranteed readability
+    val solidBg = Color(0xFF111827) // Deep Slate
+    val pureWhite = Color.White
+    val secondaryWhite = Color.White.copy(alpha = 0.7f)
+    val warningAccent = Color(0xFFFACC15)
+    
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = Color(0xFF1E293B),
-        dragHandle = { BottomSheetDefaults.DragHandle(color = Color.White.copy(alpha = 0.2f)) }
+        containerColor = solidBg,
+        contentColor = pureWhite,
+        dragHandle = { BottomSheetDefaults.DragHandle(color = pureWhite.copy(alpha = 0.2f)) },
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
-                .padding(bottom = 48.dp)
+                .padding(bottom = 32.dp)
         ) {
-            Text(
-                text = stringResource(R.string.health_title),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-
-            if (!isNetworkAvailable) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                    color = Color(0xFFFACC15).copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(20.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFACC15).copy(alpha = 0.2f))
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.Rounded.WifiOff, null, tint = Color(0xFFFACC15), modifier = Modifier.size(24.dp))
-                        Spacer(Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(R.string.health_no_internet),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White.copy(alpha = 0.9f),
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
-            }
-
+            // The main card will now detect its container and adjust
             SystemHealthCard()
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Button(
-                onClick = onDismiss,
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.1f)),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(stringResource(android.R.string.ok), color = Color.White, fontWeight = FontWeight.Bold)
-            }
         }
     }
 }
