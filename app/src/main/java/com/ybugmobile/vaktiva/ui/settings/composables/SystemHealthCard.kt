@@ -29,7 +29,10 @@ import com.ybugmobile.vaktiva.data.notification.NotificationHelper
 import com.ybugmobile.vaktiva.utils.PermissionUtils
 
 @Composable
-fun SystemHealthCard() {
+fun SystemHealthCard(
+    showBackground: Boolean = true,
+    contentColor: Color = Color.White
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -56,7 +59,6 @@ fun SystemHealthCard() {
     // Use solid colors for guaranteed visibility
     val criticalColor = Color(0xFFFF5252)
     val warningColor = Color(0xFFFACC15)
-    val contentColor = Color.White
 
     if (isGpsOff) issues.add(HealthIssue(
         stringResource(R.string.health_gps_off),
@@ -110,12 +112,19 @@ fun SystemHealthCard() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 20.dp)
-                .background(
-                    color = Color.Black.copy(alpha = 0.2f),
-                    shape = RoundedCornerShape(24.dp)
+                .then(
+                    if (showBackground) {
+                        Modifier
+                            .background(
+                                color = Color.Black.copy(alpha = 0.2f),
+                                shape = RoundedCornerShape(24.dp)
+                            )
+                            .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(24.dp))
+                            .padding(20.dp)
+                    } else {
+                        Modifier
+                    }
                 )
-                .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(24.dp))
-                .padding(20.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -150,10 +159,10 @@ private fun HealthIssueItem(issue: HealthIssue, textColor: Color) {
 
     Surface(
         onClick = { context.startActivity(issue.intent) },
-        color = issue.accentColor.copy(alpha = 0.15f),
+        color = issue.accentColor.copy(alpha = 0.1f),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.padding(bottom = 8.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, issue.accentColor.copy(alpha = 0.3f))
+        border = androidx.compose.foundation.BorderStroke(1.dp, issue.accentColor.copy(alpha = 0.2f))
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -170,9 +179,9 @@ private fun HealthIssueItem(issue: HealthIssue, textColor: Color) {
                 Text(
                     text = issue.message,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = textColor.copy(alpha = 0.95f),
+                    color = textColor.copy(alpha = 0.9f),
                     lineHeight = 20.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.SemiBold
                 )
 
                 Spacer(Modifier.height(16.dp))

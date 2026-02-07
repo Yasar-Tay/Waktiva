@@ -6,33 +6,42 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SystemHealthOverlay(
     onDismiss: () -> Unit
 ) {
-    
-    // Using solid dark theme for guaranteed readability
-    val solidBg = Color(0xFF111827) // Deep Slate
-    val pureWhite = Color.White
+    // Modern Light Design
+    val backgroundColor = Color(0xFFF8FAFC) // Ultra light slate
+    val textColor = Color(0xFF0F172A) // Slate 900
     
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = solidBg,
-        contentColor = pureWhite,
-        dragHandle = { BottomSheetDefaults.DragHandle(color = pureWhite.copy(alpha = 0.2f)) },
-        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+        containerColor = backgroundColor,
+        contentColor = textColor,
+        dragHandle = { 
+            BottomSheetDefaults.DragHandle(
+                color = textColor.copy(alpha = 0.1f)
+            ) 
+        },
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        tonalElevation = 0.dp
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
-                .padding(bottom = 32.dp)
+                .padding(bottom = 40.dp)
         ) {
-            // The main card will now detect its container and adjust
-            SystemHealthCard()
+            // SystemHealthCard without its own background and border
+            SystemHealthCard(
+                showBackground = false,
+                contentColor = textColor
+            )
         }
     }
 }
