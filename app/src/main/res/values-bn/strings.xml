@@ -36,7 +36,7 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">অজানা অবস্থান</string>
-    <string name="home_last_known_location">শেষ পরিচিত অবস্থান: %s</string>
+    <string name="home_last_known_location">শেষ পরিচিত অবস্থান</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">বাকি সময়</string>
     <string name="home_permissions_required">অনুমতি প্রয়োজন</string>

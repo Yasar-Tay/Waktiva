@@ -112,8 +112,16 @@ fun HomeHeader(
 }
 
 @Composable
-private fun LocationSection(locationName: String, contentColor: Color, isNetworkAvailable: Boolean) {
-    Column(horizontalAlignment = Alignment.Start) {
+fun LocationSection(
+    locationName: String,
+    contentColor: Color,
+    isNetworkAvailable: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.Start
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Rounded.LocationOn,
@@ -123,29 +131,38 @@ private fun LocationSection(locationName: String, contentColor: Color, isNetwork
             )
             Spacer(modifier = Modifier.width(4.dp))
 
-            val displayLocation = if (!isNetworkAvailable && locationName.isNotEmpty() && locationName != "Current Location") {
-                stringResource(R.string.home_last_known_location, locationName.substringBefore(","))
+            val displayTitle = if (!isNetworkAvailable && locationName.isNotEmpty() && locationName != "Current Location") {
+                stringResource(R.string.home_last_known_location)
             } else {
                 locationName.substringBefore(",")
                     .ifEmpty { stringResource(R.string.home_unknown_location) }
             }
 
             Text(
-                text = displayLocation,
+                text = displayTitle,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = contentColor,
                 letterSpacing = (-0.5).sp
             )
         }
-        Text(
-            text = locationName.substringAfter(", ").ifEmpty { "" }.uppercase(),
-            style = MaterialTheme.typography.labelSmall,
-            color = contentColor.copy(alpha = 0.3f),
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp,
-            modifier = Modifier.padding(start = 20.dp)
-        )
+        
+        val subTitle = if (!isNetworkAvailable && locationName.isNotEmpty() && locationName != "Current Location") {
+            locationName
+        } else {
+            locationName.substringAfter(", ").ifEmpty { "" }
+        }
+
+        if (subTitle.isNotEmpty()) {
+            Text(
+                text = subTitle.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                color = contentColor.copy(alpha = 0.3f),
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp,
+                modifier = Modifier.padding(start = 20.dp)
+            )
+        }
     }
 }
 

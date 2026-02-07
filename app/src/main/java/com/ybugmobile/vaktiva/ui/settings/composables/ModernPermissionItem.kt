@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 
 @Composable
 fun ModernPermissionItem(
@@ -22,6 +23,8 @@ fun ModernPermissionItem(
     isGranted: Boolean,
     icon: ImageVector
 ) {
+    val glassTheme = LocalGlassTheme.current
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,8 +35,8 @@ fun ModernPermissionItem(
             modifier = Modifier
                 .size(36.dp)
                 .background(
-                    if (isGranted) Color(0xFF81C784).copy(alpha = 0.1f)
-                    else Color(0xFFF87171).copy(alpha = 0.1f), 
+                    if (isGranted) Color(0xFF4CAF50).copy(alpha = 0.15f)
+                    else Color(0xFFF87171).copy(alpha = 0.15f), 
                     CircleShape
                 ),
             contentAlignment = Alignment.Center
@@ -41,7 +44,7 @@ fun ModernPermissionItem(
             Icon(
                 imageVector = icon, 
                 contentDescription = null, 
-                tint = if (isGranted) Color(0xFF81C784) else Color(0xFFF87171),
+                tint = if (isGranted) Color(0xFF4CAF50) else Color(0xFFF87171),
                 modifier = Modifier.size(18.dp)
             )
         }
@@ -53,14 +56,14 @@ fun ModernPermissionItem(
                 text = title, 
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = glassTheme.contentColor
                 )
             )
             if (subtitle != null) {
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = Color.White.copy(alpha = 0.6f),
+                        color = glassTheme.secondaryContentColor,
                         lineHeight = 16.sp
                     ),
                     modifier = Modifier.padding(top = 2.dp)
@@ -88,7 +91,7 @@ fun ModernPermissionItem(
                     fontWeight = FontWeight.Black,
                     letterSpacing = 1.sp
                 ),
-                color = Color.White
+                color = glassTheme.contentColor
             )
         }
     }

@@ -9,7 +9,6 @@ import android.provider.Settings
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -24,7 +23,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -35,20 +33,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
-import com.ybugmobile.vaktiva.ui.qibla.composables.CalibrationDialog
-import com.ybugmobile.vaktiva.ui.qibla.composables.ProfessionalCompass
-import com.ybugmobile.vaktiva.ui.qibla.composables.QiblaInfoCard
-import com.ybugmobile.vaktiva.ui.qibla.composables.QiblaMap
+import com.ybugmobile.vaktiva.ui.home.composables.LocationSection
+import com.ybugmobile.vaktiva.ui.qibla.composables.*
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import org.maplibre.android.MapLibre
 import org.maplibre.android.geometry.LatLng
-import java.util.Locale
 import kotlin.math.abs
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
@@ -123,8 +117,6 @@ fun QiblaScreen(
                     animatedAzimuth = animatedAzimuth,
                     isAligned = isAligned,
                     alignmentColor = alignmentColor,
-                    contentColor = contentColor,
-                    textShadow = textShadow,
                     glassTheme = glassTheme,
                     onCalibrationClick = { showCalibrationDialog = true },
                     onStatusClick = { showHealthOverlay = true }
@@ -140,7 +132,6 @@ fun QiblaScreen(
 
         if (showHealthOverlay) {
             SystemHealthOverlay(
-                isNetworkAvailable = state.isNetworkAvailable,
                 onDismiss = { showHealthOverlay = false }
             )
         }
@@ -156,8 +147,6 @@ private fun QiblaContent(
     animatedAzimuth: Float,
     isAligned: Boolean,
     alignmentColor: Color,
-    contentColor: Color,
-    textShadow: Shadow?,
     glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme,
     onCalibrationClick: () -> Unit,
     onStatusClick: () -> Unit
@@ -170,15 +159,6 @@ private fun QiblaContent(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val theme = MaterialTheme.colorScheme
 
-    // Dynamic Colors based on View Mode
-    val containerColor by animateColorAsState(
-        targetValue = when {
-            isMapView -> theme.surface
-            else -> glassTheme.containerColor
-        },
-        label = "containerColor"
-    )
-    
     val effectiveContentColor = when {
         isMapView -> theme.onSurface
         else -> glassTheme.contentColor
@@ -190,7 +170,7 @@ private fun QiblaContent(
             Surface(
                 onClick = onStatusClick,
                 shape = CircleShape,
-                color = color.copy(alpha = 0.15f),
+                color = if (!isMapView) color.copy(alpha = 0.15f) else Color(0xFF282722).copy(alpha = 0.5f),
                 border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.4f)),
                 modifier = Modifier.size(40.dp)
             ) {
@@ -386,57 +366,39 @@ private fun QiblaContent(
                     ) {
                         state.settings?.let { s ->
                             Surface(
-                                color = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else glassTheme.containerColor,
+                                color = if (isMapView) theme.surface else Color.Transparent,
                                 shape = RoundedCornerShape(22.dp),
                                 modifier = Modifier.weight(1f).padding(end = 8.dp),
-                                border = androidx.compose.foundation.BorderStroke(
+                                border = if (isMapView) androidx.compose.foundation.BorderStroke(
                                     1.dp, 
-                                    if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
-                                )
+                                    effectiveContentColor.copy(alpha = 0.1f)
+                                ) else null
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                                    modifier = Modifier.padding(
+                                        horizontal = if (isMapView) 12.dp else 0.dp,
+                                        vertical = if (isMapView) 4.dp else 0.dp
+                                    ),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        val displayLocation = if (!state.isNetworkAvailable && s.locationName.isNotEmpty() && s.locationName != "Current Location") {
-                                            stringResource(R.string.home_last_known_location, s.locationName.substringBefore(","))
-                                        } else {
-                                            s.locationName.substringBefore(",")
-                                                .ifEmpty { stringResource(R.string.home_unknown_location) }
-                                        }
-                                        Text(
-                                            text = displayLocation,
-                                            color = effectiveContentColor,
-                                            style = MaterialTheme.typography.titleSmall,
-                                            fontWeight = FontWeight.Bold,
-                                            maxLines = 1
-                                        )
-                                        Text(
-                                            text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
-                                            color = effectiveContentColor.copy(alpha = 0.6f),
-                                            style = MaterialTheme.typography.labelSmall
-                                        )
-                                    }
+                                    LocationSection(
+                                        locationName = s.locationName,
+                                        contentColor = effectiveContentColor,
+                                        isNetworkAvailable = state.isNetworkAvailable,
+                                        modifier = Modifier.weight(1f)
+                                    )
                                     statusIcon?.invoke()
                                 }
                             }
                         }
 
-                        Surface(
-                            color = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else glassTheme.containerColor,
-                            shape = RoundedCornerShape(22.dp),
-                            modifier = Modifier.height(40.dp),
-                            border = androidx.compose.foundation.BorderStroke(
-                                1.dp, 
-                                if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
-                            )
-                        ) {
-                            Row(modifier = Modifier.padding(2.dp)) {
-                                SwitcherButton(isSelected = !isMapView, icon = Icons.Default.Explore, contentColor = effectiveContentColor, isMapView = isMapView, onClick = { isMapView = false })
-                                SwitcherButton(isSelected = isMapView, icon = Icons.Default.Map, contentColor = effectiveContentColor, isMapView = isMapView, onClick = { isMapView = true })
-                            }
-                        }
+                        QiblaViewSwitcher(
+                            isMapView = isMapView,
+                            onViewChange = { isMapView = it },
+                            contentColor = effectiveContentColor,
+                            containerColor = if (isMapView) theme.surface else glassTheme.containerColor,
+                            borderColor = if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
+                        )
                     }
 
                     QiblaInfoCard(
@@ -449,7 +411,7 @@ private fun QiblaContent(
                         onCalibrationClick = onCalibrationClick,
                         isMapView = isMapView,
                         isSatelliteView = isSatelliteView,
-                        containerColor = if (isMapView) theme.surfaceVariant.copy(alpha = 0.5f) else glassTheme.containerColor,
+                        containerColor = if (isMapView) theme.surface else glassTheme.containerColor,
                         contentColor = effectiveContentColor
                     )
                     
@@ -468,83 +430,41 @@ private fun QiblaContent(
             ) {
                 state.settings?.let { s ->
                     Surface(
-                        color = containerColor,
+                        color = if (isMapView) theme.surface else Color.Transparent,
                         shape = RoundedCornerShape(22.dp),
                         modifier = Modifier.weight(1f).padding(end = 12.dp),
                         shadowElevation = if (isMapView) 4.dp else 0.dp,
                         tonalElevation = if (isMapView) 2.dp else 0.dp,
-                        border = androidx.compose.foundation.BorderStroke(
+                        border = if (isMapView) androidx.compose.foundation.BorderStroke(
                             1.dp, 
-                            if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
-                        )
+                            effectiveContentColor.copy(alpha = 0.1f)
+                        ) else null
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                            modifier = Modifier.padding(
+                                horizontal = if (isMapView) 6.dp else 6.dp,
+                                vertical = if (isMapView) 8.dp else 16.dp
+                            ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.LocationOn, null, tint = effectiveContentColor, modifier = Modifier.size(18.dp))
-                                    Spacer(Modifier.width(8.dp))
-                                    
-                                    val displayLocation = if (!state.isNetworkAvailable && s.locationName.isNotEmpty() && s.locationName != "Current Location") {
-                                        stringResource(R.string.home_last_known_location, s.locationName.substringBefore(","))
-                                    } else {
-                                        s.locationName.substringBefore(",")
-                                            .ifEmpty { stringResource(R.string.home_unknown_location) }
-                                    }
-
-                                    Text(
-                                        text = displayLocation,
-                                        color = effectiveContentColor,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        maxLines = 1
-                                    )
-                                }
-                                Text(
-                                    text = String.format(Locale.US, "%.4f, %.4f", s.latitude, s.longitude),
-                                    color = effectiveContentColor.copy(alpha = 0.6f),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    modifier = Modifier.padding(start = 26.dp)
-                                )
-                            }
+                            LocationSection(
+                                locationName = s.locationName,
+                                contentColor = effectiveContentColor,
+                                isNetworkAvailable = state.isNetworkAvailable,
+                                modifier = Modifier.weight(1f)
+                            )
                             statusIcon?.invoke()
                         }
                     }
                 }
 
-                Surface(
-                    color = containerColor,
-                    shape = RoundedCornerShape(22.dp),
-                    modifier = Modifier.height(44.dp),
-                    shadowElevation = if (isMapView) 4.dp else 0.dp,
-                    tonalElevation = if (isMapView) 2.dp else 0.dp,
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp, 
-                        if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier.padding(4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        SwitcherButton(
-                            isSelected = !isMapView,
-                            icon = Icons.Default.Explore,
-                            contentColor = effectiveContentColor,
-                            isMapView = isMapView,
-                            onClick = { isMapView = false }
-                        )
-                        SwitcherButton(
-                            isSelected = isMapView,
-                            icon = Icons.Default.Map,
-                            contentColor = effectiveContentColor,
-                            isMapView = isMapView,
-                            onClick = { isMapView = true }
-                        )
-                    }
-                }
+                QiblaViewSwitcher(
+                    isMapView = isMapView,
+                    onViewChange = { isMapView = it },
+                    contentColor = effectiveContentColor,
+                    containerColor = if (isMapView) theme.surface else glassTheme.containerColor,
+                    borderColor = if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
+                )
             }
 
             Column(
@@ -593,7 +513,7 @@ private fun QiblaContent(
                         onCalibrationClick = onCalibrationClick,
                         isMapView = isMapView,
                         isSatelliteView = isSatelliteView,
-                        containerColor = containerColor,
+                        containerColor = if (isMapView) theme.surface else glassTheme.containerColor,
                         contentColor = effectiveContentColor
                     )
                 }
@@ -601,49 +521,6 @@ private fun QiblaContent(
                 Spacer(modifier = Modifier.height(150.dp))
             }
         }
-    }
-}
-
-@Composable
-fun SwitcherButton(
-    isSelected: Boolean,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    contentColor: Color,
-    isMapView: Boolean,
-    onClick: () -> Unit
-) {
-    val theme = MaterialTheme.colorScheme
-    
-    val bgColor by animateColorAsState(
-        if (isSelected) {
-            if (isMapView) theme.primary else Color.White.copy(alpha = 0.9f)
-        } else Color.Transparent,
-        label = "bg"
-    )
-    val iconColor by animateColorAsState(
-        if (isSelected) {
-            if (isMapView) theme.onPrimary else Color.Black
-        } else {
-            if (isMapView) theme.onSurface.copy(alpha = 0.6f) else contentColor.copy(alpha = 0.7f)
-        },
-        label = "icon"
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(44.dp)
-            .clip(RoundedCornerShape(18.dp))
-            .background(bgColor)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = iconColor,
-            modifier = Modifier.size(20.dp)
-        )
     }
 }
 

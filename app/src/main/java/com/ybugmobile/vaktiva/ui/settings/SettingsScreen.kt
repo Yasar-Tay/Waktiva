@@ -115,7 +115,7 @@ fun SettingsScreen(
                             .verticalScroll(rememberScrollState())
                     ) {
                         Spacer(modifier = Modifier.height(12.dp))
-                        ReliabilitySection()
+
                         DataManagementSection(
                             onDeleteHistoryClick = { showDeleteHistoryDialog = true }
                         )
@@ -151,8 +151,6 @@ fun SettingsScreen(
                         onMadhabClick = { showMadhabDialog = true },
                         onMethodClick = { showMethodDialog = true }
                     )
-
-                    ReliabilitySection()
 
                     DataManagementSection(
                         onDeleteHistoryClick = { showDeleteHistoryDialog = true }

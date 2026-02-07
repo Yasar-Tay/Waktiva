@@ -36,7 +36,7 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">مکان ناشناخته</string>
-    <string name="home_last_known_location">آخرین موقعیت: %s</string>
+    <string name="home_last_known_location">آخرین موقعیت</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">زمان باقی‌مانده</string>
     <string name="home_permissions_required">مجوزها لازم است</string>
