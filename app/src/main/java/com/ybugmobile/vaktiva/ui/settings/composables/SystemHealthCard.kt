@@ -26,14 +26,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.notification.NotificationHelper
-import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.vaktiva.utils.PermissionUtils
 
 @Composable
 fun SystemHealthCard() {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val glassTheme = LocalGlassTheme.current
 
     var isGpsOff by remember { mutableStateOf(!PermissionUtils.isLocationEnabled(context)) }
     var isDndActive by remember { mutableStateOf(PermissionUtils.isDoNotDisturbActive(context)) }
@@ -151,34 +149,55 @@ private fun HealthIssueItem(issue: HealthIssue, textColor: Color) {
     val context = LocalContext.current
 
     Surface(
+        onClick = { context.startActivity(issue.intent) },
         color = issue.accentColor.copy(alpha = 0.15f),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.padding(bottom = 8.dp),
         border = androidx.compose.foundation.BorderStroke(1.dp, issue.accentColor.copy(alpha = 0.3f))
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(issue.icon, null, tint = issue.accentColor, modifier = Modifier.size(20.dp))
-            Spacer(Modifier.width(12.dp))
-            Text(
-                text = issue.message,
-                style = MaterialTheme.typography.bodySmall,
-                color = textColor.copy(alpha = 0.9f),
-                modifier = Modifier.weight(1f),
-                lineHeight = 16.sp
+            Icon(
+                issue.icon, 
+                null, 
+                tint = issue.accentColor, 
+                modifier = Modifier.size(28.dp)
             )
-            TextButton(
-                onClick = { context.startActivity(issue.intent) },
-                colors = ButtonDefaults.textButtonColors(contentColor = issue.accentColor)
-            ) {
+            Spacer(Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = if (issue.accentColor == Color(0xFFFACC15)) stringResource(R.string.nav_settings) else stringResource(R.string.health_fix_now),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp
+                    text = issue.message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = textColor.copy(alpha = 0.95f),
+                    lineHeight = 20.sp,
+                    fontWeight = FontWeight.Medium
+                )
+
+                Spacer(Modifier.height(16.dp))
+                
+                Text(
+                    text = (if (issue.accentColor == Color(0xFFFACC15)) 
+                        stringResource(R.string.nav_settings) 
+                    else stringResource(R.string.health_fix_now)).uppercase(),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Black,
+                        color = issue.accentColor,
+                        letterSpacing = 0.5.sp
+                    ),
+                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
+            
+            Spacer(modifier = Modifier.width(8.dp))
+            
+            Icon(
+                imageVector = Icons.Rounded.ChevronRight,
+                contentDescription = null,
+                tint = issue.accentColor.copy(alpha = 0.5f),
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }

@@ -466,7 +466,6 @@ fun HomeScreenContent(
 
             if (showHealthOverlay) {
                 SystemHealthOverlay(
-                    isNetworkAvailable = state.isNetworkAvailable,
                     onDismiss = { showHealthOverlay = false }
                 )
             }
