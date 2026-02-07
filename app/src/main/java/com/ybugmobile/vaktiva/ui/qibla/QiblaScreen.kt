@@ -170,8 +170,8 @@ private fun QiblaContent(
             Surface(
                 onClick = onStatusClick,
                 shape = CircleShape,
-                color = if (!isMapView) color.copy(alpha = 0.15f) else Color(0xFF282722).copy(alpha = 0.5f),
-                border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.4f)),
+                color = if (!isMapView) color.copy(alpha = 0.15f) else theme.surfaceVariant,
+                border = androidx.compose.foundation.BorderStroke(2.dp, color.copy(alpha = if (isMapView) 0.5f else 0.4f)),
                 modifier = Modifier.size(40.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -368,7 +368,7 @@ private fun QiblaContent(
                             Surface(
                                 color = if (isMapView) theme.surface else Color.Transparent,
                                 shape = RoundedCornerShape(22.dp),
-                                modifier = Modifier.weight(1f).padding(end = 8.dp),
+                                modifier = Modifier.padding(end = 8.dp),
                                 border = if (isMapView) androidx.compose.foundation.BorderStroke(
                                     1.dp, 
                                     effectiveContentColor.copy(alpha = 0.1f)
@@ -384,10 +384,12 @@ private fun QiblaContent(
                                     LocationSection(
                                         locationName = s.locationName,
                                         contentColor = effectiveContentColor,
-                                        isNetworkAvailable = state.isNetworkAvailable,
-                                        modifier = Modifier.weight(1f)
+                                        isNetworkAvailable = state.isNetworkAvailable
                                     )
-                                    statusIcon?.invoke()
+                                    if (statusIcon != null) {
+                                        Spacer(Modifier.width(12.dp))
+                                        statusIcon.invoke()
+                                    }
                                 }
                             }
                         }
@@ -432,7 +434,7 @@ private fun QiblaContent(
                     Surface(
                         color = if (isMapView) theme.surface else Color.Transparent,
                         shape = RoundedCornerShape(22.dp),
-                        modifier = Modifier.weight(1f).padding(end = 12.dp),
+                        modifier = Modifier.padding(end = 12.dp),
                         shadowElevation = if (isMapView) 4.dp else 0.dp,
                         tonalElevation = if (isMapView) 2.dp else 0.dp,
                         border = if (isMapView) androidx.compose.foundation.BorderStroke(
@@ -450,10 +452,12 @@ private fun QiblaContent(
                             LocationSection(
                                 locationName = s.locationName,
                                 contentColor = effectiveContentColor,
-                                isNetworkAvailable = state.isNetworkAvailable,
-                                modifier = Modifier.weight(1f)
+                                isNetworkAvailable = state.isNetworkAvailable
                             )
-                            statusIcon?.invoke()
+                            if (statusIcon != null) {
+                                Spacer(Modifier.width(12.dp))
+                                statusIcon.invoke()
+                            }
                         }
                     }
                 }
