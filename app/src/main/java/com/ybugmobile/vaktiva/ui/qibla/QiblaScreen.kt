@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -40,6 +41,7 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.ui.home.composables.LocationSection
 import com.ybugmobile.vaktiva.ui.qibla.composables.*
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
+import com.ybugmobile.vaktiva.ui.theme.GlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import org.maplibre.android.MapLibre
@@ -148,7 +150,7 @@ private fun QiblaContent(
     animatedAzimuth: Float,
     isAligned: Boolean,
     alignmentColor: Color,
-    glassTheme: com.ybugmobile.vaktiva.ui.theme.GlassTheme,
+    glassTheme: GlassTheme,
     onCalibrationClick: () -> Unit,
     onStatusClick: () -> Unit
 ) {
@@ -160,27 +162,47 @@ private fun QiblaContent(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val theme = MaterialTheme.colorScheme
 
-    val effectiveContentColor = when {
-        isMapView -> theme.onSurface
-        else -> glassTheme.contentColor
-    }
+    val lightGlassTheme = GlassTheme(
+        containerColor = Color.White.copy(alpha = 0.7f),
+        contentColor = Color.Black,
+        borderColor = Color.White.copy(alpha = 0.3f),
+        secondaryContentColor = Color.Black.copy(alpha = 0.6f),
+        isLightMode = true
+    )
+
+    val currentTheme = if (isMapView) lightGlassTheme else glassTheme
 
     val statusIcon = if (!state.isNetworkAvailable || state.hasSystemIssues) {
         @Composable {
             val color = Color(0xFFFF5252)
+            val iconPulseTransition = rememberInfiniteTransition(label = "iconPulse")
+            val iconScale by iconPulseTransition.animateFloat(
+                initialValue = 1f,
+                targetValue = 1.12f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1000, easing = FastOutSlowInEasing),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "iconScale"
+            )
+
             Surface(
                 onClick = onStatusClick,
                 shape = CircleShape,
-                color = if (!isMapView) color.copy(alpha = 0.15f) else theme.surfaceVariant,
-                border = androidx.compose.foundation.BorderStroke(2.dp, color.copy(alpha = if (isMapView) 0.5f else 0.4f)),
-                modifier = Modifier.size(40.dp)
+                color = Color.White,
+                shadowElevation = 10.dp,
+                tonalElevation = 6.dp,
+                border = androidx.compose.foundation.BorderStroke(2.dp, color.copy(alpha = 0.7f)),
+                modifier = Modifier.size(46.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = if (!state.isNetworkAvailable) Icons.Rounded.WifiOff else Icons.Rounded.PriorityHigh,
                         contentDescription = "Status",
                         tint = color,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier
+                            .size(24.dp)
+                            .graphicsLayer(scaleX = iconScale, scaleY = iconScale)
                     )
                 }
             }
@@ -367,29 +389,26 @@ private fun QiblaContent(
                     ) {
                         state.settings?.let { s ->
                             Surface(
+                                color = currentTheme.containerColor,
                                 shape = RoundedCornerShape(22.dp),
-                                modifier = Modifier.padding(end = 8.dp),
-                                border = if (isMapView) androidx.compose.foundation.BorderStroke(
+                                modifier = Modifier.weight(1f).padding(end = 8.dp),
+                                border = androidx.compose.foundation.BorderStroke(
                                     1.dp, 
-                                    effectiveContentColor.copy(alpha = 0.1f)
-                                ) else null
+                                    currentTheme.borderColor
+                                )
                             ) {
                                 Row(
                                     modifier = Modifier.padding(
-                                        horizontal = if (isMapView) 12.dp else 0.dp,
-                                        vertical = if (isMapView) 4.dp else 0.dp
+                                        horizontal = 12.dp,
+                                        vertical = 8.dp
                                     ),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     LocationSection(
                                         locationName = s.locationName,
-                                        contentColor = effectiveContentColor,
+                                        contentColor = currentTheme.contentColor,
                                         isNetworkAvailable = state.isNetworkAvailable
                                     )
-                                        Spacer(Modifier.width(12.dp))
-                                    if (statusIcon != null) {
-                                        statusIcon.invoke()
-                                    }
                                 }
                             }
                         }
@@ -397,25 +416,33 @@ private fun QiblaContent(
                         QiblaViewSwitcher(
                             isMapView = isMapView,
                             onViewChange = { isMapView = it },
-                            contentColor = effectiveContentColor,
-                            containerColor = if (isMapView) theme.surface else glassTheme.containerColor,
-                            borderColor = if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
+                            contentColor = currentTheme.contentColor,
+                            containerColor = currentTheme.containerColor,
+                            borderColor = currentTheme.borderColor
                         )
                     }
 
-                    QiblaInfoCard(
-                        isAligned = isAligned,
-                        alignmentColor = alignmentColor,
-                        qiblaDirection = state.qiblaDirection,
-                        compassData = state.compassData,
-                        isAccuracyLow = isAccuracyLow,
-                        isAccuracyUnreliable = isAccuracyUnreliable,
-                        onCalibrationClick = onCalibrationClick,
-                        isMapView = isMapView,
-                        isSatelliteView = isSatelliteView,
-                        containerColor = if (isMapView) theme.surface else glassTheme.containerColor,
-                        contentColor = effectiveContentColor
-                    )
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Column(horizontalAlignment = Alignment.Start) {
+                            if (statusIcon != null) {
+                                statusIcon()
+                                Spacer(Modifier.height(12.dp))
+                            }
+                            QiblaInfoCard(
+                                isAligned = isAligned,
+                                alignmentColor = alignmentColor,
+                                qiblaDirection = state.qiblaDirection,
+                                compassData = state.compassData,
+                                isAccuracyLow = isAccuracyLow,
+                                isAccuracyUnreliable = isAccuracyUnreliable,
+                                onCalibrationClick = onCalibrationClick,
+                                isMapView = isMapView,
+                                isSatelliteView = isSatelliteView,
+                                containerColor = currentTheme.containerColor,
+                                contentColor = currentTheme.contentColor
+                            )
+                        }
+                    }
                     
                     Spacer(modifier = Modifier.height(80.dp))
                 }
@@ -432,32 +459,26 @@ private fun QiblaContent(
             ) {
                 state.settings?.let { s ->
                     Surface(
-                        color = if (isMapView) theme.surface else Color.Transparent,
+                        color = currentTheme.containerColor,
                         shape = RoundedCornerShape(22.dp),
-                        modifier = Modifier.padding(end = 12.dp),
-                        shadowElevation = if (isMapView) 4.dp else 0.dp,
-                        tonalElevation = if (isMapView) 2.dp else 0.dp,
-                        border = if (isMapView) androidx.compose.foundation.BorderStroke(
+                        modifier = Modifier.weight(1f).padding(end = 12.dp),
+                        border = androidx.compose.foundation.BorderStroke(
                             1.dp, 
-                            effectiveContentColor.copy(alpha = 0.1f)
-                        ) else null
+                            currentTheme.borderColor
+                        )
                     ) {
                         Row(
                             modifier = Modifier.padding(
-                                horizontal = if (isMapView) 6.dp else 6.dp,
-                                vertical = if (isMapView) 8.dp else 16.dp
+                                horizontal = 12.dp,
+                                vertical = 8.dp
                             ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             LocationSection(
                                 locationName = s.locationName,
-                                contentColor = effectiveContentColor,
+                                contentColor = currentTheme.contentColor,
                                 isNetworkAvailable = state.isNetworkAvailable
                             )
-                            if (statusIcon != null) {
-                                Spacer(Modifier.width(12.dp))
-                                statusIcon.invoke()
-                            }
                         }
                     }
                 }
@@ -465,9 +486,9 @@ private fun QiblaContent(
                 QiblaViewSwitcher(
                     isMapView = isMapView,
                     onViewChange = { isMapView = it },
-                    contentColor = effectiveContentColor,
-                    containerColor = if (isMapView) theme.surface else glassTheme.containerColor,
-                    borderColor = if (isMapView) effectiveContentColor.copy(alpha = 0.1f) else glassTheme.borderColor
+                    contentColor = currentTheme.contentColor,
+                    containerColor = currentTheme.containerColor,
+                    borderColor = currentTheme.borderColor
                 )
             }
 
@@ -507,19 +528,25 @@ private fun QiblaContent(
                 }
 
                 Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    QiblaInfoCard(
-                        isAligned = isAligned,
-                        alignmentColor = alignmentColor,
-                        qiblaDirection = state.qiblaDirection,
-                        compassData = state.compassData,
-                        isAccuracyLow = isAccuracyLow,
-                        isAccuracyUnreliable = isAccuracyUnreliable,
-                        onCalibrationClick = onCalibrationClick,
-                        isMapView = isMapView,
-                        isSatelliteView = isSatelliteView,
-                        containerColor = if (isMapView) theme.surface else glassTheme.containerColor,
-                        contentColor = effectiveContentColor
-                    )
+                    Column(horizontalAlignment = Alignment.Start) {
+                        if (statusIcon != null) {
+                            statusIcon()
+                            Spacer(Modifier.height(12.dp))
+                        }
+                        QiblaInfoCard(
+                            isAligned = isAligned,
+                            alignmentColor = alignmentColor,
+                            qiblaDirection = state.qiblaDirection,
+                            compassData = state.compassData,
+                            isAccuracyLow = isAccuracyLow,
+                            isAccuracyUnreliable = isAccuracyUnreliable,
+                            onCalibrationClick = onCalibrationClick,
+                            isMapView = isMapView,
+                            isSatelliteView = isSatelliteView,
+                            containerColor = currentTheme.containerColor,
+                            contentColor = currentTheme.contentColor
+                        )
+                    }
                 }
                 
                 Spacer(modifier = Modifier.height(150.dp))
