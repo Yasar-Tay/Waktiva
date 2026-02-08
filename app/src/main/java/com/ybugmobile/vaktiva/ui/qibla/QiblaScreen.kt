@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.PriorityHigh
+import androidx.compose.material.icons.rounded.ReportProblem
 import androidx.compose.material.icons.rounded.WifiOff
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -40,6 +41,7 @@ import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.ui.home.composables.LocationSection
 import com.ybugmobile.vaktiva.ui.qibla.composables.*
+import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthCard
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
 import com.ybugmobile.vaktiva.ui.theme.GlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
@@ -104,6 +106,56 @@ fun QiblaScreen(
         if (state.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = contentColor)
+            }
+        } else if (state.currentPrayerDay == null && (!state.isNetworkAvailable || state.hasSystemIssues)) {
+            // Empty State with Detailed System Health issues
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Surface(
+                    color = glassTheme.containerColor,
+                    shape = RoundedCornerShape(32.dp),
+                    modifier = Modifier.padding(24.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, glassTheme.borderColor)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp).verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.ReportProblem,
+                            contentDescription = null,
+                            tint = Color(0xFFFF5252),
+                            modifier = Modifier.size(56.dp)
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        Text(
+                            text = stringResource(R.string.health_issues_detected),
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = contentColor,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = stringResource(R.string.health_overlay_description),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = contentColor.copy(alpha = 0.7f),
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(Modifier.height(24.dp))
+                        
+                        SystemHealthCard(
+                            showBackground = false,
+                            showTitle = false,
+                            contentColor = contentColor,
+                            onIssuesChanged = { /* Handled by state.hasSystemIssues */ }
+                        )
+
+                    }
+                }
             }
         } else {
             PullToRefreshBox(
