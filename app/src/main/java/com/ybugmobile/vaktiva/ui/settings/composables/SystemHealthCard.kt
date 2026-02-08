@@ -33,7 +33,8 @@ import com.ybugmobile.vaktiva.utils.PermissionUtils
 fun SystemHealthCard(
     showBackground: Boolean = true,
     showTitle: Boolean = true,
-    contentColor: Color = Color.Unspecified
+    contentColor: Color = Color.Unspecified,
+    onIssuesChanged: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -47,6 +48,8 @@ fun SystemHealthCard(
     var isDndActive by remember { mutableStateOf(PermissionUtils.isDoNotDisturbActive(context)) }
     var areChannelsMuted by remember { mutableStateOf(PermissionUtils.areNotificationChannelsMuted(context)) }
     var isNetworkOffline by remember { mutableStateOf(!PermissionUtils.isNetworkAvailable(context)) }
+    var isLocationPermissionMissing by remember { mutableStateOf(!PermissionUtils.isLocationPermissionGranted(context)) }
+    var isNotificationPermissionMissing by remember { mutableStateOf(!PermissionUtils.isNotificationPermissionGranted(context)) }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -55,6 +58,8 @@ fun SystemHealthCard(
                 isDndActive = PermissionUtils.isDoNotDisturbActive(context)
                 areChannelsMuted = PermissionUtils.areNotificationChannelsMuted(context)
                 isNetworkOffline = !PermissionUtils.isNetworkAvailable(context)
+                isLocationPermissionMissing = !PermissionUtils.isLocationPermissionGranted(context)
+                isNotificationPermissionMissing = !PermissionUtils.isNotificationPermissionGranted(context)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -63,9 +68,22 @@ fun SystemHealthCard(
 
     val issues = mutableListOf<HealthIssue>()
 
-    // Use solid colors for guaranteed visibility
     val criticalColor = Color(0xFFFF5252)
     val warningColor = Color(0xFFFACC15)
+
+    if (isLocationPermissionMissing) issues.add(HealthIssue(
+        stringResource(R.string.home_permissions_required),
+        Icons.Rounded.GpsFixed,
+        PermissionUtils.getAppSettingsIntent(context),
+        criticalColor
+    ))
+
+    if (isNotificationPermissionMissing) issues.add(HealthIssue(
+        stringResource(R.string.health_channels_muted),
+        Icons.Rounded.Notifications,
+        PermissionUtils.getAppSettingsIntent(context),
+        criticalColor
+    ))
 
     if (isGpsOff) issues.add(HealthIssue(
         stringResource(R.string.health_gps_off),
@@ -73,6 +91,7 @@ fun SystemHealthCard(
         Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
         criticalColor
     ))
+
     if (areChannelsMuted) issues.add(HealthIssue(
         stringResource(R.string.health_channels_muted),
         Icons.Rounded.NotificationsPaused,
@@ -94,7 +113,6 @@ fun SystemHealthCard(
         ))
     }
 
-    // Connectivity Warning (Yellow)
     if (isNetworkOffline) {
         val connectivityIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
@@ -108,6 +126,10 @@ fun SystemHealthCard(
             connectivityIntent,
             warningColor
         ))
+    }
+
+    LaunchedEffect(issues.isNotEmpty()) {
+        onIssuesChanged(issues.isNotEmpty())
     }
 
     AnimatedVisibility(
@@ -195,7 +217,7 @@ private fun HealthIssueItem(issue: HealthIssue, textColor: Color) {
                     fontWeight = FontWeight.SemiBold
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(4.dp))
                 
                 Text(
                     text = (if (issue.accentColor == Color(0xFFFACC15)) 

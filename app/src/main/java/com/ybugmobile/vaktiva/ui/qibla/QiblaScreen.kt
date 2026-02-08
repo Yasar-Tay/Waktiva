@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material.icons.rounded.WifiOff
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -51,9 +52,9 @@ fun QiblaScreen(
     viewModel: QiblaViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
     
     val context = LocalContext.current
-    val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
 
     LaunchedEffect(Unit) {
         MapLibre.getInstance(context)
@@ -96,11 +97,6 @@ fun QiblaScreen(
     )
 
     val contentColor = glassTheme.contentColor
-    val textShadow = Shadow(
-        color = Color.Black.copy(alpha = 0.3f),
-        offset = Offset(0f, 2f),
-        blurRadius = 4f
-    )
 
     Box(modifier = Modifier.fillMaxSize().background(brush = backgroundGradient)) {
         if (state.isLoading) {
@@ -108,18 +104,24 @@ fun QiblaScreen(
                 CircularProgressIndicator(color = contentColor)
             }
         } else {
-            QiblaContent(
-                state = state,
-                isAccuracyLow = isAccuracyLow,
-                isAccuracyUnreliable = isAccuracyUnreliable,
-                pulseAlpha = pulseAlpha,
-                animatedAzimuth = animatedAzimuth,
-                isAligned = isAligned,
-                alignmentColor = alignmentColor,
-                glassTheme = glassTheme,
-                onCalibrationClick = { showCalibrationDialog = true },
-                onStatusClick = { showHealthOverlay = true }
-            )
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = { viewModel.refresh() },
+                modifier = Modifier.fillMaxSize()
+            ) {
+                QiblaContent(
+                    state = state,
+                    isAccuracyLow = isAccuracyLow,
+                    isAccuracyUnreliable = isAccuracyUnreliable,
+                    pulseAlpha = pulseAlpha,
+                    animatedAzimuth = animatedAzimuth,
+                    isAligned = isAligned,
+                    alignmentColor = alignmentColor,
+                    glassTheme = glassTheme,
+                    onCalibrationClick = { showCalibrationDialog = true },
+                    onStatusClick = { showHealthOverlay = true }
+                )
+            }
         }
 
         if (showCalibrationDialog) {
@@ -128,7 +130,10 @@ fun QiblaScreen(
 
         if (showHealthOverlay) {
             SystemHealthOverlay(
-                onDismiss = { showHealthOverlay = false }
+                onDismiss = { 
+                    showHealthOverlay = false 
+                    viewModel.refresh()
+                }
             )
         }
     }
@@ -519,68 +524,6 @@ private fun QiblaContent(
                 }
                 
                 Spacer(modifier = Modifier.height(150.dp))
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-private fun LocationRequiredFallback(permissionState: PermissionState) {
-    val context = LocalContext.current
-    var denialCount by rememberSaveable { mutableIntStateOf(0) }
-
-    fun openAppSettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = Uri.fromParts("package", context.packageName, null)
-        }
-        context.startActivity(intent)
-    }
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                Icons.Default.LocationOn,
-                contentDescription = null,
-                modifier = Modifier.size(80.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = stringResource(R.string.qibla_location_required),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = stringResource(R.string.qibla_location_required_desc),
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = {
-                    if (denialCount >= 2 || (permissionState.status as? PermissionStatus.Denied)?.shouldShowRationale == true) {
-                        openAppSettings()
-                    } else {
-                        permissionState.launchPermissionRequest()
-                        denialCount++
-                    }
-                },
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(stringResource(R.string.qibla_grant_permission))
             }
         }
     }

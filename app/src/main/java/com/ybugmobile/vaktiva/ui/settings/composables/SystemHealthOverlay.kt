@@ -27,6 +27,14 @@ fun SystemHealthOverlay(
     val accentColor = Color(0xFF6366F1) // Indigo 500
     val textColor = Color(0xFF0F172A)
     val secondaryText = Color(0xFF64748B)
+
+    var hasIssues by remember { mutableStateOf(true) }
+
+    LaunchedEffect(hasIssues) {
+        if (!hasIssues) {
+            onDismiss()
+        }
+    }
     
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -105,7 +113,8 @@ fun SystemHealthOverlay(
             SystemHealthCard(
                 showBackground = false,
                 showTitle = false,
-                contentColor = textColor
+                contentColor = textColor,
+                onIssuesChanged = { hasIssues = it }
             )
 
         }

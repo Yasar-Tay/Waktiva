@@ -25,7 +25,7 @@ import javax.inject.Inject
 class QiblaViewModel @Inject constructor(
     settingsManager: SettingsManager,
     private val compassManager: CompassManager,
-    prayerRepository: PrayerRepository,
+    private val prayerRepository: PrayerRepository,
     timeManager: TimeManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -47,6 +47,9 @@ class QiblaViewModel @Inject constructor(
         val today = LocalDate.now()
         days.find { it.date == today }
     }
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
 
     private val _isNetworkAvailable = MutableStateFlow(PermissionUtils.isNetworkAvailable(context))
     private val _hasSystemIssues = MutableStateFlow(checkSystemIssues())
@@ -116,9 +119,34 @@ class QiblaViewModel @Inject constructor(
         }
     }
 
+    fun refresh() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            _isNetworkAvailable.value = PermissionUtils.isNetworkAvailable(context)
+            _hasSystemIssues.value = checkSystemIssues()
+            
+            val s = settings.first()
+            val now = LocalDate.now()
+            if (s.latitude != null && s.longitude != null) {
+                prayerRepository.refreshPrayerTimes(
+                    year = now.year,
+                    month = now.monthValue,
+                    latitude = s.latitude,
+                    longitude = s.longitude,
+                    method = s.calculationMethod
+                )
+            }
+
+            delay(500)
+            _isRefreshing.value = false
+        }
+    }
+
     private fun checkSystemIssues(): Boolean {
         return !PermissionUtils.isLocationEnabled(context) || 
                PermissionUtils.isDoNotDisturbActive(context) || 
-               PermissionUtils.areNotificationChannelsMuted(context)
+               PermissionUtils.areNotificationChannelsMuted(context) ||
+               !PermissionUtils.isLocationPermissionGranted(context) ||
+               !PermissionUtils.isNotificationPermissionGranted(context)
     }
 }
