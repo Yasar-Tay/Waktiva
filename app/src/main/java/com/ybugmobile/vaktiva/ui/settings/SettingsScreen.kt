@@ -362,7 +362,6 @@ private fun DataManagementSection(
             title = stringResource(R.string.settings_delete_history),
             subtitle = stringResource(R.string.settings_delete_history_desc),
             icon = Icons.Rounded.DeleteSweep,
-            iconColor = Color(0xFFF87171),
             onClick = onDeleteHistoryClick
         )
     }
