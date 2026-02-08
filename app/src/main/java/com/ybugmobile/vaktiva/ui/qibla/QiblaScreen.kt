@@ -64,6 +64,12 @@ fun QiblaScreen(
         MapLibre.getInstance(context)
     }
 
+    LaunchedEffect(state.isNetworkAvailable, state.hasSystemIssues, state.currentPrayerDay) {
+        if (state.currentPrayerDay == null && state.isNetworkAvailable && !state.hasSystemIssues) {
+            viewModel.refresh()
+        }
+    }
+
     val isAccuracyLow = state.compassData.accuracy <= SensorManager.SENSOR_STATUS_ACCURACY_LOW
     val isAccuracyUnreliable = state.compassData.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE
 
@@ -78,7 +84,7 @@ fun QiblaScreen(
         initialValue = 0.1f,
         targetValue = 0.3f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1500, easing = LinearEasing),
+            animation = tween(1500, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "pulseAlpha"
@@ -148,6 +154,7 @@ fun QiblaScreen(
                         Spacer(Modifier.height(24.dp))
                         
                         SystemHealthCard(
+                            hasPrayerData = state.currentPrayerDay != null,
                             showBackground = false,
                             showTitle = false,
                             contentColor = contentColor,

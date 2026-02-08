@@ -237,12 +237,12 @@ fun HomeScreenContent(
                                 Spacer(Modifier.height(24.dp))
                                 
                                 SystemHealthCard(
+                                    hasPrayerData = state.currentPrayerDay != null,
                                     showBackground = false,
                                     showTitle = false,
                                     contentColor = contentColor,
                                     onIssuesChanged = { /* Handled by state.hasSystemIssues */ }
                                 )
-
                             }
                         }
                     }

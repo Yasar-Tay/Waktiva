@@ -20,6 +20,7 @@ import com.ybugmobile.vaktiva.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SystemHealthOverlay(
+    hasPrayerData: Boolean = true,
     onDismiss: () -> Unit
 ) {
     // Modern Sleek Palette
@@ -100,7 +101,7 @@ fun SystemHealthOverlay(
 
             // Section Title for Issues
             Text(
-                text = "Detected Issues".uppercase(),
+                text = stringResource(R.string.health_overlay_issues_title).uppercase(),
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontWeight = FontWeight.Black,
                     letterSpacing = 1.2.sp
@@ -111,6 +112,7 @@ fun SystemHealthOverlay(
 
             // SystemHealthCard content (List of issues)
             SystemHealthCard(
+                hasPrayerData = hasPrayerData,
                 showBackground = false,
                 showTitle = false,
                 contentColor = textColor,

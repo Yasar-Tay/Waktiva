@@ -31,6 +31,7 @@ import com.ybugmobile.vaktiva.utils.PermissionUtils
 
 @Composable
 fun SystemHealthCard(
+    hasPrayerData: Boolean = true,
     showBackground: Boolean = true,
     showTitle: Boolean = true,
     contentColor: Color = Color.Unspecified,
@@ -120,11 +121,17 @@ fun SystemHealthCard(
             Intent(Settings.ACTION_WIRELESS_SETTINGS)
         }
         
+        val networkMessage = if (hasPrayerData) {
+            stringResource(R.string.health_no_internet)
+        } else {
+            stringResource(R.string.health_no_internet_no_data)
+        }
+
         issues.add(HealthIssue(
-            stringResource(R.string.health_no_internet),
+            networkMessage,
             Icons.Rounded.CloudOff,
             connectivityIntent,
-            warningColor
+            if (hasPrayerData) warningColor else criticalColor
         ))
     }
 

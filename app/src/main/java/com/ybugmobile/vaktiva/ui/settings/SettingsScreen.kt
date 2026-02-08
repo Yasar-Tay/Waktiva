@@ -40,7 +40,8 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.settings.collectAsState(initial = null)
-    
+    val allDays by viewModel.allPrayerDays.collectAsState()
+
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -54,7 +55,7 @@ fun SettingsScreen(
         containerColor = Color.Transparent,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { 
+                title = {
                     Text(
                         text = stringResource(R.string.settings_title).uppercase(),
                         style = MaterialTheme.typography.titleMedium.copy(
@@ -62,7 +63,7 @@ fun SettingsScreen(
                             letterSpacing = 2.sp
                         ),
                         color = Color.White
-                    ) 
+                    )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
@@ -94,7 +95,9 @@ fun SettingsScreen(
                             .verticalScroll(rememberScrollState())
                     ) {
                         Spacer(modifier = Modifier.height(12.dp))
-                        SystemHealthCard()
+                        SystemHealthCard(
+                            hasPrayerData = allDays.isNotEmpty()
+                        )
                         NotificationSoundSection(
                             settings = settings,
                             onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
@@ -137,7 +140,9 @@ fun SettingsScreen(
                 ) {
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    SystemHealthCard()
+                    SystemHealthCard(
+                        hasPrayerData = allDays.isNotEmpty()
+                    )
 
                     NotificationSoundSection(
                         settings = settings,
@@ -222,7 +227,7 @@ private fun NotificationSoundSection(
                 onPlayAdhanChange(enabled)
             }
         )
-        
+
         SettingsClickItem(
             title = stringResource(R.string.settings_adhan_sound_selection),
             subtitle = stringResource(R.string.settings_adhan_sound_selection_desc),
@@ -259,14 +264,14 @@ private fun PreferencesSection(
                 icon = Icons.Rounded.Language,
                 onClick = onLanguageClick
             )
-            
+
             SettingsClickItem(
                 title = stringResource(R.string.settings_madhab),
                 subtitle = madhabOptions.find { it.second == s.madhab }?.first ?: "",
                 icon = Icons.Rounded.School,
                 onClick = onMadhabClick
             )
-            
+
             SettingsClickItem(
                 title = stringResource(R.string.settings_method),
                 subtitle = methods.find { it.second == s.calculationMethod }?.first ?: "",
@@ -286,7 +291,7 @@ private fun ReliabilitySection() {
     var canScheduleExactAlarms by remember {
         mutableStateOf(PermissionUtils.canScheduleExactAlarms(context))
     }
-    
+
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -305,7 +310,7 @@ private fun ReliabilitySection() {
         // Battery Optimization
         SettingsClickItem(
             title = stringResource(R.string.settings_battery_opt),
-            subtitle = if (isIgnoringBatteryOptimizations) 
+            subtitle = if (isIgnoringBatteryOptimizations)
                 stringResource(R.string.settings_battery_opt_enabled)
                 else stringResource(R.string.settings_battery_opt_disabled),
             icon = Icons.Rounded.BatteryChargingFull,
