@@ -145,13 +145,14 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
             val prayerType = PrayerType.fromString(prayerName)
             val audioPath = if (settings.useSpecificAdhanForEachPrayer && prayerType != null) {
-                settings.prayerSpecificAdhanPaths[prayerType] ?: settings.selectedAdhanPath
-            } else settings.selectedAdhanPath
+                settings.prayerSpecificAdhanPaths[prayerType] ?: getDefaultAdhanForPrayer(context, prayerType)
+            } else {
+                settings.selectedAdhanPath ?: "android.resource://${context.packageName}/${R.raw.muhsinkara_muhayyerkurdi_ezan}"
+            }
 
-            val finalPath = audioPath ?: "android.resource://${context.packageName}/${R.raw.muhsinkara_muhayyerkurdi_ezan}"
             val serviceIntent = Intent(context, AdhanService::class.java).apply {
                 putExtra(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
-                putExtra("AUDIO_PATH", finalPath)
+                putExtra("AUDIO_PATH", audioPath)
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -162,5 +163,17 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         } finally {
             if (wakeLock.isHeld) wakeLock.release()
         }
+    }
+
+    private fun getDefaultAdhanForPrayer(context: Context, prayerType: PrayerType): String {
+        val resId = when (prayerType) {
+            PrayerType.FAJR -> R.raw.muhsinkara_fajr
+            PrayerType.DHUHR -> R.raw.muhsinkara_muhayyerkurdi_ezan
+            PrayerType.ASR -> R.raw.muhsinkara_asr
+            PrayerType.MAGHRIB -> R.raw.muhsinkara_maghrib
+            PrayerType.ISHA -> R.raw.muhsinkara_isha
+            else -> R.raw.muhsinkara_muhayyerkurdi_ezan
+        }
+        return "android.resource://${context.packageName}/$resId"
     }
 }

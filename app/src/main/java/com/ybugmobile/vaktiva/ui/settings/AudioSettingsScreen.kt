@@ -152,11 +152,8 @@ fun AudioSettingsScreen(
                                         ?: audioItems.find { it.isDefault && selectedAdhanPath == null }
                                         ?: audioItems.find { it.isDefault }
 
-                                    val prayerTime = todayPrayerDay?.timings?.get(prayer)?.toString() ?: ""
-
                                     PrayerAdhanRow(
                                         prayerName = prayer.getDisplayName(context),
-                                        prayerTime = prayerTime,
                                         adhanTitle = adhanItem?.name ?: "",
                                         adhanArtist = adhanItem?.artist,
                                         onClick = {
@@ -179,7 +176,6 @@ fun AudioSettingsScreen(
 
                                 PrayerAdhanRow(
                                     prayerName = stringResource(R.string.audio_header_all_prayers),
-                                    prayerTime = "",
                                     adhanTitle = adhanItem?.name ?: "",
                                     adhanArtist = adhanItem?.artist,
                                     onClick = {
@@ -219,7 +215,6 @@ fun AudioSettingsScreen(
 @Composable
 private fun PrayerAdhanRow(
     prayerName: String,
-    prayerTime: String,
     adhanTitle: String,
     adhanArtist: String?,
     onClick: () -> Unit
@@ -242,55 +237,22 @@ private fun PrayerAdhanRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Box(modifier = Modifier.height(16.dp), contentAlignment = Alignment.CenterStart) {
-                if (prayerTime.isNotEmpty()) {
-                    Text(
-                        text = prayerTime,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = glassTheme.secondaryContentColor.copy(alpha = 0.6f),
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
+            Text(
+                text = if (!adhanArtist.isNullOrEmpty()) "$adhanTitle • $adhanArtist" else adhanTitle,
+                style = MaterialTheme.typography.labelMedium,
+                color = glassTheme.secondaryContentColor.copy(alpha = 0.8f),
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
         
         Spacer(Modifier.width(16.dp))
         
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1.6f),
             horizontalArrangement = Arrangement.End
         ) {
-            Column(horizontalAlignment = Alignment.End, modifier = Modifier.weight(1f)) {
-                Surface(
-                    color = Color(0xFFCE93D8).copy(alpha = 0.3f),
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, Color(0xFFD0BCFF).copy(alpha = 0.3f))
-                ) {
-                    Text(
-                        text = adhanTitle,
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                    )
-                }
-                if (!adhanArtist.isNullOrEmpty()) {
-                    Text(
-                        text = adhanArtist,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = glassTheme.secondaryContentColor.copy(alpha = 0.6f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier.padding(top = 4.dp, end = 4.dp)
-                    )
-                }
-            }
-            Spacer(Modifier.width(12.dp))
             Icon(
                 Icons.Rounded.ChevronRight,
                 null,
@@ -338,8 +300,24 @@ private fun AdhanSelectionDialog(
                     fontWeight = FontWeight.Black,
                     letterSpacing = 1.sp
                 )
-                IconButton(onClick = onAddCustom) {
-                    Icon(Icons.Rounded.AddCircleOutline, null, tint = glassTheme.contentColor)
+                TextButton(
+                    onClick = onAddCustom,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                ) {
+                    Icon(
+                        Icons.Rounded.AddCircleOutline,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = glassTheme.contentColor
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.audio_add_custom).uppercase(),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Black,
+                        color = glassTheme.contentColor,
+                        letterSpacing = 1.sp
+                    )
                 }
             }
             

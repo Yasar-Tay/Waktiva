@@ -64,7 +64,12 @@ class AudioSettingsViewModel @Inject constructor(
 
         // Built-in Adhans
         val rawAdhans = listOf(
-            R.raw.muhsinkara_muhayyerkurdi_ezan to true, // New default
+            R.raw.muhsinkara_muhayyerkurdi_ezan to true,
+            R.raw.muhsinkara_fajr to false,
+            R.raw.muhsinkara_asr to false,
+            R.raw.muhsinkara_maghrib to false,
+            R.raw.muhsinkara_isha to false,
+            R.raw.medina to false
         )
 
         rawAdhans.forEach { (resId, isDefaultFile) ->
@@ -80,22 +85,32 @@ class AudioSettingsViewModel @Inject constructor(
             }
 
             // Provide a better default name if metadata fails
-            val displayName = metadata.first ?: if (resId == R.raw.muhsinkara_muhayyerkurdi_ezan) {
-                "Muhayyer Kürdi Ezan"
-            } else {
-                context.getString(R.string.audio_setting_default)
+            val displayName = metadata.first ?: when (resId) {
+                R.raw.muhsinkara_muhayyerkurdi_ezan -> "Muhayyer Kürdi Ezan"
+                R.raw.muhsinkara_fajr -> "Fajr Ezan"
+                R.raw.muhsinkara_asr -> "Asr Ezan"
+                R.raw.muhsinkara_maghrib -> "Maghrib Ezan"
+                R.raw.muhsinkara_isha -> "Isha Ezan"
+                R.raw.medina -> "Madinah Ezan"
+                else -> context.getString(R.string.audio_setting_default)
             }
             
-            val artistName = metadata.second ?: if (resId == R.raw.muhsinkara_muhayyerkurdi_ezan) {
-                "Muhsin Kara"
-            } else null
+            val artistName = metadata.second ?: when (resId) {
+                R.raw.muhsinkara_muhayyerkurdi_ezan,
+                R.raw.muhsinkara_fajr,
+                R.raw.muhsinkara_asr,
+                R.raw.muhsinkara_maghrib,
+                R.raw.muhsinkara_isha -> "Muhsin Kara"
+                R.raw.medina -> "Madinah"
+                else -> null
+            }
 
             items.add(
                 AdhanAudioItem(
                     name = displayName,
                     artist = artistName,
                     path = path,
-                    isDefault = true,
+                    isDefault = isDefaultFile,
                     isSelected = isSelected,
                     isPlaying = playingPath == path
                 )

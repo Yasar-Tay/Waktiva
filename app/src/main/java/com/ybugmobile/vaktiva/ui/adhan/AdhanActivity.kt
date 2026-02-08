@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.Player
@@ -349,5 +350,30 @@ fun AdhanScreen(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AdhanScreenPreview() {
+    VaktivaTheme {
+        AdhanScreen(
+            prayerName = "MAGHRIB",
+            adhanTitle = "Adhan Makkah",
+            adhanArtist = "Sheikh Ali Mulla",
+            currentPrayerDay = PrayerDay(
+                date = LocalDate.now(),
+                hijriDate = null,
+                timings = mapOf(
+                    PrayerType.FAJR to LocalTime.of(5, 0),
+                    PrayerType.SUNRISE to LocalTime.of(6, 30),
+                    PrayerType.DHUHR to LocalTime.of(12, 30),
+                    PrayerType.ASR to LocalTime.of(15, 45),
+                    PrayerType.MAGHRIB to LocalTime.of(18, 15),
+                    PrayerType.ISHA to LocalTime.of(19, 45)
+                )
+            ),
+            onDismiss = {}
+        )
     }
 }
