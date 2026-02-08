@@ -125,7 +125,7 @@ fun HomeScreenContent(
 
     val statusIcon: @Composable (() -> Unit)? = if (permissionState.allPermissionsGranted && (!state.isNetworkAvailable || state.hasSystemIssues)) {
         {
-            val color = if (!state.isNetworkAvailable) Color(0xFFFACC15) else Color(0xFFFF5252)
+            val color = Color(0xFFFF5252)
             Surface(
                 onClick = { showHealthOverlay = true },
                 shape = CircleShape,

@@ -167,7 +167,7 @@ private fun QiblaContent(
 
     val statusIcon = if (!state.isNetworkAvailable || state.hasSystemIssues) {
         @Composable {
-            val color = if (!state.isNetworkAvailable) Color(0xFFFACC15) else Color(0xFFFF5252)
+            val color = Color(0xFFFF5252)
             Surface(
                 onClick = onStatusClick,
                 shape = CircleShape,
@@ -354,7 +354,7 @@ private fun QiblaContent(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .background(if (isMapView) theme.surface else Color.Transparent)
+                        .background(if (isMapView) Color.Black.copy(alpha = 0.15f) else Color.Transparent)
                         .padding(horizontal = 24.dp, vertical = 24.dp)
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -367,7 +367,6 @@ private fun QiblaContent(
                     ) {
                         state.settings?.let { s ->
                             Surface(
-                                color = if (isMapView) theme.surface else Color.Transparent,
                                 shape = RoundedCornerShape(22.dp),
                                 modifier = Modifier.padding(end = 8.dp),
                                 border = if (isMapView) androidx.compose.foundation.BorderStroke(
@@ -387,8 +386,8 @@ private fun QiblaContent(
                                         contentColor = effectiveContentColor,
                                         isNetworkAvailable = state.isNetworkAvailable
                                     )
-                                    if (statusIcon != null) {
                                         Spacer(Modifier.width(12.dp))
+                                    if (statusIcon != null) {
                                         statusIcon.invoke()
                                     }
                                 }
