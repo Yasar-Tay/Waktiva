@@ -23,8 +23,8 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 data class UserSettings(
     val madhab: Int,
     val calculationMethod: Int,
-    val latitude: Double,
-    val longitude: Double,
+    val latitude: Double?,
+    val longitude: Double?,
     val locationName: String,
     val language: String,
     val selectedAdhanPath: String?,
@@ -77,8 +77,8 @@ class SettingsManager @Inject constructor(
         UserSettings(
             madhab = preferences[MADHAB] ?: 0,
             calculationMethod = preferences[CALCULATION_METHOD] ?: 2,
-            latitude = preferences[LAST_KNOWN_LAT] ?: 0.0,
-            longitude = preferences[LAST_KNOWN_LNG] ?: 0.0,
+            latitude = preferences[LAST_KNOWN_LAT],
+            longitude = preferences[LAST_KNOWN_LNG],
             locationName = preferences[LAST_LOCATION_NAME] ?: "Unknown",
             language = preferences[LANGUAGE] ?: "system",
             selectedAdhanPath = preferences[SELECTED_ADHAN_PATH],

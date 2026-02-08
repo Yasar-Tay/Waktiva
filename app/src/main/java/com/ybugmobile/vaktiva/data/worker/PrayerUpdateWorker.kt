@@ -26,6 +26,12 @@ class PrayerUpdateWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         return try {
+            val settings = settingsManager.settingsFlow.first()
+            if (settings.latitude == null || settings.longitude == null) {
+                Log.d("PrayerUpdateWorker", "No location stored, skipping update")
+                return Result.success()
+            }
+
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val calendar = Calendar.getInstance()
             val currentDate = sdf.format(calendar.time)
@@ -36,7 +42,6 @@ class PrayerUpdateWorker @AssistedInject constructor(
             // If less than 15 days of data remaining, proactively fetch to maintain a 30-day buffer
             if (remainingDays < 15) {
                 Log.d("PrayerUpdateWorker", "Proactively fetching prayer times for current and next month")
-                val settings = settingsManager.settingsFlow.first()
                 
                 // Fetch current month
                 val resultCurrent = repository.refreshPrayerTimes(

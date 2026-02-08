@@ -108,22 +108,18 @@ fun QiblaScreen(
                 CircularProgressIndicator(color = contentColor)
             }
         } else {
-            if (locationPermissionState.status.isGranted) {
-                QiblaContent(
-                    state = state,
-                    isAccuracyLow = isAccuracyLow,
-                    isAccuracyUnreliable = isAccuracyUnreliable,
-                    pulseAlpha = pulseAlpha,
-                    animatedAzimuth = animatedAzimuth,
-                    isAligned = isAligned,
-                    alignmentColor = alignmentColor,
-                    glassTheme = glassTheme,
-                    onCalibrationClick = { showCalibrationDialog = true },
-                    onStatusClick = { showHealthOverlay = true }
-                )
-            } else {
-                LocationRequiredFallback(permissionState = locationPermissionState)
-            }
+            QiblaContent(
+                state = state,
+                isAccuracyLow = isAccuracyLow,
+                isAccuracyUnreliable = isAccuracyUnreliable,
+                pulseAlpha = pulseAlpha,
+                animatedAzimuth = animatedAzimuth,
+                isAligned = isAligned,
+                alignmentColor = alignmentColor,
+                glassTheme = glassTheme,
+                onCalibrationClick = { showCalibrationDialog = true },
+                onStatusClick = { showHealthOverlay = true }
+            )
         }
 
         if (showCalibrationDialog) {

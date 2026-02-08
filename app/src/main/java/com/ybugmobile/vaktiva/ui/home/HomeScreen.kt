@@ -155,9 +155,7 @@ fun HomeScreenContent(
                 .fillMaxSize()
                 .background(brush = backgroundGradient)
         ) {
-            if (!permissionState.allPermissionsGranted) {
-                PermissionRequiredFallback(permissionState = permissionState)
-            } else if (state.isLoading) {
+            if (state.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
                     color = contentColor

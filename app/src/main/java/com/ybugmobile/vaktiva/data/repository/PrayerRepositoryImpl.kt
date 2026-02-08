@@ -32,10 +32,14 @@ class PrayerRepositoryImpl @Inject constructor(
     override suspend fun refreshPrayerTimes(
         year: Int,
         month: Int,
-        latitude: Double,
-        longitude: Double,
+        latitude: Double?,
+        longitude: Double?,
         method: Int
     ): Result<Unit> {
+        if (latitude == null || longitude == null) {
+            return Result.failure(Exception("Location is required for fetching prayer times"))
+        }
+
         // 1. Try Primary Source (Aladhan)
         val aladhanResult = try {
             val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method)

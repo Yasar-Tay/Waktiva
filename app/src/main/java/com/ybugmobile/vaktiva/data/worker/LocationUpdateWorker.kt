@@ -26,15 +26,23 @@ class LocationUpdateWorker @AssistedInject constructor(
             val currentLocation = locationWrapper.getCurrentLocation() ?: return Result.failure()
             val settings = settingsManager.settingsFlow.first()
 
-            val distance = locationWrapper.calculateDistance(
-                settings.latitude,
-                settings.longitude,
-                currentLocation.latitude,
-                currentLocation.longitude
-            )
+            val savedLat = settings.latitude
+            val savedLng = settings.longitude
 
-            // If user moved more than 50km, refresh data
-            if (distance > 50.0) {
+            val shouldUpdate = if (savedLat == null || savedLng == null) {
+                true
+            } else {
+                val distance = locationWrapper.calculateDistance(
+                    savedLat,
+                    savedLng,
+                    currentLocation.latitude,
+                    currentLocation.longitude
+                )
+                distance > 50.0
+            }
+
+            // If user moved more than 50km or no previous location, refresh data
+            if (shouldUpdate) {
                 val calendar = Calendar.getInstance()
                 
                 val result = repository.refreshPrayerTimes(

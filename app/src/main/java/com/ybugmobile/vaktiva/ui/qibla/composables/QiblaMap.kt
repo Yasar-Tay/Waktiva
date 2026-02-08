@@ -138,12 +138,16 @@ fun QiblaMap(
                             }
                             
                             settings?.let {
-                                map.moveCamera(
-                                    CameraUpdateFactory.newLatLngZoom(
-                                        LatLng(it.latitude, it.longitude),
-                                        MapConstants.DEFAULT_ZOOM
+                                val lat = it.latitude
+                                val lng = it.longitude
+                                if (lat != null && lng != null) {
+                                    map.moveCamera(
+                                        CameraUpdateFactory.newLatLngZoom(
+                                            LatLng(lat, lng),
+                                            MapConstants.DEFAULT_ZOOM
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                         map.addOnMapLongClickListener { point ->
@@ -224,12 +228,16 @@ fun QiblaMap(
             FloatingActionButton(
                 onClick = {
                     settings?.let { loc ->
-                        mapInstance?.animateCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                LatLng(loc.latitude, loc.longitude),
-                                MapConstants.DEFAULT_ZOOM
+                        val lat = loc.latitude
+                        val lng = loc.longitude
+                        if (lat != null && lng != null) {
+                            mapInstance?.animateCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    LatLng(lat, lng),
+                                    MapConstants.DEFAULT_ZOOM
+                                )
                             )
-                        )
+                        }
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -272,41 +280,45 @@ fun QiblaMap(
         )
         
         settings?.let { loc ->
-            val userLatLng = LatLng(loc.latitude, loc.longitude)
-            val qiblaDir = Qibla(Coordinates(loc.latitude, loc.longitude)).direction
-            val isUserAligned = abs(compassData.azimuth - qiblaDir) < 2.0
-            
-            val activeColor = if (isUserAligned) appleGreen else appleBlue
-            val activeIcon = if (isUserAligned) "green_arrow" else MapConstants.USER_ARROW_ID
-            
-            // Draw Qibla line glow (Pulsing)
-            lm.create(
-                LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
-                    .withLineWidth(18f)
-                    .withLineOpacity(linePulseAlpha * 0.4f)
-                    .withLineBlur(5f)
-            )
+            val lat = loc.latitude
+            val lng = loc.longitude
+            if (lat != null && lng != null) {
+                val userLatLng = LatLng(lat, lng)
+                val qiblaDir = Qibla(Coordinates(lat, lng)).direction
+                val isUserAligned = abs(compassData.azimuth - qiblaDir) < 2.0
+                
+                val activeColor = if (isUserAligned) appleGreen else appleBlue
+                val activeIcon = if (isUserAligned) "green_arrow" else MapConstants.USER_ARROW_ID
+                
+                // Draw Qibla line glow (Pulsing)
+                lm.create(
+                    LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
+                        .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
+                        .withLineWidth(18f)
+                        .withLineOpacity(linePulseAlpha * 0.4f)
+                        .withLineBlur(5f)
+                )
 
-            // Draw Qibla line white border
-            lm.create(
-                LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE))
-                    .withLineWidth(10f)
-                    .withLineJoin("round")
-            )
-            // Draw main Qibla line
-            lm.create(
-                LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
-                    .withLineWidth(6f)
-                    .withLineJoin("round")
-            )
-            
-            sm.create(
-                SymbolOptions().withLatLng(userLatLng).withIconImage(activeIcon)
-                    .withIconRotate(compassData.azimuth).withIconSize(1.2f)
-            )
+                // Draw Qibla line white border
+                lm.create(
+                    LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
+                        .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE))
+                        .withLineWidth(10f)
+                        .withLineJoin("round")
+                )
+                // Draw main Qibla line
+                lm.create(
+                    LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
+                        .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
+                        .withLineWidth(6f)
+                        .withLineJoin("round")
+                )
+                
+                sm.create(
+                    SymbolOptions().withLatLng(userLatLng).withIconImage(activeIcon)
+                        .withIconRotate(compassData.azimuth).withIconSize(1.2f)
+                )
+            }
         }
         
         customPoint?.let { cp ->

@@ -28,7 +28,6 @@ import com.ybugmobile.vaktiva.service.AdhanService
 import com.ybugmobile.vaktiva.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.Duration
@@ -267,7 +266,10 @@ class HomeViewModel @Inject constructor(
                 val loc = locationWrapper.getCurrentLocation()
                 val lat = loc?.latitude ?: s.latitude
                 val lng = loc?.longitude ?: s.longitude
-                prayerRepository.refreshPrayerTimes(date.year, date.monthValue, lat, lng, s.calculationMethod)
+                
+                if (lat != null && lng != null) {
+                    prayerRepository.refreshPrayerTimes(date.year, date.monthValue, lat, lng, s.calculationMethod)
+                }
             } finally { _isRefreshing.value = false }
         }
     }
@@ -302,23 +304,22 @@ class HomeViewModel @Inject constructor(
         val s = settings.first()
         val now = LocalDate.now()
         val nextMonth = now.plusMonths(1)
+        
         val lat = loc?.latitude ?: s.latitude
         val lng = loc?.longitude ?: s.longitude
-        
+
+        if (lat == null || lng == null) return
+
         if (loc != null) {
             val address = locationWrapper.getAddressFromLocation(lat, lng)
             if (address != null) {
                 settingsManager.saveLocation(lat, lng, address)
             } else {
-                // Keep the existing location name if we can't resolve a new one (e.g., offline)
                 settingsManager.saveLocation(lat, lng, s.locationName)
             }
         }
         
-        // Fetch Current Month
         prayerRepository.refreshPrayerTimes(now.year, now.monthValue, lat, lng, s.calculationMethod)
-        
-        // Fetch Next Month to ensure we have ~60 days of data and show Ramadan early if it's coming
         prayerRepository.refreshPrayerTimes(nextMonth.year, nextMonth.monthValue, lat, lng, s.calculationMethod)
     }
 

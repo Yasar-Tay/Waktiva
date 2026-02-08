@@ -9,8 +9,8 @@ interface PrayerRepository {
     suspend fun refreshPrayerTimes(
         year: Int,
         month: Int,
-        latitude: Double,
-        longitude: Double,
+        latitude: Double?,
+        longitude: Double?,
         method: Int
     ): Result<Unit>
     

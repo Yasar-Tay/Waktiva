@@ -19,7 +19,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,9 +32,11 @@ class QiblaViewModel @Inject constructor(
 
     val settings = settingsManager.settingsFlow
 
-    val qiblaDirection: Flow<Double> = settings.map { settings ->
-        val coordinates = Coordinates(settings.latitude, settings.longitude)
-        Qibla(coordinates).direction
+    val qiblaDirection: Flow<Double> = settings.map { s ->
+        if (s.latitude != null && s.longitude != null) {
+            val coordinates = Coordinates(s.latitude, s.longitude)
+            Qibla(coordinates).direction
+        } else 0.0
     }
 
     val compassData: Flow<CompassData> = compassManager.compassFlow
@@ -68,7 +69,10 @@ class QiblaViewModel @Inject constructor(
         statusFlow
     ) { s, c, d, t, status ->
         val (settled, network, issues) = status
-        val qiblaDir = Qibla(Coordinates(s.latitude, s.longitude)).direction
+        val qiblaDir = if (s.latitude != null && s.longitude != null) {
+            Qibla(Coordinates(s.latitude, s.longitude)).direction
+        } else 0.0
+
         QiblaViewState(
             settings = s,
             qiblaDirection = qiblaDir,
@@ -93,13 +97,15 @@ class QiblaViewModel @Inject constructor(
         // Update magnetic declination whenever location changes
         viewModelScope.launch {
             settings.collectLatest { s ->
-                val geomagneticField = GeomagneticField(
-                    s.latitude.toFloat(),
-                    s.longitude.toFloat(),
-                    0f, // Altitude - approximate as 0 for declination
-                    System.currentTimeMillis()
-                )
-                compassManager.setDeclination(geomagneticField.declination)
+                if (s.latitude != null && s.longitude != null) {
+                    val geomagneticField = GeomagneticField(
+                        s.latitude.toFloat(),
+                        s.longitude.toFloat(),
+                        0f, // Altitude - approximate as 0 for declination
+                        System.currentTimeMillis()
+                    )
+                    compassManager.setDeclination(geomagneticField.declination)
+                }
             }
         }
 
