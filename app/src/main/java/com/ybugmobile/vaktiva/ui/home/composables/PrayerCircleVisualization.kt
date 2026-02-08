@@ -43,6 +43,7 @@ import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
+import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.delay
@@ -456,38 +457,59 @@ fun PrayerCircleVisualization(
 
 @Composable
 fun InfoGlassCard(info: DetailedInfo) {
+    val glassTheme = LocalGlassTheme.current
+    
+    // Adaptive glass design logic:
+    // glassTheme.isLightMode == true means background is DARK (Night). We use a LIGHT glass card.
+    // glassTheme.isLightMode == false means background is LIGHT (Day). We use a DARK glass card.
+    val containerColor = if (glassTheme.isLightMode) {
+        Color.White.copy(alpha = 0.22f)
+    } else {
+        Color.Black.copy(alpha = 0.45f)
+    }
+    
+    val borderColor = if (glassTheme.isLightMode) {
+        Color.White.copy(alpha = 0.45f)
+    } else {
+        Color.White.copy(alpha = 0.15f)
+    }
+
     Surface(
-        color = Color.Black.copy(alpha = 0.7f),
+        color = containerColor,
         shape = RoundedCornerShape(24.dp),
-        shadowElevation = 8.dp,
-        tonalElevation = 4.dp,
+        shadowElevation = 12.dp,
+        tonalElevation = 6.dp,
         modifier = Modifier
             .wrapContentWidth()
-            .height(52.dp)
+            .height(56.dp)
             .drawWithContent {
                 drawContent()
-                // Subtle top highlight border
+                // Glass-like highlight border
                 drawRoundRect(
-                    color = Color.White.copy(alpha = 0.25f),
+                    color = borderColor,
                     size = size,
                     cornerRadius = CornerRadius(24.dp.toPx()),
-                    style = Stroke(width = 1.dp.toPx())
+                    style = Stroke(width = 1.5.dp.toPx())
                 )
             },
         contentColor = Color.White
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(36.dp)
                     .background(info.color.copy(alpha = 0.25f), CircleShape)
                     .drawWithContent {
                         drawContent()
-                        drawCircle(info.color, radius = size.minDimension / 2, style = Stroke(2.dp.toPx()))
+                        drawCircle(
+                            color = info.color.copy(alpha = 0.8f),
+                            radius = size.minDimension / 2,
+                            style = Stroke(2.dp.toPx())
+                        )
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -495,7 +517,7 @@ fun InfoGlassCard(info: DetailedInfo) {
                     imageVector = info.icon,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(20.dp)
                 )
             }
             
@@ -505,16 +527,17 @@ fun InfoGlassCard(info: DetailedInfo) {
                     style = TextStyle(
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White.copy(alpha = 0.8f),
-                        letterSpacing = 0.5.sp
+                        color = Color.White.copy(alpha = 0.7f),
+                        letterSpacing = 0.6.sp
                     )
                 )
                 Text(
                     text = info.time,
                     style = TextStyle(
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color.White
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        letterSpacing = (-0.5).sp
                     )
                 )
             }
