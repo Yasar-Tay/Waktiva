@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">Home</string>
@@ -62,8 +62,8 @@
     <string name="health_channels_muted">Adhan notification channels are muted in system settings.</string>
     <string name="health_dnd_active">Do Not Disturb is active. Adhan sounds might be blocked.</string>
     <string name="health_fix_now">Fix Now</string>
-    <string name="health_no_internet">No Internet Connection. Vaktiva is using stored data. Please connect to refresh prayer times.</string>
-    <string name="health_no_internet_no_data">No Internet Connection. Vaktiva needs an active connection to fetch your first prayer times.</string>
+    <string name="health_no_internet">No Internet Connection. Waktiva is using stored data. Please connect to refresh prayer times.</string>
+    <string name="health_no_internet_no_data">No Internet Connection. Waktiva needs an active connection to fetch your first prayer times.</string>
     <string name="health_status_ok">All systems functional</string>
     <string name="health_overlay_subtitle">Optimizing your app experience</string>
     <string name="health_overlay_description">Address the issues below to ensure notifications and location services work reliably in the background.</string>
@@ -195,12 +195,12 @@
     <string name="pre_adhan_channel_description">Notifications shown before prayer time.</string>
 
     <!-- Welcome / Onboarding -->
-    <string name="welcome_title">Welcome to Vaktiva</string>
+    <string name="welcome_title">Welcome to Waktiva</string>
     <string name="welcome_desc">Your professional companion for prayer times, built with precision and modern design.</string>
     <string name="welcome_begin">Begin Setup</string>
     <string name="welcome_finish">Finish Setup</string>
     <string name="welcome_precision_settings">Precision Settings</string>
-    <string name="welcome_precision_desc">Vaktiva needs these to serve you better</string>
+    <string name="welcome_precision_desc">Waktiva needs these to serve you better</string>
     <string name="welcome_loc_title">Accurate Location</string>
     <string name="welcome_loc_desc">Crucial for calculating prayer times. Without this, the app cannot fetch times for your location and becomes useless.</string>
     <string name="welcome_notif_title">Adhan Alerts</string>
@@ -235,17 +235,17 @@
 
     <!-- Donations -->
     <string name="settings_donate">Support the Developer</string>
-    <string name="donate_title">Support Vaktiva</string>
-    <string name="donate_description">Vaktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
-    <string name="donate_header">Empower Vaktiva Development</string>
-    <string name="donate_desc">Vaktiva is open-source and ad-free. Your contributions help cover server costs and ongoing development to provide the best prayer experience for everyone.</string>
+    <string name="donate_title">Support Waktiva</string>
+    <string name="donate_description">Waktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
+    <string name="donate_header">Empower Waktiva Development</string>
+    <string name="donate_desc">Waktiva is open-source and ad-free. Your contributions help cover server costs and ongoing development to provide the best prayer experience for everyone.</string>
     <string name="donate_footer">Your generosity keeps this project alive. May it be a source of continuous blessing.</string>
     <string name="donate_button">Donate</string>
     <string name="donate_thank_you">Thank you for your support!</string>
     <string name="donate_error">Donation failed. Please try again.</string>
     <string name="donate_billing_error">Failed to connect to billing service</string>
-    <string name="rate_title">Rate Vaktiva</string>
-    <string name="rate_desc">If you enjoy Vaktiva, please take a moment to rate it 5 stars on Google Play. It helps us reach more people!</string>
+    <string name="rate_title">Rate Waktiva</string>
+    <string name="rate_desc">If you enjoy Waktiva, please take a moment to rate it 5 stars on Google Play. It helps us reach more people!</string>
     <string name="rate_button">Rate 5 Stars</string>
 
     <!-- Hijri Months -->

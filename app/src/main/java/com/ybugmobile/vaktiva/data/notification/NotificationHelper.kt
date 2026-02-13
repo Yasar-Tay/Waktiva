@@ -12,7 +12,6 @@ import com.ybugmobile.vaktiva.MainActivity
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
-import com.ybugmobile.vaktiva.ui.adhan.AdhanActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton

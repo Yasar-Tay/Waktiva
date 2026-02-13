@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">Ana Sayfa</string>
@@ -62,7 +62,7 @@
     <string name="health_channels_muted">Ezan bildirim kanalları sistem ayarlarında sessize alınmış.</string>
     <string name="health_dnd_active">Rahatsız Etmeyin modu açık. Ezan sesleri engellenebilir.</string>
     <string name="health_fix_now">Hemen Düzelt</string>
-    <string name="health_no_internet">İnternet Bağlantısı Yok. Vaktiva kayıtlı verileri kullanıyor. Vakitleri güncellemek için lütfen internete bağlanın.</string>
+    <string name="health_no_internet">İnternet Bağlantısı Yok. Waktiva kayıtlı verileri kullanıyor. Vakitleri güncellemek için lütfen internete bağlanın.</string>
     <string name="health_status_ok">Tüm sistemler çalışıyor</string>
 
     <!-- Prayer Names -->
@@ -105,7 +105,7 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردو</string>
+    <string name="lang_ur">اردu</string>
     <string name="lang_bn">বাংলা</string>
     <string name="lang_fa">Farsça</string>
     <string name="lang_ms">Bahasa Melayu</string>
@@ -190,12 +190,12 @@
     <string name="pre_adhan_channel_description">Namaz vaktinden önce gösterilen bildirimler.</string>
 
     <!-- Welcome / Onboarding -->
-    <string name="welcome_title">Vaktiva\'ya Hoş Geldiniz</string>
+    <string name="welcome_title">Waktiva\'ya Hoş Geldiniz</string>
     <string name="welcome_desc">Hassasiyet ve modern tasarımla oluşturulmuş, namaz vakitleri için profesyonel rehberiniz.</string>
     <string name="welcome_begin">Kuruluma Başla</string>
     <string name="welcome_finish">Kurulumu Tamamla</string>
     <string name="welcome_precision_settings">Hassasiyet Ayarları</string>
-    <string name="welcome_precision_desc">Vaktiva size daha iyi hizmet verebilmek için bunlara ihtiyaç duyar</string>
+    <string name="welcome_precision_desc">Waktiva size daha iyi hizmet verebilmek için bunlara ihtiyaç duyar</string>
     <string name="welcome_loc_title">Doğru Konum</string>
     <string name="welcome_loc_desc">Namaz vakitlerinin hesaplanması için kritiktir. Bu izin olmadan uygulama vakitleri getiremez.</string>
     <string name="welcome_notif_title">Ezan Uyarıları</string>
@@ -230,17 +230,17 @@
 
     <!-- Donations -->
     <string name="settings_donate">Geliştiriciyi Destekle</string>
-    <string name="donate_title">Vaktiva\'yı Destekle</string>
-    <string name="donate_description">Vaktiva özenle geliştirilmiş ücretsiz bir uygulamadır. Desteğiniz uygulamanın reklamsız kalmasına ve gelecekteki geliştirmelere yardımcı olur.</string>
-    <string name="donate_header">Vaktiva Gelişimine Destek Olun</string>
-    <string name="donate_desc">Vaktiva açık kaynaklı ve reklamsızdır. Katkılarınız sunucu maliyetlerini karşılamaya ve herkes için en iyi namaz deneyimini sunmaya yardımcı olur.</string>
+    <string name="donate_title">Waktiva\'yı Destekle</string>
+    <string name="donate_description">Waktiva özenle geliştirilmiş ücretsiz bir uygulamadır. Desteğiniz uygulamanın reklamsız kalmasına ve gelecekteki geliştirmelere yardımcı olur.</string>
+    <string name="donate_header">Waktiva Gelişimine Destek Olun</string>
+    <string name="donate_desc">Waktiva açık kaynaklı ve reklamsızdır. Katkılarınız sunucu maliyetlerini karşılamaya ve herkes için en iyi namaz deneyimini sunmaya yardımcı olur.</string>
     <string name="donate_footer">Cömertliğiniz bu projenin yaşamasına yardımcı oluyor. Sürekli bir hayır kaynağı olması dileğiyle.</string>
     <string name="donate_button">Bağış Yap</string>
     <string name="donate_thank_you">Desteğiniz için teşekkürler!</string>
     <string name="donate_error">Bağış başarısız oldu. Lütfen tekrar deneyin.</string>
     <string name="donate_billing_error">Ödeme servisine bağlanılamadı</string>
-    <string name="rate_title">Vaktiva\'yı Puanlayın</string>
-    <string name="rate_desc">Vaktiva\'yı seviyorsanız, lütfen Google Play\'de 5 yıldız verin. Daha fazla kişiye ulaşmamıza yardımcı olur!</string>
+    <string name="rate_title">Waktiva\'yı Puanlayın</string>
+    <string name="rate_desc">Waktiva\'yı seviyorsanız, lütfen Google Play\'de 5 yıldız verin. Daha fazla kişiye ulaşmamıza yardımcı olur!</string>
     <string name="rate_button">5 Yıldız Ver</string>
 
     <!-- Hijri Months -->
