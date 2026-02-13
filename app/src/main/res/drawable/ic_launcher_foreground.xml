@@ -1,60 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-
-    <group
-        android:translateX="18"
-        android:translateY="18">
-
-        <!-- Main Icon Shape (Stylized V / Arch) -->
-        <path
-            android:pathData="M36,20 L10,65 L36,85 L62,65 L36,20 Z"
-            android:strokeWidth="1"
-            android:strokeColor="#40FFFFFF">
-            <aapt:attr name="android:fillColor">
-                <gradient
-                    android:type="linear"
-                    android:startX="36"
-                    android:startY="20"
-                    android:endX="36"
-                    android:endY="85">
-                    <item android:color="#60A5FA" android:offset="0"/>
-                    <item android:color="#3B82F6" android:offset="1"/>
-                </gradient>
-            </aapt:attr>
-        </path>
-
-        <!-- Accent Shape -->
-        <path
-            android:pathData="M36,20 L18,52 L36,68 L54,52 L36,20 Z">
-            <aapt:attr name="android:fillColor">
-                <gradient
-                    android:type="linear"
-                    android:startX="36"
-                    android:startY="20"
-                    android:endX="36"
-                    android:endY="68">
-                    <item android:color="#FCD34D" android:offset="0"/>
-                    <item android:color="#F59E0B" android:offset="1"/>
-                </gradient>
-            </aapt:attr>
-        </path>
-
-        <!-- Inner Glow -->
-        <path
-            android:pathData="M36,35 L28,50 L36,58 L44,50 Z"
-            android:fillColor="#FFFFFF"
-            android:alpha="0.8" />
-
-        <!-- Bottom Reflection -->
-        <path
-            android:pathData="M25,75 L36,82 L47,75"
-            android:strokeWidth="2"
-            android:strokeLineCap="round"
-            android:strokeColor="#80FFFFFF" />
-
-    </group>
+    <!-- Right Wing (Darker Cyan for depth) -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M76,34 C76,60 68,78 55,78 L55,64 C63,64 66,50 66,34 Z" />
+    <!-- Left Wing (Main Cyan) -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M32,34 C32,60 40,78 53,78 L53,64 C46,64 44,50 44,34 Z" />
+    <!-- Sun Accent (Amber) -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M54,42 m-6,0 a6,6 0 1,1 12,0 a6,6 0 1,1 -12,0" />
 </vector>
