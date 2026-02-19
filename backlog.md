@@ -78,7 +78,17 @@ The project follows **Professional Clean Architecture** with **Uni-directional D
 ## 🌙 EPIC 8 – Celestial & Lunar Visualization
 - [x] **Moon Phase Logic:** Implemented local offline calculation using `com.batoulapps.adhan.LunarInfo`.
 - [x] **Domain Model:** Created `MoonPhase` domain model and integrated it into `PrayerRepository`.
-- [ ] **Dynamic Moon Component:** Create a custom `MoonView` using Compose `Canvas` that draws the exact shadow curvature (waxing/waning) for any given phase.
+- [x] **Dynamic Moon Component:** Created a custom `MoonPhaseView` using Compose `Canvas` with realistic texture.
 - [ ] **Hijri Alignment:** Synchronize moon visualization with the Hijri calendar to assist in identifying key dates like Ramadan or Eid.
-- [ ] **Atmospheric Rendering:** Add glow effects, star field backgrounds, and smooth transition animations between different moon states.
+- [x] **Atmospheric Rendering:** Added glow effects and layered rendering for a premium look.
 - [ ] **Interactive Details:** Bottom sheet or dedicated view showing moon rise/set times and current illumination details.
+
+---
+
+## 📱 EPIC 9 – Home Screen Widgets (Glance)
+- [ ] **Glance Integration:** Setup Jetpack Glance for modern, Compose-based widgets.
+- [ ] **Prayer Times Widget:** A glanceable 4x2 widget showing the full day's timings.
+- [ ] **Next Prayer Tracker:** A compact 2x1 widget focusing on the countdown to the next prayer.
+- [ ] **Dynamic Updates:** Ensure widgets update in real-time as prayer times change throughout the day.
+- [ ] **Interactive Controls:** Add direct actions like "Mute Adhan" or "Open Qibla" from the widget.
+- [ ] **Material You Widgets:** Support system-wide dynamic color themes for a native look.
