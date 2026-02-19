@@ -54,6 +54,7 @@
     <string name="home_adhan_unmuted">%s için ezan okunacak</string>
     <string name="home_hijri_offline_note">Çevrimdışı Hicri takvim hesabı kullanılıyor</string>
     <string name="home_hijri_offline_indicator"> (*)</string>
+    <string name="home_current_time">Şu Anki Saat</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">Sistem Sağlığı</string>
@@ -112,7 +113,7 @@
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">فارسی</string>
+    <string name="lang_fa">Farsça</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -236,7 +237,7 @@
     <!-- Donations -->
     <string name="settings_donate">Geliştiriciyi Destekle</string>
     <string name="donate_title">Waktiva\'yı Destekle</string>
-    <string name="donate_description">Waktiva özenle geliştirilmiş ücretsiz bir uygulamadır. Desteğiniz uygulamanın reklamsız kalmasına ve gelecekteki geliştirmelere yardımcı olur.</string>
+    <string name="donate_description">Waktiva özenle geliştirilmiş ücretsiz bir uygulamadır. Desteğiniz uygulamanın reklamsız kalmasına ve gelekteki geliştirmelere yardımcı olur.</string>
     <string name="donate_header">Waktiva Gelişimine Destek Olun</string>
     <string name="donate_desc">Waktiva açık kaynaklı ve reklamsızdır. Katkılarınız sunucu maliyetlerini karşılamaya ve herkes için en iyi namaz deneyimini sunmaya yardımcı olur.</string>
     <string name="donate_footer">Cömertliğiniz bu projenin yaşamasına yardımcı oluyor. Sürekli bir hayır kaynağı olması dileğiyle.</string>

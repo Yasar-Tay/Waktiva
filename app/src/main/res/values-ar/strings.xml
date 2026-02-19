@@ -54,6 +54,7 @@
     <string name="home_adhan_unmuted">تم تفعيل الأذان لـ %s</string>
     <string name="home_hijri_offline_note">استخدام حساب هجري غير متصل</string>
     <string name="home_hijri_offline_indicator"> (*)</string>
+    <string name="home_current_time">الوقت الحالي</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">صحة النظام</string>

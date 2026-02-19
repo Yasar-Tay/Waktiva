@@ -192,7 +192,7 @@ fun PrayerCircleVisualization(
                             if ((tapOffset - currentPos).getDistance() <= 32.dp.toPx()) {
                                 hit = DetailedInfo(
                                     id = "CURRENT",
-                                    title = context.getString(R.string.adhan_sounding),
+                                    title = context.getString(R.string.home_current_time),
                                     time = currentTime.format(formatter),
                                     color = currentPrayerColor,
                                     icon = Icons.Default.AccessTime
