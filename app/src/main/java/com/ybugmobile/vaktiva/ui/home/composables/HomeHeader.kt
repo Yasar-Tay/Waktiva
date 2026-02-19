@@ -91,20 +91,17 @@ fun HomeHeader(
             }
         } else {
             Column(horizontalAlignment = Alignment.Start) {
-                LocationSection(locationName, contentColor, isNetworkAvailable)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    LocationSection(locationName, contentColor, isNetworkAvailable)
+                    if (statusIcon != null) {
+                        Spacer(modifier = Modifier.width(12.dp))
+                        statusIcon()
+                    }
+                }
                 Spacer(modifier = Modifier.height(12.dp))
                 DatesSection(date, effectiveHijri, contentColor, context, isOffline = hijriDate == null)
                 Spacer(modifier = Modifier.height(12.dp))
                 ReligiousBadge(date = date, contentColor = contentColor, hijriDate = effectiveHijri)
-            }
-
-            // Floating badge for portrait
-            Box(
-                modifier = Modifier.align(Alignment.TopEnd)
-            ) {
-                if (statusIcon != null) {
-                    statusIcon()
-                }
             }
         }
     }

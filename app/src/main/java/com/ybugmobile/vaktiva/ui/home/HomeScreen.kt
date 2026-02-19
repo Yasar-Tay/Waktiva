@@ -44,6 +44,7 @@ import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.home.composables.*
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthCard
+import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
@@ -185,68 +186,12 @@ fun HomeScreenContent(
                     color = contentColor
                 )
             } else if (state.currentPrayerDay == null && (!state.isNetworkAvailable || state.hasSystemIssues)) {
-                // Empty State with Detailed System Health issues
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Surface(
-                        color = glassTheme.containerColor,
-                        shape = RoundedCornerShape(32.dp),
-                        modifier = Modifier.padding(24.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, glassTheme.borderColor)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(24.dp).verticalScroll(rememberScrollState()),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            if (state.isRefreshing) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(48.dp),
-                                    color = contentColor
-                                )
-                                Spacer(Modifier.height(16.dp))
-                                Text(
-                                    text = stringResource(R.string.qibla_locating),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = contentColor
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = Icons.Rounded.ReportProblem,
-                                    contentDescription = null,
-                                    tint = Color(0xFFFF5252),
-                                    modifier = Modifier.size(56.dp)
-                                )
-                                Spacer(Modifier.height(16.dp))
-                                Text(
-                                    text = stringResource(R.string.health_issues_detected),
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = contentColor,
-                                    textAlign = TextAlign.Center
-                                )
-                                Spacer(Modifier.height(8.dp))
-                                Text(
-                                    text = stringResource(R.string.health_overlay_description),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = contentColor.copy(alpha = 0.7f),
-                                    textAlign = TextAlign.Center
-                                )
-                                Spacer(Modifier.height(24.dp))
-                                
-                                SystemHealthCard(
-                                    hasPrayerData = state.currentPrayerDay != null,
-                                    showBackground = false,
-                                    showTitle = false,
-                                    contentColor = contentColor,
-                                    onIssuesChanged = { /* Handled by state.hasSystemIssues */ }
-                                )
-                            }
-                        }
-                    }
-                }
+                SystemHealthEmptyState(
+                    isRefreshing = state.isRefreshing,
+                    hasPrayerData = false,
+                    contentColor = contentColor,
+                    glassTheme = glassTheme
+                )
             } else {
                 PullToRefreshBox(
                     isRefreshing = state.isRefreshing,
@@ -418,29 +363,14 @@ fun HomeScreenContent(
                                     .systemBarsPadding()
                                     .verticalScroll(rememberScrollState())
                             ) {
-                                Box(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.TopStart
-                                ) {
-                                    HomeHeader(
-                                        locationName = state.locationName,
-                                        date = state.selectedDate,
-                                        hijriDate = state.currentPrayerDay?.hijriDate,
-                                        contentColor = contentColor,
-                                        statusIcon = statusIcon,
-                                        isNetworkAvailable = state.isNetworkAvailable
-                                    )
-                                    
-                                    // Moon Phase Vertically Aligned with LocationSection in Portrait
-                                    MoonPhaseView(
-                                        moonPhase = state.moonPhase,
-                                        contentColor = contentColor,
-                                        modifier = Modifier
-                                            .align(Alignment.TopEnd)
-                                            .padding(top = 24.dp, end = 24.dp)
-                                            .graphicsLayer(scaleX = 0.85f, scaleY = 0.85f)
-                                    )
-                                }
+                                HomeHeader(
+                                    locationName = state.locationName,
+                                    date = state.selectedDate,
+                                    hijriDate = state.currentPrayerDay?.hijriDate,
+                                    contentColor = contentColor,
+                                    statusIcon = statusIcon,
+                                    isNetworkAvailable = state.isNetworkAvailable
+                                )
 
                                 Column(
                                     modifier = Modifier.padding(horizontal = 24.dp),
@@ -572,6 +502,17 @@ fun HomeScreenContent(
                                 }
                                 Spacer(modifier = Modifier.height(80.dp))
                             }
+
+                            // Moon Phase in Top Right for Portrait (Drawn Last)
+                            // Added top padding to align vertically with LocationSection
+                            MoonPhaseView(
+                                moonPhase = state.moonPhase,
+                                contentColor = contentColor,
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(top = 24.dp, end = 24.dp)
+                                    .graphicsLayer(scaleX = 0.85f, scaleY = 0.85f)
+                            )
                         }
                     }
                 }
