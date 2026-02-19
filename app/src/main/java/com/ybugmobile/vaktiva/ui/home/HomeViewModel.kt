@@ -309,7 +309,6 @@ class HomeViewModel @Inject constructor(
         val loc = locationWrapper.getCurrentLocation()
         val s = settings.first()
         val now = LocalDate.now()
-        val nextMonth = now.plusMonths(1)
         
         val lat = loc?.latitude ?: s.latitude
         val lng = loc?.longitude ?: s.longitude
@@ -325,8 +324,10 @@ class HomeViewModel @Inject constructor(
             }
         }
         
-        prayerRepository.refreshPrayerTimes(now.year, now.monthValue, lat, lng, s.calculationMethod)
-        prayerRepository.refreshPrayerTimes(nextMonth.year, nextMonth.monthValue, lat, lng, s.calculationMethod)
+        // Fetch data for the whole current year
+        for (month in 1..12) {
+            prayerRepository.refreshPrayerTimes(now.year, month, lat, lng, s.calculationMethod)
+        }
     }
 
     override fun onCleared() {
