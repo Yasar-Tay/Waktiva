@@ -103,7 +103,6 @@ fun HomeHeader(
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
                 if (statusIcon != null) {
-                    Spacer(modifier = Modifier.width(16.dp))
                     statusIcon()
                 }
             }

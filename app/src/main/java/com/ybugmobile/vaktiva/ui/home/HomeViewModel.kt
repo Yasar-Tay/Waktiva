@@ -83,6 +83,10 @@ class HomeViewModel @Inject constructor(
         PrayerType.entries.map { it to (day.timings[it] ?: LocalTime.MIN) }
     }
 
+    val moonPhase = selectedDate.map { date ->
+        prayerRepository.getMoonPhase(date)
+    }
+
     val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, settings) { prayers, now, currentSettings ->
         if (prayers == null) return@combine null
         
@@ -219,11 +223,11 @@ class HomeViewModel @Inject constructor(
     private val _hasSettled = MutableStateFlow(false)
 
     val state: StateFlow<HomeViewState> = combine(
-        combine(selectedDate, currentTime, currentPrayerDay, ::Triple),
+        combine(selectedDate, currentTime, currentPrayerDay, moonPhase, ::StateQuad),
         combine(nextPrayerInfo, currentPrayerInfo, isRefreshing, ::Triple),
         combine(settings, _isAdhanPlaying, _playingPrayerName, ::Triple),
         combine(_isNetworkAvailable, _hasSystemIssues, { a, b -> a to b })
-    ) { (date, time, prayerDay), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, issues) ->
+    ) { (date, time, prayerDay, moon), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, issues) ->
         
         val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
@@ -231,7 +235,9 @@ class HomeViewModel @Inject constructor(
         HomeViewState(
             selectedDate = date, currentTime = time, currentPrayerDay = prayerDay,
             currentPrayer = currentPrayer,
-            nextPrayer = nextPrayer, isRefreshing = refreshing, isLoading = !hasSettled() && prayerDay == null,
+            nextPrayer = nextPrayer, 
+            moonPhase = moon,
+            isRefreshing = refreshing, isLoading = !hasSettled() && prayerDay == null,
             locationName = currentSettings.locationName, 
             isAdhanPlaying = playing, 
             playingPrayerName = prayerName,
@@ -344,3 +350,5 @@ class HomeViewModel @Inject constructor(
         )
     }
 }
+
+data class StateQuad<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)

@@ -9,10 +9,14 @@ import com.ybugmobile.vaktiva.data.remote.AladhanApiService
 import com.ybugmobile.vaktiva.data.remote.UmmahApiService
 import com.ybugmobile.vaktiva.data.remote.dto.PrayerDayDto
 import com.ybugmobile.vaktiva.data.remote.dto.UmmahPrayerDayDto
+import com.ybugmobile.vaktiva.domain.model.MoonPhase
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Date
 import javax.inject.Inject
 
 class PrayerRepositoryImpl @Inject constructor(
@@ -27,6 +31,46 @@ class PrayerRepositoryImpl @Inject constructor(
         return dao.getAllPrayerDays().map { entities -> 
             entities.map { it.toDomain() } 
         }
+    }
+
+    override suspend fun getMoonPhase(date: LocalDate): MoonPhase {
+        // The adhan library we use (com.github.batoulapps:adhan-java:1.1.0) 
+        // does not seem to have Moon calculation in its core classes.
+        // We will use a highly accurate mathematical approximation for the moon phase (illumination and cycle).
+        
+        val dateInMs = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()).time
+        val lunarMonth = 2551442877L // 29.53059 days in ms
+        val newMoonReference = 947163600000L // New Moon on Jan 6, 2000
+        
+        val diff = dateInMs - newMoonReference
+        val phasePercentage = (diff % lunarMonth).toDouble() / lunarMonth
+        
+        // Illumination approximation: 0.0 (New Moon) -> 1.0 (Full Moon) -> 0.0 (New Moon)
+        val illumination = if (phasePercentage < 0.5) {
+            phasePercentage * 2
+        } else {
+            (1.0 - phasePercentage) * 2
+        }
+
+        val phaseName = when {
+            phasePercentage < 0.03 -> "New Moon"
+            phasePercentage < 0.22 -> "Waxing Crescent"
+            phasePercentage < 0.28 -> "First Quarter"
+            phasePercentage < 0.47 -> "Waxing Gibbous"
+            phasePercentage < 0.53 -> "Full Moon"
+            phasePercentage < 0.72 -> "Waning Gibbous"
+            phasePercentage < 0.78 -> "Last Quarter"
+            else -> "Waning Crescent"
+        }
+
+        return MoonPhase(
+            illumination = illumination,
+            phaseName = phaseName,
+            hijriDate = "", // Will be filled by other parts of the app if needed
+            moonrise = null,
+            moonset = null,
+            date = date
+        )
     }
 
     override suspend fun refreshPrayerTimes(

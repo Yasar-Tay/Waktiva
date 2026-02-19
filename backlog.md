@@ -72,3 +72,13 @@ The project follows **Professional Clean Architecture** with **Uni-directional D
 ## 🏗️ EPIC 7 – Monetization & Localization
 - [ ] Integrate Google Play Billing for donations.
 - [ ] Community translation support (Arabic, Turkish, etc.).
+
+---
+
+## 🌙 EPIC 8 – Celestial & Lunar Visualization
+- [x] **Moon Phase Logic:** Implemented local offline calculation using `com.batoulapps.adhan.LunarInfo`.
+- [x] **Domain Model:** Created `MoonPhase` domain model and integrated it into `PrayerRepository`.
+- [ ] **Dynamic Moon Component:** Create a custom `MoonView` using Compose `Canvas` that draws the exact shadow curvature (waxing/waning) for any given phase.
+- [ ] **Hijri Alignment:** Synchronize moon visualization with the Hijri calendar to assist in identifying key dates like Ramadan or Eid.
+- [ ] **Atmospheric Rendering:** Add glow effects, star field backgrounds, and smooth transition animations between different moon states.
+- [ ] **Interactive Details:** Bottom sheet or dedicated view showing moon rise/set times and current illumination details.
