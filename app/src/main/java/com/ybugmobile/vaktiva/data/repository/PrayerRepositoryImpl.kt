@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.chrono.HijrahChronology
+import java.time.temporal.ChronoField
 import java.util.Date
 import javax.inject.Inject
 
@@ -34,10 +36,6 @@ class PrayerRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMoonPhase(date: LocalDate): MoonPhase {
-        // The adhan library we use (com.github.batoulapps:adhan-java:1.1.0) 
-        // does not seem to have Moon calculation in its core classes.
-        // We will use a highly accurate mathematical approximation for the moon phase (illumination and cycle).
-        
         val dateInMs = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()).time
         val lunarMonth = 2551442877L // 29.53059 days in ms
         val newMoonReference = 947163600000L // New Moon on Jan 6, 2000
@@ -45,7 +43,6 @@ class PrayerRepositoryImpl @Inject constructor(
         val diff = dateInMs - newMoonReference
         val phasePercentage = (diff % lunarMonth).toDouble() / lunarMonth
         
-        // Illumination approximation: 0.0 (New Moon) -> 1.0 (Full Moon) -> 0.0 (New Moon)
         val illumination = if (phasePercentage < 0.5) {
             phasePercentage * 2
         } else {
@@ -63,10 +60,18 @@ class PrayerRepositoryImpl @Inject constructor(
             else -> "Waning Crescent"
         }
 
+        // Calculate Hijri Date locally
+        val hijriDateStr = try {
+            val hDate = HijrahChronology.INSTANCE.date(date)
+            "${hDate.get(ChronoField.DAY_OF_MONTH)} ${hDate.get(ChronoField.MONTH_OF_YEAR)} ${hDate.get(ChronoField.YEAR)}"
+        } catch (e: Exception) {
+            ""
+        }
+
         return MoonPhase(
             illumination = illumination,
             phaseName = phaseName,
-            hijriDate = "", // Will be filled by other parts of the app if needed
+            hijriDate = hijriDateStr,
             moonrise = null,
             moonset = null,
             date = date
@@ -84,7 +89,6 @@ class PrayerRepositoryImpl @Inject constructor(
             return Result.failure(Exception("Location is required for fetching prayer times"))
         }
 
-        // 1. Try Primary Source (Aladhan)
         val aladhanResult = try {
             val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method)
             if (response.code == 200) {
@@ -100,7 +104,6 @@ class PrayerRepositoryImpl @Inject constructor(
 
         if (aladhanResult.isSuccess) return aladhanResult
 
-        // 2. Try Secondary Source (UmmahAPI) fallback
         val ummahResult = try {
             val response = ummahApi.getPrayerTimesCalendar(latitude, longitude, year, month, method)
             if (response.data != null) {
@@ -116,7 +119,6 @@ class PrayerRepositoryImpl @Inject constructor(
 
         if (ummahResult.isSuccess) return ummahResult
 
-        // 3. Final Fallback: Local Calculation
         return try {
             val localEntities = localCalculator.calculateMonthlyPrayerTimes(year, month, latitude, longitude, method)
             dao.insertPrayerDays(localEntities)

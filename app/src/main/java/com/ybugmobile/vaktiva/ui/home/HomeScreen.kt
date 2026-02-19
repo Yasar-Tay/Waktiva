@@ -198,6 +198,7 @@ fun HomeScreenContent(
                     onRefresh = onRefresh,
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    val scrollState = rememberScrollState()
                     if (isLandscape) {
                         Box(modifier = Modifier.fillMaxSize()) {
                             Column(
@@ -205,7 +206,7 @@ fun HomeScreenContent(
                                     .fillMaxSize()
                                     .systemBarsPadding()
                                     .displayCutoutPadding()
-                                    .verticalScroll(rememberScrollState())
+                                    .verticalScroll(scrollState)
                                     .padding(horizontal = 24.dp, vertical = 16.dp)
                                     .padding(start = 72.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
@@ -344,13 +345,17 @@ fun HomeScreenContent(
                                 Spacer(modifier = Modifier.height(80.dp))
                             }
 
-                            // Moon Phase in Top Middle for Landscape (Drawn Last)
+                            // Moon Phase in Top Middle for Landscape
+                            // Now moves with scroll by applying negative scroll offset
                             MoonPhaseView(
                                 moonPhase = state.moonPhase,
                                 contentColor = contentColor,
                                 modifier = Modifier
                                     .align(Alignment.TopCenter)
                                     .padding(top = 16.dp)
+                                    .graphicsLayer {
+                                        translationY = -scrollState.value.toFloat()
+                                    }
                             )
                         }
                     } else {
@@ -361,16 +366,21 @@ fun HomeScreenContent(
                                     .fillMaxSize()
                                     .padding(top = 16.dp)
                                     .systemBarsPadding()
-                                    .verticalScroll(rememberScrollState())
+                                    .verticalScroll(scrollState)
                             ) {
-                                HomeHeader(
-                                    locationName = state.locationName,
-                                    date = state.selectedDate,
-                                    hijriDate = state.currentPrayerDay?.hijriDate,
-                                    contentColor = contentColor,
-                                    statusIcon = statusIcon,
-                                    isNetworkAvailable = state.isNetworkAvailable
-                                )
+                                Box(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentAlignment = Alignment.TopStart
+                                ) {
+                                    HomeHeader(
+                                        locationName = state.locationName,
+                                        date = state.selectedDate,
+                                        hijriDate = state.currentPrayerDay?.hijriDate,
+                                        contentColor = contentColor,
+                                        statusIcon = statusIcon,
+                                        isNetworkAvailable = state.isNetworkAvailable
+                                    )
+                                }
 
                                 Column(
                                     modifier = Modifier.padding(horizontal = 24.dp),
@@ -503,15 +513,19 @@ fun HomeScreenContent(
                                 Spacer(modifier = Modifier.height(80.dp))
                             }
 
-                            // Moon Phase in Top Right for Portrait (Drawn Last)
-                            // Added top padding to align vertically with LocationSection
+                            // Moon Phase in Top Right for Portrait
+                            // Now moves with scroll by applying negative scroll offset
                             MoonPhaseView(
                                 moonPhase = state.moonPhase,
                                 contentColor = contentColor,
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                     .padding(top = 24.dp, end = 24.dp)
-                                    .graphicsLayer(scaleX = 0.85f, scaleY = 0.85f)
+                                    .graphicsLayer {
+                                        translationY = -scrollState.value.toFloat()
+                                        scaleX = 0.85f
+                                        scaleY = 0.85f
+                                    }
                             )
                         }
                     }
