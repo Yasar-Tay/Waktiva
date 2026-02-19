@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <group
+        android:translateX="-12.3"
+        android:translateY="-10.5"
+        android:scaleX="0.45"
+        android:scaleY="0.45">
+        <!-- Sun Accent -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M54,32 m-5,0 a5,5 0 1,1 10,0 a5,5 0 1,1 -10,0" />
+        <!-- Right Swoosh -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M80,38 C80,63 69,73 61,73 L57,73 L54,59 L59,59 C64,67 70,59 70,38 Z" />
+        <!-- Left Swoosh -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M28,38 C28,63 39,73 47,73 L51,73 L54,59 L49,59 C44,67 38,59 38,38 Z" />
+    </group>
+</vector>

@@ -76,7 +76,7 @@ class NotificationHelper @Inject constructor(
         )
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID_WARNING)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_notification)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setContentIntent(contentIntent)
@@ -86,7 +86,7 @@ class NotificationHelper @Inject constructor(
         if (isMuted) {
             builder.setContentTitle(context.getString(R.string.notification_adhan_muted))
                 .setContentText(context.getString(R.string.notification_adhan_skipped_text, displayedPrayerName))
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_notification)
         } else {
             val skipIntent = Intent(context, PrayerAlarmReceiver::class.java).apply {
                 action = ACTION_SKIP_ADHAN
@@ -100,7 +100,7 @@ class NotificationHelper @Inject constructor(
 
             builder.setContentTitle(context.getString(R.string.notification_upcoming_adhan_title, displayedPrayerName))
                 .setContentText(context.getString(R.string.notification_upcoming_adhan_text, minutes))
-                .addAction(R.drawable.ic_launcher_foreground, context.getString(R.string.notification_skip_action), skipPendingIntent)
+                .addAction(R.drawable.ic_notification, context.getString(R.string.notification_skip_action), skipPendingIntent)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
         }
 

@@ -248,7 +248,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         return NotificationCompat.Builder(this, NotificationHelper.CHANNEL_ID_ADHAN)
             .setContentTitle(getString(R.string.notification_adhan_title, displayedPrayerName))
             .setContentText(getString(R.string.notification_adhan_content))
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_notification)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setFullScreenIntent(fullScreenPendingIntent, true) 
