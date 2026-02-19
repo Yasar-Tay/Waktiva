@@ -15,5 +15,5 @@
     <!-- Sun Accent -->
     <path
         android:fillColor="#FFFFFFFF"
-        android:pathData="M54,44 m-5,0 a5,5 0 1,1 10,0 a5,5 0 1,1 -10,0" />
+        android:pathData="M54,32 m-5,0 a5,5 0 1,1 10,0 a5,5 0 1,1 -10,0" />
 </vector>
