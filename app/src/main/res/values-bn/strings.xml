@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">হোম</string>
@@ -62,8 +62,13 @@
     <string name="health_channels_muted">সিস্টেম সেটিংসে আজান নোটিফিকেশন চ্যানেলগুলি মিউট করা আছে।</string>
     <string name="health_dnd_active">ডু নট ডিস্টার্ব সক্রিয়। আজানের শব্দ বাধাগ্রস্ত হতে পারে।</string>
     <string name="health_fix_now">এখনই ঠিক করুন</string>
-    <string name="health_no_internet">ইন্টারনেট সংযোগ নেই। Vaktiva সংরক্ষিত ডেটা ব্যবহার করছে। নামাজের সময় রিফ্রেশ করতে অনুগ্রহ করে সংযোগ করুন।</string>
+    <string name="health_no_internet">ইন্টারনেট সংযোগ নেই। Waktiva সংরক্ষিত ডেটা ব্যবহার করছে। নামাজের সময় রিফ্রেশ করতে অনুগ্রহ করে সংযোগ করুন।</string>
+    <string name="health_no_internet_no_data">ইন্টারনেট সংযোগ নেই। প্রথম নামাজের সময় লোড করতে Waktiva-র সক্রিয় সংযোগ প্রয়োজন।</string>
     <string name="health_status_ok">সমস্ত সিস্টেম সচল আছে</string>
+    <string name="health_overlay_subtitle">আপনার অ্যাপের অভিজ্ঞতা অপ্টিমাইজ করা হচ্ছে</string>
+    <string name="health_overlay_description">ব্যাকগ্রাউন্ডে নোটিফিকেশন এবং লোকেশন সার্ভিস সঠিকভাবে কাজ করার জন্য নিচের সমস্যাগুলো সমাধান করুন।</string>
+    <string name="health_overlay_dismiss">বুঝেছি</string>
+    <string name="health_overlay_issues_title">শনাক্তকৃত সমস্যাসমূহ</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">ফজর</string>
@@ -105,7 +110,7 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردو</string>
+    <string name="lang_ur">اردো</string>
     <string name="lang_bn">বাংলা</string>
     <string name="lang_fa">ফারসি</string>
     <string name="lang_ms">Bahasa Melayu</string>
@@ -142,7 +147,7 @@
     <string name="audio_header_specific">%1$s এর আজান</string>
     <string name="audio_select_prayer_prompt">কনফিগার করতে নামাজ নির্বাচন করুন</string>
     <string name="audio_individual_sounds_title">আলাদা নামাজের শব্দ</string>
-    <string name="audio_individual_sounds_desc">প্রতিটি নামাজের জন্য আলাদা আজান সেট করুন</string>
+    <string name="audio_individual_sounds_desc">প্রতি প্রতিটি নামাজের জন্য আলাদা আজান সেট করুন</string>
 
     <string name="audio_setting_default">ডিফল্ট আজান</string>
     <string name="audio_setting_fajr">ফজরের আজান</string>
@@ -190,7 +195,7 @@
     <string name="pre_adhan_channel_description">নামাজের সময়ের আগে দেখানো নোটিফিকেশনসমূহ।</string>
 
     <!-- Welcome / Onboarding -->
-    <string name="welcome_title">Vaktiva-তে স্বাগতম</string>
+    <string name="welcome_title">Waktiva-তে স্বাগতম</string>
     <string name="welcome_desc">নামাজের সময়ের জন্য আপনার পেশাদার সঙ্গী, নির্ভুলতা এবং আধুনিক ডিজাইনে তৈরি।</string>
     <string name="welcome_begin">সেটআপ শুরু করুন</string>
     <string name="welcome_finish">সেটআপ শেষ করুন</string>
@@ -206,7 +211,7 @@
     <string name="welcome_continue_btn">চালিয়ে যান</string>
     <string name="welcome_personalize">পছন্দমতো সাজান</string>
     <string name="welcome_personalize_desc">আপনার নামাজ এবং গণনা সেটিংস কনফিগার করুন</string>
-    <string name="welcome_audio_desc">আপনার আজানের পছন্দের শব্দ সেট করুন</string>
+    <string name="welcome_audio_desc">Set your prayer call preferences</string>
     <string name="welcome_adhan_audio">আজান অডিও</string>
     <string name="welcome_adhan_audio_desc">নামাজের জন্য আজান বাজান</string>
     <string name="welcome_select_sound">শব্দ নির্বাচন করুন</string>
@@ -229,16 +234,16 @@
     <string name="adhan_metadata_title_format">%s আজান</string>
 
     <!-- Donations -->
-    <string name="settings_donate">ডেভেলপারকে সমর্থন করুন</string>
-    <string name="donate_title">Vaktiva-কে সমর্থন করুন</string>
-    <string name="donate_description">Vaktiva একটি ফ্রি অ্যাপ, যা অনেক যত্নে তৈরি করা হয়েছে। আপনার সমর্থন এটিকে বিজ্ঞাপনমুক্ত রাখতে এবং ভবিষ্যতে উন্নত করতে সাহায্য করবে।</string>
-    <string name="donate_header">Vaktiva-র উন্নয়নে সহায়তা করুন</string>
-    <string name="donate_desc">Vaktiva ওপেন সোর্স এবং বিজ্ঞাপনমুক্ত। আপনার অবদান সার্ভার খরচ মেটাতে এবং সবার জন্য সেরা নামাজের অভিজ্ঞতা প্রদান করতে সাহায্য করে।</string>
-    <string name="donate_footer">আপনার উদারতা এই প্রজেক্টটিকে বাঁচিয়ে রেখেছে। এটি আপনার জন্য সদকায়ে জারিয়া হিসেবে গণ্য হোক।</string>
-    <string name="donate_button">দান করুন</string>
-    <string name="donate_thank_you">আপনার সমর্থনের জন্য ধন্যবাদ!</string>
-    <string name="donate_error">দান সফল হয়নি। আবার চেষ্টা করুন।</string>
-    <string name="donate_billing_error">পেমেন্ট সার্ভিসের সাথে সংযোগ করা যায়নি</string>
+    <string name="settings_donate">Support the Developer</string>
+    <string name="donate_title">Support Waktiva</string>
+    <string name="donate_description">Waktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
+    <string name="donate_header">Empower Waktiva Development</string>
+    <string name="donate_desc">Waktiva is open-source and ad-free. Your contributions help cover server costs and ongoing development to provide the best prayer experience for everyone.</string>
+    <string name="donate_footer">Your generosity keeps this project alive. May it be a source of continuous blessing.</string>
+    <string name="donate_button">Donate</string>
+    <string name="donate_thank_you">Thank you for your support!</string>
+    <string name="donate_error">Donation failed. Please try again.</string>
+    <string name="donate_billing_error">Failed to connect to billing service</string>
     <string name="rate_title">Vaktiva-কে রেটিং দিন</string>
     <string name="rate_desc">Vaktiva ভালো লাগলে গুগল প্লে-তে ৫ স্টার দিন। এটি আমাদের আরও মানুষের কাছে পৌঁছাতে সাহায্য করবে!</string>
     <string name="rate_button">৫ স্টার দিন</string>

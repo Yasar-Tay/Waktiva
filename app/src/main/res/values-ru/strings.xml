@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">Главная</string>
@@ -62,8 +62,13 @@
     <string name="health_channels_muted">Каналы уведомлений об Азане отключены в системных настройках.</string>
     <string name="health_dnd_active">Режим «Не беспокоить» активен. Звуки Азана могут быть заблокированы.</string>
     <string name="health_fix_now">Исправить сейчас</string>
-    <string name="health_no_internet">Нет подключения к Интернету. Vaktiva использует сохраненные данные. Пожалуйста, подключитесь для обновления времени молитв.</string>
+    <string name="health_no_internet">Нет подключения к Интернету. Waktiva использует сохраненные данные. Пожалуйста, подключитесь для обновления времени молитв.</string>
+    <string name="health_no_internet_no_data">Нет подключения к Интернету. Waktiva требуется активное соединение для получения первого времени молитв.</string>
     <string name="health_status_ok">Все системы работают нормально</string>
+    <string name="health_overlay_subtitle">Оптимизация работы приложения</string>
+    <string name="health_overlay_description">Устраните проблемы ниже, чтобы уведомления и службы геолокации надежно работали в фоновом режиме.</string>
+    <string name="health_overlay_dismiss">Понятно</string>
+    <string name="health_overlay_issues_title">Обнаруженные проблемы</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Фаджр</string>
@@ -190,12 +195,12 @@
     <string name="pre_adhan_channel_description">Уведомления, показываемые перед временем молитвы.</string>
 
     <!-- Welcome / Onboarding -->
-    <string name="welcome_title">Добро пожаловать в Vaktiva</string>
+    <string name="welcome_title">Добро пожаловать в Waktiva</string>
     <string name="welcome_desc">Ваш профессиональный помощник для времени молитв, созданный с точностью и современным дизайном.</string>
     <string name="welcome_begin">Начать настройку</string>
     <string name="welcome_finish">Завершить настройку</string>
     <string name="welcome_precision_settings">Настройки точности</string>
-    <string name="welcome_precision_desc">Vaktiva нуждается в этом для лучшего обслуживания</string>
+    <string name="welcome_precision_desc">Waktiva нуждается в этом для лучшего обслуживания</string>
     <string name="welcome_loc_title">Точное местоположение</string>
     <string name="welcome_loc_desc">Критически важно для расчета времени молитв. Без этого приложение не сможет получать время для вашего местоположения и станет бесполезным.</string>
     <string name="welcome_notif_title">Оповещения об Азане</string>
@@ -230,17 +235,17 @@
 
     <!-- Donations -->
     <string name="settings_donate">Поддержать разработчика</string>
-    <string name="donate_title">Поддержать Vaktiva</string>
-    <string name="donate_description">Vaktiva — бесплатное приложение, разработанное с заботой. Ваша поддержка помогает ему оставаться без рекламы и позволяет развиваться в будущем.</string>
-    <string name="donate_header">Развитие Vaktiva</string>
-    <string name="donate_desc">Vaktiva имеет открытый исходный код и не содержит рекламы. Ваши пожертвования помогают покрывать расходы на сервер и продолжать разработку, чтобы предоставить лучший опыт молитв для всех.</string>
+    <string name="donate_title">Поддержать Waktiva</string>
+    <string name="donate_description">Waktiva — бесплатное приложение, разработанное с заботой. Ваша поддержка помогает ему оставаться без рекламы и позволяет развиваться в будущем.</string>
+    <string name="donate_header">Развитие Waktiva</string>
+    <string name="donate_desc">Waktiva имеет открытый исходный код и не содержит рекламы. Ваши пожертвования помогают покрывать расходы на сервер и продолжать разработку, чтобы предоставить лучший опыт молитв для всех.</string>
     <string name="donate_footer">Ваша щедрость поддерживает этот проект. Пусть это будет источником постоянного благословения.</string>
     <string name="donate_button">Пожертвовать</string>
     <string name="donate_thank_you">Спасибо за вашу поддержку!</string>
     <string name="donate_error">Ошибка пожертвования. Пожалуйста, попробуйте еще раз.</string>
     <string name="donate_billing_error">Не удалось подключиться к платежному сервису</string>
-    <string name="rate_title">Оценить Vaktiva</string>
-    <string name="rate_desc">Если вам нравится Vaktiva, пожалуйста, найдите минутку, чтобы оценить его на 5 звезд в Google Play. Это помогает нам охватить больше людей!</string>
+    <string name="rate_title">Оценить Waktiva</string>
+    <string name="rate_desc">Если вам нравится Waktiva, пожалуйста, найдите минутку, чтобы оценить его на 5 звезд в Google Play. Это помогает нам охватить больше людей!</string>
     <string name="rate_button">Поставить 5 звезд</string>
 
     <!-- Hijri Months -->

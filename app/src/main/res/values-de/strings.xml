@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">Startseite</string>
@@ -31,7 +31,7 @@
     <string name="qibla_magnetic_interference">Magnetische Störung erkannt - Gerät kalibrieren</string>
     <string name="qibla_kaaba_aligned">Nach der Kaaba ausgerichtet</string>
     <string name="qibla_find_marker">Finden Sie die goldene Markierung</string>
-    <string name="qibla_calibrate">KALIBRIEREN</string>
+    <string name="qibla_calibrate">KALRIEREN</string>
     <string name="qibla_interference_tip">Tipp: In Gebäuden können Metallstrukturen den Kompass beeinflussen. Führen Sie für beste Genauigkeit eine Achter-Kalibrierung durch.</string>
 
     <!-- Home Screen -->
@@ -62,8 +62,13 @@
     <string name="health_channels_muted">Adhan-Benachrichtigungskanäle sind in den Systemeinstellungen stummgeschaltet.</string>
     <string name="health_dnd_active">„Nicht stören“ ist aktiv. Adhan-Töne könnten blockiert werden.</string>
     <string name="health_fix_now">Jetzt beheben</string>
-    <string name="health_no_internet">Keine Internetverbindung. Vaktiva verwendet gespeicherte Daten. Bitte verbinden Sie sich, um die Gebetszeiten zu aktualisieren.</string>
+    <string name="health_no_internet">Keine Internetverbindung. Waktiva verwendet gespeicherte Daten. Bitte verbinden Sie sich, um die Gebetszeiten zu aktualisieren.</string>
+    <string name="health_no_internet_no_data">Keine Internetverbindung. Waktiva benötigt eine aktive Verbindung, um die ersten Gebetszeiten abzurufen.</string>
     <string name="health_status_ok">Alle Systeme funktionsfähig</string>
+    <string name="health_overlay_subtitle">App-Erlebnis optimieren</string>
+    <string name="health_overlay_description">Beheben Sie die unten stehenden Probleme, um sicherzustellen, dass Benachrichtigungen und Standortdienste zuverlässig im Hintergrund funktionieren.</string>
+    <string name="health_overlay_dismiss">Verstanden</string>
+    <string name="health_overlay_issues_title">Erkannte Probleme</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Fajr</string>
@@ -107,7 +112,7 @@
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">Farsça</string>
+    <string name="lang_fa">فارسی</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -190,12 +195,12 @@
     <string name="pre_adhan_channel_description">Benachrichtigungen, die vor der Gebetszeit angezeigt werden.</string>
 
     <!-- Welcome / Onboarding -->
-    <string name="welcome_title">Willkommen bei Vaktiva</string>
+    <string name="welcome_title">Willkommen bei Waktiva</string>
     <string name="welcome_desc">Ihr professioneller Begleiter für Gebetszeiten, entwickelt mit Präzision und modernem Design.</string>
     <string name="welcome_begin">Einrichtung beginnen</string>
     <string name="welcome_finish">Einrichtung abschließen</string>
     <string name="welcome_precision_settings">Präcisionseinstellungen</string>
-    <string name="welcome_precision_desc">Vaktiva benötigt diese, um Ihnen besser zu dienen</string>
+    <string name="welcome_precision_desc">Waktiva benötigt diese, um Ihnen besser zu dienen</string>
     <string name="welcome_loc_title">Genauer Standort</string>
     <string name="welcome_loc_desc">Entscheidend für die Berechnung der Gebetszeiten. Ohne diese kann die App keine Zeiten für Ihren Standort abrufen und wird unbrauchbar.</string>
     <string name="welcome_notif_title">Adhan-Warnungen</string>
@@ -230,17 +235,17 @@
 
     <!-- Donations -->
     <string name="settings_donate">Den Entwickler unterstützen</string>
-    <string name="donate_title">Vaktiva unterstützen</string>
-    <string name="donate_description">Vaktiva ist eine kostenlose App, die mit Sorgfalt entwickelt wurde. Ihre Unterstützung hilft dabei, sie werbefrei zu halten und ermöglicht die zukünftige Entwicklung.</string>
-    <string name="donate_header">Vaktiva-Entwicklung stärken</string>
-    <string name="donate_desc">Vaktiva ist Open-Source und werbefrei. Ihre Beiträge helfen, Serverkosten zu decken und die laufende Entwicklung zu unterstützen, um allen das beste Gebetserlebnis zu bieten.</string>
+    <string name="donate_title">Waktiva unterstützen</string>
+    <string name="donate_description">Waktiva ist eine kostenlose App, die mit Sorgfalt entwickelt wurde. Ihre Unterstützung hilft dabei, sie werbefrei zu halten und ermöglicht die zukünftige Entwicklung.</string>
+    <string name="donate_header">Waktiva-Entwicklung stärken</string>
+    <string name="donate_desc">Waktiva ist Open-Source und werbefrei. Ihre Beiträge helfen, Serverkosten zu decken und die laufende Entwicklung zu unterstützen, um allen das beste Gebetserlebnis zu bieten.</string>
     <string name="donate_footer">Ihre Großzügigkeit hält dieses Projekt am Leben. Möge es eine Quelle kontinuierlichen Segens sein.</string>
     <string name="donate_button">Spenden</string>
     <string name="donate_thank_you">Vielen Dank für Ihre Unterstützung!</string>
     <string name="donate_error">Spende fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
     <string name="donate_billing_error">Verbindung zum Abrechnungsdienst fehlgeschlagen</string>
-    <string name="rate_title">Vaktiva bewerten</string>
-    <string name="rate_desc">Wenn Ihnen Vaktiva gefällt, nehmen Sie sich bitte einen Moment Zeit, um es mit 5 Sternen im Google Play Store zu bewerten. Es hilft uns, mehr Menschen zu erreichen!</string>
+    <string name="rate_title">Waktiva bewerten</string>
+    <string name="rate_desc">Wenn Ihnen Waktiva gefällt, nehmen Sie sich bitte einen Moment Zeit, um es mit 5 Sternen im Google Play Store zu bewerten. Es hilft uns, mehr Menschen zu erreichen!</string>
     <string name="rate_button">5 Sterne geben</string>
 
     <!-- Hijri Months -->

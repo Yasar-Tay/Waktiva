@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">Beranda</string>
@@ -62,8 +62,13 @@
     <string name="health_channels_muted">Saluran notifikasi Adzan dibisukan di pengaturan sistem.</string>
     <string name="health_dnd_active">Jangan Ganggu aktif. Suara Adzan mungkin terblokir.</string>
     <string name="health_fix_now">Perbaiki Sekarang</string>
-    <string name="health_no_internet">Tidak Ada Koneksi Internet. Vaktiva menggunakan data tersimpan. Silakan hubungkan untuk memperbarui waktu shalat.</string>
+    <string name="health_no_internet">Tidak Ada Koneksi Internet. Waktiva menggunakan data tersimpan. Silakan hubungkan untuk memperbarui waktu shalat.</string>
+    <string name="health_no_internet_no_data">Tidak Ada Koneksi Internet. Waktiva memerlukan koneksi aktif untuk mengambil waktu shalat pertama Anda.</string>
     <string name="health_status_ok">Semua sistem berfungsi</string>
+    <string name="health_overlay_subtitle">Mengoptimalkan pengalaman aplikasi Anda</string>
+    <string name="health_overlay_description">Atasi masalah di bawah ini untuk memastikan notifikasi dan layanan lokasi berfungsi dengan andal di latar belakang.</string>
+    <string name="health_overlay_dismiss">Mengerti</string>
+    <string name="health_overlay_issues_title">Masalah Terdeteksi</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Subuh</string>
@@ -105,7 +110,7 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردو</string>
+    <string name="lang_ur">اردu</string>
     <string name="lang_bn">বাংলা</string>
     <string name="lang_fa">Farsça</string>
     <string name="lang_ms">Bahasa Melayu</string>
@@ -190,12 +195,12 @@
     <string name="pre_adhan_channel_description">Notifikasi yang ditampilkan sebelum waktu shalat.</string>
 
     <!-- Welcome / Onboarding -->
-    <string name="welcome_title">Selamat Datang di Vaktiva</string>
+    <string name="welcome_title">Selamat Datang di Waktiva</string>
     <string name="welcome_desc">Pendamping profesional Anda untuk waktu shalat, dibangun dengan presisi dan desain modern.</string>
     <string name="welcome_begin">Mulai Pengaturan</string>
     <string name="welcome_finish">Selesaikan Pengaturan</string>
     <string name="welcome_precision_settings">Pengaturan Presisi</string>
-    <string name="welcome_precision_desc">Vaktiva membutuhkan ini untuk melayani Anda lebih baik</string>
+    <string name="welcome_precision_desc">Waktiva membutuhkan ini untuk melayani Anda lebih baik</string>
     <string name="welcome_loc_title">Lokasi Akurat</string>
     <string name="welcome_loc_desc">Sangat penting untuk menghitung waktu shalat. Tanpa ini, aplikasi tidak dapat mengambil waktu untuk lokasi Anda dan menjadi tidak berguna.</string>
     <string name="welcome_notif_title">Peringatan Adzan</string>
@@ -230,17 +235,17 @@
 
     <!-- Donations -->
     <string name="settings_donate">Dukung Pengembang</string>
-    <string name="donate_title">Dukung Vaktiva</string>
-    <string name="donate_description">Vaktiva adalah aplikasi gratis yang dikembangkan dengan hati. Dukungan Anda membantu menjaganya tetap bebas iklan dan memungkinkan pengembangan di masa depan.</string>
-    <string name="donate_header">Berdayakan Pengembangan Vaktiva</string>
-    <string name="donate_desc">Vaktiva bersifat open-source dan bebas iklan. Kontribusi Anda membantu menutupi biaya server dan pengembangan berkelanjutan untuk memberikan pengalaman shalat terbaik bagi semua orang.</string>
+    <string name="donate_title">Dukung Waktiva</string>
+    <string name="donate_description">Waktiva adalah aplikasi gratis yang dikembangkan dengan hati. Dukungan Anda membantu menjaganya tetap bebas iklan dan memungkinkan pengembangan di masa depan.</string>
+    <string name="donate_header">Berdayakan Pengembangan Waktiva</string>
+    <string name="donate_desc">Waktiva bersifat open-source dan bebas iklan. Kontribusi Anda membantu menutupi biaya server dan pengembangan berkelanjutan untuk memberikan pengalaman shalat terbaik bagi semua orang.</string>
     <string name="donate_footer">Kemurahan hati Anda menjaga proyek ini tetap hidup. Semoga menjadi amal jariyah yang terus mengalir.</string>
     <string name="donate_button">Donasi</string>
     <string name="donate_thank_you">Terima kasih atas dukungan Anda!</string>
     <string name="donate_error">Donasi gagal. Silakan coba lagi.</string>
     <string name="donate_billing_error">Gagal terhubung ke layanan pembayaran</string>
-    <string name="rate_title">Beri Rating Vaktiva</string>
-    <string name="rate_desc">Jika Anda menyukai Vaktiva, harap beri rating 5 bintang di Google Play. Ini membantu kami menjangkau lebih banyak orang!</string>
+    <string name="rate_title">Beri Rating Waktiva</string>
+    <string name="rate_desc">Jika Anda menyukai Waktiva, harap beri rating 5 bintang di Google Play. Ini membantu kami menjangkau lebih banyak orang!</string>
     <string name="rate_button">Beri 5 Bintang</string>
 
     <!-- Hijri Months -->

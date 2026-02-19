@@ -63,7 +63,12 @@
     <string name="health_dnd_active">Rahatsız Etmeyin modu açık. Ezan sesleri engellenebilir.</string>
     <string name="health_fix_now">Hemen Düzelt</string>
     <string name="health_no_internet">İnternet Bağlantısı Yok. Waktiva kayıtlı verileri kullanıyor. Vakitleri güncellemek için lütfen internete bağlanın.</string>
+    <string name="health_no_internet_no_data">İnternet Bağlantısı Yok. Waktiva ilk namaz vakitlerini almak için aktif bir bağlantıya ihtiyaç duyar.</string>
     <string name="health_status_ok">Tüm sistemler çalışıyor</string>
+    <string name="health_overlay_subtitle">Uygulama deneyiminizi optimize ediyoruz</string>
+    <string name="health_overlay_description">Bildirimlerin ve konum servislerinin arka planda güvenilir bir şekilde çalışmasını sağlamak için aşağıdaki sorunları giderin.</string>
+    <string name="health_overlay_dismiss">Anladım</string>
+    <string name="health_overlay_issues_title">Tespit Edilen Sorunlar</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">İmsak</string>
@@ -105,9 +110,9 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردu</string>
+    <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">Farsça</string>
+    <string name="lang_fa">فارسی</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -125,7 +130,7 @@
     <string name="method_tehran">Tahran Üniversitesi Jeofizik Enstitüsü</string>
     <string name="method_gulf">Körfez Bölgesi</string>
     <string name="method_kuwait">Kuveyt</string>
-    <string name="method_qatar">Qatar</string>
+    <string name="method_qatar">Katar</string>
     <string name="method_singapore">Singapur İslami Dini Meclisi</string>
     <string name="method_turkey">Türkiye (Diyanet İşleri Başkanlığı)</string>
 

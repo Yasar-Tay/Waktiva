@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">Home</string>
@@ -62,8 +62,13 @@
     <string name="health_channels_muted">I canali di notifica dell\'Adhan sono silenziati nelle impostazioni di sistema.</string>
     <string name="health_dnd_active">"Non disturbare" è attivo. I suoni dell\'Adhan potrebbero essere bloccati.</string>
     <string name="health_fix_now">Ripara ora</string>
-    <string name="health_no_internet">Nessuna connessione Internet. Vaktiva sta utilizzando i dati memorizzati. Connettiti per aggiornare gli orari di preghiera.</string>
+    <string name="health_no_internet">Nessuna connessione Internet. Waktiva sta utilizzando i dati memorizzati. Connettiti per aggiornare gli orari di preghiera.</string>
+    <string name="health_no_internet_no_data">Nessuna connessione Internet. Waktiva ha bisogno di una connessione attiva per recuperare i primi orari di preghiera.</string>
     <string name="health_status_ok">Tutti i sistemi sono funzionanti</string>
+    <string name="health_overlay_subtitle">Ottimizzazione dell\'esperienza dell\'app</string>
+    <string name="health_overlay_description">Risolvi i problemi sottostanti per garantire che le notifiche e i servizi di localizzazione funzionino in modo affidabile in background.</string>
+    <string name="health_overlay_dismiss">Ho capito</string>
+    <string name="health_overlay_issues_title">Problemi rilevati</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Fajr</string>
@@ -190,12 +195,12 @@
     <string name="pre_adhan_channel_description">Notifiche mostrate prima dell\'orario di preghiera.</string>
 
     <!-- Welcome / Onboarding -->
-    <string name="welcome_title">Benvenuto su Vaktiva</string>
+    <string name="welcome_title">Benvenuto su Waktiva</string>
     <string name="welcome_desc">Il tuo compagno professionale per gli orari di preghiera, costruito con precisione e design moderno.</string>
     <string name="welcome_begin">Inizia configurazione</string>
     <string name="welcome_finish">Termina configurazione</string>
     <string name="welcome_precision_settings">Impostazioni di precisione</string>
-    <string name="welcome_precision_desc">Vaktiva ne ha bisogno per servirti al meglio</string>
+    <string name="welcome_precision_desc">Waktiva ne ha bisogno per servirti al meglio</string>
     <string name="welcome_loc_title">Posizione accurata</string>
     <string name="welcome_loc_desc">Fondamentale per il calcolo degli orari di preghiera. Senza questo, l\'app non può recuperare gli orari per la tua posizione e diventa inutile.</string>
     <string name="welcome_notif_title">Avvisi Adhan</string>
@@ -230,17 +235,17 @@
 
     <!-- Donations -->
     <string name="settings_donate">Sostieni lo sviluppatore</string>
-    <string name="donate_title">Sostieni Vaktiva</string>
-    <string name="donate_description">Vaktiva è un\'app gratuita, sviluppata con cura. Il tuo supporto aiuta a mantenerla senza pubblicità e ne consente lo sviluppo futuro.</string>
-    <string name="donate_header">Potenzia lo sviluppo di Vaktiva</string>
-    <string name="donate_desc">Vaktiva è open-source and senza pubblicità. I tuoi contributi aiutano a coprire i costi del server e lo sviluppo continuo per fornire a tutti la migliore esperienza di preghiera.</string>
+    <string name="donate_title">Sostieni Waktiva</string>
+    <string name="donate_description">Waktiva è un\'app gratuita, sviluppata con cura. Il tuo supporto aiuta a mantenerla senza pubblicità e ne consente lo sviluppo futuro.</string>
+    <string name="donate_header">Potenzia lo sviluppo di Waktiva</string>
+    <string name="donate_desc">Waktiva è open-source and senza pubblicità. I tuoi contributi aiutano a coprire i costi del server e lo sviluppo continuo per fornire a tutti la migliore esperienza di preghiera.</string>
     <string name="donate_footer">La tua generosità mantiene vivo questo progetto. Possa essere una fonte di benedizione continua.</string>
     <string name="donate_button">Dona</string>
     <string name="donate_thank_you">Grazie per il tuo supporto!</string>
     <string name="donate_error">Donazione fallita. Riprova.</string>
     <string name="donate_billing_error">Impossibile connettersi al servizio di fatturazione</string>
-    <string name="rate_title">Valuta Vaktiva</string>
-    <string name="rate_desc">Se ti piace Vaktiva, prenditi un momento per valutarla con 5 stelle su Google Play. Ci aiuta a raggiungere più persone!</string>
+    <string name="rate_title">Valuta Waktiva</string>
+    <string name="rate_desc">Se ti piace Waktiva, prenditi un momento per valutarla con 5 stelle su Google Play. Ci aiuta a raggiungere più persone!</string>
     <string name="rate_button">Dai 5 stelle</string>
 
     <!-- Hijri Months -->

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">خانه</string>
@@ -62,8 +62,13 @@
     <string name="health_channels_muted">کانال‌های اعلان اذان در تنظیمات سیستم بی‌صدا هستند.</string>
     <string name="health_dnd_active">حالت «مزاحم نشوید» فعال است. ممکن است صداهای اذان مسدود شوند.</string>
     <string name="health_fix_now">اکنون اصلاح کنید</string>
-    <string name="health_no_internet">اتصال اینترنت برقرار نیست. Vaktiva از داده‌های ذخیره شده استفاده می‌کند. لطفاً برای تازه‌سازی اوقات شرعی متصل شوید.</string>
+    <string name="health_no_internet">اتصال اینترنت برقرار نیست. Waktiva از داده‌های ذخیره شده استفاده می‌کند. لطفاً برای تازه‌سازی اوقات شرعی متصل شوید.</string>
+    <string name="health_no_internet_no_data">اتصال اینترنت برقرار نیست. Waktiva برای واکشی اولین اوقات شرعی به اتصال فعال نیاز دارد.</string>
     <string name="health_status_ok">همه سیستم‌ها فعال هستند</string>
+    <string name="health_overlay_subtitle">بهینه‌سازی تجربه برنامه شما</string>
+    <string name="health_overlay_description">مشکلات زیر را برطرف کنید تا اطمینان حاصل شود که اعلان‌ها و خدمات مکان به‌طور قابل اعتماد در پس‌زمینه کار می‌کنند.</string>
+    <string name="health_overlay_dismiss">متوجه شدم</string>
+    <string name="health_overlay_issues_title">مشکلات شناسایی شده</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">اذان صبح</string>
@@ -184,18 +189,18 @@
     <string name="settings_pre_adhan_warning">هشدار پیش از اذان</string>
     <string name="settings_pre_adhan_warning_summary">پیش از رسیدن وقت شرعی، اعلان دریافت کنید.</string>
     <string name="pre_adhan_notification_title">نزدیک شدن به وقت شرعی</string>
-    <string name="pre_adhan_notification_text">۵ دقیقه تا وقت %s باقی‌مانده است.</string>
+    <string name="pre_adhan_notification_text">وقت صلاة %s بعد از ۵ دقیقه.</string>
     <string name="pre_adhan_cancel_action">بستن</string>
     <string name="pre_adhan_channel_name">هشدارهای پیش از اذان</string>
     <string name="pre_adhan_channel_description">اعلان‌هایی که پیش از وقت شرعی نمایش داده می‌شوند.</string>
 
     <!-- Welcome / Onboarding -->
-    <string name="welcome_title">به Vaktiva خوش آمدید</string>
+    <string name="welcome_title">به Waktiva خوش آمدید</string>
     <string name="welcome_desc">همراه حرفه‌ای شما برای اوقات شرعی، ساخته شده با دقت و طراحی مدرن.</string>
     <string name="welcome_begin">شروع راه‌اندازی</string>
     <string name="welcome_finish">پایان راه‌اندازی</string>
     <string name="welcome_precision_settings">تنظیمات دقت</string>
-    <string name="welcome_precision_desc">Vaktiva برای خدمت‌رسانی بهتر به این مجوزها نیاز دارد</string>
+    <string name="welcome_precision_desc">Waktiva برای خدمت‌رسانی بهتر به این مجوزها نیاز دارد</string>
     <string name="welcome_loc_title">مکان دقیق</string>
     <string name="welcome_loc_desc">برای محاسبه اوقات شرعی حیاتی است. بدون این، برنامه نمی‌تواند اوقات را برای مکان شما واکشی کند و بی‌فایده می‌شود.</string>
     <string name="welcome_notif_title">هشدارهای اذان</string>
@@ -230,17 +235,17 @@
 
     <!-- Donations -->
     <string name="settings_donate">حمایت از توسعه‌دهنده</string>
-    <string name="donate_title">حمایت از Vaktiva</string>
-    <string name="donate_description">برنامه Vaktiva رایگان است و با دقت توسعه یافته است. حمایت شما به بدون تبلیغات ماندن برنامه و توسعه آینده آن کمک می‌کند.</string>
-    <string name="donate_header">تقویت توسعه Vaktiva</string>
-    <string name="donate_desc">Vaktiva متن‌باز و بدون تبلیغات است. مشارکت‌های شما به پوشش هزینه‌های سرور و توسعه مداوم برای ارائه بهترین تجربه اوقات شرعی کمک می‌کند.</string>
+    <string name="donate_title">حمایت از Waktiva</string>
+    <string name="donate_description">برنامه Waktiva رایگان است و با دقت توسعه یافته است. حمایت شما به بدون تبلیغات ماندن برنامه و توسعه آینده آن کمک می‌کند.</string>
+    <string name="donate_header">تقویت توسعه Waktiva</string>
+    <string name="donate_desc">Waktiva متن‌باز و بدون تبلیغات است. مشارکت‌های شما به پوشش هزینه‌های سرور و توسعه مداوم برای ارائه بهترین تجربه اوقات شرعی کمک می‌کند.</string>
     <string name="donate_footer">سخاوت شما این پروژه را زنده نگه می‌دارد. امیدواریم این یک منبع خیر مستمر باشد.</string>
     <string name="donate_button">حمایت مالی</string>
     <string name="donate_thank_you">از حمایت شما سپاسگزاریم!</string>
     <string name="donate_error">خطا در حمایت مالی. لطفاً دوباره تلاش کنید.</string>
     <string name="donate_billing_error">خطا در اتصال به سرویس پرداخت</string>
-    <string name="rate_title">امتیاز به Vaktiva</string>
-    <string name="rate_desc">اگر از Vaktiva لذت می‌برید، لطفاً در گوگل پلی ۵ ستاره بدهید. این کار به ما کمک می‌کند تا به افراد بیشتری برسیم!</string>
+    <string name="rate_title">امتیاز به Waktiva</string>
+    <string name="rate_desc">اگر از Waktiva لذت می‌برید، لطفاً در گوگل پلی ۵ ستاره بدهید. این کار به ما کمک می‌کند تا به افراد بیشتری برسیم!</string>
     <string name="rate_button">دادن ۵ ستاره</string>
 
     <!-- Hijri Months -->

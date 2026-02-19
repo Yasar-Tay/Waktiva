@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">Inicio</string>
@@ -20,7 +20,7 @@
     <string name="qibla_signal">Señal</string>
     <string name="qibla_standard">Estándar</string>
     <string name="qibla_satellite">Satélite</string>
-    <string name="qibla_recenter">Recentrar</string>
+    <string name="qibla_recenter">Recentrer</string>
     <string name="qibla_location_required">Se requiere acceso a la ubicación</string>
     <string name="qibla_location_required_desc">Necesario para un cálculo preciso de la Qibla.</string>
     <string name="qibla_grant_permission">Conceder permiso</string>
@@ -62,8 +62,13 @@
     <string name="health_channels_muted">Los canales de notificación de Adhan están silenciados en los ajustes del sistema.</string>
     <string name="health_dnd_active">El modo No molestar está activo. Los sonidos de Adhan podrían estar bloqueados.</string>
     <string name="health_fix_now">Reparar ahora</string>
-    <string name="health_no_internet">Sin conexión a Internet. Vaktiva está utilizando datos almacenados. Por favor, conéctate para actualizar los horarios de oración.</string>
+    <string name="health_no_internet">Sin conexión a Internet. Waktiva está utilizando datos almacenados. Por favor, conéctate para actualizar los horarios de oración.</string>
+    <string name="health_no_internet_no_data">Sin conexión a Internet. Waktiva necesita una conexión activa para recuperar sus primeros horarios de oración.</string>
     <string name="health_status_ok">Todos los sistemas funcionan correctamente</string>
+    <string name="health_overlay_subtitle">Optimizando su experiencia con la aplicación</string>
+    <string name="health_overlay_description">Solucione los problemas a continuación para garantizar que las notificaciones y los servicios de ubicación funcionen de manera confiable en segundo plano.</string>
+    <string name="health_overlay_dismiss">Entendido</string>
+    <string name="health_overlay_issues_title">Problemas detectados</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Fajr</string>
@@ -190,12 +195,12 @@
     <string name="pre_adhan_channel_description">Notificaciones mostradas antes de la hora de oración.</string>
 
     <!-- Welcome / Onboarding -->
-    <string name="welcome_title">Bienvenido a Vaktiva</string>
+    <string name="welcome_title">Bienvenido a Waktiva</string>
     <string name="welcome_desc">Tu compañero profesional para los horarios de oración, creado con precisión y un diseño moderno.</string>
     <string name="welcome_begin">Comenzar configuración</string>
     <string name="welcome_finish">Finalizar configuración</string>
     <string name="welcome_precision_settings">Ajustes de precisión</string>
-    <string name="welcome_precision_desc">Vaktiva los necesita para servirte mejor</string>
+    <string name="welcome_precision_desc">Waktiva los necesita para servirte mejor</string>
     <string name="welcome_loc_title">Ubicación precisa</string>
     <string name="welcome_loc_desc">Crucial para calcular los horarios de oración. Sin esto, la aplicación no puede obtener los horarios para su ubicación y se vuelve inútil.</string>
     <string name="welcome_notif_title">Alertas de Adhan</string>
@@ -230,17 +235,17 @@
 
     <!-- Donations -->
     <string name="settings_donate">Apoya al desarrollador</string>
-    <string name="donate_title">Apoya a Vaktiva</string>
-    <string name="donate_description">Vaktiva es una aplicación gratuita, desarrollada con esmero. Tu apoyo ayuda a mantenerla sin publicidad y permite su desarrollo futuro.</string>
-    <string name="donate_header">Potencia el desarrollo de Vaktiva</string>
-    <string name="donate_desc">Vaktiva es de código abierto y sin publicidad. Tus contribuciones ayudan a cubrir los costes de servidor y el desarrollo continuo para ofrecer la mejor experiencia de oración a todo el mundo.</string>
+    <string name="donate_title">Support Waktiva</string>
+    <string name="donate_description">Waktiva es una aplicación gratuita, desarrollada con esmero. Tu apoyo ayuda a mantenerla sin publicidad y permite su desarrollo futuro.</string>
+    <string name="donate_header">Potencia el desarrollo de Waktiva</string>
+    <string name="donate_desc">Waktiva es de código abierto y sin publicidad. Tus contribuciones ayudan a cubrir los costes de servidor y el desarrollo continuo para ofrecer la mejor experiencia de oración a todo el mundo.</string>
     <string name="donate_footer">Tu generosidad mantiene vivo este proyecto. Que sea una fuente de bendición continua.</string>
     <string name="donate_button">Donar</string>
     <string name="donate_thank_you">¡Gracias por tu apoyo!</string>
     <string name="donate_error">Error en la donación. Por favor, inténtalo de nuevo.</string>
     <string name="donate_billing_error">Error al conectar con el servicio de facturación</string>
-    <string name="rate_title">Califica Vaktiva</string>
-    <string name="rate_desc">Si disfrutas de Vaktiva, tómate un momento para calificarla con 5 estrellas en Google Play. ¡Nos ayuda a llegar a más gente!</string>
+    <string name="rate_title">Califica Waktiva</string>
+    <string name="rate_desc">Si disfrutas de Waktiva, tómate un momento para calificarla con 5 estrellas en Google Play. ¡Nos ayuda a llegar a más gente!</string>
     <string name="rate_button">Dar 5 estrellas</string>
 
     <!-- Hijri Months -->

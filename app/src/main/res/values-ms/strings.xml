@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">Utama</string>
@@ -62,8 +62,13 @@
     <string name="health_channels_muted">Saluran notifikasi Azan disenyapkan dalam tetapan sistem.</string>
     <string name="health_dnd_active">Jangan Ganggu aktif. Bunyi Azan mungkin disekat.</string>
     <string name="health_fix_now">Baiki Sekarang</string>
-    <string name="health_no_internet">Tiada Sambungan Internet. Vaktiva menggunakan data tersimpan. Sila sambung untuk menyegarkan waktu solat.</string>
+    <string name="health_no_internet">Tiada Sambungan Internet. Waktiva menggunakan data tersimpan. Sila sambung untuk menyegarkan waktu solat.</string>
+    <string name="health_no_internet_no_data">Tiada Sambungan Internet. Waktiva memerlukan sambungan aktif untuk mengambil waktu solat pertama anda.</string>
     <string name="health_status_ok">Semua sistem berfungsi</string>
+    <string name="health_overlay_subtitle">Mengoptimumkan pengalaman aplikasi anda</string>
+    <string name="health_overlay_description">Tangani isu di bawah untuk memastikan notifikasi dan perkhidmatan lokasi berfungsi dengan dipercayai di latar belakang.</string>
+    <string name="health_overlay_dismiss">Faham</string>
+    <string name="health_overlay_issues_title">Isu Dikesan</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Subuh</string>
@@ -190,12 +195,12 @@
     <string name="pre_adhan_channel_description">Notifikasi yang ditunjukkan sebelum waktu solat.</string>
 
     <!-- Welcome / Onboarding -->
-    <string name="welcome_title">Selamat Datang ke Vaktiva</string>
+    <string name="welcome_title">Selamat Datang ke Waktiva</string>
     <string name="welcome_desc">Teman profesional anda untuk waktu solat, dibina dengan ketepatan dan reka bentuk moden.</string>
     <string name="welcome_begin">Mulakan Persediaan</string>
     <string name="welcome_finish">Tamat Persediaan</string>
     <string name="welcome_precision_settings">Tetapan Ketepatan</string>
-    <string name="welcome_precision_desc">Vaktiva memerlukan ini untuk melayani anda dengan lebih baik</string>
+    <string name="welcome_precision_desc">Waktiva memerlukan ini untuk melayani anda dengan lebih baik</string>
     <string name="welcome_loc_title">Lokasi Tepat</string>
     <string name="welcome_loc_desc">Sangat penting untuk pengiraan waktu solat. Tanpanya, aplikasi tidak dapat mengambil waktu bagi lokasi anda dan menjadi tidak berguna.</string>
     <string name="welcome_notif_title">Amaran Azan</string>
@@ -230,17 +235,17 @@
 
     <!-- Donations -->
     <string name="settings_donate">Sokong Pembangun</string>
-    <string name="donate_title">Sokong Vaktiva</string>
-    <string name="donate_description">Vaktiva adalah aplikasi percuma, dibangunkan dengan penuh teliti. Sokongan anda membantu memastikannya bebas iklan dan membolehkan pembangunan masa hadapan.</string>
-    <string name="donate_header">Perkasakan Pembangunan Vaktiva</string>
-    <string name="donate_desc">Vaktiva adalah sumber terbuka dan bebas iklan. Sumbangan anda membantu menampung kos pelayan dan pembangunan berterusan untuk menyediakan pengalaman solat terbaik untuk semua orang.</string>
+    <string name="donate_title">Sokong Waktiva</string>
+    <string name="donate_description">Waktiva adalah aplikasi percuma, dibangunkan dengan penuh teliti. Sokongan anda membantu memastikannya bebas iklan dan membolehkan pembangunan masa hadapan.</string>
+    <string name="donate_header">Perkasakan Pembangunan Waktiva</string>
+    <string name="donate_desc">Waktiva adalah sumber terbuka dan bebas iklan. Sumbangan anda membantu menampung kos pelayan dan pembangunan berterusan untuk menyediakan pengalaman solat terbaik untuk semua orang.</string>
     <string name="donate_footer">Kemurahan hati anda mengekalkan projek ini hidup. Semoga ia menjadi punca rahmat yang berterusan.</string>
     <string name="donate_button">Derma</string>
     <string name="donate_thank_you">Terima kasih atas sokongan anda!</string>
     <string name="donate_error">Derma gagal. Sila cuba lagi.</string>
     <string name="donate_billing_error">Gagal menyambung ke perkhidmatan pengebilan</string>
-    <string name="rate_title">Nilaikan Vaktiva</string>
-    <string name="rate_desc">Jika anda menikmati Vaktiva, sila luangkan masa seketika untuk menilaikan ia 5 bintang di Google Play. Ia membantu kami menjangkau lebih ramai orang!</string>
+    <string name="rate_title">Nilaikan Waktiva</string>
+    <string name="rate_desc">Jika anda menikmati Waktiva, sila luangkan masa seketika untuk menilaikan ia 5 bintang di Google Play. Ia membantu kami menjangkau lebih ramai orang!</string>
     <string name="rate_button">Nilai 5 Bintang</string>
 
     <!-- Hijri Months -->

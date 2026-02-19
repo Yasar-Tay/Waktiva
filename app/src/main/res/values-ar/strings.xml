@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">الرئيسية</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Navigation Tabs -->
     <string name="nav_home">الرئيسية</string>
@@ -45,8 +45,8 @@
     <string name="home_refresh_success">تم تحديث مواقيت الصلاة</string>
     <string name="home_refresh_error">فشل تحديث المواقيت</string>
     <string name="home_prayer_provider">المزود: </string>
-    <string name="home_skip_adhan">كتم الأذان لـ %s</string>
-    <string name="home_unmute_adhan">إلغاء كتم الأذان لـ %s</string>
+    <string name="home_skip_adhan">كتم الأذان</string>
+    <string name="home_unmute_adhan">إلغاء كتم الأذان</string>
     <string name="home_return_to_today">العودة إلى اليوم</string>
     <string name="home_tomorrow_is">غداً هو: %s</string>
     <string name="home_today_is">اليوم هو %s</string>
@@ -62,8 +62,13 @@
     <string name="health_channels_muted">قنوات إشعار الأذان مكتومة في إعدادات النظام.</string>
     <string name="health_dnd_active">وضع عدم الإزعاج نشط. قد يتم حظر أصوات الأذان.</string>
     <string name="health_fix_now">إصلاح الآن</string>
-    <string name="health_no_internet">لا يوجد اتصال بالإنترنت. يستخدم Vaktiva البيانات المخزنة. يرجى الاتصال لتحديث مواقيت الصلاة.</string>
+    <string name="health_no_internet">لا يوجد اتصال بالإنترنت. يستخدم Waktiva البيانات المخزنة. يرجى الاتصال لتحديث مواقيت الصلاة.</string>
+    <string name="health_no_internet_no_data">لا يوجد اتصال بالإنترنت. يحتاج Waktiva إلى اتصال نشط لجلب أول مواقيت للصلاة.</string>
     <string name="health_status_ok">جميع الأنظمة تعمل بشكل طبيعي</string>
+    <string name="health_overlay_subtitle">تحسين تجربة التطبيق الخاصة بك</string>
+    <string name="health_overlay_description">عالج المشكلات أدناه لضمان عمل الإشعارات وخدمات الموقع بشكل موثوق في الخلفية.</string>
+    <string name="health_overlay_dismiss">فهمت</string>
+    <string name="health_overlay_issues_title">المشكلات المكتشفة</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">الفجر</string>
@@ -190,12 +195,12 @@
     <string name="pre_adhan_channel_description">الإشعارات المعروضة قبل وقت الصلاة.</string>
 
     <!-- Welcome / Onboarding -->
-    <string name="welcome_title">مرحباً بك في Vaktiva</string>
+    <string name="welcome_title">مرحباً بك في Waktiva</string>
     <string name="welcome_desc">رفيقك المهني لمواقيت الصلاة، صُمم بدقة وتصميم عصري.</string>
     <string name="welcome_begin">بدء الإعداد</string>
     <string name="welcome_finish">إنهاء الإعداد</string>
     <string name="welcome_precision_settings">إعدادات الدقة</string>
-    <string name="welcome_precision_desc">يحتاج Vaktiva إليها لخدمتك بشكل أفضل</string>
+    <string name="welcome_precision_desc">يحتاج Waktiva إليها لخدمتك بشكل أفضل</string>
     <string name="welcome_loc_title">موقع دقيق</string>
     <string name="welcome_loc_desc">مهم جداً لحساب مواقيت الصلاة. بدون هذا، لا يمكن للتطبيق جلب المواعيد لموقعك ويصبح عديم الفائدة.</string>
     <string name="welcome_notif_title">تنبيهات الأذان</string>
@@ -230,17 +235,17 @@
 
     <!-- Donations -->
     <string name="settings_donate">ادعم المطور</string>
-    <string name="donate_title">ادعم Vaktiva</string>
-    <string name="donate_description">Vaktiva تطبيق مجاني، تم تطويره بعناية. يساعد دعمك في بقائه خالياً من الإعلانات ويسمح بالتطوير المستقبلي.</string>
-    <string name="donate_header">تمكين تطوير Vaktiva</string>
-    <string name="donate_desc">Vaktiva مفتوح المصدر وخالٍ من الإعلانات. تساعد مساهماتك في تغطية تكاليف الخادم والتطوير المستمر لتقديم أفضل تجربة صلاة للجميع.</string>
+    <string name="donate_title">Support Waktiva</string>
+    <string name="donate_description">Waktiva تطبيق مجاني، تم تطويره بعناية. يساعد دعمك في بقائه خالياً من الإعلانات ويسمح بالتطوير المستقبلي.</string>
+    <string name="donate_header">تمكين تطوير Waktiva</string>
+    <string name="donate_desc">Waktiva مفتوح المصدر وخالٍ من الإعلانات. تساعد مساهماتك في تغطية تكاليف الخادم والتطوير المستمر لتقديم أفضل تجربة صلاة للجميع.</string>
     <string name="donate_footer">سخاؤك يبقي هذا المشروع حياً. نرجو أن يكون مصدراً للبركة المستمرة.</string>
     <string name="donate_button">تبرع</string>
     <string name="donate_thank_you">شكراً لدعمك!</string>
     <string name="donate_error">فشل التبرع. يرجى المحاولة مرة أخرى.</string>
     <string name="donate_billing_error">فشل الاتصال بخدمة الدفع</string>
-    <string name="rate_title">قيم Vaktiva</string>
-    <string name="rate_desc">إذا كنت تستمتع بـ Vaktiva، يرجى تخصيص لحظة لتقييمه بـ 5 نجوم على Google Play. يساعدنا ذلك في الوصول لمزيد من الناس!</string>
+    <string name="rate_title">قيم Waktiva</string>
+    <string name="rate_desc">إذا كنت تستمتع بـ Waktiva، يرجى تخصيص لحظة لتقييمه بـ 5 نجوم على Google Play. يساعدنا ذلك في الوصول لمزيد من الناس!</string>
     <string name="rate_button">قيم بـ 5 نجوم</string>
 
     <!-- Hijri Months -->
