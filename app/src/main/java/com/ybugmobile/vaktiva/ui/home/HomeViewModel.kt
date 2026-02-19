@@ -226,17 +226,32 @@ class HomeViewModel @Inject constructor(
         combine(selectedDate, currentTime, currentPrayerDay, moonPhase, ::StateQuad),
         combine(nextPrayerInfo, currentPrayerInfo, isRefreshing, ::Triple),
         combine(settings, _isAdhanPlaying, _playingPrayerName, ::Triple),
-        combine(_isNetworkAvailable, _hasSystemIssues, { a, b -> a to b })
-    ) { (date, time, prayerDay, moon), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, issues) ->
+        combine(_isNetworkAvailable, _hasSystemIssues, { a, b -> a to b }),
+        allPrayerDays
+    ) { (date, time, prayerDay, moon), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, issues), allDays ->
         
         val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
+
+        // Calculate Effective Hijri Date based on Sunset Rollover
+        val effectiveHijri = if (date == LocalDate.now() && prayerDay != null) {
+            val maghribTime = prayerDay.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
+            if (time.toLocalTime().isAfter(maghribTime) || time.toLocalTime() == maghribTime) {
+                // Rollover to next day's Hijri date
+                allDays.find { it.date == date.plusDays(1) }?.hijriDate ?: prayerDay.hijriDate
+            } else {
+                prayerDay.hijriDate
+            }
+        } else {
+            prayerDay?.hijriDate
+        }
 
         HomeViewState(
             selectedDate = date, currentTime = time, currentPrayerDay = prayerDay,
             currentPrayer = currentPrayer,
             nextPrayer = nextPrayer, 
             moonPhase = moon,
+            effectiveHijriDate = effectiveHijri,
             isRefreshing = refreshing, isLoading = !hasSettled() && prayerDay == null,
             locationName = currentSettings.locationName, 
             isAdhanPlaying = playing, 

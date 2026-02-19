@@ -214,7 +214,7 @@ fun HomeScreenContent(
                                 HomeHeader(
                                     locationName = state.locationName,
                                     date = state.selectedDate,
-                                    hijriDate = state.currentPrayerDay?.hijriDate,
+                                    hijriDate = state.effectiveHijriDate,
                                     contentColor = contentColor,
                                     statusIcon = statusIcon,
                                     isNetworkAvailable = state.isNetworkAvailable
@@ -315,6 +315,7 @@ fun HomeScreenContent(
                                             selectedDate = state.selectedDate,
                                             availableDays = allDays.filter { !it.date.isBefore(LocalDate.now()) },
                                             isHijriSelected = state.isHijriSelected,
+                                            currentTime = state.currentTime.toLocalTime(),
                                             onToggleCalendarType = onToggleCalendarType,
                                             onDateSelected = onDateSelected,
                                             contentColor = contentColor
@@ -375,7 +376,7 @@ fun HomeScreenContent(
                                     HomeHeader(
                                         locationName = state.locationName,
                                         date = state.selectedDate,
-                                        hijriDate = state.currentPrayerDay?.hijriDate,
+                                        hijriDate = state.effectiveHijriDate,
                                         contentColor = contentColor,
                                         statusIcon = statusIcon,
                                         isNetworkAvailable = state.isNetworkAvailable
@@ -483,6 +484,7 @@ fun HomeScreenContent(
                                             selectedDate = state.selectedDate,
                                             availableDays = allDays.filter { !it.date.isBefore(LocalDate.now()) },
                                             isHijriSelected = state.isHijriSelected,
+                                            currentTime = state.currentTime.toLocalTime(),
                                             onToggleCalendarType = onToggleCalendarType,
                                             onDateSelected = onDateSelected,
                                             contentColor = contentColor

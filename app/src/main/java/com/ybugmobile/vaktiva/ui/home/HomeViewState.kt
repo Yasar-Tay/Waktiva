@@ -1,6 +1,7 @@
 package com.ybugmobile.vaktiva.ui.home
 
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
+import com.ybugmobile.vaktiva.domain.model.HijriData
 import com.ybugmobile.vaktiva.domain.model.MoonPhase
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
@@ -14,6 +15,7 @@ data class HomeViewState(
     val currentPrayer: CurrentPrayer? = null,
     val nextPrayer: NextPrayer? = null,
     val moonPhase: MoonPhase? = null,
+    val effectiveHijriDate: HijriData? = null,
     val isRefreshing: Boolean = false,
     val isLoading: Boolean = true, // Initial state is loading
     val locationName: String = "",

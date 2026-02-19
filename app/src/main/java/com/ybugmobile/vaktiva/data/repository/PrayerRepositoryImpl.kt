@@ -41,22 +41,23 @@ class PrayerRepositoryImpl @Inject constructor(
         val newMoonReference = 947163600000L // New Moon on Jan 6, 2000
         
         val diff = dateInMs - newMoonReference
-        val phasePercentage = (diff % lunarMonth).toDouble() / lunarMonth
+        val phaseProgress = (diff % lunarMonth).toDouble() / lunarMonth
         
-        val illumination = if (phasePercentage < 0.5) {
-            phasePercentage * 2
+        // Illumination approximation: 0.0 (New Moon) -> 1.0 (Full Moon) -> 0.0 (New Moon)
+        val illumination = if (phaseProgress < 0.5) {
+            phaseProgress * 2
         } else {
-            (1.0 - phasePercentage) * 2
+            (1.0 - phaseProgress) * 2
         }
 
         val phaseName = when {
-            phasePercentage < 0.03 -> "New Moon"
-            phasePercentage < 0.22 -> "Waxing Crescent"
-            phasePercentage < 0.28 -> "First Quarter"
-            phasePercentage < 0.47 -> "Waxing Gibbous"
-            phasePercentage < 0.53 -> "Full Moon"
-            phasePercentage < 0.72 -> "Waning Gibbous"
-            phasePercentage < 0.78 -> "Last Quarter"
+            phaseProgress < 0.03 -> "New Moon"
+            phaseProgress < 0.22 -> "Waxing Crescent"
+            phaseProgress < 0.28 -> "First Quarter"
+            phaseProgress < 0.47 -> "Waxing Gibbous"
+            phaseProgress < 0.53 -> "Full Moon"
+            phaseProgress < 0.72 -> "Waning Gibbous"
+            phaseProgress < 0.78 -> "Last Quarter"
             else -> "Waning Crescent"
         }
 
@@ -70,6 +71,7 @@ class PrayerRepositoryImpl @Inject constructor(
 
         return MoonPhase(
             illumination = illumination,
+            phaseProgress = phaseProgress,
             phaseName = phaseName,
             hijriDate = hijriDateStr,
             moonrise = null,
