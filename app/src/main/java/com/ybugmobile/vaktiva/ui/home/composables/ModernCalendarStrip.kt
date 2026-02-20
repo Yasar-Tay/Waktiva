@@ -85,19 +85,7 @@ fun ModernCalendarStrip(
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        AnimatedVisibility(
-            visible = isUsingCalculatedHijri,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
-            Text(
-                text = stringResource(R.string.home_hijri_offline_note),
-                style = MaterialTheme.typography.labelSmall,
-                color = contentColor.copy(alpha = 0.5f),
-                modifier = Modifier.padding(bottom = 8.dp, start = 4.dp),
-                lineHeight = 14.sp
-            )
-        }
+
 
         // Toggle and Religious Day Info at the top
         Row(
