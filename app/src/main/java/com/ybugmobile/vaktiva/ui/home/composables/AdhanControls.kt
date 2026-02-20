@@ -28,6 +28,17 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 
+/**
+ * A specialized UI component that appears when an Adhan (call to prayer) is actively playing.
+ * It provides visual feedback through a pulsing icon and a clear action to stop the audio.
+ *
+ * @param isAdhanPlaying Whether the Adhan audio is currently active.
+ * @param playingPrayerName The name of the prayer currently being announced (e.g., "Fajr").
+ * @param isTest Indicates if the current playing state is a user-initiated test.
+ * @param onStopAdhan Callback invoked when the user requests to stop the Adhan playback.
+ * @param onStopTest Callback specifically for stopping a test simulation.
+ * @param modifier Modifier for layout adjustments.
+ */
 @Composable
 fun AdhanControls(
     isAdhanPlaying: Boolean,

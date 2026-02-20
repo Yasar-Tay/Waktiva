@@ -23,6 +23,20 @@ import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import javax.inject.Inject
 
+/**
+ * A [BroadcastReceiver] responsible for handling all prayer-related alarm events.
+ * It serves as the primary entry point for timed triggers from [AlarmScheduler].
+ *
+ * This receiver manages:
+ * - Triggering the [AdhanService] for prayer calls.
+ * - Displaying pre-Adhan warning notifications.
+ * - Handling the "Skip" action for upcoming prayers.
+ * - Rescheduling alarms after a device reboot or prayer completion.
+ *
+ * Since many operations are asynchronous (DataStore, Database access), it utilizes
+ * [goAsync] and a supervised [CoroutineScope] to ensure tasks complete without 
+ * the receiver being killed prematurely.
+ */
 @AndroidEntryPoint
 class PrayerAlarmReceiver : BroadcastReceiver() {
 
@@ -48,6 +62,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
         Log.d("PrayerAlarmReceiver", "onReceive: action=$action, prayer=$prayerName, date=$prayerDate")
         
+        // Handle immediate "Skip" action from notification
         if (action == NotificationHelper.ACTION_SKIP_ADHAN) {
             runBlocking {
                 settingsManager.muteNextPrayer(prayerName, prayerDate)
@@ -92,6 +107,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         rescheduleNextPrayer()
                     }
                     Intent.ACTION_BOOT_COMPLETED -> {
+                        // Reschedule all alarms when device finishes booting
                         rescheduleNextPrayer()
                     }
                 }
@@ -103,6 +119,9 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         }
     }
 
+    /**
+     * Refreshes the alarm queue by identifying the next upcoming prayer from the database.
+     */
     private suspend fun rescheduleNextPrayer() {
         val settings = settingsManager.settingsFlow.first()
         val prayerDays = prayerRepository.getPrayerDays().first()
@@ -115,6 +134,10 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         }
     }
 
+    /**
+     * Orchestrates the starting of the Adhan audio.
+     * Checks for user-defined skip/mute settings before initiating the [AdhanService].
+     */
     private suspend fun handleAdhanTrigger(context: Context, prayerName: String, prayerDate: String) {
         val settings = settingsManager.settingsFlow.first()
         
@@ -138,6 +161,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
         val wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Vaktiva:AdhanWakeLock")
+        // Acquire wake lock to ensure the CPU doesn't sleep before the service starts
         wakeLock.acquire(5 * 60 * 1000L)
 
         try {
@@ -165,6 +189,9 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         }
     }
 
+    /**
+     * Returns a built-in default Adhan audio resource path for a given prayer type.
+     */
     private fun getDefaultAdhanForPrayer(context: Context, prayerType: PrayerType): String {
         val resId = when (prayerType) {
             PrayerType.FAJR -> R.raw.muhsinkara_fajr

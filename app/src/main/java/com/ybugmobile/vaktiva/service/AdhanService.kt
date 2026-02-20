@@ -40,6 +40,17 @@ import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.adhan.AdhanActivity
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * A foreground [MediaSessionService] responsible for high-reliability Adhan (Call to Prayer) audio playback.
+ * 
+ * Key Features:
+ * - Uses [ExoPlayer] (Media3) for robust audio playback with alarm-priority attributes.
+ * - Manages Audio Focus to respect other media and system sounds.
+ * - Provides a "Full Screen Intent" notification for lock-screen visibility.
+ * - Handles "Becoming Noisy" events (e.g., unplugging headphones).
+ * - Implements a fallback mechanism to play the system default alarm if the selected Adhan fails.
+ * - Exposes a [MediaSession] allowing other components (like UI) to control playback.
+ */
 @AndroidEntryPoint
 class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListener {
 
@@ -50,6 +61,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
     
     private var isFallbackPlaying = false
 
+    /** Listens for physical audio changes like headphone disconnection. */
     private val noisyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
@@ -59,6 +71,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
     }
 
     companion object {
+        /** Command action used to stop the Adhan from notifications or external controllers. */
         const val ACTION_STOP_ADHAN = "com.ybugmobile.vaktiva.ACTION_STOP_ADHAN"
     }
 
@@ -67,6 +80,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         super.onCreate()
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         
+        // Alarm usage ensures the sound is routed correctly and respects system alarm volume
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(C.USAGE_ALARM)
             .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
@@ -77,7 +91,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
             .setWakeMode(C.WAKE_MODE_NETWORK)
             .build()
 
-        // Restrict player commands to prevent pause/seek from UI or external controllers
+        // Restrict player commands to prevent pause/seek from UI or external controllers (Adhan should be continuous)
         player = object : ForwardingPlayer(basePlayer) {
             override fun getAvailableCommands(): Player.Commands {
                 return super.getAvailableCommands().buildUpon()
@@ -97,6 +111,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
                 }
             }
             override fun onPlayerError(error: PlaybackException) {
+                // If the custom Adhan fails, immediately try to play the system default alarm
                 if (!isFallbackPlaying) {
                     isFallbackPlaying = true
                     basePlayer.setMediaItem(MediaItem.fromUri(Settings.System.DEFAULT_ALARM_ALERT_URI))
@@ -130,6 +145,10 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         registerReceiver(noisyReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
     }
 
+    /**
+     * Entry point for starting the Adhan.
+     * Expects [NotificationHelper.EXTRA_PRAYER_NAME] and "AUDIO_PATH" in the intent extras.
+     */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP_ADHAN) {
             stopPlaybackAndService()
@@ -150,6 +169,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
             if (audioPath != null) {
                 isFallbackPlaying = false
                 
+                // Handle different audio path formats (URI, raw resource ID, or file path)
                 if (audioPath.startsWith("android.resource://")) {
                     // Already URI
                 } else if (!audioPath.contains("://")) {
@@ -195,7 +215,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
                 
                 player?.setMediaItem(mediaItem)
                 player?.prepare()
-                player?.volume = 1.0f // Set full volume immediately, removing fade-in
+                player?.volume = 1.0f 
                 player?.play()
             }
         }
@@ -203,6 +223,10 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         return super.onStartCommand(intent, flags, startId)
     }
 
+    /**
+     * Requests transient audio focus with ducking support.
+     * Ensures that the Adhan can be heard clearly while other apps temporarily lower their volume.
+     */
     private fun requestAudioFocus(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val playbackAttributes = AndroidAudioAttributes.Builder()
@@ -221,6 +245,9 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         }
     }
 
+    /**
+     * Reacts to external audio focus changes (e.g., incoming call, other alarm).
+     */
     override fun onAudioFocusChange(focusChange: Int) {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> player?.volume = 1.0f
@@ -229,6 +256,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         }
     }
 
+    /** Creates a highly visible notification with Full Screen Intent to wake the device screen. */
     @OptIn(UnstableApi::class)
     private fun createNotificationBuilder(prayerName: String): NotificationCompat.Builder {
         val prayerType = PrayerType.fromString(prayerName)
@@ -257,6 +285,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, getString(R.string.adhan_stop), stopPendingIntent)
     }
 
+    /** Cleans up resources, abandons audio focus, and shuts down the service. */
     private fun stopPlaybackAndService() {
         player?.stop()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && focusRequest != null) {

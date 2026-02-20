@@ -20,6 +20,9 @@ import javax.inject.Singleton
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
+/**
+ * Data class representing the complete set of user preferences for the application.
+ */
 data class UserSettings(
     val madhab: Int,
     val calculationMethod: Int,
@@ -42,6 +45,10 @@ data class UserSettings(
     val isHijriSelected: Boolean = false
 )
 
+/**
+ * Implementation of [SettingsManagerInterface] using Jetpack DataStore.
+ * Responsible for persisting and retrieving user preferences in a thread-safe and reactive way.
+ */
 @Singleton
 class SettingsManager @Inject constructor(
     @ApplicationContext private val context: Context
@@ -69,6 +76,9 @@ class SettingsManager @Inject constructor(
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
 
+    /**
+     * A flow of [UserSettings] that emits every time any preference is updated.
+     */
     override val settingsFlow: Flow<UserSettings> = context.dataStore.data.map { preferences ->
         val prayerSpecificPaths = PrayerType.entries.associateWith { type ->
             preferences[prayerPathKey(type)]

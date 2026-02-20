@@ -38,6 +38,19 @@ import java.time.LocalTime
 import java.time.ZoneId
 import javax.inject.Inject
 
+/**
+ * Core ViewModel for the Home screen, responsible for orchestrating prayer data,
+ * handling media playback controls for the Adhan, and managing screen state.
+ *
+ * It acts as a bridge between the [PrayerRepository], [SettingsManagerInterface],
+ * and the UI layer, providing a unified [HomeViewState].
+ *
+ * Features:
+ * - Real-time countdown to the next prayer.
+ * - Adhan playback synchronization via [MediaController].
+ * - Automated prayer time refreshing and alarm scheduling.
+ * - System health monitoring (GPS, DND, Notification settings).
+ */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val prayerRepository: PrayerRepository,
@@ -48,20 +61,26 @@ class HomeViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel(), DefaultLifecycleObserver {
 
+    /** Current user preferences and app settings stream. */
     val settings = settingsManager.settingsFlow
 
+    /** The date currently being viewed on the home screen (defaults to today). */
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate = _selectedDate.asStateFlow()
 
+    /** All cached prayer days observed from the database. */
     val allPrayerDays: StateFlow<List<PrayerDay>> = prayerRepository.getPrayerDays()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    /** Prayer data specifically for the [selectedDate]. */
     val currentPrayerDay: Flow<PrayerDay?> = combine(allPrayerDays, selectedDate) { days, date ->
         days.find { it.date == date }
     }
 
+    /** Real-time clock stream for UI updates and countdowns. */
     val currentTime = timeManager.currentTime
 
+    /** Loading state for pull-to-refresh or manual data fetch. */
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
@@ -83,10 +102,12 @@ class HomeViewModel @Inject constructor(
         PrayerType.entries.map { it to (day.timings[it] ?: LocalTime.MIN) }
     }
 
+    /** Observed moon phase for the currently selected date. */
     val moonPhase = selectedDate.map { date ->
         prayerRepository.getMoonPhase(date)
     }
 
+    /** Information about the next upcoming prayer, including remaining duration. */
     val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, settings) { prayers, now, currentSettings ->
         if (prayers == null) return@combine null
         
@@ -111,6 +132,7 @@ class HomeViewModel @Inject constructor(
         NextPrayer(nextReal.first, nextReal.second, realDateTime.toLocalDate(), Duration.between(now, realDateTime))
     }
 
+    /** Information about the prayer time that has most recently passed. */
     val currentPrayerInfo: Flow<CurrentPrayer?> = combine(todayPrayerTimes, currentTime) { prayers, now ->
         if (prayers == null) return@combine null
         
@@ -135,7 +157,7 @@ class HomeViewModel @Inject constructor(
                     settingsManager.clearMutedPrayer()
                 }
             }
-            // Periodically check health
+            // Periodically check health every 30 seconds
             if (now.second % 30 == 0) {
                 _isNetworkAvailable.value = PermissionUtils.isNetworkAvailable(context)
                 _hasSystemIssues.value = checkSystemIssues()
@@ -159,6 +181,10 @@ class HomeViewModel @Inject constructor(
                PermissionUtils.areNotificationChannelsMuted(context)
     }
 
+    /**
+     * Schedules a test Adhan alert to trigger after a specific delay.
+     * @param seconds Delay in seconds before the test Adhan sounds.
+     */
     fun triggerTestAlarm(seconds: Int) {
         val endTimeMillis = System.currentTimeMillis() + (seconds * 1000)
         viewModelScope.launch {
@@ -169,6 +195,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /** For debugging: shifts the internal app clock. */
     fun debugAddHours(minutes: Long) {
         timeManager.addMinutes(minutes)
     }
@@ -184,6 +211,7 @@ class HomeViewModel @Inject constructor(
 
     private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
+    /** Initializes the [MediaController] to communicate with the [AdhanService]. */
     private fun setupMediaController() {
         val sessionToken = SessionToken(context, ComponentName(context, AdhanService::class.java))
         val controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
@@ -214,6 +242,7 @@ class HomeViewModel @Inject constructor(
         _playingPrayerName.value = name
     }
 
+    /** Stops any currently playing Adhan audio. */
     fun stopAdhan() {
         mediaController?.stop()
         _isAdhanPlaying.value = false
@@ -222,6 +251,10 @@ class HomeViewModel @Inject constructor(
 
     private val _hasSettled = MutableStateFlow(false)
 
+    /**
+     * The primary state observable for the Home Screen.
+     * Combines multiple data streams into a single [HomeViewState].
+     */
     val state: StateFlow<HomeViewState> = combine(
         combine(selectedDate, currentTime, currentPrayerDay, moonPhase, ::StateQuad),
         combine(nextPrayerInfo, currentPrayerInfo, isRefreshing, ::Triple),
@@ -233,7 +266,7 @@ class HomeViewModel @Inject constructor(
         val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
 
-        // Calculate Effective Hijri Date based on Sunset Rollover
+        // Calculate Effective Hijri Date based on Sunset Rollover (Maghrib)
         val effectiveHijri = if (date == LocalDate.now() && prayerDay != null) {
             val maghribTime = prayerDay.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
             if (time.toLocalTime().isAfter(maghribTime) || time.toLocalTime() == maghribTime) {
@@ -265,6 +298,7 @@ class HomeViewModel @Inject constructor(
 
     private fun hasSettled() = _hasSettled.value
 
+    /** Cancels a running test alarm and restores normal scheduling. */
     fun stopTestAlarm() {
         viewModelScope.launch {
             settingsManager.setTestAlarmEndTime(null)
@@ -278,6 +312,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /** Changes the date for which prayer times are displayed. */
     fun selectDate(date: LocalDate) {
         _selectedDate.value = date
         if (allPrayerDays.value.none { it.date == date }) viewModelScope.launch {
@@ -295,13 +330,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /** Forcefully refreshes prayer data for the current year. */
     fun refresh() = viewModelScope.launch {
         _isRefreshing.value = true
         try { fetchPrayerData() } finally { _isRefreshing.value = false; _hasSettled.value = true }
     }
 
+    /** Updates the prayer calculation method and triggers a data refresh. */
     fun updateCalculationMethod(methodId: Int) = viewModelScope.launch { settingsManager.updateCalculationMethod(methodId); refresh() }
 
+    /** Toggles the 'muted' state for a specific upcoming prayer. */
     fun toggleSkipNextPrayerAudio(prayerName: String, prayerDate: LocalDate) = viewModelScope.launch {
         val s = settings.first()
         val currentlyMuted = s.mutedPrayerName.equals(prayerName, ignoreCase = true) &&
@@ -314,12 +352,20 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /** Toggles the UI display between Hijri and Gregorian calendars. */
     fun toggleCalendarType(isHijri: Boolean) = viewModelScope.launch {
         settingsManager.updateCalendarType(isHijri)
     }
 
+    /** Entry point for permissions completion to initiate first-time setup. */
     fun onPermissionsGranted() = viewModelScope.launch { try { fetchPrayerData() } finally { _hasSettled.value = true } }
 
+    /**
+     * Orchestrates the fetching of prayer times.
+     * 1. Detects current location.
+     * 2. Resolves human-readable address.
+     * 3. Fetches prayer times for all 12 months of the current year.
+     */
     private suspend fun fetchPrayerData() {
         val loc = locationWrapper.getCurrentLocation()
         val s = settings.first()
@@ -339,7 +385,7 @@ class HomeViewModel @Inject constructor(
             }
         }
         
-        // Fetch data for the whole current year
+        // Fetch data for the whole current year to ensure proactive caching
         for (month in 1..12) {
             prayerRepository.refreshPrayerTimes(now.year, month, lat, lng, s.calculationMethod)
         }
@@ -367,4 +413,5 @@ class HomeViewModel @Inject constructor(
     }
 }
 
+/** Utility state container for combining four flows. */
 data class StateQuad<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)

@@ -7,24 +7,40 @@ import androidx.core.os.ConfigurationCompat
 import com.ybugmobile.vaktiva.R
 import java.util.Locale as JavaLocale
 
+/**
+ * Utility object for handling application-wide language and locale settings.
+ *
+ * This object manages the list of supported languages and provides helper methods
+ * to retrieve native language names and display options for the settings UI.
+ */
 object LanguageUtils {
+    /**
+     * List of ISO 639-1 language codes currently supported by the application.
+     * "system" is a special token representing the device's default locale.
+     */
     val supportedLanguages = listOf(
         "system",
-        "en",
-        "tr",
-        "fr",
-        "de",
-        "es",
-        "it",
-        "ar",
-        "in",
-        "ur",
-        "bn",
-        "fa",
-        "ms",
-        "ru"
+        "en", // English
+        "tr", // Turkish
+        "fr", // French
+        "de", // German
+        "es", // Spanish
+        "it", // Italian
+        "ar", // Arabic
+        "in", // Indonesian
+        "ur", // Urdu
+        "bn", // Bengali
+        "fa", // Persian
+        "ms", // Malay
+        "ru"  // Russian
     )
 
+    /**
+     * Retrieves the native name of a language (e.g., "Français" for "fr").
+     *
+     * @param languageCode The ISO 639-1 code of the language, or "system".
+     * @return A formatted string representing the language name.
+     */
     @Composable
     fun getNativeLanguageName(languageCode: String): String {
         return when (languageCode) {
@@ -41,6 +57,12 @@ object LanguageUtils {
         }
     }
 
+    /**
+     * Generates a list of pairs for use in a language selection UI.
+     * Each pair consists of the (Display Name, Language Code).
+     *
+     * @return A list of language options.
+     */
     @Composable
     fun getLanguageOptions(): List<Pair<String, String>> {
         return supportedLanguages.map { code ->

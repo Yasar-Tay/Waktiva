@@ -55,6 +55,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+/**
+ * The main activity of the application, serving as the primary entry point for the UI.
+ * 
+ * Responsibilities:
+ * - Setting up Jetpack Compose with a custom Material 3 theme ([VaktivaTheme]).
+ * - Configuring edge-to-edge display for immersive UI.
+ * - Initializing [WorkManager] for background data syncing (Prayer & Location updates).
+ * - Managing top-level navigation and screen routing.
+ */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -64,6 +73,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
+        // Schedule periodic background tasks if this is the first time the activity is created
         if (savedInstanceState == null) {
             scheduleWork()
         }
@@ -83,6 +93,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Enqueues unique periodic work for both prayer time updates and location tracking.
+     * These tasks ensure data remains accurate even when the app is not in the foreground.
+     */
     private fun scheduleWork() {
         val workManager = WorkManager.getInstance(this)
         
@@ -90,6 +104,7 @@ class MainActivity : AppCompatActivity() {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
+        // Sync prayer times every 24 hours
         val prayerRequest = PeriodicWorkRequestBuilder<PrayerUpdateWorker>(24, TimeUnit.HOURS)
             .setConstraints(constraints)
             .build()
@@ -100,6 +115,7 @@ class MainActivity : AppCompatActivity() {
             prayerRequest
         )
 
+        // Sync location every 4 hours to adjust prayer times if the user has moved
         val locationRequest = PeriodicWorkRequestBuilder<LocationUpdateWorker>(4, TimeUnit.HOURS)
             .setConstraints(constraints)
             .build()
@@ -112,6 +128,10 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+/**
+ * Root-level composable that manages the navigation graph and the global UI layout
+ * (including background wrappers and bottom/rail navigation bars).
+ */
 @Composable
 fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: TimeManager) {
     val navController = rememberNavController()
@@ -120,6 +140,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
+    // Determine where to send the user based on onboarding status
     val startDestination = remember(settings) {
         if (settings == null) null
         else {
@@ -141,24 +162,24 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
     val currentDestination = navBackStackEntry?.destination
     val showNavigationLayout = items.any { it.route == currentDestination?.route }
 
-    // State to control navigation visibility based on swipe
+    // State to control navigation bar visibility based on scroll gestures
     var isNavVisible by remember { mutableStateOf(true) }
     
-    // Force visibility in landscape
+    // Force visibility in landscape as the rail is fixed
     LaunchedEffect(isLandscape) {
         if (isLandscape) isNavVisible = true
     }
     
-    // NestedScrollConnection to detect swipe direction
+    // Intercept scroll events to hide/show the bottom navigation bar
     val nestedScrollConnection = remember(isLandscape) {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                // Only toggle visibility in portrait mode
+                // Toggle visibility based on swipe direction in portrait mode
                 if (!isLandscape) {
                     if (available.y > 15) {
-                        isNavVisible = true // Show when swiping DOWN
+                        isNavVisible = true 
                     } else if (available.y < -15) {
-                        isNavVisible = false // Hide when swiping UP
+                        isNavVisible = false 
                     }
                 }
                 return Offset.Zero
@@ -171,7 +192,6 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
         prayerDay = homeState.currentPrayerDay
     ) {
         Box(modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection)) {
-            // Main Content Area
             NavHost(
                 navController, 
                 startDestination = startDestination, 
@@ -207,13 +227,13 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                 }
             }
 
-            // Overlay Navigation (Landscape Rail) - No animation in landscape
+            // Landscape Navigation Rail (Fixed at start)
             if (showNavigationLayout && isLandscape) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
-                        .displayCutoutPadding() // Avoid notch in landscape
-                        .systemBarsPadding()   // Respect system-level controls
+                        .displayCutoutPadding() 
+                        .systemBarsPadding()   
                 ) {
                     SmoothTouchNavigationRail(
                         items = items,
@@ -231,7 +251,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                 }
             }
 
-            // Overlay Navigation (Portrait Bottom Bar) - Animated
+            // Portrait Bottom Navigation Bar (Animated)
             if (showNavigationLayout && !isLandscape) {
                 AnimatedVisibility(
                     visible = isNavVisible,
@@ -239,7 +259,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                     exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .navigationBarsPadding() // Respect system navigation bar (buttons/pill)
+                        .navigationBarsPadding()
                 ) {
                     SmoothTouchNavigationBar(
                         items = items,
@@ -257,7 +277,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                 }
             }
 
-            // Floating Debug Controls
+            // Global floating actions (Debug/Development only in current state)
             Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                 Column(
                     modifier = Modifier
@@ -267,7 +287,6 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.End
                 ) {
-                    // Time Shift Test Button
                     SmallFloatingActionButton(
                         onClick = { 
                             timeManager.addMinutes(30)
@@ -278,7 +297,6 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                         Icon(Icons.Default.Update, contentDescription = "Shift Time")
                     }
 
-                    // Alarm Test Button
                     FloatingActionButton(
                         onClick = { 
                             val seconds = 5
@@ -295,8 +313,10 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
     }
 }
 
+/** Data class representing a tab in the navigation layout. */
 data class NavigationItem(val route: String, val labelResId: Int, val icon: ImageVector)
 
+/** A custom navigation rail for tablets or landscape phones with smooth selection indicators. */
 @Composable
 fun SmoothTouchNavigationRail(
     items: List<NavigationItem>,
@@ -380,6 +400,7 @@ fun SmoothTouchNavigationRail(
     }
 }
 
+/** A modern, animated bottom navigation bar with a glass-like aesthetic and spring selection. */
 @Composable
 fun SmoothTouchNavigationBar(
     items: List<NavigationItem>,
