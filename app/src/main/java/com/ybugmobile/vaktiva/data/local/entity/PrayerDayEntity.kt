@@ -14,5 +14,11 @@ data class PrayerDayEntity(
     val asr: String,
     val maghrib: String,
     val isha: String,
-    val lastUpdated: Long = System.currentTimeMillis()
+    val lastUpdated: Long = System.currentTimeMillis(),
+    
+    // Astronomical data (Accurate source)
+    val moonPhase: Double? = null,
+    val moonIllumination: Double? = null,
+    val moonrise: String? = null,
+    val moonset: String? = null
 )

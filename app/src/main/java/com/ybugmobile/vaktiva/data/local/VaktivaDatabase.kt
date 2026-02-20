@@ -14,7 +14,7 @@ import com.ybugmobile.vaktiva.data.local.entity.PrayerStatusEntity
         PrayerDayEntity::class,
         PrayerStatusEntity::class
     ],
-    version = 2,
+    version = 3, // Incremented version for astro data fields
     exportSchema = false
 )
 @TypeConverters(PrayerTypeConverter::class)

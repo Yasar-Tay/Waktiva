@@ -1,8 +1,11 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.HijriData
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
@@ -54,7 +58,6 @@ fun ModernCalendarStrip(
     val listState = rememberLazyListState()
     val density = LocalDensity.current
     val context = LocalContext.current
-
     val isUsingCalculatedHijri = remember(availableDays, isHijriSelected) {
         isHijriSelected && availableDays.any { it.hijriDate == null }
     }
@@ -81,8 +84,19 @@ fun ModernCalendarStrip(
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-
-
+        AnimatedVisibility(
+            visible = isUsingCalculatedHijri,
+            enter = expandVertically(),
+            exit = shrinkVertically()
+        ) {
+            Text(
+                text = stringResource(R.string.home_hijri_offline_note),
+                style = MaterialTheme.typography.labelSmall,
+                color = contentColor.copy(alpha = 0.5f),
+                modifier = Modifier.padding(bottom = 8.dp, start = 4.dp),
+                lineHeight = 14.sp
+            )
+        }
         // Toggle and Religious Day Info at the top
         Row(
             modifier = Modifier
@@ -112,12 +126,12 @@ fun ModernCalendarStrip(
             }
 
             // Calculate current effective hijri for the selected Gregorian date
+            // We prioritize stored hijri data if available
             val effectiveHijri = remember(selectedDate, availableDays, currentTime) {
                 val selectedDayData = availableDays.find { it.date == selectedDate }
                 if (selectedDate == today && selectedDayData != null) {
                     val maghribTime = selectedDayData.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
                     if (currentTime.isAfter(maghribTime) || currentTime == maghribTime) {
-                        // Rollover to next day's Hijri
                         availableDays.find { it.date == selectedDate.plusDays(1) }?.hijriDate 
                             ?: selectedDayData.hijriDate
                     } else {
@@ -159,7 +173,6 @@ fun ModernCalendarStrip(
                             prayerDay.hijriDate
                         }
                     } else if (date.isAfter(today)) {
-                        // All future days also roll over if we are past today's Maghrib to keep sequence
                         val todayData = availableDays.find { it.date == today }
                         val todayMaghrib = todayData?.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
                         if (currentTime.isAfter(todayMaghrib) || currentTime == todayMaghrib) {
@@ -185,16 +198,11 @@ fun ModernCalendarStrip(
                 val isToday = date == today
 
                 val religiousDay = ReligiousDaysProvider.getReligiousDay(date)
-                val isReligiousDay = religiousDay != null
-                
                 val hijriMonth = hijri?.monthNumber
                 val hijriDayNum = hijri?.day
                 
-                // Use unified detection logic from ReligiousBadge
                 val isRamadan = isRamadan(hijriMonth, religiousDay)
                 val isEid = isEid(hijriMonth, hijriDayNum, religiousDay)
-                
-                // Use shared accent color logic
                 val accentColor = getCalendarAccentColor(date, hijriMonth, hijriDayNum, contentColor)
 
                 val cardBgColor by animateColorAsState(
@@ -216,7 +224,7 @@ fun ModernCalendarStrip(
                             when {
                                 isSelected -> Modifier.border(1.5.dp, contentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
                                 isToday -> Modifier.border(2.dp, accentColor.copy(alpha = 0.6f), RoundedCornerShape(12.dp))
-                                isReligiousDay || isRamadan || isEid -> Modifier.border(1.dp, accentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
+                                religiousDay != null || isRamadan || isEid -> Modifier.border(1.dp, accentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
                                 else -> Modifier
                             }
                         )
@@ -225,14 +233,13 @@ fun ModernCalendarStrip(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Top Section: Month Label
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(
                                     when {
                                         isToday -> accentColor.copy(alpha = 0.4f)
-                                        isReligiousDay || isRamadan || isEid -> accentColor.copy(alpha = 0.35f)
+                                        religiousDay != null || isRamadan || isEid -> accentColor.copy(alpha = 0.35f)
                                         isSelected -> contentColor.copy(alpha = 0.2f)
                                         else -> contentColor.copy(alpha = 0.1f)
                                     }
@@ -253,7 +260,7 @@ fun ModernCalendarStrip(
                             }
                             Text(
                                 text = monthText,
-                                color = if (isToday || isReligiousDay || isRamadan || isEid) contentColor else contentColor.copy(alpha = 0.6f),
+                                color = if (isToday || religiousDay != null || isRamadan || isEid) contentColor else contentColor.copy(alpha = 0.6f),
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Black,
                                 letterSpacing = 0.5.sp
@@ -262,12 +269,7 @@ fun ModernCalendarStrip(
 
                         Spacer(Modifier.height(8.dp))
 
-                        // Middle Section: Day Number
-                        val dayNumber = if (isHijriSelected && hijri != null) {
-                            hijri.day.toString()
-                        } else {
-                            date.dayOfMonth.toString()
-                        }
+                        val dayNumber = if (isHijriSelected && hijri != null) hijri.day.toString() else date.dayOfMonth.toString()
                         Text(
                             text = dayNumber,
                             color = contentColor,
@@ -276,7 +278,6 @@ fun ModernCalendarStrip(
                             lineHeight = 22.sp
                         )
 
-                        // Bottom Section: Day Name
                         Text(
                             text = date.format(dayNameFormatter).uppercase(),
                             color = contentColor.copy(alpha = if (isSelected || isToday) 1f else 0.4f),

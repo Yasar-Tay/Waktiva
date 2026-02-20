@@ -18,7 +18,6 @@ fun PrayerDayEntity.toDomain(): PrayerDay {
 
     val hijri = try {
         val parts = hijriDate.split(" ")
-        // Format: "day monthNumber monthEn year" or "day monthEn year"
         if (parts.size >= 4) {
             HijriData(
                 day = parts[0].toInt(),
@@ -29,7 +28,7 @@ fun PrayerDayEntity.toDomain(): PrayerDay {
         } else if (parts.size == 3) {
             HijriData(
                 day = parts[0].toInt(),
-                monthNumber = 1, // Fallback
+                monthNumber = 1,
                 monthEn = parts[1],
                 year = parts[2].toInt()
             )
@@ -48,6 +47,29 @@ fun PrayerDayEntity.toDomain(): PrayerDay {
             PrayerType.ASR to parseTime(asr),
             PrayerType.MAGHRIB to parseTime(maghrib),
             PrayerType.ISHA to parseTime(isha)
-        )
+        ),
+        moonPhase = moonPhase,
+        moonIllumination = moonIllumination,
+        moonrise = moonrise,
+        moonset = moonset
+    )
+}
+
+fun PrayerDay.toEntity(): PrayerDayEntity {
+    val timings = this.timings
+    val hijri = this.hijriDate
+    return PrayerDayEntity(
+        date = this.date.toString(),
+        hijriDate = if (hijri != null) "${hijri.day} ${hijri.monthNumber} ${hijri.monthEn} ${hijri.year}" else "",
+        fajr = timings[PrayerType.FAJR].toString(),
+        sunrise = timings[PrayerType.SUNRISE].toString(),
+        dhuhr = timings[PrayerType.DHUHR].toString(),
+        asr = timings[PrayerType.ASR].toString(),
+        maghrib = timings[PrayerType.MAGHRIB].toString(),
+        isha = timings[PrayerType.ISHA].toString(),
+        moonPhase = this.moonPhase,
+        moonIllumination = this.moonIllumination,
+        moonrise = this.moonrise,
+        moonset = this.moonset
     )
 }

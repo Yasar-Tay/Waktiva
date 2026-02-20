@@ -29,6 +29,7 @@ accompanistPermissions = "0.37.3"
 uiautomator = "2.3.0"
 testRules = "1.6.1"
 billing = "8.3.0"
+suncalc = "3.11"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -97,6 +98,9 @@ accompanist-permissions = { group = "com.google.accompanist", name = "accompanis
 
 # Billing
 billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
+
+# SunCalc
+suncalc = { group = "org.shredzone.commons", name = "commons-suncalc", version.ref = "suncalc" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

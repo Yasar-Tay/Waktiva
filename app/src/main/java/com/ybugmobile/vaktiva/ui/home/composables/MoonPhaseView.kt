@@ -58,84 +58,90 @@ fun MoonPhaseView(
                 val center = Offset(size.width / 2, size.height / 2)
                 val radius = size.minDimension / 2.5f
 
-                // 1. Atmospheric Glow
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(contentColor.copy(alpha = glowAlpha * 0.4f), Color.Transparent),
-                        center = center,
-                        radius = radius * 2f
-                    ),
-                    radius = radius * 2f,
-                    center = center
-                )
+                // Use the parallactic angle from the accurate SunCalc calculation
+                // to rotate the moon exactly as it appears in the sky
+                val rotationAngle = moonPhase.parallacticAngle.toFloat()
 
-                val moonClipPath = Path().apply {
-                    addOval(Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius))
-                }
-
-                clipPath(moonClipPath) {
-                    // 2. Dark Background (The unlit part of the moon)
+                withTransform({
+                    rotate(degrees = rotationAngle, pivot = center)
+                }) {
+                    // 1. Atmospheric Glow
                     drawCircle(
-                        color = Color.Black.copy(alpha = 0.4f), // Darker dark area
-                        radius = radius,
-                        center = center,
-                        style = Fill
+                        brush = Brush.radialGradient(
+                            colors = listOf(contentColor.copy(alpha = glowAlpha * 0.4f), Color.Transparent),
+                            center = center,
+                            radius = radius * 2f
+                        ),
+                        radius = radius * 2f,
+                        center = center
                     )
 
-                    // 3. The Illuminated Part (Mask)
-                    val illumination = moonPhase.illumination.toFloat()
-                    val isWaning = moonPhase.phaseProgress >= 0.5
+                    val moonClipPath = Path().apply {
+                        addOval(Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius))
+                    }
 
-                    withTransform({
-                        // If waning, we flip the drawing to the other side
-                        if (isWaning) {
-                            scale(scaleX = -1f, scaleY = 1f, pivot = center)
+                    clipPath(moonClipPath) {
+                        // 2. Dark Background (The unlit part of the moon)
+                        drawCircle(
+                            color = Color.Black.copy(alpha = 0.4f), 
+                            radius = radius,
+                            center = center,
+                            style = Fill
+                        )
+
+                        // 3. The Illuminated Part (Mask)
+                        val illumination = moonPhase.illumination.toFloat()
+                        val isWaning = moonPhase.phaseProgress >= 0.5
+
+                        withTransform({
+                            if (isWaning) {
+                                scale(scaleX = -1f, scaleY = 1f, pivot = center)
+                            }
+                        }) {
+                            if (illumination > 0) {
+                                if (illumination >= 0.98f) {
+                                    drawCircle(contentColor.copy(alpha = 0.85f), radius, center)
+                                } else {
+                                    val maskPath = Path()
+                                    maskPath.addArc(
+                                        oval = Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius),
+                                        startAngleDegrees = -90f,
+                                        sweepAngleDegrees = 180f
+                                    )
+                                    
+                                    val curveXControl = radius * (1f - 2f * illumination)
+                                    maskPath.cubicTo(
+                                        center.x + curveXControl, center.y + radius,
+                                        center.x + curveXControl, center.y - radius,
+                                        center.x, center.y - radius
+                                    )
+                                    
+                                    drawPath(maskPath, color = contentColor.copy(alpha = 0.85f), style = Fill)
+                                }
+                            }
                         }
-                    }) {
-                        if (illumination > 0) {
-                            if (illumination >= 0.98f) {
-                                drawCircle(contentColor.copy(alpha = 0.85f), radius, center)
-                            } else {
-                                val maskPath = Path()
-                                maskPath.addArc(
-                                    oval = Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius),
-                                    startAngleDegrees = -90f,
-                                    sweepAngleDegrees = 180f
+
+                        // 4. Moon Surface Texture
+                        withTransform({
+                            translate(center.x - radius, center.y - radius)
+                        }) {
+                            with(surfacePainter) {
+                                draw(
+                                    size = Size(radius * 2, radius * 2),
+                                    alpha = 0.5f 
                                 )
-                                
-                                val curveXControl = radius * (1f - 2f * illumination)
-                                maskPath.cubicTo(
-                                    center.x + curveXControl, center.y + radius,
-                                    center.x + curveXControl, center.y - radius,
-                                    center.x, center.y - radius
-                                )
-                                
-                                drawPath(maskPath, color = contentColor.copy(alpha = 0.85f), style = Fill)
                             }
                         }
                     }
 
-                    // 4. Moon Surface Texture (Vector Background)
-                    // Drawn last inside the clip to ensure craters are visible on both sides
-                    withTransform({
-                        translate(center.x - radius, center.y - radius)
-                    }) {
-                        with(surfacePainter) {
-                            draw(
-                                size = Size(radius * 2, radius * 2),
-                                alpha = 0.5f // Increased visibility for organic craters
-                            )
-                        }
-                    }
+                    // 5. Moon Outline
+                    drawCircle(
+                        color = contentColor.copy(alpha = 0.3f),
+                        radius = radius,
+                        center = center,
+                        style = Stroke(width = 1.5.dp.toPx())
+                    )
                 }
-
-                // 5. Moon Outline
-                drawCircle(
-                    color = contentColor.copy(alpha = 0.3f),
-                    radius = radius,
-                    center = center,
-                    style = Stroke(width = 1.5.dp.toPx())
-                )
             }
         }
         

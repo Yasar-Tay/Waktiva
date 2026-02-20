@@ -66,7 +66,6 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.hilt.work)
-    ksp(libs.androidx.hilt.compiler)
 
     // Room
     implementation(libs.room.runtime)
@@ -94,6 +93,9 @@ dependencies {
 
     // Adhan (Offline)
     implementation(libs.adhan)
+
+    // SunCalc
+    implementation(libs.suncalc)
 
     // MapLibre
     implementation(libs.maplibre.android)
