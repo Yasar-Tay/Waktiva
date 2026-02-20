@@ -22,6 +22,7 @@ import com.ybugmobile.vaktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.vaktiva.data.location.LocationWrapper
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
+import com.ybugmobile.vaktiva.domain.model.HijriData
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import com.ybugmobile.vaktiva.domain.manager.TimeManager
 import com.ybugmobile.vaktiva.service.AdhanService
@@ -36,11 +37,12 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.chrono.HijrahChronology
+import java.time.temporal.ChronoField
 import javax.inject.Inject
 
 /**
- * Core ViewModel for the Home screen, responsible for orchestrating prayer data,
- * handling media playback controls for the Adhan, and managing screen state.
+ * Core ViewModel for the Home screen.
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -87,10 +89,6 @@ class HomeViewModel @Inject constructor(
         PrayerType.entries.map { it to (day.timings[it] ?: LocalTime.MIN) }
     }
 
-    /**
-     * Moon phase is now decoupled from the second-by-second currentTime.
-     * It only updates when the selectedDate changes or when the hour changes.
-     */
     val moonPhase = combine(
         selectedDate,
         currentTime.map { it.withMinute(0).withSecond(0).withNano(0) }.distinctUntilChanged()
@@ -233,6 +231,9 @@ class HomeViewModel @Inject constructor(
 
     private val _hasSettled = MutableStateFlow(false)
 
+    /**
+     * Unified State flow with centralized rollover logic.
+     */
     val state: StateFlow<HomeViewState> = combine(
         combine(selectedDate, currentTime, currentPrayerDay, moonPhase, ::StateQuad),
         combine(nextPrayerInfo, currentPrayerInfo, isRefreshing, ::Triple),
@@ -244,17 +245,30 @@ class HomeViewModel @Inject constructor(
         val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
 
-        val effectiveHijri = if (date == moon.date && moon.hijriDate != null) {
-            moon.hijriDate
-        } else if (date == LocalDate.now() && prayerDay != null) {
-            val maghribTime = prayerDay.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
-            if (time.toLocalTime().isAfter(maghribTime) || time.toLocalTime() == maghribTime) {
+        /**
+         * DISCREPANCY FIX: Unified Maghrib Rollover
+         * Islamic days start at Maghrib of the PREVIOUS Gregorian day.
+         */
+        val todayRecord = allDays.find { it.date == LocalDate.now() }
+        val maghribTime = todayRecord?.timings?.get(PrayerType.MAGHRIB) ?: LocalTime.of(18, 0)
+        val isPastMaghrib = time.toLocalTime().isAfter(maghribTime) || time.toLocalTime() == maghribTime
+
+        val effectiveHijri = if (prayerDay != null) {
+            if (isPastMaghrib) {
+                // If it's past Maghrib, every Gregorian date views the NEXT Hijri day in sequence
                 allDays.find { it.date == date.plusDays(1) }?.hijriDate ?: prayerDay.hijriDate
             } else {
                 prayerDay.hijriDate
             }
         } else {
-            prayerDay?.hijriDate
+            // Fallback: If no database record, use moon data or local calculation
+            val baseHijri = moon.hijriDate ?: calculateFallbackHijri(date)
+            if (isPastMaghrib && baseHijri != null) {
+                // Approximate rollover for local calculation
+                calculateFallbackHijri(date.plusDays(1))
+            } else {
+                baseHijri
+            }
         }
 
         HomeViewState(
@@ -273,6 +287,18 @@ class HomeViewModel @Inject constructor(
             hasSystemIssues = issues
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))
+
+    private fun calculateFallbackHijri(date: LocalDate): HijriData? {
+        return try {
+            val hDate = HijrahChronology.INSTANCE.date(date)
+            HijriData(
+                day = hDate.get(ChronoField.DAY_OF_MONTH),
+                monthNumber = hDate.get(ChronoField.MONTH_OF_YEAR),
+                monthEn = "",
+                year = hDate.get(ChronoField.YEAR)
+            )
+        } catch (e: Exception) { null }
+    }
 
     private fun hasSettled() = _hasSettled.value
 
