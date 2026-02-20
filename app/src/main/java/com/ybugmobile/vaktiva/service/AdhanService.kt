@@ -6,16 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ServiceInfo
-import android.media.AudioAttributes as AndroidAudioAttributes
-import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
-import androidx.core.net.toUri
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.ForwardingPlayer
@@ -39,29 +38,20 @@ import com.ybugmobile.vaktiva.data.notification.NotificationHelper
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.adhan.AdhanActivity
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 
 /**
  * A foreground [MediaSessionService] responsible for high-reliability Adhan (Call to Prayer) audio playback.
- * 
- * Key Features:
- * - Uses [ExoPlayer] (Media3) for robust audio playback with alarm-priority attributes.
- * - Manages Audio Focus to respect other media and system sounds.
- * - Provides a "Full Screen Intent" notification for lock-screen visibility.
- * - Handles "Becoming Noisy" events (e.g., unplugging headphones).
- * - Implements a fallback mechanism to play the system default alarm if the selected Adhan fails.
- * - Exposes a [MediaSession] allowing other components (like UI) to control playback.
  */
 @AndroidEntryPoint
-class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListener {
+class AdhanService : MediaSessionService() {
 
     private var player: Player? = null
     private var mediaSession: MediaSession? = null
     private lateinit var audioManager: AudioManager
-    private var focusRequest: AudioFocusRequest? = null
     
     private var isFallbackPlaying = false
 
-    /** Listens for physical audio changes like headphone disconnection. */
     private val noisyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
@@ -71,7 +61,7 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
     }
 
     companion object {
-        /** Command action used to stop the Adhan from notifications or external controllers. */
+        private const val TAG = "AdhanService"
         const val ACTION_STOP_ADHAN = "com.ybugmobile.vaktiva.ACTION_STOP_ADHAN"
     }
 
@@ -80,18 +70,17 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         super.onCreate()
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         
-        // Alarm usage ensures the sound is routed correctly and respects system alarm volume
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(C.USAGE_ALARM)
             .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             .build()
 
         val basePlayer = ExoPlayer.Builder(this)
-            .setAudioAttributes(audioAttributes, false)
-            .setWakeMode(C.WAKE_MODE_NETWORK)
+            .setAudioAttributes(audioAttributes, false) // Automatic handling of audio focus is only available for USAGE_MEDIA and USAGE_GAME.
+            .setHandleAudioBecomingNoisy(true)
+            .setWakeMode(C.WAKE_MODE_LOCAL)
             .build()
 
-        // Restrict player commands to prevent pause/seek from UI or external controllers (Adhan should be continuous)
         player = object : ForwardingPlayer(basePlayer) {
             override fun getAvailableCommands(): Player.Commands {
                 return super.getAvailableCommands().buildUpon()
@@ -106,12 +95,13 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
 
         basePlayer.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
+                Log.d(TAG, "Playback state: $playbackState")
                 if (playbackState == Player.STATE_ENDED) {
                     stopPlaybackAndService()
                 }
             }
             override fun onPlayerError(error: PlaybackException) {
-                // If the custom Adhan fails, immediately try to play the system default alarm
+                Log.e(TAG, "Playback error: ${error.errorCodeName} (${error.errorCode})", error)
                 if (!isFallbackPlaying) {
                     isFallbackPlaying = true
                     basePlayer.setMediaItem(MediaItem.fromUri(Settings.System.DEFAULT_ALARM_ALERT_URI))
@@ -142,13 +132,13 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
             override fun handleCustomCommand(s: MediaSession, a: String, e: Bundle) = false
         })
 
-        registerReceiver(noisyReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(noisyReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY), RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(noisyReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
+        }
     }
 
-    /**
-     * Entry point for starting the Adhan.
-     * Expects [NotificationHelper.EXTRA_PRAYER_NAME] and "AUDIO_PATH" in the intent extras.
-     */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP_ADHAN) {
             stopPlaybackAndService()
@@ -156,7 +146,8 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
         }
 
         val prayerName = intent?.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME) ?: getString(R.string.adhan_default_prayer)
-        var audioPath = intent?.getStringExtra("AUDIO_PATH")
+        val audioPath = intent?.getStringExtra("AUDIO_PATH")
+        Log.d(TAG, "onStartCommand: prayer=$prayerName, audioPath=$audioPath")
 
         val notification = createNotificationBuilder(prayerName).build()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -165,98 +156,71 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
             startForeground(NotificationHelper.NOTIFICATION_ID_ADHAN, notification)
         }
 
-        if (requestAudioFocus()) {
-            if (audioPath != null) {
-                isFallbackPlaying = false
-                
-                // Handle different audio path formats (URI, raw resource ID, or file path)
-                if (audioPath.startsWith("android.resource://")) {
-                    // Already URI
-                } else if (!audioPath.contains("://")) {
-                     val resId = resources.getIdentifier(audioPath, "raw", packageName)
-                     if (resId != 0) {
-                         audioPath = "android.resource://$packageName/$resId"
-                     }
+        if (audioPath != null) {
+            isFallbackPlaying = false
+            
+            val uri = when {
+                audioPath.startsWith("android.resource://") -> {
+                    val resId = audioPath.substringAfterLast("/")
+                    Uri.parse("rawresource:///$resId")
                 }
-
-                val prayerType = PrayerType.fromString(prayerName)
-                val displayedPrayerName = prayerType?.getDisplayName(this) ?: prayerName
-                val metadataTitle = getString(R.string.adhan_metadata_title_format, displayedPrayerName)
-                
-                val retriever = MediaMetadataRetriever()
-                var adhanArtist: String? = null
-                try {
-                    if (audioPath!!.startsWith("android.resource://")) {
-                        retriever.setDataSource(this, audioPath.toUri())
+                audioPath.contains("://") -> Uri.parse(audioPath)
+                else -> {
+                    val resId = resources.getIdentifier(audioPath, "raw", packageName)
+                    if (resId != 0) {
+                        Uri.parse("rawresource:///$resId")
                     } else {
-                        retriever.setDataSource(audioPath)
+                        Uri.fromFile(File(audioPath))
                     }
-                    adhanArtist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                } finally {
-                    try { retriever.release() } catch (e: Exception) {}
                 }
-
-                val extras = Bundle().apply {
-                    putString(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
-                }
-                
-                val metadata = MediaMetadata.Builder()
-                    .setTitle(metadataTitle)
-                    .setArtist(adhanArtist)
-                    .setExtras(extras)
-                    .build()
-                    
-                val mediaItem = MediaItem.Builder()
-                    .setUri(audioPath!!.toUri())
-                    .setMediaMetadata(metadata)
-                    .build()
-                
-                player?.setMediaItem(mediaItem)
-                player?.prepare()
-                player?.volume = 1.0f 
-                player?.play()
             }
+            Log.d(TAG, "Playing URI: $uri")
+
+            val prayerType = PrayerType.fromString(prayerName)
+            val displayedPrayerName = prayerType?.getDisplayName(this) ?: prayerName
+            val metadataTitle = getString(R.string.adhan_metadata_title_format, displayedPrayerName)
+            
+            val retriever = MediaMetadataRetriever()
+            var adhanArtist: String? = null
+            try {
+                // MediaMetadataRetriever might not support rawresource:/// directly, 
+                // so we use the android.resource:// format for metadata if possible
+                val metadataUri = if (uri.scheme == "rawresource") {
+                    Uri.parse("android.resource://$packageName/${uri.lastPathSegment}")
+                } else uri
+                
+                retriever.setDataSource(this, metadataUri)
+                adhanArtist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
+            } catch (e: Exception) {
+                Log.w(TAG, "Metadata retrieval failed for $uri: ${e.message}")
+            } finally {
+                try { retriever.release() } catch (e: Exception) {}
+            }
+
+            val extras = Bundle().apply {
+                putString(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
+            }
+            
+            val metadata = MediaMetadata.Builder()
+                .setTitle(metadataTitle)
+                .setArtist(adhanArtist)
+                .setExtras(extras)
+                .build()
+                
+            val mediaItem = MediaItem.Builder()
+                .setUri(uri)
+                .setMediaMetadata(metadata)
+                .build()
+            
+            player?.setMediaItem(mediaItem)
+            player?.prepare()
+            player?.volume = 1.0f 
+            player?.play()
         }
 
         return super.onStartCommand(intent, flags, startId)
     }
 
-    /**
-     * Requests transient audio focus with ducking support.
-     * Ensures that the Adhan can be heard clearly while other apps temporarily lower their volume.
-     */
-    private fun requestAudioFocus(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val playbackAttributes = AndroidAudioAttributes.Builder()
-                .setUsage(AndroidAudioAttributes.USAGE_ALARM)
-                .setContentType(AndroidAudioAttributes.CONTENT_TYPE_MUSIC)
-                .build()
-            focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-                .setAudioAttributes(playbackAttributes)
-                .setAcceptsDelayedFocusGain(true)
-                .setOnAudioFocusChangeListener(this)
-                .build()
-            audioManager.requestAudioFocus(focusRequest!!) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
-        } else {
-            @Suppress("DEPRECATION")
-            audioManager.requestAudioFocus(this, AudioManager.STREAM_ALARM, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
-        }
-    }
-
-    /**
-     * Reacts to external audio focus changes (e.g., incoming call, other alarm).
-     */
-    override fun onAudioFocusChange(focusChange: Int) {
-        when (focusChange) {
-            AudioManager.AUDIOFOCUS_GAIN -> player?.volume = 1.0f
-            AudioManager.AUDIOFOCUS_LOSS, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> stopPlaybackAndService()
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> player?.volume = 0.2f
-        }
-    }
-
-    /** Creates a highly visible notification with Full Screen Intent to wake the device screen. */
     @OptIn(UnstableApi::class)
     private fun createNotificationBuilder(prayerName: String): NotificationCompat.Builder {
         val prayerType = PrayerType.fromString(prayerName)
@@ -285,15 +249,8 @@ class AdhanService : MediaSessionService(), AudioManager.OnAudioFocusChangeListe
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, getString(R.string.adhan_stop), stopPendingIntent)
     }
 
-    /** Cleans up resources, abandons audio focus, and shuts down the service. */
     private fun stopPlaybackAndService() {
         player?.stop()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && focusRequest != null) {
-            audioManager.abandonAudioFocusRequest(focusRequest!!)
-        } else {
-            @Suppress("DEPRECATION")
-            audioManager.abandonAudioFocus(this)
-        }
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }

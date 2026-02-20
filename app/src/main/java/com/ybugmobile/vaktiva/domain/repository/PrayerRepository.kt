@@ -4,6 +4,7 @@ import com.ybugmobile.vaktiva.domain.model.MoonPhase
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * Repository interface defining the contract for managing prayer data, lunar information,
@@ -18,13 +19,13 @@ interface PrayerRepository {
     fun getPrayerDays(): Flow<List<PrayerDay>>
 
     /**
-     * Retrieves the [MoonPhase] for a specific date.
+     * Retrieves the [MoonPhase] for a specific date and time.
      * Implementation typically involves astronomical calculations or API lookups.
      *
-     * @param date The [LocalDate] for which to calculate the moon phase.
+     * @param dateTime The [LocalDateTime] for which to calculate the moon phase.
      * @return A [MoonPhase] object containing illumination and phase details.
      */
-    suspend fun getMoonPhase(date: LocalDate): MoonPhase
+    suspend fun getMoonPhase(dateTime: LocalDateTime): MoonPhase
     
     /**
      * Triggers a refresh of prayer times from remote or local sources.

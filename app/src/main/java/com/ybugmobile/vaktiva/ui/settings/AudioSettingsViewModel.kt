@@ -209,7 +209,7 @@ class AudioSettingsViewModel @Inject constructor(
             _currentPlayingPath.value = null
         } else {
             audioPlayer.stop()
-            audioPlayer.play(Uri.parse(path))
+            audioPlayer.playFromPath(path)
             _currentPlayingPath.value = path
         }
     }

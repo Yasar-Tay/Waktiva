@@ -102,9 +102,15 @@ class HomeViewModel @Inject constructor(
         PrayerType.entries.map { it to (day.timings[it] ?: LocalTime.MIN) }
     }
 
-    /** Observed moon phase for the currently selected date. */
-    val moonPhase = selectedDate.map { date ->
-        prayerRepository.getMoonPhase(date)
+    /** Observed moon phase for the currently selected date and time. */
+    val moonPhase = combine(selectedDate, currentTime) { date, time ->
+        // If viewing today, use real-time for moon phase, otherwise use start of that day
+        val dateTimeToCalculate = if (date == LocalDate.now()) {
+            time
+        } else {
+            date.atStartOfDay()
+        }
+        prayerRepository.getMoonPhase(dateTimeToCalculate)
     }
 
     /** Information about the next upcoming prayer, including remaining duration. */

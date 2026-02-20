@@ -15,6 +15,7 @@ import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.chrono.HijrahChronology
 import java.time.temporal.ChronoField
@@ -35,8 +36,8 @@ class PrayerRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMoonPhase(date: LocalDate): MoonPhase {
-        val dateInMs = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()).time
+    override suspend fun getMoonPhase(dateTime: LocalDateTime): MoonPhase {
+        val dateInMs = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant()).time
         val lunarMonth = 2551442877L // 29.53059 days in ms
         val newMoonReference = 947163600000L // New Moon on Jan 6, 2000
         
@@ -63,7 +64,7 @@ class PrayerRepositoryImpl @Inject constructor(
 
         // Calculate Hijri Date locally
         val hijriDateStr = try {
-            val hDate = HijrahChronology.INSTANCE.date(date)
+            val hDate = HijrahChronology.INSTANCE.date(dateTime.toLocalDate())
             "${hDate.get(ChronoField.DAY_OF_MONTH)} ${hDate.get(ChronoField.MONTH_OF_YEAR)} ${hDate.get(ChronoField.YEAR)}"
         } catch (e: Exception) {
             ""
@@ -76,7 +77,7 @@ class PrayerRepositoryImpl @Inject constructor(
             hijriDate = hijriDateStr,
             moonrise = null,
             moonset = null,
-            date = date
+            date = dateTime.toLocalDate()
         )
     }
 
