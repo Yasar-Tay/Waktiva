@@ -321,25 +321,27 @@ class HomeViewModel @Inject constructor(
     /** Changes the date for which prayer times are displayed. */
     fun selectDate(date: LocalDate) {
         _selectedDate.value = date
-        if (allPrayerDays.value.none { it.date == date }) viewModelScope.launch {
-            try {
-                _isRefreshing.value = true
-                val s = settings.first()
-                val loc = locationWrapper.getCurrentLocation()
-                val lat = loc?.latitude ?: s.latitude
-                val lng = loc?.longitude ?: s.longitude
-                
-                if (lat != null && lng != null) {
-                    prayerRepository.refreshPrayerTimes(date.year, date.monthValue, lat, lng, s.calculationMethod)
-                }
-            } finally { _isRefreshing.value = false }
+        viewModelScope.launch {
+            if (allPrayerDays.value.none { it.date == date }) {
+                try {
+                    _isRefreshing.value = true
+                    val s = settings.first()
+                    val loc = locationWrapper.getCurrentLocation()
+                    val lat = loc?.latitude ?: s.latitude
+                    val lng = loc?.longitude ?: s.longitude
+                    
+                    if (lat != null && lng != null) {
+                        prayerRepository.refreshPrayerTimes(date.year, date.monthValue, lat, lng, s.calculationMethod)
+                    }
+                } finally { _isRefreshing.value = false }
+            }
         }
     }
 
     /** Forcefully refreshes prayer data for the current year. */
     fun refresh() = viewModelScope.launch {
         _isRefreshing.value = true
-        try { fetchPrayerData() } finally { _isRefreshing.value = false; _hasSettled.value = true }
+        try { fetchPrayerData(forceFullRefresh = true) } finally { _isRefreshing.value = false; _hasSettled.value = true }
     }
 
     /** Updates the prayer calculation method and triggers a data refresh. */
@@ -370,9 +372,11 @@ class HomeViewModel @Inject constructor(
      * Orchestrates the fetching of prayer times.
      * 1. Detects current location.
      * 2. Resolves human-readable address.
-     * 3. Fetches prayer times for all 12 months of the current year.
+     * 3. Fetches prayer times (Current + Next month by default).
+     * 
+     * @param forceFullRefresh If true, fetches all 12 months.
      */
-    private suspend fun fetchPrayerData() {
+    private suspend fun fetchPrayerData(forceFullRefresh: Boolean = false) {
         val loc = locationWrapper.getCurrentLocation()
         val s = settings.first()
         val now = LocalDate.now()
@@ -391,9 +395,17 @@ class HomeViewModel @Inject constructor(
             }
         }
         
-        // Fetch data for the whole current year to ensure proactive caching
-        for (month in 1..12) {
-            prayerRepository.refreshPrayerTimes(now.year, month, lat, lng, s.calculationMethod)
+        if (forceFullRefresh) {
+            // Full refresh: Fetch all 12 months
+            for (month in 1..12) {
+                prayerRepository.refreshPrayerTimes(now.year, month, lat, lng, s.calculationMethod)
+            }
+        } else {
+            // Optimized fetch: Only current month and next month
+            prayerRepository.refreshPrayerTimes(now.year, now.monthValue, lat, lng, s.calculationMethod)
+            
+            val nextMonth = now.plusMonths(1)
+            prayerRepository.refreshPrayerTimes(nextMonth.year, nextMonth.monthValue, lat, lng, s.calculationMethod)
         }
     }
 
