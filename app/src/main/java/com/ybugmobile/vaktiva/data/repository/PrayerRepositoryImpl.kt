@@ -6,9 +6,7 @@ import com.ybugmobile.vaktiva.data.local.dao.PrayerStatusDao
 import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.vaktiva.data.mapper.toDomain
 import com.ybugmobile.vaktiva.data.remote.AladhanApiService
-import com.ybugmobile.vaktiva.data.remote.UmmahApiService
 import com.ybugmobile.vaktiva.data.remote.dto.PrayerDayDto
-import com.ybugmobile.vaktiva.data.remote.dto.UmmahPrayerDayDto
 import com.ybugmobile.vaktiva.domain.model.MoonPhase
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
@@ -24,7 +22,6 @@ import javax.inject.Inject
 
 class PrayerRepositoryImpl @Inject constructor(
     private val aladhanApi: AladhanApiService,
-    private val ummahApi: UmmahApiService,
     private val localCalculator: LocalPrayerCalculator,
     private val dao: PrayerDao,
     private val statusDao: PrayerStatusDao
@@ -107,21 +104,6 @@ class PrayerRepositoryImpl @Inject constructor(
 
         if (aladhanResult.isSuccess) return aladhanResult
 
-        val ummahResult = try {
-            val response = ummahApi.getPrayerTimesCalendar(latitude, longitude, year, month, method)
-            if (response.data != null) {
-                val entities = response.data.map { it.toEntity() }
-                dao.insertPrayerDays(entities)
-                Result.success(Unit)
-            } else {
-                Result.failure(Exception("UmmahAPI Error"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-
-        if (ummahResult.isSuccess) return ummahResult
-
         return try {
             val localEntities = localCalculator.calculateMonthlyPrayerTimes(year, month, latitude, longitude, method)
             dao.insertPrayerDays(localEntities)
@@ -146,19 +128,6 @@ class PrayerRepositoryImpl @Inject constructor(
         return PrayerDayEntity(
             date = formattedDate,
             hijriDate = "${date.hijri.day} ${date.hijri.month.number} ${date.hijri.month.en} ${date.hijri.year}",
-            fajr = timings.fajr.cleanTime(),
-            sunrise = timings.sunrise.cleanTime(),
-            dhuhr = timings.dhuhr.cleanTime(),
-            asr = timings.asr.cleanTime(),
-            maghrib = timings.maghrib.cleanTime(),
-            isha = timings.isha.cleanTime()
-        )
-    }
-
-    private fun UmmahPrayerDayDto.toEntity(): PrayerDayEntity {
-        return PrayerDayEntity(
-            date = date,
-            hijriDate = "",
             fajr = timings.fajr.cleanTime(),
             sunrise = timings.sunrise.cleanTime(),
             dhuhr = timings.dhuhr.cleanTime(),

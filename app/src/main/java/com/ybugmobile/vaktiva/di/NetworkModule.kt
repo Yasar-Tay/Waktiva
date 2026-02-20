@@ -1,7 +1,6 @@
 package com.ybugmobile.vaktiva.di
 
 import com.ybugmobile.vaktiva.data.remote.AladhanApiService
-import com.ybugmobile.vaktiva.data.remote.UmmahApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,16 +40,5 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AladhanApiService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideUmmahApiService(okHttpClient: OkHttpClient): UmmahApiService {
-        return Retrofit.Builder()
-            .baseUrl(UmmahApiService.BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(UmmahApiService::class.java)
     }
 }
