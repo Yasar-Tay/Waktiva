@@ -1,12 +1,7 @@
 package com.ybugmobile.vaktiva.ui.qibla
 
-import android.Manifest
-import android.content.Intent
 import android.content.res.Configuration
 import android.hardware.SensorManager
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -16,8 +11,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material.icons.rounded.ReportProblem
 import androidx.compose.material.icons.rounded.WifiOff
 import androidx.compose.material3.*
@@ -28,9 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -42,7 +33,6 @@ import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.ui.home.composables.LocationSection
 import com.ybugmobile.vaktiva.ui.qibla.composables.*
-import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthCard
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthIndicator
@@ -142,6 +132,46 @@ fun QiblaScreen(
                     onCalibrationClick = { showCalibrationDialog = true },
                     onStatusClick = { showHealthOverlay = true }
                 )
+            }
+        }
+
+        // Calibration Alert FAB
+        if (isAccuracyLow || isAccuracyUnreliable) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.BottomStart
+            ) {
+                val calPulseTransition = rememberInfiniteTransition(label = "calPulse")
+                val calScale by calPulseTransition.animateFloat(
+                    initialValue = 1f,
+                    targetValue = 1.15f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(1000, easing = FastOutSlowInEasing),
+                        repeatMode = RepeatMode.Reverse
+                    ),
+                    label = "calScale"
+                )
+
+                Surface(
+                    onClick = { showCalibrationDialog = true },
+                    shape = CircleShape,
+                    color = Color(0xFFFACC15), // Warning Yellow
+                    shadowElevation = 8.dp,
+                    modifier = Modifier
+                        .size(56.dp)
+                        .graphicsLayer(scaleX = calScale, scaleY = calScale)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Rounded.ReportProblem,
+                            contentDescription = "Calibrate",
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
             }
         }
 
