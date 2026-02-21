@@ -346,8 +346,9 @@ class HomeViewModel @Inject constructor(
         }
         
         if (forceFullRefresh) {
-            for (month in 1..12) {
-                prayerRepository.refreshPrayerTimes(now.year, month, lat, lng, s.calculationMethod)
+            for (i in 0..2) {
+                val fetchDate = now.plusMonths(i.toLong())
+                prayerRepository.refreshPrayerTimes(fetchDate.year, fetchDate.monthValue, lat, lng, s.calculationMethod)
             }
         } else {
             prayerRepository.refreshPrayerTimes(now.year, now.monthValue, lat, lng, s.calculationMethod)

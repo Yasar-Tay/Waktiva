@@ -39,35 +39,30 @@ class PrayerUpdateWorker @AssistedInject constructor(
             val remainingDays = repository.getRemainingDaysCount(currentDate)
             Log.d("PrayerUpdateWorker", "Remaining days in cache: $remainingDays")
             
-            // If less than 15 days of data remaining, proactively fetch to maintain a 30-day buffer
+            // If less than 15 days of data remaining, proactively fetch to maintain a buffer
             if (remainingDays < 15) {
-                Log.d("PrayerUpdateWorker", "Proactively fetching prayer times for current and next month")
+                Log.d("PrayerUpdateWorker", "Proactively fetching prayer times for next 3 months")
                 
-                // Fetch current month
-                val resultCurrent = repository.refreshPrayerTimes(
-                    year = calendar.get(Calendar.YEAR),
-                    month = calendar.get(Calendar.MONTH) + 1,
-                    latitude = settings.latitude,
-                    longitude = settings.longitude,
-                    method = settings.calculationMethod
-                )
+                var allSuccess = true
                 
-                // Fetch next month
-                val nextMonthCal = calendar.clone() as Calendar
-                nextMonthCal.add(Calendar.MONTH, 1)
-                val resultNext = repository.refreshPrayerTimes(
-                    year = nextMonthCal.get(Calendar.YEAR),
-                    month = nextMonthCal.get(Calendar.MONTH) + 1,
-                    latitude = settings.latitude,
-                    longitude = settings.longitude,
-                    method = settings.calculationMethod
-                )
+                // Fetch current and next 2 months (Total 3 months)
+                for (i in 0..2) {
+                    val fetchCal = calendar.clone() as Calendar
+                    fetchCal.add(Calendar.MONTH, i)
+                    val result = repository.refreshPrayerTimes(
+                        year = fetchCal.get(Calendar.YEAR),
+                        month = fetchCal.get(Calendar.MONTH) + 1,
+                        latitude = settings.latitude,
+                        longitude = settings.longitude,
+                        method = settings.calculationMethod
+                    )
+                    if (!result.isSuccess) allSuccess = false
+                }
                 
-                if (resultCurrent.isSuccess && resultNext.isSuccess) {
+                if (allSuccess) {
                     scheduleAlarms()
                     Result.success()
                 } else {
-                    // If one fails, we retry later
                     Result.retry()
                 }
             } else {
