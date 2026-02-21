@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.hardware.SensorManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -44,6 +45,7 @@ import com.ybugmobile.vaktiva.ui.qibla.composables.*
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthCard
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
+import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthIndicator
 import com.ybugmobile.vaktiva.ui.theme.GlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
@@ -119,7 +121,8 @@ fun QiblaScreen(
                 isRefreshing = isRefreshing,
                 hasPrayerData = false,
                 contentColor = contentColor,
-                glassTheme = glassTheme
+                glassTheme = glassTheme,
+                onStatusClick = { showHealthOverlay = true }
             )
         } else {
             PullToRefreshBox(
@@ -188,42 +191,9 @@ private fun QiblaContent(
 
     val currentTheme = if (isMapView) lightGlassTheme else glassTheme
 
-    val statusIcon = if (!state.isNetworkAvailable || state.hasSystemIssues) {
-        @Composable {
-            val color = Color(0xFFFF5252)
-            val iconPulseTransition = rememberInfiniteTransition(label = "iconPulse")
-            val iconScale by iconPulseTransition.animateFloat(
-                initialValue = 1f,
-                targetValue = 1.12f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(1000, easing = FastOutSlowInEasing),
-                    repeatMode = RepeatMode.Reverse
-                ),
-                label = "iconScale"
-            )
-
-            Surface(
-                onClick = onStatusClick,
-                shape = CircleShape,
-                color = Color.White,
-                shadowElevation = 10.dp,
-                tonalElevation = 6.dp,
-                border = androidx.compose.foundation.BorderStroke(2.dp, color.copy(alpha = 0.7f)),
-                modifier = Modifier.size(46.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = if (!state.isNetworkAvailable) Icons.Rounded.WifiOff else Icons.Rounded.PriorityHigh,
-                        contentDescription = "Status",
-                        tint = color,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .graphicsLayer(scaleX = iconScale, scaleY = iconScale)
-                    )
-                }
-            }
-        }
-    } else null
+    val statusIndicator = @Composable {
+        SystemHealthIndicator(onClick = onStatusClick)
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (isMapView && !isLandscape) {
@@ -440,10 +410,8 @@ private fun QiblaContent(
 
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Column(horizontalAlignment = Alignment.Start) {
-                            if (statusIcon != null) {
-                                statusIcon()
-                                Spacer(Modifier.height(12.dp))
-                            }
+                            statusIndicator()
+                            Spacer(Modifier.height(12.dp))
                             QiblaInfoCard(
                                 isAligned = isAligned,
                                 alignmentColor = alignmentColor,
@@ -545,10 +513,8 @@ private fun QiblaContent(
 
                 Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Column(horizontalAlignment = Alignment.Start) {
-                        if (statusIcon != null) {
-                            statusIcon()
-                            Spacer(Modifier.height(12.dp))
-                        }
+                        statusIndicator()
+                        Spacer(Modifier.height(12.dp))
                         QiblaInfoCard(
                             isAligned = isAligned,
                             alignmentColor = alignmentColor,

@@ -48,6 +48,7 @@ import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
+import com.ybugmobile.vaktiva.utils.PermissionUtils
 import java.time.LocalDate
 import java.time.LocalTime
 import kotlinx.coroutines.launch
@@ -133,7 +134,11 @@ fun HomeScreenContent(
 
     val contentColor = glassTheme.contentColor
 
-    val statusIcon: @Composable (() -> Unit)? = if (permissionState.allPermissionsGranted && (!state.isNetworkAvailable || state.hasSystemIssues)) {
+    val hasNotificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        permissionState.permissions.find { it.permission == Manifest.permission.POST_NOTIFICATIONS }?.status?.isGranted ?: true
+    } else true
+
+    val statusIcon: @Composable (() -> Unit)? = if (!hasNotificationPermission || !state.isNetworkAvailable || state.hasSystemIssues) {
         {
             val color = Color(0xFFFF5252)
             val iconPulseTransition = rememberInfiniteTransition(label = "iconPulse")
