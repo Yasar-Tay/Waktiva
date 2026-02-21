@@ -45,21 +45,16 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.Vaktiva" />
-
-        <activity
-            android:name=".ui.adhan.SkipAdhanActivity"
-            android:exported="false"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
-            android:launchMode="singleTop"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
             android:theme="@style/Theme.Vaktiva" />
 
         <service
             android:name=".service.AdhanService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="mediaPlayback">
+            android:foregroundServiceType="mediaPlayback"
+            tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaSessionService" />
             </intent-filter>
