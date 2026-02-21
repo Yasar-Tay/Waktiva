@@ -30,9 +30,8 @@ fun ReligiousBadge(
     modifier: Modifier = Modifier,
     hijriDate: HijriData? = null
 ) {
-    val religiousDay = ReligiousDaysProvider.getReligiousDay(hijriDate)
+    val religiousDay = ReligiousDaysProvider.getReligiousDay(date)
     
-    // We only show the badge if today (based on effective hijri) is a religious day
     val holidayToShow = religiousDay ?: return
 
     val label = stringResource(holidayToShow.nameResId)
@@ -81,19 +80,17 @@ fun getCalendarAccentColor(
     hijriDay: Int?,
     contentColor: Color
 ): Color {
-    val hijriData = if (hijriMonth != null && hijriDay != null) {
-        HijriData(hijriDay, hijriMonth, "", 0)
-    } else null
-    
-    val religiousDay = ReligiousDaysProvider.getReligiousDay(hijriData)
+    val religiousDay = ReligiousDaysProvider.getReligiousDay(date)
     val isToday = date == LocalDate.now()
     
-    val isEid = isEid(hijriMonth, hijriDay, religiousDay)
+    val isEid = isEid(religiousDay)
     val isRamadan = isRamadan(hijriMonth, religiousDay)
+    val isEve = isEve(religiousDay)
 
     return when {
         isEid -> Color(0xFFFFD54F) // Soft Gold
         isRamadan -> Color(0xFF81C784) // Sage Green
+        isEve -> Color(0xFFBA68C8) // Soft Purple (Distinct from Gold)
         religiousDay != null -> Color(0xFFBA68C8) // Soft Purple
         isToday -> Color(0xFF42A5F5) // Remarkable Vibrant Blue
         else -> contentColor.copy(alpha = 0.15f)
@@ -107,12 +104,13 @@ fun isRamadan(hijriMonth: Int?, religiousDay: ReligiousDay?): Boolean {
            religiousDay?.nameResId == R.string.rel_day_kadir
 }
 
-fun isEid(hijriMonth: Int?, hijriDay: Int?, religiousDay: ReligiousDay?): Boolean {
-    return (hijriMonth == 10 && hijriDay in 1..3) || 
-           (hijriMonth == 12 && hijriDay in 10..13) ||
-           religiousDay?.nameResId == R.string.rel_day_ramadan_eid ||
-           religiousDay?.nameResId == R.string.rel_day_sacrifice_eid ||
-           religiousDay?.nameResId == R.string.rel_day_eid_eve
+fun isEid(religiousDay: ReligiousDay?): Boolean {
+    return religiousDay?.nameResId == R.string.rel_day_ramadan_eid ||
+           religiousDay?.nameResId == R.string.rel_day_sacrifice_eid
+}
+
+fun isEve(religiousDay: ReligiousDay?): Boolean {
+    return religiousDay?.nameResId == R.string.rel_day_eid_eve
 }
 
 // Overload for simpler calls

@@ -160,13 +160,13 @@ fun ModernCalendarStrip(
                 val isSelected = date == selectedDate
                 val isToday = date == today
 
-                val religiousDay = ReligiousDaysProvider.getReligiousDay(hijri)
+                val religiousDay = ReligiousDaysProvider.getReligiousDay(date)
                 val hijriMonth = hijri?.monthNumber
                 val hijriDayNum = hijri?.day
                 
-                val isRamadan = isRamadan(hijriMonth, religiousDay)
-                val isEid = isEid(hijriMonth, hijriDayNum, religiousDay)
                 val accentColor = getCalendarAccentColor(date, hijriMonth, hijriDayNum, contentColor)
+                val isRamadan = isRamadan(hijriMonth, religiousDay)
+                val isEid = isEid(religiousDay)
 
                 val cardBgColor by animateColorAsState(
                     targetValue = when {

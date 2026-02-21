@@ -1,10 +1,11 @@
 package com.ybugmobile.vaktiva.domain.model
 
+import java.time.LocalDate
+
 /**
- * Represents a significant day in the Islamic calendar.
+ * Represents a significant religious day anchored to a Gregorian date.
  */
 data class ReligiousDay(
-    val month: Int,
-    val day: Int,
+    val date: LocalDate,
     val nameResId: Int
 )

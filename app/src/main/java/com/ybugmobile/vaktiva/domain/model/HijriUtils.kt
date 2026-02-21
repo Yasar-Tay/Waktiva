@@ -24,16 +24,18 @@ object HijriUtils {
         todayDate: LocalDate = LocalDate.now(),
         startsAtMaghrib: Boolean = true
     ): HijriData? {
-        val isPastRollover = if (startsAtMaghrib) {
+        // Rollover logic should only apply when we are viewing "Today" relative to system time.
+        // For any other date, we show the standard Hijri date for that Gregorian day.
+        val isTargetToday = targetDate == todayDate
+        
+        val isPastRollover = if (startsAtMaghrib && isTargetToday) {
             val todayRecord = allPrayerDays.find { it.date == todayDate }
             val maghribTime = todayRecord?.timings?.get(PrayerType.MAGHRIB) ?: LocalTime.of(18, 0)
             currentTime.isAfter(maghribTime) || currentTime == maghribTime
         } else {
-            false // Midnight is naturally handled by Gregorian date change
+            false
         }
 
-        // If it's past Maghrib today, the Islamic day has already changed.
-        // This applies to all dates being viewed: we show the "upcoming" Hijri day.
         val sourceDate = if (isPastRollover) targetDate.plusDays(1) else targetDate
         
         return allPrayerDays.find { it.date == sourceDate }?.hijriDate 
