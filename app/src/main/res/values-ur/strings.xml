@@ -54,6 +54,7 @@
     <string name="home_adhan_unmuted">%s کے لیے اذان سنائی دے گی</string>
     <string name="home_hijri_offline_note">آف لائن ہجری حساب کا استعمال</string>
     <string name="home_hijri_offline_indicator"> (*)</string>
+    <string name="home_current_time">موجودہ وقت</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">سسٹم کی صحت</string>
@@ -138,7 +139,7 @@
     <string name="settings_notifications_sound">اطلاعات اور آواز</string>
     <string name="settings_play_adhan">اذان کی آڈیو چلائیں</string>
     <string name="settings_play_adhan_desc">نماز کا وقت ہونے پر اذان کی آواز چلائیں</string>
-    <string name="settings_adhan_sound_selection">اذان کی آواز का انتخاب</string>
+    <string name="settings_adhan_sound_selection">اذان کی آواز کا انتخاب</string>
     <string name="settings_adhan_sound_selection_desc">نماز کے اوقات میں چلنے والی آواز منتخب کریں</string>
 
     <string name="audio_settings_title">اذان کی آوازیں</string>
@@ -289,4 +290,9 @@
     <string name="notification_adhan_disabled_title">اذان غیر فعال ہے</string>
     <string name="notification_adhan_skipped_title">اذان چھوڑ دی گئی</string>
     <string name="notification_prayer_time_content">اب %s کا وقت ہے۔</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">ہجری دن کا آغاز</string>
+    <string name="settings_hijri_day_start_maghrib">مغرب سے شروع ہو</string>
+    <string name="settings_hijri_day_start_desc">ہجری تاریخ آدھی رات کے بجائے غروبِ آفتاب (مغرب) پر تبدیل کریں۔</string>
 </resources>

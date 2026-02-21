@@ -290,4 +290,9 @@
     <string name="notification_adhan_disabled_title">Adhan Deaktiviert</string>
     <string name="notification_adhan_skipped_title">Adhan Übersprungen</string>
     <string name="notification_prayer_time_content">Es ist Zeit für das %s-Gebet.</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">Beginn des Hijri-Tages</string>
+    <string name="settings_hijri_day_start_maghrib">Beginnt bei Maghrib</string>
+    <string name="settings_hijri_day_start_desc">Das Hijri-Datum bei Sonnenuntergang (Maghrib) anstelle von Mitternacht umschalten.</string>
 </resources>

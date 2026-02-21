@@ -54,6 +54,7 @@
     <string name="home_adhan_unmuted">Azan dibunyikan untuk %s</string>
     <string name="home_hijri_offline_note">Menggunakan pengiraan Hijrah luar talian</string>
     <string name="home_hijri_offline_indicator"> (*)</string>
+    <string name="home_current_time">Waktu Sekarang</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">Kesihatan Sistem</string>
@@ -289,4 +290,9 @@
     <string name="notification_adhan_disabled_title">Azan Dilumpuhkan</string>
     <string name="notification_adhan_skipped_title">Azan Dilangkau</string>
     <string name="notification_prayer_time_content">Sudah tiba waktu %s.</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">Permulaan Hari Hijriah</string>
+    <string name="settings_hijri_day_start_maghrib">Bermula pada Maghrib</string>
+    <string name="settings_hijri_day_start_desc">Tukar tarikh Hijriah pada waktu matahari terbenam (Maghrib) bukannya tengah malam.</string>
 </resources>

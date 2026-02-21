@@ -54,6 +54,7 @@
     <string name="home_adhan_unmuted">اذان برای %s فعال شد</string>
     <string name="home_hijri_offline_note">در حال استفاده از محاسبات هجری آفلاین</string>
     <string name="home_hijri_offline_indicator"> (*)</string>
+    <string name="home_current_time">زمان فعلی</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">سلامت سیستم</string>
@@ -239,7 +240,7 @@
     <string name="donate_description">برنامه Waktiva رایگان است و با دقت توسعه یافته است. حمایت شما به بدون تبلیغات ماندن برنامه و توسعه آینده آن کمک می‌کند.</string>
     <string name="donate_header">تقویت توسعه Waktiva</string>
     <string name="donate_desc">Waktiva متن‌باز و بدون تبلیغات است. مشارکت‌های شما به پوشش هزینه‌های سرور و توسعه مداوم برای ارائه بهترین تجربه اوقات شرعی کمک می‌کند.</string>
-    <string name="donate_footer">سخاوت شما این پروژه را زنده نگه می‌دارد. امیدواریم این یک منبع خیر مستمر باشد.</string>
+    <string name="donate_footer">سخاؤت شما این پروژه را زنده نگه می‌دارد. امیدواریم این یک منبع خیر مستمر باشد.</string>
     <string name="donate_button">حمایت مالی</string>
     <string name="donate_thank_you">از حمایت شما سپاسگزاریم!</string>
     <string name="donate_error">خطا در حمایت مالی. لطفاً دوباره تلاش کنید.</string>
@@ -289,4 +290,9 @@
     <string name="notification_adhan_disabled_title">اذان غیرفعال است</string>
     <string name="notification_adhan_skipped_title">اذان رد شد</string>
     <string name="notification_prayer_time_content">زمان %s فرا رسیده است.</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">آغاز روز هجری</string>
+    <string name="settings_hijri_day_start_maghrib">شروع از مغرب</string>
+    <string name="settings_hijri_day_start_desc">تغییر تاریخ هجری در هنگام غروب خورشید (مغرب) به جای نیمه‌شب.</string>
 </resources>

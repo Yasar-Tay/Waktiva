@@ -111,7 +111,7 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردو</string>
+    <string name="lang_ur">اردu</string>
     <string name="lang_bn">বাংলা</string>
     <string name="lang_fa">Farsça</string>
     <string name="lang_ms">Bahasa Melayu</string>
@@ -290,4 +290,9 @@
     <string name="notification_adhan_disabled_title">Ezan Devre Dışı</string>
     <string name="notification_adhan_skipped_title">Ezan Atlandı</string>
     <string name="notification_prayer_time_content">%s vakti geldi.</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">Hicri Gün Başlangıcı</string>
+    <string name="settings_hijri_day_start_maghrib">Akşam Vaktinde Başlar</string>
+    <string name="settings_hijri_day_start_desc">Hicri tarihi gece yarısı yerine akşam vaktinde (gün batımı) değiştirin.</string>
 </resources>

@@ -290,4 +290,9 @@
     <string name="notification_adhan_disabled_title">تم تعطيل الأذان</string>
     <string name="notification_adhan_skipped_title">تم تخطي الأذان</string>
     <string name="notification_prayer_time_content">حان وقت صلاة %s.</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">بداية اليوم الهجري</string>
+    <string name="settings_hijri_day_start_maghrib">يبدأ عند المغرب</string>
+    <string name="settings_hijri_day_start_desc">تغيير التاريخ الهجري عند غروب الشمس (المغرب) بدلاً من منتصف الليل.</string>
 </resources>

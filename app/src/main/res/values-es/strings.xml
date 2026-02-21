@@ -54,6 +54,7 @@
     <string name="home_adhan_unmuted">Adhan activado para %s</string>
     <string name="home_hijri_offline_note">Usando cálculo Hijri fuera de línea</string>
     <string name="home_hijri_offline_indicator"> (*)</string>
+    <string name="home_current_time">Hora actual</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">Salud del sistema</string>
@@ -289,4 +290,9 @@
     <string name="notification_adhan_disabled_title">Adhan desactivado</string>
     <string name="notification_adhan_skipped_title">Adhan omitido</string>
     <string name="notification_prayer_time_content">Es hora de la oración %s.</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">Inicio del día Hijri</string>
+    <string name="settings_hijri_day_start_maghrib">Comienza en el Maghrib</string>
+    <string name="settings_hijri_day_start_desc">Cambia la fecha Hijri al atardecer (Maghrib) en lugar de a medianoche.</string>
 </resources>

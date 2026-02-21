@@ -90,7 +90,7 @@
     <string name="settings_title">সেটিংস</string>
     <string name="settings_preferences">পছন্দসমূহ</string>
     <string name="settings_permissions">অনুমতিসমূহ</string>
-    <string name="settings_manage_system">সিস্টем সেটিংসে পরিচালনা করুন</string>
+    <string name="settings_manage_system">সিস্টেম সেটিংসে পরিচালনা করুন</string>
     <string name="settings_location_access">লোকেশন অ্যাক্সেস</string>
     <string name="settings_location_desc">নামাজের সময় গণনার জন্য অত্যন্ত গুরুত্বপূর্ণ। এটি ছাড়া অ্যাপটি আপনার অবস্থানের জন্য সময় আনতে পারবে না এবং নিরর্থক হয়ে পড়বে।</string>
     <string name="settings_notifications">নোটিফিকেশন</string>
@@ -290,4 +290,9 @@
     <string name="notification_adhan_disabled_title">আজান নিষ্ক্রিয়</string>
     <string name="notification_adhan_skipped_title">আজান এড়িয়ে যাওয়া হয়েছে</string>
     <string name="notification_prayer_time_content">এখন %s এর সময়।</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">হিজরি দিন শুরু</string>
+    <string name="settings_hijri_day_start_maghrib">মাগরিব থেকে শুরু</string>
+    <string name="settings_hijri_day_start_desc">মধ্যরাতের পরিবর্তে সূর্যাস্তের (মাগরিব) সময় হিজরি তারিখ পরিবর্তন করুন।</string>
 </resources>
