@@ -6,6 +6,7 @@ import android.provider.Settings
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -35,7 +36,8 @@ fun SystemHealthCard(
     showBackground: Boolean = true,
     showTitle: Boolean = true,
     contentColor: Color = Color.Unspecified,
-    onIssuesChanged: (Boolean) -> Unit = {}
+    onIssuesChanged: (Boolean) -> Unit = {},
+    onClick: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -159,6 +161,7 @@ fun SystemHealthCard(
                                 shape = RoundedCornerShape(24.dp)
                             )
                             .border(1.dp, cardBorderColor, RoundedCornerShape(24.dp))
+                            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
                             .padding(20.dp)
                     } else {
                         Modifier

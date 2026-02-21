@@ -24,7 +24,8 @@ fun SystemHealthEmptyState(
     hasPrayerData: Boolean,
     contentColor: Color,
     glassTheme: GlassTheme,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onStatusClick: (() -> Unit)? = null
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -82,7 +83,8 @@ fun SystemHealthEmptyState(
                         hasPrayerData = hasPrayerData,
                         showBackground = false,
                         showTitle = false,
-                        contentColor = contentColor
+                        contentColor = contentColor,
+                        onClick = onStatusClick
                     )
                 }
             }

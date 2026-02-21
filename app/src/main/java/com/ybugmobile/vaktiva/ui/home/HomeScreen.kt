@@ -185,12 +185,13 @@ fun HomeScreenContent(
                     modifier = Modifier.align(Alignment.Center),
                     color = contentColor
                 )
-            } else if (state.currentPrayerDay == null && (!state.isNetworkAvailable || state.hasSystemIssues)) {
+            } else if (state.currentPrayerDay == null && (!permissionState.allPermissionsGranted || !state.isNetworkAvailable || state.hasSystemIssues)) {
                 SystemHealthEmptyState(
                     isRefreshing = state.isRefreshing,
                     hasPrayerData = false,
                     contentColor = contentColor,
-                    glassTheme = glassTheme
+                    glassTheme = glassTheme,
+                    onStatusClick = { showHealthOverlay = true }
                 )
             } else {
                 PullToRefreshBox(
