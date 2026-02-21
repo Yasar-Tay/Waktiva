@@ -24,11 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.HijriData
+import com.ybugmobile.vaktiva.domain.model.HijriUtils
 import com.ybugmobile.vaktiva.ui.theme.Inter
 import java.time.LocalDate
-import java.time.chrono.HijrahChronology
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoField
 import java.util.Locale
 
 @Composable
@@ -47,17 +46,7 @@ fun HomeHeader(
 
     // Fallback Hijri calculation if network data is missing
     val effectiveHijri = remember(hijriDate, date) {
-        hijriDate ?: try {
-            val hDate = HijrahChronology.INSTANCE.date(date)
-            HijriData(
-                day = hDate.get(ChronoField.DAY_OF_MONTH),
-                monthNumber = hDate.get(ChronoField.MONTH_OF_YEAR),
-                monthEn = "", // Will be translated via resource ID
-                year = hDate.get(ChronoField.YEAR)
-            )
-        } catch (e: Exception) {
-            null
-        }
+        hijriDate ?: HijriUtils.calculateFallbackHijri(date)
     }
 
     Box(

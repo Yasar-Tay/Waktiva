@@ -290,4 +290,9 @@
     <string name="notification_adhan_disabled_title">Adhan Disabled</string>
     <string name="notification_adhan_skipped_title">Adhan Skipped</string>
     <string name="notification_prayer_time_content">It is time for %s.</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">Hijri Day Start</string>
+    <string name="settings_hijri_day_start_maghrib">Starts at Maghrib</string>
+    <string name="settings_hijri_day_start_desc">Switch Hijri date at sunset (Maghrib) instead of midnight.</string>
 </resources>

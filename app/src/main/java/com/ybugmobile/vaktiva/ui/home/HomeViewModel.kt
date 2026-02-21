@@ -22,7 +22,7 @@ import com.ybugmobile.vaktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.vaktiva.data.location.LocationWrapper
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
-import com.ybugmobile.vaktiva.domain.model.HijriData
+import com.ybugmobile.vaktiva.domain.model.HijriUtils
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import com.ybugmobile.vaktiva.domain.manager.TimeManager
 import com.ybugmobile.vaktiva.service.AdhanService
@@ -37,8 +37,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
-import java.time.chrono.HijrahChronology
-import java.time.temporal.ChronoField
 import javax.inject.Inject
 
 /**
@@ -242,34 +240,15 @@ class HomeViewModel @Inject constructor(
         allPrayerDays
     ) { (date, time, prayerDay, moon), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, issues), allDays ->
         
-        val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
+        val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.getDisplayName(context), ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
 
-        /**
-         * DISCREPANCY FIX: Unified Maghrib Rollover
-         * Islamic days start at Maghrib of the PREVIOUS Gregorian day.
-         */
-        val todayRecord = allDays.find { it.date == LocalDate.now() }
-        val maghribTime = todayRecord?.timings?.get(PrayerType.MAGHRIB) ?: LocalTime.of(18, 0)
-        val isPastMaghrib = time.toLocalTime().isAfter(maghribTime) || time.toLocalTime() == maghribTime
-
-        val effectiveHijri = if (prayerDay != null) {
-            if (isPastMaghrib) {
-                // If it's past Maghrib, every Gregorian date views the NEXT Hijri day in sequence
-                allDays.find { it.date == date.plusDays(1) }?.hijriDate ?: prayerDay.hijriDate
-            } else {
-                prayerDay.hijriDate
-            }
-        } else {
-            // Fallback: If no database record, use moon data or local calculation
-            val baseHijri = moon.hijriDate ?: calculateFallbackHijri(date)
-            if (isPastMaghrib && baseHijri != null) {
-                // Approximate rollover for local calculation
-                calculateFallbackHijri(date.plusDays(1))
-            } else {
-                baseHijri
-            }
-        }
+        val effectiveHijri = HijriUtils.getEffectiveHijriDate(
+            targetDate = date,
+            allPrayerDays = allDays,
+            currentTime = time.toLocalTime(),
+            startsAtMaghrib = currentSettings.hijriDayStartsAtMaghrib
+        )
 
         HomeViewState(
             selectedDate = date, currentTime = time, currentPrayerDay = prayerDay,
@@ -287,18 +266,6 @@ class HomeViewModel @Inject constructor(
             hasSystemIssues = issues
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))
-
-    private fun calculateFallbackHijri(date: LocalDate): HijriData? {
-        return try {
-            val hDate = HijrahChronology.INSTANCE.date(date)
-            HijriData(
-                day = hDate.get(ChronoField.DAY_OF_MONTH),
-                monthNumber = hDate.get(ChronoField.MONTH_OF_YEAR),
-                monthEn = "",
-                year = hDate.get(ChronoField.YEAR)
-            )
-        } catch (e: Exception) { null }
-    }
 
     private fun hasSettled() = _hasSettled.value
 

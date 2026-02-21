@@ -107,7 +107,8 @@ fun SettingsScreen(
                             settings = settings,
                             onLanguageClick = { showLanguageDialog = true },
                             onMadhabClick = { showMadhabDialog = true },
-                            onMethodClick = { showMethodDialog = true }
+                            onMethodClick = { showMethodDialog = true },
+                            onHijriDayStartChange = { viewModel.setHijriDayStart(it) }
                         )
                         Spacer(modifier = Modifier.height(80.dp))
                     }
@@ -154,7 +155,8 @@ fun SettingsScreen(
                         settings = settings,
                         onLanguageClick = { showLanguageDialog = true },
                         onMadhabClick = { showMadhabDialog = true },
-                        onMethodClick = { showMethodDialog = true }
+                        onMethodClick = { showMethodDialog = true },
+                        onHijriDayStartChange = { viewModel.setHijriDayStart(it) }
                     )
 
                     DataManagementSection(
@@ -242,7 +244,8 @@ private fun PreferencesSection(
     settings: UserSettings?,
     onLanguageClick: () -> Unit,
     onMadhabClick: () -> Unit,
-    onMethodClick: () -> Unit
+    onMethodClick: () -> Unit,
+    onHijriDayStartChange: (Boolean) -> Unit
 ) {
     val currentAppLocales = AppCompatDelegate.getApplicationLocales()
     val currentLanguageCode = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
@@ -277,6 +280,14 @@ private fun PreferencesSection(
                 subtitle = methods.find { it.second == s.calculationMethod }?.first ?: "",
                 icon = Icons.Rounded.Functions,
                 onClick = onMethodClick
+            )
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_hijri_day_start),
+                subtitle = stringResource(R.string.settings_hijri_day_start_desc),
+                icon = Icons.Rounded.EventRepeat,
+                checked = s.hijriDayStartsAtMaghrib,
+                onCheckedChange = onHijriDayStartChange
             )
         }
     }

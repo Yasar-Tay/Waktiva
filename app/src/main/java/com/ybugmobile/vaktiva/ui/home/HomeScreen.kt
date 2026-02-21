@@ -318,7 +318,8 @@ fun HomeScreenContent(
                                             currentTime = state.currentTime.toLocalTime(),
                                             onToggleCalendarType = onToggleCalendarType,
                                             onDateSelected = onDateSelected,
-                                            contentColor = contentColor
+                                            contentColor = contentColor,
+                                            startsAtMaghrib = settings?.hijriDayStartsAtMaghrib ?: true
                                         )
 
                                         Spacer(modifier = Modifier.height(32.dp))
@@ -487,7 +488,8 @@ fun HomeScreenContent(
                                             currentTime = state.currentTime.toLocalTime(),
                                             onToggleCalendarType = onToggleCalendarType,
                                             onDateSelected = onDateSelected,
-                                            contentColor = contentColor
+                                            contentColor = contentColor,
+                                            startsAtMaghrib = settings?.hijriDayStartsAtMaghrib ?: true
                                         )
 
                                         Spacer(modifier = Modifier.height(32.dp))

@@ -30,29 +30,14 @@ fun ReligiousBadge(
     modifier: Modifier = Modifier,
     hijriDate: HijriData? = null
 ) {
-    val religiousDay = ReligiousDaysProvider.getReligiousDay(date)
-    val tomorrowReligiousDay = if (religiousDay == null) {
-        ReligiousDaysProvider.getReligiousDay(date.plusDays(1))
-    } else null
-
-    val holidayToShow = religiousDay ?: tomorrowReligiousDay ?: return
-
-    val isToday = religiousDay != null
-
-    val label = if (isToday) {
-        stringResource(holidayToShow.nameResId)
-    } else {
-        stringResource(
-            R.string.home_tomorrow_is,
-            stringResource(holidayToShow.nameResId)
-        )
-    }
-
-    val holidayDate = if (isToday) date else date.plusDays(1)
-    val holidayHijriMonth = if (isToday) hijriDate?.monthNumber else null
-    val holidayHijriDay = if (isToday) hijriDate?.day else null
+    val religiousDay = ReligiousDaysProvider.getReligiousDay(hijriDate)
     
-    val accentColor = getCalendarAccentColor(holidayDate, holidayHijriMonth, holidayHijriDay, contentColor)
+    // We only show the badge if today (based on effective hijri) is a religious day
+    val holidayToShow = religiousDay ?: return
+
+    val label = stringResource(holidayToShow.nameResId)
+    
+    val accentColor = getCalendarAccentColor(date, hijriDate?.monthNumber, hijriDate?.day, contentColor)
 
     Surface(
         shape = RoundedCornerShape(12.dp),
@@ -96,7 +81,11 @@ fun getCalendarAccentColor(
     hijriDay: Int?,
     contentColor: Color
 ): Color {
-    val religiousDay = ReligiousDaysProvider.getReligiousDay(date)
+    val hijriData = if (hijriMonth != null && hijriDay != null) {
+        HijriData(hijriDay, hijriMonth, "", 0)
+    } else null
+    
+    val religiousDay = ReligiousDaysProvider.getReligiousDay(hijriData)
     val isToday = date == LocalDate.now()
     
     val isEid = isEid(hijriMonth, hijriDay, religiousDay)

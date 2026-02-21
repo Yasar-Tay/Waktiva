@@ -31,15 +31,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
-import com.ybugmobile.vaktiva.domain.model.HijriData
+import com.ybugmobile.vaktiva.domain.model.HijriUtils
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
-import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.provider.ReligiousDaysProvider
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.chrono.HijrahChronology
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoField
 
 @Composable
 fun ModernCalendarStrip(
@@ -49,7 +46,8 @@ fun ModernCalendarStrip(
     currentTime: LocalTime,
     onToggleCalendarType: (Boolean) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
-    contentColor: Color = Color.White
+    contentColor: Color = Color.White,
+    startsAtMaghrib: Boolean = true
 ) {
     val today = LocalDate.now()
     val monthFormatter = DateTimeFormatter.ofPattern("MMM")
@@ -126,28 +124,14 @@ fun ModernCalendarStrip(
             }
 
             // Calculate current effective hijri for the selected Gregorian date
-            // We prioritize stored hijri data if available
-            val effectiveHijri = remember(selectedDate, availableDays, currentTime) {
-                val selectedDayData = availableDays.find { it.date == selectedDate }
-                if (selectedDate == today && selectedDayData != null) {
-                    val maghribTime = selectedDayData.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
-                    if (currentTime.isAfter(maghribTime) || currentTime == maghribTime) {
-                        availableDays.find { it.date == selectedDate.plusDays(1) }?.hijriDate 
-                            ?: selectedDayData.hijriDate
-                    } else {
-                        selectedDayData.hijriDate
-                    }
-                } else {
-                    selectedDayData?.hijriDate
-                } ?: try {
-                    val hDate = HijrahChronology.INSTANCE.date(selectedDate)
-                    HijriData(
-                        day = hDate.get(ChronoField.DAY_OF_MONTH),
-                        monthNumber = hDate.get(ChronoField.MONTH_OF_YEAR),
-                        monthEn = "",
-                        year = hDate.get(ChronoField.YEAR)
-                    )
-                } catch (e: Exception) { null }
+            val effectiveHijri = remember(selectedDate, availableDays, currentTime, startsAtMaghrib) {
+                HijriUtils.getEffectiveHijriDate(
+                    targetDate = selectedDate,
+                    allPrayerDays = availableDays,
+                    currentTime = currentTime,
+                    todayDate = today,
+                    startsAtMaghrib = startsAtMaghrib
+                )
             }
 
             ReligiousBadge(date = selectedDate, contentColor = contentColor, hijriDate = effectiveHijri)
@@ -163,41 +147,20 @@ fun ModernCalendarStrip(
                 val date = prayerDay.date
                 
                 // Effective Hijri calculation for this card
-                val hijri = remember(date, prayerDay, availableDays, currentTime) {
-                    if (date == today) {
-                        val maghribTime = prayerDay.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
-                        if (currentTime.isAfter(maghribTime) || currentTime == maghribTime) {
-                            availableDays.find { it.date == date.plusDays(1) }?.hijriDate 
-                                ?: prayerDay.hijriDate
-                        } else {
-                            prayerDay.hijriDate
-                        }
-                    } else if (date.isAfter(today)) {
-                        val todayData = availableDays.find { it.date == today }
-                        val todayMaghrib = todayData?.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
-                        if (currentTime.isAfter(todayMaghrib) || currentTime == todayMaghrib) {
-                            availableDays.find { it.date == date.plusDays(1) }?.hijriDate 
-                                ?: prayerDay.hijriDate
-                        } else {
-                            prayerDay.hijriDate
-                        }
-                    } else {
-                        prayerDay.hijriDate
-                    } ?: try {
-                        val hDate = HijrahChronology.INSTANCE.date(date)
-                        HijriData(
-                            day = hDate.get(ChronoField.DAY_OF_MONTH),
-                            monthNumber = hDate.get(ChronoField.MONTH_OF_YEAR),
-                            monthEn = "",
-                            year = hDate.get(ChronoField.YEAR)
-                        )
-                    } catch (e: Exception) { null }
+                val hijri = remember(date, availableDays, currentTime, startsAtMaghrib) {
+                    HijriUtils.getEffectiveHijriDate(
+                        targetDate = date,
+                        allPrayerDays = availableDays,
+                        currentTime = currentTime,
+                        todayDate = today,
+                        startsAtMaghrib = startsAtMaghrib
+                    )
                 }
 
                 val isSelected = date == selectedDate
                 val isToday = date == today
 
-                val religiousDay = ReligiousDaysProvider.getReligiousDay(date)
+                val religiousDay = ReligiousDaysProvider.getReligiousDay(hijri)
                 val hijriMonth = hijri?.monthNumber
                 val hijriDayNum = hijri?.day
                 

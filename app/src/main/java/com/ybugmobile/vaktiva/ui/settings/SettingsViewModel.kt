@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -55,6 +54,12 @@ class SettingsViewModel @Inject constructor(
     fun setSetupComplete(complete: Boolean) {
         viewModelScope.launch {
             settingsManager.setSetupComplete(complete)
+        }
+    }
+
+    fun setHijriDayStart(startsAtMaghrib: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updateHijriDayStart(startsAtMaghrib)
         }
     }
 
