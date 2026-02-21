@@ -42,6 +42,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.settings.AudioSettingsViewModel
 import com.ybugmobile.vaktiva.ui.settings.SettingsViewModel
 import com.ybugmobile.vaktiva.utils.LanguageUtils
@@ -296,6 +297,7 @@ private fun PreferencesStep(
 ) {
     val settings by settingsViewModel.settings.collectAsState(null)
     val audioItems by audioViewModel.audioItems.collectAsState()
+    val selectedPrayerType by audioViewModel.selectedPrayerType.collectAsState()
     
     val currentAppLocales = AppCompatDelegate.getApplicationLocales()
     val currentLanguage = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
@@ -303,6 +305,7 @@ private fun PreferencesStep(
     var showMethodDialog by rememberSaveable { mutableStateOf(false) }
     var showMadhabDialog by rememberSaveable { mutableStateOf(false) }
     var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
+    var showAudioSelectionDialog by remember { mutableStateOf(false) }
 
     val methods = listOf(
         stringResource(R.string.method_mwl) to 3,
@@ -322,6 +325,8 @@ private fun PreferencesStep(
         stringResource(R.string.madhab_shafi) to 0,
         stringResource(R.string.madhab_hanafi) to 1
     )
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp).systemBarsPadding()
@@ -402,7 +407,7 @@ private fun PreferencesStep(
                         )
                     }
                 }
-                
+
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
@@ -454,16 +459,72 @@ private fun PreferencesStep(
                     }
                 }
 
-                Text(stringResource(R.string.welcome_select_sound), style = MaterialTheme.typography.titleSmall, color = Color.White, modifier = Modifier.padding(top = 8.dp))
-                
-                audioItems.forEach { item ->
-                    AudioSelectionItem(
-                        name = item.name,
-                        isSelected = item.isSelected,
-                        isPlaying = item.isPlaying,
-                        onSelect = { audioViewModel.selectAudio(item.path) },
-                        onTogglePreview = { audioViewModel.togglePreview(item.path) }
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.White.copy(alpha = 0.05f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(stringResource(id = R.string.audio_individual_sounds_title), fontWeight = FontWeight.Bold, color = Color.White)
+                            Text(stringResource(id = R.string.audio_individual_sounds_desc), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
+                        }
+                        Switch(
+                            checked = settings?.useSpecificAdhanForEachPrayer ?: false,
+                            onCheckedChange = { audioViewModel.toggleUseSpecificAdhan(it) },
+                            colors = SwitchDefaults.colors(checkedThumbColor = AccentColor)
+                        )
+                    }
+                }
+
+                if (settings?.useSpecificAdhanForEachPrayer == true) {
+                    Text(
+                        text = stringResource(id = R.string.audio_select_prayer_prompt),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Color.White,
+                        modifier = Modifier.padding(top = 8.dp)
                     )
+                    PrayerType.entries.filter { it != PrayerType.SUNRISE }.forEach { prayer ->
+                        val selectedAdhanPath = settings?.prayerSpecificAdhanPaths?.get(prayer) ?: settings?.selectedAdhanPath
+                        val adhanItem = audioItems.find { it.path == selectedAdhanPath } ?: audioItems.find { it.isDefault }
+                        
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    audioViewModel.selectPrayerType(prayer)
+                                    showAudioSelectionDialog = true
+                                },
+                            shape = RoundedCornerShape(12.dp),
+                            color = Color.White.copy(alpha = 0.05f)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(prayer.getDisplayName(context), fontWeight = FontWeight.Bold, color = Color.White)
+                                    Text(adhanItem?.name ?: "", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
+                                }
+                                Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color.White.copy(alpha = 0.3f))
+                            }
+                        }
+                    }
+                } else {
+                    Text(stringResource(R.string.welcome_select_sound), style = MaterialTheme.typography.titleSmall, color = Color.White, modifier = Modifier.padding(top = 8.dp))
+                    
+                    audioItems.forEach { item ->
+                        AudioSelectionItem(
+                            name = item.name,
+                            isSelected = item.isSelected,
+                            isPlaying = item.isPlaying,
+                            onSelect = { audioViewModel.selectAudio(item.path) },
+                            onTogglePreview = { audioViewModel.togglePreview(item.path) }
+                        )
+                    }
                 }
             }
         }
@@ -517,6 +578,22 @@ private fun PreferencesStep(
             selectedKey = settings?.calculationMethod ?: 3,
             onSelected = { settingsViewModel.setCalculationMethod(it); showMethodDialog = false },
             onDismiss = { showMethodDialog = false }
+        )
+    }
+
+    if (showAudioSelectionDialog) {
+        WelcomeSelectionDialog(
+            title = selectedPrayerType?.getDisplayName(context) ?: stringResource(R.string.audio_header_all_prayers),
+            options = audioItems.map { it.name to it.path },
+            selectedKey = settings?.prayerSpecificAdhanPaths?.get(selectedPrayerType) ?: settings?.selectedAdhanPath ?: "",
+            onSelected = { 
+                audioViewModel.selectAudio(it)
+                showAudioSelectionDialog = false
+            },
+            onDismiss = { 
+                audioViewModel.selectPrayerType(null)
+                showAudioSelectionDialog = false 
+            }
         )
     }
 }
