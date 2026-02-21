@@ -275,6 +275,7 @@ private fun AdhanSelectionDialog(
     onDismiss: () -> Unit
 ) {
     val glassTheme = LocalGlassTheme.current
+    var audioToDelete by remember { mutableStateOf<AdhanAudioItem?>(null) }
     
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -332,11 +333,39 @@ private fun AdhanSelectionDialog(
                         item = item,
                         onSelect = { onSelect(item.path) },
                         onTogglePreview = { onTogglePreview(item.path) },
-                        onDelete = if (!item.isDefault) { { onDelete(item.path) } } else null
+                        onDelete = if (!item.isDefault) { { audioToDelete = item } } else null
                     )
                 }
             }
         }
+    }
+
+    if (audioToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { audioToDelete = null },
+            title = { Text(stringResource(R.string.audio_delete_confirm)) },
+            text = { 
+                Text(
+                    text = "${stringResource(R.string.audio_delete_description)}\n\n\"${audioToDelete?.name}\""
+                ) 
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { 
+                        onDelete(audioToDelete!!.path)
+                        audioToDelete = null
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFF87171))
+                ) {
+                    Text(stringResource(R.string.settings_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { audioToDelete = null }) {
+                    Text(stringResource(R.string.settings_cancel))
+                }
+            }
+        )
     }
 }
 

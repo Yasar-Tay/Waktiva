@@ -49,6 +49,9 @@ class AudioSettingsViewModel @Inject constructor(
     private val _selectedPrayerType = MutableStateFlow<PrayerType?>(null)
     val selectedPrayerType: StateFlow<PrayerType?> = _selectedPrayerType.asStateFlow()
 
+    // Trigger to force refresh the audio list when files are added or deleted
+    private val _refreshTrigger = MutableStateFlow(0)
+
     val settings = settingsManager.settingsFlow
     val currentTime = timeManager.currentTime
 
@@ -58,8 +61,9 @@ class AudioSettingsViewModel @Inject constructor(
     val audioItems: StateFlow<List<AdhanAudioItem>> = combine(
         settingsManager.settingsFlow,
         _currentPlayingPath,
-        _selectedPrayerType
-    ) { settings, playingPath, selectedPrayer ->
+        _selectedPrayerType,
+        _refreshTrigger
+    ) { settings, playingPath, selectedPrayer, _ ->
         val items = mutableListOf<AdhanAudioItem>()
 
         // Built-in Adhans
@@ -225,6 +229,7 @@ class AudioSettingsViewModel @Inject constructor(
             val savedPath = audioManager.saveCustomAdhan(uri, fileName)
             if (savedPath != null) {
                 selectAudio(savedPath)
+                _refreshTrigger.value += 1
             }
         }
     }
@@ -234,6 +239,7 @@ class AudioSettingsViewModel @Inject constructor(
             val file = File(path)
             if (file.exists()) {
                 audioManager.deleteAdhan(file)
+                _refreshTrigger.value += 1
             }
         }
     }
