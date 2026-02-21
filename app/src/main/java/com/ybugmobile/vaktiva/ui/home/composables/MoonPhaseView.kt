@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.MoonPhase
+import java.util.Locale
 
 @Composable
 fun MoonPhaseView(
@@ -146,7 +147,7 @@ fun MoonPhaseView(
         }
         
         Text(
-            text = "${(moonPhase.illumination * 100).toInt()}%",
+            text = String.format(Locale.US, "%.1f%%", moonPhase.illumination * 100),
             style = MaterialTheme.typography.labelSmall.copy(
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp
