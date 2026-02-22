@@ -29,8 +29,10 @@ import com.ybugmobile.vaktiva.service.AdhanService
 import com.ybugmobile.vaktiva.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -72,8 +74,9 @@ class HomeViewModel @Inject constructor(
     private val _isAdhanPlaying = MutableStateFlow(false)
     private val _playingPrayerName = MutableStateFlow<String?>(null)
     
+    // Performance Optimization: Initial values are set, but updates are offloaded to IO
     private val _isNetworkAvailable = MutableStateFlow(PermissionUtils.isNetworkAvailable(context))
-    private val _hasSystemIssues = MutableStateFlow(checkSystemIssues())
+    private val _hasSystemIssues = MutableStateFlow(false)
 
     private var mediaController: MediaController? = null
 
@@ -143,12 +146,15 @@ class HomeViewModel @Inject constructor(
                     settingsManager.clearMutedPrayer()
                 }
             }
+            // Suggestion 2: Offload system health checks to Dispatchers.IO to keep UI thread free
             if (now.second % 30 == 0) {
-                _isNetworkAvailable.value = PermissionUtils.isNetworkAvailable(context)
-                _hasSystemIssues.value = checkSystemIssues()
+                updateHealthStatus()
             }
         }.launchIn(viewModelScope)
 
+        // Initial health check
+        updateHealthStatus()
+        
         onPermissionsGranted()
         
         combine(allPrayerDays, settings) { days, s -> 
@@ -158,6 +164,18 @@ class HomeViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
         setupMediaController()
+    }
+
+    /**
+     * Updates the health status by performing system checks on a background thread.
+     */
+    private fun updateHealthStatus() {
+        viewModelScope.launch {
+            val network = withContext(Dispatchers.IO) { PermissionUtils.isNetworkAvailable(context) }
+            val issues = withContext(Dispatchers.IO) { checkSystemIssues() }
+            _isNetworkAvailable.value = network
+            _hasSystemIssues.value = issues
+        }
     }
 
     private fun checkSystemIssues(): Boolean {
@@ -185,8 +203,8 @@ class HomeViewModel @Inject constructor(
         if (status && !lastPermissionStatus) refresh()
         lastPermissionStatus = status
         
-        _isNetworkAvailable.value = PermissionUtils.isNetworkAvailable(context)
-        _hasSystemIssues.value = checkSystemIssues()
+        // Suggestion 2: Health check on resume should also be offloaded
+        updateHealthStatus()
     }
 
     private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
