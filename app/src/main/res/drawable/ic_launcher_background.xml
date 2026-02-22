@@ -16,8 +16,8 @@
                 android:endX="54"
                 android:type="linear">
                 <item android:offset="0.0" android:color="#03F8D5" /> <!-- Daytime Blue -->
-                <item android:offset="0.5" android:color="#21799D" /> <!-- Indigo Depth -->
-                <item android:offset="1.0" android:color="#3F1B5F" /> <!-- Deep Rose Glow (Horizon) -->
+                <item android:offset="0.5" android:color="#038BC1" /> <!-- Indigo Depth -->
+                <item android:offset="1.0" android:color="#21799D" /> <!-- Deep Rose Glow (Horizon) -->
             </gradient>
         </aapt:attr>
     </path>

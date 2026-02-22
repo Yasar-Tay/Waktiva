@@ -2,24 +2,44 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Scaled up to 0.24 to occupy more of the 24dp container (approx 20.5dp) -->
+    <!-- This makes the icon content visually match the height of the status bar time -->
     <group
-        android:translateX="-12.3"
-        android:translateY="-10.5"
-        android:scaleX="0.45"
-        android:scaleY="0.45">
-        <!-- Sun Accent -->
+        android:translateX="8.0"
+        android:translateY="8.0"
+        android:scaleX="0.24"
+        android:scaleY="0.24">
+
+        <!-- 1. The Moon (Thick Crescent) -->
         <path
             android:fillColor="#FFFFFFFF"
-            android:pathData="M54,32 m-5,0 a5,5 0 1,1 10,0 a5,5 0 1,1 -10,0" />
-        <!-- Right Swoosh -->
-        <path
-            android:fillColor="#FFFFFFFF"
-            android:pathData="M80,38 C80,63 69,73 61,73 L57,73 L54,59 L59,59 C64,67 70,59 70,38 Z" />
-        <!-- Left Swoosh -->
-        <path
-            android:fillColor="#FFFFFFFF"
-            android:pathData="M28,38 C28,63 39,73 47,73 L51,73 L54,59 L49,59 C44,67 38,59 38,38 Z" />
+            android:pathData="M120,0C90,35 70,85 70,140C70,240 150,320 250,320C295,320 340,305 380,273C348,339 280,385 201,385C90,385 0,295 0,184C0,102 49,31 120,0Z" />
+
+        <!-- 2. The Sun Group -->
+        <group
+            android:pivotX="223"
+            android:pivotY="150"
+            android:scaleX="1.25"
+            android:scaleY="1.25">
+
+            <!-- Sun Rays -->
+            <path android:fillColor="#FFFFFFFF" android:pathData="M223.07,184.47L308.21,211.71V222.83L223.07,197.26V184.47Z"/>
+            <path android:fillColor="#FFFFFFFF" android:pathData="M223.07,184.69L137.01,212.29V223.02L223.07,197.32V184.69Z"/>
+            <path android:fillColor="#FFFFFFFF" android:pathData="M222.5,32L232.46,87.5H212.54L222.5,32Z"/>
+            <path android:fillColor="#FFFFFFFF" android:pathData="M128.13,69.13L174.42,101.33L160.33,115.42L128.13,69.13Z"/>
+            <path android:fillColor="#FFFFFFFF" android:pathData="M313.46,69.13L281.26,115.42L267.17,101.33L313.46,69.13Z"/>
+            <path android:fillColor="#FFFFFFFF" android:pathData="M93,158.5L148.5,148.54V168.46L93,158.5Z"/>
+            <path android:fillColor="#FFFFFFFF" android:pathData="M351,158.5L295.5,168.46V148.54L351,158.5Z"/>
+
+            <!-- Sun Core -->
+            <path
+                android:fillColor="#FFFFFFFF"
+                android:pathData="M223.1,169.72L147.46,194.38C132.57,166.71 133.82,131.79 153.55,104.69C180.98,67.04 233.75,58.75 271.4,86.18C305.78,111.22 315.68,157.37 296.27,193.87L223.1,169.72Z" />
+        </group>
+
     </group>
+
 </vector>
