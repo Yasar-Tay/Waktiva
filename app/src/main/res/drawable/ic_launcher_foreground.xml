@@ -12,7 +12,7 @@
         android:scaleX="0.12"
         android:scaleY="0.12">
 
-        <!-- 1. Atmospheric Ambient Bloom -->
+        <!-- 1. Atmospheric Ambient Bloom (Cool Toned) -->
         <path
             android:pathData="M190,192m-220,0a220,220 0,1 1,440 0a220,220 0,1 1,-440 0">
             <aapt:attr name="android:fillColor">
@@ -20,13 +20,13 @@
                     android:centerX="190" android:centerY="192"
                     android:gradientRadius="220"
                     android:type="radial">
-                    <item android:color="#1AFFFFFF" android:offset="0.0" />
+                    <item android:color="#20BAE6FD" android:offset="0.0" /> <!-- Ice Blue Glow -->
                     <item android:color="#00FFFFFF" android:offset="1.0" />
                 </gradient>
             </aapt:attr>
         </path>
 
-        <!-- 2. The Moon (Thick Crescent) with an Ivory/Glowing Gradient for better contrast -->
+        <!-- 2. The Moon (Thick Crescent) with a Glowing Ice White Gradient -->
         <path
             android:pathData="M120,0C90,35 70,85 70,140C70,240 150,320 250,320C295,320 340,305 380,273C348,339 280,385 201,385C90,385 0,295 0,184C0,102 49,31 120,0Z">
             <aapt:attr name="android:fillColor">
@@ -34,22 +34,22 @@
                     android:startX="0" android:startY="0"
                     android:endX="380" android:endY="385"
                     android:type="linear">
-                    <item android:color="#FFFFFF" android:offset="0.0" />      <!-- Bright White -->
-                    <item android:color="#FFFBEB" android:offset="0.4" />      <!-- Ivory Glow -->
-                    <item android:color="#FEF3C7" android:offset="0.7" />      <!-- Soft Amber Tint -->
-                    <item android:color="#FDE68A" android:offset="1.0" />      <!-- Depth Amber -->
+                    <item android:color="#FFFFFF" android:offset="0.0" />      <!-- Pure White Brilliance -->
+                    <item android:color="#F0F9FF" android:offset="0.4" />      <!-- Ice White Glow -->
+                    <item android:color="#E0F2FE" android:offset="0.7" />      <!-- Cool Ice Tint -->
+                    <item android:color="#BAE6FD" android:offset="1.0" />      <!-- Depth Ice Blue -->
                 </gradient>
             </aapt:attr>
         </path>
 
         <!-- 2a. Moon Craters (Subtle Surface Detail) -->
-        <path android:fillColor="#000000" android:fillAlpha="0.03" android:pathData="M80,150m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0" />
-        <path android:fillColor="#000000" android:fillAlpha="0.02" android:pathData="M110,240m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0" />
-        <path android:fillColor="#000000" android:fillAlpha="0.03" android:pathData="M140,310m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
+        <path android:fillColor="#000000" android:fillAlpha="0.02" android:pathData="M80,150m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0" />
+        <path android:fillColor="#000000" android:fillAlpha="0.01" android:pathData="M110,240m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0" />
+        <path android:fillColor="#000000" android:fillAlpha="0.02" android:pathData="M140,310m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
 
         <!-- 3. Night-side Accents (Bright Stars) -->
-        <path android:fillColor="#FFFFFF" android:fillAlpha="0.8" android:pathData="M40,100l2,2l2,-2l-2,-2z" />
-        <path android:fillColor="#FFFFFF" android:fillAlpha="0.6" android:pathData="M90,40l1.5,1.5l1.5,-1.5l-1.5,-1.5z" />
+        <path android:fillColor="#FFFFFF" android:fillAlpha="0.9" android:pathData="M40,100l2,2l2,-2l-2,-2z" />
+        <path android:fillColor="#FFFFFF" android:fillAlpha="0.7" android:pathData="M90,40l1.5,1.5l1.5,-1.5l-1.5,-1.5z" />
 
         <!-- 4. Enlarged Sun Group - Enhanced for Weather App aesthetic -->
         <group
