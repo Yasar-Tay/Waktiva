@@ -37,6 +37,7 @@ import com.ybugmobile.vaktiva.domain.provider.ReligiousDaysProvider
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun ModernCalendarStrip(
@@ -56,11 +57,13 @@ fun ModernCalendarStrip(
     val listState = rememberLazyListState()
     val density = LocalDensity.current
     val context = LocalContext.current
+    val currentLocale = Locale.getDefault()
+    val isNonLatin = currentLocale.language in listOf("ar", "fa", "ur", "bn")
+
     val isUsingCalculatedHijri = remember(availableDays, isHijriSelected) {
         isHijriSelected && availableDays.any { it.hijriDate == null }
     }
 
-    // Slower Auto-scroll to selected date
     LaunchedEffect(selectedDate) {
         val index = availableDays.indexOfFirst { it.date == selectedDate }
         if (index != -1) {
@@ -95,7 +98,6 @@ fun ModernCalendarStrip(
                 lineHeight = 14.sp
             )
         }
-        // Toggle and Religious Day Info at the top
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -123,7 +125,6 @@ fun ModernCalendarStrip(
                 }
             }
 
-            // Calculate current effective hijri for the selected Gregorian date
             val effectiveHijri = remember(selectedDate, availableDays, currentTime, startsAtMaghrib) {
                 HijriUtils.getEffectiveHijriDate(
                     targetDate = selectedDate,
@@ -146,7 +147,6 @@ fun ModernCalendarStrip(
             itemsIndexed(availableDays) { index, prayerDay ->
                 val date = prayerDay.date
                 
-                // Effective Hijri calculation for this card
                 val hijri = remember(date, availableDays, currentTime, startsAtMaghrib) {
                     HijriUtils.getEffectiveHijriDate(
                         targetDate = date,
@@ -224,7 +224,7 @@ fun ModernCalendarStrip(
                             Text(
                                 text = monthText,
                                 color = if (isToday || religiousDay != null || isRamadan || isEid) contentColor else contentColor.copy(alpha = 0.6f),
-                                fontSize = 10.sp,
+                                fontSize = if (isNonLatin) 11.sp else 10.sp,
                                 fontWeight = FontWeight.Black,
                                 letterSpacing = 0.5.sp
                             )
@@ -244,7 +244,7 @@ fun ModernCalendarStrip(
                         Text(
                             text = date.format(dayNameFormatter).uppercase(),
                             color = contentColor.copy(alpha = if (isSelected || isToday) 1f else 0.4f),
-                            fontSize = 11.sp,
+                            fontSize = if (isNonLatin) 12.sp else 11.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(bottom = 6.dp)
                         )

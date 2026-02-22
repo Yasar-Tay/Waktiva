@@ -43,6 +43,7 @@ import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
+import com.ybugmobile.vaktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -70,10 +71,8 @@ fun PrayerCircleVisualization(
 
     var canvasSize by remember { mutableStateOf(Size.Zero) }
 
-    // Selection State
     var selectedInfo by remember { mutableStateOf<DetailedInfo?>(null) }
     
-    // Auto-dismiss selection after some time
     LaunchedEffect(selectedInfo) {
         if (selectedInfo != null) {
             delay(4000)
@@ -81,7 +80,6 @@ fun PrayerCircleVisualization(
         }
     }
 
-    // Pulse Animation for Active Prayer
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -93,7 +91,6 @@ fun PrayerCircleVisualization(
         label = "pulseScale"
     )
 
-    // Smooth rotation for the clock handle
     val rotationAngle by animateFloatAsState(
         targetValue = if (isSelectedDayToday) {
             val totalMinutes = currentTime.hour * 60 + currentTime.minute
@@ -152,7 +149,6 @@ fun PrayerCircleVisualization(
 
     val currentPrayerColor = prayers.find { it.type == currentPrayerType }?.color ?: Color.White
 
-    // Animated scales for prayer markers
     val prayerScales = prayers.map { prayer ->
         animateFloatAsState(
             targetValue = if (selectedInfo?.id == prayer.type.name) 1.25f else 1f,
@@ -161,7 +157,6 @@ fun PrayerCircleVisualization(
         )
     }
 
-    // Animated scale for current time dot
     val currentTimeDotScale by animateFloatAsState(
         targetValue = if (selectedInfo?.id == "CURRENT") 1.4f else 1f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
@@ -186,7 +181,6 @@ fun PrayerCircleVisualization(
                         
                         var hit: DetailedInfo? = null
                         
-                        // Check Current Time Dot
                         if (isSelectedDayToday) {
                             val currentPos = getPosition(currentTime, radius, center)
                             if ((tapOffset - currentPos).getDistance() <= 32.dp.toPx()) {
@@ -200,7 +194,6 @@ fun PrayerCircleVisualization(
                             }
                         }
 
-                        // Check Prayers
                         if (hit == null) {
                             for (prayer in prayers) {
                                 val pos = getPosition(prayer.time, radius, center)
@@ -231,7 +224,6 @@ fun PrayerCircleVisualization(
             val center = Offset(size.width / 2, size.height / 2)
             val radius = size.width / 2 - 20.dp.toPx()
 
-            // 1. Background Track
             drawCircle(
                 color = contentColor.copy(alpha = 0.08f),
                 radius = radius,
@@ -239,7 +231,6 @@ fun PrayerCircleVisualization(
                 style = Stroke(width = 2.dp.toPx())
             )
 
-            // Hour ticks
             for (i in 0 until 24) {
                 val angle = i * 15f + 90f
                 val angleRad = Math.toRadians(angle.toDouble())
@@ -256,7 +247,6 @@ fun PrayerCircleVisualization(
                 )
             }
 
-            // 2. Daylight Arc
             val sunriseMinutes = sunrise.hour * 60 + sunrise.minute
             val sunsetMinutes = sunset.hour * 60 + sunset.minute
             
@@ -293,7 +283,6 @@ fun PrayerCircleVisualization(
                 style = Stroke(width = 6.dp.toPx(), cap = StrokeCap.Round)
             )
 
-            // 3. Current Time Clock Handle
             if (isSelectedDayToday) {
                 withTransform({
                     rotate(rotationAngle, center)
@@ -312,7 +301,6 @@ fun PrayerCircleVisualization(
                 }
             }
 
-            // 4. Prayer Markers
             prayers.forEachIndexed { index, (type, time, color, painter) ->
                 val pos = getPosition(time, radius, center)
                 val isCurrent = type == currentPrayerType && isSelectedDayToday
@@ -368,7 +356,6 @@ fun PrayerCircleVisualization(
                 }
             }
 
-            // 5. Current Time Dot
             if (isSelectedDayToday) {
                 val currentPos = getPosition(currentTime, radius, center)
                 val scale = currentTimeDotScale
@@ -399,7 +386,6 @@ fun PrayerCircleVisualization(
                 }
             }
 
-            // 6. Prayer Time Text
             prayers.forEach { prayer ->
                 val prayerTime = prayer.time.format(formatter)
                 val pos = getPosition(prayer.time, radius, center)
@@ -408,7 +394,8 @@ fun PrayerCircleVisualization(
                     style = TextStyle(
                         color = contentColor.copy(alpha = 0.7f),
                         fontSize = 11.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontFamily = IBMPlexArabic,
+                        fontWeight = FontWeight.Bold
                     )
                 )
 
@@ -424,14 +411,12 @@ fun PrayerCircleVisualization(
             }
         }
 
-        // Center Content Overlay
         CurrentPrayerHeader(
             currentPrayer = currentPrayer,
             contentColor = contentColor,
             iconColor = currentPrayerColor
         )
 
-        // 7. Modern Sleek Info Overlay (Centered under the icon) - High Z-Index to avoid being hidden
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -445,7 +430,7 @@ fun PrayerCircleVisualization(
                         .togetherWith(slideOutVertically { it / 2 } + fadeOut(tween(200)))
                 },
                 label = "info_card",
-                modifier = Modifier.offset(y = 70.dp) // Positioned exactly under the 56dp central icon
+                modifier = Modifier.offset(y = 70.dp)
             ) { info ->
                 if (info != null) {
                     InfoGlassCard(info)
@@ -459,9 +444,6 @@ fun PrayerCircleVisualization(
 fun InfoGlassCard(info: DetailedInfo) {
     val glassTheme = LocalGlassTheme.current
     
-    // Adaptive glass design logic:
-    // glassTheme.isLightMode == true means background is DARK (Night). We use a LIGHT glass card.
-    // glassTheme.isLightMode == false means background is LIGHT (Day). We use a DARK glass card.
     val containerColor = if (glassTheme.isLightMode) {
         Color.White.copy(alpha = 0.22f)
     } else {
@@ -484,7 +466,6 @@ fun InfoGlassCard(info: DetailedInfo) {
             .height(56.dp)
             .drawWithContent {
                 drawContent()
-                // Glass-like highlight border
                 drawRoundRect(
                     color = borderColor,
                     size = size,
@@ -535,7 +516,8 @@ fun InfoGlassCard(info: DetailedInfo) {
                     text = info.time,
                     style = TextStyle(
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Black,
+                        fontFamily = IBMPlexArabic,
+                        fontWeight = FontWeight.Bold,
                         color = Color.White,
                         letterSpacing = (-0.5).sp
                     )

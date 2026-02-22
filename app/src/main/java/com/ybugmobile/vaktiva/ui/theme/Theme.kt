@@ -55,9 +55,9 @@ fun VaktivaTheme(
         val locale = Locale.getDefault()
         val language = locale.language
         when (language) {
-            "ar", "fa", "ur" -> ArabicTypography
-            "bn" -> HindTypography
-            else -> InterTypography
+            "ar", "fa", "ur" -> ArabicComposedTypography
+            "bn" -> BengaliComposedTypography
+            else -> DefaultComposedTypography
         }
     }
 

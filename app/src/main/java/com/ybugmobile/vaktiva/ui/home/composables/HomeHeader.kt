@@ -199,7 +199,11 @@ private fun DatesSection(
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         text = String.format(currentLocale, "%d", hijriDate.day),
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            fontFamily = if (currentLocale.language in listOf("ar", "fa", "ur")) 
+                                MaterialTheme.typography.headlineSmall.fontFamily 
+                            else MaterialTheme.typography.titleMedium.fontFamily
+                        ),
                         color = contentColor
                     )
                     Spacer(modifier = Modifier.width(6.dp))

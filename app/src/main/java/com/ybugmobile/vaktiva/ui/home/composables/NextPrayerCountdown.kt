@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
@@ -23,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
+import com.ybugmobile.vaktiva.ui.theme.IBMPlexArabic
 import java.time.LocalDate
 import java.util.Locale
 
@@ -162,7 +162,7 @@ private fun ResponsiveCountdownText(
         text = text,
         style = TextStyle(
             fontSize = fontSize,
-            fontFamily = FontFamily.Default,
+            fontFamily = IBMPlexArabic,
             fontWeight = FontWeight.ExtraLight,
             fontFeatureSettings = "tnum",
             letterSpacing = (-2).sp,
