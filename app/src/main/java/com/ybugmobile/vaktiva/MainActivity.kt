@@ -26,6 +26,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -328,12 +329,12 @@ fun SmoothTouchNavigationRail(
     var tabHeight by remember { mutableStateOf(0.dp) }
 
     Surface(
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-        tonalElevation = 8.dp,
+        color = Color(0xFFF8F9FA), // Solid light color
+        tonalElevation = 4.dp,
         shape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp),
         modifier = Modifier
             .fillMaxHeight()
-            .width(72.dp)
+            .width(80.dp)
             .padding(vertical = 40.dp)
     ) {
         Box(
@@ -362,7 +363,7 @@ fun SmoothTouchNavigationRail(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(
-                                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                                color = Color(0xFFE9ECEF), // Light gray indicator
                                 shape = RoundedCornerShape(16.dp)
                             )
                     )
@@ -384,7 +385,7 @@ fun SmoothTouchNavigationRail(
                         contentAlignment = Alignment.Center
                     ) {
                         val contentColor by animateColorAsState(
-                            targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            targetValue = if (isSelected) Color(0xFF212529) else Color(0xFF6C757D),
                             label = "contentColor"
                         )
                         Icon(
@@ -400,7 +401,7 @@ fun SmoothTouchNavigationRail(
     }
 }
 
-/** A modern, animated bottom navigation bar with a glass-like aesthetic and spring selection. */
+/** A modern, animated bottom navigation bar with a solid light background and spring selection. */
 @Composable
 fun SmoothTouchNavigationBar(
     items: List<NavigationItem>,
@@ -412,8 +413,8 @@ fun SmoothTouchNavigationBar(
     var tabWidth by remember { mutableStateOf(0.dp) }
 
     Surface(
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-        tonalElevation = 8.dp,
+        color = Color(0xFFF8F9FA), // Solid light color
+        tonalElevation = 4.dp,
         shape = RoundedCornerShape(24.dp),
         modifier = Modifier
             .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
@@ -446,7 +447,7 @@ fun SmoothTouchNavigationBar(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(
-                                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                                color = Color(0xFFE9ECEF), // Light gray indicator
                                 shape = RoundedCornerShape(16.dp)
                             )
                     )
@@ -468,7 +469,7 @@ fun SmoothTouchNavigationBar(
                         contentAlignment = Alignment.Center
                     ) {
                         val contentColor by animateColorAsState(
-                            targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            targetValue = if (isSelected) Color(0xFF212529) else Color(0xFF6C757D),
                             label = "contentColor"
                         )
                         Icon(
