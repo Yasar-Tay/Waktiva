@@ -5,87 +5,103 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Highly Optimized & Enhanced Foreground Icon -->
+    <!-- Center the composition within the 66dp safe zone -->
     <group
-        android:translateX="33.0"
-        android:translateY="32.8"
-        android:scaleX="0.11"
-        android:scaleY="0.11">
+        android:translateX="30.0"
+        android:translateY="30.0"
+        android:scaleX="0.12"
+        android:scaleY="0.12">
 
-        <!-- Deep Shadow / Base for Crescent -->
+        <!-- 1. Atmospheric Ambient Bloom -->
         <path
-            android:fillColor="#000000"
-            android:fillAlpha="0.05"
-            android:pathData="M125,5C86,40 63,90 63,145C63,249 147,334 252,334C304,334 352,312 386,278C353,344 285,390 206,390C95,390 5,300 5,189C5,107 54,36 125,5Z"/>
-
-        <!-- Premium Crescent with Silk-like Gradient -->
-        <path
-            android:pathData="M120.08,0C81.95,34.58 58,84.51 58,140.04C58,244.43 142.62,329.04 247,329.04C299.51,329.04 347.01,307.63 381.26,273.06C348.43,339.42 280.04,385.04 201,385.04C89.99,385.04 0,295.05 0,184.04C0,101.82 49.37,31.14 120.08,0Z">
+            android:pathData="M190,192m-220,0a220,220 0,1 1,440 0a220,220 0,1 1,-440 0">
             <aapt:attr name="android:fillColor">
                 <gradient
-                    android:startX="191"
-                    android:startY="0"
-                    android:endX="191"
-                    android:endY="385"
+                    android:centerX="190" android:centerY="192"
+                    android:gradientRadius="220"
+                    android:type="radial">
+                    <item android:color="#1AFFFFFF" android:offset="0.0" />
+                    <item android:color="#00FFFFFF" android:offset="1.0" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- 2. The Moon (Thick Crescent) with an Ivory/Glowing Gradient for better contrast -->
+        <path
+            android:pathData="M120,0C90,35 70,85 70,140C70,240 150,320 250,320C295,320 340,305 380,273C348,339 280,385 201,385C90,385 0,295 0,184C0,102 49,31 120,0Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="0" android:startY="0"
+                    android:endX="380" android:endY="385"
                     android:type="linear">
-                    <item android:color="#FFFFFF" android:offset="0.0" />
-                    <item android:color="#F8FAFC" android:offset="0.5" />
-                    <item android:color="#E2E8F0" android:offset="1.0" />
+                    <item android:color="#FFFFFF" android:offset="0.0" />      <!-- Bright White -->
+                    <item android:color="#FFFBEB" android:offset="0.4" />      <!-- Ivory Glow -->
+                    <item android:color="#FEF3C7" android:offset="0.7" />      <!-- Soft Amber Tint -->
+                    <item android:color="#FDE68A" android:offset="1.0" />      <!-- Depth Amber -->
                 </gradient>
             </aapt:attr>
         </path>
 
-        <!-- Ambient Sun Bloom -->
-        <path
-            android:pathData="M223,150m-95,0a95,95 0,1 1,190 0a95,95 0,1 1,-190 0">
-            <aapt:attr name="android:fillColor">
-                <gradient
-                    android:centerX="223"
-                    android:centerY="150"
-                    android:gradientRadius="95"
-                    android:type="radial">
-                    <item android:color="#22F59E0B" android:offset="0.0" />
-                    <item android:color="#00F59E0B" android:offset="1.0" />
-                </gradient>
-            </aapt:attr>
-        </path>
+        <!-- 2a. Moon Craters (Subtle Surface Detail) -->
+        <path android:fillColor="#000000" android:fillAlpha="0.03" android:pathData="M80,150m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0" />
+        <path android:fillColor="#000000" android:fillAlpha="0.02" android:pathData="M110,240m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0" />
+        <path android:fillColor="#000000" android:fillAlpha="0.03" android:pathData="M140,310m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
 
-        <!-- Dynamic Sun Rays with subtle variations -->
-        <path android:fillColor="#D97706" android:pathData="M223.07,184.47L308.21,211.71V222.83L223.07,197.26V184.47Z"/> <!-- Deeper Amber -->
-        <path android:fillColor="#FBBF24" android:pathData="M223.07,184.69L137.01,212.29V223.02L223.07,197.32V184.69Z"/>
-        <path android:fillColor="#FBBF24" android:pathData="M222.5,32L232.46,87.5H212.54L222.5,32Z"/>
-        <path android:fillColor="#FBBF24" android:pathData="M128.13,69.13L174.42,101.33L160.33,115.42L128.13,69.13Z"/>
-        <path android:fillColor="#FBBF24" android:pathData="M313.46,69.13L281.26,115.42L267.17,101.33L313.46,69.13Z"/>
-        <path android:fillColor="#FBBF24" android:pathData="M93,158.5L148.5,148.54V168.46L93,158.5Z"/>
-        <path android:fillColor="#FBBF24" android:pathData="M351,158.5L295.5,168.46V148.54L351,158.5Z"/>
+        <!-- 3. Night-side Accents (Bright Stars) -->
+        <path android:fillColor="#FFFFFF" android:fillAlpha="0.8" android:pathData="M40,100l2,2l2,-2l-2,-2z" />
+        <path android:fillColor="#FFFFFF" android:fillAlpha="0.6" android:pathData="M90,40l1.5,1.5l1.5,-1.5l-1.5,-1.5z" />
 
-        <!-- Sun Core with High-Vibrancy Radial Gradient for Volume -->
-        <path
-            android:pathData="M223.1,169.72L147.46,194.38C132.57,166.71 133.82,131.79 153.55,104.69C180.98,67.04 233.75,58.75 271.4,86.18C305.78,111.22 315.68,157.37 296.27,193.87L223.1,169.72Z">
-            <aapt:attr name="android:fillColor">
-                <gradient
-                    android:centerX="223"
-                    android:centerY="150"
-                    android:gradientRadius="120"
-                    android:type="radial">
-                    <item android:color="#FDE68A" android:offset="0.0" /> <!-- Core Light -->
-                    <item android:color="#FBBF24" android:offset="0.6" /> <!-- Mid Amber -->
-                    <item android:color="#D97706" android:offset="1.0" /> <!-- Edge Depth -->
-                </gradient>
-            </aapt:attr>
-        </path>
+        <!-- 4. Enlarged Sun Group -->
+        <group
+            android:pivotX="223"
+            android:pivotY="150"
+            android:scaleX="1.25"
+            android:scaleY="1.25">
 
-        <!-- Glass Morphism Shine Layer -->
-        <path
-            android:fillColor="#FFFFFF"
-            android:fillAlpha="0.3"
-            android:pathData="M235,90 C215,85 175,105 165,135 C170,120 195,100 235,100 Z" />
+            <!-- Sun Bloom -->
+            <path
+                android:pathData="M223,150m-100,0a100,100 0,1 1,200 0a100,100 0,1 1,-200 0">
+                <aapt:attr name="android:fillColor">
+                    <gradient
+                        android:centerX="223" android:centerY="150"
+                        android:gradientRadius="100"
+                        android:type="radial">
+                        <item android:color="#40BAE6FD" android:offset="0.0" />
+                        <item android:color="#00FBBF24" android:offset="1.0" />
+                    </gradient>
+                </aapt:attr>
+            </path>
 
-        <!-- Lower Internal Reflection -->
-        <path
-            android:fillColor="#FFFFFF"
-            android:fillAlpha="0.1"
-            android:pathData="M220,175 C250,180 285,160 290,140 C280,160 250,170 220,165 Z" />
+            <!-- Rays -->
+            <path android:fillColor="#FBBF24" android:pathData="M223.07,184.47L308.21,211.71V222.83L223.07,197.26V184.47Z"/>
+            <path android:fillColor="#FCD34D" android:pathData="M223.07,184.69L137.01,212.29V223.02L223.07,197.32V184.69Z"/>
+            <path android:fillColor="#FCD34D" android:pathData="M222.5,32L232.46,87.5H212.54L222.5,32Z"/>
+            <path android:fillColor="#FCD34D" android:pathData="M128.13,69.13L174.42,101.33L160.33,115.42L128.13,69.13Z"/>
+            <path android:fillColor="#FCD34D" android:pathData="M313.46,69.13L281.26,115.42L267.17,101.33L313.46,69.13Z"/>
+            <path android:fillColor="#FBBF24" android:pathData="M93,158.5L148.5,148.54V168.46L93,158.5Z"/>
+            <path android:fillColor="#FCD34D" android:pathData="M351,158.5L295.5,168.46V148.54L351,158.5Z"/>
+
+            <!-- Sun Core -->
+            <path
+                android:pathData="M223.1,169.72L147.46,194.38C132.57,166.71 133.82,131.79 153.55,104.69C180.98,67.04 233.75,58.75 271.4,86.18C305.78,111.22 315.68,157.37 296.27,193.87L223.1,169.72Z">
+                <aapt:attr name="android:fillColor">
+                    <gradient
+                        android:centerX="223" android:centerY="150"
+                        android:gradientRadius="120"
+                        android:type="radial">
+                        <item android:color="#FFFFFF" android:offset="0.0" />
+                        <item android:color="#FEF3C7" android:offset="0.4" />
+                        <item android:color="#FBBF24" android:offset="1.0" />
+                    </gradient>
+                </aapt:attr>
+            </path>
+
+            <!-- Glass Shine -->
+            <path
+                android:fillColor="#FFFFFF"
+                android:fillAlpha="0.4"
+                android:pathData="M240,95 C220,85 180,105 170,135 C175,120 200,105 240,105 Z" />
+        </group>
 
     </group>
 
