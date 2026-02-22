@@ -30,13 +30,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
@@ -60,8 +62,13 @@ fun HomeScreen(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
-        lifecycleOwner.lifecycle.addObserver(viewModel)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(viewModel) }
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME || event == Lifecycle.Event.ON_START) {
+                viewModel.onResume(lifecycleOwner)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     val state by viewModel.state.collectAsState()
@@ -321,11 +328,9 @@ fun HomeScreenContent(
                                             selectedDate = state.selectedDate,
                                             availableDays = allDays.filter { !it.date.isBefore(LocalDate.now()) },
                                             isHijriSelected = state.isHijriSelected,
-                                            currentTime = state.currentTime.toLocalTime(),
                                             onToggleCalendarType = onToggleCalendarType,
                                             onDateSelected = onDateSelected,
-                                            contentColor = contentColor,
-                                            startsAtMaghrib = settings?.hijriDayStartsAtMaghrib ?: true
+                                            contentColor = contentColor
                                         )
 
                                         Spacer(modifier = Modifier.height(32.dp))
@@ -491,11 +496,9 @@ fun HomeScreenContent(
                                             selectedDate = state.selectedDate,
                                             availableDays = allDays.filter { !it.date.isBefore(LocalDate.now()) },
                                             isHijriSelected = state.isHijriSelected,
-                                            currentTime = state.currentTime.toLocalTime(),
                                             onToggleCalendarType = onToggleCalendarType,
                                             onDateSelected = onDateSelected,
-                                            contentColor = contentColor,
-                                            startsAtMaghrib = settings?.hijriDayStartsAtMaghrib ?: true
+                                            contentColor = contentColor
                                         )
 
                                         Spacer(modifier = Modifier.height(32.dp))

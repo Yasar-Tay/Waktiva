@@ -362,27 +362,6 @@ private fun PreferencesStep(
                     icon = Icons.Default.Functions,
                     onClick = { showMethodDialog = true }
                 )
-
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    color = Color.White.copy(alpha = 0.05f)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(stringResource(R.string.settings_hijri_day_start), fontWeight = FontWeight.Bold, color = Color.White)
-                            Text(stringResource(R.string.settings_hijri_day_start_desc), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
-                        }
-                        Switch(
-                            checked = settings?.hijriDayStartsAtMaghrib ?: true,
-                            onCheckedChange = { settingsViewModel.setHijriDayStart(it) },
-                            colors = SwitchDefaults.colors(checkedThumbColor = AccentColor)
-                        )
-                    }
-                }
             }
 
             // Adhan Audio

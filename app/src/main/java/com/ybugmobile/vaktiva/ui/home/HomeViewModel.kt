@@ -264,9 +264,7 @@ class HomeViewModel @Inject constructor(
 
         val effectiveHijri = HijriUtils.getEffectiveHijriDate(
             targetDate = date,
-            allPrayerDays = allDays,
-            currentTime = time.toLocalTime(),
-            startsAtMaghrib = currentSettings.hijriDayStartsAtMaghrib
+            allPrayerDays = allDays
         )
 
         HomeViewState(

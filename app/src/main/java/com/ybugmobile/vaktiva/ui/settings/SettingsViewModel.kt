@@ -57,12 +57,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setHijriDayStart(startsAtMaghrib: Boolean) {
-        viewModelScope.launch {
-            settingsManager.updateHijriDayStart(startsAtMaghrib)
-        }
-    }
-
     fun deletePastData() {
         viewModelScope.launch {
             val today = LocalDate.now().toString()

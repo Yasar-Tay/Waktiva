@@ -35,7 +35,6 @@ import com.ybugmobile.vaktiva.domain.model.HijriUtils
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.provider.ReligiousDaysProvider
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -44,11 +43,9 @@ fun ModernCalendarStrip(
     selectedDate: LocalDate,
     availableDays: List<PrayerDay>,
     isHijriSelected: Boolean,
-    currentTime: LocalTime,
     onToggleCalendarType: (Boolean) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
-    contentColor: Color = Color.White,
-    startsAtMaghrib: Boolean = true
+    contentColor: Color = Color.White
 ) {
     val today = LocalDate.now()
     val monthFormatter = DateTimeFormatter.ofPattern("MMM")
@@ -125,13 +122,10 @@ fun ModernCalendarStrip(
                 }
             }
 
-            val effectiveHijri = remember(selectedDate, availableDays, currentTime, startsAtMaghrib) {
+            val effectiveHijri = remember(selectedDate, availableDays) {
                 HijriUtils.getEffectiveHijriDate(
                     targetDate = selectedDate,
-                    allPrayerDays = availableDays,
-                    currentTime = currentTime,
-                    todayDate = today,
-                    startsAtMaghrib = startsAtMaghrib
+                    allPrayerDays = availableDays
                 )
             }
 
@@ -147,13 +141,10 @@ fun ModernCalendarStrip(
             itemsIndexed(availableDays) { index, prayerDay ->
                 val date = prayerDay.date
                 
-                val hijri = remember(date, availableDays, currentTime, startsAtMaghrib) {
+                val hijri = remember(date, availableDays) {
                     HijriUtils.getEffectiveHijriDate(
                         targetDate = date,
-                        allPrayerDays = availableDays,
-                        currentTime = currentTime,
-                        todayDate = today,
-                        startsAtMaghrib = startsAtMaghrib
+                        allPrayerDays = availableDays
                     )
                 }
 
