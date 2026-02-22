@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.HijriData
 import com.ybugmobile.vaktiva.domain.model.HijriUtils
-import com.ybugmobile.vaktiva.ui.theme.Inter
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -44,7 +43,6 @@ fun HomeHeader(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    // Fallback Hijri calculation if network data is missing
     val effectiveHijri = remember(hijriDate, date) {
         hijriDate ?: HijriUtils.calculateFallbackHijri(date)
     }
@@ -125,8 +123,7 @@ fun LocationSection(
 
             Text(
                 text = displayTitle,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge,
                 color = contentColor,
                 letterSpacing = (-0.5).sp
             )
@@ -142,7 +139,7 @@ fun LocationSection(
             Text(
                 text = subTitle.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
-                color = contentColor.copy(alpha = 0.3f),
+                color = contentColor.copy(alpha = 0.4f),
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
                 modifier = Modifier.padding(start = 20.dp)
@@ -167,31 +164,28 @@ private fun DatesSection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        // Gregorian Date Group
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 text = date.format(dayFormatter).uppercase(),
                 style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Black,
-                color = contentColor.copy(alpha = 0.3f),
+                fontWeight = FontWeight.Bold,
+                color = contentColor.copy(alpha = 0.4f),
                 letterSpacing = 1.sp
             )
             Text(
                 text = date.format(dateFormatter),
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium,
-                color = contentColor.copy(alpha = 0.6f)
+                style = MaterialTheme.typography.titleMedium,
+                color = contentColor.copy(alpha = 0.8f)
             )
         }
 
         if (hijriDate != null) {
-            // Elegant Vertical Divider
             Box(
                 modifier = Modifier
-                    .padding(horizontal = 12.dp)
+                    .padding(horizontal = 16.dp)
                     .width(1.dp)
-                    .height(24.dp)
-                    .background(contentColor.copy(alpha = 0.15f))
+                    .height(32.dp)
+                    .background(contentColor.copy(alpha = 0.1f))
             )
 
             val hijriMonthResId = context.resources.getIdentifier(
@@ -201,31 +195,27 @@ private fun DatesSection(
             )
             val translatedMonth = if (hijriMonthResId != 0) stringResource(hijriMonthResId) else hijriDate.monthEn
 
-            // Hijri Date Group
             Column(horizontalAlignment = Alignment.Start) {
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         text = String.format(currentLocale, "%d", hijriDate.day),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontFamily = Inter,
-                            fontWeight = FontWeight.Light
-                        ),
+                        style = MaterialTheme.typography.headlineSmall,
                         color = contentColor
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = translatedMonth.uppercase(),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Black,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
                         color = if (isOffline) contentColor.copy(alpha = 0.7f) else contentColor,
-                        modifier = Modifier.padding(bottom = 3.dp)
+                        modifier = Modifier.padding(bottom = 2.dp)
                     )
                 }
                 Text(
                     text = String.format(currentLocale, "%d %s", hijriDate.year, stringResource(R.string.hijri_suffix)) + 
                            if (isOffline) stringResource(R.string.home_hijri_offline_indicator) else "",
                     style = MaterialTheme.typography.labelSmall,
-                    color = contentColor.copy(alpha = 0.3f),
+                    color = contentColor.copy(alpha = 0.4f),
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp
                 )

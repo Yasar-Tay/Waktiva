@@ -14,12 +14,14 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import java.time.LocalTime
+import java.util.Locale
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -36,7 +38,6 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun VaktivaTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
@@ -45,18 +46,26 @@ fun VaktivaTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+    val context = LocalContext.current
+    val typography = remember(context) {
+        val locale = Locale.getDefault()
+        val language = locale.language
+        when (language) {
+            "ar", "fa", "ur" -> ArabicTypography
+            "bn" -> HindTypography
+            else -> InterTypography
+        }
+    }
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
             val insetsController = WindowCompat.getInsetsController(window, view)
-            
-            // Force both status bar and navigation bar icons/text to be LIGHT colored (white)
-            // suited for immersive/dark backgrounds.
             insetsController.isAppearanceLightStatusBars = false
             insetsController.isAppearanceLightNavigationBars = false
         }
@@ -64,7 +73,7 @@ fun VaktivaTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = typography,
         content = content
     )
 }
