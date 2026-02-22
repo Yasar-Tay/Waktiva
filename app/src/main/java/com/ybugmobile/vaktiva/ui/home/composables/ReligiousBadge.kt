@@ -30,12 +30,9 @@ fun ReligiousBadge(
     modifier: Modifier = Modifier,
     hijriDate: HijriData? = null
 ) {
-    val religiousDay = ReligiousDaysProvider.getReligiousDay(date)
+    val religiousDay = ReligiousDaysProvider.getReligiousDay(date) ?: return
     
-    val holidayToShow = religiousDay ?: return
-
-    val label = stringResource(holidayToShow.nameResId)
-    
+    val label = stringResource(religiousDay.nameResId)
     val accentColor = getCalendarAccentColor(date, hijriDate?.monthNumber, hijriDate?.day, contentColor)
 
     Surface(
@@ -49,8 +46,6 @@ fun ReligiousBadge(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-
-            // Optional subtle icon
             Icon(
                 imageVector = Icons.Rounded.Star,
                 contentDescription = null,
@@ -62,18 +57,13 @@ fun ReligiousBadge(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
                 color = contentColor,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.4.sp
             )
         }
     }
 }
 
-
-/**
- * Shared logic for calendar accent colors.
- * Prioritizes religious events over the current day color.
- */
 fun getCalendarAccentColor(
     date: LocalDate,
     hijriMonth: Int?,
@@ -113,7 +103,6 @@ fun isEve(religiousDay: ReligiousDay?): Boolean {
     return religiousDay?.nameResId == R.string.rel_day_eid_eve
 }
 
-// Overload for simpler calls
 fun getCalendarAccentColor(date: LocalDate, hijriData: HijriData?, contentColor: Color): Color {
     return getCalendarAccentColor(date, hijriData?.monthNumber, hijriData?.day, contentColor)
 }
