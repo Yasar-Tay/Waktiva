@@ -15,9 +15,9 @@
                 android:startX="54"
                 android:endX="54"
                 android:type="linear">
-                <item android:offset="0.0" android:color="#38BDF8" /> <!-- Vibrant Daytime Blue -->
-                <item android:offset="0.5" android:color="#1E1B4B" /> <!-- Atmospheric Indigo Depth -->
-                <item android:offset="1.0" android:color="#310F1A" /> <!-- Deep Rose Dusk Horizon -->
+                <item android:offset="0.0" android:color="#2DB9E4" /> <!-- Vibrant Daytime Blue -->
+                <item android:offset="0.5" android:color="#68B298" />  <!-- Vibrant Daytime Blue -->
+                <item android:offset="0.8" android:color="#1E5DA8" /> <!-- Vibrant Daytime Blue -->
             </gradient>
         </aapt:attr>
     </path>

@@ -258,7 +258,8 @@ class HomeViewModel @Inject constructor(
         allPrayerDays
     ) { (date, time, prayerDay, moon), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, issues), allDays ->
         
-        val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.getDisplayName(context), ignoreCase = true) &&
+        // Comparison Fix: Use prayer type name (enum) consistently instead of localized display name
+        val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
 
         val effectiveHijri = HijriUtils.getEffectiveHijriDate(
@@ -328,6 +329,7 @@ class HomeViewModel @Inject constructor(
 
     fun toggleSkipNextPrayerAudio(prayerName: String, prayerDate: LocalDate) = viewModelScope.launch {
         val s = settings.first()
+        // Logic Alignment: Check against the enum name coming from the UI
         val currentlyMuted = s.mutedPrayerName.equals(prayerName, ignoreCase = true) &&
                              s.mutedPrayerDate == prayerDate.toString()
         
