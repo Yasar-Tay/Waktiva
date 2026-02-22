@@ -6,7 +6,7 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Day to Dusk Atmospheric Gradient (Restored) -->
+    <!-- Cinematic Day-to-Night Atmosphere -->
     <path android:pathData="M0,0h108v108h-108z">
         <aapt:attr name="android:fillColor">
             <gradient
@@ -15,28 +15,62 @@
                 android:startX="54"
                 android:endX="54"
                 android:type="linear">
-                <item android:offset="0.0" android:color="#03F8D5" /> <!-- Daytime Blue -->
-                <item android:offset="0.5" android:color="#038BC1" /> <!-- Indigo Depth -->
-                <item android:offset="1.0" android:color="#21799D" /> <!-- Deep Rose Glow (Horizon) -->
+                <item android:offset="0.0" android:color="#38BDF8" /> <!-- Vibrant Daytime Blue -->
+                <item android:offset="0.5" android:color="#1E1B4B" /> <!-- Atmospheric Indigo Depth -->
+                <item android:offset="1.0" android:color="#310F1A" /> <!-- Deep Rose Dusk Horizon -->
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- Rose Horizon Glow -->
+    <!-- Celestial Nebula Glow -->
     <path
-        android:pathData="M0,60 Q54,85 108,60 L108,108 L0,108 Z">
+        android:pathData="M54,80m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="54"
+                android:centerY="80"
+                android:gradientRadius="40"
+                android:type="radial">
+                <item android:color="#156366F1" android:offset="0.0" />
+                <item android:color="#006366F1" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Shooting Star (Meteor Detail) -->
+    <path
+        android:pathData="M85,65 L70,80"
+        android:strokeWidth="0.4">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="85"
+                android:startY="65"
+                android:endX="70"
+                android:endY="80"
+                android:type="linear">
+                <item android:color="#00FFFFFF" android:offset="0.0" />
+                <item android:color="#A0FFFFFF" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Enhanced Star Field -->
+    <path android:fillColor="#ffffff" android:fillAlpha="0.15" android:pathData="M15,75l0.6,0l0,0.6l-0.6,0zM95,90l0.6,0l0,0.6l-0.6,0zM40,100l0.6,0l0,0.6l-0.6,0zM65,85l0.6,0l0,0.6l-0.6,0zM10,95l0.6,0l0,0.6l-0.6,0z" />
+    <path android:fillColor="#ffffff" android:fillAlpha="0.4" android:pathData="M25,85l1,0l0,1l-1,0zM80,75l1,0l0,1l-1,0zM55,95l1,0l0,1l-1,0zM92,98l1,0l0,1l-1,0z" />
+
+    <!-- Horizon Glow Accent -->
+    <path
+        android:pathData="M0,70 Q54,95 108,70 L108,108 L0,108 Z">
         <aapt:attr name="android:fillColor">
             <gradient
                 android:centerX="54"
                 android:centerY="108"
-                android:gradientRadius="60"
+                android:gradientRadius="50"
                 android:type="radial">
-                <item android:color="#25A43653" android:offset="0.0" />
-                <item android:color="#00A43653" android:offset="1.0" />
+                <item android:color="#1AFFFFFF" android:offset="0.0" />
+                <item android:color="#00FFFFFF" android:offset="1.0" />
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- Subtle Evening Stars -->
-    <path android:fillColor="#ffffff" android:fillAlpha="0.2" android:pathData="M25,75l0.8,0l0,0.8l-0.8,0zM82,85l0.8,0l0,0.8l-0.8,0zM48,95l0.8,0l0,0.8l-0.8,0zM90,80l0.8,0l0,0.8l-0.8,0z" />
 </vector>
