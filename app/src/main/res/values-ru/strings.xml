@@ -36,7 +36,10 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Неизвестное местоположение</string>
-    <string name="home_last_known_location">Последнее известное</string>
+    <string name="home_last_known_location">Последнее местоположение: %s</string>
+    <string name="home_gps_disabled_location">GPS отключен</string>
+    <string name="home_location_permission_denied">Доступ запрещен</string>
+    <string name="home_offline_status">Офлайн</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">Оставшееся время</string>
     <string name="home_permissions_required">Требуются разрешения</string>

@@ -76,6 +76,7 @@ class HomeViewModel @Inject constructor(
     
     // Performance Optimization: Initial values are set, but updates are offloaded to IO
     private val _isNetworkAvailable = MutableStateFlow(PermissionUtils.isNetworkAvailable(context))
+    private val _isLocationEnabled = MutableStateFlow(PermissionUtils.isLocationEnabled(context))
     private val _hasSystemIssues = MutableStateFlow(false)
 
     private var mediaController: MediaController? = null
@@ -172,8 +173,10 @@ class HomeViewModel @Inject constructor(
     private fun updateHealthStatus() {
         viewModelScope.launch {
             val network = withContext(Dispatchers.IO) { PermissionUtils.isNetworkAvailable(context) }
+            val locationEnabled = withContext(Dispatchers.IO) { PermissionUtils.isLocationEnabled(context) }
             val issues = withContext(Dispatchers.IO) { checkSystemIssues() }
             _isNetworkAvailable.value = network
+            _isLocationEnabled.value = locationEnabled
             _hasSystemIssues.value = issues
         }
     }
@@ -254,9 +257,9 @@ class HomeViewModel @Inject constructor(
         combine(selectedDate, currentTime, currentPrayerDay, moonPhase, ::StateQuad),
         combine(nextPrayerInfo, currentPrayerInfo, isRefreshing, ::Triple),
         combine(settings, _isAdhanPlaying, _playingPrayerName, ::Triple),
-        combine(_isNetworkAvailable, _hasSystemIssues, { a, b -> a to b }),
+        combine(_isNetworkAvailable, _isLocationEnabled, _hasSystemIssues, ::Triple),
         allPrayerDays
-    ) { (date, time, prayerDay, moon), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, issues), allDays ->
+    ) { (date, time, prayerDay, moon), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, locationEnabled, issues), allDays ->
         
         // Comparison Fix: Use prayer type name (enum) consistently instead of localized display name
         val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
@@ -280,6 +283,7 @@ class HomeViewModel @Inject constructor(
             isMuted = isMuted,
             isHijriSelected = currentSettings.isHijriSelected,
             isNetworkAvailable = network,
+            isLocationEnabled = locationEnabled,
             hasSystemIssues = issues
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))

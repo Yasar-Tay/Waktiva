@@ -36,7 +36,10 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Unbekannter Standort</string>
-    <string name="home_last_known_location">Zuletzt bekannter Standort</string>
+    <string name="home_last_known_location">Letzter Standort: %s</string>
+    <string name="home_gps_disabled_location">GPS Deaktiviert</string>
+    <string name="home_location_permission_denied">Standort Abgelehnt</string>
+    <string name="home_offline_status">Offline</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">Verbleibende Zeit</string>
     <string name="home_permissions_required">Berechtigungen erforderlich</string>
@@ -131,7 +134,7 @@
     <string name="method_tehran">Institut für Geophysik, Univ. Teheran</string>
     <string name="method_gulf">Golfregion</string>
     <string name="method_kuwait">Kuwait</string>
-    <string name="method_qatar">Katar</string>
+    <string name="method_qatar">Qatar</string>
     <string name="method_singapore">Majlis Ugama Islam Singapura</string>
     <string name="method_turkey">Türkei (Diyanet)</string>
 

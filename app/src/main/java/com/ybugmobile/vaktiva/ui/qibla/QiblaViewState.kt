@@ -13,5 +13,7 @@ data class QiblaViewState(
     val currentTime: LocalDateTime = LocalDateTime.now(),
     val isLoading: Boolean = true,
     val isNetworkAvailable: Boolean = true,
+    val isLocationEnabled: Boolean = true,
+    val isLocationPermissionGranted: Boolean = true,
     val hasSystemIssues: Boolean = false
 )

@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
@@ -145,8 +146,8 @@ fun HomeScreenContent(
         permissionState.permissions.find { it.permission == Manifest.permission.POST_NOTIFICATIONS }?.status?.isGranted ?: true
     } else true
 
-    val statusIcon: @Composable (() -> Unit)? = if (!hasNotificationPermission || !state.isNetworkAvailable || state.hasSystemIssues) {
-        {
+    val statusIcon: @Composable ((Modifier) -> Unit)? = if (!hasNotificationPermission || !state.isNetworkAvailable || state.hasSystemIssues) {
+        { modifier ->
             val color = Color(0xFFFF5252)
             val iconPulseTransition = rememberInfiniteTransition(label = "iconPulse")
             val iconScale by iconPulseTransition.animateFloat(
@@ -163,10 +164,10 @@ fun HomeScreenContent(
                 onClick = { showHealthOverlay = true },
                 shape = CircleShape,
                 color = Color.White,
-                shadowElevation = 10.dp,
-                tonalElevation = 6.dp,
-                border = androidx.compose.foundation.BorderStroke(2.dp, color.copy(alpha = 0.7f)),
-                modifier = Modifier.size(46.dp)
+                shadowElevation = 8.dp,
+                tonalElevation = 4.dp,
+                border = androidx.compose.foundation.BorderStroke(1.5.dp, color.copy(alpha = 0.7f)),
+                modifier = modifier
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
@@ -174,7 +175,7 @@ fun HomeScreenContent(
                         contentDescription = "Status",
                         tint = color,
                         modifier = Modifier
-                            .size(24.dp)
+                            .fillMaxSize(0.6f)
                             .graphicsLayer(scaleX = iconScale, scaleY = iconScale)
                     )
                 }
@@ -230,7 +231,8 @@ fun HomeScreenContent(
                                     hijriDate = state.effectiveHijriDate,
                                     contentColor = contentColor,
                                     statusIcon = statusIcon,
-                                    isNetworkAvailable = state.isNetworkAvailable
+                                    isNetworkAvailable = state.isNetworkAvailable,
+                                    isLocationEnabled = state.isLocationEnabled
                                 )
 
                                 Row(
@@ -391,7 +393,8 @@ fun HomeScreenContent(
                                         hijriDate = state.effectiveHijriDate,
                                         contentColor = contentColor,
                                         statusIcon = statusIcon,
-                                        isNetworkAvailable = state.isNetworkAvailable
+                                        isNetworkAvailable = state.isNetworkAvailable,
+                                        isLocationEnabled = state.isLocationEnabled
                                     )
                                 }
 
@@ -563,8 +566,8 @@ fun HomeScreenContent(
                     val message = parts.getOrNull(1) ?: data.visuals.message
 
                     val icon = when (type) {
-                        "MUTED" -> Icons.Rounded.VolumeOff
-                        "UNMUTED" -> Icons.Rounded.VolumeUp
+                        "MUTED" -> Icons.AutoMirrored.Filled.VolumeOff
+                        "UNMUTED" -> Icons.AutoMirrored.Filled.VolumeUp
                         else -> null
                     }
 

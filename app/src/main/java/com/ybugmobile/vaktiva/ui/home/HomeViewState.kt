@@ -25,5 +25,7 @@ data class HomeViewState(
     val isHijriSelected: Boolean = false,
     val error: String? = null,
     val isNetworkAvailable: Boolean = true,
+    val isLocationEnabled: Boolean = true,
+    val isLocationPermissionGranted: Boolean = true,
     val hasSystemIssues: Boolean = false
 )

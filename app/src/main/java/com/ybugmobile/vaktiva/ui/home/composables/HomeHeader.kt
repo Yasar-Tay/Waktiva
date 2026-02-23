@@ -36,8 +36,10 @@ fun HomeHeader(
     hijriDate: HijriData?,
     contentColor: Color,
     modifier: Modifier = Modifier,
-    statusIcon: (@Composable () -> Unit)? = null,
-    isNetworkAvailable: Boolean = true
+    statusIcon: (@Composable (Modifier) -> Unit)? = null,
+    isNetworkAvailable: Boolean = true,
+    isLocationEnabled: Boolean = true,
+    isLocationPermissionGranted: Boolean = true
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
@@ -60,11 +62,14 @@ fun HomeHeader(
                 verticalAlignment = Alignment.Top
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    LocationSection(locationName, contentColor, isNetworkAvailable)
-                    if (statusIcon != null) {
-                        Spacer(modifier = Modifier.width(16.dp))
-                        statusIcon()
-                    }
+                    LocationSection(
+                        locationName = locationName, 
+                        contentColor = contentColor, 
+                        isNetworkAvailable = isNetworkAvailable, 
+                        isLocationEnabled = isLocationEnabled,
+                        isLocationPermissionGranted = isLocationPermissionGranted,
+                        statusIcon = statusIcon
+                    )
                 }
 
                 Column(
@@ -78,13 +83,14 @@ fun HomeHeader(
             }
         } else {
             Column(horizontalAlignment = Alignment.Start) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    LocationSection(locationName, contentColor, isNetworkAvailable)
-                    if (statusIcon != null) {
-                        Spacer(modifier = Modifier.width(12.dp))
-                        statusIcon()
-                    }
-                }
+                LocationSection(
+                    locationName = locationName, 
+                    contentColor = contentColor, 
+                    isNetworkAvailable = isNetworkAvailable, 
+                    isLocationEnabled = isLocationEnabled,
+                    isLocationPermissionGranted = isLocationPermissionGranted,
+                    statusIcon = statusIcon
+                )
                 Spacer(modifier = Modifier.height(12.dp))
                 DatesSection(date, effectiveHijri, contentColor, context, isOffline = hijriDate == null)
                 Spacer(modifier = Modifier.height(12.dp))
@@ -99,38 +105,51 @@ fun LocationSection(
     locationName: String,
     contentColor: Color,
     isNetworkAvailable: Boolean,
-    modifier: Modifier = Modifier
+    isLocationEnabled: Boolean,
+    isLocationPermissionGranted: Boolean,
+    modifier: Modifier = Modifier,
+    statusIcon: (@Composable (Modifier) -> Unit)? = null
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.Start
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Rounded.LocationOn,
-                contentDescription = null,
-                tint = contentColor.copy(alpha = 0.5f),
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
+        val unknownStr = stringResource(R.string.home_unknown_location)
+        val city = locationName.substringBefore(",").ifEmpty { unknownStr }
+        val isFallbackState = !isLocationEnabled || !isNetworkAvailable || !isLocationPermissionGranted
 
-            val displayTitle = if (!isNetworkAvailable && locationName.isNotEmpty() && locationName != "Current Location") {
-                stringResource(R.string.home_last_known_location)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (statusIcon != null) {
+                statusIcon(Modifier.size(28.dp))
             } else {
-                locationName.substringBefore(",")
-                    .ifEmpty { stringResource(R.string.home_unknown_location) }
+                Icon(
+                    imageVector = Icons.Rounded.LocationOn,
+                    contentDescription = null,
+                    tint = contentColor.copy(alpha = 0.5f),
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+
+            val displayTitle = when {
+                !isLocationEnabled -> stringResource(R.string.home_gps_disabled_location)
+                !isLocationPermissionGranted -> stringResource(R.string.home_location_permission_denied)
+                !isNetworkAvailable -> stringResource(R.string.home_offline_status)
+                else -> city
             }
 
             Text(
                 text = displayTitle,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 color = contentColor,
                 letterSpacing = (-0.5).sp
             )
         }
         
-        val subTitle = if (!isNetworkAvailable && locationName.isNotEmpty() && locationName != "Current Location") {
-            locationName
+        val subTitle = if (isFallbackState) {
+            if (locationName.isNotEmpty() && locationName != unknownStr) {
+                stringResource(R.string.home_last_known_location, city)
+            } else ""
         } else {
             locationName.substringAfter(", ").ifEmpty { "" }
         }
@@ -142,7 +161,7 @@ fun LocationSection(
                 color = contentColor.copy(alpha = 0.4f),
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
-                modifier = Modifier.padding(start = 20.dp)
+                modifier = Modifier.padding(start = if (statusIcon != null) 36.dp else 24.dp)
             )
         }
     }

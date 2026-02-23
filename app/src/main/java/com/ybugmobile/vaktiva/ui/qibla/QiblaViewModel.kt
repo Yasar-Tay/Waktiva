@@ -32,13 +32,6 @@ class QiblaViewModel @Inject constructor(
 
     val settings = settingsManager.settingsFlow
 
-    val qiblaDirection: Flow<Double> = settings.map { s ->
-        if (s.latitude != null && s.longitude != null) {
-            val coordinates = Coordinates(s.latitude, s.longitude)
-            Qibla(coordinates).direction
-        } else 0.0
-    }
-
     val compassData: Flow<CompassData> = compassManager.compassFlow
 
     val currentTime = timeManager.currentTime
@@ -52,16 +45,20 @@ class QiblaViewModel @Inject constructor(
     val isRefreshing = _isRefreshing.asStateFlow()
 
     private val _isNetworkAvailable = MutableStateFlow(PermissionUtils.isNetworkAvailable(context))
+    private val _isLocationEnabled = MutableStateFlow(PermissionUtils.isLocationEnabled(context))
+    private val _isLocationPermissionGranted = MutableStateFlow(PermissionUtils.isLocationPermissionGranted(context))
     private val _hasSystemIssues = MutableStateFlow(checkSystemIssues())
     private val _hasSettled = MutableStateFlow(false)
 
-    // Grouping status flows to stay within the 5-parameter limit of combine
+    // Grouping status flows
     private val statusFlow = combine(
         _hasSettled,
         _isNetworkAvailable,
+        _isLocationEnabled,
+        _isLocationPermissionGranted,
         _hasSystemIssues
-    ) { settled, network, issues ->
-        Triple(settled, network, issues)
+    ) { settled, network, locEnabled, locPerm, issues ->
+        StateQuint(settled, network, locEnabled, locPerm, issues)
     }
 
     val state: StateFlow<QiblaViewState> = combine(
@@ -71,7 +68,7 @@ class QiblaViewModel @Inject constructor(
         currentTime,
         statusFlow
     ) { s, c, d, t, status ->
-        val (settled, network, issues) = status
+        val (settled, network, locEnabled, locPerm, issues) = status
         val qiblaDir = if (s.latitude != null && s.longitude != null) {
             Qibla(Coordinates(s.latitude, s.longitude)).direction
         } else 0.0
@@ -84,6 +81,8 @@ class QiblaViewModel @Inject constructor(
             currentTime = t,
             isLoading = !settled,
             isNetworkAvailable = network,
+            isLocationEnabled = locEnabled,
+            isLocationPermissionGranted = locPerm,
             hasSystemIssues = issues
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), QiblaViewState(isLoading = true))
@@ -92,8 +91,7 @@ class QiblaViewModel @Inject constructor(
         // Update health status periodically
         currentTime.onEach { now ->
             if (now.second % 30 == 0) {
-                _isNetworkAvailable.value = PermissionUtils.isNetworkAvailable(context)
-                _hasSystemIssues.value = checkSystemIssues()
+                updateHealthStatus()
             }
         }.launchIn(viewModelScope)
 
@@ -119,11 +117,17 @@ class QiblaViewModel @Inject constructor(
         }
     }
 
+    private fun updateHealthStatus() {
+        _isNetworkAvailable.value = PermissionUtils.isNetworkAvailable(context)
+        _isLocationEnabled.value = PermissionUtils.isLocationEnabled(context)
+        _isLocationPermissionGranted.value = PermissionUtils.isLocationPermissionGranted(context)
+        _hasSystemIssues.value = checkSystemIssues()
+    }
+
     fun refresh() {
         viewModelScope.launch {
             _isRefreshing.value = true
-            _isNetworkAvailable.value = PermissionUtils.isNetworkAvailable(context)
-            _hasSystemIssues.value = checkSystemIssues()
+            updateHealthStatus()
             
             val s = settings.first()
             val now = LocalDate.now()
@@ -150,3 +154,5 @@ class QiblaViewModel @Inject constructor(
                !PermissionUtils.isNotificationPermissionGranted(context)
     }
 }
+
+data class StateQuint<A, B, C, D, E>(val first: A, val second: B, val third: C, val fourth: D, val fifth: E)

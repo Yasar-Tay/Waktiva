@@ -36,7 +36,10 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">موقع غير معروف</string>
-    <string name="home_last_known_location">آخر موقع معروف</string>
+    <string name="home_last_known_location">آخر موقع: %s</string>
+    <string name="home_gps_disabled_location">GPS معطل</string>
+    <string name="home_location_permission_denied">تم رفض الموقع</string>
+    <string name="home_offline_status">غير متصل</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">الوقت المتبقي</string>
     <string name="home_permissions_required">الأذونات مطلوبة</string>
@@ -122,7 +125,7 @@
     <string name="settings_madhab">المذهب</string>
     <string name="settings_method">طريقة الحساب</string>
     <string name="madhab_shafi">شافعي / قياسي (مالكي، حنبلي)</string>
-    <string name="madhab_hanafi">حنفي</string>
+    <string name="madhab_hanafi">حنبلي</string>
     <string name="method_mwl">رابطة العالم الإسلامي</string>
     <string name="method_isna">الجمعية الإسلامية لأمريكا الشمالية (ISNA)</string>
     <string name="method_egypt">الهيئة المصرية العامة للمساحة</string>
@@ -276,7 +279,7 @@
     <string name="rel_day_ramadan_eid">عيد الفطر</string>
     <string name="rel_day_sacrifice_eid">عيد الأضحى</string>
     <string name="rel_day_hijri_new_year">رأس السنة الهجرية</string>
-    <string name="rel_day_ashura">يوم عاشوراء</string>
+    <string name="rel_day_ashura">Ashura Day</string>
     <string name="rel_day_mawlid">المولد النبوي الشريف</string>
 
     <!-- Notification Strings -->

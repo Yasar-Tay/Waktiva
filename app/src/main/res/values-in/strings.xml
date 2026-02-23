@@ -36,7 +36,10 @@
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Lokasi Tidak Diketahui</string>
-    <string name="home_last_known_location">Lokasi Terakhir</string>
+    <string name="home_last_known_location">Lokasi Terakhir: %s</string>
+    <string name="home_gps_disabled_location">GPS Nonaktif</string>
+    <string name="home_location_permission_denied">Izin Lokasi Ditolak</string>
+    <string name="home_offline_status">Luring</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">Waktu Tersisa</string>
     <string name="home_permissions_required">Izin Diperlukan</string>
@@ -111,9 +114,9 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردu</string>
+    <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">Farsça</string>
+    <string name="lang_fa">فارسی</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -121,7 +124,7 @@
     <string name="settings_calculation">Pengaturan Perhitungan</string>
     <string name="settings_madhab">Madzhab</string>
     <string name="settings_method">Metode Perhitungan</string>
-    <string name="madhab_shafi">Syafi\'i / Standar (Maliki, Hambali)</string>
+    <string name="madhab_shafi">Syafi\'i / Standar (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanafi</string>
     <string name="method_mwl">Liga Muslim Dunia</string>
     <string name="method_isna">Masyarakat Islam Amerika Utara (ISNA)</string>
@@ -203,7 +206,7 @@
     <string name="welcome_precision_settings">Pengaturan Presisi</string>
     <string name="welcome_precision_desc">Waktiva membutuhkan ini untuk melayani Anda lebih baik</string>
     <string name="welcome_loc_title">Lokasi Akurat</string>
-    <string name="welcome_loc_desc">Sangat penting untuk menghitung waktu shalat. Tanpa ini, aplikasi tidak dapat mengambil waktu untuk lokasi Anda dan menjadi tidak berguna.</string>
+    <string name="welcome_loc_desc">Crucial for calculating prayer times. Without this, the app cannot fetch times for your location and becomes useless.</string>
     <string name="welcome_notif_title">Peringatan Adzan</string>
     <string name="welcome_notif_desc">Diperlukan untuk mengirim notifikasi dan membunyikan Adzan saat waktu shalat tiba.</string>
     <string name="welcome_alarm_title">Alarm Tepat Waktu</string>
@@ -236,7 +239,7 @@
 
     <!-- Donations -->
     <string name="settings_donate">Dukung Pengembang</string>
-    <string name="donate_title">Dukung Waktiva</string>
+    <string name="donate_title">Support Waktiva</string>
     <string name="donate_description">Waktiva adalah aplikasi gratis yang dikembangkan dengan hati. Dukungan Anda membantu menjaganya tetap bebas iklan dan memungkinkan pengembangan di masa depan.</string>
     <string name="donate_header">Berdayakan Pengembangan Waktiva</string>
     <string name="donate_desc">Waktiva bersifat open-source dan bebas iklan. Kontribusi Anda membantu menutupi biaya server dan pengembangan berkelanjutan untuk memberikan pengalaman shalat terbaik bagi semua orang.</string>

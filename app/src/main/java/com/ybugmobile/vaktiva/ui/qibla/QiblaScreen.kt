@@ -423,7 +423,9 @@ private fun QiblaContent(
                                     LocationSection(
                                         locationName = s.locationName,
                                         contentColor = currentTheme.contentColor,
-                                        isNetworkAvailable = state.isNetworkAvailable
+                                        isNetworkAvailable = state.isNetworkAvailable,
+                                        isLocationEnabled = state.isLocationEnabled,
+                                        isLocationPermissionGranted = state.isLocationPermissionGranted
                                     )
                                 }
                             }
@@ -491,7 +493,9 @@ private fun QiblaContent(
                             LocationSection(
                                 locationName = s.locationName,
                                 contentColor = currentTheme.contentColor,
-                                isNetworkAvailable = state.isNetworkAvailable
+                                isNetworkAvailable = state.isNetworkAvailable,
+                                isLocationEnabled = state.isLocationEnabled,
+                                isLocationPermissionGranted = state.isLocationPermissionGranted
                             )
                         }
                     }

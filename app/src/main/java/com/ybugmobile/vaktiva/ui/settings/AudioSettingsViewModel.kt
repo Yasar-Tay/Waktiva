@@ -31,6 +31,7 @@ data class AdhanAudioItem(
     val artist: String? = null,
     val path: String,
     val isDefault: Boolean = false,
+    val isBuiltIn: Boolean = false,
     val isSelected: Boolean = false,
     val isPlaying: Boolean = false
 )
@@ -115,6 +116,7 @@ class AudioSettingsViewModel @Inject constructor(
                     artist = artistName,
                     path = path,
                     isDefault = isDefaultFile,
+                    isBuiltIn = true,
                     isSelected = isSelected,
                     isPlaying = playingPath == path
                 )
@@ -136,6 +138,7 @@ class AudioSettingsViewModel @Inject constructor(
                     name = metadata.first ?: file.name,
                     artist = metadata.second,
                     path = path,
+                    isBuiltIn = false,
                     isSelected = isCustomSelected,
                     isPlaying = playingPath == path
                 )
