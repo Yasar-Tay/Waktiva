@@ -1,10 +1,7 @@
 package com.ybugmobile.vaktiva.ui.home
 
-import android.Manifest
 import android.content.ComponentName
 import android.content.Context
-import android.content.pm.PackageManager
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
@@ -74,7 +71,6 @@ class HomeViewModel @Inject constructor(
     private val _isAdhanPlaying = MutableStateFlow(false)
     private val _playingPrayerName = MutableStateFlow<String?>(null)
     
-    // Performance Optimization: Initial values are set, but updates are offloaded to IO
     private val _isNetworkAvailable = MutableStateFlow(PermissionUtils.isNetworkAvailable(context))
     private val _isLocationEnabled = MutableStateFlow(PermissionUtils.isLocationEnabled(context))
     private val _isLocationPermissionGranted = MutableStateFlow(PermissionUtils.isLocationPermissionGranted(context))
@@ -148,15 +144,12 @@ class HomeViewModel @Inject constructor(
                     settingsManager.clearMutedPrayer()
                 }
             }
-            // Suggestion 2: Offload system health checks to Dispatchers.IO to keep UI thread free
             if (now.second % 30 == 0) {
                 updateHealthStatus()
             }
         }.launchIn(viewModelScope)
 
-        // Initial health check
         updateHealthStatus()
-        
         onPermissionsGranted()
         
         combine(allPrayerDays, settings) { days, s -> 
@@ -168,27 +161,23 @@ class HomeViewModel @Inject constructor(
         setupMediaController()
     }
 
-    /**
-     * Updates the health status by performing system checks on a background thread.
-     */
     private fun updateHealthStatus() {
         viewModelScope.launch {
             val network = withContext(Dispatchers.IO) { PermissionUtils.isNetworkAvailable(context) }
             val locationEnabled = withContext(Dispatchers.IO) { PermissionUtils.isLocationEnabled(context) }
             val locationPermission = withContext(Dispatchers.IO) { PermissionUtils.isLocationPermissionGranted(context) }
-            val issues = withContext(Dispatchers.IO) { checkSystemIssues() }
+            val criticalIssues = withContext(Dispatchers.IO) { checkCriticalSystemIssues() }
             _isNetworkAvailable.value = network
             _isLocationEnabled.value = locationEnabled
             _isLocationPermissionGranted.value = locationPermission
-            _hasSystemIssues.value = issues
+            _hasSystemIssues.value = criticalIssues
         }
     }
 
-    private fun checkSystemIssues(): Boolean {
-        return !PermissionUtils.isLocationEnabled(context) || 
-               PermissionUtils.isDoNotDisturbActive(context) || 
+    private fun checkCriticalSystemIssues(): Boolean {
+        // Critical issues are those that PREVENT notification or alarm functionality
+        return PermissionUtils.isDoNotDisturbActive(context) || 
                PermissionUtils.areNotificationChannelsMuted(context) ||
-               !PermissionUtils.isLocationPermissionGranted(context) ||
                !PermissionUtils.isNotificationPermissionGranted(context)
     }
 
@@ -210,8 +199,6 @@ class HomeViewModel @Inject constructor(
         val status = PermissionUtils.isLocationPermissionGranted(context)
         if (status && !lastPermissionStatus) refresh()
         lastPermissionStatus = status
-        
-        // Suggestion 2: Health check on resume should also be offloaded
         updateHealthStatus()
     }
 
@@ -253,9 +240,6 @@ class HomeViewModel @Inject constructor(
 
     private val _hasSettled = MutableStateFlow(false)
 
-    /**
-     * Unified State flow with centralized rollover logic.
-     */
     val state: StateFlow<HomeViewState> = combine(
         combine(selectedDate, currentTime, currentPrayerDay, moonPhase, ::StateQuad),
         combine(nextPrayerInfo, currentPrayerInfo, isRefreshing, ::Triple),
@@ -264,7 +248,6 @@ class HomeViewModel @Inject constructor(
         allPrayerDays
     ) { (date, time, prayerDay, moon), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, locationEnabled, locPerm, issues), allDays ->
         
-        // Comparison Fix: Use prayer type name (enum) consistently instead of localized display name
         val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
 
@@ -335,7 +318,6 @@ class HomeViewModel @Inject constructor(
 
     fun toggleSkipNextPrayerAudio(prayerName: String, prayerDate: LocalDate) = viewModelScope.launch {
         val s = settings.first()
-        // Logic Alignment: Check against the enum name coming from the UI
         val currentlyMuted = s.mutedPrayerName.equals(prayerName, ignoreCase = true) &&
                              s.mutedPrayerDate == prayerDate.toString()
         

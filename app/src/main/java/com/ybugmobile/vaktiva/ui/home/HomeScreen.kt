@@ -202,7 +202,7 @@ fun HomeScreenContent(
                                     horizontalArrangement = Arrangement.Center
                                 ) {
                                     Box(
-                                        modifier = Modifier.size(28.dp),
+                                        modifier = Modifier.size(280.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         state.currentPrayerDay?.let { prayerDay ->
