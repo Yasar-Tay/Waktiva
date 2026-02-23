@@ -220,10 +220,6 @@ private fun QiblaContent(
 
     val currentTheme = if (isMapView) lightGlassTheme else glassTheme
 
-    val statusIconLambda: @Composable (Modifier) -> Unit = { modifier ->
-        SystemHealthIndicator(onClick = onStatusClick, modifier = modifier)
-    }
-
     Box(modifier = Modifier.fillMaxSize()) {
         if (isMapView && !isLandscape) {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -425,7 +421,7 @@ private fun QiblaContent(
                                         isNetworkAvailable = state.isNetworkAvailable,
                                         isLocationEnabled = state.isLocationEnabled,
                                         isLocationPermissionGranted = state.isLocationPermissionGranted,
-                                        statusIcon = statusIconLambda
+                                        onStatusClick = onStatusClick
                                     )
                                 }
                             }
@@ -494,7 +490,7 @@ private fun QiblaContent(
                                 isNetworkAvailable = state.isNetworkAvailable,
                                 isLocationEnabled = state.isLocationEnabled,
                                 isLocationPermissionGranted = state.isLocationPermissionGranted,
-                                statusIcon = statusIconLambda
+                                onStatusClick = onStatusClick
                             )
                         }
                     }

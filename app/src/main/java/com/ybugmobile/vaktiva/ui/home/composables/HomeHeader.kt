@@ -31,8 +31,8 @@ fun HomeHeader(
     date: LocalDate,
     hijriDate: HijriData?,
     contentColor: Color,
+    onStatusClick: () -> Unit,
     modifier: Modifier = Modifier,
-    statusIcon: (@Composable (Modifier) -> Unit)? = null,
     isNetworkAvailable: Boolean = true,
     isLocationEnabled: Boolean = true,
     isLocationPermissionGranted: Boolean = true
@@ -64,7 +64,7 @@ fun HomeHeader(
                         isNetworkAvailable = isNetworkAvailable, 
                         isLocationEnabled = isLocationEnabled,
                         isLocationPermissionGranted = isLocationPermissionGranted,
-                        statusIcon = statusIcon
+                        onStatusClick = onStatusClick
                     )
                 }
 
@@ -85,7 +85,7 @@ fun HomeHeader(
                     isNetworkAvailable = isNetworkAvailable, 
                     isLocationEnabled = isLocationEnabled,
                     isLocationPermissionGranted = isLocationPermissionGranted,
-                    statusIcon = statusIcon
+                    onStatusClick = onStatusClick
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 DatesSection(date, effectiveHijri, contentColor, context, isOffline = hijriDate == null)
@@ -184,7 +184,8 @@ fun HomeHeaderPreview() {
             locationName = "Istanbul, Turkey",
             date = LocalDate.of(2026, 3, 17),
             hijriDate = HijriData(30, 8, "Sha'ban", 1446),
-            contentColor = Color.White
+            contentColor = Color.White,
+            onStatusClick = {}
         )
     }
 }

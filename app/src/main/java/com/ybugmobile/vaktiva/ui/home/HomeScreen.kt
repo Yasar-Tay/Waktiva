@@ -143,13 +143,6 @@ fun HomeScreenContent(
 
     val contentColor = glassTheme.contentColor
 
-    val statusIcon: @Composable (Modifier) -> Unit = { modifier ->
-        SystemHealthIndicator(
-            onClick = { showHealthOverlay = true },
-            modifier = modifier
-        )
-    }
-
     Scaffold(
         containerColor = Color.Transparent,
         snackbarHost = { },
@@ -197,7 +190,7 @@ fun HomeScreenContent(
                                     date = state.selectedDate,
                                     hijriDate = state.effectiveHijriDate,
                                     contentColor = contentColor,
-                                    statusIcon = statusIcon,
+                                    onStatusClick = { showHealthOverlay = true },
                                     isNetworkAvailable = state.isNetworkAvailable,
                                     isLocationEnabled = state.isLocationEnabled,
                                     isLocationPermissionGranted = state.isLocationPermissionGranted
@@ -209,7 +202,7 @@ fun HomeScreenContent(
                                     horizontalArrangement = Arrangement.Center
                                 ) {
                                     Box(
-                                        modifier = Modifier.size(280.dp),
+                                        modifier = Modifier.size(28.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         state.currentPrayerDay?.let { prayerDay ->
@@ -360,7 +353,7 @@ fun HomeScreenContent(
                                         date = state.selectedDate,
                                         hijriDate = state.effectiveHijriDate,
                                         contentColor = contentColor,
-                                        statusIcon = statusIcon,
+                                        onStatusClick = { showHealthOverlay = true },
                                         isNetworkAvailable = state.isNetworkAvailable,
                                         isLocationEnabled = state.isLocationEnabled,
                                         isLocationPermissionGranted = state.isLocationPermissionGranted

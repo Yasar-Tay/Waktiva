@@ -77,12 +77,13 @@ class HomeViewModel @Inject constructor(
     // Performance Optimization: Initial values are set, but updates are offloaded to IO
     private val _isNetworkAvailable = MutableStateFlow(PermissionUtils.isNetworkAvailable(context))
     private val _isLocationEnabled = MutableStateFlow(PermissionUtils.isLocationEnabled(context))
+    private val _isLocationPermissionGranted = MutableStateFlow(PermissionUtils.isLocationPermissionGranted(context))
     private val _hasSystemIssues = MutableStateFlow(false)
 
     private var mediaController: MediaController? = null
 
     val calculationMethods = CALCULATION_METHODS
-    private var lastPermissionStatus = isLocationPermissionGranted()
+    private var lastPermissionStatus = PermissionUtils.isLocationPermissionGranted(context)
 
     private val todayPrayerDay: Flow<PrayerDay?> = allPrayerDays.map { days -> days.find { it.date == LocalDate.now() } }
 
@@ -174,9 +175,11 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val network = withContext(Dispatchers.IO) { PermissionUtils.isNetworkAvailable(context) }
             val locationEnabled = withContext(Dispatchers.IO) { PermissionUtils.isLocationEnabled(context) }
+            val locationPermission = withContext(Dispatchers.IO) { PermissionUtils.isLocationPermissionGranted(context) }
             val issues = withContext(Dispatchers.IO) { checkSystemIssues() }
             _isNetworkAvailable.value = network
             _isLocationEnabled.value = locationEnabled
+            _isLocationPermissionGranted.value = locationPermission
             _hasSystemIssues.value = issues
         }
     }
@@ -184,7 +187,9 @@ class HomeViewModel @Inject constructor(
     private fun checkSystemIssues(): Boolean {
         return !PermissionUtils.isLocationEnabled(context) || 
                PermissionUtils.isDoNotDisturbActive(context) || 
-               PermissionUtils.areNotificationChannelsMuted(context)
+               PermissionUtils.areNotificationChannelsMuted(context) ||
+               !PermissionUtils.isLocationPermissionGranted(context) ||
+               !PermissionUtils.isNotificationPermissionGranted(context)
     }
 
     fun triggerTestAlarm(seconds: Int) {
@@ -202,15 +207,13 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun onResume(owner: LifecycleOwner) {
-        val status = isLocationPermissionGranted()
+        val status = PermissionUtils.isLocationPermissionGranted(context)
         if (status && !lastPermissionStatus) refresh()
         lastPermissionStatus = status
         
         // Suggestion 2: Health check on resume should also be offloaded
         updateHealthStatus()
     }
-
-    private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     private fun setupMediaController() {
         val sessionToken = SessionToken(context, ComponentName(context, AdhanService::class.java))
@@ -257,9 +260,9 @@ class HomeViewModel @Inject constructor(
         combine(selectedDate, currentTime, currentPrayerDay, moonPhase, ::StateQuad),
         combine(nextPrayerInfo, currentPrayerInfo, isRefreshing, ::Triple),
         combine(settings, _isAdhanPlaying, _playingPrayerName, ::Triple),
-        combine(_isNetworkAvailable, _isLocationEnabled, _hasSystemIssues, ::Triple),
+        combine(_isNetworkAvailable, _isLocationEnabled, _isLocationPermissionGranted, _hasSystemIssues, ::StateQuad),
         allPrayerDays
-    ) { (date, time, prayerDay, moon), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, locationEnabled, issues), allDays ->
+    ) { (date, time, prayerDay, moon), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, locationEnabled, locPerm, issues), allDays ->
         
         // Comparison Fix: Use prayer type name (enum) consistently instead of localized display name
         val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
@@ -284,6 +287,7 @@ class HomeViewModel @Inject constructor(
             isHijriSelected = currentSettings.isHijriSelected,
             isNetworkAvailable = network,
             isLocationEnabled = locationEnabled,
+            isLocationPermissionGranted = locPerm,
             hasSystemIssues = issues
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))
