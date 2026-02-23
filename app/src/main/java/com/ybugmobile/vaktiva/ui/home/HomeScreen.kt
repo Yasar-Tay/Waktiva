@@ -49,6 +49,7 @@ import com.ybugmobile.vaktiva.ui.home.composables.*
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthCard
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
+import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthIndicator
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import com.ybugmobile.vaktiva.utils.PermissionUtils
@@ -142,46 +143,12 @@ fun HomeScreenContent(
 
     val contentColor = glassTheme.contentColor
 
-    val hasNotificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        permissionState.permissions.find { it.permission == Manifest.permission.POST_NOTIFICATIONS }?.status?.isGranted ?: true
-    } else true
-
-    val statusIcon: @Composable ((Modifier) -> Unit)? = if (!hasNotificationPermission || !state.isNetworkAvailable || state.hasSystemIssues) {
-        { modifier ->
-            val color = Color(0xFFFF5252)
-            val iconPulseTransition = rememberInfiniteTransition(label = "iconPulse")
-            val iconScale by iconPulseTransition.animateFloat(
-                initialValue = 1f,
-                targetValue = 1.12f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(1000, easing = FastOutSlowInEasing),
-                    repeatMode = RepeatMode.Reverse
-                ),
-                label = "iconScale"
-            )
-
-            Surface(
-                onClick = { showHealthOverlay = true },
-                shape = CircleShape,
-                color = Color.White,
-                shadowElevation = 8.dp,
-                tonalElevation = 4.dp,
-                border = androidx.compose.foundation.BorderStroke(1.5.dp, color.copy(alpha = 0.7f)),
-                modifier = modifier
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = if (!state.isNetworkAvailable) Icons.Rounded.WifiOff else Icons.Rounded.PriorityHigh,
-                        contentDescription = "Status",
-                        tint = color,
-                        modifier = Modifier
-                            .fillMaxSize(0.6f)
-                            .graphicsLayer(scaleX = iconScale, scaleY = iconScale)
-                    )
-                }
-            }
-        }
-    } else null
+    val statusIcon: @Composable (Modifier) -> Unit = { modifier ->
+        SystemHealthIndicator(
+            onClick = { showHealthOverlay = true },
+            modifier = modifier
+        )
+    }
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -232,7 +199,8 @@ fun HomeScreenContent(
                                     contentColor = contentColor,
                                     statusIcon = statusIcon,
                                     isNetworkAvailable = state.isNetworkAvailable,
-                                    isLocationEnabled = state.isLocationEnabled
+                                    isLocationEnabled = state.isLocationEnabled,
+                                    isLocationPermissionGranted = state.isLocationPermissionGranted
                                 )
 
                                 Row(
@@ -394,7 +362,8 @@ fun HomeScreenContent(
                                         contentColor = contentColor,
                                         statusIcon = statusIcon,
                                         isNetworkAvailable = state.isNetworkAvailable,
-                                        isLocationEnabled = state.isLocationEnabled
+                                        isLocationEnabled = state.isLocationEnabled,
+                                        isLocationPermissionGranted = state.isLocationPermissionGranted
                                     )
                                 }
 

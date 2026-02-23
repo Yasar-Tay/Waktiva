@@ -16,7 +16,7 @@
                 android:endX="54"
                 android:type="linear">
                 <item android:offset="0.0" android:color="#8739C5" /> <!-- Vibrant Daytime Blue -->
-                <item android:offset="1.0" android:color="#2A233C" /> <!-- Vibrant Daytime Blue -->
+                <item android:offset="1.0" android:color="#602176" /> <!-- Vibrant Daytime Blue -->
             </gradient>
         </aapt:attr>
     </path>
