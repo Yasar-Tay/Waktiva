@@ -209,7 +209,6 @@ private fun QiblaContent(
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val theme = MaterialTheme.colorScheme
 
     val lightGlassTheme = GlassTheme(
         containerColor = Color.White.copy(alpha = 0.7f),
@@ -221,8 +220,8 @@ private fun QiblaContent(
 
     val currentTheme = if (isMapView) lightGlassTheme else glassTheme
 
-    val statusIndicator = @Composable {
-        SystemHealthIndicator(onClick = onStatusClick)
+    val statusIconLambda: @Composable (Modifier) -> Unit = { modifier ->
+        SystemHealthIndicator(onClick = onStatusClick, modifier = modifier)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -425,7 +424,8 @@ private fun QiblaContent(
                                         contentColor = currentTheme.contentColor,
                                         isNetworkAvailable = state.isNetworkAvailable,
                                         isLocationEnabled = state.isLocationEnabled,
-                                        isLocationPermissionGranted = state.isLocationPermissionGranted
+                                        isLocationPermissionGranted = state.isLocationPermissionGranted,
+                                        statusIcon = statusIconLambda
                                     )
                                 }
                             }
@@ -442,8 +442,6 @@ private fun QiblaContent(
 
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Column(horizontalAlignment = Alignment.Start) {
-                            statusIndicator()
-                            Spacer(Modifier.height(12.dp))
                             QiblaInfoCard(
                                 isAligned = isAligned,
                                 alignmentColor = alignmentColor,
@@ -495,7 +493,8 @@ private fun QiblaContent(
                                 contentColor = currentTheme.contentColor,
                                 isNetworkAvailable = state.isNetworkAvailable,
                                 isLocationEnabled = state.isLocationEnabled,
-                                isLocationPermissionGranted = state.isLocationPermissionGranted
+                                isLocationPermissionGranted = state.isLocationPermissionGranted,
+                                statusIcon = statusIconLambda
                             )
                         }
                     }
@@ -547,8 +546,6 @@ private fun QiblaContent(
 
                 Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Column(horizontalAlignment = Alignment.Start) {
-                        statusIndicator()
-                        Spacer(Modifier.height(12.dp))
                         QiblaInfoCard(
                             isAligned = isAligned,
                             alignmentColor = alignmentColor,

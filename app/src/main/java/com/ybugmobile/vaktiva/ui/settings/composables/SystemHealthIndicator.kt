@@ -3,6 +3,7 @@ package com.ybugmobile.vaktiva.ui.settings.composables
 import android.os.Build
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -76,10 +77,10 @@ fun SystemHealthIndicator(
             onClick = onClick,
             shape = CircleShape,
             color = Color.White,
-            shadowElevation = 10.dp,
-            tonalElevation = 6.dp,
-            border = androidx.compose.foundation.BorderStroke(2.dp, color.copy(alpha = 0.7f)),
-            modifier = modifier.size(46.dp)
+            shadowElevation = 8.dp,
+            tonalElevation = 4.dp,
+            border = androidx.compose.foundation.BorderStroke(1.5.dp, color.copy(alpha = 0.7f)),
+            modifier = modifier
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
@@ -87,7 +88,7 @@ fun SystemHealthIndicator(
                     contentDescription = "Status",
                     tint = color,
                     modifier = Modifier
-                        .size(24.dp)
+                        .fillMaxSize(0.6f)
                         .graphicsLayer(scaleX = iconScale, scaleY = iconScale)
                 )
             }

@@ -110,24 +110,38 @@ fun LocationSection(
     modifier: Modifier = Modifier,
     statusIcon: (@Composable (Modifier) -> Unit)? = null
 ) {
+    val configuration = LocalConfiguration.current
+    val isArabic = configuration.locales[0].language == "ar"
+    
+    val unknownStr = stringResource(R.string.home_unknown_location)
+    val isFallbackState = !isLocationEnabled || !isNetworkAvailable || !isLocationPermissionGranted
+    
+    // Determine the city name, replacing sentinel "Unknown" with localized string
+    val rawCity = locationName.substringBefore(",")
+    val city = if (rawCity == "Unknown" || rawCity.isEmpty()) unknownStr else rawCity
+    
+    // Show statusIcon only if there is a health issue, otherwise show standard location pin
+    val showStatusIcon = isFallbackState && statusIcon != null
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.Start
     ) {
-        val unknownStr = stringResource(R.string.home_unknown_location)
-        val city = locationName.substringBefore(",").ifEmpty { unknownStr }
-        val isFallbackState = !isLocationEnabled || !isNetworkAvailable || !isLocationPermissionGranted
-
         Row(verticalAlignment = Alignment.CenterVertically) {
-            if (statusIcon != null) {
-                statusIcon(Modifier.size(28.dp))
-            } else {
-                Icon(
-                    imageVector = Icons.Rounded.LocationOn,
-                    contentDescription = null,
-                    tint = contentColor.copy(alpha = 0.5f),
-                    modifier = Modifier.size(16.dp)
-                )
+            Box(
+                modifier = Modifier.size(28.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                if (showStatusIcon) {
+                    statusIcon?.invoke(Modifier.fillMaxSize())
+                } else {
+                    Icon(
+                        imageVector = Icons.Rounded.LocationOn,
+                        contentDescription = null,
+                        tint = contentColor.copy(alpha = 0.5f),
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
             }
             Spacer(modifier = Modifier.width(8.dp))
 
@@ -147,7 +161,7 @@ fun LocationSection(
         }
         
         val subTitle = if (isFallbackState) {
-            if (locationName.isNotEmpty() && locationName != unknownStr) {
+            if (locationName.isNotEmpty() && locationName != "Unknown" && locationName != unknownStr) {
                 stringResource(R.string.home_last_known_location, city)
             } else ""
         } else {
@@ -157,11 +171,14 @@ fun LocationSection(
         if (subTitle.isNotEmpty()) {
             Text(
                 text = subTitle.uppercase(),
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontSize = if (isArabic) 14.sp else 11.sp
+                ),
                 color = contentColor.copy(alpha = 0.4f),
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
-                modifier = Modifier.padding(start = if (statusIcon != null) 36.dp else 24.dp)
+                // Aligned padding: Box width (28.dp) + Spacer width (8.dp) = 36.dp
+                modifier = Modifier.padding(start = 36.dp)
             )
         }
     }
