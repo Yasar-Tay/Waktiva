@@ -12,37 +12,9 @@
         android:scaleX="0.12"
         android:scaleY="0.12">
 
-        <!-- 1. Global Atmospheric Bloom -->
-        <path
-            android:pathData="M190,192m-220,0a220,220 0,1 1,440 0a220,220 0,1 1,-440 0">
-            <aapt:attr name="android:fillColor">
-                <gradient
-                    android:centerX="190" android:centerY="192"
-                    android:gradientRadius="220"
-                    android:type="radial">
-                    <item android:color="#1AFFFFFF" android:offset="0.0" />
-                    <item android:color="#00FFFFFF" android:offset="1.0" />
-                </gradient>
-            </aapt:attr>
-        </path>
-
-        <!-- 2. Glowing Pure White Moon Section -->
+        <!-- 1. Glowing Pure White Moon Section -->
         <group>
-            <!-- Moon White Halo (Brighter and Pure White) -->
-            <path
-                android:pathData="M120,0C90,35 70,85 70,140C70,240 150,320 250,320C295,320 340,305 380,273C348,339 280,385 201,385C90,385 0,295 0,184C0,102 49,31 120,0Z">
-                <aapt:attr name="android:fillColor">
-                    <gradient
-                        android:centerX="100" android:centerY="190"
-                        android:gradientRadius="250"
-                        android:type="radial">
-                        <item android:color="#4DFFFFFF" android:offset="0.0" />
-                        <item android:color="#00FFFFFF" android:offset="1.0" />
-                    </gradient>
-                </aapt:attr>
-            </path>
-
-            <!-- The Moon Body (Pure Glowing White) -->
+            <!-- The Moon Body (Pure White) -->
             <path
                 android:pathData="M120,0C90,35 70,85 70,140C70,240 150,320 250,320C295,320 340,305 380,273C348,339 280,385 201,385C90,385 0,295 0,184C0,102 49,31 120,0Z">
                 <aapt:attr name="android:fillColor">
@@ -57,7 +29,7 @@
                 </aapt:attr>
             </path>
 
-            <!-- 2a. Moon Craters (Enhanced Organic Surface Detail) -->
+            <!-- 1a. Moon Craters (Subtle Surface Detail) -->
             <path android:fillColor="#000000" android:fillAlpha="0.05" android:pathData="M70,140m-18,0a18,18 0,1 1,36 0a18,18 0,1 1,-36 0" />
             <path android:fillColor="#000000" android:fillAlpha="0.03" android:pathData="M95,210m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0" />
             <path android:fillColor="#000000" android:fillAlpha="0.04" android:pathData="M125,280m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0" />
@@ -65,32 +37,18 @@
             <path android:fillColor="#000000" android:fillAlpha="0.02" android:pathData="M140,80m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
         </group>
 
-        <!-- 3. Radiant Sun Group -->
+        <!-- 2. Sun Group (Glow and Bloom Removed) -->
         <group
             android:pivotX="223"
             android:pivotY="150"
             android:scaleX="1.35"
             android:scaleY="1.35">
 
-            <!-- Intense Solar Flare Glow (High Visibility) -->
-            <path
-                android:pathData="M223,150m-130,0a130,130 0,1 1,260 0a130,130 0,1 1,-260 0">
-                <aapt:attr name="android:fillColor">
-                    <gradient
-                        android:centerX="223" android:centerY="150"
-                        android:gradientRadius="130"
-                        android:type="radial">
-                        <item android:color="#80FDE68A" android:offset="0.0" /> <!-- Intense Amber Core Glow -->
-                        <item android:color="#00FDE68A" android:offset="1.0" />
-                    </gradient>
-                </aapt:attr>
-            </path>
-
-            <!-- Dynamic Stripes under the Sun -->
+            <!-- Stripes under the Sun -->
             <path android:fillColor="#F59E0B" android:pathData="M223.07,184.47L308.21,211.71V222.83L223.07,197.26V184.47Z"/>
             <path android:fillColor="#FBBF24" android:pathData="M223.07,184.69L137.01,212.29V223.02L223.07,197.32V184.69Z"/>
 
-            <!-- Main Sun Core - Incandescent Polish -->
+            <!-- Main Sun Core -->
             <path
                 android:pathData="M223.1,169.72L147.46,194.38C132.57,166.71 133.82,131.79 153.55,104.69C180.98,67.04 233.75,58.75 271.4,86.18C305.78,111.22 315.68,157.37 296.27,193.87L223.1,169.72Z">
                 <aapt:attr name="android:fillColor">
@@ -105,14 +63,14 @@
                 </aapt:attr>
             </path>
 
-            <!-- Premium Solar Shine -->
+            <!-- Subtle Solar Shine -->
             <path
                 android:fillColor="#FFFFFF"
-                android:fillAlpha="0.5"
+                android:fillAlpha="0.4"
                 android:pathData="M240,95 C220,85 180,105 170,135 C175,120 200,105 240,105 Z" />
         </group>
 
-        <!-- 4. Floating Night Accents (Stars) -->
+        <!-- 3. Night Accents (Stars) -->
         <path android:fillColor="#FFFFFF" android:fillAlpha="0.9" android:pathData="M40,100l2.5,2.5l2.5,-2.5l-2.5,-2.5z" />
         <path android:fillColor="#FFFFFF" android:fillAlpha="0.7" android:pathData="M90,40l1.8,1.8l1.8,-1.8l-1.8,-1.8z" />
 

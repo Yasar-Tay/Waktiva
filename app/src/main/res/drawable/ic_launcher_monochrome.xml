@@ -25,17 +25,12 @@
         <group
             android:pivotX="223"
             android:pivotY="150"
-            android:scaleX="1.25"
-            android:scaleY="1.25">
+            android:scaleX="1.35"
+            android:scaleY="1.35">
 
-            <!-- Sun Rays -->
+            <!-- Sun Stripes -->
             <path android:fillColor="#FFFFFFFF" android:pathData="M223.07,184.47L308.21,211.71V222.83L223.07,197.26V184.47Z"/>
             <path android:fillColor="#FFFFFFFF" android:pathData="M223.07,184.69L137.01,212.29V223.02L223.07,197.32V184.69Z"/>
-            <path android:fillColor="#FFFFFFFF" android:pathData="M222.5,32L232.46,87.5H212.54L222.5,32Z"/>
-            <path android:fillColor="#FFFFFFFF" android:pathData="M128.13,69.13L174.42,101.33L160.33,115.42L128.13,69.13Z"/>
-            <path android:fillColor="#FFFFFFFF" android:pathData="M313.46,69.13L281.26,115.42L267.17,101.33L313.46,69.13Z"/>
-            <path android:fillColor="#FFFFFFFF" android:pathData="M93,158.5L148.5,148.54V168.46L93,158.5Z"/>
-            <path android:fillColor="#FFFFFFFF" android:pathData="M351,158.5L295.5,168.46V148.54L351,158.5Z"/>
 
             <!-- Sun Core -->
             <path
