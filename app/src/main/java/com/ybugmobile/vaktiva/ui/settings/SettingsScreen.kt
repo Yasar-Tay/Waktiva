@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.ui.settings.composables.*
@@ -50,6 +51,7 @@ fun SettingsScreen(
     var showMadhabDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showDeleteHistoryDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -123,6 +125,9 @@ fun SettingsScreen(
                         DataManagementSection(
                             onDeleteHistoryClick = { showDeleteHistoryDialog = true }
                         )
+                        AboutSection(onShowLicensesClick = {
+                            context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
+                        })
                         SettingsSection(
                             title = stringResource(R.string.settings_permissions)
                         ) {
@@ -162,6 +167,10 @@ fun SettingsScreen(
                     DataManagementSection(
                         onDeleteHistoryClick = { showDeleteHistoryDialog = true }
                     )
+
+                    AboutSection(onShowLicensesClick = {
+                        context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
+                    })
 
                     SettingsSection(
                         title = stringResource(R.string.settings_permissions)
@@ -379,6 +388,20 @@ private fun DataManagementSection(
             subtitle = stringResource(R.string.settings_delete_history_desc),
             icon = Icons.Rounded.DeleteSweep,
             onClick = onDeleteHistoryClick
+        )
+    }
+}
+
+@Composable
+private fun AboutSection(onShowLicensesClick: () -> Unit) {
+    SettingsSection(
+        title = "About"
+    ) {
+        SettingsClickItem(
+            title = "Open Source Licenses",
+            subtitle = "License details for open source software",
+            icon = Icons.Rounded.Description,
+            onClick = onShowLicensesClick
         )
     }
 }

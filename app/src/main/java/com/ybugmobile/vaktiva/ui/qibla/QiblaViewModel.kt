@@ -102,7 +102,7 @@ class QiblaViewModel @Inject constructor(
                     val geomagneticField = GeomagneticField(
                         s.latitude.toFloat(),
                         s.longitude.toFloat(),
-                        0f, // Altitude - approximate as 0 for declination
+                        s.altitude?.toFloat() ?: 0f,
                         System.currentTimeMillis()
                     )
                     compassManager.setDeclination(geomagneticField.declination)

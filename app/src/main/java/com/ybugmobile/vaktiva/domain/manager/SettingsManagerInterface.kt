@@ -20,6 +20,7 @@ interface SettingsManagerInterface {
     suspend fun setSetupComplete(complete: Boolean)
     suspend fun setCalculationMethod(method: Int)
     suspend fun saveLocation(lat: Double, lng: Double, name: String)
+    suspend fun saveLocation(lat: Double, lng: Double, alt: Double, name: String)
     suspend fun setTestAlarmEndTime(timeMillis: Long?)
     suspend fun updateCalendarType(isHijri: Boolean)
     suspend fun updateShowWeatherEffects(enabled: Boolean)

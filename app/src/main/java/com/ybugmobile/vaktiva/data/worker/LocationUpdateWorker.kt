@@ -55,9 +55,10 @@ class LocationUpdateWorker @AssistedInject constructor(
 
                 if (result.isSuccess) {
                     settingsManager.saveLocation(
-                        currentLocation.latitude,
-                        currentLocation.longitude,
-                        "Updated Location" // We'll add Geocoding later
+                        lat = currentLocation.latitude,
+                        lng = currentLocation.longitude,
+                        alt = currentLocation.altitude,
+                        name = "Updated Location" // We'll add Geocoding later
                     )
                     Result.success()
                 } else {

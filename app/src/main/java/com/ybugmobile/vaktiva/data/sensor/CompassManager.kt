@@ -81,7 +81,18 @@ class CompassManager @Inject constructor(
                     val smoothedAzimuth = (lastAzimuth + alpha * diff + 360) % 360
                     lastAzimuth = smoothedAzimuth
 
-                    trySend(CompassData(smoothedAzimuth, event.accuracy))
+                    val headingAccuracy = if (event.values.size > 4 && event.values[4] >= 0) {
+                        val accuracyInDegrees = Math.toDegrees(event.values[4].toDouble()).toFloat()
+                        when {
+                            accuracyInDegrees < 5f -> SensorManager.SENSOR_STATUS_ACCURACY_HIGH
+                            accuracyInDegrees < 15f -> SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM
+                            else -> SensorManager.SENSOR_STATUS_ACCURACY_LOW
+                        }
+                    } else {
+                        event.accuracy
+                    }
+
+                    trySend(CompassData(smoothedAzimuth, headingAccuracy))
                 }
             }
 

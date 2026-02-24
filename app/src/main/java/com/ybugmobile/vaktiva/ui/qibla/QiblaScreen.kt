@@ -83,13 +83,10 @@ fun QiblaScreen(
         label = "pulseAlpha"
     )
 
-    val animatedAzimuth by animateFloatAsState(
-        targetValue = state.compassData.azimuth,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-        label = "azimuth"
-    )
+    // Animation removed from here to prevent "double lag" - moved entirely to ProfessionalCompass
+    val currentAzimuth = state.compassData.azimuth
 
-    var relativeQiblaAngle = (state.qiblaDirection.toFloat() - state.compassData.azimuth)
+    var relativeQiblaAngle = (state.qiblaDirection.toFloat() - currentAzimuth)
     while (relativeQiblaAngle <= -180) relativeQiblaAngle += 360
     while (relativeQiblaAngle > 180) relativeQiblaAngle -= 360
 
@@ -125,53 +122,13 @@ fun QiblaScreen(
                     isAccuracyLow = isAccuracyLow,
                     isAccuracyUnreliable = isAccuracyUnreliable,
                     pulseAlpha = pulseAlpha,
-                    animatedAzimuth = animatedAzimuth,
+                    currentAzimuth = currentAzimuth,
                     isAligned = isAligned,
                     alignmentColor = alignmentColor,
                     glassTheme = glassTheme,
                     onCalibrationClick = { showCalibrationDialog = true },
                     onStatusClick = { showHealthOverlay = true }
                 )
-            }
-        }
-
-        // Calibration Alert FAB
-        if (isAccuracyLow || isAccuracyUnreliable) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                contentAlignment = Alignment.BottomStart
-            ) {
-                val calPulseTransition = rememberInfiniteTransition(label = "calPulse")
-                val calScale by calPulseTransition.animateFloat(
-                    initialValue = 1f,
-                    targetValue = 1.15f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(1000, easing = FastOutSlowInEasing),
-                        repeatMode = RepeatMode.Reverse
-                    ),
-                    label = "calScale"
-                )
-
-                Surface(
-                    onClick = { showCalibrationDialog = true },
-                    shape = CircleShape,
-                    color = Color(0xFFFACC15), // Warning Yellow
-                    shadowElevation = 8.dp,
-                    modifier = Modifier
-                        .size(56.dp)
-                        .graphicsLayer(scaleX = calScale, scaleY = calScale)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Rounded.ReportProblem,
-                            contentDescription = "Calibrate",
-                            tint = Color.Black,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-                }
             }
         }
 
@@ -196,7 +153,7 @@ private fun QiblaContent(
     isAccuracyLow: Boolean,
     isAccuracyUnreliable: Boolean,
     pulseAlpha: Float,
-    animatedAzimuth: Float,
+    currentAzimuth: Float,
     isAligned: Boolean,
     alignmentColor: Color,
     glassTheme: GlassTheme,
@@ -373,7 +330,7 @@ private fun QiblaContent(
                                     )
                             )
                             ProfessionalCompass(
-                                azimuth = animatedAzimuth,
+                                azimuth = currentAzimuth,
                                 qiblaAngle = state.qiblaDirection.toFloat(),
                                 alignmentColor = alignmentColor,
                                 isAligned = isAligned,
@@ -437,7 +394,17 @@ private fun QiblaContent(
                     }
 
                     Box(modifier = Modifier.fillMaxWidth()) {
-                        Column(horizontalAlignment = Alignment.Start) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            if (isAccuracyLow || isAccuracyUnreliable) {
+                                AccuracyWarningButton(
+                                    onClick = onCalibrationClick,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                            }
+                            
                             QiblaInfoCard(
                                 isAligned = isAligned,
                                 alignmentColor = alignmentColor,
@@ -530,7 +497,7 @@ private fun QiblaContent(
                                     )
                             )
                             ProfessionalCompass(
-                                azimuth = animatedAzimuth,
+                                azimuth = currentAzimuth,
                                 qiblaAngle = state.qiblaDirection.toFloat(),
                                 alignmentColor = alignmentColor,
                                 isAligned = isAligned,
@@ -541,7 +508,17 @@ private fun QiblaContent(
                 }
 
                 Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    Column(horizontalAlignment = Alignment.Start) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (isAccuracyLow || isAccuracyUnreliable) {
+                            AccuracyWarningButton(
+                                onClick = onCalibrationClick,
+                                modifier = Modifier.padding(bottom = 12.dp)
+                            )
+                        }
+
                         QiblaInfoCard(
                             isAligned = isAligned,
                             alignmentColor = alignmentColor,
@@ -560,6 +537,42 @@ private fun QiblaContent(
                 
                 Spacer(modifier = Modifier.height(150.dp))
             }
+        }
+    }
+}
+
+@Composable
+private fun AccuracyWarningButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val calPulseTransition = rememberInfiniteTransition(label = "calPulse")
+    val calScale by calPulseTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "calScale"
+    )
+
+    Surface(
+        onClick = onClick,
+        shape = CircleShape,
+        color = Color(0xFFFACC15), // Warning Yellow
+        shadowElevation = 4.dp,
+        modifier = modifier
+            .size(48.dp)
+            .graphicsLayer(scaleX = calScale, scaleY = calScale)
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = Icons.Rounded.ReportProblem,
+                contentDescription = "Calibrate",
+                tint = Color.Black,
+                modifier = Modifier.size(24.dp)
+            )
         }
     }
 }

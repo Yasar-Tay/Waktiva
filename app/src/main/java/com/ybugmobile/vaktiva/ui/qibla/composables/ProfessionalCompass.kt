@@ -9,8 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -48,12 +47,26 @@ fun ProfessionalCompass(
         label = "indicator"
     )
 
-    // 2. Magnetic Inertia Animation
+    // 2. Shortest-Path Azimuth Animation
+    // This logic ensures that when the angle jumps from 359 to 1, the wheel doesn't spin all the way back.
+    var lastTargetAzimuth by remember { mutableStateOf(azimuth) }
+    var azimuthOffset by remember { mutableStateOf(0f) }
+    
+    SideEffect {
+        val diff = azimuth - lastTargetAzimuth
+        if (diff > 180f) {
+            azimuthOffset -= 360f
+        } else if (diff < -180f) {
+            azimuthOffset += 360f
+        }
+        lastTargetAzimuth = azimuth
+    }
+
     val animatedAzimuth by animateFloatAsState(
-        targetValue = azimuth,
+        targetValue = azimuth + azimuthOffset,
         animationSpec = spring(
-            dampingRatio = 0.65f,
-            stiffness = Spring.StiffnessLow
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessMediumLow // Higher stiffness for better responsiveness
         ),
         label = "magneticAzimuth"
     )

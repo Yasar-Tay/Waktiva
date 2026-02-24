@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.google.oss.licenses)
 }
 
 android {
@@ -84,6 +85,7 @@ dependencies {
 
     // Location
     implementation(libs.play.services.location)
+    implementation(libs.play.services.oss.licenses)
     implementation(libs.kotlinx.coroutines.play.services)
 
     // Networking

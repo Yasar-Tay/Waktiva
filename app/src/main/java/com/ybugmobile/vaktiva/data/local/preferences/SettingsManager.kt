@@ -28,6 +28,7 @@ data class UserSettings(
     val calculationMethod: Int,
     val latitude: Double?,
     val longitude: Double?,
+    val altitude: Double?,
     val locationName: String,
     val language: String,
     val selectedAdhanPath: String?,
@@ -59,6 +60,7 @@ class SettingsManager @Inject constructor(
         val CALCULATION_METHOD = intPreferencesKey("calculation_method")
         val LAST_KNOWN_LAT = doublePreferencesKey("last_lat")
         val LAST_KNOWN_LNG = doublePreferencesKey("last_lng")
+        val LAST_KNOWN_ALT = doublePreferencesKey("last_alt")
         val LAST_LOCATION_NAME = stringPreferencesKey("last_location_name")
         val LANGUAGE = stringPreferencesKey("language")
         val SELECTED_ADHAN_PATH = stringPreferencesKey("selected_adhan_path")
@@ -91,6 +93,7 @@ class SettingsManager @Inject constructor(
             calculationMethod = preferences[CALCULATION_METHOD] ?: 2,
             latitude = preferences[LAST_KNOWN_LAT],
             longitude = preferences[LAST_KNOWN_LNG],
+            altitude = preferences[LAST_KNOWN_ALT],
             locationName = preferences[LAST_LOCATION_NAME] ?: "Unknown",
             language = preferences[LANGUAGE] ?: "system",
             selectedAdhanPath = preferences[SELECTED_ADHAN_PATH],
@@ -199,6 +202,15 @@ class SettingsManager @Inject constructor(
         context.dataStore.edit { preferences ->
             preferences[LAST_KNOWN_LAT] = lat
             preferences[LAST_KNOWN_LNG] = lng
+            preferences[LAST_LOCATION_NAME] = name
+        }
+    }
+
+    override suspend fun saveLocation(lat: Double, lng: Double, alt: Double, name: String) {
+        context.dataStore.edit { preferences ->
+            preferences[LAST_KNOWN_LAT] = lat
+            preferences[LAST_KNOWN_LNG] = lng
+            preferences[LAST_KNOWN_ALT] = alt
             preferences[LAST_LOCATION_NAME] = name
         }
     }
