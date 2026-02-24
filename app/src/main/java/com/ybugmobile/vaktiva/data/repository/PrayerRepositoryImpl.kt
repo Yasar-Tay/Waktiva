@@ -7,9 +7,12 @@ import com.ybugmobile.vaktiva.data.local.dao.PrayerStatusDao
 import com.ybugmobile.vaktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.vaktiva.data.mapper.toDomain
 import com.ybugmobile.vaktiva.data.remote.AladhanApiService
+import com.ybugmobile.vaktiva.data.remote.WeatherApiService
 import com.ybugmobile.vaktiva.data.remote.dto.PrayerDayDto
 import com.ybugmobile.vaktiva.domain.model.MoonPhase
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
+import com.ybugmobile.vaktiva.domain.model.WeatherCondition
+import com.ybugmobile.vaktiva.domain.model.WeatherInfo
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import org.shredzone.commons.suncalc.MoonIllumination
 import org.shredzone.commons.suncalc.MoonPosition
@@ -26,6 +29,7 @@ import javax.inject.Inject
 
 class PrayerRepositoryImpl @Inject constructor(
     private val aladhanApi: AladhanApiService,
+    private val weatherApi: WeatherApiService,
     private val localCalculator: LocalPrayerCalculator,
     private val dao: PrayerDao,
     private val statusDao: PrayerStatusDao
@@ -72,6 +76,20 @@ class PrayerRepositoryImpl @Inject constructor(
             date = dateTime.toLocalDate(),
             parallacticAngle = moonPosition.parallacticAngle
         )
+    }
+
+    override suspend fun getWeatherData(latitude: Double, longitude: Double): Result<WeatherInfo> {
+        return try {
+            val response = weatherApi.getCurrentWeather(latitude, longitude)
+            val info = WeatherInfo(
+                temperature = response.current.temperature,
+                condition = WeatherCondition.fromWmoCode(response.current.weatherCode),
+                isDay = response.current.isDay == 1
+            )
+            Result.success(info)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     private fun getPhaseName(phaseProgress: Double): String {

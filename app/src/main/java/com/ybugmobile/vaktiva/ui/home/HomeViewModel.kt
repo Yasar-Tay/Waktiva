@@ -12,6 +12,7 @@ import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.MoreExecutors
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.alarm.AlarmScheduler
+import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.data.notification.NotificationHelper
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
@@ -20,8 +21,12 @@ import com.ybugmobile.vaktiva.data.location.LocationWrapper
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import com.ybugmobile.vaktiva.domain.model.HijriUtils
+import com.ybugmobile.vaktiva.domain.model.MoonPhase
+import com.ybugmobile.vaktiva.domain.model.WeatherCondition
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import com.ybugmobile.vaktiva.domain.manager.TimeManager
+import com.ybugmobile.vaktiva.data.sensor.CompassData
+import com.ybugmobile.vaktiva.data.sensor.CompassManager
 import com.ybugmobile.vaktiva.service.AdhanService
 import com.ybugmobile.vaktiva.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.shredzone.commons.suncalc.SunPosition
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -48,6 +54,7 @@ class HomeViewModel @Inject constructor(
     private val locationWrapper: LocationWrapper,
     private val alarmScheduler: AlarmScheduler,
     private val timeManager: TimeManager,
+    private val compassManager: CompassManager,
     @ApplicationContext private val context: Context
 ) : ViewModel(), DefaultLifecycleObserver {
 
@@ -76,6 +83,10 @@ class HomeViewModel @Inject constructor(
     private val _isLocationPermissionGranted = MutableStateFlow(PermissionUtils.isLocationPermissionGranted(context))
     private val _hasSystemIssues = MutableStateFlow(false)
 
+    // Weather State
+    private val _weatherCondition = MutableStateFlow(WeatherCondition.UNKNOWN)
+    private val _temperature = MutableStateFlow<Double?>(null)
+
     private var mediaController: MediaController? = null
 
     val calculationMethods = CALCULATION_METHODS
@@ -94,6 +105,17 @@ class HomeViewModel @Inject constructor(
     ) { date, hourlyTime ->
         val dateTimeToCalculate = if (date == LocalDate.now()) hourlyTime else date.atStartOfDay()
         prayerRepository.getMoonPhase(dateTimeToCalculate)
+    }
+
+    // Solar calculation logic for dynamic lens flare
+    private val sunPosition = combine(currentTime, settings) { time, s ->
+        val lat = s.latitude ?: 47.491143
+        val lng = s.longitude ?: 7.5833342
+        SunPosition.compute()
+            .on(time)
+            .at(lat, lng)
+            .timezone(ZoneId.systemDefault())
+            .execute()
     }
 
     val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, settings) { prayers, now, currentSettings ->
@@ -147,9 +169,15 @@ class HomeViewModel @Inject constructor(
             if (now.second % 30 == 0) {
                 updateHealthStatus()
             }
+            
+            // Poll weather every 60 minutes
+            if (now.minute == 0 && now.second == 0) {
+                refreshWeather()
+            }
         }.launchIn(viewModelScope)
 
         updateHealthStatus()
+        refreshWeather()
         onPermissionsGranted()
         
         combine(allPrayerDays, settings) { days, s -> 
@@ -159,6 +187,19 @@ class HomeViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
         setupMediaController()
+    }
+
+    private fun refreshWeather() {
+        viewModelScope.launch {
+            val s = settings.first()
+            val lat = s.latitude ?: return@launch
+            val lng = s.longitude ?: return@launch
+            
+            prayerRepository.getWeatherData(lat, lng).onSuccess { info ->
+                _weatherCondition.value = info.condition
+                _temperature.value = info.temperature
+            }
+        }
     }
 
     private fun updateHealthStatus() {
@@ -175,7 +216,6 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun checkCriticalSystemIssues(): Boolean {
-        // Critical issues are those that PREVENT notification or alarm functionality
         return PermissionUtils.isDoNotDisturbActive(context) || 
                PermissionUtils.areNotificationChannelsMuted(context) ||
                !PermissionUtils.isNotificationPermissionGranted(context)
@@ -200,6 +240,7 @@ class HomeViewModel @Inject constructor(
         if (status && !lastPermissionStatus) refresh()
         lastPermissionStatus = status
         updateHealthStatus()
+        refreshWeather()
     }
 
     private fun setupMediaController() {
@@ -241,37 +282,64 @@ class HomeViewModel @Inject constructor(
     private val _hasSettled = MutableStateFlow(false)
 
     val state: StateFlow<HomeViewState> = combine(
-        combine(selectedDate, currentTime, currentPrayerDay, moonPhase, ::StateQuad),
-        combine(nextPrayerInfo, currentPrayerInfo, isRefreshing, ::Triple),
-        combine(settings, _isAdhanPlaying, _playingPrayerName, ::Triple),
-        combine(_isNetworkAvailable, _isLocationEnabled, _isLocationPermissionGranted, _hasSystemIssues, ::StateQuad),
-        allPrayerDays
-    ) { (date, time, prayerDay, moon), (nextPrayer, currentPrayer, refreshing), (currentSettings, playing, prayerName), (network, locationEnabled, locPerm, issues), allDays ->
+        selectedDate, currentTime, currentPrayerDay, moonPhase,
+        nextPrayerInfo, currentPrayerInfo, isRefreshing, 
+        _isNetworkAvailable, _isLocationEnabled, _isLocationPermissionGranted, _hasSystemIssues,
+        sunPosition, compassManager.compassFlow, _weatherCondition, _temperature,
+        settings, _isAdhanPlaying, _playingPrayerName, allPrayerDays
+    ) { args ->
+        val date = args[0] as LocalDate
+        val time = args[1] as LocalDateTime
+        val prayerDay = args[2] as? PrayerDay
+        val moon = args[3] as? MoonPhase
+        val next = args[4] as? NextPrayer
+        val current = args[5] as? CurrentPrayer
+        val refreshing = args[6] as Boolean
+        val network = args[7] as Boolean
+        val locEnabled = args[8] as Boolean
+        val locPerm = args[9] as Boolean
+        val issues = args[10] as Boolean
+        val sun = args[11] as SunPosition
+        val compass = args[12] as CompassData
+        val weather = args[13] as WeatherCondition
+        val temp = args[14] as? Double
+        val currentSettings = args[15] as UserSettings
+        val playing = args[16] as Boolean
+        val prayerName = args[17] as? String
+        val allDaysList = args[18] as List<PrayerDay>
         
-        val isMuted = currentSettings.mutedPrayerName.equals(nextPrayer?.type?.name, ignoreCase = true) &&
-                      currentSettings.mutedPrayerDate == nextPrayer?.date?.toString()
+        val isMuted = currentSettings.mutedPrayerName.equals(next?.type?.name, ignoreCase = true) &&
+                      currentSettings.mutedPrayerDate == next?.date?.toString()
 
         val effectiveHijri = HijriUtils.getEffectiveHijriDate(
             targetDate = date,
-            allPrayerDays = allDays
+            allPrayerDays = allDaysList
         )
 
         HomeViewState(
-            selectedDate = date, currentTime = time, currentPrayerDay = prayerDay,
-            currentPrayer = currentPrayer,
-            nextPrayer = nextPrayer, 
+            selectedDate = date, 
+            currentTime = time, 
+            currentPrayerDay = prayerDay,
+            currentPrayer = current,
+            nextPrayer = next, 
             moonPhase = moon,
             effectiveHijriDate = effectiveHijri,
-            isRefreshing = refreshing, isLoading = !hasSettled() && prayerDay == null,
+            isRefreshing = refreshing, 
+            isLoading = !hasSettled() && prayerDay == null,
             locationName = currentSettings.locationName, 
             isAdhanPlaying = playing, 
             playingPrayerName = prayerName,
             isMuted = isMuted,
             isHijriSelected = currentSettings.isHijriSelected,
             isNetworkAvailable = network,
-            isLocationEnabled = locationEnabled,
+            isLocationEnabled = locEnabled,
             isLocationPermissionGranted = locPerm,
-            hasSystemIssues = issues
+            hasSystemIssues = issues,
+            sunAzimuth = sun.azimuth.toFloat(),
+            sunAltitude = sun.altitude.toFloat(),
+            compassAzimuth = compass.azimuth,
+            weatherCondition = weather,
+            temperature = temp
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))
 
@@ -311,7 +379,7 @@ class HomeViewModel @Inject constructor(
 
     fun refresh() = viewModelScope.launch {
         _isRefreshing.value = true
-        try { fetchPrayerData(forceFullRefresh = true) } finally { _isRefreshing.value = false; _hasSettled.value = true }
+        try { fetchPrayerData(forceFullRefresh = true); refreshWeather() } finally { _isRefreshing.value = false; _hasSettled.value = true }
     }
 
     fun updateCalculationMethod(methodId: Int) = viewModelScope.launch { settingsManager.updateCalculationMethod(methodId); refresh() }

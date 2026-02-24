@@ -92,3 +92,16 @@ The project follows **Professional Clean Architecture** with **Uni-directional D
 - [ ] **Dynamic Updates:** Ensure widgets update in real-time as prayer times change throughout the day.
 - [ ] **Interactive Controls:** Add direct actions like "Mute Adhan" or "Open Qibla" from the widget.
 - [ ] **Material You Widgets:** Support system-wide dynamic color themes for a native look.
+
+---
+
+## 🌦️ EPIC 10 – Weather-Reactive Environment
+- [ ] **Weather Data Integration:** Fetch real-time weather conditions via Open-Meteo API.
+- [ ] **Domain Model:** Define `WeatherCondition` (Clear, Rain, Snow, Cloudy, Thunderstorm) and map WMO codes.
+- [ ] **Reactive Backgrounds:** Create animated background layers that respond to weather:
+    - **RainLayer:** Falling animated droplets with intensity control.
+    - **SnowLayer:** Drifting snowflakes with varying sizes.
+    - **CloudyLayer:** Drifting semi-transparent mist/clouds affecting luminosity.
+    - **ThunderLayer:** Randomized screen flashes synchronized with storm state.
+- [ ] **Atmospheric Blending:** Blend weather effects with existing prayer-time gradients (e.g., Rain at Sunset).
+- [ ] **Polling Logic:** Efficient background polling every 30-60 minutes to maintain weather accuracy without battery drain.

@@ -1,6 +1,7 @@
 package com.ybugmobile.vaktiva.di
 
 import com.ybugmobile.vaktiva.data.remote.AladhanApiService
+import com.ybugmobile.vaktiva.data.remote.WeatherApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,5 +41,16 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AladhanApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherApiService(okHttpClient: OkHttpClient): WeatherApiService {
+        return Retrofit.Builder()
+            .baseUrl(WeatherApiService.BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(WeatherApiService::class.java)
     }
 }

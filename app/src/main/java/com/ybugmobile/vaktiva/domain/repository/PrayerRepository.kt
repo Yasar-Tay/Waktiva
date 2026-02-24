@@ -2,13 +2,14 @@ package com.ybugmobile.vaktiva.domain.repository
 
 import com.ybugmobile.vaktiva.domain.model.MoonPhase
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
+import com.ybugmobile.vaktiva.domain.model.WeatherInfo
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 /**
  * Repository interface defining the contract for managing prayer data, lunar information,
- * and data lifecycle within the application.
+ * weather information, and data lifecycle within the application.
  */
 interface PrayerRepository {
     
@@ -26,6 +27,15 @@ interface PrayerRepository {
      * @return A [MoonPhase] object containing illumination and phase details.
      */
     suspend fun getMoonPhase(dateTime: LocalDateTime): MoonPhase
+
+    /**
+     * Retrieves current weather information for a specific location.
+     *
+     * @param latitude The latitude of the location.
+     * @param longitude The longitude of the location.
+     * @return A [WeatherInfo] object containing current weather conditions.
+     */
+    suspend fun getWeatherData(latitude: Double, longitude: Double): Result<WeatherInfo>
     
     /**
      * Triggers a refresh of prayer times from remote or local sources.

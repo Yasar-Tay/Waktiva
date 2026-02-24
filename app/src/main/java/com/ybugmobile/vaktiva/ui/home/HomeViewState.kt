@@ -5,6 +5,7 @@ import com.ybugmobile.vaktiva.domain.model.HijriData
 import com.ybugmobile.vaktiva.domain.model.MoonPhase
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
+import com.ybugmobile.vaktiva.domain.model.WeatherCondition
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -27,5 +28,14 @@ data class HomeViewState(
     val isNetworkAvailable: Boolean = true,
     val isLocationEnabled: Boolean = true,
     val isLocationPermissionGranted: Boolean = true,
-    val hasSystemIssues: Boolean = false
+    val hasSystemIssues: Boolean = false,
+    
+    // Weather state
+    val weatherCondition: WeatherCondition = WeatherCondition.UNKNOWN,
+    val temperature: Double? = null,
+    
+    // Solar and Compass data for atmospheric effects
+    val sunAzimuth: Float = 0f,
+    val sunAltitude: Float = 0f,
+    val compassAzimuth: Float = 0f
 )
