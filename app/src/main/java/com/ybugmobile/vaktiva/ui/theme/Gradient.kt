@@ -1,12 +1,21 @@
 package com.ybugmobile.vaktiva.ui.theme
 
-import androidx.compose.runtime.Composable
+import android.content.res.Configuration
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.dp
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import java.time.LocalDate
 import java.time.LocalTime
+import kotlin.random.Random
 
 /**
  * Provides an enriched, modern gradient based on the current time of day.
@@ -129,5 +138,62 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
                 1.0f to Color(0xFF1C2533)
             )
         )
+    }
+}
+
+/**
+ * A specialized star-field layer that only appears during Night/Isha.
+ * Animates a twinkling effect for realism.
+ */
+@Composable
+fun StarryBackgroundLayer(
+    currentTime: LocalTime,
+    day: PrayerDay?
+) {
+    if (day == null) return
+    
+    val isha = day.timings[PrayerType.ISHA] ?: LocalTime.of(20, 0)
+    val fajr = day.timings[PrayerType.FAJR] ?: LocalTime.of(5, 0)
+    
+    // Show stars after Isha or before Fajr
+    val isNight = currentTime.isAfter(isha) || currentTime.isBefore(fajr)
+    if (!isNight) return
+
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+    val topCoverage = if (isPortrait) 0.3f else 0.4f
+
+    val infiniteTransition = rememberInfiniteTransition(label = "stars")
+    val twinkleAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 0.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2500, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "twinkle"
+    )
+
+    // Seed the random number generator so the stars are stable across recompositions
+    val stars = remember(topCoverage) {
+        List(40) {
+            Offset(
+                x = Random.nextFloat(),
+                y = Random.nextFloat() * topCoverage
+            )
+        }
+    }
+
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        stars.forEach { pos ->
+            val actualX = pos.x * size.width
+            val actualY = pos.y * size.height
+            
+            drawCircle(
+                color = Color.White.copy(alpha = twinkleAlpha * Random.nextFloat().coerceAtLeast(0.3f)),
+                radius = 1.dp.toPx(),
+                center = Offset(actualX, actualY)
+            )
+        }
     }
 }

@@ -52,6 +52,7 @@ import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthIndicator
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
+import com.ybugmobile.vaktiva.ui.theme.StarryBackgroundLayer
 import com.ybugmobile.vaktiva.utils.PermissionUtils
 import java.time.LocalDate
 import java.time.LocalTime
@@ -153,6 +154,12 @@ fun HomeScreenContent(
                 .fillMaxSize()
                 .background(brush = backgroundGradient)
         ) {
+            // New Twinkling Stars Layer
+            StarryBackgroundLayer(
+                currentTime = state.currentTime.toLocalTime(),
+                day = state.currentPrayerDay
+            )
+
             if (state.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
