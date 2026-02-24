@@ -58,31 +58,45 @@ fun LocationSection(
         else -> ""
     }
 
-    Column(
-        modifier = modifier.clickable { onStatusClick() },
-        horizontalAlignment = Alignment.Start
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier.size(28.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                if (hasIssue) {
-                    SystemHealthIndicator(
-                        onClick = onStatusClick,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Rounded.LocationOn,
-                        contentDescription = null,
-                        tint = contentColor.copy(alpha = 0.5f),
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.width(8.dp))
+    val subTitle = if (hasIssue) {
+        if (city != unknownStr && city.isNotEmpty()) {
+            stringResource(R.string.home_last_known_location, city)
+        } else ""
+    } else {
+        locationName.substringAfter(", ").ifEmpty { "" }
+    }
 
+    Row(
+        modifier = modifier.clickable { onStatusClick() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Column 1: Icon / Status Indicator
+        Box(
+            modifier = Modifier.size(32.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (hasIssue) {
+                SystemHealthIndicator(
+                    onClick = onStatusClick,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Rounded.LocationOn,
+                    contentDescription = null,
+                    tint = contentColor.copy(alpha = 0.5f),
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        // Column 2: Location Information
+        Column(
+            modifier = Modifier.weight(1f, fill = false),
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(
                 text = if (hasIssue) healthIssueTitle else city,
                 style = MaterialTheme.typography.titleMedium,
@@ -90,28 +104,19 @@ fun LocationSection(
                 letterSpacing = (-0.5).sp,
                 maxLines = 1
             )
-        }
-        
-        val subTitle = if (hasIssue) {
-            if (city != unknownStr && city.isNotEmpty()) {
-                stringResource(R.string.home_last_known_location, city)
-            } else ""
-        } else {
-            locationName.substringAfter(", ").ifEmpty { "" }
-        }
-
-        if (subTitle.isNotEmpty()) {
-            Text(
-                text = subTitle.uppercase(),
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontSize = if (isArabic) 14.sp else 11.sp
-                ),
-                color = contentColor.copy(alpha = 0.4f),
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp,
-                modifier = Modifier.padding(start = 36.dp),
-                maxLines = 1
-            )
+            
+            if (subTitle.isNotEmpty()) {
+                Text(
+                    text = subTitle.uppercase(),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontSize = if (isArabic) 14.sp else 11.sp
+                    ),
+                    color = contentColor.copy(alpha = 0.4f),
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                    maxLines = 1
+                )
+            }
         }
     }
 }
