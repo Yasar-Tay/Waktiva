@@ -138,11 +138,18 @@ fun HomeScreenContent(
         }
     }
 
-    // Pass weatherCondition to dynamic gradient calculation
+    // Determine the effective weather condition based on user setting
+    val effectiveWeather = if (settings?.showWeatherEffects == true) {
+        state.weatherCondition
+    } else {
+        WeatherCondition.CLEAR
+    }
+
+    // Pass effective weatherCondition to dynamic gradient calculation
     val backgroundGradient = getGradientForTime(
         currentTime = state.currentTime.toLocalTime(), 
         day = state.currentPrayerDay,
-        weatherCondition = state.weatherCondition
+        weatherCondition = effectiveWeather
     )
     val glassTheme = getGlassTheme(state.currentTime.toLocalTime(), state.currentPrayerDay)
     var showMethodDialog by remember { mutableStateOf(false) }
@@ -195,10 +202,13 @@ fun HomeScreenContent(
                 compassAzimuth = state.compassAzimuth
             )
 
-            WeatherBackgroundLayer(
-                condition = state.weatherCondition,
-                isDay = true // Logic already handled inside layer via day timings
-            )
+            // Only show weather layer if effects are enabled in settings
+            if (settings?.showWeatherEffects == true) {
+                WeatherBackgroundLayer(
+                    condition = effectiveWeather,
+                    isDay = true
+                )
+            }
 
             if (state.isLoading) {
                 CircularProgressIndicator(

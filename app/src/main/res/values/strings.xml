@@ -111,6 +111,8 @@
     <string name="settings_language">App Language</string>
     <string name="settings_cancel">Cancel</string>
     <string name="settings_confirm">Confirm</string>
+    <string name="settings_weather_effects">Weather Effects</string>
+    <string name="settings_weather_effects_desc">Show animated weather conditions (rain, snow, clouds) in the background.</string>
 
     <!-- Language Options -->
     <string name="lang_system">System Default</string>

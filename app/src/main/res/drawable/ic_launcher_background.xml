@@ -15,9 +15,10 @@
                 android:startX="54"
                 android:endX="54"
                 android:type="linear">
-                <item android:offset="0.0" android:color="#6366F1" /> <!-- Soft Indigo Twilight -->
-                <item android:offset="0.6" android:color="#3730A3" /> <!-- Deep Atmospheric Blue -->
-                <item android:offset="1.0" android:color="#1E1B4B" /> <!-- Rich Midnight Navy -->
+
+                <item android:offset="0.0" android:color="#AF56FA" /> <!-- Soft Indigo Twilight -->
+                <item android:offset="0.6" android:color="#6F1FAF" /> <!-- Deep Atmospheric Blue -->
+                <item android:offset="1.0" android:color="#370A5B" /> <!-- Rich Midnight Navy -->
             </gradient>
         </aapt:attr>
     </path>

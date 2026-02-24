@@ -63,4 +63,10 @@ class SettingsViewModel @Inject constructor(
             prayerRepository.deletePastData(today)
         }
     }
+
+    fun setShowWeatherEffects(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updateShowWeatherEffects(enabled)
+        }
+    }
 }

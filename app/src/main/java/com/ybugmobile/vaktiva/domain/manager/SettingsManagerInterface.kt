@@ -22,4 +22,5 @@ interface SettingsManagerInterface {
     suspend fun saveLocation(lat: Double, lng: Double, name: String)
     suspend fun setTestAlarmEndTime(timeMillis: Long?)
     suspend fun updateCalendarType(isHijri: Boolean)
+    suspend fun updateShowWeatherEffects(enabled: Boolean)
 }
