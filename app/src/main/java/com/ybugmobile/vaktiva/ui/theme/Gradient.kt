@@ -209,14 +209,14 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
                         
                         // Half are small flakes (background), half are larger (foreground)
                         val isSmall = index % 2 == 0
-                        val baseScale = if (isSmall) 0.35f else 0.75f
-                        val scale = baseScale + (pos.x * 0.2f)
+                        val baseScale = if (isSmall) 0.245f else 0.525f // Reduced by 30% (original: 0.35f, 0.75f)
+                        val scale = baseScale + (pos.x * 0.14f) // Reduced variation by 30% as well (original: 0.2f)
                         val alpha = if (isSmall) 0.4f else 0.7f
                         
                         // Draw a soft glow behind the snowflake
                         drawCircle(
                             Color.White.copy(alpha = 0.08f),
-                            radius = (if (isSmall) 4.dp else 7.dp).toPx(),
+                            radius = (if (isSmall) 2.8.dp else 4.9.dp).toPx(), // Reduced by 30% (original: 4.dp, 7.dp)
                             center = Offset(x, y)
                         )
 
