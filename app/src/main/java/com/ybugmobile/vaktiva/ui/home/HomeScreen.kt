@@ -45,6 +45,7 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
+import com.ybugmobile.vaktiva.domain.model.WeatherCondition
 import com.ybugmobile.vaktiva.ui.home.composables.*
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthCard
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthEmptyState
@@ -54,6 +55,7 @@ import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import com.ybugmobile.vaktiva.ui.theme.StarryBackgroundLayer
 import com.ybugmobile.vaktiva.ui.theme.AtmosphericBackgroundLayer
+import com.ybugmobile.vaktiva.ui.theme.WeatherBackgroundLayer
 import com.ybugmobile.vaktiva.utils.PermissionUtils
 import java.time.LocalDate
 import java.time.LocalTime
@@ -97,7 +99,8 @@ fun HomeScreen(
         onSkipNextAudio = { name, date -> viewModel.toggleSkipNextPrayerAudio(name, date) },
         onStopAdhan = { viewModel.stopAdhan() },
         onStopTest = { viewModel.stopTestAlarm() },
-        onResetDate = { viewModel.selectDate(LocalDate.now()) }
+        onResetDate = { viewModel.selectDate(LocalDate.now()) },
+        onDebugWeather = { viewModel.debugSetWeather(it) }
     )
 }
 
@@ -115,7 +118,8 @@ fun HomeScreenContent(
     onSkipNextAudio: (String, LocalDate) -> Unit,
     onStopAdhan: () -> Unit,
     onStopTest: () -> Unit,
-    onResetDate: () -> Unit
+    onResetDate: () -> Unit,
+    onDebugWeather: (WeatherCondition) -> Unit
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
@@ -134,11 +138,16 @@ fun HomeScreenContent(
         }
     }
 
-    val backgroundGradient =
-        getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
+    // Pass weatherCondition to dynamic gradient calculation
+    val backgroundGradient = getGradientForTime(
+        currentTime = state.currentTime.toLocalTime(), 
+        day = state.currentPrayerDay,
+        weatherCondition = state.weatherCondition
+    )
     val glassTheme = getGlassTheme(state.currentTime.toLocalTime(), state.currentPrayerDay)
     var showMethodDialog by remember { mutableStateOf(false) }
     var showHealthOverlay by remember { mutableStateOf(false) }
+    var showDebugWeather by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -148,7 +157,24 @@ fun HomeScreenContent(
     Scaffold(
         containerColor = Color.Transparent,
         snackbarHost = { },
-        contentWindowInsets = WindowInsets.systemBars
+        contentWindowInsets = WindowInsets.systemBars,
+        floatingActionButton = {
+            Box(Modifier.fillMaxSize()) {
+                // Debug Weather FAB - Positioned on the Bottom Left
+                LargeFloatingActionButton(
+                    onClick = { showDebugWeather = true },
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 16.dp, bottom = 80.dp)
+                        .size(48.dp)
+                ) {
+                    Icon(Icons.Rounded.CloudQueue, "Debug Weather")
+                }
+            }
+        }
     ) { padding ->
         Box(
             modifier = Modifier
@@ -163,7 +189,15 @@ fun HomeScreenContent(
             
             AtmosphericBackgroundLayer(
                 currentTime = state.currentTime.toLocalTime(),
-                day = state.currentPrayerDay
+                day = state.currentPrayerDay,
+                sunAzimuth = state.sunAzimuth,
+                sunAltitude = state.sunAltitude,
+                compassAzimuth = state.compassAzimuth
+            )
+
+            WeatherBackgroundLayer(
+                condition = state.weatherCondition,
+                isDay = true // Logic already handled inside layer via day timings
             )
 
             if (state.isLoading) {
@@ -378,6 +412,15 @@ fun HomeScreenContent(
                                     modifier = Modifier.padding(horizontal = 24.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
+                                    // Weather Summary Row (Temporary for testing)
+                                    if (state.temperature != null) {
+                                        Text(
+                                            text = "${state.temperature}°C • ${state.weatherCondition.name}",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = contentColor.copy(alpha = 0.6f)
+                                        )
+                                    }
+
                                     Spacer(modifier = Modifier.height(32.dp))
 
                                     Box(
@@ -529,6 +572,31 @@ fun HomeScreenContent(
                     onDismiss = { 
                         showHealthOverlay = false 
                         onRefresh()
+                    }
+                )
+            }
+
+            if (showDebugWeather) {
+                AlertDialog(
+                    onDismissRequest = { showDebugWeather = false },
+                    title = { Text("Test Weather Conditions") },
+                    text = {
+                        LazyColumn {
+                            items(WeatherCondition.entries.filter { it != WeatherCondition.UNKNOWN }) { condition ->
+                                TextButton(
+                                    onClick = { 
+                                        onDebugWeather(condition)
+                                        showDebugWeather = false
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(condition.name)
+                                }
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { showDebugWeather = false }) { Text("Close") }
                     }
                 )
             }

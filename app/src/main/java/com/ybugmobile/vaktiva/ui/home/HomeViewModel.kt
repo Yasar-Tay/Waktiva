@@ -202,6 +202,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun debugSetWeather(condition: WeatherCondition) {
+        _weatherCondition.value = condition
+    }
+
     private fun updateHealthStatus() {
         viewModelScope.launch {
             val network = withContext(Dispatchers.IO) { PermissionUtils.isNetworkAvailable(context) }
