@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
@@ -16,6 +17,7 @@ import com.ybugmobile.vaktiva.domain.model.PrayerType
 import java.time.LocalDate
 import java.time.LocalTime
 import kotlin.random.Random
+import kotlinx.coroutines.delay
 
 /**
  * Provides an enriched, modern gradient based on the current time of day.
@@ -143,7 +145,7 @@ fun getGradientForTime(currentTime: LocalTime, day: PrayerDay?): Brush {
 
 /**
  * A specialized star-field layer that only appears during Night/Isha.
- * Animates a twinkling effect for realism.
+ * Animates twinkling stars, occasional meteors, and a deep space nebula.
  */
 @Composable
 fun StarryBackgroundLayer(
@@ -165,34 +167,97 @@ fun StarryBackgroundLayer(
 
     val infiniteTransition = rememberInfiniteTransition(label = "stars")
     val twinkleAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.2f,
-        targetValue = 0.8f,
+        initialValue = 0.3f,
+        targetValue = 0.9f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2500, easing = LinearEasing),
+            animation = tween(2000, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "twinkle"
     )
 
-    // Seed the random number generator so the stars are stable across recompositions
+    // Shooting Star State
+    var meteorProgress by remember { mutableStateOf(0f) }
+    var meteorStartPos by remember { mutableStateOf(Offset.Zero) }
+    
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(Random.nextLong(15000, 30000)) // Wait 15-30s between meteors
+            meteorStartPos = Offset(Random.nextFloat() * 0.8f + 0.1f, Random.nextFloat() * 0.2f)
+            animate(
+                initialValue = 0f,
+                targetValue = 1f,
+                animationSpec = tween(1200, easing = LinearOutSlowInEasing)
+            ) { value, _ -> meteorProgress = value }
+            meteorProgress = 0f
+        }
+    }
+
+    // Stable star map
     val stars = remember(topCoverage) {
-        List(40) {
-            Offset(
-                x = Random.nextFloat(),
-                y = Random.nextFloat() * topCoverage
+        List(50) {
+            Triple(
+                Random.nextFloat(), // x
+                Random.nextFloat() * topCoverage, // y
+                Random.nextFloat() * 0.5f + 0.5f // size variation
             )
         }
     }
 
     Canvas(modifier = Modifier.fillMaxSize()) {
-        stars.forEach { pos ->
-            val actualX = pos.x * size.width
-            val actualY = pos.y * size.height
-            
+        val w = size.width
+        val h = size.height
+
+        // 1. Deep Space Nebula (Purplish glow)
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(Color(0xFF6366F1).copy(alpha = 0.08f), Color.Transparent),
+                center = Offset(w * 0.7f, h * 0.2f),
+                radius = w * 0.6f
+            ),
+            center = Offset(w * 0.7f, h * 0.2f),
+            radius = w * 0.6f
+        )
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(Color(0xFFA855F7).copy(alpha = 0.05f), Color.Transparent),
+                center = Offset(w * 0.2f, h * 0.1f),
+                radius = w * 0.4f
+            ),
+            center = Offset(w * 0.2f, h * 0.1f),
+            radius = w * 0.4f
+        )
+
+        // 2. Stars
+        stars.forEach { (x, y, s) ->
             drawCircle(
-                color = Color.White.copy(alpha = twinkleAlpha * Random.nextFloat().coerceAtLeast(0.3f)),
-                radius = 1.dp.toPx(),
-                center = Offset(actualX, actualY)
+                color = Color.White.copy(alpha = twinkleAlpha * (s * 0.8f)),
+                radius = (s * 1.2.dp.toPx()),
+                center = Offset(x * w, y * h)
+            )
+        }
+
+        // 3. Shooting Star (Meteor)
+        if (meteorProgress > 0f) {
+            val startX = meteorStartPos.x * w
+            val startY = meteorStartPos.y * h
+            val currentX = startX + (meteorProgress * 200.dp.toPx())
+            val currentY = startY + (meteorProgress * 100.dp.toPx())
+            
+            val tailAlpha = (1f - meteorProgress).coerceAtLeast(0f)
+            
+            drawLine(
+                brush = Brush.linearGradient(
+                    colors = listOf(Color.Transparent, Color.White.copy(alpha = tailAlpha * 0.6f)),
+                    start = Offset(startX, startY),
+                    end = Offset(currentX, currentY)
+                ),
+                start = Offset(
+                    startX + (meteorProgress * 0.85f * 200.dp.toPx()),
+                    startY + (meteorProgress * 0.85f * 100.dp.toPx())
+                ),
+                end = Offset(currentX, currentY),
+                strokeWidth = 1.5.dp.toPx()
             )
         }
     }
