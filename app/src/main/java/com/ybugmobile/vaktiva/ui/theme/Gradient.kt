@@ -12,8 +12,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.model.WeatherCondition
@@ -142,12 +148,16 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
     val precipElements = remember(condition) {
         val count = when (condition) {
             WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM -> 80
-            WeatherCondition.SNOWY -> 55
+            WeatherCondition.SNOWY -> 50 // Increased density since half are small
             else -> 0
         }
         if (count == 0) emptyList()
         else List(count) { Offset(Random.nextFloat(), Random.nextFloat()) }
     }
+
+    val snowflakePainter = if (condition == WeatherCondition.SNOWY) {
+        rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_snowflake))
+    } else null
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (condition == WeatherCondition.THUNDERSTORM) ThunderLayer()
@@ -180,10 +190,35 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
                     }
                 }
                 WeatherCondition.SNOWY -> {
-                    precipElements.forEach { pos ->
+                    precipElements.forEachIndexed { index, pos ->
                         val x = pos.x * w + (kotlin.math.sin(fallProgress.toDouble() * Math.PI * 2 + pos.x * 10).toFloat() * 15.dp.toPx())
                         val y = ((pos.y + fallProgress) % 1f) * h
-                        drawCircle(Color.White.copy(alpha = 0.4f), (pos.x * 1.5.dp.toPx() + 0.5.dp.toPx()), Offset(x, y))
+                        
+                        // Half are small flakes (background), half are larger (foreground)
+                        val isSmall = index % 2 == 0
+                        val baseScale = if (isSmall) 0.35f else 0.75f
+                        val scale = baseScale + (pos.x * 0.2f)
+                        val alpha = if (isSmall) 0.4f else 0.7f
+                        
+                        // Draw a soft glow behind the snowflake
+                        drawCircle(
+                            Color.White.copy(alpha = 0.08f),
+                            radius = (if (isSmall) 4.dp else 7.dp).toPx(),
+                            center = Offset(x, y)
+                        )
+
+                        // Draw the vector snowflake
+                        snowflakePainter?.let { painter ->
+                            val sizePx = 14.dp.toPx() * scale
+                            withTransform({
+                                translate(x - sizePx / 2, y - sizePx / 2)
+                                rotate(degrees = fallProgress * 360f * (if (index % 3 == 0) 1.5f else -1f), pivot = Offset(sizePx / 2, sizePx / 2))
+                            }) {
+                                with(painter) {
+                                    draw(size = Size(sizePx, sizePx), alpha = alpha)
+                                }
+                            }
+                        }
                     }
                 }
                 else -> {}
