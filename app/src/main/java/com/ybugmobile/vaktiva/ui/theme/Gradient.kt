@@ -55,13 +55,16 @@ fun getGradientForTime(
     val dayStart = sunrise.plusMinutes(45)
     val sunsetStart = maghrib.minusMinutes(45)
 
+    // Weather impact factors
     val isCloudy = weatherCondition == WeatherCondition.CLOUDY || 
                    weatherCondition == WeatherCondition.FOGGY || 
                    weatherCondition == WeatherCondition.RAINY || 
-                   weatherCondition == WeatherCondition.THUNDERSTORM
+                   weatherCondition == WeatherCondition.THUNDERSTORM ||
+                   weatherCondition == WeatherCondition.SNOWY
     
     val isSevere = weatherCondition == WeatherCondition.RAINY || 
-                   weatherCondition == WeatherCondition.THUNDERSTORM
+                   weatherCondition == WeatherCondition.THUNDERSTORM ||
+                   weatherCondition == WeatherCondition.SNOWY
 
     fun Color.adjustForWeather(): Color {
         return when {
@@ -92,18 +95,11 @@ fun WeatherBackgroundLayer(
     if (condition == WeatherCondition.UNKNOWN || condition == WeatherCondition.CLEAR) return
 
     val infiniteTransition = rememberInfiniteTransition(label = "weather")
-    
-    // Animation progress for precipitation (Slower for gentler fall)
     val fallProgress by infiniteTransition.animateFloat(
         initialValue = 0f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(if (condition == WeatherCondition.SNOWY) 6000 else 2500, easing = LinearEasing), 
-            repeatMode = RepeatMode.Restart
-        ),
+        animationSpec = infiniteRepeatable(animation = tween(if (condition == WeatherCondition.SNOWY) 6000 else 2500, easing = LinearEasing), repeatMode = RepeatMode.Restart),
         label = "fall"
     )
-    
-    // Slower Wind/Drift
     val driftProgress by infiniteTransition.animateFloat(
         initialValue = -0.05f, targetValue = 0.05f,
         animationSpec = infiniteRepeatable(animation = tween(12000, easing = LinearOutSlowInEasing), repeatMode = RepeatMode.Reverse),
@@ -124,13 +120,11 @@ fun WeatherBackgroundLayer(
                     elements.forEach { pos ->
                         val x = pos.x * w + (driftProgress * w)
                         val y = ((pos.y + fallProgress) % 1f) * h
-                        // Fainter, thinner, and slower rain lines
                         drawLine(Color.White.copy(alpha = 0.15f), Offset(x, y), Offset(x - 2.dp.toPx(), y + 8.dp.toPx()), 0.8.dp.toPx(), StrokeCap.Round)
                     }
                 }
                 WeatherCondition.SNOWY -> {
                     elements.forEach { pos ->
-                        // More pronounced sine drift for gentle snow
                         val x = pos.x * w + (kotlin.math.sin(fallProgress.toDouble() * Math.PI * 2 + pos.x * 10).toFloat() * 15.dp.toPx())
                         val y = ((pos.y + fallProgress) % 1f) * h
                         drawCircle(Color.White.copy(alpha = 0.4f), (pos.x * 1.5.dp.toPx() + 0.5.dp.toPx()), Offset(x, y))
