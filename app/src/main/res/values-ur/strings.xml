@@ -59,6 +59,14 @@
     <string name="home_hijri_offline_indicator"> (*)</string>
     <string name="home_current_time">موجودہ وقت</string>
 
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">جی پی ایس بند ہے</string>
+    <string name="location_health_permission_denied">اجازت نہیں ملی</string>
+    <string name="location_health_offline">آف لائن موڈ</string>
+    <string name="location_health_notifications_off">اطلاعات بند ہیں</string>
+    <string name="location_health_channels_muted">آواز خاموش ہے</string>
+    <string name="location_health_dnd_active">ڈی این ڈی موڈ فعال ہے</string>
+
     <!-- System Health & Warnings -->
     <string name="health_title">سسٹم کی صحت</string>
     <string name="health_issues_detected">مسائل پائے گئے</string>

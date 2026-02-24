@@ -49,12 +49,12 @@ fun LocationSection(
     val city = if (rawCity == "Unknown" || rawCity.isEmpty()) unknownStr else rawCity
     
     val healthIssueTitle = when {
-        !isLocationPermissionGranted -> stringResource(R.string.home_location_permission_denied)
-        !isLocationEnabled -> stringResource(R.string.home_gps_disabled_location)
-        !isNetworkAvailable -> stringResource(R.string.home_offline_status)
-        !isNotificationGranted -> stringResource(R.string.settings_notifications) + " " + stringResource(R.string.settings_denied)
-        areChannelsMuted -> stringResource(R.string.health_channels_muted).substringBefore(".")
-        isDndActive -> stringResource(R.string.health_dnd_active).substringBefore(".")
+        !isLocationPermissionGranted -> stringResource(R.string.location_health_permission_denied)
+        !isLocationEnabled -> stringResource(R.string.location_health_gps_off)
+        !isNetworkAvailable -> stringResource(R.string.location_health_offline)
+        !isNotificationGranted -> stringResource(R.string.location_health_notifications_off)
+        areChannelsMuted -> stringResource(R.string.location_health_channels_muted)
+        isDndActive -> stringResource(R.string.location_health_dnd_active)
         else -> ""
     }
 

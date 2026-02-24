@@ -59,6 +59,14 @@
     <string name="home_hijri_offline_indicator"> (*)</string>
     <string name="home_current_time">Ora attuale</string>
 
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">GPS Disabilitato</string>
+    <string name="location_health_permission_denied">Posizione Negata</string>
+    <string name="location_health_offline">Modalità Offline</string>
+    <string name="location_health_notifications_off">Notifiche Negate</string>
+    <string name="location_health_channels_muted">Canali Silenziati</string>
+    <string name="location_health_dnd_active">Modalità DND Attiva</string>
+
     <!-- System Health & Warnings -->
     <string name="health_title">Salute del sistema</string>
     <string name="health_issues_detected">Problemi rilevati</string>
@@ -178,7 +186,7 @@
     <string name="settings_reliability">Affidabilità e Ottimizzazione</string>
     <string name="settings_battery_opt">Ottimizzazione batteria</string>
     <string name="settings_battery_opt_enabled">Ottimizzato per l\'affidabilità</string>
-    <string name="settings_battery_opt_disabled">Essenziale per riprodurre l\'Adhan in tempo. Le ottimizzazioni della batteria possono ritardare o bloccare gli avvisi programmati.</string>
+    <string name="settings_battery_opt_disabled">Essenziale per riprodurre l\'Adhan in tempo. Le ottimizzazioni della batteria peuvento ritardare o bloccare gli avvisi programmati.</string>
     <string name="settings_exact_alarm_title">Allarmi esatti</string>
     <string name="settings_exact_alarm_desc">Necessario per notifiche precise degli orari di preghiera e Adhan puntuali.</string>
 
@@ -249,7 +257,7 @@
     <string name="donate_error">Donation fallita. Riprova.</string>
     <string name="donate_billing_error">Impossibile connettersi al servizio di fatturazione</string>
     <string name="rate_title">Valuta Waktiva</string>
-    <string name="rate_desc">Se ti piace Waktiva, prenditi un momento per valutarla con 5 stelle su Google Play. Ci aiuta a raggiungere più persone!</string>
+    <string name="rate_desc">Si ti piace Waktiva, prenditi un momento per valutarla con 5 stelle su Google Play. Ci aiuta a raggiungere più persone!</string>
     <string name="rate_button">Dai 5 stelle</string>
 
     <!-- Hijri Months -->

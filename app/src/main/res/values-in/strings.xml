@@ -59,6 +59,14 @@
     <string name="home_hijri_offline_indicator"> (*)</string>
     <string name="home_current_time">Waktu Sekarang</string>
 
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">GPS Nonaktif</string>
+    <string name="location_health_permission_denied">Izin Ditolak</string>
+    <string name="location_health_offline">Mode Luring</string>
+    <string name="location_health_notifications_off">Notifikasi Ditolak</string>
+    <string name="location_health_channels_muted">Saluran Senyap</string>
+    <string name="location_health_dnd_active">Mode DND Aktif</string>
+
     <!-- System Health & Warnings -->
     <string name="health_title">Kesehatan Sistem</string>
     <string name="health_issues_detected">Masalah Terdeteksi</string>
@@ -206,7 +214,7 @@
     <string name="welcome_precision_settings">Pengaturan Presisi</string>
     <string name="welcome_precision_desc">Waktiva membutuhkan ini untuk melayani Anda lebih baik</string>
     <string name="welcome_loc_title">Lokasi Akurat</string>
-    <string name="welcome_loc_desc">Crucial for calculating prayer times. Without this, the app cannot fetch times for your location and becomes useless.</string>
+    <string name="welcome_loc_desc">Sangat penting untuk menghitung waktu shalat. Tanpa ini, aplikasi tidak dapat mengambil waktu untuk lokasi Anda dan menjadi tidak berguna.</string>
     <string name="welcome_notif_title">Peringatan Adzan</string>
     <string name="welcome_notif_desc">Diperlukan untuk mengirim notifikasi dan membunyikan Adzan saat waktu shalat tiba.</string>
     <string name="welcome_alarm_title">Alarm Tepat Waktu</string>

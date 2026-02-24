@@ -59,6 +59,14 @@
     <string name="home_hijri_offline_indicator"> (*)</string>
     <string name="home_current_time">Heure actuelle</string>
 
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">GPS Désactivé</string>
+    <string name="location_health_permission_denied">Position Refusée</string>
+    <string name="location_health_offline">Mode Hors Ligne</string>
+    <string name="location_health_notifications_off">Notifications Refusées</string>
+    <string name="location_health_channels_muted">Canaux Muets</string>
+    <string name="location_health_dnd_active">Mode NPD Activé</string>
+
     <!-- System Health & Warnings -->
     <string name="health_title">Santé du système</string>
     <string name="health_issues_detected">Problèmes détectés</string>

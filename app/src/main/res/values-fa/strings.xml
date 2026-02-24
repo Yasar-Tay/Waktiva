@@ -59,6 +59,14 @@
     <string name="home_hijri_offline_indicator"> (*)</string>
     <string name="home_current_time">زمان فعلی</string>
 
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">GPS غیرفعال</string>
+    <string name="location_health_permission_denied">مجوز مکان رد شد</string>
+    <string name="location_health_offline">حالت آفلاین</string>
+    <string name="location_health_notifications_off">مجوز اعلان رد شد</string>
+    <string name="location_health_channels_muted">کانال‌ها بی‌صدا هستند</string>
+    <string name="location_health_dnd_active">حالت مزاحم نشوید فعال است</string>
+
     <!-- System Health & Warnings -->
     <string name="health_title">سلامت سیستم</string>
     <string name="health_issues_detected">مشکلات شناسایی شد</string>
@@ -297,5 +305,5 @@
     <!-- Hijri Day Settings -->
     <string name="settings_hijri_day_start">آغاز روز هجری</string>
     <string name="settings_hijri_day_start_maghrib">شروع از مغرب</string>
-    <string name="settings_hijri_day_start_desc">تغییر تاریخ هجری در هنگام غروب خورشید (مغرب) به جای نیمه‌شب.</string>
+    <string name="settings_hijri_day_start_desc">تغيير تاریخ هجری در هنگام غروب خورشید (مغرب) به جای نیمه‌شب.</string>
 </resources>

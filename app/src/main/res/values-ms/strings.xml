@@ -25,7 +25,7 @@
     <string name="qibla_location_required_desc">Diperlukan untuk pengiraan Kiblat yang tepat.</string>
     <string name="qibla_grant_permission">Berikan Kebenaran</string>
     <string name="qibla_calibration_needed">Kalibrasi Diperlukan</string>
-    <string name="qibla_calibration_desc">Gerakkan telefon anda dalam corak angka 8 (∞) untuk meningkatkan ketepatan.</string>
+    <string name="qibla_calibration_desc">Gerakkan telefon anda dalam corak angka 8 (∞) untuk meningkatkan akurasi.</string>
     <string name="qibla_got_it">Faham</string>
     <string name="qibla_aligned_badge">SELARI</string>
     <string name="qibla_magnetic_interference">Gangguan Magnetik Dikesan - Kalibrasi Peranti</string>
@@ -58,6 +58,14 @@
     <string name="home_hijri_offline_note">Menggunakan pengiraan Hijrah luar talian</string>
     <string name="home_hijri_offline_indicator"> (*)</string>
     <string name="home_current_time">Waktu Sekarang</string>
+
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">GPS Dimatikan</string>
+    <string name="location_health_permission_denied">Lokasi Dinafikan</string>
+    <string name="location_health_offline">Mod Luar Talian</string>
+    <string name="location_health_notifications_off">Notifikasi Dinafikan</string>
+    <string name="location_health_channels_muted">Saluran Senyap</string>
+    <string name="location_health_dnd_active">Mod DND Aktif</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">Kesihatan Sistem</string>
@@ -97,7 +105,7 @@
     <string name="settings_location_access">Akses Lokasi</string>
     <string name="settings_location_desc">Sangat penting untuk pengiraan waktu solat. Tanpanya, aplikasi tidak dapat mengambil waktu bagi lokasi anda dan menjadi tidak berguna.</string>
     <string name="settings_notifications">Notifikasi</string>
-    <string name="settings_notifications_desc">Diperlukan untuk menunjukkan amaran waktu solat dan notifikasi Azan.</string>
+    <string name="settings_notifications_desc">Diperlukan untuk menunjukkan amaran waktu solat and notifikasi Azan.</string>
     <string name="settings_granted">Dibenarkan</string>
     <string name="settings_denied">Dinafikan</string>
     <string name="settings_language">Bahasa Aplikasi</string>

@@ -59,6 +59,14 @@
     <string name="home_hijri_offline_indicator"> (*)</string>
     <string name="home_current_time">الوقت الحالي</string>
 
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">GPS معطل</string>
+    <string name="location_health_permission_denied">تم رفض الموقع</string>
+    <string name="location_health_offline">وضع عدم الاتصال</string>
+    <string name="location_health_notifications_off">تم رفض الإشعارات</string>
+    <string name="location_health_channels_muted">القنوات مكتومة</string>
+    <string name="location_health_dnd_active">وضع عدم الإزعاج نشط</string>
+
     <!-- System Health & Warnings -->
     <string name="health_title">صحة النظام</string>
     <string name="health_issues_detected">تم اكتشاف مشكلات</string>

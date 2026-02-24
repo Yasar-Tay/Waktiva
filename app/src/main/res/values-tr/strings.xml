@@ -59,6 +59,14 @@
     <string name="home_hijri_offline_indicator"> (*)</string>
     <string name="home_current_time">Şu Anki Saat</string>
 
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">GPS Kapalı</string>
+    <string name="location_health_permission_denied">Konum Reddedildi</string>
+    <string name="location_health_offline">Çevrimdışı Modu</string>
+    <string name="location_health_notifications_off">Bildirim Reddedildi</string>
+    <string name="location_health_channels_muted">Kanallar Sessizde</string>
+    <string name="location_health_dnd_active">DND Modu Aktif</string>
+
     <!-- System Health & Warnings -->
     <string name="health_title">Sistem Sağlığı</string>
     <string name="health_issues_detected">Sorunlar Tespit Edildi</string>
