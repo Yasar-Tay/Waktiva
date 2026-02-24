@@ -53,6 +53,7 @@ import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthIndicator
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import com.ybugmobile.vaktiva.ui.theme.StarryBackgroundLayer
+import com.ybugmobile.vaktiva.ui.theme.AtmosphericBackgroundLayer
 import com.ybugmobile.vaktiva.utils.PermissionUtils
 import java.time.LocalDate
 import java.time.LocalTime
@@ -154,8 +155,13 @@ fun HomeScreenContent(
                 .fillMaxSize()
                 .background(brush = backgroundGradient)
         ) {
-            // New Twinkling Stars Layer
+            // Dynamic Environmental Layers
             StarryBackgroundLayer(
+                currentTime = state.currentTime.toLocalTime(),
+                day = state.currentPrayerDay
+            )
+            
+            AtmosphericBackgroundLayer(
                 currentTime = state.currentTime.toLocalTime(),
                 day = state.currentPrayerDay
             )
@@ -188,9 +194,10 @@ fun HomeScreenContent(
                                     .systemBarsPadding()
                                     .displayCutoutPadding()
                                     .verticalScroll(scrollState)
-                                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                                    .padding(horizontal = 24.dp, vertical = 12.dp)
                                     .padding(start = 72.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Top
                             ) {
                                 HomeHeader(
                                     locationName = state.locationName,

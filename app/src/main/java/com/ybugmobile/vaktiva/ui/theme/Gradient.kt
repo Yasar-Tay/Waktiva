@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
@@ -262,3 +264,159 @@ fun StarryBackgroundLayer(
         }
     }
 }
+
+/**
+ * Atmospheric layer for daytime, providing sun bloom, lens flare, 
+ * and floating luminous particles.
+ */
+@Composable
+fun AtmosphericBackgroundLayer(
+    currentTime: LocalTime,
+    day: PrayerDay?
+) {
+    if (day == null) return
+
+    val sunrise = day.timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 30)
+    val dhuhur = day.timings[PrayerType.DHUHR] ?: LocalTime.of(13, 0)
+    val maghrib = day.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 30)
+
+    // Active between sunrise and sunset
+    val isDaytime = currentTime.isAfter(sunrise) && currentTime.isBefore(maghrib)
+    if (!isDaytime) return
+
+    // Identify if we are in the "Sunrise to Noon" phase
+    val isMorning = currentTime.isBefore(dhuhur)
+
+    val infiniteTransition = rememberInfiniteTransition(label = "atmosphere")
+    
+    // Sun Bloom Pulse
+    val bloomPulse by infiniteTransition.animateFloat(
+        initialValue = 0.7f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(if (isMorning) 5000 else 4000, easing = LinearOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "bloom"
+    )
+
+    // Floating Particles State
+    val particleCount = if (isMorning) 15 else 25
+    val particles = remember(isMorning) {
+        List(particleCount) {
+            MutableParticle(
+                x = Random.nextFloat(),
+                y = Random.nextFloat(),
+                size = if (isMorning) Random.nextFloat() * 1.5f + 0.5f else Random.nextFloat() * 2f + 1f,
+                speed = if (isMorning) Random.nextFloat() * 0.0006f + 0.0003f else Random.nextFloat() * 0.001f + 0.0005f
+            )
+        }
+    }
+
+    // Animate particles
+    val step by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(if (isMorning) 15000 else 10000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "particles"
+    )
+
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val w = size.width
+        val h = size.height
+
+        // 1. Dynamic Sun Bloom (Positioned based on morning progress)
+        // Sun starts lower and left in morning, moves to top right by noon
+        val sunProgress = if (isMorning) {
+            val totalMinutes = java.time.Duration.between(sunrise, dhuhur).toMinutes().toFloat()
+            val currentMinutes = java.time.Duration.between(sunrise, currentTime).toMinutes().toFloat()
+            (currentMinutes / totalMinutes).coerceIn(0f, 1f)
+        } else 1f
+
+        val bloomX = w * (0.6f + (sunProgress * 0.3f))
+        val bloomY = h * (0.3f - (sunProgress * 0.2f))
+        
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    if (isMorning) Color(0xFFFFF9C4).copy(alpha = 0.12f * bloomPulse) else Color.White.copy(alpha = 0.15f * bloomPulse),
+                    Color.Transparent
+                ),
+                center = Offset(bloomX, bloomY),
+                radius = w * (if (isMorning) 0.4f else 0.5f)
+            ),
+            center = Offset(bloomX, bloomY),
+            radius = w * (if (isMorning) 0.4f else 0.5f)
+        )
+
+        // 2. Dynamic God Rays
+        val rayAlpha = if (isMorning) 0.04f * (1f - sunProgress) else 0.03f
+        if (rayAlpha > 0.005f) {
+            val rayPath = Path().apply {
+                moveTo(bloomX - (w * 0.2f), -50f)
+                lineTo(bloomX + (w * 0.2f), -50f)
+                lineTo(w * 0.2f, h * 1.2f)
+                lineTo(-w * 0.1f, h * 1.2f)
+                close()
+            }
+            drawPath(
+                path = rayPath,
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        (if (isMorning) Color(0xFFFFE082) else Color.White).copy(alpha = rayAlpha * bloomPulse), 
+                        Color.Transparent
+                    ),
+                    start = Offset(bloomX, bloomY),
+                    end = Offset(0f, h)
+                )
+            )
+        }
+
+        // 3. Morning Center Luminosity (Midday Sky Depth)
+        if (sunProgress > 0.5f) {
+            val azureAlpha = ((sunProgress - 0.5f) * 2f * 0.06f).coerceIn(0f, 0.06f)
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(Color(0xFF4593E5).copy(alpha = azureAlpha), Color.Transparent),
+                    center = center,
+                    radius = w * 0.8f
+                ),
+                radius = w * 0.8f
+            )
+        }
+
+        // 4. Floating Particles (Dust Motes)
+        particles.forEach { p ->
+            val currentY = (p.y - (step * p.speed * 100)) % 1f
+            val yPos = if (currentY < 0) currentY + 1f else currentY
+            
+            drawCircle(
+                color = (if (isMorning) Color(0xFFFFF9C4) else Color.White).copy(alpha = 0.15f),
+                radius = p.size.dp.toPx(),
+                center = Offset(p.x * w, yPos * h)
+            )
+        }
+
+        // 5. Horizon Haze (Luminous Bottom)
+        val hazeColor = if (isMorning) Color(0xFFFFECB3) else Color.White
+        drawRect(
+            brush = Brush.verticalGradient(
+                colors = listOf(Color.Transparent, hazeColor.copy(alpha = 0.06f)),
+                startY = h * 0.7f,
+                endY = h
+            ),
+            topLeft = Offset(0f, h * 0.7f),
+            size = Size(w, h * 0.3f)
+        )
+    }
+}
+
+private class MutableParticle(
+    val x: Float,
+    var y: Float,
+    val size: Float,
+    val speed: Float
+)
