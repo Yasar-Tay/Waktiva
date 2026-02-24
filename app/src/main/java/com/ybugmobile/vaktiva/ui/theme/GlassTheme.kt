@@ -31,7 +31,10 @@ val LocalBackgroundGradient = staticCompositionLocalOf<Brush> {
     error("No BackgroundGradient provided")
 }
 
-@Composable
+/**
+ * Pure function to calculate glass theme based on time and prayer timings.
+ * Removed @Composable as it's a stateless factory function.
+ */
 fun getGlassTheme(
     currentTime: LocalTime,
     day: PrayerDay?

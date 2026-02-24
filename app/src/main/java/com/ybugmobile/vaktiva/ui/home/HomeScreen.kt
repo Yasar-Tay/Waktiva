@@ -139,19 +139,29 @@ fun HomeScreenContent(
     }
 
     // Determine the effective weather condition based on user setting
-    val effectiveWeather = if (settings?.showWeatherEffects == true) {
-        state.weatherCondition
-    } else {
-        WeatherCondition.CLEAR
+    val effectiveWeather = remember(settings?.showWeatherEffects, state.weatherCondition) {
+        if (settings?.showWeatherEffects == true) {
+            state.weatherCondition
+        } else {
+            WeatherCondition.CLEAR
+        }
     }
 
+    val localTime = remember(state.currentTime) { state.currentTime.toLocalTime() }
+
     // Pass effective weatherCondition to dynamic gradient calculation
-    val backgroundGradient = getGradientForTime(
-        currentTime = state.currentTime.toLocalTime(), 
-        day = state.currentPrayerDay,
-        weatherCondition = effectiveWeather
-    )
-    val glassTheme = getGlassTheme(state.currentTime.toLocalTime(), state.currentPrayerDay)
+    val backgroundGradient = remember(localTime, state.currentPrayerDay, effectiveWeather) {
+        getGradientForTime(
+            currentTime = localTime, 
+            day = state.currentPrayerDay,
+            weatherCondition = effectiveWeather
+        )
+    }
+    
+    val glassTheme = remember(localTime, state.currentPrayerDay) {
+        getGlassTheme(localTime, state.currentPrayerDay)
+    }
+    
     var showMethodDialog by remember { mutableStateOf(false) }
     var showHealthOverlay by remember { mutableStateOf(false) }
     var showDebugWeather by remember { mutableStateOf(false) }
@@ -190,12 +200,12 @@ fun HomeScreenContent(
         ) {
             // Dynamic Environmental Layers
             StarryBackgroundLayer(
-                currentTime = state.currentTime.toLocalTime(),
+                currentTime = localTime,
                 day = state.currentPrayerDay
             )
             
             AtmosphericBackgroundLayer(
-                currentTime = state.currentTime.toLocalTime(),
+                currentTime = localTime,
                 day = state.currentPrayerDay,
                 sunAzimuth = state.sunAzimuth,
                 sunAltitude = state.sunAltitude,
@@ -266,7 +276,7 @@ fun HomeScreenContent(
                                         state.currentPrayerDay?.let { prayerDay ->
                                             PrayerCircleVisualization(
                                                 day = prayerDay,
-                                                currentTime = if (state.selectedDate == LocalDate.now()) state.currentTime.toLocalTime() else LocalTime.MIDNIGHT,
+                                                currentTime = if (state.selectedDate == LocalDate.now()) localTime else LocalTime.MIDNIGHT,
                                                 nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
                                                 currentPrayer = if (state.selectedDate == LocalDate.now()) state.currentPrayer else null,
                                                 isSelectedDayToday = state.selectedDate == LocalDate.now(),
@@ -442,7 +452,7 @@ fun HomeScreenContent(
                                         state.currentPrayerDay?.let { prayerDay ->
                                             PrayerCircleVisualization(
                                                 day = prayerDay,
-                                                currentTime = if (state.selectedDate == LocalDate.now()) state.currentTime.toLocalTime() else LocalTime.MIDNIGHT,
+                                                currentTime = if (state.selectedDate == LocalDate.now()) localTime else LocalTime.MIDNIGHT,
                                                 nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
                                                 currentPrayer = if (state.selectedDate == LocalDate.now()) state.currentPrayer else null,
                                                 isSelectedDayToday = state.selectedDate == LocalDate.now(),
