@@ -27,7 +27,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.local.preferences.UserSettings
 import com.ybugmobile.vaktiva.ui.settings.composables.*
@@ -38,6 +37,7 @@ import com.ybugmobile.vaktiva.utils.PermissionUtils
 @Composable
 fun SettingsScreen(
     onNavigateToAudio: () -> Unit,
+    onNavigateToLicenses: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.settings.collectAsState(initial = null)
@@ -51,7 +51,6 @@ fun SettingsScreen(
     var showMadhabDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showDeleteHistoryDialog by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -125,9 +124,7 @@ fun SettingsScreen(
                         DataManagementSection(
                             onDeleteHistoryClick = { showDeleteHistoryDialog = true }
                         )
-                        AboutSection(onShowLicensesClick = {
-                            context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
-                        })
+                        AboutSection(onShowLicensesClick = onNavigateToLicenses)
                         SettingsSection(
                             title = stringResource(R.string.settings_permissions)
                         ) {
@@ -168,9 +165,7 @@ fun SettingsScreen(
                         onDeleteHistoryClick = { showDeleteHistoryDialog = true }
                     )
 
-                    AboutSection(onShowLicensesClick = {
-                        context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
-                    })
+                    AboutSection(onShowLicensesClick = onNavigateToLicenses)
 
                     SettingsSection(
                         title = stringResource(R.string.settings_permissions)

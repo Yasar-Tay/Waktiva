@@ -48,6 +48,7 @@ import com.ybugmobile.vaktiva.ui.donation.DonateScreen
 import com.ybugmobile.vaktiva.ui.navigation.Screen
 import com.ybugmobile.vaktiva.ui.qibla.QiblaScreen
 import com.ybugmobile.vaktiva.ui.settings.AudioSettingsScreen
+import com.ybugmobile.vaktiva.ui.settings.LicensesScreen
 import com.ybugmobile.vaktiva.ui.settings.SettingsScreen
 import com.ybugmobile.vaktiva.ui.theme.VaktivaBackgroundWrapper
 import com.ybugmobile.vaktiva.ui.theme.VaktivaTheme
@@ -218,11 +219,19 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                     SettingsScreen(
                         onNavigateToAudio = {
                             navController.navigate(Screen.AudioSettings.route)
+                        },
+                        onNavigateToLicenses = {
+                            navController.navigate(Screen.Licenses.route)
                         }
                     ) 
                 }
                 composable(Screen.AudioSettings.route) {
                     AudioSettingsScreen(
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+                composable(Screen.Licenses.route) {
+                    LicensesScreen(
                         onBack = { navController.popBackStack() }
                     )
                 }
@@ -280,6 +289,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
 
             // Global floating actions (Debug/Development only in current state)
             Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                val density = LocalDensity.current
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)

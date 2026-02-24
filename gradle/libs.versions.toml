@@ -30,7 +30,7 @@ uiautomator = "2.3.0"
 testRules = "1.6.1"
 billing = "8.3.0"
 suncalc = "3.11"
-ossLicenses = "17.1.0"
+ossLicenses = "17.4.0"
 ossLicensesPlugin = "0.10.10"
 
 [libraries]
