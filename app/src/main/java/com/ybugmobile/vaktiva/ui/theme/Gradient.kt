@@ -118,7 +118,8 @@ fun WeatherBackgroundLayer(
     )
 
     val cloudCount = when(condition) {
-        WeatherCondition.CLOUDY, WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM, WeatherCondition.SNOWY -> 12
+        WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM, WeatherCondition.SNOWY -> 20
+        WeatherCondition.CLOUDY, WeatherCondition.FOGGY -> 12
         WeatherCondition.PARTLY_CLOUDY -> 5
         else -> 0
     }
@@ -128,7 +129,7 @@ fun WeatherBackgroundLayer(
     }
     
     val precipElements = remember(condition) {
-        if (condition == WeatherCondition.CLOUDY || condition == WeatherCondition.PARTLY_CLOUDY) emptyList()
+        if (condition == WeatherCondition.CLOUDY || condition == WeatherCondition.PARTLY_CLOUDY || condition == WeatherCondition.FOGGY) emptyList()
         else List(45) { Offset(Random.nextFloat(), Random.nextFloat()) }
     }
 
@@ -143,8 +144,7 @@ fun WeatherBackgroundLayer(
             // 1. Draw Clouds first (Top 30%)
             val cloudColor = if (isDay) {
                 when(condition) {
-                    WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM -> Color(0xFF4B5563) // Dark Gray
-                    WeatherCondition.SNOWY -> Color(0xFFD1D5DB) // Slate Gray
+                    WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM, WeatherCondition.SNOWY -> Color(0xFF4B5563) // Dark Gray
                     else -> Color.White // Standard clouds
                 }
             } else {
@@ -153,10 +153,18 @@ fun WeatherBackgroundLayer(
             }
 
             val cloudAlpha = if (isDay) {
-                if(condition == WeatherCondition.FOGGY) 0.12f else 0.04f
+                when (condition) {
+                    WeatherCondition.FOGGY -> 0.12f
+                    WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM, WeatherCondition.SNOWY -> 0.15f
+                    else -> 0.04f
+                }
             } else {
                 // Night clouds are extremely subtle
-                if(condition == WeatherCondition.FOGGY) 0.08f else 0.02f
+                when (condition) {
+                    WeatherCondition.FOGGY -> 0.08f
+                    WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM, WeatherCondition.SNOWY -> 0.06f
+                    else -> 0.02f
+                }
             }
 
             cloudElements.forEach { pos ->
@@ -216,10 +224,20 @@ fun StarryBackgroundLayer(currentTime: LocalTime, day: PrayerDay?) {
     if (day == null) return
     val isha = day.timings[PrayerType.ISHA] ?: LocalTime.of(20, 0)
     val fajr = day.timings[PrayerType.FAJR] ?: LocalTime.of(5, 0)
-    if (!(currentTime.isAfter(isha) || currentTime.isBefore(fajr))) return
+    val sunrise = day.timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 30)
+
+    val isFullNight = currentTime.isAfter(isha) || currentTime.isBefore(fajr)
+    val isDawn = !isFullNight && currentTime.isBefore(sunrise)
+
+    if (!isFullNight && !isDawn) return
 
     val configuration = LocalConfiguration.current
-    val topCoverage = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 0.3f else 0.4f
+    val starCount = if (isDawn) 15 else 50
+    val topCoverage = if (isDawn) 0.15f else {
+        if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 0.3f else 0.4f
+    }
+    val starAlphaMultiplier = if (isDawn) 0.5f else 1.0f
+
     val infiniteTransition = rememberInfiniteTransition(label = "stars")
     val twinkleAlpha by infiniteTransition.animateFloat(0.3f, 0.9f, infiniteRepeatable(tween(2000, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "twinkleAlpha")
 
@@ -234,14 +252,23 @@ fun StarryBackgroundLayer(currentTime: LocalTime, day: PrayerDay?) {
         }
     }
 
-    val stars = remember(topCoverage) { List(50) { Triple(Random.nextFloat(), Random.nextFloat() * topCoverage, Random.nextFloat() * 0.5f + 0.5f) } }
+    val stars = remember(isDawn, topCoverage) { 
+        List(starCount) { Triple(Random.nextFloat(), Random.nextFloat() * topCoverage, Random.nextFloat() * 0.5f + 0.5f) } 
+    }
 
     Canvas(modifier = Modifier.fillMaxSize()) {
         val w = size.width; val h = size.height
-        drawCircle(Brush.radialGradient(listOf(Color(0xFF6366F1).copy(alpha = 0.08f), Color.Transparent), Offset(w * 0.7f, h * 0.2f), w * 0.6f), w * 0.6f, Offset(w * 0.7f, h * 0.2f))
-        drawCircle(Brush.radialGradient(listOf(Color(0xFFA855F7).copy(alpha = 0.05f), Color.Transparent), Offset(w * 0.2f, h * 0.1f), w * 0.4f), w * 0.4f, Offset(w * 0.2f, h * 0.1f))
-        stars.forEach { (x, y, s) -> drawCircle(Color.White.copy(alpha = twinkleAlpha * (s * 0.8f)), s * 1.2.dp.toPx(), Offset(x * w, y * h)) }
-        if (meteorAnim.value > 0f && meteorAnim.value < 1f) {
+        
+        if (isFullNight) {
+            drawCircle(Brush.radialGradient(listOf(Color(0xFF6366F1).copy(alpha = 0.08f), Color.Transparent), Offset(w * 0.7f, h * 0.2f), w * 0.6f), w * 0.6f, Offset(w * 0.7f, h * 0.2f))
+            drawCircle(Brush.radialGradient(listOf(Color(0xFFA855F7).copy(alpha = 0.05f), Color.Transparent), Offset(w * 0.2f, h * 0.1f), w * 0.4f), w * 0.4f, Offset(w * 0.2f, h * 0.1f))
+        }
+        
+        stars.forEach { (x, y, s) -> 
+            drawCircle(Color.White.copy(alpha = twinkleAlpha * (s * 0.8f) * starAlphaMultiplier), s * 1.2.dp.toPx(), Offset(x * w, y * h)) 
+        }
+        
+        if (isFullNight && meteorAnim.value > 0f && meteorAnim.value < 1f) {
             val progress = meteorAnim.value
             val startX = meteorStartPos.x * w; val startY = meteorStartPos.y * h
             val currentX = startX + (progress * 200.dp.toPx()); val currentY = startY + (progress * 100.dp.toPx())
