@@ -92,18 +92,25 @@ fun WeatherBackgroundLayer(
     if (condition == WeatherCondition.UNKNOWN || condition == WeatherCondition.CLEAR) return
 
     val infiniteTransition = rememberInfiniteTransition(label = "weather")
+    
+    // Animation progress for precipitation (Slower for gentler fall)
     val fallProgress by infiniteTransition.animateFloat(
         initialValue = 0f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(animation = tween(if (condition == WeatherCondition.SNOWY) 4000 else 1000, easing = LinearEasing), repeatMode = RepeatMode.Restart),
+        animationSpec = infiniteRepeatable(
+            animation = tween(if (condition == WeatherCondition.SNOWY) 6000 else 2500, easing = LinearEasing), 
+            repeatMode = RepeatMode.Restart
+        ),
         label = "fall"
     )
+    
+    // Slower Wind/Drift
     val driftProgress by infiniteTransition.animateFloat(
-        initialValue = -0.1f, targetValue = 0.1f,
-        animationSpec = infiniteRepeatable(animation = tween(8000, easing = LinearOutSlowInEasing), repeatMode = RepeatMode.Reverse),
+        initialValue = -0.05f, targetValue = 0.05f,
+        animationSpec = infiniteRepeatable(animation = tween(12000, easing = LinearOutSlowInEasing), repeatMode = RepeatMode.Reverse),
         label = "drift"
     )
 
-    val elements = remember(condition) { List(if (condition == WeatherCondition.CLOUDY) 5 else 60) { Offset(Random.nextFloat(), Random.nextFloat()) } }
+    val elements = remember(condition) { List(if (condition == WeatherCondition.CLOUDY) 5 else 45) { Offset(Random.nextFloat(), Random.nextFloat()) } }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (condition == WeatherCondition.THUNDERSTORM) {
@@ -117,21 +124,23 @@ fun WeatherBackgroundLayer(
                     elements.forEach { pos ->
                         val x = pos.x * w + (driftProgress * w)
                         val y = ((pos.y + fallProgress) % 1f) * h
-                        drawLine(Color.White.copy(alpha = 0.3f), Offset(x, y), Offset(x - 5.dp.toPx(), y + 15.dp.toPx()), 1.dp.toPx(), StrokeCap.Round)
+                        // Fainter, thinner, and slower rain lines
+                        drawLine(Color.White.copy(alpha = 0.15f), Offset(x, y), Offset(x - 2.dp.toPx(), y + 8.dp.toPx()), 0.8.dp.toPx(), StrokeCap.Round)
                     }
                 }
                 WeatherCondition.SNOWY -> {
                     elements.forEach { pos ->
-                        val x = pos.x * w + (kotlin.math.sin(fallProgress.toDouble() * Math.PI * 2 + pos.x).toFloat() * 20.dp.toPx())
+                        // More pronounced sine drift for gentle snow
+                        val x = pos.x * w + (kotlin.math.sin(fallProgress.toDouble() * Math.PI * 2 + pos.x * 10).toFloat() * 15.dp.toPx())
                         val y = ((pos.y + fallProgress) % 1f) * h
-                        drawCircle(Color.White.copy(alpha = 0.6f), (pos.x * 2.dp.toPx() + 1.dp.toPx()), Offset(x, y))
+                        drawCircle(Color.White.copy(alpha = 0.4f), (pos.x * 1.5.dp.toPx() + 0.5.dp.toPx()), Offset(x, y))
                     }
                 }
                 WeatherCondition.CLOUDY, WeatherCondition.PARTLY_CLOUDY, WeatherCondition.FOGGY -> {
                     elements.forEach { pos ->
                         val x = ((pos.x + driftProgress) % 1f) * w
                         val y = pos.y * h * 0.5f
-                        drawCircle(Brush.radialGradient(listOf(Color.White.copy(alpha = if(condition == WeatherCondition.FOGGY) 0.15f else 0.05f), Color.Transparent), Offset(x, y), w * 0.4f), w * 0.4f, Offset(x, y))
+                        drawCircle(Brush.radialGradient(listOf(Color.White.copy(alpha = if(condition == WeatherCondition.FOGGY) 0.12f else 0.04f), Color.Transparent), Offset(x, y), w * 0.4f), w * 0.4f, Offset(x, y))
                     }
                 }
                 else -> {}
@@ -145,11 +154,11 @@ fun ThunderLayer() {
     val alphaAnim = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
         while (true) {
-            delay(Random.nextLong(3000, 15000))
-            repeat(Random.nextInt(1, 4)) {
-                alphaAnim.animateTo(Random.nextFloat() * 0.2f + 0.05f, tween(50))
-                alphaAnim.animateTo(0f, tween(Random.nextInt(100, 400)))
-                delay(Random.nextLong(50, 150))
+            delay(Random.nextLong(5000, 20000))
+            repeat(Random.nextInt(1, 3)) {
+                alphaAnim.animateTo(Random.nextFloat() * 0.15f + 0.05f, tween(60))
+                alphaAnim.animateTo(0f, tween(Random.nextInt(200, 600)))
+                delay(Random.nextLong(100, 300))
             }
         }
     }
