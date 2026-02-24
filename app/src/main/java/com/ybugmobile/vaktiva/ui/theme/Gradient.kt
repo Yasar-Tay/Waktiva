@@ -60,7 +60,8 @@ fun getGradientForTime(
                    weatherCondition == WeatherCondition.FOGGY || 
                    weatherCondition == WeatherCondition.RAINY || 
                    weatherCondition == WeatherCondition.THUNDERSTORM ||
-                   weatherCondition == WeatherCondition.SNOWY
+                   weatherCondition == WeatherCondition.SNOWY ||
+                   weatherCondition == WeatherCondition.PARTLY_CLOUDY
     
     val isSevere = weatherCondition == WeatherCondition.RAINY || 
                    weatherCondition == WeatherCondition.THUNDERSTORM ||
@@ -77,16 +78,19 @@ fun getGradientForTime(
     return when {
         currentTime.isBefore(dawnStart) -> Brush.verticalGradient(listOf(Color(0xFF020617).adjustForWeather(), Color(0xFF0F141E).adjustForWeather(), Color(0xFF1E1B4B).adjustForWeather()))
         currentTime.isBefore(sunrise) -> Brush.verticalGradient(listOf(Color(0xFF020617).adjustForWeather(), Color(0xFF0A1024).adjustForWeather(), Color(0xFF1E1B4B).adjustForWeather(), Color(0xFF2B2A6F).adjustForWeather()))
-        currentTime.isBefore(dayStart) -> Brush.verticalGradient(listOf(Color(0xFF1D405B).adjustForWeather(), Color(0xFF3674A4).adjustForWeather(), Color(0xFFA26B19).adjustForWeather(), Color(0xFFFCD34D).adjustForWeather()))
+        currentTime.isBefore(dayStart) -> Brush.verticalGradient(listOf(Color(0xFF1D405B).adjustForWeather(), Color(0xFF3674A4).adjustForWeather(), Color(0xFFB45309).adjustForWeather(), Color(0xFFFCD34D).adjustForWeather()))
         currentTime.isBefore(dhuhur) -> Brush.verticalGradient(listOf(Color(0xFF0F2A44).adjustForWeather(), Color(0xFF1E5DA8).adjustForWeather(), Color(0xFF68B298).adjustForWeather(), Color(0xFF4593E5).adjustForWeather()))
         currentTime.isBefore(asr) -> Brush.verticalGradient(listOf(Color(0xFF0F2A44).adjustForWeather(), Color(0xFF1E5DA8).adjustForWeather(), Color(0xFF4FA3C7).adjustForWeather(), Color(0xFFE8D5A7).adjustForWeather()))
         currentTime.isBefore(sunsetStart) -> Brush.verticalGradient(listOf(Color(0xFF081A2F).adjustForWeather(), Color(0xFF123E7C).adjustForWeather(), Color(0xFF3F8FD2).adjustForWeather(), Color(0xFF9FD3F6).adjustForWeather()))
-        currentTime.isBefore(maghrib) -> Brush.verticalGradient(listOf(Color(0xFF0B1D33).adjustForWeather(), Color(0xFF134E8A).adjustForWeather(), Color(0xFFA26B19).adjustForWeather(), Color(0xFFA43653).adjustForWeather()))
+        currentTime.isBefore(maghrib) -> Brush.verticalGradient(listOf(Color(0xFF0B1D33).adjustForWeather(), Color(0xFF134E8A).adjustForWeather(), Color(0xFFB45309).adjustForWeather(), Color(0xFFB91C1C).adjustForWeather()))
         currentTime.isBefore(isha) -> Brush.verticalGradient(listOf(Color(0xFF020617).adjustForWeather(), Color(0xFF1E1B4B).adjustForWeather(), Color(0xFF310F1A).adjustForWeather()))
         else -> Brush.verticalGradient(listOf(Color(0xFF020617).adjustForWeather(), Color(0xFF0F141E).adjustForWeather(), Color(0xFF1C2533).adjustForWeather()))
     }
 }
 
+/**
+ * Weather-reactive layer that renders precipitation or cloud effects.
+ */
 @Composable
 fun WeatherBackgroundLayer(
     condition: WeatherCondition,
@@ -95,18 +99,38 @@ fun WeatherBackgroundLayer(
     if (condition == WeatherCondition.UNKNOWN || condition == WeatherCondition.CLEAR) return
 
     val infiniteTransition = rememberInfiniteTransition(label = "weather")
+    
+    // Animation progress for precipitation
     val fallProgress by infiniteTransition.animateFloat(
         initialValue = 0f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(animation = tween(if (condition == WeatherCondition.SNOWY) 6000 else 2500, easing = LinearEasing), repeatMode = RepeatMode.Restart),
+        animationSpec = infiniteRepeatable(
+            animation = tween(if (condition == WeatherCondition.SNOWY) 6000 else 2500, easing = LinearEasing), 
+            repeatMode = RepeatMode.Restart
+        ),
         label = "fall"
     )
+    
+    // Wind/Drift animation
     val driftProgress by infiniteTransition.animateFloat(
         initialValue = -0.05f, targetValue = 0.05f,
         animationSpec = infiniteRepeatable(animation = tween(12000, easing = LinearOutSlowInEasing), repeatMode = RepeatMode.Reverse),
         label = "drift"
     )
 
-    val elements = remember(condition) { List(if (condition == WeatherCondition.CLOUDY) 5 else 45) { Offset(Random.nextFloat(), Random.nextFloat()) } }
+    val cloudCount = when(condition) {
+        WeatherCondition.CLOUDY, WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM, WeatherCondition.SNOWY -> 12
+        WeatherCondition.PARTLY_CLOUDY -> 5
+        else -> 0
+    }
+
+    val cloudElements = remember(condition) { 
+        List(cloudCount) { Offset(Random.nextFloat(), Random.nextFloat() * 0.3f) } 
+    }
+    
+    val precipElements = remember(condition) {
+        if (condition == WeatherCondition.CLOUDY || condition == WeatherCondition.PARTLY_CLOUDY) emptyList()
+        else List(45) { Offset(Random.nextFloat(), Random.nextFloat()) }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (condition == WeatherCondition.THUNDERSTORM) {
@@ -115,26 +139,54 @@ fun WeatherBackgroundLayer(
         
         Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width; val h = size.height
+            
+            // 1. Draw Clouds first (Top 30%)
+            val cloudColor = if (isDay) {
+                when(condition) {
+                    WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM -> Color(0xFF4B5563) // Dark Gray
+                    WeatherCondition.SNOWY -> Color(0xFFD1D5DB) // Slate Gray
+                    else -> Color.White // Standard clouds
+                }
+            } else {
+                // Night time: Clouds are very deep, almost invisible silhouettes
+                Color(0xFF020617) 
+            }
+
+            val cloudAlpha = if (isDay) {
+                if(condition == WeatherCondition.FOGGY) 0.12f else 0.04f
+            } else {
+                // Night clouds are extremely subtle
+                if(condition == WeatherCondition.FOGGY) 0.08f else 0.02f
+            }
+
+            cloudElements.forEach { pos ->
+                val x = ((pos.x + driftProgress) % 1f) * w
+                val y = pos.y * h
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(cloudColor.copy(alpha = cloudAlpha), Color.Transparent),
+                        center = Offset(x, y),
+                        radius = w * 0.4f
+                    ),
+                    radius = w * 0.4f,
+                    center = Offset(x, y)
+                )
+            }
+
+            // 2. Draw Precipitation
             when (condition) {
                 WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM -> {
-                    elements.forEach { pos ->
+                    precipElements.forEach { pos ->
                         val x = pos.x * w + (driftProgress * w)
                         val y = ((pos.y + fallProgress) % 1f) * h
                         drawLine(Color.White.copy(alpha = 0.15f), Offset(x, y), Offset(x - 2.dp.toPx(), y + 8.dp.toPx()), 0.8.dp.toPx(), StrokeCap.Round)
                     }
                 }
                 WeatherCondition.SNOWY -> {
-                    elements.forEach { pos ->
+                    precipElements.forEach { pos ->
                         val x = pos.x * w + (kotlin.math.sin(fallProgress.toDouble() * Math.PI * 2 + pos.x * 10).toFloat() * 15.dp.toPx())
                         val y = ((pos.y + fallProgress) % 1f) * h
                         drawCircle(Color.White.copy(alpha = 0.4f), (pos.x * 1.5.dp.toPx() + 0.5.dp.toPx()), Offset(x, y))
-                    }
-                }
-                WeatherCondition.CLOUDY, WeatherCondition.PARTLY_CLOUDY, WeatherCondition.FOGGY -> {
-                    elements.forEach { pos ->
-                        val x = ((pos.x + driftProgress) % 1f) * w
-                        val y = pos.y * h * 0.5f
-                        drawCircle(Brush.radialGradient(listOf(Color.White.copy(alpha = if(condition == WeatherCondition.FOGGY) 0.12f else 0.04f), Color.Transparent), Offset(x, y), w * 0.4f), w * 0.4f, Offset(x, y))
                     }
                 }
                 else -> {}
