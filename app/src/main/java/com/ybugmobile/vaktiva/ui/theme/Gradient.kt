@@ -147,7 +147,7 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
     
     val precipElements = remember(condition) {
         val count = when (condition) {
-            WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM -> 80
+            WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM -> 120 // Increased for depth
             WeatherCondition.SNOWY -> 50 // Increased density since half are small
             else -> 0
         }
@@ -183,10 +183,23 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
 
             when (condition) {
                 WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM -> {
-                    precipElements.forEach { pos ->
+                    precipElements.forEachIndexed { index, pos ->
                         val x = pos.x * w + (driftProgress * w)
                         val y = ((pos.y + fallProgress) % 1f) * h
-                        drawLine(Color.White.copy(alpha = 0.15f), Offset(x, y), Offset(x - 2.dp.toPx(), y + 8.dp.toPx()), 0.8.dp.toPx(), StrokeCap.Round)
+                        
+                        val isSmall = index % 2 == 0
+                        val alpha = if (isSmall) 0.07f else 0.15f
+                        val length = (if (isSmall) 4.dp else 8.dp).toPx()
+                        val thickness = (if (isSmall) 0.5.dp else 0.8.dp).toPx()
+                        val slant = (if (isSmall) 1.dp else 2.dp).toPx()
+                        
+                        drawLine(
+                            Color.White.copy(alpha = alpha), 
+                            Offset(x, y), 
+                            Offset(x - slant, y + length), 
+                            thickness, 
+                            StrokeCap.Round
+                        )
                     }
                 }
                 WeatherCondition.SNOWY -> {
