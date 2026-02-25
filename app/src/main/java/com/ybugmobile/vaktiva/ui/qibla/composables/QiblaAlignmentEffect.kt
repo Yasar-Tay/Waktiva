@@ -16,18 +16,9 @@ fun QiblaAlignmentEffect(
     isAligned: Boolean,
     modifier: Modifier = Modifier
 ) {
-    // 1. MASTER TIMER: Only ONE state change per frame instead of 35+
-    val infiniteTransition = rememberInfiniteTransition(label = "performanceEffect")
-    val masterProgress by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(8000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "masterTimer"
-    )
-
+    val infiniteTransition = rememberInfiniteTransition(label = "heavenlyEffect")
+    
+    // Pulse animation for the Atmospheric White Ray
     val rayAlpha by infiniteTransition.animateFloat(
         initialValue = 0.2f,
         targetValue = 1.0f,
@@ -38,14 +29,24 @@ fun QiblaAlignmentEffect(
         label = "rayAlpha"
     )
 
-    // Permanent particle metadata (Non-animated constants)
+    // Master Timer for optimized particle rain
+    val masterProgress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(8000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "masterTimer"
+    )
+
     val particles = remember {
         List(35) {
             ParticleMeta(
                 startXOffset = Random.nextFloat() * 120f - 60f,
-                speedMultiplier = Random.nextFloat() * 0.5f + 0.8f, // Varied falling speeds
-                delayOffset = Random.nextFloat(), // Individual start times
-                size = Random.nextFloat() * 1.2f + 0.4f
+                speedMultiplier = Random.nextFloat() * 0.4f + 0.8f,
+                delayOffset = Random.nextFloat(),
+                size = Random.nextFloat() * 1.0f + 0.4f
             )
         }
     }
@@ -64,7 +65,7 @@ fun QiblaAlignmentEffect(
             val center = this.center
             val radius = size.minDimension / 2 - 20.dp.toPx()
             
-            // --- 1. GOD RAY (Volumetric focus) ---
+            // 1. CINEMATIC GOD RAY GEOMETRY
             val rayHeight = radius * 3.2f
             val rayTopWidth = 2.dp.toPx()
             val rayBaseWidth = radius * 0.9f
@@ -77,7 +78,7 @@ fun QiblaAlignmentEffect(
                 close()
             }
 
-            // Atmospheric white beam
+            // A. Atmospheric white beam - radial gradient for ultra-soft diagonal edges
             drawPath(
                 path = rayPath,
                 brush = Brush.radialGradient(
@@ -92,16 +93,16 @@ fun QiblaAlignmentEffect(
                 blendMode = BlendMode.Screen
             )
 
-            // Static Green Energy Pillar
-            val pillarHalfWidth = 42.dp.toPx()
+            // B. Static Green Energy Pillar - Extra wide with smooth bleeding edges
+            val pillarHalfWidth = 48.dp.toPx() 
             drawPath(
                 path = rayPath,
                 brush = Brush.horizontalGradient(
                     colorStops = arrayOf(
                         0.0f to Color.Transparent,
-                        0.35f to Color(0xFF4CAF50).copy(alpha = 0.1f),
+                        0.3f to Color(0xFF4CAF50).copy(alpha = 0.05f),
                         0.5f to Color(0xFF4CAF50).copy(alpha = 0.55f),
-                        0.65f to Color(0xFF4CAF50).copy(alpha = 0.1f),
+                        0.7f to Color(0xFF4CAF50).copy(alpha = 0.05f),
                         1.0f to Color.Transparent
                     ),
                     startX = center.x - pillarHalfWidth,
@@ -110,14 +111,13 @@ fun QiblaAlignmentEffect(
                 blendMode = BlendMode.Plus
             )
 
-            // VERTICAL MASK (Corrected DstIn logic)
+            // C. VERTICAL MASK: Long cinematic fade-out at the bottom
             drawRect(
                 brush = Brush.verticalGradient(
                     colorStops = arrayOf(
                         0.0f to Color.White,
-                        0.5f to Color.White,
-                        0.8f to Color.White.copy(alpha = 0.3f),
-                        0.95f to Color.Transparent 
+                        0.4f to Color.White, // Stays solid for longer at top
+                        0.9f to Color.Transparent // Feathers out completely into nothingness
                     ),
                     startY = center.y - rayHeight,
                     endY = center.y + 60.dp.toPx()
@@ -125,14 +125,13 @@ fun QiblaAlignmentEffect(
                 blendMode = BlendMode.DstIn
             )
 
-            // --- 2. OPTIMIZED RAINING BULBS ---
+            // 2. RAINING LIGHT BULBS (Small, Professional, Neutral Shimmer)
             particles.forEach { meta ->
-                // Calculate individual progress based on Master Timer + individual delay
                 val p = (masterProgress * meta.speedMultiplier + meta.delayOffset) % 1f
-                
                 val particleY = (center.y - radius * 1.6f) + (radius * 1.6f * p)
                 val particleX = center.x + (meta.startXOffset.dp.toPx() * (1f - p) * 0.5f)
                 
+                // Disappear well before the center to keep it clean
                 val alpha = when {
                     p < 0.15f -> p / 0.15f 
                     p > 0.6f -> (1f - p) / 0.4f
@@ -140,14 +139,12 @@ fun QiblaAlignmentEffect(
                 }
 
                 if (alpha > 0f) {
-                    // Optimized bulb core
                     drawCircle(
                         color = Color.White.copy(alpha = alpha * 0.8f),
                         radius = meta.size.dp.toPx(),
                         center = Offset(particleX, particleY),
                         blendMode = BlendMode.Plus
                     )
-                    // High-performance light glow (Single pass)
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(Color.White.copy(alpha = alpha * 0.2f), Color.Transparent),
