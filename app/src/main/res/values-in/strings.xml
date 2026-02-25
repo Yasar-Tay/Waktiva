@@ -111,6 +111,8 @@
     <string name="settings_language">Bahasa Aplikasi</string>
     <string name="settings_cancel">Batal</string>
     <string name="settings_confirm">Konfirmasi</string>
+    <string name="settings_weather_effects">Efek Cuaca</string>
+    <string name="settings_weather_effects_desc">Tampilkan animasi kondisi cuaca (hujan, salju, awan) di latar belakang.</string>
 
     <!-- Language Options -->
     <string name="lang_system">Default Sistem</string>
@@ -247,13 +249,12 @@
 
     <!-- Donations -->
     <string name="settings_donate">Dukung Pengembang</string>
-    <string name="donate_title">Support Waktiva</string>
-    <string name="donate_description">Waktiva adalah aplikasi gratis yang dikembangkan dengan hati. Dukungan Anda membantu menjaganya tetap bebas iklan dan memungkinkan pengembangan di masa depan.</string>
-    <string name="donate_header">Berdayakan Pengembangan Waktiva</string>
-    <string name="donate_desc">Waktiva bersifat open-source dan bebas iklan. Kontribusi Anda membantu menutupi biaya server dan pengembangan berkelanjutan untuk memberikan pengalaman shalat terbaik bagi semua orang.</string>
-    <string name="donate_footer">Kemurahan hati Anda menjaga proyek ini tetap hidup. Semoga menjadi amal jariyah yang terus mengalir.</string>
+    <string name="donate_title">Dukung Waktiva</string>
+    <string name="donate_header">Dukung Waktiva</string>
+    <string name="donate_desc">Waktiva dibangun dengan satu niat:\nuntuk menawarkan ruang yang bersih, pribadi, dan bebas iklan untuk shalat.\n\nTanpa iklan.\nTanpa pelacakan.\nTanpa penjualan data.\nHanya sesuatu yang jujur dan berguna.\n\nMenjaga Waktiva tetap gratis berarti memilih kemandirian daripada monetisasi.\nItu berarti tidak menambahkan iklan.\nItu berarti tidak menjual data pengguna.\nItu berarti membangun secara perlahan, hati-hati, dan etis.\n\nJika Waktiva membawa kemudahan bagi shalat harian Anda…\nJika Anda menghargai memiliki aplikasi shalat yang menghormati privasi Anda…\nJika Anda ingin membantu meningkatkan desain, fitur, dan konten berlisensinya…\n\nAnda dapat mendukung pengembangannya dengan donasi.\n\nDukungan Anda membantu menutupi:\n\n• Biaya server dan API\n• Rekaman Adzan berlisensi\n• Ikon, ilustrasi, dan aset desain\n• Alat pengembangan dan biaya penerbitan\n• Peningkatan masa depan dan fitur baru\n\nSetiap kontribusi — kecil atau besar — benar-benar membuat perbedaan.\n\nJika Anda tidak dalam posisi untuk berdonasi, itu tidak masalah.\nDoa dan kata-kata baik Anda sudah sangat dihargai.\n\nTerima kasih telah membantu menjaga Waktiva tetap sederhana, pribadi, dan bebas iklan.</string>
+    <string name="donate_footer">🤲 Semoga bermanfaat bagi Anda di dunia dan akhirat.</string>
     <string name="donate_button">Donasi</string>
-    <string name="donate_thank_you">Terima kasih atas dukungan Anda!</string>
+    <string name="donate_thank_you">Terima kasih telah mendukung perangkat lunak sumber terbuka!</string>
     <string name="donate_error">Donasi gagal. Silakan coba lagi.</string>
     <string name="donate_billing_error">Gagal terhubung ke layanan pembayaran</string>
     <string name="rate_title">Beri Rating Waktiva</string>
@@ -306,4 +307,51 @@
     <string name="settings_hijri_day_start">Awal Hari Hijriah</string>
     <string name="settings_hijri_day_start_maghrib">Mulai saat Maghrib</string>
     <string name="settings_hijri_day_start_desc">Ganti tanggal Hijriah saat matahari terbenam (Maghrib) alih-alih tengah malam.</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">Lisensi</string>
+    <string name="license_legal_info">Waktiva – Lisensi &amp; Informasi Hukum</string>
+    <string name="license_app_copyright">Hak Cipta © 2026 YBugMobile\nSeluruh hak dilindungi undang-undang.</string>
+    <string name="license_app_mit">Waktiva dirilis sebagai perangkat lunak sumber terbuka di bawah Lisensi MIT.</string>
+    <string name="license_app_warranty">PERANGKAT LUNAK INI DISEDIAKAN \"APA ADANYA\", TANPA JAMINAN APA PUN, BAIK TERSURAT MAUPUN TERSIRAT, TERMASUK NAMUN TIDAK TERBATAS PADA JAMINAN KELAYAKAN JUAL, KESESUAIAN UNTUK TUJUAN TERTENTU, DAN NON-PELANGGARAN.</string>
+    <string name="license_third_party_services">1. Layanan Pihak Ketiga</string>
+    <string name="license_aladhan_api">API Al-Adhan</string>
+    <string name="license_aladhan_desc">Waktiva mengambil waktu shalat dari layanan API Al-Adhan. Perhitungan waktu shalat disediakan sesuai dengan metodologi dan ketentuan yang mereka publikasikan.</string>
+    <string name="license_data_privacy">Waktiva tidak menyimpan, menjual kembali, atau mendistribusikan data pengguna.</string>
+    <string name="license_open_source_libs">2. Perpustakaan Sumber Terbuka Pihak Ketiga</string>
+    <string name="license_libs_intro">Waktiva menyertakan komponen sumber terbuka berikut:</string>
+    <string name="license_lib_androidx">Perpustakaan AndroidX (Lisensi Apache 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Lisensi Apache 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Lisensi Apache 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Lisensi Apache 2.0)</string>
+    <string name="license_lib_room">Room (Lisensi Apache 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Lisensi Apache 2.0)</string>
+    <string name="license_lib_work">WorkManager (Lisensi Apache 2.0)</string>
+    <string name="license_lib_media3">Media3 (Lisensi Apache 2.0)</string>
+    <string name="license_lib_location">Lokasi Layanan Google Play (Ketentuan Layanan Google Play)</string>
+    <string name="license_lib_retrofit">Retrofit (Lisensi Apache 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Lisensi Apache 2.0)</string>
+    <string name="license_lib_gson">Gson (Lisensi Apache 2.0)</string>
+    <string name="license_lib_adhan">Perpustakaan Adhan Kotlin (Lisensi MIT)</string>
+    <string name="license_lib_suncalc">SunCalc (Lisensi BSD)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (Lisensi BSD 3-Clause)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Lisensi Apache 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Lisensi Apache 2.0)</string>
+    <string name="license_lib_billing">Perpustakaan Google Play Billing (Ketentuan Google Play)</string>
+    <string name="license_libs_property">Setiap perpustakaan tetap menjadi milik masing-masing penulisnya dan digunakan sesuai dengan lisensinya.</string>
+    <string name="license_adhan_audio">3. Lisensi Audio Adzan</string>
+    <string name="license_adhan_reciter">Waktiva menyertakan rekaman Adzan oleh Muhsin Kara, Juara Dunia Adzan 2022.</string>
+    <string name="license_adhan_permission">Rekaman ini digunakan dengan izin. Seluruh hak audio tetap berada pada pelantun asli.</string>
+    <string name="license_adhan_restrictions">Audio Adzan tidak boleh diekstrak, didistribusikan ulang, atau digunakan kembali di luar aplikasi Waktiva tanpa izin eksplisit dari pemegang hak.</string>
+    <string name="license_location_permissions">4. Lokasi &amp; Izin</string>
+    <string name="license_location_usage">Waktiva meminta izin lokasi semata-mata untuk:</string>
+    <string name="license_loc_usage_1">Menghitung waktu shalat yang akurat</string>
+    <string name="license_loc_usage_2">Menentukan arah Kiblat</string>
+    <string name="license_loc_usage_3">Menyediakan perhitungan tanggal Hijriah dan fase bulan</string>
+    <string name="license_loc_processing">Data lokasi diproses secara lokal dan tidak disimpan, dilacak, atau dibagikan. Waktu shalat diunduh hingga tiga bulan ke depan untuk memungkinkan penggunaan luring.</string>
+    <string name="license_no_ads">5. Komitmen Tanpa Iklan / Tanpa Pelacakan</string>
+    <string name="license_no_ads_1">Tidak menampilkan iklan</string>
+    <string name="license_no_ads_2">Tidak menggunakan SDK pelacakan</string>
+    <string name="license_no_ads_3">Tidak mengumpulkan analitik</string>
+    <string name="license_no_ads_4">Tidak menjual data pribadi</string>
 </resources>

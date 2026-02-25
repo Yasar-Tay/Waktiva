@@ -29,7 +29,7 @@
     <string name="qibla_got_it">Faham</string>
     <string name="qibla_aligned_badge">SELARI</string>
     <string name="qibla_magnetic_interference">Gangguan Magnetik Dikesan - Kalibrasi Peranti</string>
-    <string name="qibla_kaaba_aligned">Selari dengan Kaabah</string>
+    <string name="qibla_kaaba_aligned">Selari with Kaabah</string>
     <string name="qibla_find_marker">Cari Penanda Emas</string>
     <string name="qibla_calibrate">KALIBRASI</string>
     <string name="qibla_interference_tip">Tip: Di dalam bangunan, struktur logam boleh menjejaskan kompas. Untuk ketepatan terbaik, lakukan kalibrasi angka 8.</string>
@@ -78,7 +78,7 @@
     <string name="health_no_internet_no_data">Tiada Sambungan Internet. Waktiva memerlukan sambungan aktif untuk mengambil waktu solat pertama anda.</string>
     <string name="health_status_ok">Semua sistem berfungsi</string>
     <string name="health_overlay_subtitle">Mengoptimumkan pengalaman aplikasi anda</string>
-    <string name="health_overlay_description">Tangani isu di bawah untuk memastikan notifikasi dan perkhidmatan lokasi berfungsi dengan dipercayai di latar belakang.</string>
+    <string name="health_overlay_description">Tangani isu di bawah untuk memastikan notifikasi and perkhidmatan lokasi berfungsi dengan dipercayai di latar belakang.</string>
     <string name="health_overlay_dismiss">Faham</string>
     <string name="health_overlay_issues_title">Isu Dikesan</string>
 
@@ -103,7 +103,7 @@
     <string name="settings_permissions">Kebenaran</string>
     <string name="settings_manage_system">Urus dalam Tetapan Sistem</string>
     <string name="settings_location_access">Akses Lokasi</string>
-    <string name="settings_location_desc">Sangat penting untuk pengiraan waktu solat. Tanpanya, aplikasi tidak dapat mengambil waktu bagi lokasi anda dan menjadi tidak berguna.</string>
+    <string name="settings_location_desc">Sangat penting untuk pengiraan waktu solat. Tanpanya, aplikasi tidak dapat mengambil waktu bagi lokasi anda and menjadi tidak berguna.</string>
     <string name="settings_notifications">Notifikasi</string>
     <string name="settings_notifications_desc">Diperlukan untuk menunjukkan amaran waktu solat and notifikasi Azan.</string>
     <string name="settings_granted">Dibenarkan</string>
@@ -111,6 +111,8 @@
     <string name="settings_language">Bahasa Aplikasi</string>
     <string name="settings_cancel">Batal</string>
     <string name="settings_confirm">Sahkan</string>
+    <string name="settings_weather_effects">Kesan Cuaca</string>
+    <string name="settings_weather_effects_desc">Tunjukkan animasi keadaan cuaca (hujan, salji, awan) di latar belakang.</string>
 
     <!-- Language Options -->
     <string name="lang_system">Sistem Lalai</string>
@@ -188,7 +190,7 @@
     <string name="settings_battery_opt_enabled">Dioptimalkan untuk kebolehpercayaan</string>
     <string name="settings_battery_opt_disabled">Penting bagi memainkan Azan tepat pada masanya. Pengoptimuman bateri boleh melambatkan atau menyekat amaran yang dijadualkan.</string>
     <string name="settings_exact_alarm_title">Penggera Tepat</string>
-    <string name="settings_exact_alarm_desc">Diperlukan bagi notifikasi waktu solat yang tepat dan Azan yang menepati masa.</string>
+    <string name="settings_exact_alarm_desc">Diperlukan bagi notifikasi waktu solat yang tepat and Azan yang menepati masa.</string>
 
     <!-- Data Management -->
     <string name="settings_data_management">Pengurusan Data</string>
@@ -208,21 +210,21 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Selamat Datang ke Waktiva</string>
-    <string name="welcome_desc">Teman profesional anda untuk waktu solat, dibina dengan ketepatan dan reka bentuk moden.</string>
+    <string name="welcome_desc">Teman profesional anda untuk waktu solat, dibina with ketepatan and reka bentuk moden.</string>
     <string name="welcome_begin">Mulakan Persediaan</string>
     <string name="welcome_finish">Tamat Persediaan</string>
     <string name="welcome_precision_settings">Tetapan Ketepatan</string>
     <string name="welcome_precision_desc">Waktiva memerlukan ini untuk melayani anda dengan lebih baik</string>
     <string name="welcome_loc_title">Lokasi Tepat</string>
-    <string name="welcome_loc_desc">Sangat penting untuk pengiraan waktu solat. Tanpanya, aplikasi tidak dapat mengambil waktu bagi lokasi anda dan menjadi tidak berguna.</string>
+    <string name="welcome_loc_desc">Sangat penting untuk pengiraan waktu solat. Tanpanya, aplikasi tidak dapat mengambil waktu bagi lokasi anda and menjadi tidak berguna.</string>
     <string name="welcome_notif_title">Amaran Azan</string>
-    <string name="welcome_notif_desc">Diperlukan bagi menghantar notifikasi dan membunyikan Azan apabila tiba waktu solat.</string>
+    <string name="welcome_notif_desc">Diperlukan bagi menghantar notifikasi and membunyikan Azan apabila tiba waktu solat.</string>
     <string name="welcome_alarm_title">Penggera Tepat</string>
     <string name="welcome_alarm_desc">Diperlukan supaya Azan dimainkan tepat pada masanya tanpa sebarang kelewatan.</string>
     <string name="welcome_grant_btn">Berikan Kebenaran</string>
     <string name="welcome_continue_btn">Teruskan</string>
     <string name="welcome_personalize">Peribadikan</string>
-    <string name="welcome_personalize_desc">Konfigurasikan tetapan solat dan pengiraan anda</string>
+    <string name="welcome_personalize_desc">Konfigurasikan tetapan solat and pengiraan anda</string>
     <string name="welcome_audio_desc">Tetapkan pilihan panggilan solat anda</string>
     <string name="welcome_adhan_audio">Audio Azan</string>
     <string name="welcome_adhan_audio_desc">Mainkan panggilan audio untuk solat</string>
@@ -248,9 +250,8 @@
     <!-- Donations -->
     <string name="settings_donate">Sokong Pembangun</string>
     <string name="donate_title">Sokong Waktiva</string>
-    <string name="donate_description">Waktiva adalah aplikasi percuma, dibangunkan dengan penuh teliti. Sokongan anda membantu memastikannya bebas iklan dan membolehkan pembangunan masa hadapan.</string>
     <string name="donate_header">Perkasakan Pembangunan Waktiva</string>
-    <string name="donate_desc">Waktiva adalah sumber terbuka dan bebas iklan. Sumbangan anda membantu menampung kos pelayan dan pembangunan berterusan untuk menyediakan pengalaman solat terbaik untuk semua orang.</string>
+    <string name="donate_desc">Waktiva adalah sumber terbuka and bebas iklan. Sumbangan anda membantu menampung kos pelayan and pembangunan berterusan untuk menyediakan pengalaman solat terbaik untuk semua orang.</string>
     <string name="donate_footer">Kemurahan hati anda mengekalkan projek ini hidup. Semoga ia menjadi punca rahmat yang berterusan.</string>
     <string name="donate_button">Derma</string>
     <string name="donate_thank_you">Terima kasih atas sokongan anda!</string>
@@ -278,7 +279,7 @@
     <!-- Religious Days -->
     <string name="rel_day_3_months">Awal Tiga Bulan</string>
     <string name="rel_day_regaip">Laylat al-Raghaib</string>
-    <string name="rel_day_mirac">Israk dan Mikraj</string>
+    <string name="rel_day_mirac">Israk and Mikraj</string>
     <string name="rel_day_berat">Malam Nisfu Syaaban</string>
     <string name="rel_day_first_tarawih">Tarawih Pertama</string>
     <string name="rel_day_ramadan_start">Awal Ramadan</string>
@@ -306,4 +307,51 @@
     <string name="settings_hijri_day_start">Permulaan Hari Hijriah</string>
     <string name="settings_hijri_day_start_maghrib">Bermula pada Maghrib</string>
     <string name="settings_hijri_day_start_desc">Tukar tarikh Hijriah pada waktu matahari terbenam (Maghrib) bukannya tengah malam.</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">Lesen</string>
+    <string name="license_legal_info">Waktiva – Lesen &amp; Maklumat Undang-undang</string>
+    <string name="license_app_copyright">Hak Cipta © 2026 YBugMobile\nHak cipta terpelihara.</string>
+    <string name="license_app_mit">Waktiva dikeluarkan sebagai perisian sumber terbuka di bawah Lesen MIT.</string>
+    <string name="license_app_warranty">PERISIAN INI DISEDIAKAN \"SEBAGAIMANA ADANYA\", TANPA SEBARANG JENIS JAMINAN, SAMA ADA TERSURAT ATAU TERSIRAT, TERMASUK TETAPI TIDAK TERHAD KEPADA JAMINAN KEBOLEHPERDAGANGAN, KESESUAIAN UNTUK TUJUAN TERTENTU, DAN KETIDAKPELANGGARAN.</string>
+    <string name="license_third_party_services">1. Perkhidmatan Pihak Ketiga</string>
+    <string name="license_aladhan_api">API Al-Adhan</string>
+    <string name="license_aladhan_desc">Waktiva mengambil waktu solat daripada perkhidmatan API Al-Adhan. Pengiraan waktu solat disediakan mengikut metodologi and syarat yang mereka terbitkan.</string>
+    <string name="license_data_privacy">Waktiva tidak menyimpan, menjual semula, atau mengedarkan data pengguna.</string>
+    <string name="license_open_source_libs">2. Perpustakaan Sumber Terbuka Pihak Ketiga</string>
+    <string name="license_libs_intro">Waktiva menyertakan komponen sumber terbuka berikut:</string>
+    <string name="license_lib_androidx">Perpustakaan AndroidX (Lesen Apache 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Lesen Apache 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Lesen Apache 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Lesen Apache 2.0)</string>
+    <string name="license_lib_room">Room (Lesen Apache 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Lesen Apache 2.0)</string>
+    <string name="license_lib_work">WorkManager (Lesen Apache 2.0)</string>
+    <string name="license_lib_media3">Media3 (Lesen Apache 2.0)</string>
+    <string name="license_lib_location">Lokasi Perkhidmatan Google Play (Syarat Perkhidmatan Google Play)</string>
+    <string name="license_lib_retrofit">Retrofit (Lesen Apache 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Lesen Apache 2.0)</string>
+    <string name="license_lib_gson">Gson (Lesen Apache 2.0)</string>
+    <string name="license_lib_adhan">Perpustakaan Adhan Kotlin (Lesen MIT)</string>
+    <string name="license_lib_suncalc">SunCalc (Lesen BSD)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (Lesen BSD 3-Clause)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Lesen Apache 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Lesen Apache 2.0)</string>
+    <string name="license_lib_billing">Perpustakaan Pengebilan Google Play (Syarat Google Play)</string>
+    <string name="license_libs_property">Setiap perpustakaan tetap menjadi hak milik pengarang masing-masing and digunakan mengikut lesennya.</string>
+    <string name="license_adhan_audio">3. Lesen Audio Azan</string>
+    <string name="license_adhan_reciter">Waktiva menyertakan rakaman Azan oleh Muhsin Kara, Juara Dunia Azan 2022.</string>
+    <string name="license_adhan_permission">Rakaman ini digunakan with izin. Semua hak audio kekal with pelantun asal.</string>
+    <string name="license_adhan_restrictions">Audio Azan tidak boleh diekstrak, diedarkan semula, atau digunakan semula di luar aplikasi Waktiva tanpa kebenaran nyata daripada pemegang hak.</string>
+    <string name="license_location_permissions">4. Lokasi &amp; Kebenaran</string>
+    <string name="license_location_usage">Waktiva meminta kebenaran lokasi semata-mata untuk:</string>
+    <string name="license_loc_usage_1">Mengira waktu solat yang tepat</string>
+    <string name="license_loc_usage_2">Menentukan arah Kiblat</string>
+    <string name="license_loc_usage_3">Menyediakan pengiraan tarikh Hijriah and fasa bulan</string>
+    <string name="license_loc_processing">Data lokasi diproses secara tempatan and tidak disimpan, dijejaki, atau dikongsi. Waktu solat dimuat turun sehingga tiga bulan untuk membolehkan penggunaan luar talian.</string>
+    <string name="license_no_ads">5. Komitmen Tanpa Iklan / Tanpa Penjejakan</string>
+    <string name="license_no_ads_1">Tidak memaparkan sebarang iklan</string>
+    <string name="license_no_ads_2">Tidak menggunakan sebarang SDK penjejakan</string>
+    <string name="license_no_ads_3">Tidak mengumpul analitik</string>
+    <string name="license_no_ads_4">Tidak menjual data peribadi</string>
 </resources>

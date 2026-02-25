@@ -2,10 +2,10 @@ package com.ybugmobile.vaktiva.ui.donation
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -20,9 +20,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,7 +38,7 @@ import com.ybugmobile.vaktiva.domain.manager.PurchaseResult
 import com.ybugmobile.vaktiva.ui.theme.GlassTheme
 import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DonateScreen(
     onBack: () -> Unit,
@@ -94,76 +97,81 @@ fun DonateScreen(
                 .padding(padding),
             contentPadding = PaddingValues(bottom = 60.dp),
         ) {
-            // HERO SECTION: Visual Focal Point
+            // HERO SECTION: Elevated Visual with App Icon
             item {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp)
-                        .padding(horizontal = 24.dp, vertical = 24.dp)
+                        .height(320.dp)
+                        .padding(top = 24.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    // Soft organic glow
+                    // Multi-layered Glow
                     Box(
                         modifier = Modifier
-                            .size(200.dp)
-                            .align(Alignment.Center)
-                            .blur(80.dp)
-                            .background(Color(0xFFF87171).copy(alpha = 0.15f), CircleShape)
+                            .size(240.dp)
+                            .blur(90.dp)
+                            .background(Color(0xFFF87171).copy(alpha = 0.12f), CircleShape)
                     )
 
                     Column(
-                        modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Surface(
-                            modifier = Modifier.size(80.dp),
-                            shape = CircleShape,
-                            color = Color.White.copy(alpha = 0.05f),
-                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f))
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    Icons.Default.Favorite,
+                        Box(contentAlignment = Alignment.BottomEnd) {
+                            // Main App Icon Container
+                            Surface(
+                                modifier = Modifier.size(110.dp),
+                                shape = RoundedCornerShape(30.dp),
+                                color = Color.White.copy(alpha = 0.1f),
+                                border = BorderStroke(1.5.dp, Color.White.copy(alpha = 0.2f))
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
                                     contentDescription = null,
-                                    tint = Color(0xFFF87171),
-                                    modifier = Modifier.size(36.dp)
+                                    modifier = Modifier.padding(18.dp).clip(RoundedCornerShape(12.dp)),
+                                    contentScale = ContentScale.Fit
                                 )
                             }
+                            
+                            // Floating Heart Indicator
+                            Surface(
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .offset(x = 12.dp, y = 12.dp),
+                                shape = CircleShape,
+                                color = Color(0xFFF87171),
+                                border = BorderStroke(2.dp, Color.Black.copy(alpha = 0.5f)),
+                                shadowElevation = 8.dp
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        Icons.Default.Favorite,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
                         }
-                        Spacer(modifier = Modifier.height(24.dp))
+                        
+                        Spacer(modifier = Modifier.height(32.dp))
+                        
                         Text(
                             text = stringResource(R.string.donate_header),
-                            style = MaterialTheme.typography.displaySmall.copy(
+                            style = MaterialTheme.typography.headlineMedium.copy(
                                 fontWeight = FontWeight.Black,
                                 letterSpacing = (-1).sp
                             ),
                             color = Color.White,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 24.dp)
                         )
                     }
                 }
             }
 
-            // PHILOSOPHY BADGES: Broken down values for visual design
-            item {
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    PhilosophyBadge("No Ads", true)
-                    PhilosophyBadge("No Tracking")
-                    PhilosophyBadge("Privacy First", true)
-                    PhilosophyBadge("No Data Selling")
-                    PhilosophyBadge("Ethical Build")
-                }
-                Spacer(modifier = Modifier.height(32.dp))
-            }
-
-            // THE MANIFESTO: Description in a styled Glass Card
+            // THE MANIFESTO GLASS CARD
             item {
                 Surface(
                     modifier = Modifier
@@ -172,30 +180,30 @@ fun DonateScreen(
                     shape = RoundedCornerShape(36.dp),
                     color = Color.White.copy(alpha = 0.03f),
                     border = BorderStroke(1.dp, Brush.verticalGradient(
-                        colors = listOf(Color.White.copy(alpha = 0.12f), Color.White.copy(alpha = 0.02f))
+                        colors = listOf(Color.White.copy(alpha = 0.15f), Color.White.copy(alpha = 0.02f))
                     ))
                 ) {
                     Column(modifier = Modifier.padding(32.dp)) {
                         Text(
                             text = stringResource(R.string.settings_donate).uppercase(),
-                            style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
-                            color = Color(0xFFF87171).copy(alpha = 0.8f),
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 3.sp),
+                            color = Color(0xFFF87171).copy(alpha = 0.9f),
+                            fontWeight = FontWeight.ExtraBold
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         Text(
                             text = stringResource(R.string.donate_desc),
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 lineHeight = 28.sp,
-                                letterSpacing = 0.3.sp
+                                letterSpacing = 0.2.sp
                             ),
-                            color = Color.White.copy(alpha = 0.75f)
+                            color = Color.White.copy(alpha = 0.8f)
                         )
                     }
                 }
             }
 
-            // CONTRIBUTION SECTION
+            // INTERACTIVE SECTION
             item {
                 Column(
                     modifier = Modifier
@@ -210,12 +218,11 @@ fun DonateScreen(
                         modifier = Modifier.padding(start = 12.dp)
                     )
 
-                    // Community Rating Card
                     CommunityRatingCard(onClick = { viewModel.onRateClick() })
 
                     if (products.isEmpty()) {
                         Box(
-                            modifier = Modifier.fillMaxWidth().height(100.dp),
+                            modifier = Modifier.fillMaxWidth().height(120.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(color = Color.White.copy(alpha = 0.2f), strokeWidth = 2.dp)
@@ -232,7 +239,7 @@ fun DonateScreen(
                 }
             }
 
-            // FOOTER: Personal touch
+            // FOOTER
             item {
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
@@ -245,27 +252,9 @@ fun DonateScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp)
                 )
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(60.dp))
             }
         }
-    }
-}
-
-@Composable
-fun PhilosophyBadge(text: String, highlighted: Boolean = false) {
-    Surface(
-        modifier = Modifier.padding(horizontal = 4.dp),
-        shape = CircleShape,
-        color = if (highlighted) Color.White.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.05f),
-        border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.1f))
-    ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
-            style = MaterialTheme.typography.labelMedium,
-            color = if (highlighted) Color.White else Color.White.copy(alpha = 0.6f),
-            fontWeight = if (highlighted) FontWeight.Bold else FontWeight.Normal
-        )
     }
 }
 
