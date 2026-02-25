@@ -36,7 +36,10 @@ class QiblaViewModel @Inject constructor(
 
     val currentTime = timeManager.currentTime
 
-    val currentPrayerDay: Flow<PrayerDay?> = prayerRepository.getPrayerDays().map { days ->
+    val allPrayerDays: StateFlow<List<PrayerDay>> = prayerRepository.getPrayerDays()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val currentPrayerDay: Flow<PrayerDay?> = allPrayerDays.map { days ->
         val today = LocalDate.now()
         days.find { it.date == today }
     }
@@ -79,7 +82,7 @@ class QiblaViewModel @Inject constructor(
             compassData = c,
             currentPrayerDay = d,
             currentTime = t,
-            isLoading = !settled,
+            isLoading = !settled && d == null,
             isNetworkAvailable = network,
             isLocationEnabled = locEnabled,
             isLocationPermissionGranted = locPerm,
@@ -143,6 +146,7 @@ class QiblaViewModel @Inject constructor(
 
             delay(500)
             _isRefreshing.value = false
+            _hasSettled.value = true
         }
     }
 

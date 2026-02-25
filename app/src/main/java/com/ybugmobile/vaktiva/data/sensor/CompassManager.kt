@@ -9,11 +9,11 @@ import android.hardware.display.DisplayManager
 import android.view.Display
 import android.view.Surface
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,6 +26,7 @@ data class CompassData(
 class CompassManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
     private val rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
@@ -104,11 +105,18 @@ class CompassManager @Inject constructor(
         awaitClose {
             sensorManager.unregisterListener(listener)
         }
+    }.onStart {
+        // Emit a default value to prevent blocking combine() flows
+        emit(CompassData(0f, SensorManager.SENSOR_STATUS_UNRELIABLE))
     }
 
     val compassFlow: Flow<CompassData> = combine(rawCompassFlow, declination) { data, dec ->
         // Adjust Magnetic North to True North
         val trueAzimuth = (data.azimuth + dec + 360) % 360
         data.copy(azimuth = trueAzimuth)
-    }
+    }.stateIn(
+        scope = scope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = CompassData(0f, SensorManager.SENSOR_STATUS_UNRELIABLE)
+    )
 }
