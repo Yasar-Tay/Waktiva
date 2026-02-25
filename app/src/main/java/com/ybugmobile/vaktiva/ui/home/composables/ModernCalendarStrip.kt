@@ -82,7 +82,7 @@ fun ModernCalendarStrip(
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        AnimatedVisibility(
+        /*AnimatedVisibility(
             visible = isUsingCalculatedHijri,
             enter = expandVertically(),
             exit = shrinkVertically()
@@ -94,7 +94,7 @@ fun ModernCalendarStrip(
                 modifier = Modifier.padding(bottom = 8.dp, start = 4.dp),
                 lineHeight = 14.sp
             )
-        }
+        }*/
         Row(
             modifier = Modifier
                 .fillMaxWidth()

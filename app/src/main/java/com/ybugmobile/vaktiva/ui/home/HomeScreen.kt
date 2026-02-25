@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.animation.*
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -47,16 +46,13 @@ import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.model.WeatherCondition
 import com.ybugmobile.vaktiva.ui.home.composables.*
-import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthCard
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
-import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthIndicator
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import com.ybugmobile.vaktiva.ui.theme.StarryBackgroundLayer
 import com.ybugmobile.vaktiva.ui.theme.AtmosphericBackgroundLayer
 import com.ybugmobile.vaktiva.ui.theme.WeatherBackgroundLayer
-import com.ybugmobile.vaktiva.utils.PermissionUtils
 import java.time.LocalDate
 import java.time.LocalTime
 import kotlinx.coroutines.launch
@@ -433,13 +429,13 @@ fun HomeScreenContent(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     // Weather Summary Row (Temporary for testing)
-                                    if (state.temperature != null) {
+                                    /*if (state.temperature != null) {
                                         Text(
                                             text = "${state.temperature}°C • ${state.weatherCondition.name}",
                                             style = MaterialTheme.typography.labelMedium,
                                             color = contentColor.copy(alpha = 0.6f)
                                         )
-                                    }
+                                    }*/
 
                                     Spacer(modifier = Modifier.height(32.dp))
 
