@@ -53,7 +53,8 @@ fun QiblaMap(
     onMapReady: (MapLibreMap) -> Unit,
     onMapLongClick: (LatLng) -> Unit,
     onToggleSatellite: () -> Unit,
-    fabAlignment: Alignment = Alignment.CenterEnd
+    fabAlignment: Alignment = Alignment.CenterEnd,
+    fabPadding: PaddingValues = PaddingValues(16.dp)
 ) {
     var mapInstance by remember { mutableStateOf<MapLibreMap?>(null) }
     var symbolManager by remember { mutableStateOf<SymbolManager?>(null) }
@@ -193,7 +194,7 @@ fun QiblaMap(
         Column(
             modifier = Modifier
                 .align(fabAlignment)
-                .padding(horizontal = 16.dp),
+                .padding(fabPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
