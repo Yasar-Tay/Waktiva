@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -23,7 +24,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
@@ -47,18 +47,14 @@ fun ProfessionalCompass(
         label = "indicator"
     )
 
-    // 2. Shortest-Path Azimuth Animation
-    // This logic ensures that when the angle jumps from 359 to 1, the wheel doesn't spin all the way back.
+    // 2. Shortest-Path Azimuth Animation (Handled via graphicsLayer rotation)
     var lastTargetAzimuth by remember { mutableStateOf(azimuth) }
     var azimuthOffset by remember { mutableStateOf(0f) }
     
     SideEffect {
         val diff = azimuth - lastTargetAzimuth
-        if (diff > 180f) {
-            azimuthOffset -= 360f
-        } else if (diff < -180f) {
-            azimuthOffset += 360f
-        }
+        if (diff > 180f) azimuthOffset -= 360f
+        else if (diff < -180f) azimuthOffset += 360f
         lastTargetAzimuth = azimuth
     }
 
@@ -66,16 +62,15 @@ fun ProfessionalCompass(
         targetValue = azimuth + azimuthOffset,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioNoBouncy,
-            stiffness = Spring.StiffnessMediumLow // Higher stiffness for better responsiveness
+            stiffness = Spring.StiffnessMediumLow
         ),
         label = "magneticAzimuth"
     )
 
-    // 3. Pulsing Radiant Glow
     val infiniteTransition = rememberInfiniteTransition(label = "alignmentGlow")
     val glowScale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.15f,
+        targetValue = 1.12f,
         animationSpec = infiniteRepeatable(
             animation = tween(2000, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -84,14 +79,20 @@ fun ProfessionalCompass(
     )
 
     Box(modifier = Modifier.size(340.dp), contentAlignment = Alignment.Center) {
-        // Outer Ambient Glow
+        // Outer Ambient Glow (Performance: Use graphicsLayer for scaling)
         Box(
             modifier = Modifier
-                .size(300.dp * if (isAligned) glowScale else 1f)
+                .size(300.dp)
+                .graphicsLayer {
+                    val scale = if (isAligned) glowScale else 1f
+                    scaleX = scale
+                    scaleY = scale
+                    alpha = if (isAligned) 0.8f else 0.4f
+                }
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            indicatorColor.copy(alpha = if (isAligned) 0.15f else 0.05f),
+                            indicatorColor.copy(alpha = 0.15f),
                             Color.Transparent
                         )
                     ),
@@ -99,243 +100,173 @@ fun ProfessionalCompass(
                 )
         )
 
+        // The Compass Dial (Cached Performance Layer)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer { rotationZ = -animatedAzimuth }
+                .drawWithCache {
+                    onDrawWithContent {
+                        val center = this.center
+                        val radius = size.minDimension / 2 - 20.dp.toPx()
+
+                        // Static Dial Body
+                        drawCircle(
+                            color = contentColor.copy(alpha = 0.03f),
+                            radius = radius + 10.dp.toPx(),
+                            style = Fill
+                        )
+
+                        // Ticks & Graduations
+                        for (i in 0 until 360 step 2) {
+                            val angleInRad = Math.toRadians(i.toDouble() - 90)
+                            val isMajor = i % 30 == 0
+                            val isMedium = i % 10 == 0
+                            
+                            val tickLength = when {
+                                isMajor -> 16.dp.toPx()
+                                isMedium -> 10.dp.toPx()
+                                else -> 5.dp.toPx()
+                            }
+                            
+                            val startX = center.x + radius * cos(angleInRad).toFloat()
+                            val startY = center.y + radius * sin(angleInRad).toFloat()
+                            val endX = center.x + (radius - tickLength) * cos(angleInRad).toFloat()
+                            val endY = center.y + (radius - tickLength) * sin(angleInRad).toFloat()
+
+                            drawLine(
+                                color = when {
+                                    isMajor -> contentColor.copy(alpha = 0.8f)
+                                    isMedium -> contentColor.copy(alpha = 0.4f)
+                                    else -> contentColor.copy(alpha = 0.15f)
+                                },
+                                start = Offset(startX, startY),
+                                end = Offset(endX, endY),
+                                strokeWidth = if (isMajor) 1.5.dp.toPx() else 1.dp.toPx(),
+                                cap = StrokeCap.Round
+                            )
+                        }
+
+                        // Cardinal Directions
+                        val directions = listOf("N" to 0f, "E" to 90f, "S" to 180f, "W" to 270f)
+                        directions.forEach { (label, angle) ->
+                            val angleInRad = Math.toRadians(angle.toDouble() - 90)
+                            val x = center.x + (radius - 32.dp.toPx()) * cos(angleInRad).toFloat()
+                            val y = center.y + (radius - 32.dp.toPx()) * sin(angleInRad).toFloat()
+                            
+                            // Counter-rotate text so it stays upright
+                            rotate(animatedAzimuth, pivot = Offset(x, y)) {
+                                val textLayout = textMeasurer.measure(
+                                    text = label,
+                                    style = TextStyle(
+                                        color = if (label == "N") Color(0xFFF87171) else contentColor,
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 14.sp,
+                                        letterSpacing = 1.sp
+                                    )
+                                )
+                                drawText(
+                                    textLayoutResult = textLayout,
+                                    topLeft = Offset(x - textLayout.size.width / 2, y - textLayout.size.height / 2)
+                                )
+                            }
+                        }
+
+                        // Kaaba Marker
+                        val qiblaInRad = Math.toRadians(qiblaAngle.toDouble() - 90)
+                        val kX = center.x + radius * cos(qiblaInRad).toFloat()
+                        val kY = center.y + radius * sin(qiblaInRad).toFloat()
+                        
+                        drawCircle(
+                            brush = Brush.radialGradient(listOf(indicatorColor.copy(alpha = 0.4f), Color.Transparent)),
+                            radius = 24.dp.toPx() * (if (isAligned) glowScale else 1f),
+                            center = Offset(kX, kY)
+                        )
+                        
+                        drawCircle(color = Color.White, radius = 15.dp.toPx(), center = Offset(kX, kY))
+                        drawCircle(color = Color(0xFFFFD700), radius = 13.dp.toPx(), center = Offset(kX, kY))
+                        
+                        val kaabaSize = 12.dp.toPx()
+                        drawRect(
+                            color = Color.Black,
+                            topLeft = Offset(kX - kaabaSize / 2, kY - kaabaSize / 2),
+                            size = androidx.compose.ui.geometry.Size(kaabaSize, kaabaSize)
+                        )
+                        drawRect(
+                            color = Color(0xFFFFD700),
+                            topLeft = Offset(kX - kaabaSize / 2, kY - kaabaSize / 4),
+                            size = androidx.compose.ui.geometry.Size(kaabaSize, kaabaSize / 8)
+                        )
+                    }
+                }
+        )
+
+        // Static Center Needle (Doesn't need to rotate with the dial)
         Canvas(modifier = Modifier.fillMaxSize()) {
             val center = this.center
             val radius = size.minDimension / 2 - 20.dp.toPx()
-
-            // Static Outer Bezel (Glass Effect)
-            drawCircle(
-                color = contentColor.copy(alpha = 0.05f),
-                radius = radius + 10.dp.toPx(),
-                style = Fill
-            )
-            drawCircle(
-                brush = Brush.sweepGradient(
-                    0.0f to contentColor.copy(alpha = 0f),
-                    0.5f to contentColor.copy(alpha = 0.2f),
-                    1.0f to contentColor.copy(alpha = 0f)
-                ),
-                radius = radius + 10.dp.toPx(),
-                style = Stroke(width = 1.dp.toPx())
-            )
-
-            // Rotating Scale with Magnetic Inertia
-            rotate(-animatedAzimuth) {
-                for (i in 0 until 360 step 2) {
-                    val angleInRad = Math.toRadians(i.toDouble() - 90)
-                    val isMajor = i % 30 == 0
-                    val isMedium = i % 10 == 0
-                    
-                    val tickLength = when {
-                        isMajor -> 16.dp.toPx()
-                        isMedium -> 10.dp.toPx()
-                        else -> 5.dp.toPx()
-                    }
-                    
-                    val startX = center.x + radius * cos(angleInRad).toFloat()
-                    val startY = center.y + radius * sin(angleInRad).toFloat()
-                    val endX = center.x + (radius - tickLength) * cos(angleInRad).toFloat()
-                    val endY = center.y + (radius - tickLength) * sin(angleInRad).toFloat()
-
-                    drawLine(
-                        color = when {
-                            isMajor -> contentColor.copy(alpha = 0.9f)
-                            isMedium -> contentColor.copy(alpha = 0.5f)
-                            else -> contentColor.copy(alpha = 0.2f)
-                        },
-                        start = Offset(startX, startY),
-                        end = Offset(endX, endY),
-                        strokeWidth = if (isMajor) 1.5.dp.toPx() else 1.dp.toPx(),
-                        cap = StrokeCap.Round
-                    )
-                }
-
-                // Cardinal Directions
-                val directions = listOf("N" to 0f, "E" to 90f, "S" to 180f, "W" to 270f)
-                directions.forEach { (label, angle) ->
-                    val angleInRad = Math.toRadians(angle.toDouble() - 90)
-                    val x = center.x + (radius - 32.dp.toPx()) * cos(angleInRad).toFloat()
-                    val y = center.y + (radius - 32.dp.toPx()) * sin(angleInRad).toFloat()
-                    
-                    rotate(animatedAzimuth, pivot = Offset(x, y)) {
-                        val textLayout = textMeasurer.measure(
-                            text = label,
-                            style = TextStyle(
-                                color = if (label == "N") Color(0xFFF87171) else contentColor,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 14.sp,
-                                letterSpacing = 1.sp
-                            )
-                        )
-                        drawText(
-                            textLayoutResult = textLayout,
-                            topLeft = Offset(
-                                x - textLayout.size.width / 2,
-                                y - textLayout.size.height / 2
-                            )
-                        )
-                    }
-                }
-
-                // Kaaba Marker
-                val qiblaInRad = Math.toRadians(qiblaAngle.toDouble() - 90)
-                val kX = center.x + radius * cos(qiblaInRad).toFloat()
-                val kY = center.y + radius * sin(qiblaInRad).toFloat()
-                
-                val markerPulse = if (isAligned) glowScale else 1f
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        listOf(indicatorColor.copy(alpha = 0.6f), Color.Transparent)
-                    ),
-                    radius = 28.dp.toPx() * markerPulse,
-                    center = Offset(kX, kY)
-                )
-                
-                val markerRadius = 14.dp.toPx()
-                drawCircle(
-                    color = Color.White,
-                    radius = markerRadius + 2.dp.toPx(),
-                    center = Offset(kX, kY)
-                )
-                drawCircle(
-                    color = Color(0xFFFFD700),
-                    radius = markerRadius,
-                    center = Offset(kX, kY)
-                )
-                
-                val kaabaSize = 12.dp.toPx()
-                drawRect(
-                    color = Color.Black,
-                    topLeft = Offset(kX - kaabaSize / 2, kY - kaabaSize / 2),
-                    size = androidx.compose.ui.geometry.Size(kaabaSize, kaabaSize)
-                )
-                drawRect(
-                    color = Color(0xFFFFD700),
-                    topLeft = Offset(kX - kaabaSize / 2, kY - kaabaSize / 4),
-                    size = androidx.compose.ui.geometry.Size(kaabaSize, kaabaSize / 8)
-                )
-            }
-
-            // --- MODERN SLEEK NEEDLE DESIGN ---
+            
             val needleWidth = 4.dp.toPx()
-            val needleHeight = radius * 0.82f
-            val tailHeight = 22.dp.toPx()
+            val needleHeight = radius * 0.85f
+            val tailHeight = 20.dp.toPx()
 
             val mainNeedlePath = Path().apply {
-                moveTo(center.x, center.y - needleHeight) // Tip
-                lineTo(center.x + needleWidth, center.y) // Right Pivot
-                lineTo(center.x, center.y + tailHeight) // Tail
-                lineTo(center.x - needleWidth, center.y) // Left Pivot
+                moveTo(center.x, center.y - needleHeight)
+                lineTo(center.x + needleWidth, center.y)
+                lineTo(center.x, center.y + tailHeight)
+                lineTo(center.x - needleWidth, center.y)
                 close()
             }
 
-            // 1. Subtle Glass/Shadow Layer
-            translate(2f, 2f) {
+            // Shadow
+            translate(1f, 1f) {
                 drawPath(mainNeedlePath, Color.Black.copy(alpha = 0.1f))
             }
 
-            // 2. Main Sleek Body (Light Silver to White Gradient)
+            // Body
             drawPath(
                 path = mainNeedlePath,
                 brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White,
-                        Color(0xFFF5F5F5),
-                        Color(0xFFE0E0E0)
-                    ),
+                    colors = listOf(Color.White, Color(0xFFF5F5F5), Color(0xFFDDDDDD)),
                     startY = center.y - needleHeight,
                     endY = center.y + tailHeight
                 )
             )
 
-            // 3. High-Gloss Spine
-            drawLine(
-                color = Color.White,
-                start = Offset(center.x, center.y - needleHeight + 4.dp.toPx()),
-                end = Offset(center.x, center.y + tailHeight - 4.dp.toPx()),
-                strokeWidth = 1.dp.toPx()
-            )
-
-            // 4. North Pointer Accent (Subtle Red Lume)
+            // North Tip Accent
             val northTipPath = Path().apply {
                 moveTo(center.x, center.y - needleHeight)
-                lineTo(center.x + needleWidth, center.y - needleHeight * 0.6f)
-                lineTo(center.x - needleWidth, center.y - needleHeight * 0.6f)
+                lineTo(center.x + needleWidth, center.y - needleHeight * 0.7f)
+                lineTo(center.x - needleWidth, center.y - needleHeight * 0.7f)
                 close()
             }
-            drawPath(
-                path = northTipPath,
-                color = Color(0xFFF87171).copy(alpha = 0.15f)
-            )
+            drawPath(path = northTipPath, color = Color(0xFFF87171).copy(alpha = 0.2f))
 
-            // 5. Minimalist Precision Pivot
-            // Outer Ring
-            drawCircle(
-                color = contentColor.copy(alpha = 0.1f),
-                radius = 10.dp.toPx(),
-                center = center,
-                style = Stroke(width = 0.5.dp.toPx())
-            )
-            // Polished Base
-            drawCircle(
-                color = Color.White,
-                radius = 5.dp.toPx(),
-                center = center
-            )
-            // Active Core (Uses alignmentColor for accent)
-            drawCircle(
-                color = if (isAligned) alignmentColor else indicatorColor,
-                radius = 2.5.dp.toPx(),
-                center = center
-            )
+            // Pivot
+            drawCircle(color = Color.White, radius = 5.dp.toPx(), center = center)
+            drawCircle(color = if (isAligned) alignmentColor else indicatorColor, radius = 2.5.dp.toPx(), center = center)
         }
 
         // Aligned Badge
         AnimatedVisibility(
             visible = isAligned,
-            enter = fadeIn() + scaleIn(initialScale = 0.8f),
+            enter = fadeIn() + scaleIn(initialScale = 0.9f),
             exit = fadeOut() + scaleOut(),
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 12.dp)
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 16.dp)
         ) {
             Surface(
-                color = Color(0xFF4CAF50).copy(alpha = 0.9f),
+                color = Color(0xFF4CAF50),
                 shape = CircleShape,
-                tonalElevation = 8.dp,
-                shadowElevation = 4.dp,
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.5f))
+                shadowElevation = 4.dp
             ) {
                 Text(
                     text = stringResource(R.string.qibla_aligned_badge),
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                     color = Color.White,
                     style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = 1.sp
+                    fontWeight = FontWeight.Bold
                 )
             }
-        }
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF121212)
-@Composable
-fun ProfessionalCompassPreview() {
-    MaterialTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFF121212)),
-            contentAlignment = Alignment.Center
-        ) {
-            ProfessionalCompass(
-                azimuth = 45f,
-                qiblaAngle = 180f,
-                alignmentColor = Color(0xFFFFD700),
-                isAligned = true,
-                contentColor = Color.White
-            )
         }
     }
 }

@@ -7,11 +7,9 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ReportProblem
 import androidx.compose.material.icons.rounded.WifiOff
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -21,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -29,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.permissions.*
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.ui.home.composables.LocationSection
 import com.ybugmobile.vaktiva.ui.qibla.composables.*
@@ -43,7 +39,7 @@ import org.maplibre.android.MapLibre
 import org.maplibre.android.geometry.LatLng
 import kotlin.math.abs
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QiblaScreen(
     viewModel: QiblaViewModel = hiltViewModel()
@@ -83,14 +79,15 @@ fun QiblaScreen(
         label = "pulseAlpha"
     )
 
-    // Animation removed from here to prevent "double lag" - moved entirely to ProfessionalCompass
-    val currentAzimuth = state.compassData.azimuth
+    val isAligned by remember {
+        derivedStateOf {
+            var relativeQiblaAngle = (state.qiblaDirection.toFloat() - state.compassData.azimuth)
+            while (relativeQiblaAngle <= -180) relativeQiblaAngle += 360
+            while (relativeQiblaAngle > 180) relativeQiblaAngle -= 360
+            abs(relativeQiblaAngle) < 3f
+        }
+    }
 
-    var relativeQiblaAngle = (state.qiblaDirection.toFloat() - currentAzimuth)
-    while (relativeQiblaAngle <= -180) relativeQiblaAngle += 360
-    while (relativeQiblaAngle > 180) relativeQiblaAngle -= 360
-
-    val isAligned = abs(relativeQiblaAngle) < 3f
     val alignmentColor by animateColorAsState(
         targetValue = if (isAligned) Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary,
         label = "alignmentColor"
@@ -122,7 +119,7 @@ fun QiblaScreen(
                     isAccuracyLow = isAccuracyLow,
                     isAccuracyUnreliable = isAccuracyUnreliable,
                     pulseAlpha = pulseAlpha,
-                    currentAzimuth = currentAzimuth,
+                    currentAzimuth = state.compassData.azimuth,
                     isAligned = isAligned,
                     alignmentColor = alignmentColor,
                     glassTheme = glassTheme,
@@ -178,7 +175,8 @@ private fun QiblaContent(
     val currentTheme = if (isMapView) lightGlassTheme else glassTheme
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (isMapView && !isLandscape) {
+        // Primary Content (Map or Compass)
+        if (isMapView) {
             Box(modifier = Modifier.fillMaxSize()) {
                 QiblaMap(
                     settings = state.settings,
@@ -188,7 +186,8 @@ private fun QiblaContent(
                     kaabaLatLng = kaabaLatLng,
                     onMapReady = { },
                     onMapLongClick = { },
-                    onToggleSatellite = { isSatelliteView = !isSatelliteView }
+                    onToggleSatellite = { isSatelliteView = !isSatelliteView },
+                    fabAlignment = if (isLandscape) Alignment.CenterEnd else Alignment.BottomEnd
                 )
                 
                 if (!state.isNetworkAvailable) {
@@ -234,19 +233,6 @@ private fun QiblaContent(
                     }
                 }
             }
-        } else if (isAccuracyLow && !isLandscape) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.radialGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.error.copy(alpha = pulseAlpha),
-                                Color.Transparent
-                            )
-                        )
-                    )
-            )
         }
 
         if (isLandscape) {
@@ -257,265 +243,51 @@ private fun QiblaContent(
                         .fillMaxHeight(),
                     contentAlignment = Alignment.CenterEnd
                 ) {
-                    if (isMapView) {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            QiblaMap(
-                                settings = state.settings,
-                                compassData = state.compassData,
-                                isSatelliteView = isSatelliteView,
-                                isAligned = isAligned,
-                                kaabaLatLng = kaabaLatLng,
-                                onMapReady = { },
-                                onMapLongClick = { },
-                                onToggleSatellite = { isSatelliteView = !isSatelliteView }
-                            )
-                            
-                            if (!state.isNetworkAvailable) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(Color.Black.copy(alpha = 0.4f)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Surface(
-                                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
-                                        shape = RoundedCornerShape(24.dp),
-                                        modifier = Modifier.padding(32.dp),
-                                        tonalElevation = 8.dp
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.padding(24.dp),
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Icon(Icons.Rounded.WifiOff, null, tint = Color(0xFFFACC15), modifier = Modifier.size(40.dp))
-                                            Spacer(Modifier.height(12.dp))
-                                            Text(
-                                                text = stringResource(R.string.health_no_internet),
-                                                textAlign = TextAlign.Center,
-                                                style = MaterialTheme.typography.bodySmall,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        Box(contentAlignment = Alignment.Center) {
-                            if (isAccuracyLow) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(300.dp)
-                                        .background(
-                                            Brush.radialGradient(
-                                                colors = listOf(
-                                                    MaterialTheme.colorScheme.error.copy(alpha = pulseAlpha),
-                                                    Color.Transparent
-                                                )
-                                            )
-                                        )
-                                )
-                            }
-                            
-                            Box(
-                                modifier = Modifier
-                                    .size(280.dp)
-                                    .background(
-                                        Brush.radialGradient(
-                                            colors = listOf(
-                                                glassTheme.containerColor.copy(alpha = 0.4f),
-                                                Color.Transparent
-                                            )
-                                        )
-                                    )
-                            )
-                            ProfessionalCompass(
-                                azimuth = currentAzimuth,
-                                qiblaAngle = state.qiblaDirection.toFloat(),
-                                alignmentColor = alignmentColor,
-                                isAligned = isAligned,
-                                contentColor = glassTheme.contentColor
-                            )
-                        }
+                    if (!isMapView) {
+                        ProfessionalCompass(
+                            azimuth = currentAzimuth,
+                            qiblaAngle = state.qiblaDirection.toFloat(),
+                            alignmentColor = alignmentColor,
+                            isAligned = isAligned,
+                            contentColor = currentTheme.contentColor
+                        )
                     }
                 }
 
-                Column(
+                Box(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .background(if (isMapView) Color.Black.copy(alpha = 0.15f) else Color.Transparent)
-                        .padding(horizontal = 24.dp, vertical = 24.dp)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        state.settings?.let { s ->
-                            Surface(
-                                color = currentTheme.containerColor,
-                                shape = RoundedCornerShape(22.dp),
-                                modifier = Modifier.weight(1f).padding(end = 8.dp),
-                                border = androidx.compose.foundation.BorderStroke(
-                                    1.dp, 
-                                    currentTheme.borderColor
-                                )
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(
-                                        horizontal = 12.dp,
-                                        vertical = 8.dp
-                                    ),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    LocationSection(
-                                        locationName = s.locationName,
-                                        contentColor = currentTheme.contentColor,
-                                        isNetworkAvailable = state.isNetworkAvailable,
-                                        isLocationEnabled = state.isLocationEnabled,
-                                        isLocationPermissionGranted = state.isLocationPermissionGranted,
-                                        onStatusClick = onStatusClick
-                                    )
-                                }
-                            }
-                        }
-
-                        QiblaViewSwitcher(
-                            isMapView = isMapView,
-                            onViewChange = { isMapView = it },
-                            contentColor = currentTheme.contentColor,
-                            containerColor = currentTheme.containerColor,
-                            borderColor = currentTheme.borderColor
-                        )
-                    }
-
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            if (isAccuracyLow || isAccuracyUnreliable) {
-                                AccuracyWarningButton(
-                                    onClick = onCalibrationClick,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                            }
-                            
-                            QiblaInfoCard(
-                                isAligned = isAligned,
-                                alignmentColor = alignmentColor,
-                                qiblaDirection = state.qiblaDirection,
-                                compassData = state.compassData,
-                                isAccuracyLow = isAccuracyLow,
-                                isAccuracyUnreliable = isAccuracyUnreliable,
-                                onCalibrationClick = onCalibrationClick,
-                                isMapView = isMapView,
-                                isSatelliteView = isSatelliteView,
-                                containerColor = currentTheme.containerColor,
-                                contentColor = currentTheme.contentColor
-                            )
-                        }
-                    }
-                    
-                    Spacer(modifier = Modifier.height(80.dp))
-                }
-            }
-        } else {
-            // Portrait Layout
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .systemBarsPadding()
-                    .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                state.settings?.let { s ->
-                    Surface(
-                        color = currentTheme.containerColor,
-                        shape = RoundedCornerShape(22.dp),
-                        modifier = Modifier.weight(1f).padding(end = 12.dp),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp, 
-                            currentTheme.borderColor
-                        )
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
+                            .padding(bottom = 80.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Row(
-                            modifier = Modifier.padding(
-                                horizontal = 12.dp,
-                                vertical = 8.dp
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             LocationSection(
-                                locationName = s.locationName,
+                                locationName = state.settings?.locationName ?: "...",
                                 contentColor = currentTheme.contentColor,
+                                onStatusClick = onStatusClick,
                                 isNetworkAvailable = state.isNetworkAvailable,
                                 isLocationEnabled = state.isLocationEnabled,
                                 isLocationPermissionGranted = state.isLocationPermissionGranted,
-                                onStatusClick = onStatusClick
+                                modifier = Modifier.weight(1f)
                             )
-                        }
-                    }
-                }
-
-                QiblaViewSwitcher(
-                    isMapView = isMapView,
-                    onViewChange = { isMapView = it },
-                    contentColor = currentTheme.contentColor,
-                    containerColor = currentTheme.containerColor,
-                    borderColor = currentTheme.borderColor
-                )
-            }
-
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(60.dp))
-
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (!isMapView) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Box(
-                                modifier = Modifier
-                                    .size(320.dp)
-                                    .background(
-                                        Brush.radialGradient(
-                                            colors = listOf(
-                                                glassTheme.containerColor.copy(alpha = 0.4f),
-                                                Color.Transparent
-                                            )
-                                        )
-                                    )
-                            )
-                            ProfessionalCompass(
-                                azimuth = currentAzimuth,
-                                qiblaAngle = state.qiblaDirection.toFloat(),
-                                alignmentColor = alignmentColor,
-                                isAligned = isAligned,
-                                contentColor = glassTheme.contentColor
-                            )
-                        }
-                    }
-                }
-
-                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        if (isAccuracyLow || isAccuracyUnreliable) {
-                            AccuracyWarningButton(
-                                onClick = onCalibrationClick,
-                                modifier = Modifier.padding(bottom = 12.dp)
+                            
+                            QiblaViewSwitcher(
+                                isMapView = isMapView,
+                                onViewChange = { isMapView = it },
+                                contentColor = currentTheme.contentColor,
+                                containerColor = currentTheme.containerColor,
+                                borderColor = currentTheme.borderColor
                             )
                         }
 
@@ -527,52 +299,103 @@ private fun QiblaContent(
                             isAccuracyLow = isAccuracyLow,
                             isAccuracyUnreliable = isAccuracyUnreliable,
                             onCalibrationClick = onCalibrationClick,
-                            isMapView = isMapView,
-                            isSatelliteView = isSatelliteView,
                             containerColor = currentTheme.containerColor,
                             contentColor = currentTheme.contentColor
                         )
                     }
                 }
+            }
+        } else {
+            // Portrait Layout
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .systemBarsPadding()
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(Modifier.height(24.dp))
                 
-                Spacer(modifier = Modifier.height(150.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    LocationSection(
+                        locationName = state.settings?.locationName ?: "...",
+                        contentColor = currentTheme.contentColor,
+                        onStatusClick = onStatusClick,
+                        isNetworkAvailable = state.isNetworkAvailable,
+                        isLocationEnabled = state.isLocationEnabled,
+                        isLocationPermissionGranted = state.isLocationPermissionGranted,
+                        modifier = Modifier.weight(1f)
+                    )
+                    
+                    QiblaViewSwitcher(
+                        isMapView = isMapView,
+                        onViewChange = { isMapView = it },
+                        contentColor = currentTheme.contentColor,
+                        containerColor = currentTheme.containerColor,
+                        borderColor = currentTheme.borderColor
+                    )
+                }
+
+                Spacer(Modifier.height(32.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (!isMapView) {
+                        if (isAccuracyLow && !isAligned) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        Brush.radialGradient(
+                                            colors = listOf(
+                                                MaterialTheme.colorScheme.errorContainer.copy(alpha = pulseAlpha),
+                                                Color.Transparent
+                                            )
+                                        )
+                                    )
+                            )
+                        }
+                        ProfessionalCompass(
+                            azimuth = currentAzimuth,
+                            qiblaAngle = state.qiblaDirection.toFloat(),
+                            alignmentColor = alignmentColor,
+                            isAligned = isAligned,
+                            contentColor = currentTheme.contentColor
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .padding(bottom = 120.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    QiblaInfoCard(
+                        isAligned = isAligned,
+                        alignmentColor = alignmentColor,
+                        qiblaDirection = state.qiblaDirection,
+                        compassData = state.compassData,
+                        isAccuracyLow = isAccuracyLow,
+                        isAccuracyUnreliable = isAccuracyUnreliable,
+                        onCalibrationClick = onCalibrationClick,
+                        containerColor = currentTheme.containerColor,
+                        contentColor = currentTheme.contentColor
+                    )
+                }
             }
         }
-    }
-}
 
-@Composable
-private fun AccuracyWarningButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val calPulseTransition = rememberInfiniteTransition(label = "calPulse")
-    val calScale by calPulseTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.05f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "calScale"
-    )
-
-    Surface(
-        onClick = onClick,
-        shape = CircleShape,
-        color = Color(0xFFFACC15), // Warning Yellow
-        shadowElevation = 4.dp,
-        modifier = modifier
-            .size(48.dp)
-            .graphicsLayer(scaleX = calScale, scaleY = calScale)
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Icon(
-                imageVector = Icons.Rounded.ReportProblem,
-                contentDescription = "Calibrate",
-                tint = Color.Black,
-                modifier = Modifier.size(24.dp)
-            )
-        }
+        // Removed the fixed bottom overlay switcher as it's now top-aligned with location
     }
 }
