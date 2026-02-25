@@ -140,8 +140,8 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
         label = "drift"
     )
 
-    val cloudElements = remember(condition) { 
-        List(condition.cloudCount) { Offset(Random.nextFloat(), Random.nextFloat() * 0.3f) } 
+    val cloudElements = remember(condition) {
+        List(condition.cloudCount) { Offset(Random.nextFloat(), Random.nextFloat() * 0.3f) }
     }
     
     val precipElements = remember(condition) {

@@ -429,13 +429,13 @@ fun HomeScreenContent(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     // Weather Summary Row (Temporary for testing)
-                                    /*if (state.temperature != null) {
+                                    if (state.temperature != null) {
                                         Text(
                                             text = "${state.temperature}°C • ${state.weatherCondition.name}",
                                             style = MaterialTheme.typography.labelMedium,
                                             color = contentColor.copy(alpha = 0.6f)
                                         )
-                                    }*/
+                                    }
 
                                     Spacer(modifier = Modifier.height(32.dp))
 

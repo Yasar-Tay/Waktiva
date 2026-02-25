@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun DateSection(
+fun DatesSection(
     date: LocalDate,
     hijriDate: HijriData?,
     contentColor: Color,
@@ -35,9 +35,9 @@ fun DateSection(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Start
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(horizontalAlignment = Alignment.Start) {
             Text(
                 text = date.format(dayFormatter).uppercase(),
                 style = MaterialTheme.typography.labelSmall,
@@ -68,7 +68,7 @@ fun DateSection(
             )
             val translatedMonth = if (hijriMonthResId != 0) stringResource(hijriMonthResId) else hijriDate.monthEn
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(horizontalAlignment = Alignment.Start) {
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         text = String.format(currentLocale, "%d", hijriDate.day),
