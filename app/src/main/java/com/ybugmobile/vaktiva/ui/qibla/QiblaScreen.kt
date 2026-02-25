@@ -31,7 +31,6 @@ import com.ybugmobile.vaktiva.ui.home.composables.LocationSection
 import com.ybugmobile.vaktiva.ui.qibla.composables.*
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthOverlay
-import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthIndicator
 import com.ybugmobile.vaktiva.ui.theme.GlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
@@ -109,24 +108,20 @@ fun QiblaScreen(
                 onStatusClick = { showHealthOverlay = true }
             )
         } else {
-            PullToRefreshBox(
+            QiblaContent(
+                state = state,
+                isAccuracyLow = isAccuracyLow,
+                isAccuracyUnreliable = isAccuracyUnreliable,
+                pulseAlpha = pulseAlpha,
+                currentAzimuth = state.compassData.azimuth,
+                isAligned = isAligned,
+                alignmentColor = alignmentColor,
+                glassTheme = glassTheme,
                 isRefreshing = isRefreshing,
                 onRefresh = { viewModel.refresh() },
-                modifier = Modifier.fillMaxSize()
-            ) {
-                QiblaContent(
-                    state = state,
-                    isAccuracyLow = isAccuracyLow,
-                    isAccuracyUnreliable = isAccuracyUnreliable,
-                    pulseAlpha = pulseAlpha,
-                    currentAzimuth = state.compassData.azimuth,
-                    isAligned = isAligned,
-                    alignmentColor = alignmentColor,
-                    glassTheme = glassTheme,
-                    onCalibrationClick = { showCalibrationDialog = true },
-                    onStatusClick = { showHealthOverlay = true }
-                )
-            }
+                onCalibrationClick = { showCalibrationDialog = true },
+                onStatusClick = { showHealthOverlay = true }
+            )
         }
 
         if (showCalibrationDialog) {
@@ -144,6 +139,7 @@ fun QiblaScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun QiblaContent(
     state: QiblaViewState,
@@ -154,6 +150,8 @@ private fun QiblaContent(
     isAligned: Boolean,
     alignmentColor: Color,
     glassTheme: GlassTheme,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     onCalibrationClick: () -> Unit,
     onStatusClick: () -> Unit
 ) {
@@ -175,75 +173,26 @@ private fun QiblaContent(
     val currentTheme = if (isMapView) lightGlassTheme else glassTheme
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Primary Content (Map or Compass)
-        if (isMapView) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                QiblaMap(
-                    settings = state.settings,
-                    compassData = state.compassData,
-                    isSatelliteView = isSatelliteView,
-                    isAligned = isAligned,
-                    kaabaLatLng = kaabaLatLng,
-                    onMapReady = { },
-                    onMapLongClick = { },
-                    onToggleSatellite = { isSatelliteView = !isSatelliteView },
-                    fabAlignment = if (isLandscape) Alignment.CenterEnd else Alignment.BottomEnd
-                )
-                
-                if (!state.isNetworkAvailable) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.4f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
-                            shape = RoundedCornerShape(24.dp),
-                            modifier = Modifier.padding(32.dp),
-                            tonalElevation = 8.dp
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(24.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    Icons.Rounded.WifiOff,
-                                    null,
-                                    tint = Color(0xFFFACC15),
-                                    modifier = Modifier.size(48.dp)
-                                )
-                                Spacer(Modifier.height(16.dp))
-                                Text(
-                                    text = stringResource(R.string.health_no_internet),
-                                    textAlign = TextAlign.Center,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(Modifier.height(24.dp))
-                                Button(
-                                    onClick = onStatusClick,
-                                    shape = RoundedCornerShape(12.dp)
-                                ) {
-                                    Text(stringResource(R.string.health_title))
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
+        // LAYER 1: The Visual Core (Map or Compass)
         if (isLandscape) {
             Row(modifier = Modifier.fillMaxSize().systemBarsPadding().displayCutoutPadding()) {
                 Box(
-                    modifier = Modifier
-                        .weight(1.5f)
-                        .fillMaxHeight(),
-                    contentAlignment = Alignment.CenterEnd
+                    modifier = Modifier.weight(1.5f).fillMaxHeight(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    if (!isMapView) {
+                    if (isMapView) {
+                        QiblaMap(
+                            settings = state.settings,
+                            compassData = state.compassData,
+                            isSatelliteView = isSatelliteView,
+                            isAligned = isAligned,
+                            kaabaLatLng = kaabaLatLng,
+                            onMapReady = { },
+                            onMapLongClick = { },
+                            onToggleSatellite = { isSatelliteView = !isSatelliteView },
+                            fabAlignment = Alignment.CenterEnd
+                        )
+                    } else {
                         ProfessionalCompass(
                             azimuth = currentAzimuth,
                             qiblaAngle = state.qiblaDirection.toFloat(),
@@ -254,42 +203,18 @@ private fun QiblaContent(
                     }
                 }
 
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .padding(24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
+                Box(modifier = Modifier.weight(1f).fillMaxHeight().padding(24.dp), contentAlignment = Alignment.Center) {
                     Column(
-                        modifier = Modifier
-                            .verticalScroll(rememberScrollState())
-                            .padding(bottom = 80.dp),
+                        modifier = Modifier.verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            LocationSection(
-                                locationName = state.settings?.locationName ?: "...",
-                                contentColor = currentTheme.contentColor,
-                                onStatusClick = onStatusClick,
-                                isNetworkAvailable = state.isNetworkAvailable,
-                                isLocationEnabled = state.isLocationEnabled,
-                                isLocationPermissionGranted = state.isLocationPermissionGranted,
-                                modifier = Modifier.weight(1f)
-                            )
-                            
-                            QiblaViewSwitcher(
-                                isMapView = isMapView,
-                                onViewChange = { isMapView = it },
-                                contentColor = currentTheme.contentColor,
-                                containerColor = currentTheme.containerColor,
-                                borderColor = currentTheme.borderColor
-                            )
-                        }
+                        TopHeaderRow(
+                            state = state,
+                            currentTheme = currentTheme,
+                            isMapView = isMapView,
+                            onViewChange = { isMapView = it },
+                            onStatusClick = onStatusClick
+                        )
 
                         QiblaInfoCard(
                             isAligned = isAligned,
@@ -306,80 +231,71 @@ private fun QiblaContent(
                 }
             }
         } else {
-            // Portrait Layout
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .systemBarsPadding()
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(Modifier.height(24.dp))
-                
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+            // Portrait Layout: Stacked layers for touch passthrough
+            if (isMapView) {
+                QiblaMap(
+                    settings = state.settings,
+                    compassData = state.compassData,
+                    isSatelliteView = isSatelliteView,
+                    isAligned = isAligned,
+                    kaabaLatLng = kaabaLatLng,
+                    onMapReady = { },
+                    onMapLongClick = { },
+                    onToggleSatellite = { isSatelliteView = !isSatelliteView },
+                    fabAlignment = Alignment.CenterEnd
+                )
+            }
+
+            // UI Layer (Only occupies top and bottom areas)
+            Box(modifier = Modifier.fillMaxSize()) {
+                // Top Overlays
+                Column(
+                    modifier = Modifier.fillMaxWidth().systemBarsPadding()
                 ) {
-                    LocationSection(
-                        locationName = state.settings?.locationName ?: "...",
-                        contentColor = currentTheme.contentColor,
-                        onStatusClick = onStatusClick,
-                        isNetworkAvailable = state.isNetworkAvailable,
-                        isLocationEnabled = state.isLocationEnabled,
-                        isLocationPermissionGranted = state.isLocationPermissionGranted,
-                        modifier = Modifier.weight(1f)
-                    )
-                    
-                    QiblaViewSwitcher(
+                    Spacer(Modifier.height(24.dp))
+                    TopHeaderRow(
+                        state = state,
+                        currentTheme = currentTheme,
                         isMapView = isMapView,
                         onViewChange = { isMapView = it },
-                        contentColor = currentTheme.contentColor,
-                        containerColor = currentTheme.containerColor,
-                        borderColor = currentTheme.borderColor
+                        onStatusClick = onStatusClick,
+                        modifier = Modifier.padding(horizontal = 24.dp)
                     )
-                }
 
-                Spacer(Modifier.height(32.dp))
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f),
-                    contentAlignment = Alignment.Center
-                ) {
                     if (!isMapView) {
-                        if (isAccuracyLow && !isAligned) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(
-                                        Brush.radialGradient(
-                                            colors = listOf(
-                                                MaterialTheme.colorScheme.errorContainer.copy(alpha = pulseAlpha),
-                                                Color.Transparent
-                                            )
-                                        )
-                                    )
-                            )
+                        // In Compass Mode, we wrap the center content in PullToRefresh
+                        PullToRefreshBox(
+                            isRefreshing = isRefreshing,
+                            onRefresh = onRefresh,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Spacer(Modifier.height(32.dp))
+                                CompassContainer(
+                                    isAccuracyLow = isAccuracyLow,
+                                    isAligned = isAligned,
+                                    pulseAlpha = pulseAlpha,
+                                    currentAzimuth = currentAzimuth,
+                                    state = state,
+                                    alignmentColor = alignmentColor,
+                                    currentTheme = currentTheme
+                                )
+                                Spacer(Modifier.height(240.dp)) // Buffer for the bottom card
+                            }
                         }
-                        ProfessionalCompass(
-                            azimuth = currentAzimuth,
-                            qiblaAngle = state.qiblaDirection.toFloat(),
-                            alignmentColor = alignmentColor,
-                            isAligned = isAligned,
-                            contentColor = currentTheme.contentColor
-                        )
                     }
                 }
 
-                Column(
+                // Bottom Overlay
+                Box(
                     modifier = Modifier
+                        .align(Alignment.BottomCenter)
                         .padding(horizontal = 24.dp)
-                        .padding(bottom = 120.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                        .padding(bottom = 96.dp)
+                        .navigationBarsPadding()
                 ) {
                     QiblaInfoCard(
                         isAligned = isAligned,
@@ -395,7 +311,75 @@ private fun QiblaContent(
                 }
             }
         }
+    }
+}
 
-        // Removed the fixed bottom overlay switcher as it's now top-aligned with location
+@Composable
+private fun TopHeaderRow(
+    state: QiblaViewState,
+    currentTheme: GlassTheme,
+    isMapView: Boolean,
+    onViewChange: (Boolean) -> Unit,
+    onStatusClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        LocationSection(
+            locationName = state.settings?.locationName ?: "...",
+            contentColor = currentTheme.contentColor,
+            onStatusClick = onStatusClick,
+            isNetworkAvailable = state.isNetworkAvailable,
+            isLocationEnabled = state.isLocationEnabled,
+            isLocationPermissionGranted = state.isLocationPermissionGranted,
+            modifier = Modifier.weight(1f)
+        )
+        
+        QiblaViewSwitcher(
+            isMapView = isMapView,
+            onViewChange = onViewChange,
+            contentColor = currentTheme.contentColor,
+            containerColor = currentTheme.containerColor,
+            borderColor = currentTheme.borderColor
+        )
+    }
+}
+
+@Composable
+private fun CompassContainer(
+    isAccuracyLow: Boolean,
+    isAligned: Boolean,
+    pulseAlpha: Float,
+    currentAzimuth: Float,
+    state: QiblaViewState,
+    alignmentColor: Color,
+    currentTheme: GlassTheme
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth().aspectRatio(1f),
+        contentAlignment = Alignment.Center
+    ) {
+        if (isAccuracyLow && !isAligned) {
+            Box(
+                modifier = Modifier.fillMaxSize().background(
+                    Brush.radialGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.errorContainer.copy(alpha = pulseAlpha),
+                            Color.Transparent
+                        )
+                    )
+                )
+            )
+        }
+        ProfessionalCompass(
+            azimuth = currentAzimuth,
+            qiblaAngle = state.qiblaDirection.toFloat(),
+            alignmentColor = alignmentColor,
+            isAligned = isAligned,
+            contentColor = currentTheme.contentColor
+        )
     }
 }
