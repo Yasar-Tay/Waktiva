@@ -12,7 +12,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -147,8 +146,8 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
     
     val precipElements = remember(condition) {
         val count = when (condition) {
-            WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM -> 120 // Increased for depth
-            WeatherCondition.SNOWY -> 50 // Increased density since half are small
+            WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM -> 120 
+            WeatherCondition.SNOWY -> 50 
             else -> 0
         }
         if (count == 0) emptyList()
@@ -207,20 +206,17 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
                         val x = pos.x * w + (kotlin.math.sin(fallProgress.toDouble() * Math.PI * 2 + pos.x * 10).toFloat() * 15.dp.toPx())
                         val y = ((pos.y + fallProgress) % 1f) * h
                         
-                        // Half are small flakes (background), half are larger (foreground)
                         val isSmall = index % 2 == 0
-                        val baseScale = if (isSmall) 0.245f else 0.525f // Reduced by 30% (original: 0.35f, 0.75f)
-                        val scale = baseScale + (pos.x * 0.14f) // Reduced variation by 30% as well (original: 0.2f)
+                        val baseScale = if (isSmall) 0.245f else 0.525f 
+                        val scale = baseScale + (pos.x * 0.14f) 
                         val alpha = if (isSmall) 0.4f else 0.7f
                         
-                        // Draw a soft glow behind the snowflake
                         drawCircle(
                             Color.White.copy(alpha = 0.08f),
-                            radius = (if (isSmall) 2.8.dp else 4.9.dp).toPx(), // Reduced by 30% (original: 4.dp, 7.dp)
+                            radius = (if (isSmall) 2.8.dp else 4.9.dp).toPx(), 
                             center = Offset(x, y)
                         )
 
-                        // Draw the vector snowflake
                         snowflakePainter?.let { painter ->
                             val sizePx = 14.dp.toPx() * scale
                             withTransform({
@@ -269,41 +265,109 @@ fun StarryBackgroundLayer(currentTime: LocalTime, day: PrayerDay?) {
 
     if (!isFullNight && !isDawn) return
 
-    val configuration = LocalConfiguration.current
     val starCount = if (isDawn) 15 else 50
-    val topCoverage = if (isDawn) 0.15f else {
-        if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 0.3f else 0.4f
-    }
+    val topCoverage = if (isDawn) 0.10f else 0.20f
     val starAlphaMultiplier = if (isDawn) 0.5f else 1.0f
 
     val infiniteTransition = rememberInfiniteTransition(label = "stars")
-    val twinkleAlpha by infiniteTransition.animateFloat(0.3f, 0.9f, infiniteRepeatable(tween(2000, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "twinkleAlpha")
+    val time by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = Math.PI.toFloat() * 2f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(12000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "time"
+    )
+
+    val stars = remember(isDawn, topCoverage) {
+        val starColors = listOf(
+            Color(0xFFFFFFFF), // Pure White
+            Color(0xFFFFF9C4), // Warm White
+            Color(0xFFE3F2FD), // Cool Blue
+            Color(0xFFFFFDE7), // Soft Yellow
+            Color(0xFFF3E5F5), // Soft Purple
+            Color(0xFFE0F2F1)  // Minty White
+        )
+        List(starCount) {
+            Star(
+                x = Random.nextFloat(),
+                y = Random.nextFloat() * topCoverage,
+                size = Random.nextFloat() * 1.5f + 0.4f,
+                color = starColors.random(),
+                twinkleSpeed = Random.nextFloat() * 2.5f + 0.5f,
+                twinklePhase = Random.nextFloat() * Math.PI.toFloat() * 2f
+            )
+        }
+    }
+
+    val distantStars = remember(isDawn, topCoverage) {
+        if (isDawn) emptyList() else List(80) {
+            Offset(Random.nextFloat(), Random.nextFloat() * topCoverage)
+        }
+    }
 
     var meteorStartPos by remember { mutableStateOf(Offset.Zero) }
     val meteorAnim = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
         while (true) {
             delay(Random.nextLong(15000, 30000))
-            meteorStartPos = Offset(Random.nextFloat() * 0.8f + 0.1f, Random.nextFloat() * 0.2f)
+            meteorStartPos = Offset(Random.nextFloat() * 0.8f + 0.1f, Random.nextFloat() * 0.10f)
             meteorAnim.snapTo(0f)
             meteorAnim.animateTo(1f, tween(1200, easing = LinearOutSlowInEasing))
         }
-    }
-
-    val stars = remember(isDawn, topCoverage) { 
-        List(starCount) { Triple(Random.nextFloat(), Random.nextFloat() * topCoverage, Random.nextFloat() * 0.5f + 0.5f) } 
     }
 
     Canvas(modifier = Modifier.fillMaxSize()) {
         val w = size.width; val h = size.height
         
         if (isFullNight) {
-            drawCircle(Brush.radialGradient(listOf(Color(0xFF6366F1).copy(alpha = 0.08f), Color.Transparent), Offset(w * 0.7f, h * 0.2f), w * 0.6f), w * 0.6f, Offset(w * 0.7f, h * 0.2f))
-            drawCircle(Brush.radialGradient(listOf(Color(0xFFE91EC7).copy(alpha = 0.05f), Color.Transparent), Offset(w * 0.2f, h * 0.1f), w * 0.4f), w * 0.4f, Offset(w * 0.2f, h * 0.1f))
+            // Enhanced Deep Space Nebulas/Galactic Dust
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(Color(0xFF6366F1).copy(alpha = 0.08f), Color.Transparent),
+                    center = Offset(w * 0.7f, h * 0.10f),
+                    radius = w * 0.5f
+                ),
+                radius = w * 0.5f,
+                center = Offset(w * 0.7f, h * 0.10f)
+            )
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(Color(0xFFE91EC7).copy(alpha = 0.05f), Color.Transparent),
+                    center = Offset(w * 0.2f, h * 0.08f),
+                    radius = w * 0.3f
+                ),
+                radius = w * 0.3f,
+                center = Offset(w * 0.2f, h * 0.08f)
+            )
+
+            // Distant Static Stars (Gives depth)
+            distantStars.forEach { pos ->
+                drawCircle(
+                    color = Color.White.copy(alpha = 0.15f),
+                    radius = 0.4.dp.toPx(),
+                    center = Offset(pos.x * w, pos.y * h)
+                )
+            }
         }
         
-        stars.forEach { (x, y, s) -> 
-            drawCircle(Color.White.copy(alpha = twinkleAlpha * (s * 0.8f) * starAlphaMultiplier), s * 1.2.dp.toPx(), Offset(x * w, y * h)) 
+        stars.forEach { star ->
+            val twinkle = ((kotlin.math.sin((time * star.twinkleSpeed + star.twinklePhase).toDouble()).toFloat() + 1f) / 2f)
+            val alpha = (0.2f + twinkle * 0.8f) * starAlphaMultiplier
+            
+            // Soft radiant glow
+            drawCircle(
+                color = star.color.copy(alpha = alpha * 0.1f),
+                radius = star.size.dp.toPx() * 3.5f,
+                center = Offset(star.x * w, star.y * h)
+            )
+            
+            drawCircle(
+                color = star.color.copy(alpha = alpha),
+                radius = star.size.dp.toPx(),
+                center = Offset(star.x * w, star.y * h)
+            ) 
         }
         
         if (isFullNight && meteorAnim.value > 0f && meteorAnim.value < 1f) {
@@ -311,7 +375,26 @@ fun StarryBackgroundLayer(currentTime: LocalTime, day: PrayerDay?) {
             val startX = meteorStartPos.x * w; val startY = meteorStartPos.y * h
             val currentX = startX + (progress * 200.dp.toPx()); val currentY = startY + (progress * 100.dp.toPx())
             val tailAlpha = (1f - progress).coerceAtLeast(0f)
-            drawLine(Brush.linearGradient(listOf(Color.Transparent, Color.White.copy(alpha = tailAlpha * 0.6f)), Offset(startX, startY), Offset(currentX, currentY)), Offset(startX + (progress * 0.85f * 200.dp.toPx()), startY + (progress * 0.85f * 100.dp.toPx())), Offset(currentX, currentY), 1.5.dp.toPx())
+            
+            // Meteor Trail
+            drawLine(
+                brush = Brush.linearGradient(
+                    listOf(Color.Transparent, Color.White.copy(alpha = tailAlpha * 0.6f)),
+                    Offset(startX + (progress * 0.85f * 200.dp.toPx()), startY + (progress * 0.85f * 100.dp.toPx())),
+                    Offset(currentX, currentY)
+                ),
+                Offset(startX + (progress * 0.85f * 200.dp.toPx()), startY + (progress * 0.85f * 100.dp.toPx())),
+                Offset(currentX, currentY),
+                1.5.dp.toPx(),
+                StrokeCap.Round
+            )
+            
+            // Meteor Head
+            drawCircle(
+                color = Color.White.copy(alpha = tailAlpha * 0.3f),
+                radius = 3.dp.toPx(),
+                center = Offset(currentX, currentY)
+            )
         }
     }
 }
@@ -349,6 +432,15 @@ fun AtmosphericBackgroundLayer(currentTime: LocalTime, day: PrayerDay?, sunAzimu
 }
 
 private class MutableParticle(val x: Float, var y: Float, val size: Float, val speed: Float)
+
+private data class Star(
+    val x: Float,
+    val y: Float,
+    val size: Float,
+    val color: Color,
+    val twinkleSpeed: Float,
+    val twinklePhase: Float
+)
 
 private fun Color.desaturate(amount: Float): Color { 
     val r = red; val g = green; val b = blue
