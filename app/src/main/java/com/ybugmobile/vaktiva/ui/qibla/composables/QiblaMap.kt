@@ -118,7 +118,6 @@ fun QiblaMap(
                         
                         map.addOnCameraMoveListener {
                             val cameraPosition = map.cameraPosition
-                            // Detect if map is tilted or rotated from North
                             isMapOriented = abs(cameraPosition.bearing) > 1.0 || abs(cameraPosition.tilt) > 1.0
                         }
 
@@ -192,7 +191,6 @@ fun QiblaMap(
 
         if (showFabs) {
             val fabContent = @Composable {
-                // Map Orientation Fix FAB
                 AnimatedVisibility(
                     visible = isMapOriented,
                     enter = fadeIn(),
@@ -221,7 +219,6 @@ fun QiblaMap(
                     }
                 }
 
-                // Current Location FAB
                 FloatingActionButton(
                     onClick = {
                         settings?.let { loc ->
@@ -248,7 +245,6 @@ fun QiblaMap(
                     )
                 }
 
-                // Toggle Satellite FAB
                 FloatingActionButton(
                     onClick = onToggleSatellite,
                     containerColor = if (isSatelliteView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,

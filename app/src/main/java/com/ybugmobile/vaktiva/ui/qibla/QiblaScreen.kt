@@ -185,8 +185,7 @@ private fun QiblaContent(
                 onMapLongClick = { },
                 onToggleSatellite = { isSatelliteView = !isSatelliteView },
                 fabAlignment = if (isLandscape) Alignment.BottomCenter else Alignment.CenterEnd,
-                fabPadding = if (isLandscape) PaddingValues(start = 80.dp, end = 320.dp, bottom = 32.dp) else PaddingValues(16.dp),
-                isHorizontalFabs = isLandscape
+                fabPadding = if (isLandscape) PaddingValues(start = 80.dp, end = 320.dp, bottom = 32.dp) else PaddingValues(16.dp)
             )
             
             if (!state.isNetworkAvailable) {
@@ -219,14 +218,19 @@ private fun QiblaContent(
                     modifier = Modifier.weight(1.3f).fillMaxHeight(),
                     contentAlignment = Alignment.CenterEnd
                 ) {
-                    if (!isMapView) {
-                        ProfessionalCompass(
-                            azimuth = currentAzimuth,
-                            qiblaAngle = state.qiblaDirection.toFloat(),
-                            alignmentColor = alignmentColor,
-                            isAligned = isAligned,
-                            contentColor = currentTheme.contentColor
-                        )
+                    Box(modifier = Modifier.size(340.dp), contentAlignment = Alignment.Center) {
+                        if (!isMapView) {
+                            ProfessionalCompass(
+                                azimuth = currentAzimuth,
+                                qiblaAngle = state.qiblaDirection.toFloat(),
+                                alignmentColor = alignmentColor,
+                                isAligned = isAligned,
+                                contentColor = currentTheme.contentColor
+                            )
+                        }
+                        
+                        // Alignment God Ray effect
+                        QiblaAlignmentEffect(isAligned = isAligned)
                     }
                 }
 
@@ -242,7 +246,7 @@ private fun QiblaContent(
                         modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // 1. Location Header (Top)
+                        // 1. Location Section (Top)
                         LocationHeader(
                             state = state,
                             currentTheme = currentTheme,
@@ -437,5 +441,8 @@ private fun CompassContainer(
             isAligned = isAligned,
             contentColor = currentTheme.contentColor
         )
+        
+        // Alignment God Ray effect
+        QiblaAlignmentEffect(isAligned = isAligned)
     }
 }

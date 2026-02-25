@@ -246,27 +246,5 @@ fun ProfessionalCompass(
             drawCircle(color = Color.White, radius = 5.dp.toPx(), center = center)
             drawCircle(color = if (isAligned) alignmentColor else indicatorColor, radius = 2.5.dp.toPx(), center = center)
         }
-
-        // Aligned Badge
-        AnimatedVisibility(
-            visible = isAligned,
-            enter = fadeIn() + scaleIn(initialScale = 0.9f),
-            exit = fadeOut() + scaleOut(),
-            modifier = Modifier.align(Alignment.TopCenter).padding(top = 16.dp)
-        ) {
-            Surface(
-                color = Color(0xFF4CAF50),
-                shape = CircleShape,
-                shadowElevation = 4.dp
-            ) {
-                Text(
-                    text = stringResource(R.string.qibla_aligned_badge),
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                    color = Color.White,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
     }
 }
