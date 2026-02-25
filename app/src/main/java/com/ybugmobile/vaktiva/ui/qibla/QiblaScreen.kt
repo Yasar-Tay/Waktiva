@@ -348,16 +348,38 @@ private fun TopHeaderRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        LocationSection(
-            locationName = state.settings?.locationName ?: "...",
-            contentColor = currentTheme.contentColor,
-            onStatusClick = onStatusClick,
-            isNetworkAvailable = state.isNetworkAvailable,
-            isLocationEnabled = state.isLocationEnabled,
-            isLocationPermissionGranted = state.isLocationPermissionGranted,
-            modifier = Modifier.weight(1f)
-        )
+        if (isMapView) {
+            Surface(
+                color = currentTheme.containerColor,
+                shape = RoundedCornerShape(22.dp),
+                modifier = Modifier.weight(1f).height(44.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, currentTheme.borderColor)
+            ) {
+                Box(modifier = Modifier.padding(horizontal = 12.dp), contentAlignment = Alignment.CenterStart) {
+                    LocationSection(
+                        locationName = state.settings?.locationName ?: "...",
+                        contentColor = currentTheme.contentColor,
+                        onStatusClick = onStatusClick,
+                        isNetworkAvailable = state.isNetworkAvailable,
+                        isLocationEnabled = state.isLocationEnabled,
+                        isLocationPermissionGranted = state.isLocationPermissionGranted
+                    )
+                }
+            }
+        } else {
+            LocationSection(
+                locationName = state.settings?.locationName ?: "...",
+                contentColor = currentTheme.contentColor,
+                onStatusClick = onStatusClick,
+                isNetworkAvailable = state.isNetworkAvailable,
+                isLocationEnabled = state.isLocationEnabled,
+                isLocationPermissionGranted = state.isLocationPermissionGranted,
+                modifier = Modifier.weight(1f)
+            )
+        }
         
+        Spacer(Modifier.width(12.dp))
+
         QiblaViewSwitcher(
             isMapView = isMapView,
             onViewChange = onViewChange,

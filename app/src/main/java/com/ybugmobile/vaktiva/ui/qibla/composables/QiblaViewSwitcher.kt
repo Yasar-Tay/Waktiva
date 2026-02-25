@@ -42,14 +42,14 @@ fun QiblaViewSwitcher(
                 isSelected = !isMapView,
                 icon = Icons.Default.Explore,
                 contentColor = contentColor,
-                isMapView = isMapView,
+                isActiveViewMap = isMapView,
                 onClick = { onViewChange(false) }
             )
             SwitcherButton(
                 isSelected = isMapView,
                 icon = Icons.Default.Map,
                 contentColor = contentColor,
-                isMapView = isMapView,
+                isActiveViewMap = isMapView,
                 onClick = { onViewChange(true) }
             )
         }
@@ -61,22 +61,24 @@ private fun SwitcherButton(
     isSelected: Boolean,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     contentColor: Color,
-    isMapView: Boolean,
+    isActiveViewMap: Boolean,
     onClick: () -> Unit
 ) {
     val theme = MaterialTheme.colorScheme
     
     val bgColor by animateColorAsState(
         if (isSelected) {
-            if (isMapView) theme.primary else Color.White.copy(alpha = 0.9f)
+            if (isActiveViewMap) theme.primary else Color.White.copy(alpha = 0.9f)
         } else Color.Transparent,
         label = "bg"
     )
+    
+    // Improved icon visibility: unselected icons use contentColor (Black in MapView)
     val iconColor by animateColorAsState(
         if (isSelected) {
-            if (isMapView) theme.onPrimary else Color.Black
+            if (isActiveViewMap) theme.onPrimary else Color.Black
         } else {
-            if (isMapView) theme.onSurface.copy(alpha = 0.6f) else contentColor.copy(alpha = 0.7f)
+            contentColor.copy(alpha = 0.8f) // Darker unselected state for better visibility
         },
         label = "icon"
     )
