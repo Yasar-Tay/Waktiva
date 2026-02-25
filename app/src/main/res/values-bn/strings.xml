@@ -111,6 +111,8 @@
     <string name="settings_language">অ্যাপের ভাষা</string>
     <string name="settings_cancel">বাতিল</string>
     <string name="settings_confirm">নিশ্চিত করুন</string>
+    <string name="settings_weather_effects">আবহাওয়ার প্রভাব</string>
+    <string name="settings_weather_effects_desc">ব্যাকগ্রাউন্ডে অ্যানিমেটেড আবহাওয়ার অবস্থা (বৃষ্টি, তুষারপাত, মেঘ) দেখান।</string>
 
     <!-- Language Options -->
     <string name="lang_system">সিস্টেম ডিফাল্ট</string>
@@ -133,7 +135,7 @@
     <string name="settings_madhab">মাযহাব</string>
     <string name="settings_method">গণনা পদ্ধতি</string>
     <string name="madhab_shafi">শাফেয়ী / সাধারণ (মালিকি, হাম্বলি)</string>
-    <string name="madhab_hanafi">হানাফি</string>
+    <string name="madhab_hanafi">Hanafi</string>
     <string name="method_mwl">মুসলিম ওয়ার্ল্ড লীগ</string>
     <string name="method_isna">ইসলামিক সোসাইটি অফ নর্থ আমেরিকা (ISNA)</string>
     <string name="method_egypt">মিশরীয় জেনারেল অথরিটি অফ সার্ভে</string>
@@ -223,7 +225,7 @@
     <string name="welcome_continue_btn">চালিয়ে যান</string>
     <string name="welcome_personalize">পছন্দমতো সাজান</string>
     <string name="welcome_personalize_desc">আপনার নামাজ এবং গণনা সেটিংস কনফিগার করুন</string>
-    <string name="welcome_audio_desc">Set your prayer call preferences</string>
+    <string name="welcome_audio_desc">আপনার নামাজের ডাকের পছন্দগুলি সেট করুন</string>
     <string name="welcome_adhan_audio">আজান অডিও</string>
     <string name="welcome_adhan_audio_desc">নামাজের জন্য আজান বাজান</string>
     <string name="welcome_select_sound">শব্দ নির্বাচন করুন</string>
@@ -246,16 +248,15 @@
     <string name="adhan_metadata_title_format">%s আজান</string>
 
     <!-- Donations -->
-    <string name="settings_donate">Support the Developer</string>
-    <string name="donate_title">Support Waktiva</string>
-    <string name="donate_description">Waktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
-    <string name="donate_header">Empower Waktiva Development</string>
-    <string name="donate_desc">Waktiva is open-source and ad-free. Your contributions help cover server costs and ongoing development to provide the best prayer experience for everyone.</string>
-    <string name="donate_footer">Your generosity keeps this project alive. May it be a source of continuous blessing.</string>
-    <string name="donate_button">Donate</string>
-    <string name="donate_thank_you">Thank you for your support!</string>
-    <string name="donate_error">Donation failed. Please try again.</string>
-    <string name="donate_billing_error">Failed to connect to billing service</string>
+    <string name="settings_donate">Waktiva উন্নয়নে সহায়তা করুন</string>
+    <string name="donate_title">Waktiva-কে সহায়তা করুন</string>
+    <string name="donate_header">Waktiva-কে সহায়তা করুন 🤍</string>
+    <string name="donate_desc">Waktiva একটি উদ্দেশ্য নিয়ে তৈরি করা হয়েছে:\nনামাজের জন্য একটি পরিচ্ছন্ন, ব্যক্তিগত এবং বিজ্ঞাপন-মুক্ত স্থান প্রদান করা।\n\nকোনো বিজ্ঞাপন নেই।\nকোনো ট্র্যাকিং নেই।\nকোনো ডেটা বিক্রি নেই।\nশুধুমাত্র একটি সৎ এবং দরকারী অ্যাপ।\n\nWaktiva-কে বিনামূল্যে রাখার অর্থ হলো অর্থ উপার্জনের চেয়ে স্বাধীনতাকে গুরুত্ব দেওয়া।\nএর অর্থ কোনো বিজ্ঞাপন যোগ না করা।\nএর অর্থ ব্যবহারকারীর ডেটা বিক্রি না করা।\nএর অর্থ হলো ধীরে ধীরে, সাবধানে এবং নৈতিকভাবে অ্যাপটি গড়ে তোলা।\n\nWaktiva যদি আপনার দৈনিক ইবাদতে সহায়ক হয়…\nআপনি যদি এমন একটি অ্যাপের প্রশংসা করেন যা আপনার গোপনীয়তাকে সম্মান করে…\nআপনি যদি এর ডিজাইন, ফিচার এবং লাইসেন্সকৃত কনটেন্ট উন্নত করতে সাহায্য করতে চান…\n\nআপনি দানের মাধ্যমে এর উন্নয়নে সহায়তা করতে পারেন।\n\nআপনার সহায়তা যা যা কভার করতে সাহায্য করবে:\n\n• সার্ভার এবং API খরচ\n• লাইসেন্সকৃত আজান রেকর্ডিং\n• আইকন, ইলাস্ট্রেশন এবং ডিজাইন রিসোর্স\n• ডেভেলপমেন্ট টুলস এবং পাবলিশিং ফি\n• ভবিষ্যৎ উন্নয়ন এবং নতুন ফিচারসমূহ\n\nপ্রতিটি অবদান — ছোট বা বড় — সত্যিই পরিবর্তন আনে।\n\nআপনার যদি দান করার সামর্থ্য না থাকে, তবে সেটি একদম ঠিক আছে।\nআপনার দোয়া এবং শুভকামনাই আমাদের জন্য যথেষ্ট।\n\nWaktiva-কে সহজ, ব্যক্তিগত এবং বিজ্ঞাপন-মুক্ত রাখতে সাহায্য করার জন্য ধন্যবাদ।</string>
+    <string name="donate_footer">🤲 আল্লাহ আপনাকে ইহকাল ও পরকালে এর উত্তম প্রতিদান দান করুন।</string>
+    <string name="donate_button">দান করুন</string>
+    <string name="donate_thank_you">ওপেন-সোর্স সফটওয়্যারকে সমর্থন করার জন্য ধন্যবাদ!</string>
+    <string name="donate_error">দান সফল হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
+    <string name="donate_billing_error">বিলিং সার্ভিসের সাথে সংযোগ করতে ব্যর্থ হয়েছে</string>
     <string name="rate_title">Vaktiva-কে রেটিং দিন</string>
     <string name="rate_desc">Vaktiva ভালো লাগলে গুগল প্লে-তে ৫ স্টার দিন। এটি আমাদের আরও মানুষের কাছে পৌঁছাতে সাহায্য করবে!</string>
     <string name="rate_button">৫ স্টার দিন</string>
@@ -269,10 +270,10 @@
     <string name="hijri_month_6">জমাদিউস সানি</string>
     <string name="hijri_month_7">রজব</string>
     <string name="hijri_month_8">শাবান</string>
-    <string name="hijri_month_9">রমজান</string>
     <string name="hijri_month_10">শাওয়াল</string>
     <string name="hijri_month_11">জিলকদ</string>
     <string name="hijri_month_12">জিলহজ</string>
+    <string name="hijri_month_9">রমজান</string>
     <string name="hijri_suffix">হিজরি</string>
 
     <!-- Religious Days -->
@@ -306,4 +307,51 @@
     <string name="settings_hijri_day_start">হিজরি দিন শুরু</string>
     <string name="settings_hijri_day_start_maghrib">মাগরিব থেকে শুরু</string>
     <string name="settings_hijri_day_start_desc">মধ্যরাতের পরিবর্তে সূর্যাস্তের (মাগরিব) সময় হিজরি তারিখ পরিবর্তন করুন।</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">লাইসেন্সসমূহ</string>
+    <string name="license_legal_info">Waktiva – লাইসেন্স এবং আইনি তথ্য</string>
+    <string name="license_app_copyright">কপিরাইট © 2026 YBugMobile\nসর্বস্বত্ব সংরক্ষিত।</string>
+    <string name="license_app_mit">Waktiva এমআইটি (MIT) লাইসেন্সের অধীনে ওপেন-সোর্স সফটওয়্যার হিসেবে প্রকাশ করা হয়েছে।</string>
+    <string name="license_app_warranty">সফটওয়্যারটি \"যেমন আছে\" (AS IS) ভিত্তিতে প্রদান করা হয়েছে, কোনো প্রকার ওয়ারেন্টি ছাড়াই।</string>
+    <string name="license_third_party_services">১. তৃতীয় পক্ষীয় সেবাসমূহ</string>
+    <string name="license_aladhan_api">আল-আজান এপিআই (Al-Adhan API)</string>
+    <string name="license_aladhan_desc">Waktiva আল-আজান এপিআই সার্ভিসের মাধ্যমে নামাজের সময় সংগ্রহ করে। তাদের প্রকাশিত পদ্ধতি এবং শর্ত অনুযায়ী সময় গণনা করা হয়।</string>
+    <string name="license_data_privacy">Waktiva ব্যবহারকারীর ডেটা সংরক্ষণ, পুনঃবিক্রয় বা বিতরণ করে না।</string>
+    <string name="license_open_source_libs">২. তৃতীয় পক্ষীয় ওপেন-সোর্স লাইব্রেরিসমূহ</string>
+    <string name="license_libs_intro">Waktiva-তে নিম্নলিখিত ওপেন-সোর্স উপাদানগুলো অন্তর্ভুক্ত রয়েছে:</string>
+    <string name="license_lib_androidx">অ্যান্ড্রয়েড এক্স লাইব্রেরিসমূহ (Apache License 2.0)</string>
+    <string name="license_lib_compose">জেটপ্যাক কম্পোজ (Apache License 2.0)</string>
+    <string name="license_lib_kotlin">কটলিন (Apache License 2.0)</string>
+    <string name="license_lib_hilt">হিল্ট (Apache License 2.0)</string>
+    <string name="license_lib_room">রুম (Apache License 2.0)</string>
+    <string name="license_lib_datastore">ডেটা স্টোর (Apache License 2.0)</string>
+    <string name="license_lib_work">ওয়ার্ক ম্যানেজার (Apache License 2.0)</string>
+    <string name="license_lib_media3">মিডিয়া ৩ (Apache License 2.0)</string>
+    <string name="license_lib_location">গুগল প্লে সার্ভিসেস লোকেশন (গুগল প্লে সার্ভিসেস শর্তাবলী)</string>
+    <string name="license_lib_retrofit">রেট্রোফিট (Apache License 2.0)</string>
+    <string name="license_lib_okhttp">ওকে এইচটিটিপি (Apache License 2.0)</string>
+    <string name="license_lib_gson">জিসন (Apache License 2.0)</string>
+    <string name="license_lib_adhan">আজান কটলিন লাইব্রেরি (MIT License)</string>
+    <string name="license_lib_suncalc">সানক্যাল্ক (BSD License)</string>
+    <string name="license_lib_maplibre">ম্যাপলিব্রে অ্যান্ড্রয়েড এসডিকে (BSD 3-Clause License)</string>
+    <string name="license_lib_osmdroid">ওএসএম ড্রয়েড (Apache License 2.0)</string>
+    <string name="license_lib_accompanist">অ্যাকম্পানিস্ট (Apache License 2.0)</string>
+    <string name="license_lib_billing">গুগল প্লে বিলিং লাইব্রেরি (গুগল প্লে শর্তাবলী)</string>
+    <string name="license_libs_property">প্রতিটি লাইব্রেরি তাদের নিজ নিজ লেখকদের সম্পত্তি এবং তাদের লাইসেন্স অনুযায়ী ব্যবহৃত হয়।</string>
+    <string name="license_adhan_audio">৩. আজান অডিও লাইসেন্স</string>
+    <string name="license_adhan_reciter">Waktiva-তে ২০২২ সালের আজান প্রতিযোগিতার বিশ্ব চ্যাম্পিয়ন মুহসিন কারার আজান রেকর্ডিং অন্তর্ভুক্ত করা হয়েছে।</string>
+    <string name="license_adhan_permission">এই রেকর্ডিংগুলো অনুমতি নিয়ে ব্যবহার করা হয়েছে। সমস্ত অডিও অধিকার মূল মুয়াজ্জিনের কাছে সংরক্ষিত।</string>
+    <string name="license_adhan_restrictions">আজান অডিওটি Waktiva অ্যাপ্লিকেশনের বাইরে ব্যবহার করা যাবে না।</string>
+    <string name="license_location_permissions">৪. অবস্থান এবং অনুমতিসমূহ</string>
+    <string name="license_location_usage">Waktiva শুধুমাত্র নিম্নলিখিত কারণে অবস্থানের অনুমতি চায়:</string>
+    <string name="license_loc_usage_1">সঠিক নামাজের সময় গণনা করতে</string>
+    <string name="license_loc_usage_2">কিবলার দিক নির্ধারণ করতে</string>
+    <string name="license_loc_usage_3">হিজরি তারিখ এবং চাঁদের পর্যায় গণনা করতে</string>
+    <string name="license_loc_processing">অবস্থানের ডেটা আপনার ডিভাইসেই প্রসেস করা হয় এবং এটি কোথাও সংরক্ষণ বা শেয়ার করা হয় না।</string>
+    <string name="license_no_ads">৫. কোনো বিজ্ঞাপন বা ট্র্যাকিং নেই</string>
+    <string name="license_no_ads_1">কোনো বিজ্ঞাপন দেখায় না</string>
+    <string name="license_no_ads_2">কোনো ট্র্যাকিং এসডিকে ব্যবহার করে না</string>
+    <string name="license_no_ads_3">অ্যানালিটিক্স সংগ্রহ করে না</string>
+    <string name="license_no_ads_4">ব্যক্তিগত ডেটা বিক্রি করে না</string>
 </resources>

@@ -111,6 +111,8 @@
     <string name="settings_language">Idioma de la aplicación</string>
     <string name="settings_cancel">Cancelar</string>
     <string name="settings_confirm">Confirmar</string>
+    <string name="settings_weather_effects">Efectos climáticos</string>
+    <string name="settings_weather_effects_desc">Mostrar condiciones climáticas animadas (lluvia, nieve, nubes) de fondo.</string>
 
     <!-- Language Options -->
     <string name="lang_system">Predeterminado del sistema</string>
@@ -122,7 +124,7 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردو</string>
+    <string name="lang_ur">اردu</string>
     <string name="lang_bn">বাংলা</string>
     <string name="lang_fa">Farsça</string>
     <string name="lang_ms">Bahasa Melayu</string>
@@ -140,7 +142,7 @@
     <string name="method_makkah">Universidad Umm al-Qura, Meca</string>
     <string name="method_karachi">Universidad de Ciencias Islámicas, Karachi</string>
     <string name="method_tehran">Instituto de Geofisica, Univ. de Teherán</string>
-    <string name="method_gulf">Región del Golfo</string>
+    <string name="method_gulf">Región del Golfe</string>
     <string name="method_kuwait">Kuwait</string>
     <string name="method_qatar">Catar</string>
     <string name="method_singapore">Majlis Ugama Islam Singapura</string>
@@ -246,14 +248,13 @@
     <string name="adhan_metadata_title_format">Adhan de %s</string>
 
     <!-- Donations -->
-    <string name="settings_donate">Apoya al desarrollador</string>
-    <string name="donate_title">Support Waktiva</string>
-    <string name="donate_description">Waktiva es una aplicación gratuita, desarrollada con esmero. Tu apoyo ayuda a mantenerla sin publicidad y permite su desarrollo futuro.</string>
-    <string name="donate_header">Potencia el desarrollo de Waktiva</string>
-    <string name="donate_desc">Waktiva es de código abierto y sin publicidad. Tus contribuciones ayudan a cubrir los costes de servidor y el desarrollo continuo para ofrecer la mejor experiencia de oración a todo el mundo.</string>
-    <string name="donate_footer">Tu generosidad mantiene vivo este proyecto. Que sea una fuente de bendición continua.</string>
+    <string name="settings_donate">Apoya el desarrollo de Waktiva</string>
+    <string name="donate_title">Apoya a Waktiva</string>
+    <string name="donate_header">Apoya a Waktiva 🤍</string>
+    <string name="donate_desc">Waktiva fue creada con una sola intención:\nofrecer un espacio para la oración limpio, privado y libre de anuncios.\n\nSin anuncios.\nSin rastreo.\nSin venta de datos.\nSolo algo honesto y útil.\n\nMantener Waktiva gratuita significa elegir la independencia sobre la monetización.\nSignifica no añadir anuncios.\nSignifica no vender los datos de los usuarios.\nSignifica construir de forma lenta, cuidadosa y ética.\n\nSi Waktiva aporta facilidad a tus oraciones diarias…\nSi valoras tener una aplicación de oración que respete tu privacidad…\nSi quieres ayudar a mejorar su diseño, funciones y contenido bajo licencia…\n\nPuedes apoyar su desarrollo con una donación.\n\nTu apoyo ayuda a cubrir:\n\n• Costes de servidor y API\n• Grabaciones de Adhan bajo licencia\n• Iconos, ilustraciones y recursos de diseño\n• Herramientas de desarrollo y cuotas de publicación\n• Mejoras futuras y nuevas funciones\n\nCada contribución, pequeña o grande, marca realmente la diferencia.\n\nSi no estás en condiciones de donar, no pasa absolutamente nada.\nTus oraciones y palabras amables ya son valoradas.\n\nGracias por ayudar a mantener Waktiva simple, privada y libre de anuncios.</string>
+    <string name="donate_footer">🤲 Que te beneficie en esta vida y en la próxima.</string>
     <string name="donate_button">Donar</string>
-    <string name="donate_thank_you">¡Gracias por tu apoyo!</string>
+    <string name="donate_thank_you">¡Gracias por apoyar el software de código abierto!</string>
     <string name="donate_error">Error en la donación. Por favor, inténtalo de nuevo.</string>
     <string name="donate_billing_error">Error al conectar con el servicio de facturación</string>
     <string name="rate_title">Califica Waktiva</string>
@@ -306,4 +307,51 @@
     <string name="settings_hijri_day_start">Inicio del día Hijri</string>
     <string name="settings_hijri_day_start_maghrib">Comienza en el Maghrib</string>
     <string name="settings_hijri_day_start_desc">Cambia la fecha Hijri al atardecer (Maghrib) en lugar de a medianoche.</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">LICENCIAS</string>
+    <string name="license_legal_info">Waktiva – Información legal y licencias</string>
+    <string name="license_app_copyright">Copyright © 2026 YBugMobile\nTodos los derechos reservados.</string>
+    <string name="license_app_mit">Waktiva se publica como software de código abierto bajo la licencia MIT.</string>
+    <string name="license_app_warranty">EL SOFTWARE SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍA DE NINGÚN TIPO.</string>
+    <string name="license_third_party_services">1. Servicios de terceros</string>
+    <string name="license_aladhan_api">Al-Adhan API</string>
+    <string name="license_aladhan_desc">Waktiva obtiene los horarios de oración del servicio Al-Adhan API. Los cálculos se proporcionan de acuerdo con sus metodologías y términos publicados.</string>
+    <string name="license_data_privacy">Waktiva no almacena, revende ni distribuye datos de usuario.</string>
+    <string name="license_open_source_libs">2. Bibliotecas de código abierto de terceros</string>
+    <string name="license_libs_intro">Waktiva incluye los siguientes componentes de código abierto:</string>
+    <string name="license_lib_androidx">Bibliotecas AndroidX (Licencia Apache 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Licencia Apache 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Licencia Apache 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Licencia Apache 2.0)</string>
+    <string name="license_lib_room">Room (Licencia Apache 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Licencia Apache 2.0)</string>
+    <string name="license_lib_work">WorkManager (Licencia Apache 2.0)</string>
+    <string name="license_lib_media3">Media3 (Licencia Apache 2.0)</string>
+    <string name="license_lib_location">Ubicación de Google Play Services (Términos de Google Play Services)</string>
+    <string name="license_lib_retrofit">Retrofit (Licencia Apache 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Licencia Apache 2.0)</string>
+    <string name="license_lib_gson">Gson (Licencia Apache 2.0)</string>
+    <string name="license_lib_adhan">Biblioteca Adhan Kotlin (Licencia MIT)</string>
+    <string name="license_lib_suncalc">SunCalc (Licencia BSD)</string>
+    <string name="license_lib_maplibre">SDK de Android MapLibre (Licencia BSD de 3 cláusulas)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Licencia Apache 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Licencia Apache 2.0)</string>
+    <string name="license_lib_billing">Biblioteca de facturación de Google Play (Términos de Google Play)</string>
+    <string name="license_libs_property">Cada biblioteca sigue siendo propiedad de sus respectivos autores y se utiliza de acuerdo con su licencia.</string>
+    <string name="license_adhan_audio">3. Licencia de audio de Adhan</string>
+    <string name="license_adhan_reciter">Waktiva incluye grabaciones de Adhan de Muhsin Kara, Campeón Mundial de Adhan 2022.</string>
+    <string name="license_adhan_permission">Estas grabaciones se utilizan con permiso. Todos los derechos de audio pertenecen al recitador original.</string>
+    <string name="license_adhan_restrictions">El audio de Adhan no se puede extraer, redistribuir ni reutilizar fuera de la aplicación Waktiva sin el permiso explícito del titular de los derechos.</string>
+    <string name="license_location_permissions">4. Ubicación y permisos</string>
+    <string name="license_location_usage">Waktiva solicita permiso de ubicación únicamente para:</string>
+    <string name="license_loc_usage_1">Calcular horarios de oración precisos</string>
+    <string name="license_loc_usage_2">Determinar la dirección de la Qibla</string>
+    <string name="license_loc_usage_3">Proporcionar la fecha Hijri y cálculos de fase lunar</string>
+    <string name="license_loc_processing">Los datos de ubicación se procesan localmente y no se almacenan, rastrean ni comparten. Los horarios de oración se descargan por hasta tres meses para permitir el uso fuera de línea.</string>
+    <string name="license_no_ads">5. Compromiso sin anuncios / sin rastreo</string>
+    <string name="license_no_ads_1">No muestra anuncios</string>
+    <string name="license_no_ads_2">No utiliza SDK de rastreo</string>
+    <string name="license_no_ads_3">No recopila análisis</string>
+    <string name="license_no_ads_4">No vende datos personales</string>
 </resources>

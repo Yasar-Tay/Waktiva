@@ -246,14 +246,13 @@
     <string name="adhan_metadata_title_format">أذان %s</string>
 
     <!-- Donations -->
-    <string name="settings_donate">ادعم المطور</string>
-    <string name="donate_title">Support Waktiva</string>
-    <string name="donate_description">Waktiva تطبيق مجاني، تم تطويره بعناية. يساعد دعمك في بقائه خالياً من الإعلانات ويسمح بالتطوير المستقبلي.</string>
-    <string name="donate_header">تمكين تطوير Waktiva</string>
-    <string name="donate_desc">Waktiva مفتوح المصدر وخالٍ من الإعلانات. تساعد مساهماتك في تغطية تكاليف الخادم والتطوير المستمر لتقديم أفضل تجربة صلاة للجميع.</string>
-    <string name="donate_footer">سخاؤك يبقي هذا المشروع حياً. نرجو أن يكون مصدراً للبركة المستمرة.</string>
+    <string name="settings_donate">ادعم تطوير Waktiva</string>
+    <string name="donate_title">ادعم Waktiva</string>
+    <string name="donate_header">ادعم Waktiva 🤍</string>
+    <string name="donate_desc">تم بناء Waktiva بنية واحدة: توفير مساحة نظيفة وخاصة وخالية من الإعلانات للصلاة.\n\nلا إعلانات.\nلا تتبع.\nلا بيع للبيانات.\nمجرد شيء صادق ومفيد.\n\nالحفاظ على Waktiva مجانياً يعني اختيار الاستقلال بدلاً من تحقيق الربح.\nيعني عدم إضافة إعلانات.\nيعني عدم بيع بيانات المستخدمين.\nيعني البناء ببطء وعناية وبشكل أخلاقي.\n\nإذا كان Waktiva يسهل صلواتك اليومية...\nإذا كنت تقدر وجود تطبيق صلاة يحترم خصوصيتك...\nإذا كنت ترغب في المساعدة في تحسين تصميمه وميزاته ومحتواه المرخص...\n\nيمكنك دعم تطويره بتبرع.\n\nدعمك يساعد في تغطية:\n\n• تكاليف الخادم وواجهة برمجة التطبيقات (API)\n• تسجيلات الأذان المرخصة\n• الأيقونات والرسوم التوضيحية وأصول التصميم\n• أدوات التطوير ورسوم النشر\n• التحسينات المستقبلية والميزات الجديدة\n\nكل مساهمة - صغيرة كانت أم كبيرة - تصنع فرقاً حقاً.\n\nإذا لم تكن في وضع يسمح لك بالتبرع، فهذا أمر طبيعي تماماً.\nدعواتك وكلماتك الطيبة مقدرة بالفعل.\n\nشكراً لك على مساعدتنا في إبقاء Waktiva بسيطاً وخاصاً وخالياً من الإعلانات.</string>
+    <string name="donate_footer">🤲 نفعك الله بها في الدنيا والآخرة.</string>
     <string name="donate_button">تبرع</string>
-    <string name="donate_thank_you">شكراً لدعمك!</string>
+    <string name="donate_thank_you">شكراً لك على دعم البرمجيات مفتوحة المصدر!</string>
     <string name="donate_error">فشل التبرع. يرجى المحاولة مرة أخرى.</string>
     <string name="donate_billing_error">فشل الاتصال بخدمة الدفع</string>
     <string name="rate_title">قيم Waktiva</string>

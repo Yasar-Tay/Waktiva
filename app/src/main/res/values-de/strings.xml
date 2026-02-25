@@ -111,6 +111,8 @@
     <string name="settings_language">App-Sprache</string>
     <string name="settings_cancel">Abbrechen</string>
     <string name="settings_confirm">Bestätigen</string>
+    <string name="settings_weather_effects">Wettereffekte</string>
+    <string name="settings_weather_effects_desc">Zeige animierte Wetterbedingungen (Regen, Schnee, Wolken) im Hintergrund.</string>
 
     <!-- Language Options -->
     <string name="lang_system">Systemstandard</string>
@@ -122,7 +124,7 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردو</string>
+    <string name="lang_ur">اردu</string>
     <string name="lang_bn">বাংলা</string>
     <string name="lang_fa">Farsça</string>
     <string name="lang_ms">Bahasa Melayu</string>
@@ -246,14 +248,13 @@
     <string name="adhan_metadata_title_format">Adhan %s</string>
 
     <!-- Donations -->
-    <string name="settings_donate">Den Entwickler unterstützen</string>
+    <string name="settings_donate">Waktiva-Entwicklung unterstützen</string>
     <string name="donate_title">Waktiva unterstützen</string>
-    <string name="donate_description">Waktiva ist eine kostenlose App, die mit Sorgfalt entwickelt wurde. Ihre Unterstützung hilft dabei, sie werbefrei zu halten und ermöglicht die zukünftige Entwicklung.</string>
-    <string name="donate_header">Waktiva-Entwicklung stärken</string>
-    <string name="donate_desc">Waktiva ist Open-Source und werbefrei. Ihre Beiträge helfen, Serverkosten zu decken und die laufende Entwicklung zu unterstützen, um allen das beste Gebetserlebnis zu bieten.</string>
-    <string name="donate_footer">Ihre Großzügigkeit hält dieses Projekt am Leben. Möge es eine Quelle kontinuierlichen Segens sein.</string>
+    <string name="donate_header">Waktiva unterstützen 🤍</string>
+    <string name="donate_desc">Waktiva wurde mit einer Absicht entwickelt:\neinen sauberen, privaten und werbefreien Raum für das Gebet zu bieten.\n\nKeine Werbung.\nKein Tracking.\nKein Datenverkauf.\nEinfach etwas Ehrliches und Nützliches.\n\nWaktiva kostenlos zu halten bedeutet, Unabhängigkeit über Monetarisierung zu stellen.\nEs bedeutet, keine Werbung hinzuzufügen.\nEs bedeutet, keine Nutzerdaten zu verkaufen.\nEs bedeutet, langsam, sorgfältig und ethisch zu bauen.\n\nWenn Waktiva Erleichterung in Ihre täglichen Gebete bringt…\nWenn Sie es schätzen, eine Gebets-App zu haben, die Ihre Privatsphäre respektiert…\nWenn Sie helfen möchten, Design, Funktionen und lizenzierte Inhalte zu verbessern…\n\nKönnen Sie die Entwicklung mit einer Spende unterstützen.\n\nIhre Unterstützung hilft bei:\n\n• Server- und API-Kosten\n• Lizenzierte Adhan-Aufnahmen\n• Icons, Illustrationen und Design-Assets\n• Entwicklungstools und Veröffentlichungsgebühren\n• Zukünftige Verbesserungen und neue Funktionen\n\nJeder Beitrag – ob klein oder groß – macht wirklich einen Unterschied.\n\nWenn Sie nicht in der Lage sind zu spenden, ist das völlig in Ordnung.\nIhre Gebete und freundlichen Worte werden bereits geschätzt.\n\nVielen Dank, dass Sie helfen, Waktiva einfach, privat und werbefrei zu halten.</string>
+    <string name="donate_footer">🤲 Möge es Ihnen in diesem und im nächsten Leben nützen.</string>
     <string name="donate_button">Spenden</string>
-    <string name="donate_thank_you">Vielen Dank für Ihre Unterstützung!</string>
+    <string name="donate_thank_you">Vielen Dank für Ihre Unterstützung von Open-Source-Software!</string>
     <string name="donate_error">Spende fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
     <string name="donate_billing_error">Verbindung zum Abrechnungsdienst fehlgeschlagen</string>
     <string name="rate_title">Waktiva bewerten</string>
@@ -306,4 +307,51 @@
     <string name="settings_hijri_day_start">Beginn des Hijri-Tages</string>
     <string name="settings_hijri_day_start_maghrib">Beginnt bei Maghrib</string>
     <string name="settings_hijri_day_start_desc">Das Hijri-Datum bei Sonnenuntergang (Maghrib) anstelle von Mitternacht umschalten.</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">Lizenzen</string>
+    <string name="license_legal_info">Waktiva – Lizenz &amp; rechtliche Informationen</string>
+    <string name="license_app_copyright">Copyright © 2026 YBugMobile\nAlle Rechte vorbehalten.</string>
+    <string name="license_app_mit">Waktiva wird als Open-Source-Software unter der MIT-Lizenz veröffentlicht.</string>
+    <string name="license_app_warranty">DIE SOFTWARE WIRD OHNE MÄNGELGEWÄHR UND OHNE JEGLICHE AUSDRÜCKLICHE ODER STILLSCHWEIGENDE GEWÄHRLEISTUNG ZUR VERFÜGUNG GESTELLT.</string>
+    <string name="license_third_party_services">1. Dienste von Drittanbietern</string>
+    <string name="license_aladhan_api">Al-Adhan API</string>
+    <string name="license_aladhan_desc">Waktiva ruft Gebetszeiten vom Al-Adhan API-Dienst ab. Die Berechnungen der Gebetszeiten erfolgen gemäß deren veröffentlichten Methoden und Bedingungen.</string>
+    <string name="license_data_privacy">Waktiva speichert, verkauft oder verbreitet keine Nutzerdaten.</string>
+    <string name="license_open_source_libs">2. Open-Source-Bibliotheken von Drittanbietern</string>
+    <string name="license_libs_intro">Waktiva enthält die folgenden Open-Source-Komponenten:</string>
+    <string name="license_lib_androidx">AndroidX-Bibliotheken (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_room">Room (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_work">WorkManager (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_media3">Media3 (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_location">Google Play Services Standort (Google Play Services Bedingungen)</string>
+    <string name="license_lib_retrofit">Retrofit (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_gson">Gson (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_adhan">Adhan Kotlin-Bibliothek (MIT-Lizenz)</string>
+    <string name="license_lib_suncalc">SunCalc (BSD-Lizenz)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (BSD 3-Clause Lizenz)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Apache-Lizenz 2.0)</string>
+    <string name="license_lib_billing">Google Play Billing Library (Google Play Bedingungen)</string>
+    <string name="license_libs_property">Jede Bibliothek bleibt Eigentum ihrer jeweiligen Autoren und wird in Übereinstimmung mit ihrer Lizenz verwendet.</string>
+    <string name="license_adhan_audio">3. Adhan Audio-Lizenz</string>
+    <string name="license_adhan_reciter">Waktiva enthält Adhan-Aufnahmen von Muhsin Kara, dem Weltmeister des Adhan 2022.</string>
+    <string name="license_adhan_permission">Diese Aufnahmen werden mit Genehmigung verwendet. Alle Audiorechte verbleiben beim ursprünglichen Rezitator.</string>
+    <string name="license_adhan_restrictions">Das Adhan-Audio darf ohne ausdrückliche Genehmigung des Rechteinhabers nicht aus der Waktiva-Anwendung extrahiert, weiterverteilt oder außerhalb dieser wiederverwendet werden.</string>
+    <string name="license_location_permissions">4. Standort &amp; Berechtigungen</string>
+    <string name="license_location_usage">Waktiva fordert die Standortberechtigung ausschließlich an, um:</string>
+    <string name="license_loc_usage_1">Genaue Gebetszeiten zu berechnen</string>
+    <string name="license_loc_usage_2">Die Qibla-Richtung zu bestimmen</string>
+    <string name="license_loc_usage_3">Hidschri-Datum und Mondphasenberechnungen bereitzustellen</string>
+    <string name="license_loc_processing">Standortdaten werden lokal verarbeitet und nicht gespeichert, verfolgt oder weitergegeben. Gebetszeiten werden für bis zu drei Monate heruntergeladen, um eine Offline-Nutzung zu ermöglichen.</string>
+    <string name="license_no_ads">5. Keine Werbung / Keine Tracking-Verpflichtung</string>
+    <string name="license_no_ads_1">Zeigt keine Werbung an</string>
+    <string name="license_no_ads_2">Verwendet keine Tracking-SDKs</string>
+    <string name="license_no_ads_3">Sammelt keine Analysedaten</string>
+    <string name="license_no_ads_4">Verkauft keine persönlichen Daten</string>
 </resources>

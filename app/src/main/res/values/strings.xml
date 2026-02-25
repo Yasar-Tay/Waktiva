@@ -248,14 +248,13 @@
     <string name="adhan_metadata_title_format">%s Adhan</string>
 
     <!-- Donations -->
-    <string name="settings_donate">Support the Developer</string>
+    <string name="settings_donate">Support Waktiva Development</string>
     <string name="donate_title">Support Waktiva</string>
-    <string name="donate_description">Waktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
-    <string name="donate_header">Empower Waktiva Development</string>
-    <string name="donate_desc">Waktiva is open-source and ad-free. Your contributions help cover server costs and ongoing development to provide the best prayer experience for everyone.</string>
-    <string name="donate_footer">Your generosity keeps this project alive. May it be a source of continuous blessing.</string>
+    <string name="donate_header">Support Waktiva</string>
+    <string name="donate_desc">Waktiva was built with one intention:\nto offer a clean, private, and ad-free space for prayer.\n\nNo ads.\nNo tracking.\nNo data selling.\nJust something honest and useful.\n\nKeeping Waktiva free means choosing independence over monetization.\nIt means not adding ads.\nIt means not selling user data.\nIt means building slowly, carefully, and ethically.\n\nIf Waktiva brings ease to your daily prayers…\nIf you appreciate having a prayer app that respects your privacy…\nIf you want to help improve its design, features, and licensed content…\n\nYou can support its development with a donation.\n\nYour support helps cover:\n\n• Server and API costs\n• Licensed Adhan recordings\n• Icons, illustrations, and design assets\n• Development tools and publishing fees\n• Future improvements and new features\n\nEvery contribution — small or large — truly makes a difference.\n\nIf you’re not in a position to donate, that’s completely okay.\nYour prayers and kind words are already appreciated.\n\nThank you for helping keep Waktiva simple, private, and ad-free.</string>
+    <string name="donate_footer">🤲 May it benefit you in this life and the next.</string>
     <string name="donate_button">Donate</string>
-    <string name="donate_thank_you">Thank you for your support!</string>
+    <string name="donate_thank_you">Thank you for supporting open-source software!</string>
     <string name="donate_error">Donation failed. Please try again.</string>
     <string name="donate_billing_error">Failed to connect to billing service</string>
     <string name="rate_title">Rate Waktiva</string>

@@ -111,6 +111,8 @@
     <string name="settings_language">Uygulama Dili</string>
     <string name="settings_cancel">İptal</string>
     <string name="settings_confirm">Onayla</string>
+    <string name="settings_weather_effects">Hava Durumu Efektleri</string>
+    <string name="settings_weather_effects_desc">Arka planda animasyonlu hava durumunu (yağmur, kar, bulut) göster.</string>
 
     <!-- Language Options -->
     <string name="lang_system">Sistem Varsayılanı</string>
@@ -122,7 +124,7 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردu</string>
+    <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
     <string name="lang_fa">Farsça</string>
     <string name="lang_ms">Bahasa Melayu</string>
@@ -246,18 +248,17 @@
     <string name="adhan_metadata_title_format">%s Ezanı</string>
 
     <!-- Donations -->
-    <string name="settings_donate">Geliştiriciyi Destekle</string>
+    <string name="settings_donate">Waktiva Gelişimini Destekleyin</string>
     <string name="donate_title">Waktiva\'yı Destekle</string>
-    <string name="donate_description">Waktiva özenle geliştirilmiş ücretsiz bir uygulamadır. Desteğiniz uygulamanın reklamsız kalmasına ve gelekteki geliştirmelere yardımcı olur.</string>
-    <string name="donate_header">Waktiva Gelişimine Destek Olun</string>
-    <string name="donate_desc">Waktiva açık kaynaklı ve reklamsızdır. Katkılarınız sunucu maliyetlerini karşılamaya ve herkes için en iyi namaz deneyimini sunmaya yardımcı olur.</string>
-    <string name="donate_footer">Cömertliğiniz bu projenin yaşamasına yardımcı oluyor. Sürekli bir hayır kaynağı olması dileğiyle.</string>
+    <string name="donate_header">Waktiva\'yı Destekle</string>
+    <string name="donate_desc">Waktiva tek bir amaçla geliştirildi:\nNamaz için temiz, gizli ve reklamsız bir alan sunmak.\n\nReklam yok.\nTakip yok.\nVeri satışı yok.\nSadece dürüst ve faydalı bir araç.\n\nWaktiva\'yı ücretsiz tutmak, gelir elde etmek yerine bağımsızlığı seçmek demektir.\nReklam eklememek demektir.\nKullanıcı verilerini satmamak demektir.\nYavaş, dikkatli ve etik bir şekilde inşa etmek demektir.\n\nEğer Waktiva günlük dualarınıza kolaylık getiriyorsa…\nGizliliğinize saygı duyan bir namaz uygulamasını takdir ediyorsanız…\nUygulamanın tasarımını, özelliklerini ve lisanslı içeriklerini geliştirmeye yardımcı olmak istiyorsanız…\n\nBir bağış ile geliştirme sürecini destekleyebilirsiniz.\n\nDesteğiniz şunları karşılamaya yardımcı olur:\n\n• Sunucu ve API maliyetleri\n• Lisanslı Ezan kayıtları\n• İkonlar, çizimler ve tasarım varlıkları\n• Geliştirme araçları ve yayınlama ücretleri\n• Gelecekteki iyileştirmeler ve yeni özellikler\n\nKüçük veya büyük her katkı gerçekten bir fark yaratır.\n\nBağış yapabilecek durumda değilseniz, bu tamamen sorun değil.\nDualarınız ve nazik sözleriniz zaten bizim için çok değerli.\n\nWaktiva\'nın basit, özel ve reklamsız kalmasına yardımcı olduğunuz için teşekkürler.</string>
+    <string name="donate_footer">🤲 Dünyada ve ahirette size fayda getirmesi dileğiyle.</string>
     <string name="donate_button">Bağış Yap</string>
-    <string name="donate_thank_you">Desteğiniz için teşekkürler!</string>
+    <string name="donate_thank_you">Açık kaynaklı yazılımı desteklediğiniz için teşekkürler!</string>
     <string name="donate_error">Bağış başarısız oldu. Lütfen tekrar deneyin.</string>
     <string name="donate_billing_error">Ödeme servisine bağlanılamadı</string>
     <string name="rate_title">Waktiva\'yı Puanlayın</string>
-    <string name="rate_desc">Waktiva\'yı seviyorsanız, lütfen Google Play\'de 5 yıldız verin. Daha fazla kişiye ulaşmamıza yardımcı olur!</string>
+    <string name="rate_desc">Waktiva\'yı beğendiyseniz, lütfen Google Play\'de 5 yıldız vererek daha fazla kişiye ulaşmamıza yardımcı olun!</string>
     <string name="rate_button">5 Yıldız Ver</string>
 
     <!-- Hijri Months -->
@@ -306,4 +307,51 @@
     <string name="settings_hijri_day_start">Hicri Gün Başlangıcı</string>
     <string name="settings_hijri_day_start_maghrib">Akşam Vaktinde Başlar</string>
     <string name="settings_hijri_day_start_desc">Hicri tarihi gece yarısı yerine akşam vaktinde (gün batımı) değiştirin.</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">LİSANSLAR</string>
+    <string name="license_legal_info">Waktiva – Lisans ve Yasal Bilgiler</string>
+    <string name="license_app_copyright">Telif Hakkı © 2026 YBugMobile\nTüm hakları saklıdır.</string>
+    <string name="license_app_mit">Waktiva, MIT Lisansı altında açık kaynaklı bir yazılım olarak yayınlanmıştır.</string>
+    <string name="license_app_warranty">YAZILIM \"OLDUĞU GİBİ\" SUNULMAKTADIR; HERHANGİ BİR TÜRDEN AÇIK VEYA ZIMNİ GARANTİ VERİLMEMEKTEDİR.</string>
+    <string name="license_third_party_services">1. Üçüncü Taraf Hizmetler</string>
+    <string name="license_aladhan_api">Al-Adhan API</string>
+    <string name="license_aladhan_desc">Waktiva, namaz vakitlerini Al-Adhan API servisinden alır. Namaz vakti hesaplamaları, servisin yayınlanan yöntem ve şartlarına uygun olarak sunulur.</string>
+    <string name="license_data_privacy">Waktiva kullanıcı verilerini saklamaz, satmaz veya dağıtmaz.</string>
+    <string name="license_open_source_libs">2. Üçüncü Taraf Açık Kaynak Kütüphaneler</string>
+    <string name="license_libs_intro">Waktiva aşağıdaki açık kaynaklı bileşenleri içermektedir:</string>
+    <string name="license_lib_androidx">AndroidX Kütüphaneleri (Apache Lisansı 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Apache Lisansı 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Apache Lisansı 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Apache Lisansı 2.0)</string>
+    <string name="license_lib_room">Room (Apache Lisansı 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Apache Lisansı 2.0)</string>
+    <string name="license_lib_work">WorkManager (Apache Lisansı 2.0)</string>
+    <string name="license_lib_media3">Media3 (Apache Lisansı 2.0)</string>
+    <string name="license_lib_location">Google Play Hizmetleri Konum (Google Play Hizmet Şartları)</string>
+    <string name="license_lib_retrofit">Retrofit (Apache Lisansı 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Apache Lisansı 2.0)</string>
+    <string name="license_lib_gson">Gson (Apache Lisansı 2.0)</string>
+    <string name="license_lib_adhan">Adhan Kotlin Kütüphanesi (MIT Lisansı)</string>
+    <string name="license_lib_suncalc">SunCalc (BSD Lisansı)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (BSD 3-Maddeli Lisans)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Apache Lisansı 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Apache Lisansı 2.0)</string>
+    <string name="license_lib_billing">Google Play Ödeme Kütüphanesi (Google Play Şartları)</string>
+    <string name="license_libs_property">Her kütüphane kendi yazarının mülkiyetindedir ve lisansına uygun olarak kullanılır.</string>
+    <string name="license_adhan_audio">3. Ezan Ses Kaydı Lisansı</string>
+    <string name="license_adhan_reciter">Waktiva, 2022 Ezanı Güzel Okuma Yarışması Dünya Birincisi Muhsin Kara\'nın ezan kayıtlarını içermektedir.</string>
+    <string name="license_adhan_permission">Bu kayıtlar izin alınarak kullanılmaktadır. Tüm ses hakları asıl okuyucuya aittir.</string>
+    <string name="license_adhan_restrictions">Ezan sesleri, hak sahibinin açık izni olmadan Waktiva uygulaması dışına çıkarılamaz, yeniden dağıtılamaz veya kullanılamaz.</string>
+    <string name="license_location_permissions">4. Konum ve İzinler</string>
+    <string name="license_location_usage">Waktiva konum iznini sadece şunlar için talep eder:</string>
+    <string name="license_loc_usage_1">Doğru namaz vakitlerini hesaplamak</string>
+    <string name="license_loc_usage_2">Kıble yönünü belirlemek</string>
+    <string name="license_loc_usage_3">Hicri tarih ve ay evrelerini hesaplamak</string>
+    <string name="license_loc_processing">Konum verileri yerel olarak işlenir; saklanmaz, takip edilmez veya paylaşılmaz. Çevrimdışı kullanım için üç aya kadar namaz vakti indirilir.</string>
+    <string name="license_no_ads">5. Reklamsız ve Takipsiz Kullanım Sözü</string>
+    <string name="license_no_ads_1">Reklam göstermez</string>
+    <string name="license_no_ads_2">Takip (tracking) SDK\'ları kullanmaz</string>
+    <string name="license_no_ads_3">Analitik verisi toplamaz</string>
+    <string name="license_no_ads_4">Kişisel verileri satmaz</string>
 </resources>

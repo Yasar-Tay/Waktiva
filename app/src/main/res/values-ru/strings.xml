@@ -111,6 +111,8 @@
     <string name="settings_language">Язык приложения</string>
     <string name="settings_cancel">Отмена</string>
     <string name="settings_confirm">Подтвердить</string>
+    <string name="settings_weather_effects">Погодные эффекты</string>
+    <string name="settings_weather_effects_desc">Показывать анимированные погодные условия (дождь, снег, облака) на фоне.</string>
 
     <!-- Language Options -->
     <string name="lang_system">Системный по умолчанию</string>
@@ -246,14 +248,13 @@
     <string name="adhan_metadata_title_format">Азан: %s</string>
 
     <!-- Donations -->
-    <string name="settings_donate">Поддержать разработчика</string>
+    <string name="settings_donate">Поддержать разработку Waktiva</string>
     <string name="donate_title">Поддержать Waktiva</string>
-    <string name="donate_description">Waktiva — бесплатное приложение, разработанное с заботой. Ваша поддержка помогает ему оставаться без рекламы и позволяет развиваться в будущем.</string>
-    <string name="donate_header">Развитие Waktiva</string>
-    <string name="donate_desc">Waktiva имеет открытый исходный код и не содержит рекламы. Ваши пожертвования помогают покрывать расходы на сервер и продолжать разработку, чтобы предоставить лучший опыт молитв для всех.</string>
-    <string name="donate_footer">Ваша щедрость поддерживает этот проект. Пусть это будет источником постоянного благословеления.</string>
+    <string name="donate_header">Поддержать Waktiva 🤍</string>
+    <string name="donate_desc">Waktiva была создана с одной целью:\nпредложить чистое, частное и свободное от рекламы пространство для молитвы.\n\nБез рекламы.\nБез слежки.\nБез продажи данных.\nПросто что-то честное и полезное.\n\nСохранение Waktiva бесплатной означает выбор независимости вместо монетизации.\nЭто значит не добавлять рекламу.\nЭто значит не продавать данные пользователей.\nЭто значит строить медленно, тщательно и этично.\n\nЕсли Waktiva приносит легкость в ваши ежедневные молитвы…\nЕсли вы цените приложение для молитв, которое уважает вашу конфиденциальность…\nЕсли вы хотите помочь улучшить его дизайн, функции и лицензионный контент…\n\nВы можете поддержать разработку пожертвованием.\n\nВаша поддержка помогает покрыть:\n\n• Расходы на сервер и API\n• Лицензионные записи Азана\n• Иконки, иллюстрации и ресурсы дизайна\n• Инструменты разработки и сборы за публикацию\n• Будущие улучшения и новые функции\n\nКаждый вклад — маленький или большой — действительно имеет значение.\n\nЕсли вы не в состоянии сделать пожертвование, это совершенно нормально.\nВаши молитвы и добрые слова уже ценны.\n\nСпасибо, что помогаете сохранять Waktiva простым, частным и свободным от рекламы.</string>
+    <string name="donate_footer">🤲 Пусть это принесет вам пользу в этой жизни и в следующей.</string>
     <string name="donate_button">Пожертвовать</string>
-    <string name="donate_thank_you">Спасибо за вашу поддержку!</string>
+    <string name="donate_thank_you">Спасибо за поддержку свободного ПО!</string>
     <string name="donate_error">Ошибка пожертвования. Пожалуйста, попробуйте еще раз.</string>
     <string name="donate_billing_error">Не удалось подключиться к платежному сервису</string>
     <string name="rate_title">Оценить Waktiva</string>
@@ -306,4 +307,51 @@
     <string name="settings_hijri_day_start">Начало дня по Хиджре</string>
     <string name="settings_hijri_day_start_maghrib">Начинается в Магриб</string>
     <string name="settings_hijri_day_start_desc">Переключать дату по Хиджре на закате (Магриб) вместо полуночи.</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">ЛИЦЕНЗИИ</string>
+    <string name="license_legal_info">Waktiva – Лицензии и юридическая информация</string>
+    <string name="license_app_copyright">Авторское право © 2026 YBugMobile\nВсе права защищены.</string>
+    <string name="license_app_mit">Waktiva выпущено как программное обеспечение с открытым исходным кодом под лицензией MIT.</string>
+    <string name="license_app_warranty">ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ \"КАК ЕСТЬ\", БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ.</string>
+    <string name="license_third_party_services">1. Сторонние сервисы</string>
+    <string name="license_aladhan_api">Al-Adhan API</string>
+    <string name="license_aladhan_desc">Waktiva получает время молитв из сервиса Al-Adhan API. Расчеты времени молитв предоставляются в соответствии с их опубликованными методологиями и условиями.</string>
+    <string name="license_data_privacy">Waktiva не хранит, не перепродает и не распространяет данные пользователей.</string>
+    <string name="license_open_source_libs">2. Сторонние библиотеки с открытым исходным кодом</string>
+    <string name="license_libs_intro">Waktiva включает следующие компоненты с открытым исходным кодом:</string>
+    <string name="license_lib_androidx">Библиотеки AndroidX (Лицензия Apache 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Лицензия Apache 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Лицензия Apache 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Лицензия Apache 2.0)</string>
+    <string name="license_lib_room">Room (Лицензия Apache 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Лицензия Apache 2.0)</string>
+    <string name="license_lib_work">WorkManager (Лицензия Apache 2.0)</string>
+    <string name="license_lib_media3">Media3 (Лицензия Apache 2.0)</string>
+    <string name="license_lib_location">Местоположение Google Play Services (Условия Google Play Services)</string>
+    <string name="license_lib_retrofit">Retrofit (Лицензия Apache 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Лицензия Apache 2.0)</string>
+    <string name="license_lib_gson">Gson (Лицензия Apache 2.0)</string>
+    <string name="license_lib_adhan">Библиотека Adhan Kotlin (Лицензия MIT)</string>
+    <string name="license_lib_suncalc">SunCalc (Лицензия BSD)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (Лицензия BSD 3-Clause)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Лицензия Apache 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Лицензия Apache 2.0)</string>
+    <string name="license_lib_billing">Библиотека платежей Google Play (Условия Google Play)</string>
+    <string name="license_libs_property">Каждая библиотека остается собственностью своих авторов и используется в соответствии с ее лицензией.</string>
+    <string name="license_adhan_audio">3. Лицензия на аудио Азана</string>
+    <string name="license_adhan_reciter">Waktiva включает записи Азана Мухсина Кара, чемпиона мира по Азану 2022 года.</string>
+    <string name="license_adhan_permission">Эти записи используются с разрешения. Все права на аудио принадлежат оригинальному чтецу.</string>
+    <string name="license_adhan_restrictions">Аудио Азана не может быть извлечено, перераспределено или использовано вне приложения Waktiva без явного разрешения правообладателя.</string>
+    <string name="license_location_permissions">4. Местоположение и разрешения</string>
+    <string name="license_location_usage">Waktiva запрашивает разрешение на доступ к местоположению только для того, чтобы:</string>
+    <string name="license_loc_usage_1">Вычислять точное время молитв</string>
+    <string name="license_loc_usage_2">Определять направление Киблы</string>
+    <string name="license_loc_usage_3">Предоставлять дату по Хиджре и расчеты фаз луны</string>
+    <string name="license_loc_processing">Данные о местоположении обрабатываются локально и не хранятся, не отслеживаются и не передаются. Время молитв загружается на срок до трех месяцев для использования в автономном режиме.</string>
+    <string name="license_no_ads">5. Обязательство отсутствия рекламы и слежки</string>
+    <string name="license_no_ads_1">Не показывает рекламу</string>
+    <string name="license_no_ads_2">Не использует SDK для отслеживания</string>
+    <string name="license_no_ads_3">Не собирает аналитику</string>
+    <string name="license_no_ads_4">Не продает личные данные</string>
 </resources>

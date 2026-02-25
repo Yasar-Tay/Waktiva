@@ -111,6 +111,8 @@
     <string name="settings_language">Langue de l\'application</string>
     <string name="settings_cancel">Annuler</string>
     <string name="settings_confirm">Confirmer</string>
+    <string name="settings_weather_effects">Effets météorologiques</string>
+    <string name="settings_weather_effects_desc">Afficher les conditions météorologiques animées (pluie, neige, nuages) en arrière-plan.</string>
 
     <!-- Language Options -->
     <string name="lang_system">Par défaut du système</string>
@@ -246,14 +248,13 @@
     <string name="adhan_metadata_title_format">Adhan %s</string>
 
     <!-- Donations -->
-    <string name="settings_donate">Soutenir le développeur</string>
+    <string name="settings_donate">Soutenir le développement de Waktiva</string>
     <string name="donate_title">Soutenir Waktiva</string>
-    <string name="donate_description">Waktiva est une application gratuite, développée avec soin. Votre soutien aide à la garder sans publicité et permet son développement futur.</string>
-    <string name="donate_header">Soutenir le développement de Waktiva</string>
-    <string name="donate_desc">Waktiva est open-source et sans publicité. Vos contributions aident à couvrir les frais de serveur et le développement continu pour offrir la meilleure expérience de prière à tous.</string>
-    <string name="donate_footer">Votre générosité fait vivre ce projet. Puisse-t-elle être une source de bénédiction continue.</string>
+    <string name="donate_header">Soutenir Waktiva 🤍</string>
+    <string name="donate_desc">Waktiva a été conçu avec une seule intention :\noffrir un espace de prière propre, privé et sans publicité.\n\nPas de publicité.\nPas de suivi.\nPas de vente de données.\nJuste quelque chose d\'honnête et d\'utile.\n\nGarder Waktiva gratuit signifie choisir l\'indépendance plutôt que la monétisation.\nCela signifie ne pas ajouter de publicité.\nCela signifie ne pas vendre les données des utilisateurs.\nCela signifie construire lentement, soigneusement et de manière éthique.\n\nSi Waktiva facilite vos prières quotidiennes…\nSi vous appréciez avoir une application de prière qui respecte votre vie privée…\nSi vous voulez aider à améliorer son design, ses fonctionnalités et son contenu sous licence…\n\nVous pouvez soutenir son développement par un don.\n\nVotre soutien aide à couvrir :\n\n• Les coûts de serveur et d\'API\n• Les enregistrements d\'Adhan sous licence\n• Les icônes, illustrations et ressources de design\n• Les outils de développement et les frais de publication\n• Les améliorations futures et les nouvelles fonctionnalités\n\nChaque contribution — petite ou grande — fait vraiment une différence.\n\nSi vous n\'êtes pas en mesure de faire un don, ce n\'est pas grave du tout.\nVos prières et vos paroles bienveillantes sont déjà appréciées.\n\nMerci d\'aider à garder Waktiva simple, privé et sans publicité.</string>
+    <string name="donate_footer">🤲 Puisse cela vous être bénéfique dans cette vie et dans l\'au-delà.</string>
     <string name="donate_button">Faire un don</string>
-    <string name="donate_thank_you">Merci pour votre soutien !</string>
+    <string name="donate_thank_you">Merci de soutenir les logiciels libres !</string>
     <string name="donate_error">Échec du don. Veuillez réessayer.</string>
     <string name="donate_billing_error">Échec de la connexion au service de facturation</string>
     <string name="rate_title">Évaluer Waktiva</string>
@@ -306,4 +307,51 @@
     <string name="settings_hijri_day_start">Début du jour Hijri</string>
     <string name="settings_hijri_day_start_maghrib">Commence au Maghrib</string>
     <string name="settings_hijri_day_start_desc">Changer la date Hijri au coucher du soleil (Maghrib) au lieu de minuit.</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">LICENCES</string>
+    <string name="license_legal_info">Waktiva – Informations Légales &amp; Licences</string>
+    <string name="license_app_copyright">Copyright © 2026 YBugMobile\nTous droits réservés.</string>
+    <string name="license_app_mit">Waktiva est publié en tant que logiciel open-source sous licence MIT.</string>
+    <string name="license_app_warranty">LE LOGICIEL EST FOURNI \"EN L\'ÉTAT\", SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE.</string>
+    <string name="license_third_party_services">1. Services Tiers</string>
+    <string name="license_aladhan_api">API Al-Adhan</string>
+    <string name="license_aladhan_desc">Waktiva récupère les heures de prière via le service API Al-Adhan. Les calculs sont fournis selon leurs méthodologies et conditions publiées.</string>
+    <string name="license_data_privacy">Waktiva ne stocke, ne revend, ni ne distribue les données des utilisateurs.</string>
+    <string name="license_open_source_libs">2. Bibliothèques Open-Source Tierces</string>
+    <string name="license_libs_intro">Waktiva inclut les composants open-source suivants :</string>
+    <string name="license_lib_androidx">Bibliothèques AndroidX (Licence Apache 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Licence Apache 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Licence Apache 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Licence Apache 2.0)</string>
+    <string name="license_lib_room">Room (Licence Apache 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Licence Apache 2.0)</string>
+    <string name="license_lib_work">WorkManager (Licence Apache 2.0)</string>
+    <string name="license_lib_media3">Media3 (Licence Apache 2.0)</string>
+    <string name="license_lib_location">Google Play Services Location (Conditions Google Play Services)</string>
+    <string name="license_lib_retrofit">Retrofit (Licence Apache 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Licence Apache 2.0)</string>
+    <string name="license_lib_gson">Gson (Licence Apache 2.0)</string>
+    <string name="license_lib_adhan">Bibliothèque Adhan Kotlin (Licence MIT)</string>
+    <string name="license_lib_suncalc">SunCalc (Licence BSD)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (Licence BSD 3-Clause)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Licence Apache 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Licence Apache 2.0)</string>
+    <string name="license_lib_billing">Bibliothèque de Facturation Google Play (Conditions Google Play)</string>
+    <string name="license_libs_property">Chaque bibliothèque reste la propriété de ses auteurs respectifs et est utilisée conformément à sa licence.</string>
+    <string name="license_adhan_audio">3. Licence Audio Adhan</string>
+    <string name="license_adhan_reciter">Waktiva inclut des enregistrements d\'Adhan par Muhsin Kara, champion du monde de l\'Adhan 2022.</string>
+    <string name="license_adhan_permission">Ces enregistrements sont utilisés avec permission. Tous les droits audio restent la propriété du récitant original.</string>
+    <string name="license_adhan_restrictions">L\'audio de l\'Adhan ne peut être extrait, redistribué ou réutilisé en dehors de l\'application Waktiva sans l\'autorisation explicite du détenteur des droits.</string>
+    <string name="license_location_permissions">4. Localisation &amp; Permissions</string>
+    <string name="license_location_usage">Waktiva demande l\'autorisation de localisation uniquement pour :</string>
+    <string name="license_loc_usage_1">Calculer des heures de prière précises</string>
+    <string name="license_loc_usage_2">Déterminer la direction de la Qibla</string>
+    <string name="license_loc_usage_3">Fournir la date Hijri et les phases de la lune</string>
+    <string name="license_loc_processing">Les données de localisation sont traitées localement et ne sont pas stockées, suivies ou partagées. Les heures de prière sont téléchargées pour une durée allant jusqu\'à trois mois pour permettre une utilisation hors ligne.</string>
+    <string name="license_no_ads">5. Engagement Sans Publicité / Sans Suivi</string>
+    <string name="license_no_ads_1">N\'affiche aucune publicité</string>
+    <string name="license_no_ads_2">N\'utilise aucun SDK de suivi</string>
+    <string name="license_no_ads_3">Ne collecte aucune donnée analytique</string>
+    <string name="license_no_ads_4">Ne vend aucune donnée personnelle</string>
 </resources>
