@@ -184,26 +184,15 @@ private fun QiblaContent(
                 onMapReady = { },
                 onMapLongClick = { },
                 onToggleSatellite = { isSatelliteView = !isSatelliteView },
-                fabAlignment = Alignment.CenterEnd,
-                fabPadding = if (isLandscape) PaddingValues(end = 16.dp) else PaddingValues(16.dp)
+                fabAlignment = if (isLandscape) Alignment.BottomCenter else Alignment.CenterEnd,
+                fabPadding = if (isLandscape) PaddingValues(start = 80.dp, end = 320.dp, bottom = 32.dp) else PaddingValues(16.dp),
+                isHorizontalFabs = isLandscape
             )
             
             if (!state.isNetworkAvailable) {
-                Box(
-                    modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.4f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Surface(
-                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
-                        shape = RoundedCornerShape(24.dp),
-                        modifier = Modifier.padding(32.dp),
-                        tonalElevation = 8.dp
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
+                Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.4f)), contentAlignment = Alignment.Center) {
+                    Surface(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f), shape = RoundedCornerShape(24.dp), modifier = Modifier.padding(32.dp), tonalElevation = 8.dp) {
+                        Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                             Icon(Icons.Rounded.WifiOff, null, tint = Color(0xFFFACC15), modifier = Modifier.size(48.dp))
                             Spacer(Modifier.height(16.dp))
                             Text(stringResource(R.string.health_no_internet), textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
@@ -245,21 +234,23 @@ private fun QiblaContent(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .padding(start = 12.dp, end = 24.dp, top = 16.dp, bottom = 16.dp),
+                        .padding(start = 12.dp, end = 24.dp, top = 24.dp, bottom = 24.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
+                    // Landscape Info Panel: True vertical distribution without sub-containers
                     Column(
-                        modifier = Modifier.verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        TopHeaderRow(
+                        // 1. Location Header (Top)
+                        LocationHeader(
                             state = state,
                             currentTheme = currentTheme,
                             isMapView = isMapView,
-                            onViewChange = { isMapView = it },
                             onStatusClick = onStatusClick
                         )
 
+                        // 2. Qibla Info Card (Middle)
                         QiblaInfoCard(
                             isAligned = isAligned,
                             alignmentColor = alignmentColor,
@@ -270,6 +261,16 @@ private fun QiblaContent(
                             onCalibrationClick = onCalibrationClick,
                             containerColor = currentTheme.containerColor,
                             contentColor = currentTheme.contentColor
+                        )
+
+                        // 3. View Switcher (Bottom)
+                        QiblaViewSwitcher(
+                            isMapView = isMapView,
+                            onViewChange = { isMapView = it },
+                            contentColor = currentTheme.contentColor,
+                            containerColor = currentTheme.containerColor,
+                            borderColor = currentTheme.borderColor,
+                            modifier = Modifier.align(Alignment.Start) // Aligned to Start (Left)
                         )
                     }
                 }
@@ -335,6 +336,45 @@ private fun QiblaContent(
 }
 
 @Composable
+private fun LocationHeader(
+    state: QiblaViewState,
+    currentTheme: GlassTheme,
+    isMapView: Boolean,
+    onStatusClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (isMapView) {
+        Surface(
+            color = currentTheme.containerColor,
+            shape = RoundedCornerShape(22.dp),
+            modifier = modifier.fillMaxWidth().height(44.dp),
+            border = androidx.compose.foundation.BorderStroke(1.dp, currentTheme.borderColor)
+        ) {
+            Box(modifier = Modifier.padding(horizontal = 12.dp), contentAlignment = Alignment.CenterStart) {
+                LocationSection(
+                    locationName = state.settings?.locationName ?: "...",
+                    contentColor = currentTheme.contentColor,
+                    onStatusClick = onStatusClick,
+                    isNetworkAvailable = state.isNetworkAvailable,
+                    isLocationEnabled = state.isLocationEnabled,
+                    isLocationPermissionGranted = state.isLocationPermissionGranted
+                )
+            }
+        }
+    } else {
+        LocationSection(
+            locationName = state.settings?.locationName ?: "...",
+            contentColor = currentTheme.contentColor,
+            onStatusClick = onStatusClick,
+            isNetworkAvailable = state.isNetworkAvailable,
+            isLocationEnabled = state.isLocationEnabled,
+            isLocationPermissionGranted = state.isLocationPermissionGranted,
+            modifier = modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
 private fun TopHeaderRow(
     state: QiblaViewState,
     currentTheme: GlassTheme,
@@ -348,34 +388,8 @@ private fun TopHeaderRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        if (isMapView) {
-            Surface(
-                color = currentTheme.containerColor,
-                shape = RoundedCornerShape(22.dp),
-                modifier = Modifier.weight(1f).height(44.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, currentTheme.borderColor)
-            ) {
-                Box(modifier = Modifier.padding(horizontal = 12.dp), contentAlignment = Alignment.CenterStart) {
-                    LocationSection(
-                        locationName = state.settings?.locationName ?: "...",
-                        contentColor = currentTheme.contentColor,
-                        onStatusClick = onStatusClick,
-                        isNetworkAvailable = state.isNetworkAvailable,
-                        isLocationEnabled = state.isLocationEnabled,
-                        isLocationPermissionGranted = state.isLocationPermissionGranted
-                    )
-                }
-            }
-        } else {
-            LocationSection(
-                locationName = state.settings?.locationName ?: "...",
-                contentColor = currentTheme.contentColor,
-                onStatusClick = onStatusClick,
-                isNetworkAvailable = state.isNetworkAvailable,
-                isLocationEnabled = state.isLocationEnabled,
-                isLocationPermissionGranted = state.isLocationPermissionGranted,
-                modifier = Modifier.weight(1f)
-            )
+        Box(modifier = Modifier.weight(1f)) {
+            LocationHeader(state, currentTheme, isMapView, onStatusClick)
         }
         
         Spacer(Modifier.width(12.dp))

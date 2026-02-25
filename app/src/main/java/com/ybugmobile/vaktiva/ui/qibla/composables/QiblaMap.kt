@@ -53,8 +53,10 @@ fun QiblaMap(
     onMapReady: (MapLibreMap) -> Unit,
     onMapLongClick: (LatLng) -> Unit,
     onToggleSatellite: () -> Unit,
+    showFabs: Boolean = true,
     fabAlignment: Alignment = Alignment.CenterEnd,
-    fabPadding: PaddingValues = PaddingValues(16.dp)
+    fabPadding: PaddingValues = PaddingValues(16.dp),
+    isHorizontalFabs: Boolean = false
 ) {
     var mapInstance by remember { mutableStateOf<MapLibreMap?>(null) }
     var symbolManager by remember { mutableStateOf<SymbolManager?>(null) }
@@ -64,7 +66,6 @@ fun QiblaMap(
     var isMapOriented by remember { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
 
-    // Pulsing Animation for the Qibla Line
     val infiniteTransition = rememberInfiniteTransition(label = "linePulse")
     val linePulseAlpha by infiniteTransition.animateFloat(
         initialValue = 0.3f,
@@ -76,7 +77,6 @@ fun QiblaMap(
         label = "linePulseAlpha"
     )
 
-    // Immersive 3D Tilt and Haptic Effect
     LaunchedEffect(isAligned) {
         if (isAligned) {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -118,20 +118,19 @@ fun QiblaMap(
                         
                         map.addOnCameraMoveListener {
                             val cameraPosition = map.cameraPosition
-                            isMapOriented = abs(cameraPosition.bearing) > 0.1 || abs(cameraPosition.tilt) > 0.1
+                            // Detect if map is tilted or rotated from North
+                            isMapOriented = abs(cameraPosition.bearing) > 1.0 || abs(cameraPosition.tilt) > 1.0
                         }
 
                         val initialStyle = if (isSatelliteView) MapConstants.SATELLITE_STYLE_JSON else MapConstants.STREET_STYLE
                         map.setStyle(Style.Builder().run {
                             if (isSatelliteView) fromJson(initialStyle) else fromUri(initialStyle)
                         }) { style ->
-                            // Custom marker colors
                             style.addImage(MapConstants.USER_ARROW_ID, createAppleStyleMarker("#007AFF"))
                             style.addImage(MapConstants.CUSTOM_ARROW_ID, createAppleStyleMarker("#AF52DE"))
                             style.addImage("green_arrow", createAppleStyleMarker("#4CD964"))
                             style.addImage("kaaba_marker", createKaabaMarker("#FFD700"))
 
-                            // Create line manager FIRST so symbols appear ON TOP
                             lineManager = LineManager(this@apply, map, style)
                             symbolManager = SymbolManager(this@apply, map, style).apply {
                                 iconAllowOverlap = true
@@ -191,27 +190,51 @@ fun QiblaMap(
             }
         )
 
-        Column(
-            modifier = Modifier
-                .align(fabAlignment)
-                .padding(fabPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            AnimatedVisibility(
-                visible = isMapOriented,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
+        if (showFabs) {
+            val fabContent = @Composable {
+                // Map Orientation Fix FAB
+                AnimatedVisibility(
+                    visible = isMapOriented,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    FloatingActionButton(
+                        onClick = {
+                            mapInstance?.let { map ->
+                                val currentPos = map.cameraPosition
+                                val newPos = CameraPosition.Builder(currentPos)
+                                    .bearing(0.0)
+                                    .tilt(0.0)
+                                    .build()
+                                map.animateCamera(CameraUpdateFactory.newCameraPosition(newPos))
+                            }
+                        },
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Explore,
+                            contentDescription = "Reset Orientation",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+
+                // Current Location FAB
                 FloatingActionButton(
                     onClick = {
-                        mapInstance?.let { map ->
-                            val currentPos = map.cameraPosition
-                            val newPos = CameraPosition.Builder(currentPos)
-                                .bearing(0.0)
-                                .tilt(0.0)
-                                .build()
-                            map.animateCamera(CameraUpdateFactory.newCameraPosition(newPos))
+                        settings?.let { loc ->
+                            val lat = loc.latitude
+                            val lng = loc.longitude
+                            if (lat != null && lng != null) {
+                                mapInstance?.animateCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        LatLng(lat, lng),
+                                        MapConstants.DEFAULT_ZOOM
+                                    )
+                                )
+                            }
                         }
                     },
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -219,46 +242,47 @@ fun QiblaMap(
                     modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Explore,
-                        contentDescription = "Reset Orientation",
+                        imageVector = Icons.Default.MyLocation,
+                        contentDescription = "Locate Me",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                // Toggle Satellite FAB
+                FloatingActionButton(
+                    onClick = onToggleSatellite,
+                    containerColor = if (isSatelliteView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                    contentColor = if (isSatelliteView) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isSatelliteView) Icons.Default.Map else Icons.Default.Satellite,
+                        contentDescription = "Toggle Satellite",
                         modifier = Modifier.size(24.dp)
                     )
                 }
             }
 
-            FloatingActionButton(
-                onClick = {
-                    settings?.let { loc ->
-                        val lat = loc.latitude
-                        val lng = loc.longitude
-                        if (lat != null && lng != null) {
-                            mapInstance?.animateCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    LatLng(lat, lng),
-                                    MapConstants.DEFAULT_ZOOM
-                                )
-                            )
-                        }
-                    }
-                },
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(
-                    imageVector = Icons.Default.MyLocation,
-                    contentDescription = "Locate Me"
-                )
-            }
-
-            FloatingActionButton(
-                onClick = onToggleSatellite,
-                containerColor = if (isSatelliteView) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-                contentColor = if (isSatelliteView) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
-            ) {
-                Icon(
-                    imageVector = if (isSatelliteView) Icons.Default.Map else Icons.Default.Satellite,
-                    contentDescription = "Toggle Satellite"
-                )
+            if (isHorizontalFabs) {
+                Row(
+                    modifier = Modifier
+                        .align(fabAlignment)
+                        .padding(fabPadding),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    fabContent()
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .align(fabAlignment)
+                        .padding(fabPadding),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    fabContent()
+                }
             }
         }
     }
@@ -273,7 +297,6 @@ fun QiblaMap(
         val appleGreen = "#4CD964"
         val customPurple = "#AF52DE"
         
-        // Always draw the Kaaba marker
         sm.create(
             SymbolOptions().withLatLng(kaabaLatLng)
                 .withIconImage("kaaba_marker")
@@ -291,7 +314,6 @@ fun QiblaMap(
                 val activeColor = if (isUserAligned) appleGreen else appleBlue
                 val activeIcon = if (isUserAligned) "green_arrow" else MapConstants.USER_ARROW_ID
                 
-                // Draw Qibla line glow (Pulsing)
                 lm.create(
                     LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
                         .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
@@ -300,14 +322,12 @@ fun QiblaMap(
                         .withLineBlur(5f)
                 )
 
-                // Draw Qibla line white border
                 lm.create(
                     LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
                         .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE))
                         .withLineWidth(10f)
                         .withLineJoin("round")
                 )
-                // Draw main Qibla line
                 lm.create(
                     LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
                         .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
@@ -329,7 +349,6 @@ fun QiblaMap(
             val activeColor = if (isCustomAligned) appleGreen else customPurple
             val activeIcon = if (isCustomAligned) "green_arrow" else MapConstants.CUSTOM_ARROW_ID
             
-            // Custom point line glow (Pulsing)
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
                     .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
@@ -338,14 +357,12 @@ fun QiblaMap(
                     .withLineBlur(5f)
             )
 
-            // Custom point white border
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
                     .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE))
                     .withLineWidth(10f)
                     .withLineJoin("round")
             )
-            // Custom point main line
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
                     .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
@@ -368,7 +385,6 @@ private fun createAppleStyleMarker(colorHex: String): Bitmap {
     
     val markerColor = AndroidColor.parseColor(colorHex)
     
-    // Elevated Shadow
     val shadowPaint = Paint().apply {
         isAntiAlias = true
         this.color = AndroidColor.TRANSPARENT
@@ -376,7 +392,6 @@ private fun createAppleStyleMarker(colorHex: String): Bitmap {
     }
     canvas.drawCircle(center, center, 44f, shadowPaint)
     
-    // Subtle Pulse Outer Ring
     val pulsePaint = Paint().apply {
         this.color = markerColor
         alpha = 30
@@ -385,7 +400,6 @@ private fun createAppleStyleMarker(colorHex: String): Bitmap {
     }
     canvas.drawCircle(center, center, 65f, pulsePaint)
     
-    // Opaque White Border
     val whitePaint = Paint().apply {
         this.color = AndroidColor.WHITE
         style = Paint.Style.FILL
@@ -393,7 +407,6 @@ private fun createAppleStyleMarker(colorHex: String): Bitmap {
     }
     canvas.drawCircle(center, center, 44f, whitePaint)
     
-    // Main colored circle
     val mainPaint = Paint().apply {
         this.color = markerColor
         style = Paint.Style.FILL
@@ -401,7 +414,6 @@ private fun createAppleStyleMarker(colorHex: String): Bitmap {
     }
     canvas.drawCircle(center, center, 40f, mainPaint)
     
-    // Arrow
     val arrowPaint = Paint().apply {
         this.color = AndroidColor.WHITE
         style = Paint.Style.FILL
@@ -427,7 +439,6 @@ fun createKaabaMarker(colorHex: String): Bitmap {
     
     val markerColor = AndroidColor.parseColor(colorHex)
     
-    // Elevated Shadow
     val shadowPaint = Paint().apply {
         isAntiAlias = true
         this.color = AndroidColor.TRANSPARENT
@@ -435,7 +446,6 @@ fun createKaabaMarker(colorHex: String): Bitmap {
     }
     canvas.drawCircle(center, center, 44f, shadowPaint)
     
-    // Opaque White Border
     val whitePaint = Paint().apply {
         this.color = AndroidColor.WHITE
         style = Paint.Style.FILL
@@ -443,7 +453,6 @@ fun createKaabaMarker(colorHex: String): Bitmap {
     }
     canvas.drawCircle(center, center, 44f, whitePaint)
     
-    // Main colored circle (Golden)
     val mainPaint = Paint().apply {
         this.color = markerColor
         style = Paint.Style.FILL
@@ -451,7 +460,6 @@ fun createKaabaMarker(colorHex: String): Bitmap {
     }
     canvas.drawCircle(center, center, 40f, mainPaint)
     
-    // Kaaba Shape (Square with gold band)
     val kaabaPaint = Paint().apply {
         this.color = AndroidColor.BLACK
         style = Paint.Style.FILL
@@ -467,7 +475,6 @@ fun createKaabaMarker(colorHex: String): Bitmap {
         kaabaPaint
     )
     
-    // Gold Band
     val goldPaint = Paint().apply {
         this.color = AndroidColor.parseColor("#FFD700")
         style = Paint.Style.FILL
