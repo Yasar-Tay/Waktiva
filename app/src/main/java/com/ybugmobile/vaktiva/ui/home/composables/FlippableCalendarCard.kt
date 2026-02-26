@@ -52,7 +52,7 @@ fun FlippableCalendarCard(
 
     val context = LocalContext.current
     val dayFormatter = remember { DateTimeFormatter.ofPattern("dd") }
-    val monthFormatter = remember { DateTimeFormatter.ofPattern("MMMM") }
+    val monthFormatter = remember { DateTimeFormatter.ofPattern("MMM") } // Abbreviated month name
 
     Box(
         modifier = modifier
@@ -86,10 +86,13 @@ fun FlippableCalendarCard(
                     context.resources.getIdentifier("hijri_month_${it.monthNumber}", "string", context.packageName)
                 } ?: 0
                 val monthName = if (monthResId != 0) stringResource(monthResId) else hijri?.monthEn ?: ""
+                
+                // Shorten Hijri month name to first 3 characters for abbreviation
+                val abbreviatedHijriMonth = monthName.take(3).uppercase(Locale.getDefault())
 
                 ModernCalendarCircle(
                     topText = hijri?.day?.toString() ?: "",
-                    bottomText = monthName.uppercase(Locale.getDefault()),
+                    bottomText = abbreviatedHijriMonth,
                     contentColor = contentColor,
                     isBack = true,
                     accentColor = accentColor,
