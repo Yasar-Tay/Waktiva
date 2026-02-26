@@ -59,6 +59,8 @@ fun PrayerCircleVisualization(
     nextPrayer: NextPrayer?,
     currentPrayer: CurrentPrayer?,
     isSelectedDayToday: Boolean,
+    isHijriVisible: Boolean = false,
+    onToggleHijri: () -> Unit = {},
     sunAzimuth: Float = 0f,
     sunAltitude: Float = 0f,
     contentColor: Color = Color.White,
@@ -198,6 +200,8 @@ fun PrayerCircleVisualization(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
+                // Performance: Static graphicsLayer properties should be set outside if possible,
+                // but scaleX/Y are dynamic here.
                 .graphicsLayer {
                     scaleX = pulseScale
                     scaleY = pulseScale
@@ -348,6 +352,8 @@ fun PrayerCircleVisualization(
         ) {
             FlippableCalendarCard(
                 day = day,
+                isHijriVisible = isHijriVisible,
+                onFlip = onToggleHijri,
                 contentColor = contentColor,
                 accentColor = currentPrayerColor,
                 sunAzimuth = sunAzimuth,

@@ -3,7 +3,6 @@ package com.ybugmobile.vaktiva.ui.home.composables
 import android.content.res.Configuration
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -37,15 +36,16 @@ import kotlin.math.PI
 @Composable
 fun FlippableCalendarCard(
     day: PrayerDay,
+    isHijriVisible: Boolean,
+    onFlip: () -> Unit,
     contentColor: Color,
     accentColor: Color,
     sunAzimuth: Float,
     sunAltitude: Float,
     modifier: Modifier = Modifier
 ) {
-    var isFlipped by remember { mutableStateOf(false) }
     val rotation by animateFloatAsState(
-        targetValue = if (isFlipped) 180f else 0f,
+        targetValue = if (isHijriVisible) 180f else 0f,
         animationSpec = spring(
             stiffness = Spring.StiffnessLow,
             dampingRatio = Spring.DampingRatioLowBouncy
@@ -83,7 +83,7 @@ fun FlippableCalendarCard(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) {
-                isFlipped = !isFlipped
+                onFlip()
             },
         contentAlignment = Alignment.Center
     ) {
@@ -204,7 +204,7 @@ private fun CalendarSide(
                     val terminatorShift = (sin(altitude * PI / 180f) * 0.4f).toFloat()
                     
                     val brightStop = (0.35f - terminatorShift).coerceIn(0f, 1f)
-                    val midStop = (0.55f - terminatorShift).coerceIn(0f, 1f)
+                    val mStop = (0.55f - terminatorShift).coerceIn(0f, 1f)
                     val transparentStop = (0.85f - terminatorShift).coerceIn(0f, 1f)
 
                     val radius = size.width / 2
@@ -219,7 +219,7 @@ private fun CalendarSide(
                         brush = Brush.linearGradient(
                             0.0f to accentColor.copy(alpha = 0.5f),
                             brightStop to accentColor.copy(alpha = 0.3f),
-                            midStop to accentColor.copy(alpha = 0.1f),
+                            mStop to accentColor.copy(alpha = 0.1f),
                             transparentStop to Color.Transparent,
                             1.0f to Color.Transparent,
                             start = gradientStart,
