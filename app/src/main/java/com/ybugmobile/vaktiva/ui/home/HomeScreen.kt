@@ -401,6 +401,20 @@ fun HomeScreenContent(
                                         translationY = -scrollState.value.toFloat()
                                     }
                             )
+
+                            // Weather Section in Top Right for Landscape
+                            WeatherSection(
+                                temperature = state.temperature,
+                                condition = state.weatherCondition,
+                                contentColor = contentColor,
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .systemBarsPadding()
+                                    .padding(top = 16.dp, end = 24.dp)
+                                    .graphicsLayer {
+                                        translationY = -scrollState.value.toFloat()
+                                    }
+                            )
                         }
                     } else {
                         // Portrait Layout
