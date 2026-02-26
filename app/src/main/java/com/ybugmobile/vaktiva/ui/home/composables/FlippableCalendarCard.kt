@@ -18,7 +18,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -55,7 +54,6 @@ fun FlippableCalendarCard(
     )
 
     val infiniteTransition = rememberInfiniteTransition(label = "celestial_vibes")
-    
     val flarePulse by infiniteTransition.animateFloat(
         initialValue = 0.4f,
         targetValue = 0.8f,
@@ -66,17 +64,9 @@ fun FlippableCalendarCard(
         label = "flarePulse"
     )
 
-    // Animated values for smooth transition during time shifts
-    val animSunAzimuth by animateFloatAsState(
-        targetValue = sunAzimuth,
-        animationSpec = spring(stiffness = Spring.StiffnessLow),
-        label = "animSunAzimuth"
-    )
-    val animSunAltitude by animateFloatAsState(
-        targetValue = sunAltitude,
-        animationSpec = spring(stiffness = Spring.StiffnessLow),
-        label = "animSunAltitude"
-    )
+    // Performance: Pass these as lambdas to defer state reading to Draw phase
+    val animSunAzimuth = animateFloatAsState(sunAzimuth, spring(stiffness = Spring.StiffnessLow), label = "az")
+    val animSunAltitude = animateFloatAsState(sunAltitude, spring(stiffness = Spring.StiffnessLow), label = "alt")
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -104,7 +94,6 @@ fun FlippableCalendarCard(
                 .drawBehind {
                     val radius = (cardSize.toPx() / 2)
                     
-                    // 1. Core Radiant Bloom (Atmospheric glow)
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(
@@ -117,7 +106,6 @@ fun FlippableCalendarCard(
                         )
                     )
 
-                    // 2. Faint Orbital Shimmer
                     drawCircle(
                         color = accentColor.copy(alpha = 0.2f * flarePulse),
                         radius = radius * 1.2f,
@@ -135,7 +123,7 @@ fun FlippableCalendarCard(
                 }
         )
 
-        // THE CALENDAR DISC (The Earth surface feel)
+        // THE CALENDAR DISC
         Box(
             modifier = Modifier
                 .size(cardSize)
@@ -151,8 +139,8 @@ fun FlippableCalendarCard(
                     contentColor = contentColor,
                     isBack = false,
                     accentColor = accentColor,
-                    sunAzimuth = animSunAzimuth,
-                    sunAltitude = animSunAltitude,
+                    sunAzimuthProvider = { animSunAzimuth.value },
+                    sunAltitudeProvider = { animSunAltitude.value },
                     isLandscape = isLandscape
                 )
             } else {
@@ -169,8 +157,8 @@ fun FlippableCalendarCard(
                     contentColor = contentColor,
                     isBack = true,
                     accentColor = accentColor,
-                    sunAzimuth = animSunAzimuth,
-                    sunAltitude = animSunAltitude,
+                    sunAzimuthProvider = { animSunAzimuth.value },
+                    sunAltitudeProvider = { animSunAltitude.value },
                     isLandscape = isLandscape
                 )
             }
@@ -185,23 +173,12 @@ private fun CalendarSide(
     contentColor: Color,
     isBack: Boolean,
     accentColor: Color,
-    sunAzimuth: Float,
-    sunAltitude: Float,
+    sunAzimuthProvider: () -> Float,
+    sunAltitudeProvider: () -> Float,
     isLandscape: Boolean
 ) {
     val dayFontSize = if (isLandscape) 30.sp else 34.sp
     val monthFontSize = if (isLandscape) 8.sp else 9.sp
-
-    // Map Sun Azimuth to light direction (0 deg North/Top)
-    val lightAngleRad = ((sunAzimuth - 90f) * PI / 180f).toFloat()
-    
-    // Terminator shift based on Sun Altitude
-    val terminatorShift = (sin(sunAltitude * PI / 180f) * 0.4f).toFloat()
-    
-    // Smooth transition stops
-    val brightStop = (0.35f - terminatorShift).coerceIn(0f, 1f)
-    val midStop = (0.55f - terminatorShift).coerceIn(0f, 1f)
-    val transparentStop = (0.85f - terminatorShift).coerceIn(0f, 1f)
 
     Surface(
         modifier = Modifier
@@ -216,22 +193,28 @@ private fun CalendarSide(
             )
         )
     ) {
-        // EARTH LOOK: Dynamic Light Angle via drawBehind for proper size mapping
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .drawBehind {
-                    val radius = size.width / 2
+                    val azimuth = sunAzimuthProvider()
+                    val altitude = sunAltitudeProvider()
                     
-                    // Sun direction vector (from center towards sun)
+                    val lightAngleRad = ((azimuth - 90f) * PI / 180f).toFloat()
+                    val terminatorShift = (sin(altitude * PI / 180f) * 0.4f).toFloat()
+                    
+                    val brightStop = (0.35f - terminatorShift).coerceIn(0f, 1f)
+                    val midStop = (0.55f - terminatorShift).coerceIn(0f, 1f)
+                    val transparentStop = (0.85f - terminatorShift).coerceIn(0f, 1f)
+
+                    val radius = size.width / 2
                     val dirX = cos(lightAngleRad)
                     val dirY = sin(lightAngleRad)
                     
-                    // Gradient starts at the sun side (bright) and ends at opposite side (dark/transparent)
                     val gradientStart = Offset(center.x + dirX * radius, center.y + dirY * radius)
                     val gradientEnd = Offset(center.x - dirX * radius, center.y - dirY * radius)
 
-                    // 1. The Main Planet Gradient (smoother transition to transparency)
+                    // 1. The Main Planet Gradient
                     drawCircle(
                         brush = Brush.linearGradient(
                             0.0f to accentColor.copy(alpha = 0.5f),
@@ -245,12 +228,12 @@ private fun CalendarSide(
                         )
                     )
 
-                    // 2. Curvature Highlight (Specular-like glow on the sun side)
+                    // 2. Curvature Highlight
                     val highlightOffset = Offset(
                         center.x + dirX * radius * 0.45f,
                         center.y + dirY * radius * 0.45f
                     )
-                    
+
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(Color.White.copy(alpha = 0.15f), Color.Transparent),
