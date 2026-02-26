@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.domain.model.WeatherCondition
 import java.util.Locale
@@ -19,9 +20,10 @@ fun WeatherSection(
     contentColor: Color,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    Row(
         modifier = modifier,
-        horizontalAlignment = Alignment.Start
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         if (temperature != null) {
             Text(
@@ -30,7 +32,8 @@ fun WeatherSection(
                     fontSize = 60.sp,
                     fontWeight = FontWeight.Light
                 ),
-                color = contentColor
+                color = contentColor,
+
             )
         }
         
@@ -38,7 +41,7 @@ fun WeatherSection(
             text = condition.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
             style = MaterialTheme.typography.titleMedium,
             color = contentColor.copy(alpha = 0.7f),
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
     }
 }
