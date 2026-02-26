@@ -42,12 +42,12 @@ fun ProfessionalCompass(
     
     // 1. Adaptive Glow Color
     val indicatorColor by animateColorAsState(
-        targetValue = if (isAligned) Color(0xFF4CAF50) else Color(0xFFFFD700),
+        targetValue = if (isAligned) alignmentColor else Color(0xFFFFD700),
         animationSpec = tween(600),
         label = "indicator"
     )
 
-    // 2. Shortest-Path Azimuth Animation (Handled via graphicsLayer rotation)
+    // 2. Shortest-Path Azimuth Animation
     var lastTargetAzimuth by remember { mutableStateOf(azimuth) }
     var azimuthOffset by remember { mutableStateOf(0f) }
     
@@ -67,7 +67,19 @@ fun ProfessionalCompass(
         label = "magneticAzimuth"
     )
 
-    val infiniteTransition = rememberInfiniteTransition(label = "alignmentGlow")
+    val infiniteTransition = rememberInfiniteTransition(label = "compassEffects")
+    
+    // WHITE GLOW TAPPER ANIMATION
+    val taperPulse by infiniteTransition.animateFloat(
+        initialValue = 0.05f,
+        targetValue = 0.35f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "taperPulse"
+    )
+
     val glowScale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.12f,
@@ -79,7 +91,7 @@ fun ProfessionalCompass(
     )
 
     Box(modifier = Modifier.size(340.dp), contentAlignment = Alignment.Center) {
-        // Outer Ambient Glow (Performance: Use graphicsLayer for scaling)
+        // Outer Ambient Glow
         Box(
             modifier = Modifier
                 .size(300.dp)
@@ -100,7 +112,7 @@ fun ProfessionalCompass(
                 )
         )
 
-        // The Compass Dial (Cached Performance Layer)
+        // The Compass Dial
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -110,12 +122,28 @@ fun ProfessionalCompass(
                         val center = this.center
                         val radius = size.minDimension / 2 - 20.dp.toPx()
 
-                        // Static Dial Body
-                        drawCircle(
-                            color = contentColor.copy(alpha = 0.03f),
-                            radius = radius + 10.dp.toPx(),
-                            style = Fill
-                        )
+                        // A. DYNAMIC DIAL BACKGROUND (White Taper Glow when aligned)
+                        if (isAligned) {
+                            drawCircle(
+                                brush = Brush.radialGradient(
+                                    colorStops = arrayOf(
+                                        0.0f to Color.White.copy(alpha = taperPulse),
+                                        0.6f to Color.White.copy(alpha = taperPulse * 0.3f),
+                                        1.0f to Color.Transparent
+                                    ),
+                                    center = center,
+                                    radius = radius + 10.dp.toPx()
+                                ),
+                                radius = radius + 10.dp.toPx(),
+                                style = Fill
+                            )
+                        } else {
+                            drawCircle(
+                                color = contentColor.copy(alpha = 0.03f),
+                                radius = radius + 10.dp.toPx(),
+                                style = Fill
+                            )
+                        }
 
                         // Ticks & Graduations
                         for (i in 0 until 360 step 2) {
@@ -154,7 +182,6 @@ fun ProfessionalCompass(
                             val x = center.x + (radius - 32.dp.toPx()) * cos(angleInRad).toFloat()
                             val y = center.y + (radius - 32.dp.toPx()) * sin(angleInRad).toFloat()
                             
-                            // Counter-rotate text so it stays upright
                             rotate(animatedAzimuth, pivot = Offset(x, y)) {
                                 val textLayout = textMeasurer.measure(
                                     text = label,
@@ -201,7 +228,7 @@ fun ProfessionalCompass(
                 }
         )
 
-        // Static Center Needle (Doesn't need to rotate with the dial)
+        // Static Center Needle
         Canvas(modifier = Modifier.fillMaxSize()) {
             val center = this.center
             val radius = size.minDimension / 2 - 20.dp.toPx()
@@ -244,7 +271,7 @@ fun ProfessionalCompass(
 
             // Pivot
             drawCircle(color = Color.White, radius = 5.dp.toPx(), center = center)
-            drawCircle(color = if (isAligned) alignmentColor else indicatorColor, radius = 2.5.dp.toPx(), center = center)
+            drawCircle(color = indicatorColor, radius = 2.5.dp.toPx(), center = center)
         }
     }
 }

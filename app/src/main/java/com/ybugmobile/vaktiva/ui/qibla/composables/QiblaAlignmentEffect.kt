@@ -14,6 +14,7 @@ import kotlin.random.Random
 @Composable
 fun QiblaAlignmentEffect(
     isAligned: Boolean,
+    alignmentColor: Color,
     modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "cinematicAlignmentEffect")
@@ -34,6 +35,7 @@ fun QiblaAlignmentEffect(
         val delay = remember { Random.nextInt(0, 4000) }
         val startXOffset = remember { Random.nextFloat() * 120f - 60f }
         val size = remember { Random.nextFloat() * 1.2f + 0.4f } 
+        val driftDirection = remember { if (Random.nextBoolean()) 1f else -1f }
         
         val progress by infiniteTransition.animateFloat(
             initialValue = 0f,
@@ -45,7 +47,7 @@ fun QiblaAlignmentEffect(
             label = "p$index"
         )
         
-        ParticleState(progress, startXOffset, size)
+        ParticleState(progress, startXOffset, size, driftDirection)
     }
 
     AnimatedVisibility(
@@ -75,16 +77,16 @@ fun QiblaAlignmentEffect(
                 close()
             }
 
-            // A. Static Green Energy Pillar
-            val pillarHalfWidth = 48.dp.toPx()
+            // A. Static Energy Pillar - Dynamic color based on time of day
+            val pillarHalfWidth = 42.dp.toPx()
             drawPath(
                 path = rayPath,
                 brush = Brush.horizontalGradient(
                     colorStops = arrayOf(
                         0.0f to Color.Transparent,
-                        0.35f to Color(0xFF4CAF50).copy(alpha = 0.1f),
-                        0.5f to Color(0xFF4CAF50).copy(alpha = 0.55f),
-                        0.65f to Color(0xFF4CAF50).copy(alpha = 0.1f),
+                        0.35f to alignmentColor.copy(alpha = 0.15f),
+                        0.5f to alignmentColor.copy(alpha = 0.55f),
+                        0.65f to alignmentColor.copy(alpha = 0.15f),
                         1.0f to Color.Transparent
                     ),
                     startX = center.x - pillarHalfWidth,
@@ -93,7 +95,7 @@ fun QiblaAlignmentEffect(
                 blendMode = BlendMode.Plus
             )
 
-            // B. CINEMATIC VERTICAL FADE: Smoothly dissolves the bottom
+            // B. CINEMATIC VERTICAL FADE
             drawRect(
                 brush = Brush.verticalGradient(
                     colorStops = arrayOf(
@@ -108,15 +110,27 @@ fun QiblaAlignmentEffect(
                 blendMode = BlendMode.DstIn
             )
 
-            // 2. RAINING LIGHT BULBS
+            // 2. RAINING LIGHT BULBS - Updated with "scatter through center" logic
             particleStates.forEach { state ->
                 val p = state.progress
-                val particleY = (center.y - radius * 1.6f) + (radius * 1.6f * p)
-                val particleX = center.x + (state.startXOffset.dp.toPx() * (1f - p) * 0.5f)
+                // Increase fall distance so they pass the center
+                val particleY = (center.y - radius * 1.6f) + (radius * 2.2f * p)
                 
+                // Converge then scatter logic
+                // They reach center horizontal alignment around p=0.7
+                val horizontalFactor = if (p < 0.7f) {
+                    (1f - (p / 0.7f)) // Converging
+                } else {
+                    ((p - 0.7f) / 0.3f) * 0.3f // Scattering slightly back out after passing center
+                }
+                
+                val particleX = center.x + (state.startXOffset.dp.toPx() * horizontalFactor) + 
+                                (state.driftDirection * 10.dp.toPx() * p) // Added a bit of random drift
+                
+                // Fading out logic: they disappear after passing the center
                 val alpha = when {
-                    p < 0.15f -> p / 0.15f 
-                    p > 0.6f -> (1f - p) / 0.4f
+                    p < 0.15f -> p / 0.15f // Fade in at top
+                    p > 0.85f -> (1f - p) / 0.15f // Fade out late, after scattering through center
                     else -> 1f
                 }
 
@@ -146,5 +160,6 @@ fun QiblaAlignmentEffect(
 private data class ParticleState(
     val progress: Float,
     val startXOffset: Float,
-    val size: Float
+    val size: Float,
+    val driftDirection: Float
 )

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.home.composables.LocationSection
 import com.ybugmobile.vaktiva.ui.qibla.composables.*
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthEmptyState
@@ -36,6 +37,7 @@ import com.ybugmobile.vaktiva.ui.theme.getGlassTheme
 import com.ybugmobile.vaktiva.ui.theme.getGradientForTime
 import org.maplibre.android.MapLibre
 import org.maplibre.android.geometry.LatLng
+import java.time.LocalTime
 import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,8 +66,9 @@ fun QiblaScreen(
     var showCalibrationDialog by remember { mutableStateOf(false) }
     var showHealthOverlay by remember { mutableStateOf(false) }
 
-    val backgroundGradient = getGradientForTime(state.currentTime.toLocalTime(), state.currentPrayerDay)
-    val glassTheme = getGlassTheme(state.currentTime.toLocalTime(), state.currentPrayerDay)
+    val localTime = state.currentTime.toLocalTime()
+    val backgroundGradient = getGradientForTime(localTime, state.currentPrayerDay)
+    val glassTheme = getGlassTheme(localTime, state.currentPrayerDay)
 
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseAlpha by infiniteTransition.animateFloat(
@@ -88,7 +91,7 @@ fun QiblaScreen(
     }
 
     val alignmentColor by animateColorAsState(
-        targetValue = if (isAligned) Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary,
+        targetValue = if (isAligned) Color(0xFFFFB300) else MaterialTheme.colorScheme.primary, // Reverted to fixed Warm Amber
         label = "alignmentColor"
     )
 
@@ -229,8 +232,8 @@ private fun QiblaContent(
                             )
                         }
                         
-                        // Alignment God Ray effect
-                        QiblaAlignmentEffect(isAligned = isAligned)
+                        // Alignment effect
+                        QiblaAlignmentEffect(isAligned = isAligned, alignmentColor = alignmentColor)
                     }
                 }
 
@@ -442,7 +445,7 @@ private fun CompassContainer(
             contentColor = currentTheme.contentColor
         )
         
-        // Alignment God Ray effect
-        QiblaAlignmentEffect(isAligned = isAligned)
+        // Alignment effect (Matches the theme color)
+        QiblaAlignmentEffect(isAligned = isAligned, alignmentColor = alignmentColor)
     }
 }
