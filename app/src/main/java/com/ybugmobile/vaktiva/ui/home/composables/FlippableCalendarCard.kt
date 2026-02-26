@@ -1,26 +1,25 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
-import android.content.res.Configuration
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
@@ -32,6 +31,7 @@ import java.util.Locale
 fun FlippableCalendarCard(
     day: PrayerDay,
     contentColor: Color,
+    accentColor: Color, // Now passed dynamically
     modifier: Modifier = Modifier
 ) {
     var isFlipped by remember { mutableStateOf(false) }
@@ -44,51 +44,13 @@ fun FlippableCalendarCard(
         label = "cardFlip"
     )
 
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-    // Scale factors for landscape
-    val outerSize = if (isLandscape) 90.dp else 115.dp
-    val innerSize = if (isLandscape) 70.dp else 88.dp
-    val centerTextSize = if (isLandscape) 28.sp else 36.sp
-    val topTextSize = if (isLandscape) 8.sp else 10.sp
-    val bottomTextSize = if (isLandscape) 7.sp else 9.sp
-
-    val infiniteTransition = rememberInfiniteTransition(label = "stellar")
-
-    // Rotating orbits
-    val orbitRotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(12000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "orbitRotation"
-    )
-
-    // Breathing pulse
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.04f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulseScale"
-    )
-
     val context = LocalContext.current
     val dayFormatter = remember { DateTimeFormatter.ofPattern("dd") }
-    val monthFormatter = remember { DateTimeFormatter.ofPattern("MMM") }
+    val monthFormatter = remember { DateTimeFormatter.ofPattern("MMMM") }
 
     Box(
         modifier = modifier
-            .size(outerSize)
-            .graphicsLayer {
-                scaleX = pulseScale
-                scaleY = pulseScale
-            }
+            .size(100.dp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -97,46 +59,19 @@ fun FlippableCalendarCard(
             },
         contentAlignment = Alignment.Center
     ) {
-        // Celestial Orbits
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .rotate(orbitRotation)
-                .drawBehind {
-                    val accent = if (rotation <= 90f) Color(0xFFEF4444) else Color(0xFF10B981)
-                    drawCircle(
-                        brush = Brush.sweepGradient(
-                            listOf(accent.copy(alpha = 0f), accent.copy(alpha = 0.3f), accent.copy(alpha = 0f))
-                        ),
-                        style = Stroke(
-                            width = 1.dp.toPx(),
-                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(15f, 15f))
-                        ),
-                        radius = size.width / 2 - 4.dp.toPx()
-                    )
-                }
-        )
-
-        // Core Flippable Body
-        Box(
-            modifier = Modifier
-                .size(innerSize)
-                .graphicsLayer {
-                    rotationY = rotation
-                    cameraDistance = 15f * density
-                },
-            contentAlignment = Alignment.Center
+            modifier = Modifier.graphicsLayer {
+                rotationY = rotation
+                cameraDistance = 12f * density
+            }
         ) {
             if (rotation <= 90f) {
-                StellarSpherePage(
-                    topText = day.date.format(monthFormatter).uppercase(Locale.getDefault()),
-                    centerText = day.date.format(dayFormatter),
-                    bottomText = day.date.year.toString(),
+                ModernCalendarCircle(
+                    topText = day.date.format(dayFormatter),
+                    bottomText = day.date.format(monthFormatter).uppercase(Locale.getDefault()),
+                    contentColor = contentColor,
                     isBack = false,
-                    accentColor = Color(0xFFEF4444),
-                    centerTextSize = centerTextSize,
-                    topTextSize = topTextSize,
-                    bottomTextSize = bottomTextSize
+                    accentColor = accentColor
                 )
             } else {
                 val hijri = day.hijriDate
@@ -145,15 +80,12 @@ fun FlippableCalendarCard(
                 } ?: 0
                 val monthName = if (monthResId != 0) stringResource(monthResId) else hijri?.monthEn ?: ""
 
-                StellarSpherePage(
-                    topText = monthName.take(3).uppercase(Locale.getDefault()),
-                    centerText = hijri?.day?.toString() ?: "",
-                    bottomText = hijri?.year?.toString() ?: "",
+                ModernCalendarCircle(
+                    topText = hijri?.day?.toString() ?: "",
+                    bottomText = monthName.uppercase(Locale.getDefault()),
+                    contentColor = contentColor,
                     isBack = true,
-                    accentColor = Color(0xFF10B981),
-                    centerTextSize = centerTextSize,
-                    topTextSize = topTextSize,
-                    bottomTextSize = bottomTextSize
+                    accentColor = accentColor
                 )
             }
         }
@@ -161,26 +93,23 @@ fun FlippableCalendarCard(
 }
 
 @Composable
-private fun StellarSpherePage(
+private fun ModernCalendarCircle(
     topText: String,
-    centerText: String,
     bottomText: String,
+    contentColor: Color,
     isBack: Boolean,
-    accentColor: Color,
-    centerTextSize: androidx.compose.ui.unit.TextUnit,
-    topTextSize: androidx.compose.ui.unit.TextUnit,
-    bottomTextSize: androidx.compose.ui.unit.TextUnit
+    accentColor: Color
 ) {
     Surface(
         modifier = Modifier
-            .fillMaxSize()
+            .size(100.dp)
             .graphicsLayer { if (isBack) rotationY = 180f },
-        color = Color.Black.copy(alpha = 0.35f),
+        color = Color.White.copy(alpha = 0.08f),
         shape = CircleShape,
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
             Brush.linearGradient(
-                listOf(accentColor.copy(alpha = 0.7f), Color.White.copy(alpha = 0.2f), accentColor.copy(alpha = 0.5f))
+                listOf(contentColor.copy(alpha = 0.25f), Color.Transparent, contentColor.copy(alpha = 0.1f))
             )
         )
     ) {
@@ -188,20 +117,23 @@ private fun StellarSpherePage(
             modifier = Modifier
                 .fillMaxSize()
                 .drawBehind {
-                    // Internal Nebula Glow
+                    // Central glow
                     drawCircle(
                         brush = Brush.radialGradient(
-                            colors = listOf(accentColor.copy(alpha = 0.2f), Color.Transparent),
-                            center = Offset(size.width * 0.3f, size.height * 0.3f),
-                            radius = size.width * 0.8f
+                            colors = listOf(accentColor.copy(alpha = 0.15f), Color.Transparent),
+                            radius = size.width * 0.6f
                         )
                     )
-
-                    // Atmospheric Rim Light
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(Color.Transparent, accentColor.copy(alpha = 0.12f)),
-                            radius = size.width * 0.5f
+                    
+                    // Subtle top accent
+                    drawArc(
+                        color = accentColor.copy(alpha = 0.4f),
+                        startAngle = 225f,
+                        sweepAngle = 90f,
+                        useCenter = false,
+                        style = androidx.compose.ui.graphics.drawscope.Stroke(
+                            width = 3.dp.toPx(),
+                            cap = StrokeCap.Round
                         )
                     )
                 },
@@ -210,38 +142,34 @@ private fun StellarSpherePage(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier.padding(8.dp)
             ) {
+                // Large Day Number
                 Text(
                     text = topText,
-                    color = accentColor.copy(alpha = 0.9f),
-                    style = TextStyle(
-                        fontSize = topTextSize,
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 1.5.sp
-                    )
-                )
-
-                Text(
-                    text = centerText,
-                    color = Color.White,
-                    style = TextStyle(
-                        fontSize = centerTextSize,
-                        fontWeight = FontWeight.Black,
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.Light,
                         fontFamily = IBMPlexArabic,
-                        letterSpacing = (-1).sp,
-                        shadow = Shadow(accentColor.copy(alpha = 0.7f), blurRadius = 18f)
-                    )
+                        letterSpacing = (-1).sp
+                    ),
+                    color = contentColor,
+                    textAlign = TextAlign.Center
                 )
 
+                // Month Text
                 Text(
                     text = bottomText,
-                    color = Color.White.copy(alpha = 0.5f),
-                    style = TextStyle(
-                        fontSize = bottomTextSize,
+                    style = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    )
+                        letterSpacing = 0.5.sp,
+                        fontSize = 10.sp
+                    ),
+                    color = contentColor.copy(alpha = 0.6f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 4.dp)
                 )
             }
         }

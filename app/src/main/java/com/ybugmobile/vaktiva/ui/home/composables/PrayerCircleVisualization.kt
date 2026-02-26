@@ -438,7 +438,8 @@ fun PrayerCircleVisualization(
         ) {
             FlippableCalendarCard(
                 day = day,
-                contentColor = contentColor
+                contentColor = contentColor,
+                accentColor = currentPrayerColor
             )
             
             Spacer(modifier = Modifier.height(8.dp))

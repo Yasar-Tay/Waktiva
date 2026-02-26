@@ -43,22 +43,6 @@ fun CurrentPrayerHeader(
                     .align(Alignment.Center)
                     .offset(y = (-74.dp)) // Positioned above the FlippableCalendarCard
             ) {
-                Icon(
-                    imageVector = when(currentPrayer.type) {
-                        PrayerType.FAJR -> ImageVector.vectorResource(R.drawable.water_lux_rotated)
-                        PrayerType.SUNRISE -> Icons.Rounded.WbTwilight
-                        PrayerType.DHUHR -> Icons.Rounded.WbSunny
-                        PrayerType.ASR -> Icons.Rounded.WbSunny
-                        PrayerType.MAGHRIB -> Icons.Rounded.WbTwilight
-                        PrayerType.ISHA -> Icons.Rounded.NightsStay
-                        else -> Icons.Rounded.WbSunny
-                    },
-                    contentDescription = null,
-                    tint = iconColor,
-                    modifier = Modifier.size(20.dp)
-                )
-                
-                Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
                     text = currentPrayer.type.getDisplayName(context).uppercase(locale),
