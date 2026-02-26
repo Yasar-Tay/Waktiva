@@ -62,6 +62,8 @@ fun PrayerCircleVisualization(
     nextPrayer: NextPrayer?,
     currentPrayer: CurrentPrayer?,
     isSelectedDayToday: Boolean,
+    sunAzimuth: Float = 0f,
+    sunAltitude: Float = 0f,
     contentColor: Color = Color.White,
     isMuted: Boolean = false,
     playAdhanAudio: Boolean = false,
@@ -482,7 +484,9 @@ fun PrayerCircleVisualization(
             FlippableCalendarCard(
                 day = day,
                 contentColor = contentColor,
-                accentColor = currentPrayerColor
+                accentColor = currentPrayerColor,
+                sunAzimuth = sunAzimuth,
+                sunAltitude = sunAltitude
             )
             
             Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 12.dp))

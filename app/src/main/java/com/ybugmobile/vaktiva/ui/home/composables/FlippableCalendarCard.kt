@@ -3,6 +3,7 @@ package com.ybugmobile.vaktiva.ui.home.composables
 import android.content.res.Configuration
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -32,12 +33,15 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.PI
 
 @Composable
 fun FlippableCalendarCard(
     day: PrayerDay,
     contentColor: Color,
     accentColor: Color,
+    sunAzimuth: Float,
+    sunAltitude: Float,
     modifier: Modifier = Modifier
 ) {
     var isFlipped by remember { mutableStateOf(false) }
@@ -51,15 +55,6 @@ fun FlippableCalendarCard(
     )
 
     val infiniteTransition = rememberInfiniteTransition(label = "celestial_vibes")
-    val auraRotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(45000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "auraRotation"
-    )
     
     val flarePulse by infiniteTransition.animateFloat(
         initialValue = 0.4f,
@@ -69,6 +64,18 @@ fun FlippableCalendarCard(
             repeatMode = RepeatMode.Reverse
         ),
         label = "flarePulse"
+    )
+
+    // Animated values for smooth transition during time shifts
+    val animSunAzimuth by animateFloatAsState(
+        targetValue = sunAzimuth,
+        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        label = "animSunAzimuth"
+    )
+    val animSunAltitude by animateFloatAsState(
+        targetValue = sunAltitude,
+        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        label = "animSunAltitude"
     )
 
     val configuration = LocalConfiguration.current
@@ -81,7 +88,7 @@ fun FlippableCalendarCard(
 
     Box(
         modifier = modifier
-            .size(cardSize + 54.dp) // Ample space for atmospheric "Sun" rays
+            .size(cardSize + 54.dp) 
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -90,14 +97,14 @@ fun FlippableCalendarCard(
             },
         contentAlignment = Alignment.Center
     ) {
-        // ATMOSPHERIC SUN / STAR BACKGROUND
+        // ATMOSPHERIC BACKGROUND
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .drawBehind {
                     val radius = (cardSize.toPx() / 2)
                     
-                    // 1. Core Radiant Bloom (The Sun's Body)
+                    // 1. Core Radiant Bloom (Atmospheric glow)
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(
@@ -110,36 +117,7 @@ fun FlippableCalendarCard(
                         )
                     )
 
-                    // 2. Rotating Corona Rays
-                    rotate(auraRotation) {
-                        val rayCount = 12
-                        val innerRayRadius = radius * 1.05f
-                        val outerRayRadius = radius * 1.55f
-                        
-                        for (i in 0 until rayCount) {
-                            val angle = i * (360f / rayCount)
-                            val angleRad = Math.toRadians(angle.toDouble())
-                            
-                            val startX = center.x + innerRayRadius * cos(angleRad).toFloat()
-                            val startY = center.y + innerRayRadius * sin(angleRad).toFloat()
-                            val endX = center.x + outerRayRadius * cos(angleRad).toFloat()
-                            val endY = center.y + outerRayRadius * sin(angleRad).toFloat()
-
-                            drawLine(
-                                brush = Brush.linearGradient(
-                                    colors = listOf(accentColor.copy(alpha = 0.5f * flarePulse), Color.Transparent),
-                                    start = Offset(startX, startY),
-                                    end = Offset(endX, endY)
-                                ),
-                                start = Offset(startX, startY),
-                                end = Offset(endX, endY),
-                                strokeWidth = 2.5.dp.toPx(),
-                                cap = StrokeCap.Round
-                            )
-                        }
-                    }
-
-                    // 3. Faint Orbital Shimmer
+                    // 2. Faint Orbital Shimmer
                     drawCircle(
                         color = accentColor.copy(alpha = 0.2f * flarePulse),
                         radius = radius * 1.2f,
@@ -157,7 +135,7 @@ fun FlippableCalendarCard(
                 }
         )
 
-        // THE CALENDAR DISC (The Moon/Planet surface feel)
+        // THE CALENDAR DISC (The Earth surface feel)
         Box(
             modifier = Modifier
                 .size(cardSize)
@@ -173,6 +151,8 @@ fun FlippableCalendarCard(
                     contentColor = contentColor,
                     isBack = false,
                     accentColor = accentColor,
+                    sunAzimuth = animSunAzimuth,
+                    sunAltitude = animSunAltitude,
                     isLandscape = isLandscape
                 )
             } else {
@@ -189,6 +169,8 @@ fun FlippableCalendarCard(
                     contentColor = contentColor,
                     isBack = true,
                     accentColor = accentColor,
+                    sunAzimuth = animSunAzimuth,
+                    sunAltitude = animSunAltitude,
                     isLandscape = isLandscape
                 )
             }
@@ -203,16 +185,29 @@ private fun CalendarSide(
     contentColor: Color,
     isBack: Boolean,
     accentColor: Color,
+    sunAzimuth: Float,
+    sunAltitude: Float,
     isLandscape: Boolean
 ) {
     val dayFontSize = if (isLandscape) 30.sp else 34.sp
     val monthFontSize = if (isLandscape) 8.sp else 9.sp
 
+    // Map Sun Azimuth to light direction (0 deg North/Top)
+    val lightAngleRad = ((sunAzimuth - 90f) * PI / 180f).toFloat()
+    
+    // Terminator shift based on Sun Altitude
+    val terminatorShift = (sin(sunAltitude * PI / 180f) * 0.4f).toFloat()
+    
+    // Smooth transition stops
+    val brightStop = (0.35f - terminatorShift).coerceIn(0f, 1f)
+    val midStop = (0.55f - terminatorShift).coerceIn(0f, 1f)
+    val transparentStop = (0.85f - terminatorShift).coerceIn(0f, 1f)
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
             .graphicsLayer { if (isBack) rotationY = 180f },
-        color = Color.White.copy(alpha = 0.12f), // Semi-transparent glass
+        color = Color.Transparent,
         shape = CircleShape,
         border = BorderStroke(
             1.5.dp,
@@ -221,8 +216,49 @@ private fun CalendarSide(
             )
         )
     ) {
+        // EARTH LOOK: Dynamic Light Angle via drawBehind for proper size mapping
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .drawBehind {
+                    val radius = size.width / 2
+                    
+                    // Sun direction vector (from center towards sun)
+                    val dirX = cos(lightAngleRad)
+                    val dirY = sin(lightAngleRad)
+                    
+                    // Gradient starts at the sun side (bright) and ends at opposite side (dark/transparent)
+                    val gradientStart = Offset(center.x + dirX * radius, center.y + dirY * radius)
+                    val gradientEnd = Offset(center.x - dirX * radius, center.y - dirY * radius)
+
+                    // 1. The Main Planet Gradient (smoother transition to transparency)
+                    drawCircle(
+                        brush = Brush.linearGradient(
+                            0.0f to accentColor.copy(alpha = 0.5f),
+                            brightStop to accentColor.copy(alpha = 0.3f),
+                            midStop to accentColor.copy(alpha = 0.1f),
+                            transparentStop to Color.Transparent,
+                            1.0f to Color.Transparent,
+                            start = gradientStart,
+                            end = gradientEnd,
+                            tileMode = TileMode.Clamp
+                        )
+                    )
+
+                    // 2. Curvature Highlight (Specular-like glow on the sun side)
+                    val highlightOffset = Offset(
+                        center.x + dirX * radius * 0.45f,
+                        center.y + dirY * radius * 0.45f
+                    )
+                    
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(Color.White.copy(alpha = 0.15f), Color.Transparent),
+                            center = highlightOffset,
+                            radius = radius * 1.3f
+                        )
+                    )
+                },
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -238,7 +274,7 @@ private fun CalendarSide(
                         fontFamily = IBMPlexArabic,
                         letterSpacing = (-1).sp
                     ),
-                    color = contentColor,
+                    color = Color.White,
                     textAlign = TextAlign.Center
                 )
 
@@ -249,7 +285,7 @@ private fun CalendarSide(
                         letterSpacing = 1.sp,
                         fontSize = monthFontSize
                     ),
-                    color = contentColor.copy(alpha = 0.8f),
+                    color = Color.White.copy(alpha = 0.8f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
