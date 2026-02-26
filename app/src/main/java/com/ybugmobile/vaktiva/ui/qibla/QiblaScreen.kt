@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.vaktiva.R
-import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.home.composables.LocationSection
 import com.ybugmobile.vaktiva.ui.qibla.composables.*
 import com.ybugmobile.vaktiva.ui.settings.composables.SystemHealthEmptyState
@@ -188,7 +187,8 @@ private fun QiblaContent(
                 onMapLongClick = { },
                 onToggleSatellite = { isSatelliteView = !isSatelliteView },
                 fabAlignment = if (isLandscape) Alignment.BottomCenter else Alignment.CenterEnd,
-                fabPadding = if (isLandscape) PaddingValues(start = 80.dp, end = 320.dp, bottom = 32.dp) else PaddingValues(16.dp)
+                fabPadding = if (isLandscape) PaddingValues(start = 80.dp, end = 320.dp, bottom = 32.dp) else PaddingValues(16.dp),
+                isHorizontalFabs = isLandscape
             )
             
             if (!state.isNetworkAvailable) {
