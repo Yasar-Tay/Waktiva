@@ -1,10 +1,11 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,29 +38,43 @@ fun ReligiousBadge(
     val accentColor = getCalendarAccentColor(date, hijriDate?.monthNumber, hijriDate?.day, contentColor)
 
     Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = accentColor.copy(alpha = 0.15f),
-        modifier = modifier.border(1.5.dp, contentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp)),
+        shape = CircleShape,
+        color = accentColor.copy(alpha = 0.12f),
+        modifier = modifier.graphicsLayer {
+            shadowElevation = 2f
+            shape = CircleShape
+            clip = true
+        },
+        border = BorderStroke(1.dp, accentColor.copy(alpha = 0.25f))
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 14.dp, vertical = 8.dp),
+                .padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Icon(
-                imageVector = Icons.Rounded.Star,
-                contentDescription = null,
-                tint = accentColor,
-                modifier = Modifier.size(14.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .size(18.dp)
+                    .background(accentColor.copy(alpha = 0.2f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.AutoAwesome,
+                    contentDescription = null,
+                    tint = accentColor,
+                    modifier = Modifier.size(10.dp)
+                )
+            }
 
             Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                color = contentColor,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 0.4.sp
+                text = label.uppercase(),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 0.8.sp,
+                    fontSize = 10.sp
+                ),
+                color = contentColor.copy(alpha = 0.9f)
             )
         }
     }
@@ -80,9 +96,9 @@ fun getCalendarAccentColor(
     return when {
         isEid -> Color(0xFFFFD54F) // Soft Gold
         isRamadan -> Color(0xFF81C784) // Sage Green
-        isEve -> Color(0xFFBA68C8) // Soft Purple (Distinct from Gold)
+        isEve -> Color(0xFFBA68C8) // Soft Purple
         religiousDay != null -> Color(0xFFBA68C8) // Soft Purple
-        isToday -> Color(0xFF42A5F5) // Remarkable Vibrant Blue
+        isToday -> Color(0xFF42A5F5) // Vibrant Blue
         else -> contentColor.copy(alpha = 0.15f)
     }
 }

@@ -431,6 +431,25 @@ fun PrayerCircleVisualization(
             }
         }
 
+        Column(
+            modifier = Modifier.zIndex(5f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            FlippableCalendarCard(
+                day = day,
+                contentColor = contentColor
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            ReligiousBadge(
+                date = day.date,
+                hijriDate = day.hijriDate,
+                contentColor = contentColor
+            )
+        }
+
         CurrentPrayerHeader(
             currentPrayer = currentPrayer,
             contentColor = contentColor,

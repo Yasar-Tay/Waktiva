@@ -198,7 +198,7 @@ fun HomeScreenContent(
                 .fillMaxSize()
                 .background(brush = backgroundGradient)
         ) {
-            // Environmental Background (Performance optimized: Don't recompose with scroll)
+            // Environmental Background
             Box(Modifier.fillMaxSize()) {
                 StarryBackgroundLayer(
                     currentTime = localTime,
@@ -432,14 +432,13 @@ fun HomeScreenContent(
                                     modifier = Modifier.padding(horizontal = 24.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    // Weather Summary Row
-                                    if (state.temperature != null) {
-                                        Text(
-                                            text = "${state.temperature}°C • ${state.weatherCondition.name}",
-                                            style = MaterialTheme.typography.labelMedium,
-                                            color = contentColor.copy(alpha = 0.6f)
-                                        )
-                                    }
+                                    // Weather Summary replaced DatesSection
+                                    WeatherSection(
+                                        temperature = state.temperature,
+                                        condition = state.weatherCondition,
+                                        contentColor = contentColor,
+                                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                                    )
 
                                     Spacer(modifier = Modifier.height(32.dp))
 
@@ -568,7 +567,7 @@ fun HomeScreenContent(
                                 Spacer(modifier = Modifier.height(80.dp))
                             }
 
-                            // Moon Phase (Parallax handled via graphicsLayer)
+                            // Moon Phase
                             MoonPhaseView(
                                 moonPhase = state.moonPhase,
                                 contentColor = contentColor,

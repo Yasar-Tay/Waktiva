@@ -4,16 +4,13 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ybugmobile.vaktiva.domain.model.HijriData
-import com.ybugmobile.vaktiva.domain.model.HijriUtils
 import java.time.LocalDate
 
 @Composable
@@ -28,13 +25,8 @@ fun HomeHeader(
     isLocationEnabled: Boolean = true,
     isLocationPermissionGranted: Boolean = true
 ) {
-    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-    val effectiveHijri = remember(hijriDate, date) {
-        hijriDate ?: HijriUtils.calculateFallbackHijri(date)
-    }
 
     Box(
         modifier = modifier
@@ -48,31 +40,14 @@ fun HomeHeader(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    LocationSection(
-                        locationName = locationName, 
-                        contentColor = contentColor, 
-                        isNetworkAvailable = isNetworkAvailable, 
-                        isLocationEnabled = isLocationEnabled,
-                        isLocationPermissionGranted = isLocationPermissionGranted,
-                        onStatusClick = onStatusClick
-                    )
-                }
-
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Top
-                ) {
-                    DatesSection(
-                        date = date,
-                        hijriDate = effectiveHijri,
-                        contentColor = contentColor,
-                        context = context,
-                        isOffline = hijriDate == null
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    ReligiousBadge(date = date, contentColor = contentColor, hijriDate = effectiveHijri)
-                }
+                LocationSection(
+                    locationName = locationName, 
+                    contentColor = contentColor, 
+                    isNetworkAvailable = isNetworkAvailable, 
+                    isLocationEnabled = isLocationEnabled,
+                    isLocationPermissionGranted = isLocationPermissionGranted,
+                    onStatusClick = onStatusClick
+                )
             }
         } else {
             Column(horizontalAlignment = Alignment.Start) {
@@ -84,16 +59,6 @@ fun HomeHeader(
                     isLocationPermissionGranted = isLocationPermissionGranted,
                     onStatusClick = onStatusClick
                 )
-                Spacer(modifier = Modifier.height(12.dp))
-                DatesSection(
-                    date = date,
-                    hijriDate = effectiveHijri,
-                    contentColor = contentColor,
-                    context = context,
-                    isOffline = hijriDate == null
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                ReligiousBadge(date = date, contentColor = contentColor, hijriDate = effectiveHijri)
             }
         }
     }

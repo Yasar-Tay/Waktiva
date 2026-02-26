@@ -32,37 +32,42 @@ fun CurrentPrayerHeader(
     val locale = context.resources.configuration.locales[0]
 
     Box(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         if (currentPrayer != null) {
-            // Icon exactly at the center of the Box (and thus the circle)
-            Icon(
-                imageVector = when(currentPrayer.type) {
-                    PrayerType.FAJR -> ImageVector.vectorResource(R.drawable.water_lux_rotated)
-                    PrayerType.SUNRISE -> Icons.Rounded.WbTwilight
-                    PrayerType.DHUHR -> Icons.Rounded.WbSunny
-                    PrayerType.ASR -> Icons.Rounded.WbSunny
-                    PrayerType.MAGHRIB -> Icons.Rounded.WbTwilight
-                    PrayerType.ISHA -> Icons.Rounded.NightsStay
-                    else -> Icons.Rounded.WbSunny
-                },
-                contentDescription = null,
-                tint = iconColor,
-                modifier = Modifier.size(56.dp)
-            )
-
-            // Name positioned above the icon
-            Text(
-                text = currentPrayer.type.getDisplayName(context).uppercase(locale),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = contentColor.copy(alpha = 0.6f),
-                letterSpacing = 4.sp,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .offset(y = (-52.dp)) // Offset upwards: half icon (28) + spacer (12) + approx text half (12)
-            )
+                    .offset(y = (-74.dp)) // Positioned above the FlippableCalendarCard
+            ) {
+                Icon(
+                    imageVector = when(currentPrayer.type) {
+                        PrayerType.FAJR -> ImageVector.vectorResource(R.drawable.water_lux_rotated)
+                        PrayerType.SUNRISE -> Icons.Rounded.WbTwilight
+                        PrayerType.DHUHR -> Icons.Rounded.WbSunny
+                        PrayerType.ASR -> Icons.Rounded.WbSunny
+                        PrayerType.MAGHRIB -> Icons.Rounded.WbTwilight
+                        PrayerType.ISHA -> Icons.Rounded.NightsStay
+                        else -> Icons.Rounded.WbSunny
+                    },
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(20.dp)
+                )
+                
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = currentPrayer.type.getDisplayName(context).uppercase(locale),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = contentColor.copy(alpha = 0.6f),
+                    letterSpacing = 2.sp
+                )
+            }
         }
     }
 }
