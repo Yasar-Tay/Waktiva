@@ -408,6 +408,8 @@ fun HomeScreenContent(
                                 temperature = state.temperature,
                                 condition = state.weatherCondition,
                                 contentColor = contentColor,
+                                currentTime = localTime,
+                                currentPrayerDay = state.currentPrayerDay,
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                     .systemBarsPadding()
@@ -452,6 +454,8 @@ fun HomeScreenContent(
                                         temperature = state.temperature,
                                         condition = state.weatherCondition,
                                         contentColor = contentColor,
+                                        currentTime = localTime,
+                                        currentPrayerDay = state.currentPrayerDay,
                                         modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
                                     )
 

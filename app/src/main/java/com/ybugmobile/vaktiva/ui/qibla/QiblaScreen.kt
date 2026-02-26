@@ -230,10 +230,10 @@ private fun QiblaContent(
                                 isAligned = isAligned,
                                 contentColor = currentTheme.contentColor
                             )
+                            
+                            // Alignment effect
+                            QiblaAlignmentEffect(isAligned = isAligned, alignmentColor = alignmentColor)
                         }
-                        
-                        // Alignment effect
-                        QiblaAlignmentEffect(isAligned = isAligned, alignmentColor = alignmentColor)
                     }
                 }
 
