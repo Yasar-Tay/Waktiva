@@ -1,5 +1,6 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,8 +36,17 @@ fun ReligiousBadge(
 ) {
     val religiousDay = ReligiousDaysProvider.getReligiousDay(date) ?: return
     
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    
     val label = stringResource(religiousDay.nameResId)
     val accentColor = getCalendarAccentColor(date, hijriDate?.monthNumber, hijriDate?.day, contentColor)
+
+    val verticalPadding = if (isLandscape) 4.dp else 6.dp
+    val horizontalPadding = if (isLandscape) 10.dp else 12.dp
+    val iconBoxSize = if (isLandscape) 16.dp else 18.dp
+    val iconSize = if (isLandscape) 9.dp else 10.dp
+    val fontSize = if (isLandscape) 9.sp else 10.sp
 
     Surface(
         shape = CircleShape,
@@ -49,13 +60,13 @@ fun ReligiousBadge(
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 6.dp),
+                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(if (isLandscape) 6.dp else 8.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(18.dp)
+                    .size(iconBoxSize)
                     .background(accentColor.copy(alpha = 0.2f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
@@ -63,7 +74,7 @@ fun ReligiousBadge(
                     imageVector = Icons.Rounded.AutoAwesome,
                     contentDescription = null,
                     tint = accentColor,
-                    modifier = Modifier.size(10.dp)
+                    modifier = Modifier.size(iconSize)
                 )
             }
 
@@ -72,7 +83,7 @@ fun ReligiousBadge(
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontWeight = FontWeight.Black,
                     letterSpacing = 0.8.sp,
-                    fontSize = 10.sp
+                    fontSize = fontSize
                 ),
                 color = contentColor.copy(alpha = 0.9f)
             )

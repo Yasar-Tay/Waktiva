@@ -1,5 +1,6 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
+import android.content.res.Configuration
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.vectorResource
@@ -69,9 +71,10 @@ fun PrayerCircleVisualization(
     val context = LocalContext.current
     val formatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
     val layoutDirection = LocalLayoutDirection.current
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     var canvasSize by remember { mutableStateOf(Size.Zero) }
-
     var selectedInfo by remember { mutableStateOf<DetailedInfo?>(null) }
     
     LaunchedEffect(selectedInfo) {
@@ -81,12 +84,23 @@ fun PrayerCircleVisualization(
         }
     }
 
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val infiniteTransition = rememberInfiniteTransition(label = "celestial")
+    
+    val stellarRotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(30000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "stellarRotation"
+    )
+
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.15f,
+        targetValue = 1.05f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1500, easing = FastOutSlowInEasing),
+            animation = tween(2500, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "pulseScale"
@@ -127,12 +141,12 @@ fun PrayerCircleVisualization(
     
     val prayers = remember(day, fajrPainter, sunrisePainter, sunPainter, moonPainter) {
         listOf(
-            PrayerInfo(PrayerType.FAJR, day.timings[PrayerType.FAJR] ?: LocalTime.MIN, Color(0xFF81D4FA), fajrPainter),
-            PrayerInfo(PrayerType.SUNRISE, day.timings[PrayerType.SUNRISE] ?: LocalTime.MIN, Color(0xFFFFE082), sunrisePainter),
-            PrayerInfo(PrayerType.DHUHR, day.timings[PrayerType.DHUHR] ?: LocalTime.MIN, Color(0xFFFFF59D), sunPainter),
-            PrayerInfo(PrayerType.ASR, day.timings[PrayerType.ASR] ?: LocalTime.MIN, Color(0xFFFFCC80), sunPainter),
-            PrayerInfo(PrayerType.MAGHRIB, day.timings[PrayerType.MAGHRIB] ?: LocalTime.MIN, Color(0xFFCE93D8), sunrisePainter),
-            PrayerInfo(PrayerType.ISHA, day.timings[PrayerType.ISHA] ?: LocalTime.MIN, Color(0xFF9FA8DA), moonPainter)
+            PrayerNodeInfo(PrayerType.FAJR, day.timings[PrayerType.FAJR] ?: LocalTime.MIN, Color(0xFF81D4FA), fajrPainter),
+            PrayerNodeInfo(PrayerType.SUNRISE, day.timings[PrayerType.SUNRISE] ?: LocalTime.MIN, Color(0xFFFFE082), sunrisePainter),
+            PrayerNodeInfo(PrayerType.DHUHR, day.timings[PrayerType.DHUHR] ?: LocalTime.MIN, Color(0xFFFFF59D), sunPainter),
+            PrayerNodeInfo(PrayerType.ASR, day.timings[PrayerType.ASR] ?: LocalTime.MIN, Color(0xFFFFCC80), sunPainter),
+            PrayerNodeInfo(PrayerType.MAGHRIB, day.timings[PrayerType.MAGHRIB] ?: LocalTime.MIN, Color(0xFFCE93D8), sunrisePainter),
+            PrayerNodeInfo(PrayerType.ISHA, day.timings[PrayerType.ISHA] ?: LocalTime.MIN, Color(0xFF9FA8DA), moonPainter)
         )
     }
 
@@ -151,12 +165,6 @@ fun PrayerCircleVisualization(
     val currentPrayerColor = remember(currentPrayerType, prayers) {
         prayers.find { it.type == currentPrayerType }?.color ?: Color.White
     }
-
-    val currentTimeDotScale by animateFloatAsState(
-        targetValue = if (selectedInfo?.id == "CURRENT") 1.4f else 1f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "currentTimeDotScale"
-    )
 
     val prayerScales = prayers.map { prayer ->
         animateFloatAsState(
@@ -180,17 +188,21 @@ fun PrayerCircleVisualization(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
+                .graphicsLayer {
+                    scaleX = pulseScale
+                    scaleY = pulseScale
+                }
                 .onSizeChanged { canvasSize = Size(it.width.toFloat(), it.height.toFloat()) }
                 .pointerInput(day, currentTime, isSelectedDayToday, canvasSize, layoutDirection) {
                     detectTapGestures { tapOffset ->
                         val center = Offset(canvasSize.width / 2, canvasSize.height / 2)
-                        val radius = canvasSize.width / 2 - 20.dp.toPx()
+                        val radius = canvasSize.width / 2 - 24.dp.toPx()
                         
                         var hit: DetailedInfo? = null
                         
                         if (isSelectedDayToday) {
                             val currentPos = getPosition(currentTime, radius, center)
-                            if ((tapOffset - currentPos).getDistance() <= 32.dp.toPx()) {
+                            if ((tapOffset - currentPos).getDistance() <= 36.dp.toPx()) {
                                 hit = DetailedInfo(
                                     id = "CURRENT",
                                     title = context.getString(R.string.home_current_time),
@@ -204,7 +216,7 @@ fun PrayerCircleVisualization(
                         if (hit == null) {
                             for (prayer in prayers) {
                                 val pos = getPosition(prayer.time, radius, center)
-                                if ((tapOffset - pos).getDistance() <= 28.dp.toPx()) {
+                                if ((tapOffset - pos).getDistance() <= 32.dp.toPx()) {
                                     hit = DetailedInfo(
                                         id = prayer.type.name,
                                         title = prayer.type.getDisplayName(context),
@@ -223,21 +235,12 @@ fun PrayerCircleVisualization(
                                 }
                             }
                         }
-                        
                         selectedInfo = hit
                     }
                 }
                 .drawWithCache {
                     val center = Offset(size.width / 2, size.height / 2)
-                    val radius = size.width / 2 - 20.dp.toPx()
-
-                    // Pre-calculate common drawing objects
-                    val arcBrush = Brush.sweepGradient(
-                        0.0f to Color(0xFFFFE082).copy(alpha = 0.25f),
-                        0.5f to Color(0xFFFFB74D).copy(alpha = 0.25f),
-                        1.0f to Color(0xFFCE93D8).copy(alpha = 0.25f),
-                        center = center
-                    )
+                    val radius = size.width / 2 - 24.dp.toPx()
 
                     val sunriseMinutes = sunrise.hour * 60 + sunrise.minute
                     val sunsetMinutes = sunset.hour * 60 + sunset.minute
@@ -261,59 +264,76 @@ fun PrayerCircleVisualization(
                     }
 
                     onDrawBehind {
-                        // Static circle
-                        drawCircle(
-                            color = contentColor.copy(alpha = 0.08f),
-                            radius = radius,
-                            center = center,
-                            style = Stroke(width = 2.dp.toPx())
-                        )
-
-                        // Ticks
-                        for (i in 0 until 24) {
-                            val angle = i * 15f + 90f
-                            val angleRad = Math.toRadians(angle.toDouble())
-                            val isMajor = i % 6 == 0
-                            val tickLen = if (isMajor) 8.dp.toPx() else 4.dp.toPx()
-                            val inner = radius - tickLen / 2
-                            val outer = radius + tickLen / 2
-                            
-                            drawLine(
-                                color = contentColor.copy(alpha = if (isMajor) 0.3f else 0.15f),
-                                start = Offset(center.x + inner * cos(angleRad).toFloat(), center.y + inner * sin(angleRad).toFloat()),
-                                end = Offset(center.x + outer * cos(angleRad).toFloat(), center.y + outer * sin(angleRad).toFloat()),
-                                strokeWidth = (if (isMajor) 1.5.dp else 1.dp).toPx()
+                        withTransform({ rotate(stellarRotation, center) }) {
+                            drawCircle(
+                                brush = Brush.sweepGradient(
+                                    listOf(
+                                        contentColor.copy(alpha = 0f),
+                                        contentColor.copy(alpha = 0.12f),
+                                        contentColor.copy(alpha = 0f)
+                                    )
+                                ),
+                                radius = radius + (if (isLandscape) 10.dp else 14.dp).toPx(),
+                                style = Stroke(
+                                    width = 1.dp.toPx(),
+                                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(1f, 12f), 0f)
+                                )
                             )
                         }
 
-                        // Day arc
+                        drawCircle(
+                            color = contentColor.copy(alpha = 0.05f),
+                            radius = radius,
+                            center = center,
+                            style = Stroke(width = 1.dp.toPx())
+                        )
+
                         drawArc(
-                            brush = arcBrush,
+                            brush = Brush.sweepGradient(
+                                0.0f to Color(0xFFFFE082).copy(alpha = 0.4f),
+                                0.5f to Color(0xFFFFB74D).copy(alpha = 0.4f),
+                                1.0f to Color(0xFFCE93D8).copy(alpha = 0.4f),
+                                center = center
+                            ),
                             startAngle = startAngle,
                             sweepAngle = sweepAngle,
                             useCenter = false,
                             topLeft = Offset(center.x - radius, center.y - radius),
                             size = Size(radius * 2, radius * 2),
-                            style = Stroke(width = 6.dp.toPx(), cap = StrokeCap.Round)
+                            style = Stroke(width = (if (isLandscape) 3.dp else 4.dp).toPx(), cap = StrokeCap.Round)
                         )
+                        
+                        for (i in 0 until 24) {
+                            val angle = i * 15f + 90f
+                            val angleRad = Math.toRadians(angle.toDouble())
+                            val isMajor = i % 6 == 0
+                            val tickLen = if (isMajor) (if (isLandscape) 8.dp else 10.dp).toPx() else 4.dp.toPx()
+                            val inner = radius - tickLen / 2
+                            val outer = radius + tickLen / 2
+                            
+                            drawLine(
+                                color = contentColor.copy(alpha = if (isMajor) 0.4f else 0.1f),
+                                start = Offset(center.x + inner * cos(angleRad).toFloat(), center.y + inner * sin(angleRad).toFloat()),
+                                end = Offset(center.x + outer * cos(angleRad).toFloat(), center.y + outer * sin(angleRad).toFloat()),
+                                strokeWidth = (if (isMajor) 1.5.dp else 1.dp).toPx()
+                            )
+                        }
                     }
                 }
         ) {
             val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.width / 2 - 20.dp.toPx()
+            val radius = size.width / 2 - 24.dp.toPx()
 
             if (isSelectedDayToday) {
-                withTransform({
-                    rotate(rotationAngle, center)
-                }) {
+                withTransform({ rotate(rotationAngle, center) }) {
                     drawLine(
                         brush = Brush.verticalGradient(
-                            colors = listOf(currentPrayerColor, currentPrayerColor.copy(alpha = 0f)),
-                            startY = center.y - radius,
+                            colors = listOf(currentPrayerColor, Color.Transparent),
+                            startY = center.y - radius - 8.dp.toPx(),
                             endY = center.y
                         ),
                         start = Offset(center.x, center.y),
-                        end = Offset(center.x, center.y - radius + 8.dp.toPx()),
+                        end = Offset(center.x, center.y - radius + 12.dp.toPx()),
                         strokeWidth = 2.dp.toPx(),
                         cap = StrokeCap.Round
                     )
@@ -326,28 +346,26 @@ fun PrayerCircleVisualization(
                 val scale = prayerScales[index].value
 
                 withTransform({ scale(scale, scale, pos) }) {
-                    val markerRadius = if (isCurrent) 15.dp.toPx() else 13.dp.toPx()
-                    val iconSize = if (isCurrent) 18.dp.toPx() else 15.dp.toPx()
+                    val markerRadius = if (isCurrent) (if (isLandscape) 11.dp else 14.dp).toPx() else (if (isLandscape) 9.dp else 12.dp).toPx()
+                    val iconSize = if (isCurrent) (if (isLandscape) 13.dp else 16.dp).toPx() else (if (isLandscape) 11.dp else 14.dp).toPx()
 
                     if (isCurrent) {
                         drawCircle(
                             color = prayer.color.copy(alpha = 0.15f),
-                            radius = markerRadius * 2.2f * pulseScale,
+                            radius = markerRadius * 2.5f * pulseScale,
                             center = pos
                         )
                     }
                     
-                    if (scale > 1f) {
-                        drawCircle(
-                            color = prayer.color.copy(alpha = 0.3f),
-                            radius = markerRadius * 1.8f,
-                            center = pos
-                        )
-                    }
+                    drawCircle(
+                        color = prayer.color.copy(alpha = 0.25f),
+                        radius = markerRadius * 1.6f,
+                        center = pos
+                    )
 
                     drawCircle(
                         brush = Brush.radialGradient(
-                            colors = listOf(prayer.color, prayer.color.darken(0.3f)),
+                            colors = listOf(prayer.color, prayer.color.darken(0.4f)),
                             center = pos,
                             radius = markerRadius
                         ),
@@ -356,10 +374,10 @@ fun PrayerCircleVisualization(
                     )
 
                     drawCircle(
-                        color = Color.White.copy(alpha = 0.9f),
+                        color = Color.White.copy(alpha = 0.8f),
                         radius = markerRadius,
                         center = pos,
-                        style = Stroke(width = 1.5.dp.toPx())
+                        style = Stroke(width = 1.dp.toPx())
                     )
 
                     translate(pos.x - iconSize / 2, pos.y - iconSize / 2) {
@@ -370,63 +388,36 @@ fun PrayerCircleVisualization(
                             )
                         }
                     }
+                    
+                    val prayerTimeText = prayerTimesTexts[index]
+                    val textLayoutResult = textMeasurer.measure(
+                        text = AnnotatedString(prayerTimeText),
+                        style = TextStyle(
+                            color = contentColor.copy(alpha = if (isCurrent) 0.9f else 0.5f),
+                            fontSize = (if (isLandscape) 8.sp else 10.sp),
+                            fontFamily = IBMPlexArabic,
+                            fontWeight = if (isCurrent) FontWeight.Black else FontWeight.Bold
+                        )
+                    )
+                    drawText(
+                        textLayoutResult = textLayoutResult,
+                        topLeft = Offset(pos.x - textLayoutResult.size.width / 2, pos.y + (if (isLandscape) 14.dp else 18.dp).toPx())
+                    )
                 }
             }
 
             if (isSelectedDayToday) {
                 val currentPos = getPosition(currentTime, radius, center)
-                val scale = currentTimeDotScale
-
-                withTransform({ scale(scale, scale, currentPos) }) {
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(currentPrayerColor.copy(alpha = 0.5f), Color.Transparent),
-                            center = currentPos,
-                            radius = 18.dp.toPx()
-                        ),
-                        radius = 18.dp.toPx(),
-                        center = currentPos
-                    )
-
-                    drawCircle(
-                        color = Color.White,
-                        radius = 6.dp.toPx(),
-                        center = currentPos
-                    )
-                    
-                    drawCircle(
-                        color = currentPrayerColor,
-                        radius = 7.dp.toPx(),
-                        center = currentPos,
-                        style = Stroke(width = 1.5.dp.toPx())
-                    )
-                }
-            }
-
-            // Text measurements should happen outside the draw loop if possible, 
-            // but rememberTextMeasurer helps. We'll pre-calculate texts.
-            prayers.forEachIndexed { index, prayer ->
-                val prayerTimeText = prayerTimesTexts[index]
-                val pos = getPosition(prayer.time, radius, center)
-
-                val textLayoutResult = textMeasurer.measure(
-                    text = AnnotatedString(prayerTimeText),
-                    style = TextStyle(
-                        color = contentColor.copy(alpha = 0.7f),
-                        fontSize = 11.sp,
-                        fontFamily = IBMPlexArabic,
-                        fontWeight = FontWeight.Bold
-                    )
+                drawCircle(
+                    color = Color.White,
+                    radius = (if (isLandscape) 3.dp else 4.dp).toPx(),
+                    center = currentPos
                 )
-
-                val textOffset = Offset(
-                    x = pos.x - textLayoutResult.size.width / 2,
-                    y = pos.y + 18.dp.toPx()
-                )
-
-                drawText(
-                    textLayoutResult = textLayoutResult,
-                    topLeft = textOffset
+                drawCircle(
+                    color = currentPrayerColor,
+                    radius = (if (isLandscape) 5.dp else 6.dp).toPx(),
+                    center = currentPos,
+                    style = Stroke(width = 1.5.dp.toPx())
                 )
             }
         }
@@ -442,7 +433,7 @@ fun PrayerCircleVisualization(
                 accentColor = currentPrayerColor
             )
             
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 12.dp))
             
             ReligiousBadge(
                 date = day.date,
@@ -466,11 +457,11 @@ fun PrayerCircleVisualization(
             AnimatedContent(
                 targetState = selectedInfo,
                 transitionSpec = {
-                    (slideInVertically { it / 2 } + fadeIn(tween(300)))
-                        .togetherWith(slideOutVertically { it / 2 } + fadeOut(tween(200)))
+                    (fadeIn(tween(300)) + scaleIn(initialScale = 0.8f))
+                        .togetherWith(fadeOut(tween(200)) + scaleOut(targetScale = 0.8f))
                 },
                 label = "info_card",
-
+                modifier = Modifier.padding(bottom = 10.dp)
             ) { info ->
                 if (info != null) {
                     InfoGlassCard(info)
@@ -483,55 +474,71 @@ fun PrayerCircleVisualization(
 @Composable
 fun InfoGlassCard(info: DetailedInfo) {
     val glassTheme = LocalGlassTheme.current
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
-    val containerColor = remember(glassTheme.isLightMode) {
-        if (glassTheme.isLightMode) {
-            Color.White.copy(alpha = 0.22f)
-        } else {
-            Color.Black.copy(alpha = 0.45f)
-        }
+    val height = if (isLandscape) 40.dp else 48.dp
+    val iconSize = if (isLandscape) 28.dp else 32.dp
+    val titleFontSize = if (isLandscape) 9.sp else 11.sp
+    val timeFontSize = if (isLandscape) 14.sp else 16.sp
+    val horizontalPadding = if (isLandscape) 14.dp else 18.dp
+
+    val containerColor = if (glassTheme.isLightMode) {
+        Color.White.copy(alpha = 0.25f)
+    } else {
+        Color.Black.copy(alpha = 0.5f)
     }
     
-    val borderColor = remember(glassTheme.isLightMode) {
-        if (glassTheme.isLightMode) {
-            Color.White.copy(alpha = 0.45f)
-        } else {
-            Color.White.copy(alpha = 0.15f)
-        }
+    val borderColor = if (glassTheme.isLightMode) {
+        Color.White.copy(alpha = 0.5f)
+    } else {
+        Color.White.copy(alpha = 0.2f)
     }
 
     Surface(
         color = containerColor,
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(percent = 50),
         shadowElevation = 8.dp,
         tonalElevation = 4.dp,
         modifier = Modifier
             .wrapContentSize()
-            .height(44.dp)
+            .height(height)
             .drawWithContent {
                 drawContent()
+                // Celestial Glow
+                drawRoundRect(
+                    brush = Brush.radialGradient(
+                        colors = listOf(info.color.copy(alpha = 0.2f), Color.Transparent),
+                        center = Offset(0f, size.height / 2),
+                        radius = size.width
+                    ),
+                    size = size,
+                    cornerRadius = CornerRadius(size.height / 2),
+                    blendMode = BlendMode.Screen
+                )
+                // Modern Border
                 drawRoundRect(
                     color = borderColor,
                     size = size,
-                    cornerRadius = CornerRadius(20.dp.toPx()),
-                    style = Stroke(width = 1.2.dp.toPx())
+                    cornerRadius = CornerRadius(size.height / 2),
+                    style = Stroke(width = 1.dp.toPx())
                 )
             },
         contentColor = Color.White
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = horizontalPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(if (isLandscape) 8.dp else 12.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(28.dp)
-                    .background(info.color.copy(alpha = 0.2f), CircleShape)
+                    .size(iconSize)
+                    .background(info.color.copy(alpha = 0.25f), CircleShape)
                     .drawWithContent {
                         drawContent()
                         drawCircle(
-                            color = info.color.copy(alpha = 0.7f),
+                            color = info.color.copy(alpha = 0.8f),
                             radius = size.minDimension / 2,
                             style = Stroke(1.5.dp.toPx())
                         )
@@ -542,7 +549,7 @@ fun InfoGlassCard(info: DetailedInfo) {
                     imageVector = info.icon,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(if (isLandscape) 14.dp else 18.dp)
                 )
             }
             
@@ -550,20 +557,20 @@ fun InfoGlassCard(info: DetailedInfo) {
                 Text(
                     text = info.title,
                     style = TextStyle(
-                        fontSize = 10.sp,
+                        fontSize = titleFontSize,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White.copy(alpha = 0.6f),
-                        letterSpacing = 0.4.sp
+                        color = Color.White.copy(alpha = 0.7f),
+                        letterSpacing = 0.5.sp
                     )
                 )
                 Text(
                     text = info.time,
                     style = TextStyle(
-                        fontSize = 15.sp,
+                        fontSize = timeFontSize,
                         fontFamily = IBMPlexArabic,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        letterSpacing = (-0.3).sp
+                        letterSpacing = (-0.4).sp
                     )
                 )
             }
@@ -580,7 +587,7 @@ private fun Color.darken(factor: Float): Color {
     )
 }
 
-data class PrayerInfo(
+data class PrayerNodeInfo(
     val type: PrayerType,
     val time: LocalTime,
     val color: Color,

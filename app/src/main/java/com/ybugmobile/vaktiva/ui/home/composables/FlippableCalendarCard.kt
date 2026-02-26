@@ -1,5 +1,6 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,7 +33,7 @@ import java.util.Locale
 fun FlippableCalendarCard(
     day: PrayerDay,
     contentColor: Color,
-    accentColor: Color, // Now passed dynamically
+    accentColor: Color,
     modifier: Modifier = Modifier
 ) {
     var isFlipped by remember { mutableStateOf(false) }
@@ -44,13 +46,17 @@ fun FlippableCalendarCard(
         label = "cardFlip"
     )
 
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val cardSize = if (isLandscape) 84.dp else 100.dp
+
     val context = LocalContext.current
     val dayFormatter = remember { DateTimeFormatter.ofPattern("dd") }
     val monthFormatter = remember { DateTimeFormatter.ofPattern("MMMM") }
 
     Box(
         modifier = modifier
-            .size(100.dp)
+            .size(cardSize)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -71,7 +77,8 @@ fun FlippableCalendarCard(
                     bottomText = day.date.format(monthFormatter).uppercase(Locale.getDefault()),
                     contentColor = contentColor,
                     isBack = false,
-                    accentColor = accentColor
+                    accentColor = accentColor,
+                    isLandscape = isLandscape
                 )
             } else {
                 val hijri = day.hijriDate
@@ -85,7 +92,8 @@ fun FlippableCalendarCard(
                     bottomText = monthName.uppercase(Locale.getDefault()),
                     contentColor = contentColor,
                     isBack = true,
-                    accentColor = accentColor
+                    accentColor = accentColor,
+                    isLandscape = isLandscape
                 )
             }
         }
@@ -98,11 +106,15 @@ private fun ModernCalendarCircle(
     bottomText: String,
     contentColor: Color,
     isBack: Boolean,
-    accentColor: Color
+    accentColor: Color,
+    isLandscape: Boolean
 ) {
+    val dayFontSize = if (isLandscape) 30.sp else 36.sp
+    val monthFontSize = if (isLandscape) 9.sp else 10.sp
+
     Surface(
         modifier = Modifier
-            .size(100.dp)
+            .fillMaxSize()
             .graphicsLayer { if (isBack) rotationY = 180f },
         color = Color.White.copy(alpha = 0.08f),
         shape = CircleShape,
@@ -117,7 +129,6 @@ private fun ModernCalendarCircle(
             modifier = Modifier
                 .fillMaxSize()
                 .drawBehind {
-                    // Central glow
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(accentColor.copy(alpha = 0.15f), Color.Transparent),
@@ -125,14 +136,13 @@ private fun ModernCalendarCircle(
                         )
                     )
                     
-                    // Subtle top accent
                     drawArc(
                         color = accentColor.copy(alpha = 0.4f),
                         startAngle = 225f,
                         sweepAngle = 90f,
                         useCenter = false,
                         style = androidx.compose.ui.graphics.drawscope.Stroke(
-                            width = 3.dp.toPx(),
+                            width = (if (isLandscape) 2f else 3f).dp.toPx(),
                             cap = StrokeCap.Round
                         )
                     )
@@ -142,13 +152,12 @@ private fun ModernCalendarCircle(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(if (isLandscape) 4.dp else 8.dp)
             ) {
-                // Large Day Number
                 Text(
                     text = topText,
                     style = MaterialTheme.typography.displayLarge.copy(
-                        fontSize = 36.sp,
+                        fontSize = dayFontSize,
                         fontWeight = FontWeight.Light,
                         fontFamily = IBMPlexArabic,
                         letterSpacing = (-1).sp
@@ -157,13 +166,12 @@ private fun ModernCalendarCircle(
                     textAlign = TextAlign.Center
                 )
 
-                // Month Text
                 Text(
                     text = bottomText,
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.5.sp,
-                        fontSize = 10.sp
+                        fontSize = monthFontSize
                     ),
                     color = contentColor.copy(alpha = 0.6f),
                     maxLines = 1,

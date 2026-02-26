@@ -1,25 +1,18 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.NightsStay
-import androidx.compose.material.icons.rounded.WbSunny
-import androidx.compose.material.icons.rounded.WbTwilight
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
-import com.ybugmobile.vaktiva.domain.model.PrayerType
 
 @Composable
 fun CurrentPrayerHeader(
@@ -30,6 +23,11 @@ fun CurrentPrayerHeader(
 ) {
     val context = LocalContext.current
     val locale = context.resources.configuration.locales[0]
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    
+    val fontSize = if (isLandscape) 11.sp else 14.sp
+    val offsetY = if (isLandscape) (-60.dp) else (-74.dp)
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -41,15 +39,14 @@ fun CurrentPrayerHeader(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .offset(y = (-74.dp)) // Positioned above the FlippableCalendarCard
+                    .offset(y = offsetY)
             ) {
-
                 Text(
                     text = currentPrayer.type.getDisplayName(context).uppercase(locale),
-                    fontSize = 14.sp,
+                    fontSize = fontSize,
                     fontWeight = FontWeight.ExtraBold,
                     color = contentColor.copy(alpha = 0.6f),
-                    letterSpacing = 2.sp
+                    letterSpacing = if (isLandscape) 1.5.sp else 2.sp
                 )
             }
         }
