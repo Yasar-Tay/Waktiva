@@ -2,7 +2,7 @@ package com.ybugmobile.vaktiva.ui.home.composables
 
 import android.content.res.Configuration
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -13,9 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -28,6 +30,8 @@ import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.ui.theme.IBMPlexArabic
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun FlippableCalendarCard(
@@ -46,17 +50,38 @@ fun FlippableCalendarCard(
         label = "cardFlip"
     )
 
+    val infiniteTransition = rememberInfiniteTransition(label = "celestial_vibes")
+    val auraRotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(45000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "auraRotation"
+    )
+    
+    val flarePulse by infiniteTransition.animateFloat(
+        initialValue = 0.4f,
+        targetValue = 0.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "flarePulse"
+    )
+
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val cardSize = if (isLandscape) 84.dp else 100.dp
+    val cardSize = if (isLandscape) 80.dp else 94.dp
 
     val context = LocalContext.current
     val dayFormatter = remember { DateTimeFormatter.ofPattern("dd") }
-    val monthFormatter = remember { DateTimeFormatter.ofPattern("MMM") } // Abbreviated month name
+    val monthFormatter = remember { DateTimeFormatter.ofPattern("MMM") }
 
     Box(
         modifier = modifier
-            .size(cardSize)
+            .size(cardSize + 54.dp) // Ample space for atmospheric "Sun" rays
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -65,14 +90,84 @@ fun FlippableCalendarCard(
             },
         contentAlignment = Alignment.Center
     ) {
+        // ATMOSPHERIC SUN / STAR BACKGROUND
         Box(
-            modifier = Modifier.graphicsLayer {
-                rotationY = rotation
-                cameraDistance = 12f * density
-            }
+            modifier = Modifier
+                .fillMaxSize()
+                .drawBehind {
+                    val radius = (cardSize.toPx() / 2)
+                    
+                    // 1. Core Radiant Bloom (The Sun's Body)
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                accentColor.copy(alpha = 0.4f * flarePulse),
+                                accentColor.copy(alpha = 0.1f * flarePulse),
+                                Color.Transparent
+                            ),
+                            center = center,
+                            radius = radius * 1.7f
+                        )
+                    )
+
+                    // 2. Rotating Corona Rays
+                    rotate(auraRotation) {
+                        val rayCount = 12
+                        val innerRayRadius = radius * 1.05f
+                        val outerRayRadius = radius * 1.55f
+                        
+                        for (i in 0 until rayCount) {
+                            val angle = i * (360f / rayCount)
+                            val angleRad = Math.toRadians(angle.toDouble())
+                            
+                            val startX = center.x + innerRayRadius * cos(angleRad).toFloat()
+                            val startY = center.y + innerRayRadius * sin(angleRad).toFloat()
+                            val endX = center.x + outerRayRadius * cos(angleRad).toFloat()
+                            val endY = center.y + outerRayRadius * sin(angleRad).toFloat()
+
+                            drawLine(
+                                brush = Brush.linearGradient(
+                                    colors = listOf(accentColor.copy(alpha = 0.5f * flarePulse), Color.Transparent),
+                                    start = Offset(startX, startY),
+                                    end = Offset(endX, endY)
+                                ),
+                                start = Offset(startX, startY),
+                                end = Offset(endX, endY),
+                                strokeWidth = 2.5.dp.toPx(),
+                                cap = StrokeCap.Round
+                            )
+                        }
+                    }
+
+                    // 3. Faint Orbital Shimmer
+                    drawCircle(
+                        color = accentColor.copy(alpha = 0.2f * flarePulse),
+                        radius = radius * 1.2f,
+                        style = Stroke(width = 1.dp.toPx())
+                    )
+                    
+                    drawCircle(
+                        color = accentColor.copy(alpha = 0.1f),
+                        radius = radius * 1.4f,
+                        style = Stroke(
+                            width = 0.8.dp.toPx(),
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 16f), 0f)
+                        )
+                    )
+                }
+        )
+
+        // THE CALENDAR DISC (The Moon/Planet surface feel)
+        Box(
+            modifier = Modifier
+                .size(cardSize)
+                .graphicsLayer {
+                    rotationY = rotation
+                    cameraDistance = 15f * density
+                }
         ) {
             if (rotation <= 90f) {
-                ModernCalendarCircle(
+                CalendarSide(
                     topText = day.date.format(dayFormatter),
                     bottomText = day.date.format(monthFormatter).uppercase(Locale.getDefault()),
                     contentColor = contentColor,
@@ -86,11 +181,9 @@ fun FlippableCalendarCard(
                     context.resources.getIdentifier("hijri_month_${it.monthNumber}", "string", context.packageName)
                 } ?: 0
                 val monthName = if (monthResId != 0) stringResource(monthResId) else hijri?.monthEn ?: ""
-                
-                // Shorten Hijri month name to first 3 characters for abbreviation
                 val abbreviatedHijriMonth = monthName.take(3).uppercase(Locale.getDefault())
 
-                ModernCalendarCircle(
+                CalendarSide(
                     topText = hijri?.day?.toString() ?: "",
                     bottomText = abbreviatedHijriMonth,
                     contentColor = contentColor,
@@ -104,7 +197,7 @@ fun FlippableCalendarCard(
 }
 
 @Composable
-private fun ModernCalendarCircle(
+private fun CalendarSide(
     topText: String,
     bottomText: String,
     contentColor: Color,
@@ -112,44 +205,24 @@ private fun ModernCalendarCircle(
     accentColor: Color,
     isLandscape: Boolean
 ) {
-    val dayFontSize = if (isLandscape) 30.sp else 36.sp
-    val monthFontSize = if (isLandscape) 9.sp else 10.sp
+    val dayFontSize = if (isLandscape) 30.sp else 34.sp
+    val monthFontSize = if (isLandscape) 8.sp else 9.sp
 
     Surface(
         modifier = Modifier
             .fillMaxSize()
             .graphicsLayer { if (isBack) rotationY = 180f },
-        color = Color.White.copy(alpha = 0.08f),
+        color = Color.White.copy(alpha = 0.12f), // Semi-transparent glass
         shape = CircleShape,
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
+        border = BorderStroke(
+            1.5.dp,
             Brush.linearGradient(
-                listOf(contentColor.copy(alpha = 0.25f), Color.Transparent, contentColor.copy(alpha = 0.1f))
+                listOf(accentColor.copy(alpha = 0.6f), Color.Transparent, accentColor.copy(alpha = 0.2f))
             )
         )
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .drawBehind {
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(accentColor.copy(alpha = 0.15f), Color.Transparent),
-                            radius = size.width * 0.6f
-                        )
-                    )
-                    
-                    drawArc(
-                        color = accentColor.copy(alpha = 0.4f),
-                        startAngle = 225f,
-                        sweepAngle = 90f,
-                        useCenter = false,
-                        style = androidx.compose.ui.graphics.drawscope.Stroke(
-                            width = (if (isLandscape) 2f else 3f).dp.toPx(),
-                            cap = StrokeCap.Round
-                        )
-                    )
-                },
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -161,7 +234,7 @@ private fun ModernCalendarCircle(
                     text = topText,
                     style = MaterialTheme.typography.displayLarge.copy(
                         fontSize = dayFontSize,
-                        fontWeight = FontWeight.Light,
+                        fontWeight = FontWeight.ExtraBold,
                         fontFamily = IBMPlexArabic,
                         letterSpacing = (-1).sp
                     ),
@@ -172,11 +245,11 @@ private fun ModernCalendarCircle(
                 Text(
                     text = bottomText,
                     style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 0.5.sp,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 1.sp,
                         fontSize = monthFontSize
                     ),
-                    color = contentColor.copy(alpha = 0.6f),
+                    color = contentColor.copy(alpha = 0.8f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
