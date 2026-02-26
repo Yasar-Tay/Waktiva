@@ -1,6 +1,10 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.HelpOutline
+import androidx.compose.material.icons.rounded.*
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,8 +26,7 @@ fun WeatherSection(
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        verticalAlignment = Alignment.CenterVertically
     ) {
         if (temperature != null) {
             Text(
@@ -32,16 +35,28 @@ fun WeatherSection(
                     fontSize = 60.sp,
                     fontWeight = FontWeight.Light
                 ),
-                color = contentColor,
-
+                color = contentColor
             )
         }
         
-        Text(
-            text = condition.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
-            style = MaterialTheme.typography.titleMedium,
-            color = contentColor.copy(alpha = 0.7f),
-            fontWeight = FontWeight.Medium,
+        val weatherIcon = when (condition) {
+            WeatherCondition.CLEAR -> Icons.Rounded.WbSunny
+            WeatherCondition.PARTLY_CLOUDY -> Icons.Rounded.WbCloudy
+            WeatherCondition.CLOUDY -> Icons.Rounded.Cloud
+            WeatherCondition.FOGGY -> Icons.Rounded.Grain
+            WeatherCondition.RAINY -> Icons.Rounded.Umbrella
+            WeatherCondition.SNOWY -> Icons.Rounded.AcUnit
+            WeatherCondition.THUNDERSTORM -> Icons.Rounded.Thunderstorm
+            WeatherCondition.UNKNOWN -> Icons.AutoMirrored.Rounded.HelpOutline
+        }
+
+        Icon(
+            imageVector = weatherIcon,
+            contentDescription = condition.name,
+            tint = contentColor.copy(alpha = 0.8f),
+            modifier = Modifier
+                .size(42.dp)
+                .padding(top = 4.dp) // Slight adjustment to balance with large temperature text
         )
     }
 }
