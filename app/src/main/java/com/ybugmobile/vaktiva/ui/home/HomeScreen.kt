@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -410,7 +411,7 @@ fun HomeScreenContent(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                     .systemBarsPadding()
-                                    .padding(top = 16.dp, end = 24.dp)
+                                    .padding(top = 6.dp, end = 24.dp) // Adjusted top padding to match HomeHeader inner padding (10dp + systemBars)
                                     .graphicsLayer {
                                         translationY = -scrollState.value.toFloat()
                                     }
