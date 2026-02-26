@@ -96,9 +96,10 @@ fun PrayerCircleVisualization(
         label = "stellarRotation"
     )
 
+    // Breathing pulse active ONLY if isSelectedDayToday is true
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.05f,
+        targetValue = if (isSelectedDayToday) 1.05f else 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(2500, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -477,46 +478,46 @@ fun InfoGlassCard(info: DetailedInfo) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
-    val height = if (isLandscape) 40.dp else 48.dp
-    val iconSize = if (isLandscape) 28.dp else 32.dp
-    val titleFontSize = if (isLandscape) 9.sp else 11.sp
-    val timeFontSize = if (isLandscape) 14.sp else 16.sp
-    val horizontalPadding = if (isLandscape) 14.dp else 18.dp
+    val height = if (isLandscape) 36.dp else 44.dp
+    val iconSize = if (isLandscape) 24.dp else 30.dp
+    val titleFontSize = if (isLandscape) 8.sp else 10.sp
+    val timeFontSize = if (isLandscape) 13.sp else 15.sp
+    val horizontalPadding = if (isLandscape) 12.dp else 16.dp
 
     val containerColor = if (glassTheme.isLightMode) {
-        Color.White.copy(alpha = 0.25f)
+        Color.White.copy(alpha = 0.22f)
     } else {
-        Color.Black.copy(alpha = 0.5f)
+        Color.Black.copy(alpha = 0.45f)
     }
     
     val borderColor = if (glassTheme.isLightMode) {
-        Color.White.copy(alpha = 0.5f)
+        Color.White.copy(alpha = 0.45f)
     } else {
-        Color.White.copy(alpha = 0.2f)
+        Color.White.copy(alpha = 0.15f)
     }
 
     Surface(
         color = containerColor,
         shape = RoundedCornerShape(percent = 50),
-        shadowElevation = 8.dp,
-        tonalElevation = 4.dp,
+        shadowElevation = 6.dp,
+        tonalElevation = 3.dp,
         modifier = Modifier
             .wrapContentSize()
             .height(height)
             .drawWithContent {
                 drawContent()
-                // Celestial Glow
+                // Side glow matching celestial theme
                 drawRoundRect(
-                    brush = Brush.radialGradient(
-                        colors = listOf(info.color.copy(alpha = 0.2f), Color.Transparent),
-                        center = Offset(0f, size.height / 2),
-                        radius = size.width
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(info.color.copy(alpha = 0.25f), Color.Transparent),
+                        startX = 0f,
+                        endX = size.width * 0.4f
                     ),
                     size = size,
                     cornerRadius = CornerRadius(size.height / 2),
                     blendMode = BlendMode.Screen
                 )
-                // Modern Border
+                // Modern Glass Border
                 drawRoundRect(
                     color = borderColor,
                     size = size,
@@ -529,18 +530,18 @@ fun InfoGlassCard(info: DetailedInfo) {
         Row(
             modifier = Modifier.padding(horizontal = horizontalPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(if (isLandscape) 8.dp else 12.dp)
+            horizontalArrangement = Arrangement.spacedBy(if (isLandscape) 8.dp else 10.dp)
         ) {
             Box(
                 modifier = Modifier
                     .size(iconSize)
-                    .background(info.color.copy(alpha = 0.25f), CircleShape)
+                    .background(info.color.copy(alpha = 0.2f), CircleShape)
                     .drawWithContent {
                         drawContent()
                         drawCircle(
-                            color = info.color.copy(alpha = 0.8f),
+                            color = info.color.copy(alpha = 0.7f),
                             radius = size.minDimension / 2,
-                            style = Stroke(1.5.dp.toPx())
+                            style = Stroke(1.2.dp.toPx())
                         )
                     },
                 contentAlignment = Alignment.Center
@@ -549,7 +550,7 @@ fun InfoGlassCard(info: DetailedInfo) {
                     imageVector = info.icon,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(if (isLandscape) 14.dp else 18.dp)
+                    modifier = Modifier.size(if (isLandscape) 12.dp else 16.dp)
                 )
             }
             
@@ -559,8 +560,8 @@ fun InfoGlassCard(info: DetailedInfo) {
                     style = TextStyle(
                         fontSize = titleFontSize,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White.copy(alpha = 0.7f),
-                        letterSpacing = 0.5.sp
+                        color = Color.White.copy(alpha = 0.6f),
+                        letterSpacing = 0.4.sp
                     )
                 )
                 Text(
@@ -570,7 +571,7 @@ fun InfoGlassCard(info: DetailedInfo) {
                         fontFamily = IBMPlexArabic,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        letterSpacing = (-0.4).sp
+                        letterSpacing = (-0.3).sp
                     )
                 )
             }
