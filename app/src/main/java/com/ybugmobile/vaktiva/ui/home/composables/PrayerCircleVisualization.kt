@@ -231,7 +231,37 @@ fun PrayerCircleVisualization(
                     val center = Offset(size.width / 2, size.height / 2)
                     val radius = size.width / 2 - 20.dp.toPx()
 
+                    // Pre-calculate common drawing objects
+                    val arcBrush = Brush.sweepGradient(
+                        0.0f to Color(0xFFFFE082).copy(alpha = 0.25f),
+                        0.5f to Color(0xFFFFB74D).copy(alpha = 0.25f),
+                        1.0f to Color(0xFFCE93D8).copy(alpha = 0.25f),
+                        center = center
+                    )
+
+                    val sunriseMinutes = sunrise.hour * 60 + sunrise.minute
+                    val sunsetMinutes = sunset.hour * 60 + sunset.minute
+                    
+                    val startAngle = if (layoutDirection == LayoutDirection.Rtl) {
+                        -(sunriseMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                    } else {
+                        (sunriseMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                    }
+                    
+                    val sweepAngle = if (layoutDirection == LayoutDirection.Rtl) {
+                        val end = -(sunsetMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                        var diff = end - startAngle
+                        if (diff > 0) diff -= 360f
+                        diff
+                    } else {
+                        val end = (sunsetMinutes.toFloat() / (24 * 60)) * 360f + 90f
+                        var diff = end - startAngle
+                        if (diff < 0) diff += 360f
+                        diff
+                    }
+
                     onDrawBehind {
+                        // Static circle
                         drawCircle(
                             color = contentColor.copy(alpha = 0.08f),
                             radius = radius,
@@ -239,6 +269,7 @@ fun PrayerCircleVisualization(
                             style = Stroke(width = 2.dp.toPx())
                         )
 
+                        // Ticks
                         for (i in 0 until 24) {
                             val angle = i * 15f + 90f
                             val angleRad = Math.toRadians(angle.toDouble())
@@ -255,34 +286,9 @@ fun PrayerCircleVisualization(
                             )
                         }
 
-                        val sunriseMinutes = sunrise.hour * 60 + sunrise.minute
-                        val sunsetMinutes = sunset.hour * 60 + sunset.minute
-                        
-                        val startAngle = if (layoutDirection == LayoutDirection.Rtl) {
-                            -(sunriseMinutes.toFloat() / (24 * 60)) * 360f + 90f
-                        } else {
-                            (sunriseMinutes.toFloat() / (24 * 60)) * 360f + 90f
-                        }
-                        
-                        val sweepAngle = if (layoutDirection == LayoutDirection.Rtl) {
-                            val end = -(sunsetMinutes.toFloat() / (24 * 60)) * 360f + 90f
-                            var diff = end - startAngle
-                            if (diff > 0) diff -= 360f
-                            diff
-                        } else {
-                            val end = (sunsetMinutes.toFloat() / (24 * 60)) * 360f + 90f
-                            var diff = end - startAngle
-                            if (diff < 0) diff += 360f
-                            diff
-                        }
-
+                        // Day arc
                         drawArc(
-                            brush = Brush.sweepGradient(
-                                0.0f to Color(0xFFFFE082).copy(alpha = 0.25f),
-                                0.5f to Color(0xFFFFB74D).copy(alpha = 0.25f),
-                                1.0f to Color(0xFFCE93D8).copy(alpha = 0.25f),
-                                center = center
-                            ),
+                            brush = arcBrush,
                             startAngle = startAngle,
                             sweepAngle = sweepAngle,
                             useCenter = false,
@@ -397,9 +403,12 @@ fun PrayerCircleVisualization(
                 }
             }
 
+            // Text measurements should happen outside the draw loop if possible, 
+            // but rememberTextMeasurer helps. We'll pre-calculate texts.
             prayers.forEachIndexed { index, prayer ->
                 val prayerTimeText = prayerTimesTexts[index]
                 val pos = getPosition(prayer.time, radius, center)
+
                 val textLayoutResult = textMeasurer.measure(
                     text = AnnotatedString(prayerTimeText),
                     style = TextStyle(

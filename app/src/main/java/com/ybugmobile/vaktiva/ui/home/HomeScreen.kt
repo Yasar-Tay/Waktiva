@@ -121,13 +121,17 @@ fun HomeScreenContent(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    val permissions = mutableListOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+    val permissions = remember {
+        val list = mutableListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            list.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        list
     }
+    
     val permissionState = rememberMultiplePermissionsState(permissions) { permissionsResult ->
         if (permissionsResult.values.all { it }) {
             onRefresh()
@@ -194,26 +198,27 @@ fun HomeScreenContent(
                 .fillMaxSize()
                 .background(brush = backgroundGradient)
         ) {
-            // Dynamic Environmental Layers
-            StarryBackgroundLayer(
-                currentTime = localTime,
-                day = state.currentPrayerDay
-            )
-            
-            AtmosphericBackgroundLayer(
-                currentTime = localTime,
-                day = state.currentPrayerDay,
-                sunAzimuth = state.sunAzimuth,
-                sunAltitude = state.sunAltitude,
-                compassAzimuth = state.compassAzimuth
-            )
-
-            // Only show weather layer if effects are enabled in settings
-            if (settings?.showWeatherEffects == true) {
-                WeatherBackgroundLayer(
-                    condition = effectiveWeather,
-                    isDay = true
+            // Environmental Background (Performance optimized: Don't recompose with scroll)
+            Box(Modifier.fillMaxSize()) {
+                StarryBackgroundLayer(
+                    currentTime = localTime,
+                    day = state.currentPrayerDay
                 )
+                
+                AtmosphericBackgroundLayer(
+                    currentTime = localTime,
+                    day = state.currentPrayerDay,
+                    sunAzimuth = state.sunAzimuth,
+                    sunAltitude = state.sunAltitude,
+                    compassAzimuth = state.compassAzimuth
+                )
+
+                if (settings?.showWeatherEffects == true) {
+                    WeatherBackgroundLayer(
+                        condition = effectiveWeather,
+                        isDay = true
+                    )
+                }
             }
 
             if (state.isLoading) {
@@ -386,7 +391,6 @@ fun HomeScreenContent(
                             }
 
                             // Moon Phase in Top Middle for Landscape
-                            // Now moves with scroll by applying negative scroll offset
                             MoonPhaseView(
                                 moonPhase = state.moonPhase,
                                 contentColor = contentColor,
@@ -428,7 +432,7 @@ fun HomeScreenContent(
                                     modifier = Modifier.padding(horizontal = 24.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    // Weather Summary Row (Temporary for testing)
+                                    // Weather Summary Row
                                     if (state.temperature != null) {
                                         Text(
                                             text = "${state.temperature}°C • ${state.weatherCondition.name}",
@@ -564,8 +568,7 @@ fun HomeScreenContent(
                                 Spacer(modifier = Modifier.height(80.dp))
                             }
 
-                            // Moon Phase in Top Right for Portrait
-                            // Now moves with scroll by applying negative scroll offset
+                            // Moon Phase (Parallax handled via graphicsLayer)
                             MoonPhaseView(
                                 moonPhase = state.moonPhase,
                                 contentColor = contentColor,
