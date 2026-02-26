@@ -46,7 +46,7 @@ fun FlippableCalendarCard(
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    
+
     // Scale factors for landscape
     val outerSize = if (isLandscape) 90.dp else 115.dp
     val innerSize = if (isLandscape) 70.dp else 88.dp
@@ -55,7 +55,7 @@ fun FlippableCalendarCard(
     val bottomTextSize = if (isLandscape) 7.sp else 9.sp
 
     val infiniteTransition = rememberInfiniteTransition(label = "stellar")
-    
+
     // Rotating orbits
     val orbitRotation by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -66,7 +66,7 @@ fun FlippableCalendarCard(
         ),
         label = "orbitRotation"
     )
-    
+
     // Breathing pulse
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -84,7 +84,7 @@ fun FlippableCalendarCard(
 
     Box(
         modifier = modifier
-            .size(outerSize) 
+            .size(outerSize)
             .graphicsLayer {
                 scaleX = pulseScale
                 scaleY = pulseScale
@@ -109,7 +109,7 @@ fun FlippableCalendarCard(
                             listOf(accent.copy(alpha = 0f), accent.copy(alpha = 0.3f), accent.copy(alpha = 0f))
                         ),
                         style = Stroke(
-                            width = 1.dp.toPx(), 
+                            width = 1.dp.toPx(),
                             pathEffect = PathEffect.dashPathEffect(floatArrayOf(15f, 15f))
                         ),
                         radius = size.width / 2 - 4.dp.toPx()
@@ -178,7 +178,7 @@ private fun StellarSpherePage(
         color = Color.Black.copy(alpha = 0.35f),
         shape = CircleShape,
         border = androidx.compose.foundation.BorderStroke(
-            1.dp, 
+            1.dp,
             Brush.linearGradient(
                 listOf(accentColor.copy(alpha = 0.7f), Color.White.copy(alpha = 0.2f), accentColor.copy(alpha = 0.5f))
             )
@@ -196,7 +196,7 @@ private fun StellarSpherePage(
                             radius = size.width * 0.8f
                         )
                     )
-                    
+
                     // Atmospheric Rim Light
                     drawCircle(
                         brush = Brush.radialGradient(

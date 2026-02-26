@@ -460,7 +460,7 @@ fun PrayerCircleVisualization(
             modifier = Modifier
                 .fillMaxSize()
                 .zIndex(10f),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.BottomCenter
         ) {
             AnimatedContent(
                 targetState = selectedInfo,
@@ -469,7 +469,7 @@ fun PrayerCircleVisualization(
                         .togetherWith(slideOutVertically { it / 2 } + fadeOut(tween(200)))
                 },
                 label = "info_card",
-                modifier = Modifier.offset(y = 70.dp)
+
             ) { info ->
                 if (info != null) {
                     InfoGlassCard(info)
@@ -501,38 +501,38 @@ fun InfoGlassCard(info: DetailedInfo) {
 
     Surface(
         color = containerColor,
-        shape = RoundedCornerShape(24.dp),
-        shadowElevation = 12.dp,
-        tonalElevation = 6.dp,
+        shape = RoundedCornerShape(20.dp),
+        shadowElevation = 8.dp,
+        tonalElevation = 4.dp,
         modifier = Modifier
-            .wrapContentWidth()
-            .height(56.dp)
+            .wrapContentSize()
+            .height(44.dp)
             .drawWithContent {
                 drawContent()
                 drawRoundRect(
                     color = borderColor,
                     size = size,
-                    cornerRadius = CornerRadius(24.dp.toPx()),
-                    style = Stroke(width = 1.5.dp.toPx())
+                    cornerRadius = CornerRadius(20.dp.toPx()),
+                    style = Stroke(width = 1.2.dp.toPx())
                 )
             },
         contentColor = Color.White
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 20.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(36.dp)
-                    .background(info.color.copy(alpha = 0.25f), CircleShape)
+                    .size(28.dp)
+                    .background(info.color.copy(alpha = 0.2f), CircleShape)
                     .drawWithContent {
                         drawContent()
                         drawCircle(
-                            color = info.color.copy(alpha = 0.8f),
+                            color = info.color.copy(alpha = 0.7f),
                             radius = size.minDimension / 2,
-                            style = Stroke(2.dp.toPx())
+                            style = Stroke(1.5.dp.toPx())
                         )
                     },
                 contentAlignment = Alignment.Center
@@ -541,7 +541,7 @@ fun InfoGlassCard(info: DetailedInfo) {
                     imageVector = info.icon,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(16.dp)
                 )
             }
             
@@ -549,20 +549,20 @@ fun InfoGlassCard(info: DetailedInfo) {
                 Text(
                     text = info.title,
                     style = TextStyle(
-                        fontSize = 11.sp,
+                        fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White.copy(alpha = 0.7f),
-                        letterSpacing = 0.6.sp
+                        color = Color.White.copy(alpha = 0.6f),
+                        letterSpacing = 0.4.sp
                     )
                 )
                 Text(
                     text = info.time,
                     style = TextStyle(
-                        fontSize = 18.sp,
+                        fontSize = 15.sp,
                         fontFamily = IBMPlexArabic,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        letterSpacing = (-0.5).sp
+                        letterSpacing = (-0.3).sp
                     )
                 )
             }
