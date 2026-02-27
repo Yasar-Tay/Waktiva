@@ -8,7 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -56,9 +56,9 @@ fun FlippableCalendarCard(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
-    // Compact modern sizing
-    val cardWidth = if (isLandscape) 64.dp else 80.dp
-    val cardHeight = cardWidth * 1.2f
+    // Circular sizing
+    val cardWidth = if (isLandscape) 82.dp else 100.dp
+    val cardHeight = cardWidth
 
     val context = LocalContext.current
     val dayFormatter = remember { DateTimeFormatter.ofPattern("dd") }
@@ -96,22 +96,21 @@ fun FlippableCalendarCard(
                 }
         )
 
-        // Today Active Border
+        // Today Active Border (Full Circle)
         if (isSelectedDayToday) {
             Box(
                 modifier = Modifier
-                    .size(cardWidth + 10.dp, cardHeight + 10.dp)
+                    .size(cardWidth + 12.dp)
                     .drawBehind {
-                        drawRoundRect(
+                        drawCircle(
                             color = accentColor.copy(alpha = 0.2f * pulseScale),
-                            cornerRadius = CornerRadius(16.dp.toPx()),
                             style = Stroke(width = 1.2.dp.toPx())
                         )
                     }
             )
         }
 
-        // THE CALENDAR CARD
+        // THE CALENDAR DISC
         Box(
             modifier = Modifier
                 .size(cardWidth, cardHeight)
@@ -157,8 +156,8 @@ private fun CalendarSide(
     isLandscape: Boolean
 ) {
     val glassTheme = LocalGlassTheme.current
-    val dayFontSize = if (isLandscape) 28.sp else 34.sp
-    val monthFontSize = if (isLandscape) 10.sp else 12.sp
+    val dayFontSize = if (isLandscape) 34.sp else 40.sp
+    val monthFontSize = if (isLandscape) 11.sp else 12.sp
 
     // Enhanced glassmorphism: even lighter body, solid header
     val containerColor = if (glassTheme.isLightMode) Color.White.copy(0.06f) else Color.Black.copy(0.15f)
@@ -170,7 +169,7 @@ private fun CalendarSide(
             .fillMaxSize()
             .graphicsLayer { if (isBack) rotationY = 180f },
         color = containerColor,
-        shape = RoundedCornerShape(16.dp),
+        shape = CircleShape, // Full circle
         border = BorderStroke(1.dp, borderColor)
     ) {
         Column(
@@ -181,7 +180,7 @@ private fun CalendarSide(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.35f)
+                    .weight(0.3f)
                     .background(accentColor.copy(alpha = 0.95f)),
                 contentAlignment = Alignment.Center
             ) {
@@ -203,8 +202,8 @@ private fun CalendarSide(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.65f)
-                    .padding(bottom = 4.dp),
+                    .weight(0.6f)
+                    .padding(bottom = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
