@@ -1,10 +1,7 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -64,21 +61,14 @@ fun WeatherSection(
                 )
                 
                 if (weatherIconRes != null) {
-                    // Glassmorphic icon container replacing the degree symbol
-                    Box(
+                    Image(
+                        painter = painterResource(id = weatherIconRes),
+                        contentDescription = condition.name,
                         modifier = Modifier
                             .padding(top = 10.dp, start = 4.dp)
-                            .size(42.dp)
-                            .background(Color.White.copy(alpha = 0.15f), CircleShape)
-                            .border(0.5.dp, Color.White.copy(alpha = 0.3f), CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = weatherIconRes),
-                            contentDescription = condition.name,
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
+                            .size(32.dp),
+                        alpha = 0.8f // Subtle glassmorphic look for the icon itself
+                    )
                 }
             }
         } else {
@@ -86,19 +76,12 @@ fun WeatherSection(
             Box(Modifier.width(60.dp).fillMaxHeight())
             
             if (weatherIconRes != null) {
-                Box(
-                    modifier = Modifier
-                        .size(42.dp)
-                        .background(Color.White.copy(alpha = 0.15f), CircleShape)
-                        .border(0.5.dp, Color.White.copy(alpha = 0.3f), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(id = weatherIconRes),
-                        contentDescription = condition.name,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
+                Image(
+                    painter = painterResource(id = weatherIconRes),
+                    contentDescription = condition.name,
+                    modifier = Modifier.size(42.dp),
+                    alpha = 0.9f
+                )
             }
         }
     }
