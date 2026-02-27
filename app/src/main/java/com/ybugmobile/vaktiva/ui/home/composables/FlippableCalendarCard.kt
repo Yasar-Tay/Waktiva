@@ -1,7 +1,6 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import android.content.res.Configuration
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -14,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
@@ -66,8 +64,8 @@ fun FlippableCalendarCard(
 
     Box(
         modifier = modifier
-            .width(cardWidth + 32.dp)
-            .height(cardHeight + 32.dp)
+            .width(cardWidth + 48.dp)
+            .height(cardHeight + 48.dp)
             .graphicsLayer {
                 scaleX = pulseScale
                 scaleY = pulseScale
@@ -89,18 +87,18 @@ fun FlippableCalendarCard(
                         brush = Brush.radialGradient(
                             colors = listOf(accentColor.copy(alpha = 0.2f), Color.Transparent),
                             center = center,
-                            radius = (cardWidth.toPx() / 2) * 2.0f
+                            radius = (cardWidth.toPx() / 2) * 2.2f
                         ),
-                        radius = (cardWidth.toPx() / 2) * 2.0f
+                        radius = (cardWidth.toPx() / 2) * 2.2f
                     )
                 }
         )
 
-        // Today Active Border (Full Circle)
+        // Today Active Border (Full Circle) - Conditional Radius for Landscape
         if (isSelectedDayToday) {
             Box(
                 modifier = Modifier
-                    .size(cardWidth + 12.dp)
+                    .size(cardWidth + (if (isLandscape) 14.dp else 36.dp))
                     .drawBehind {
                         drawCircle(
                             color = accentColor.copy(alpha = 0.2f * pulseScale),
@@ -160,7 +158,7 @@ private fun CalendarSide(
     val monthFontSize = if (isLandscape) 11.sp else 12.sp
 
     // Enhanced glassmorphism: even lighter body, solid header
-    val containerColor = if (glassTheme.isLightMode) Color.White.copy(0.06f) else Color.Black.copy(0.15f)
+    val containerColor = if (glassTheme.isLightMode) Color.White.copy(0.06f) else Color.Black.copy(0.06f)
     val borderColor = if (glassTheme.isLightMode) Color.White.copy(0.4f) else Color.White.copy(0.12f)
     val dayNumberColor = Color.White.copy(alpha = 0.95f) // Light color for dayNumber
 
@@ -208,7 +206,7 @@ private fun CalendarSide(
             ) {
                 Text(
                     text = topText,
-                    style = MaterialTheme.typography.displayLarge.copy(
+                    style = MaterialTheme.typography.displayMedium.copy(
                         fontSize = dayFontSize,
                         fontWeight = FontWeight.ExtraBold,
                         fontFamily = IBMPlexArabic,
