@@ -160,8 +160,8 @@ private fun CalendarSide(
     val dayFontSize = if (isLandscape) 28.sp else 34.sp
     val monthFontSize = if (isLandscape) 10.sp else 12.sp
 
-    // Enhanced glassmorphism: lighter body, solid header
-    val containerColor = if (glassTheme.isLightMode) Color.White.copy(0.12f) else Color.Black.copy(0.25f)
+    // Enhanced glassmorphism: even lighter body, solid header
+    val containerColor = if (glassTheme.isLightMode) Color.White.copy(0.06f) else Color.Black.copy(0.15f)
     val borderColor = if (glassTheme.isLightMode) Color.White.copy(0.4f) else Color.White.copy(0.12f)
     val dayNumberColor = Color.White.copy(alpha = 0.95f) // Light color for dayNumber
 
@@ -177,12 +177,12 @@ private fun CalendarSide(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header Section: More Solid Accent
+            // Header Section: Solid Accent
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.35f)
-                    .background(accentColor.copy(alpha = 0.92f)),
+                    .background(accentColor.copy(alpha = 0.95f)),
                 contentAlignment = Alignment.Center
             ) {
                 val headerTextColor = if (accentColor.luminance() > 0.5f) Color.Black.copy(0.7f) else Color.White
@@ -199,7 +199,7 @@ private fun CalendarSide(
                 )
             }
 
-            // Date Section: Lighter/More transparent background
+            // Date Section: Lighter background area (inherits surface transparency)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
