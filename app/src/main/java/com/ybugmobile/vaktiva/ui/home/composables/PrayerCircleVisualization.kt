@@ -48,8 +48,7 @@ import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.delay
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -85,11 +84,22 @@ fun PrayerCircleVisualization(
 
     val infiniteTransition = rememberInfiniteTransition(label = "celestial")
     
+    // Gravitational Flux: Subtle movement of markers
+    val gravityFlux by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(4000, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "gravityFlux"
+    )
+
     val stellarRotation by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(30000, easing = LinearEasing),
+            animation = tween(60000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "stellarRotation"
@@ -165,13 +175,12 @@ fun PrayerCircleVisualization(
         prayers.find { it.type == currentPrayerType }?.color ?: Color.White
     }
 
-    // Performance Optimization: Pre-measure text results to avoid measurement in Draw phase
     val measuredTimeLabels = remember(prayers, contentColor, isLandscape) {
         prayers.map { prayer ->
             textMeasurer.measure(
                 text = AnnotatedString(prayer.time.format(formatter)),
                 style = TextStyle(
-                    color = contentColor.copy(alpha = 0.5f), // Base color, alpha adjusted in draw
+                    color = contentColor.copy(alpha = 0.5f),
                     fontSize = (if (isLandscape) 8.sp else 10.sp),
                     fontFamily = IBMPlexArabic,
                     fontWeight = FontWeight.Bold
@@ -198,8 +207,6 @@ fun PrayerCircleVisualization(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                // Performance: Static graphicsLayer properties should be set outside if possible,
-                // but scaleX/Y are dynamic here.
                 .graphicsLayer {
                     scaleX = pulseScale
                     scaleY = pulseScale
@@ -276,6 +283,15 @@ fun PrayerCircleVisualization(
                     )
 
                     onDrawBehind {
+                        // Subtle Gravitational Ripple (Flat style)
+                        val rippleProgress = (gravityFlux) % 1f
+                        drawCircle(
+                            color = contentColor.copy(alpha = 0.04f * (1f - rippleProgress)),
+                            radius = radius * (0.4f + rippleProgress * 1.4f),
+                            center = center,
+                            style = Stroke(width = 1.dp.toPx())
+                        )
+
                         withTransform({ rotate(stellarRotation, center) }) {
                             drawCircle(
                                 brush = Brush.sweepGradient(listOf(contentColor.copy(0f), contentColor.copy(0.12f), contentColor.copy(0f))),
@@ -309,7 +325,10 @@ fun PrayerCircleVisualization(
             }
 
             prayers.forEachIndexed { index, prayer ->
-                val pos = getPosition(prayer.time, radius, center)
+                // Subtle orbital pull: markers move slightly toward/away from center
+                val pullRadius = radius * (1f - (0.02f * gravityFlux))
+                val pos = getPosition(prayer.time, pullRadius, center)
+                
                 val isCurrent = prayer.type == currentPrayerType && isSelectedDayToday
                 val scale = prayerScales[index].value
 
@@ -317,36 +336,20 @@ fun PrayerCircleVisualization(
                     val markerRadius = if (isCurrent) (if (isLandscape) 11.dp else 14.dp).toPx() else (if (isLandscape) 9.dp else 12.dp).toPx()
                     val iconSize = if (isCurrent) (if (isLandscape) 13.dp else 16.dp).toPx() else (if (isLandscape) 11.dp else 14.dp).toPx()
 
-                    // Material Design Marker (Flat)
-                    
-                    // 1. Subtle Background Halo for Active Prayer
+                    // Flat Atmospheric Halo for Active Prayer
                     if (isCurrent) {
                         drawCircle(
                             color = prayer.color.copy(alpha = 0.15f * pulseScale),
                             radius = markerRadius * 1.8f,
                             center = pos
                         )
-                        drawCircle(
-                            color = prayer.color.copy(alpha = 0.3f),
-                            radius = markerRadius * 1.4f,
-                            center = pos,
-                            style = Stroke(width = 1.dp.toPx())
-                        )
                     }
 
-                    // 2. Main Marker Circle
+                    // Main Marker (Planet body): Solid Flat Style
                     drawCircle(
                         color = prayer.color,
                         radius = markerRadius,
                         center = pos
-                    )
-
-                    // 3. Subtle Inner definition
-                    drawCircle(
-                        color = Color.White.copy(alpha = 0.2f),
-                        radius = markerRadius,
-                        center = pos,
-                        style = Stroke(width = 1.dp.toPx())
                     )
 
                     // Contrast-aware Icon Tint
