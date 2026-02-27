@@ -317,14 +317,14 @@ fun PrayerCircleVisualization(
                     val markerRadius = if (isCurrent) (if (isLandscape) 11.dp else 14.dp).toPx() else (if (isLandscape) 9.dp else 12.dp).toPx()
                     val iconSize = if (isCurrent) (if (isLandscape) 13.dp else 16.dp).toPx() else (if (isLandscape) 11.dp else 14.dp).toPx()
 
-                    // 1. Luminous Atmospheric Glow
+                    // 1. Significantly Reduced Luminous Atmospheric Glow
                     drawCircle(
                         brush = Brush.radialGradient(
-                            colors = listOf(prayer.color.copy(alpha = 0.45f), Color.Transparent),
+                            colors = listOf(prayer.color.copy(alpha = 0.3f), Color.Transparent),
                             center = pos,
-                            radius = markerRadius * 3f
+                            radius = markerRadius * 2.2f // Adjusted radius
                         ),
-                        radius = markerRadius * 3f,
+                        radius = markerRadius * 2.2f, // Adjusted radius
                         center = pos,
                         blendMode = BlendMode.Screen
                     )
@@ -332,8 +332,8 @@ fun PrayerCircleVisualization(
                     // 2. Active Corona Pulse
                     if (isCurrent) {
                         drawCircle(
-                            color = Color.White.copy(alpha = 0.3f * pulseScale),
-                            radius = markerRadius * 1.8f,
+                            color = Color.White.copy(alpha = 0.25f * pulseScale),
+                            radius = markerRadius * 1.6f, // Reduced from 1.8f
                             center = pos,
                             style = Stroke(width = 0.5.dp.toPx())
                         )
@@ -381,8 +381,8 @@ fun PrayerCircleVisualization(
 
             if (isSelectedDayToday) {
                 val currentPos = getPosition(currentTime, radius, center)
-                drawCircle(Brush.radialGradient(listOf(currentPrayerColor.copy(0.4f), Color.Transparent), currentPos, 16.dp.toPx()), 16.dp.toPx(), currentPos)
-                val spikeLen = 8.dp.toPx()
+                drawCircle(Brush.radialGradient(listOf(currentPrayerColor.copy(0.3f), Color.Transparent), currentPos, 12.dp.toPx()), 12.dp.toPx(), currentPos)
+                val spikeLen = 6.dp.toPx()
                 drawLine(Color.White.copy(0.6f), Offset(currentPos.x - spikeLen, currentPos.y), Offset(currentPos.x + spikeLen, currentPos.y), 1.2.dp.toPx(), StrokeCap.Round)
                 drawLine(Color.White.copy(0.6f), Offset(currentPos.x, currentPos.y - spikeLen), Offset(currentPos.x, currentPos.y + spikeLen), 1.2.dp.toPx(), StrokeCap.Round)
                 drawCircle(Color.White, (if (isLandscape) 2.5.dp else 3.5.dp).toPx(), currentPos)

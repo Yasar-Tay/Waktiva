@@ -195,9 +195,9 @@ private fun CalendarSide(
         }
     }
 
-    val animTop by animateColorAsState(config.top, tween(1500))
-    val animMid by animateColorAsState(config.mid, tween(1500))
-    val animBottom by animateColorAsState(config.bottom, tween(1500))
+    val animTop by animateColorAsState(config.top, tween(1500), label = "top")
+    val animMid by animateColorAsState(config.mid, tween(1500), label = "mid")
+    val animBottom by animateColorAsState(config.bottom, tween(1500), label = "bottom")
 
     Surface(
         modifier = Modifier
@@ -218,8 +218,8 @@ private fun CalendarSide(
                 .background(
                     Brush.verticalGradient(
                         0.0f to animTop,
-                        0.45f to animMid,
-                        0.65f to animBottom,
+                        0.15f to animMid,
+                        0.45f to animBottom,
                         1.0f to Color.Transparent
                     )
                 )
@@ -235,23 +235,13 @@ private fun CalendarSide(
                 },
             contentAlignment = Alignment.Center
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(if (isLandscape) 4.dp else 8.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(if (isLandscape) 4.dp else 8.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = topText,
-                    style = MaterialTheme.typography.displayLarge.copy(
-                        fontSize = dayFontSize,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontFamily = IBMPlexArabic,
-                        letterSpacing = (-1).sp
-                    ),
-                    color = Color.White,
-                    textAlign = TextAlign.Center
-                )
-
+                // Month name (bottomText in logic, but should be top in UI)
                 Text(
                     text = bottomText,
                     style = MaterialTheme.typography.labelSmall.copy(
@@ -263,7 +253,25 @@ private fun CalendarSide(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(horizontal = 4.dp)
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .offset(y = (-24).dp)
+                )
+
+                // Day number (topText in logic, but should be bottom in UI)
+                Text(
+                    text = topText,
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontSize = dayFontSize,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontFamily = IBMPlexArabic,
+                        letterSpacing = (-1).sp
+                    ),
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .offset(y = 4.dp)
                 )
             }
         }
