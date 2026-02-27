@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -41,6 +42,8 @@ fun FlippableCalendarCard(
     contentColor: Color,
     accentColor: Color,
     currentTime: LocalTime,
+    isSelectedDayToday: Boolean,
+    pulseScale: Float,
     modifier: Modifier = Modifier
 ) {
     val rotation by animateFloatAsState(
@@ -60,20 +63,13 @@ fun FlippableCalendarCard(
     val dayFormatter = remember { DateTimeFormatter.ofPattern("dd") }
     val monthFormatter = remember { DateTimeFormatter.ofPattern("MMM") }
 
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val flarePulse by infiniteTransition.animateFloat(
-        initialValue = 0.4f,
-        targetValue = 0.7f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(3000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "flarePulse"
-    )
-
     Box(
         modifier = modifier
             .size(cardSize + 48.dp) 
+            .graphicsLayer {
+                scaleX = pulseScale
+                scaleY = pulseScale
+            }
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -82,7 +78,7 @@ fun FlippableCalendarCard(
             },
         contentAlignment = Alignment.Center
     ) {
-        // ATMOSPHERIC HALO
+        // 1. ATMOSPHERIC HALO (Same as prayer node glow)
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -90,16 +86,32 @@ fun FlippableCalendarCard(
                     val radius = (cardSize.toPx() / 2)
                     drawCircle(
                         brush = Brush.radialGradient(
-                            colors = listOf(
-                                accentColor.copy(alpha = 0.3f * flarePulse),
-                                Color.Transparent
-                            ),
+                            colors = listOf(accentColor.copy(alpha = 0.3f), Color.Transparent),
                             center = center,
-                            radius = radius * 1.8f
-                        )
+                            radius = radius * 2.2f
+                        ),
+                        radius = radius * 2.2f,
+                        blendMode = BlendMode.Screen
                     )
                 }
         )
+
+        // 2. ACTIVE CORONA PULSE (The same halo ring)
+        if (isSelectedDayToday) {
+            Box(
+                modifier = Modifier
+                    .size(cardSize * 1.6f)
+                    .graphicsLayer {
+                        alpha = 0.25f * pulseScale
+                    }
+                    .drawBehind {
+                        drawCircle(
+                            color = Color.White,
+                            style = Stroke(width = 0.5.dp.toPx())
+                        )
+                    }
+            )
+        }
 
         // THE CALENDAR DISC
         Box(

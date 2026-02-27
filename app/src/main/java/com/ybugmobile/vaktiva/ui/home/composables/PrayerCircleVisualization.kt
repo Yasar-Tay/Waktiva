@@ -401,7 +401,9 @@ fun PrayerCircleVisualization(
                 onFlip = onToggleHijri,
                 contentColor = contentColor,
                 accentColor = currentPrayerColor,
-                currentTime = currentTime
+                currentTime = currentTime,
+                isSelectedDayToday = isSelectedDayToday,
+                pulseScale = pulseScale
             )
             Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 12.dp))
             ReligiousBadge(day.date, contentColor, hijriDate = day.hijriDate)
