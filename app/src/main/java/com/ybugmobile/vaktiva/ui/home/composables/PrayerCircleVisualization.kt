@@ -349,8 +349,15 @@ fun PrayerCircleVisualization(
                         style = Stroke(width = 1.dp.toPx())
                     )
 
+                    // Contrast-aware Icon Tint
+                    val iconTint = if (prayer.color.luminance() > 0.5f) {
+                        Color.Black.copy(alpha = 0.7f)
+                    } else {
+                        Color.White
+                    }
+
                     translate(pos.x - iconSize / 2, pos.y - iconSize / 2) {
-                        with(prayer.painter) { draw(Size(iconSize, iconSize), colorFilter = ColorFilter.tint(Color.White)) }
+                        with(prayer.painter) { draw(Size(iconSize, iconSize), colorFilter = ColorFilter.tint(iconTint)) }
                     }
                     
                     // Time labels
