@@ -317,56 +317,36 @@ fun PrayerCircleVisualization(
                     val markerRadius = if (isCurrent) (if (isLandscape) 11.dp else 14.dp).toPx() else (if (isLandscape) 9.dp else 12.dp).toPx()
                     val iconSize = if (isCurrent) (if (isLandscape) 13.dp else 16.dp).toPx() else (if (isLandscape) 11.dp else 14.dp).toPx()
 
-                    // 1. Significantly Reduced Luminous Atmospheric Glow
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(prayer.color.copy(alpha = 0.3f), Color.Transparent),
-                            center = pos,
-                            radius = markerRadius * 2.2f // Adjusted radius
-                        ),
-                        radius = markerRadius * 2.2f, // Adjusted radius
-                        center = pos,
-                        blendMode = BlendMode.Screen
-                    )
-
-                    // 2. Active Corona Pulse
+                    // Material Design Marker (Flat)
+                    
+                    // 1. Subtle Background Halo for Active Prayer
                     if (isCurrent) {
                         drawCircle(
-                            color = Color.White.copy(alpha = 0.25f * pulseScale),
-                            radius = markerRadius * 1.6f, // Reduced from 1.8f
+                            color = prayer.color.copy(alpha = 0.15f * pulseScale),
+                            radius = markerRadius * 1.8f,
+                            center = pos
+                        )
+                        drawCircle(
+                            color = prayer.color.copy(alpha = 0.3f),
+                            radius = markerRadius * 1.4f,
                             center = pos,
-                            style = Stroke(width = 0.5.dp.toPx())
+                            style = Stroke(width = 1.dp.toPx())
                         )
                     }
 
-                    // 3. The Disc (Celestial Body)
+                    // 2. Main Marker Circle
                     drawCircle(
-                        brush = Brush.linearGradient(
-                            colors = listOf(prayer.color, prayer.color.darken(0.35f)),
-                            start = Offset(pos.x, pos.y - markerRadius),
-                            end = Offset(pos.x, pos.y + markerRadius)
-                        ),
+                        color = prayer.color,
                         radius = markerRadius,
                         center = pos
                     )
 
-                    // 4. Specular Highlight (3D pop)
+                    // 3. Subtle Inner definition
                     drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(Color.White.copy(alpha = 0.4f), Color.Transparent),
-                            center = Offset(pos.x - markerRadius * 0.3f, pos.y - markerRadius * 0.3f),
-                            radius = markerRadius * 0.6f
-                        ),
-                        radius = markerRadius * 0.6f,
-                        center = Offset(pos.x - markerRadius * 0.3f, pos.y - markerRadius * 0.3f)
-                    )
-
-                    // 5. Polished Glass Rim
-                    drawCircle(
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = Color.White.copy(alpha = 0.2f),
                         radius = markerRadius,
                         center = pos,
-                        style = Stroke(width = 0.8.dp.toPx())
+                        style = Stroke(width = 1.dp.toPx())
                     )
 
                     translate(pos.x - iconSize / 2, pos.y - iconSize / 2) {
@@ -453,10 +433,6 @@ fun InfoGlassCard(info: DetailedInfo) {
             }
         }
     }
-}
-
-private fun Color.darken(factor: Float): Color {
-    return Color(red * (1 - factor), green * (1 - factor), blue * (1 - factor), alpha)
 }
 
 data class PrayerNodeInfo(val type: PrayerType, val time: LocalTime, val color: Color, val painter: androidx.compose.ui.graphics.vector.VectorPainter)
