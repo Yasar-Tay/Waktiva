@@ -1,7 +1,6 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import android.content.res.Configuration
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -58,7 +56,7 @@ fun FlippableCalendarCard(
 
     val infiniteTransition = rememberInfiniteTransition(label = "gravity_star")
     
-    // Core Gravity Pulse
+    // Core Gravity Pulse - Only animates if it's today
     val coreGlow by infiniteTransition.animateFloat(
         initialValue = 0.8f,
         targetValue = 1.2f,
@@ -105,49 +103,51 @@ fun FlippableCalendarCard(
             },
         contentAlignment = Alignment.Center
     ) {
-        // GRAVITY WELL (External Atmosphere)
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .drawBehind {
-                    val baseRadius = (cardWidth.toPx() / 2)
-                    
-                    // Intense Solar corona
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            0.0f to accentColor.copy(alpha = 0.5f * coreGlow),
-                            0.4f to accentColor.copy(alpha = 0.2f),
-                            0.8f to accentColor.copy(alpha = 0.05f),
-                            1.0f to Color.Transparent,
-                            center = center,
-                            radius = baseRadius * 3.5f * coreGlow
-                        ),
-                        radius = baseRadius * 3.5f * coreGlow,
-                        blendMode = BlendMode.Screen
-                    )
+        // GRAVITY WELL (External Atmosphere) - Only visible on the current day
+        if (isSelectedDayToday) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .drawBehind {
+                        val baseRadius = (cardWidth.toPx() / 2)
+                        
+                        // Intense Solar corona
+                        drawCircle(
+                            brush = Brush.radialGradient(
+                                0.0f to accentColor.copy(alpha = 0.5f * coreGlow),
+                                0.4f to accentColor.copy(alpha = 0.2f),
+                                0.8f to accentColor.copy(alpha = 0.05f),
+                                1.0f to Color.Transparent,
+                                center = center,
+                                radius = baseRadius * 3.5f * coreGlow
+                            ),
+                            radius = baseRadius * 3.5f * coreGlow,
+                            blendMode = BlendMode.Screen
+                        )
 
-                    // Rotating Magnetic Prominences
-                    rotate(starRotation) {
-                        repeat(12) { i ->
-                            val angle = Math.toRadians((i * 30).toDouble())
-                            val flareLen = baseRadius * (1.1f + 0.3f * sin(starRotation * 0.1 + i).toFloat())
-                            drawLine(
-                                color = accentColor.copy(alpha = 0.3f),
-                                start = Offset(
-                                    center.x + baseRadius * cos(angle).toFloat(),
-                                    center.y + baseRadius * sin(angle).toFloat()
-                                ),
-                                end = Offset(
-                                    center.x + flareLen * cos(angle).toFloat(),
-                                    center.y + flareLen * sin(angle).toFloat()
-                                ),
-                                strokeWidth = 1.5.dp.toPx(),
-                                cap = StrokeCap.Round
-                            )
+                        // Rotating Magnetic Prominences
+                        rotate(starRotation) {
+                            repeat(12) { i ->
+                                val angle = Math.toRadians((i * 30).toDouble())
+                                val flareLen = baseRadius * (1.1f + 0.3f * sin(starRotation * 0.1 + i).toFloat())
+                                drawLine(
+                                    color = accentColor.copy(alpha = 0.3f),
+                                    start = Offset(
+                                        center.x + baseRadius * cos(angle).toFloat(),
+                                        center.y + baseRadius * sin(angle).toFloat()
+                                    ),
+                                    end = Offset(
+                                        center.x + flareLen * cos(angle).toFloat(),
+                                        center.y + flareLen * sin(angle).toFloat()
+                                    ),
+                                    strokeWidth = 1.5.dp.toPx(),
+                                    cap = StrokeCap.Round
+                                )
+                            }
                         }
                     }
-                }
-        )
+            )
+        }
 
         // THE STAR DISC (Core)
         Box(
@@ -198,7 +198,7 @@ private fun CalendarSide(
     val dayFontSize = if (isLandscape) 34.sp else 40.sp
     val monthFontSize = if (isLandscape) 11.sp else 12.sp
 
-    val containerColor = if (glassTheme.isLightMode) Color.White.copy(0.12f) else Color.Black.copy(0.35f)
+    val containerColor = if (glassTheme.isLightMode) Color.White.copy(0.05f) else Color.Black.copy(0.10f)
     val borderColor = accentColor.copy(alpha = 0.8f)
     val dayNumberColor = Color.White
 
