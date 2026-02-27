@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -113,14 +114,19 @@ class CompassManager @Inject constructor(
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
 
-        if (rotationSensor != null) {
-            sensorManager.registerListener(listener, rotationSensor, SensorManager.SENSOR_DELAY_UI)
-        } else {
-            sensorManager.registerListener(listener, accelSensor, SensorManager.SENSOR_DELAY_UI)
-            sensorManager.registerListener(listener, magSensor, SensorManager.SENSOR_DELAY_UI)
+        // Ensure registration happens on Main thread (UI thread) to guarantee Looper availability
+        launch(Dispatchers.Main) {
+            if (rotationSensor != null) {
+                sensorManager.registerListener(listener, rotationSensor, SensorManager.SENSOR_DELAY_UI)
+            } else {
+                sensorManager.registerListener(listener, accelSensor, SensorManager.SENSOR_DELAY_UI)
+                sensorManager.registerListener(listener, magSensor, SensorManager.SENSOR_DELAY_UI)
+            }
         }
 
-        awaitClose { sensorManager.unregisterListener(listener) }
+        awaitClose { 
+            sensorManager.unregisterListener(listener) 
+        }
     }.onStart {
         emit(CompassData(0f, SensorManager.SENSOR_STATUS_UNRELIABLE))
     }

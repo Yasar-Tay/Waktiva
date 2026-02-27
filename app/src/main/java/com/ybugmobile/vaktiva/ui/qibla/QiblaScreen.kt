@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.ui.home.composables.LocationSection
 import com.ybugmobile.vaktiva.ui.qibla.composables.*
@@ -44,8 +45,9 @@ import kotlin.math.abs
 fun QiblaScreen(
     viewModel: QiblaViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    // Using collectAsStateWithLifecycle to ensure sensors and flows are managed correctly with the lifecycle
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     
     val context = LocalContext.current
 
@@ -90,7 +92,7 @@ fun QiblaScreen(
     }
 
     val alignmentColor by animateColorAsState(
-        targetValue = if (isAligned) Color(0xFFFFB300) else MaterialTheme.colorScheme.primary, // Reverted to fixed Warm Amber
+        targetValue = if (isAligned) Color(0xFFFFB300) else MaterialTheme.colorScheme.primary,
         label = "alignmentColor"
     )
 
@@ -175,7 +177,7 @@ private fun QiblaContent(
     val currentTheme = if (isMapView) lightGlassTheme else glassTheme
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // LAYER 1: Fullscreen Map (Common for both Portrait & Landscape)
+        // LAYER 1: Fullscreen Map
         if (isMapView) {
             QiblaMap(
                 settings = state.settings,
@@ -231,7 +233,6 @@ private fun QiblaContent(
                                 contentColor = currentTheme.contentColor
                             )
                             
-                            // Alignment effect
                             QiblaAlignmentEffect(isAligned = isAligned, alignmentColor = alignmentColor)
                         }
                     }
@@ -244,12 +245,10 @@ private fun QiblaContent(
                         .padding(start = 12.dp, end = 24.dp, top = 24.dp, bottom = 24.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
-                    // Landscape Info Panel: True vertical distribution without sub-containers
                     Column(
                         modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // 1. Location Section (Top)
                         LocationHeader(
                             state = state,
                             currentTheme = currentTheme,
@@ -257,7 +256,6 @@ private fun QiblaContent(
                             onStatusClick = onStatusClick
                         )
 
-                        // 2. Qibla Info Card (Middle)
                         QiblaInfoCard(
                             isAligned = isAligned,
                             alignmentColor = alignmentColor,
@@ -270,14 +268,13 @@ private fun QiblaContent(
                             contentColor = currentTheme.contentColor
                         )
 
-                        // 3. View Switcher (Bottom)
                         QiblaViewSwitcher(
                             isMapView = isMapView,
                             onViewChange = { isMapView = it },
                             contentColor = currentTheme.contentColor,
                             containerColor = currentTheme.containerColor,
                             borderColor = currentTheme.borderColor,
-                            modifier = Modifier.align(Alignment.Start) // Aligned to Start (Left)
+                            modifier = Modifier.align(Alignment.Start)
                         )
                     }
                 }
@@ -425,18 +422,6 @@ private fun CompassContainer(
         modifier = Modifier.fillMaxWidth().aspectRatio(1f),
         contentAlignment = Alignment.Center
     ) {
-        if (isAccuracyLow && !isAligned) {
-            Box(
-                modifier = Modifier.fillMaxSize().background(
-                    Brush.radialGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.errorContainer.copy(alpha = pulseAlpha),
-                            Color.Transparent
-                        )
-                    )
-                )
-            )
-        }
         ProfessionalCompass(
             azimuth = currentAzimuth,
             qiblaAngle = state.qiblaDirection.toFloat(),
@@ -445,7 +430,6 @@ private fun CompassContainer(
             contentColor = currentTheme.contentColor
         )
         
-        // Alignment effect (Matches the theme color)
         QiblaAlignmentEffect(isAligned = isAligned, alignmentColor = alignmentColor)
     }
 }

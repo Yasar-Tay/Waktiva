@@ -113,9 +113,20 @@ class QiblaViewModel @Inject constructor(
             }
         }
 
-        // Mark as settled after a small delay to allow flows to emit their first values
+        // Logic to mark as settled:
+        // Instead of a fixed delay, we wait for the first emissions of critical data
         viewModelScope.launch {
-            delay(300) // Small buffer to let flows settle
+            combine(settings, currentPrayerDay) { s, d -> 
+                s.latitude != null && d != null 
+            }.filter { it }
+             .first()
+            
+            _hasSettled.value = true
+        }
+        
+        // Fallback for settled state if no data is found after a longer period (e.g. 2 seconds)
+        viewModelScope.launch {
+            delay(2000)
             _hasSettled.value = true
         }
     }
