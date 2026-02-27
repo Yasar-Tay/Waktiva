@@ -61,8 +61,6 @@ fun PrayerCircleVisualization(
     isSelectedDayToday: Boolean,
     isHijriVisible: Boolean = false,
     onToggleHijri: () -> Unit = {},
-    sunAzimuth: Float = 0f,
-    sunAltitude: Float = 0f,
     contentColor: Color = Color.White,
     isMuted: Boolean = false,
     playAdhanAudio: Boolean = false,
@@ -356,8 +354,7 @@ fun PrayerCircleVisualization(
                 onFlip = onToggleHijri,
                 contentColor = contentColor,
                 accentColor = currentPrayerColor,
-                sunAzimuth = sunAzimuth,
-                sunAltitude = sunAltitude
+                currentTime = currentTime
             )
             Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 12.dp))
             ReligiousBadge(day.date, contentColor, hijriDate = day.hijriDate)

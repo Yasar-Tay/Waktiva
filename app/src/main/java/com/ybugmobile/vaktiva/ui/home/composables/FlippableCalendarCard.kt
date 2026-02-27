@@ -1,8 +1,10 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import android.content.res.Configuration
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -16,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -26,12 +27,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
+import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.theme.IBMPlexArabic
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.PI
 
 @Composable
 fun FlippableCalendarCard(
@@ -40,8 +40,7 @@ fun FlippableCalendarCard(
     onFlip: () -> Unit,
     contentColor: Color,
     accentColor: Color,
-    sunAzimuth: Float,
-    sunAltitude: Float,
+    currentTime: LocalTime,
     modifier: Modifier = Modifier
 ) {
     val rotation by animateFloatAsState(
@@ -53,21 +52,6 @@ fun FlippableCalendarCard(
         label = "cardFlip"
     )
 
-    val infiniteTransition = rememberInfiniteTransition(label = "celestial_vibes")
-    val flarePulse by infiniteTransition.animateFloat(
-        initialValue = 0.4f,
-        targetValue = 0.8f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(3000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "flarePulse"
-    )
-
-    // Performance: Pass these as lambdas to defer state reading to Draw phase
-    val animSunAzimuth = animateFloatAsState(sunAzimuth, spring(stiffness = Spring.StiffnessLow), label = "az")
-    val animSunAltitude = animateFloatAsState(sunAltitude, spring(stiffness = Spring.StiffnessLow), label = "alt")
-
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val cardSize = if (isLandscape) 80.dp else 94.dp
@@ -76,9 +60,20 @@ fun FlippableCalendarCard(
     val dayFormatter = remember { DateTimeFormatter.ofPattern("dd") }
     val monthFormatter = remember { DateTimeFormatter.ofPattern("MMM") }
 
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val flarePulse by infiniteTransition.animateFloat(
+        initialValue = 0.4f,
+        targetValue = 0.7f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "flarePulse"
+    )
+
     Box(
         modifier = modifier
-            .size(cardSize + 54.dp) 
+            .size(cardSize + 48.dp) 
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -87,37 +82,20 @@ fun FlippableCalendarCard(
             },
         contentAlignment = Alignment.Center
     ) {
-        // ATMOSPHERIC BACKGROUND
+        // ATMOSPHERIC HALO
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .drawBehind {
                     val radius = (cardSize.toPx() / 2)
-                    
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(
-                                accentColor.copy(alpha = 0.4f * flarePulse),
-                                accentColor.copy(alpha = 0.1f * flarePulse),
+                                accentColor.copy(alpha = 0.3f * flarePulse),
                                 Color.Transparent
                             ),
                             center = center,
-                            radius = radius * 1.7f
-                        )
-                    )
-
-                    drawCircle(
-                        color = accentColor.copy(alpha = 0.2f * flarePulse),
-                        radius = radius * 1.2f,
-                        style = Stroke(width = 1.dp.toPx())
-                    )
-                    
-                    drawCircle(
-                        color = accentColor.copy(alpha = 0.1f),
-                        radius = radius * 1.4f,
-                        style = Stroke(
-                            width = 0.8.dp.toPx(),
-                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 16f), 0f)
+                            radius = radius * 1.8f
                         )
                     )
                 }
@@ -139,8 +117,8 @@ fun FlippableCalendarCard(
                     contentColor = contentColor,
                     isBack = false,
                     accentColor = accentColor,
-                    sunAzimuthProvider = { animSunAzimuth.value },
-                    sunAltitudeProvider = { animSunAltitude.value },
+                    currentTime = currentTime,
+                    timings = day.timings,
                     isLandscape = isLandscape
                 )
             } else {
@@ -157,8 +135,8 @@ fun FlippableCalendarCard(
                     contentColor = contentColor,
                     isBack = true,
                     accentColor = accentColor,
-                    sunAzimuthProvider = { animSunAzimuth.value },
-                    sunAltitudeProvider = { animSunAltitude.value },
+                    currentTime = currentTime,
+                    timings = day.timings,
                     isLandscape = isLandscape
                 )
             }
@@ -173,12 +151,53 @@ private fun CalendarSide(
     contentColor: Color,
     isBack: Boolean,
     accentColor: Color,
-    sunAzimuthProvider: () -> Float,
-    sunAltitudeProvider: () -> Float,
+    currentTime: LocalTime,
+    timings: Map<PrayerType, LocalTime>,
     isLandscape: Boolean
 ) {
     val dayFontSize = if (isLandscape) 30.sp else 34.sp
-    val monthFontSize = if (isLandscape) 8.sp else 9.sp
+    val monthFontSize = if (isLandscape) 11.sp else 13.sp
+
+    val fajrTime = timings[PrayerType.FAJR] ?: LocalTime.of(5, 0)
+    val sunriseTime = timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 30)
+    val maghribTime = timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
+    val ishaTime = timings[PrayerType.ISHA] ?: LocalTime.of(19, 30)
+
+    val markerFajr = Color(0xFF81D4FA)
+    val markerSunrise = Color(0xFFFFE082)
+    val markerDhuhr = Color(0xFFFFF59D)
+    val markerAsr = Color(0xFFFFCC80)
+    val markerMaghrib = Color(0xFFCE93D8)
+    val markerIsha = Color(0xFF9FA8DA)
+
+    val config = remember(currentTime, timings) {
+        when {
+            // Fajr period
+            currentTime.isAfter(fajrTime) && currentTime.isBefore(sunriseTime) -> {
+                SkyColors(markerFajr.copy(alpha = 0.8f), markerFajr.copy(alpha = 0.4f), markerFajr.copy(alpha = 0.1f))
+            }
+            // Sunrise period
+            currentTime.isAfter(sunriseTime.minusMinutes(15)) && currentTime.isBefore(sunriseTime.plusMinutes(45)) -> {
+                SkyColors(markerSunrise.copy(alpha = 0.8f), markerSunrise.copy(alpha = 0.4f), Color.Transparent)
+            }
+            // Daytime (Dhuhr/Asr)
+            currentTime.isAfter(sunriseTime) && currentTime.isBefore(maghribTime.minusMinutes(15)) -> {
+                SkyColors(markerDhuhr.copy(alpha = 0.7f), markerAsr.copy(alpha = 0.3f), Color.Transparent)
+            }
+            // Sunset period (Maghrib)
+            currentTime.isAfter(maghribTime.minusMinutes(15)) && currentTime.isBefore(ishaTime) -> {
+                SkyColors(markerMaghrib.copy(alpha = 0.8f), markerMaghrib.copy(alpha = 0.4f), Color.Transparent)
+            }
+            // Night period (Isha)
+            else -> {
+                SkyColors(markerIsha.copy(alpha = 0.8f), markerIsha.copy(alpha = 0.4f), Color.Transparent)
+            }
+        }
+    }
+
+    val animTop by animateColorAsState(config.top, tween(1500))
+    val animMid by animateColorAsState(config.mid, tween(1500))
+    val animBottom by animateColorAsState(config.bottom, tween(1500))
 
     Surface(
         modifier = Modifier
@@ -187,57 +206,29 @@ private fun CalendarSide(
         color = Color.Transparent,
         shape = CircleShape,
         border = BorderStroke(
-            1.5.dp,
+            1.dp,
             Brush.linearGradient(
-                listOf(accentColor.copy(alpha = 0.6f), Color.Transparent, accentColor.copy(alpha = 0.2f))
+                listOf(accentColor.copy(alpha = 0.5f), Color.Transparent, accentColor.copy(alpha = 0.2f))
             )
         )
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        0.0f to animTop,
+                        0.45f to animMid,
+                        0.65f to animBottom,
+                        1.0f to Color.Transparent
+                    )
+                )
                 .drawBehind {
-                    val azimuth = sunAzimuthProvider()
-                    val altitude = sunAltitudeProvider()
-                    
-                    val lightAngleRad = ((azimuth - 90f) * PI / 180f).toFloat()
-                    val terminatorShift = (sin(altitude * PI / 180f) * 0.4f).toFloat()
-                    
-                    val brightStop = (0.35f - terminatorShift).coerceIn(0f, 1f)
-                    val mStop = (0.55f - terminatorShift).coerceIn(0f, 1f)
-                    val transparentStop = (0.85f - terminatorShift).coerceIn(0f, 1f)
-
                     val radius = size.width / 2
-                    val dirX = cos(lightAngleRad)
-                    val dirY = sin(lightAngleRad)
-                    
-                    val gradientStart = Offset(center.x + dirX * radius, center.y + dirY * radius)
-                    val gradientEnd = Offset(center.x - dirX * radius, center.y - dirY * radius)
-
-                    // 1. The Main Planet Gradient
-                    drawCircle(
-                        brush = Brush.linearGradient(
-                            0.0f to accentColor.copy(alpha = 0.5f),
-                            brightStop to accentColor.copy(alpha = 0.3f),
-                            mStop to accentColor.copy(alpha = 0.1f),
-                            transparentStop to Color.Transparent,
-                            1.0f to Color.Transparent,
-                            start = gradientStart,
-                            end = gradientEnd,
-                            tileMode = TileMode.Clamp
-                        )
-                    )
-
-                    // 2. Curvature Highlight
-                    val highlightOffset = Offset(
-                        center.x + dirX * radius * 0.45f,
-                        center.y + dirY * radius * 0.45f
-                    )
-
                     drawCircle(
                         brush = Brush.radialGradient(
-                            colors = listOf(Color.White.copy(alpha = 0.15f), Color.Transparent),
-                            center = highlightOffset,
+                            colors = listOf(Color.White.copy(alpha = 0.12f), Color.Transparent),
+                            center = Offset(center.x, center.y - radius * 0.4f),
                             radius = radius * 1.3f
                         )
                     )
@@ -278,3 +269,5 @@ private fun CalendarSide(
         }
     }
 }
+
+private data class SkyColors(val top: Color, val mid: Color, val bottom: Color)
