@@ -317,16 +317,63 @@ fun PrayerCircleVisualization(
                     val markerRadius = if (isCurrent) (if (isLandscape) 11.dp else 14.dp).toPx() else (if (isLandscape) 9.dp else 12.dp).toPx()
                     val iconSize = if (isCurrent) (if (isLandscape) 13.dp else 16.dp).toPx() else (if (isLandscape) 11.dp else 14.dp).toPx()
 
-                    if (isCurrent) drawCircle(prayer.color.copy(0.15f), markerRadius * 2.5f * pulseScale, pos)
-                    drawCircle(prayer.color.copy(0.25f), markerRadius * 1.6f, pos)
-                    drawCircle(Brush.radialGradient(listOf(prayer.color, prayer.color.darken(0.4f)), pos, markerRadius), markerRadius, pos)
-                    drawCircle(Color.White.copy(0.8f), markerRadius, pos, style = Stroke(1.dp.toPx()))
+                    // 1. Luminous Atmospheric Glow
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(prayer.color.copy(alpha = 0.45f), Color.Transparent),
+                            center = pos,
+                            radius = markerRadius * 3f
+                        ),
+                        radius = markerRadius * 3f,
+                        center = pos,
+                        blendMode = BlendMode.Screen
+                    )
+
+                    // 2. Active Corona Pulse
+                    if (isCurrent) {
+                        drawCircle(
+                            color = Color.White.copy(alpha = 0.3f * pulseScale),
+                            radius = markerRadius * 1.8f,
+                            center = pos,
+                            style = Stroke(width = 0.5.dp.toPx())
+                        )
+                    }
+
+                    // 3. The Disc (Celestial Body)
+                    drawCircle(
+                        brush = Brush.linearGradient(
+                            colors = listOf(prayer.color, prayer.color.darken(0.35f)),
+                            start = Offset(pos.x, pos.y - markerRadius),
+                            end = Offset(pos.x, pos.y + markerRadius)
+                        ),
+                        radius = markerRadius,
+                        center = pos
+                    )
+
+                    // 4. Specular Highlight (3D pop)
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(Color.White.copy(alpha = 0.4f), Color.Transparent),
+                            center = Offset(pos.x - markerRadius * 0.3f, pos.y - markerRadius * 0.3f),
+                            radius = markerRadius * 0.6f
+                        ),
+                        radius = markerRadius * 0.6f,
+                        center = Offset(pos.x - markerRadius * 0.3f, pos.y - markerRadius * 0.3f)
+                    )
+
+                    // 5. Polished Glass Rim
+                    drawCircle(
+                        color = Color.White.copy(alpha = 0.7f),
+                        radius = markerRadius,
+                        center = pos,
+                        style = Stroke(width = 0.8.dp.toPx())
+                    )
 
                     translate(pos.x - iconSize / 2, pos.y - iconSize / 2) {
                         with(prayer.painter) { draw(Size(iconSize, iconSize), colorFilter = ColorFilter.tint(Color.White)) }
                     }
                     
-                    // Draw pre-measured labels
+                    // Time labels
                     val textResult = measuredTimeLabels[index]
                     drawText(textResult, topLeft = Offset(pos.x - textResult.size.width / 2, pos.y + (if (isLandscape) 14.dp else 18.dp).toPx()))
                 }
