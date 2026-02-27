@@ -8,15 +8,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
@@ -28,8 +26,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
-import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.theme.IBMPlexArabic
+import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -57,7 +55,10 @@ fun FlippableCalendarCard(
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val cardSize = if (isLandscape) 80.dp else 94.dp
+    
+    // Compact modern sizing
+    val cardWidth = if (isLandscape) 64.dp else 80.dp
+    val cardHeight = cardWidth * 1.2f
 
     val context = LocalContext.current
     val dayFormatter = remember { DateTimeFormatter.ofPattern("dd") }
@@ -65,7 +66,8 @@ fun FlippableCalendarCard(
 
     Box(
         modifier = modifier
-            .size(cardSize + 48.dp) 
+            .width(cardWidth + 32.dp)
+            .height(cardHeight + 32.dp)
             .graphicsLayer {
                 scaleX = pulseScale
                 scaleY = pulseScale
@@ -78,45 +80,41 @@ fun FlippableCalendarCard(
             },
         contentAlignment = Alignment.Center
     ) {
-        // 1. ATMOSPHERIC HALO (Same as prayer node glow)
+        // Soft Glow Backdrop
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .drawBehind {
-                    val radius = (cardSize.toPx() / 2)
                     drawCircle(
                         brush = Brush.radialGradient(
-                            colors = listOf(accentColor.copy(alpha = 0.3f), Color.Transparent),
+                            colors = listOf(accentColor.copy(alpha = 0.2f), Color.Transparent),
                             center = center,
-                            radius = radius * 2.2f
+                            radius = (cardWidth.toPx() / 2) * 2.0f
                         ),
-                        radius = radius * 2.2f,
-                        blendMode = BlendMode.Screen
+                        radius = (cardWidth.toPx() / 2) * 2.0f
                     )
                 }
         )
 
-        // 2. ACTIVE CORONA PULSE (The same halo ring)
+        // Today Active Border
         if (isSelectedDayToday) {
             Box(
                 modifier = Modifier
-                    .size(cardSize * 1.6f)
-                    .graphicsLayer {
-                        alpha = 0.25f * pulseScale
-                    }
+                    .size(cardWidth + 10.dp, cardHeight + 10.dp)
                     .drawBehind {
-                        drawCircle(
-                            color = Color.White,
-                            style = Stroke(width = 0.5.dp.toPx())
+                        drawRoundRect(
+                            color = accentColor.copy(alpha = 0.2f * pulseScale),
+                            cornerRadius = CornerRadius(16.dp.toPx()),
+                            style = Stroke(width = 1.2.dp.toPx())
                         )
                     }
             )
         }
 
-        // THE CALENDAR DISC
+        // THE CALENDAR CARD
         Box(
             modifier = Modifier
-                .size(cardSize)
+                .size(cardWidth, cardHeight)
                 .graphicsLayer {
                     rotationY = rotation
                     cameraDistance = 15f * density
@@ -126,11 +124,8 @@ fun FlippableCalendarCard(
                 CalendarSide(
                     topText = day.date.format(dayFormatter),
                     bottomText = day.date.format(monthFormatter).uppercase(Locale.getDefault()),
-                    contentColor = contentColor,
                     isBack = false,
                     accentColor = accentColor,
-                    currentTime = currentTime,
-                    timings = day.timings,
                     isLandscape = isLandscape
                 )
             } else {
@@ -144,11 +139,8 @@ fun FlippableCalendarCard(
                 CalendarSide(
                     topText = hijri?.day?.toString() ?: "",
                     bottomText = abbreviatedHijriMonth,
-                    contentColor = contentColor,
                     isBack = true,
                     accentColor = accentColor,
-                    currentTime = currentTime,
-                    timings = day.timings,
                     isLandscape = isLandscape
                 )
             }
@@ -160,134 +152,73 @@ fun FlippableCalendarCard(
 private fun CalendarSide(
     topText: String,
     bottomText: String,
-    contentColor: Color,
     isBack: Boolean,
     accentColor: Color,
-    currentTime: LocalTime,
-    timings: Map<PrayerType, LocalTime>,
     isLandscape: Boolean
 ) {
-    val dayFontSize = if (isLandscape) 30.sp else 34.sp
-    val monthFontSize = if (isLandscape) 11.sp else 13.sp
+    val glassTheme = LocalGlassTheme.current
+    val dayFontSize = if (isLandscape) 28.sp else 34.sp
+    val monthFontSize = if (isLandscape) 10.sp else 12.sp
 
-    val fajrTime = timings[PrayerType.FAJR] ?: LocalTime.of(5, 0)
-    val sunriseTime = timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 30)
-    val maghribTime = timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0)
-    val ishaTime = timings[PrayerType.ISHA] ?: LocalTime.of(19, 30)
-
-    val markerFajr = Color(0xFF81D4FA)
-    val markerSunrise = Color(0xFFFFE082)
-    val markerDhuhr = Color(0xFFFFF59D)
-    val markerAsr = Color(0xFFFFCC80)
-    val markerMaghrib = Color(0xFFCE93D8)
-    val markerIsha = Color(0xFF9FA8DA)
-
-    val config = remember(currentTime, timings) {
-        when {
-            // Fajr period
-            currentTime.isAfter(fajrTime) && currentTime.isBefore(sunriseTime) -> {
-                SkyColors(markerFajr.copy(alpha = 0.8f), markerFajr.copy(alpha = 0.4f), markerFajr.copy(alpha = 0.1f))
-            }
-            // Sunrise period
-            currentTime.isAfter(sunriseTime.minusMinutes(15)) && currentTime.isBefore(sunriseTime.plusMinutes(45)) -> {
-                SkyColors(markerSunrise.copy(alpha = 0.8f), markerSunrise.copy(alpha = 0.4f), Color.Transparent)
-            }
-            // Daytime (Dhuhr/Asr)
-            currentTime.isAfter(sunriseTime) && currentTime.isBefore(maghribTime.minusMinutes(15)) -> {
-                SkyColors(markerDhuhr.copy(alpha = 0.7f), markerAsr.copy(alpha = 0.3f), Color.Transparent)
-            }
-            // Sunset period (Maghrib)
-            currentTime.isAfter(maghribTime.minusMinutes(15)) && currentTime.isBefore(ishaTime) -> {
-                SkyColors(markerMaghrib.copy(alpha = 0.8f), markerMaghrib.copy(alpha = 0.4f), Color.Transparent)
-            }
-            // Night period (Isha)
-            else -> {
-                SkyColors(markerIsha.copy(alpha = 0.8f), markerIsha.copy(alpha = 0.4f), Color.Transparent)
-            }
-        }
-    }
-
-    val animTop by animateColorAsState(config.top, tween(1500), label = "top")
-    val animMid by animateColorAsState(config.mid, tween(1500), label = "mid")
-    val animBottom by animateColorAsState(config.bottom, tween(1500), label = "bottom")
+    // Enhanced glassmorphism: lighter body, solid header
+    val containerColor = if (glassTheme.isLightMode) Color.White.copy(0.12f) else Color.Black.copy(0.25f)
+    val borderColor = if (glassTheme.isLightMode) Color.White.copy(0.4f) else Color.White.copy(0.12f)
+    val dayNumberColor = Color.White.copy(alpha = 0.95f) // Light color for dayNumber
 
     Surface(
         modifier = Modifier
             .fillMaxSize()
             .graphicsLayer { if (isBack) rotationY = 180f },
-        color = Color.Transparent,
-        shape = CircleShape,
-        border = BorderStroke(
-            1.dp,
-            Brush.linearGradient(
-                listOf(accentColor.copy(alpha = 0.5f), Color.Transparent, accentColor.copy(alpha = 0.2f))
-            )
-        )
+        color = containerColor,
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, borderColor)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        0.0f to animTop,
-                        0.15f to animMid,
-                        0.45f to animBottom,
-                        1.0f to Color.Transparent
-                    )
-                )
-                .drawBehind {
-                    val radius = size.width / 2
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(Color.White.copy(alpha = 0.12f), Color.Transparent),
-                            center = Offset(center.x, center.y - radius * 0.4f),
-                            radius = radius * 1.3f
-                        )
-                    )
-                },
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Header Section: More Solid Accent
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(if (isLandscape) 4.dp else 8.dp),
+                    .fillMaxWidth()
+                    .weight(0.35f)
+                    .background(accentColor.copy(alpha = 0.92f)),
                 contentAlignment = Alignment.Center
             ) {
-                // Month name (bottomText in logic, but should be top in UI)
+                val headerTextColor = if (accentColor.luminance() > 0.5f) Color.Black.copy(0.7f) else Color.White
                 Text(
                     text = bottomText,
                     style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 1.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.2.sp,
                         fontSize = monthFontSize
                     ),
-                    color = Color.White.copy(alpha = 0.8f),
+                    color = headerTextColor,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .offset(y = (-24).dp)
+                    overflow = TextOverflow.Ellipsis
                 )
+            }
 
-                // Day number (topText in logic, but should be bottom in UI)
+            // Date Section: Lighter/More transparent background
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.65f)
+                    .padding(bottom = 4.dp),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
                     text = topText,
                     style = MaterialTheme.typography.displayLarge.copy(
                         fontSize = dayFontSize,
                         fontWeight = FontWeight.ExtraBold,
                         fontFamily = IBMPlexArabic,
-                        letterSpacing = (-1).sp
+                        letterSpacing = (-0.5).sp
                     ),
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .offset(y = 4.dp)
+                    color = dayNumberColor,
+                    textAlign = TextAlign.Center
                 )
             }
         }
     }
 }
-
-private data class SkyColors(val top: Color, val mid: Color, val bottom: Color)
