@@ -35,7 +35,7 @@ fun WeatherSection(
     }
 
     Row(
-        modifier = modifier,
+        modifier = modifier.height(72.dp), // Stable height to prevent layout shifts
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (temperature != null) {
@@ -47,6 +47,9 @@ fun WeatherSection(
                 ),
                 color = contentColor
             )
+        } else {
+            // Placeholder to maintain width/height while loading
+            Box(Modifier.width(60.dp).fillMaxHeight())
         }
         
         val weatherIconRes = when (condition) {
@@ -68,6 +71,9 @@ fun WeatherSection(
                     .size(42.dp)
                     .padding(top = 4.dp)
             )
+        } else {
+            // Placeholder for icon
+            Box(Modifier.size(42.dp))
         }
     }
 }

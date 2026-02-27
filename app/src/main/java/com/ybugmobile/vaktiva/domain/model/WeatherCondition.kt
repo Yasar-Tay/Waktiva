@@ -10,6 +10,12 @@ enum class WeatherCondition {
     THUNDERSTORM,
     UNKNOWN;
 
+    val isSevere: Boolean
+        get() = this == RAINY || this == SNOWY || this == THUNDERSTORM
+
+    val isCloudy: Boolean
+        get() = this == CLOUDY || this == PARTLY_CLOUDY || this == FOGGY
+
     companion object {
         fun fromWmoCode(code: Int): WeatherCondition {
             return when (code) {
