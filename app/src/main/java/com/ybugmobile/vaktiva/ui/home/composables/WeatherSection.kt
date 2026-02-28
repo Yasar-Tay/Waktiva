@@ -46,11 +46,12 @@ fun WeatherSection(
     }
 
     Row(
-        modifier = modifier.height(72.dp), // Stable height to prevent layout shifts
+        modifier = modifier.height(72.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (temperature != null) {
             Row(verticalAlignment = Alignment.Top) {
+                // Temperature Number
                 Text(
                     text = String.format(Locale.US, "%.0f", temperature),
                     style = MaterialTheme.typography.displayLarge.copy(
@@ -60,19 +61,30 @@ fun WeatherSection(
                     color = contentColor
                 )
                 
+                // Degree Symbol (Smaller and elevated)
+                Text(
+                    text = "°",
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Light
+                    ),
+                    color = contentColor,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+                
+                // Weather Icon
                 if (weatherIconRes != null) {
                     Image(
                         painter = painterResource(id = weatherIconRes),
                         contentDescription = condition.name,
                         modifier = Modifier
-                            .padding(top = 10.dp, start = 4.dp)
-                            .size(32.dp),
-                        alpha = 0.8f // Subtle glassmorphic look for the icon itself
+                            .padding(top = 12.dp, start = 4.dp)
+                            .size(36.dp),
+                        alpha = 0.9f
                     )
                 }
             }
         } else {
-            // Placeholder to maintain width/height while loading
             Box(Modifier.width(60.dp).fillMaxHeight())
             
             if (weatherIconRes != null) {
