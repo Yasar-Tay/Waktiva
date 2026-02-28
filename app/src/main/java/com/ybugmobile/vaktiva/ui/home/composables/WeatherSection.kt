@@ -2,6 +2,7 @@ package com.ybugmobile.vaktiva.ui.home.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -86,13 +87,14 @@ fun WeatherSection(
                 
                 // Weather Icon & Condition Text
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(top = 12.dp, start = 4.dp)
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxHeight().padding(top = 14.dp, bottom = 6.dp, start = 4.dp)
                 ) {
                     Image(
                         painter = painterResource(id = weatherIconRes),
                         contentDescription = weatherLabelRes?.let { stringResource(it) } ?: condition.name,
-                        modifier = Modifier.size(36.dp),
+                        modifier = Modifier.size(30.dp),
                         alpha = 0.9f
                     )
                     
@@ -100,7 +102,7 @@ fun WeatherSection(
                         Text(
                             text = stringResource(weatherLabelRes).uppercase(Locale.getDefault()),
                             style = MaterialTheme.typography.labelSmall.copy(
-                                fontSize = 8.sp,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 0.5.sp
                             ),

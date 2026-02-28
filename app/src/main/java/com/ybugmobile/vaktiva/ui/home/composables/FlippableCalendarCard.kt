@@ -23,9 +23,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ybugmobile.vaktiva.domain.model.HijriUtils
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.ui.theme.IBMPlexArabic
-import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -98,7 +98,7 @@ fun FlippableCalendarCard(
                     timeAngle = timeAngle
                 )
             } else {
-                val hijri = day.hijriDate
+                val hijri = remember(day) { day.hijriDate ?: HijriUtils.calculateFallbackHijri(day.date) }
                 val monthResId = hijri?.let {
                     context.resources.getIdentifier("hijri_month_${it.monthNumber}", "string", context.packageName)
                 } ?: 0
