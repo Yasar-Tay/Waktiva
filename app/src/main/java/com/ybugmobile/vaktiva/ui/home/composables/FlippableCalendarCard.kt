@@ -145,8 +145,10 @@ private fun CalendarSide(
     isBack: Boolean,
     accentColor: Color
 ) {
-    val glassTheme = LocalGlassTheme.current
-    
+    val headerTextColor = remember(accentColor) {
+        if (accentColor.luminance() > 0.5f) Color(0xFF1C1C1E) else Color.White
+    }
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -162,53 +164,63 @@ private fun CalendarSide(
         shadowElevation = 0.dp
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 4.dp)
-                .background(
-                    Brush.verticalGradient(
-                        listOf(Color.White.copy(alpha = 0.05f), Color.Transparent)
-                    )
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Month Label (Abbreviated)
-            Text(
-                text = bottomText,
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.1.sp,
-                    fontSize = 11.sp 
-                ),
-                color = accentColor.copy(alpha = 0.9f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            // Day Number
-            Text(
-                text = topText,
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontSize = 34.sp, 
-                    fontWeight = FontWeight.SemiBold,
-                    fontFamily = IBMPlexArabic,
-                    letterSpacing = (-1).sp,
-                    lineHeight = 34.sp 
-                ),
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.offset(y = (-2).dp) 
-            )
-            
-            // Subtle Dot Indicator
+            // Month Label (Solid Calendar Header)
             Box(
                 modifier = Modifier
-                    .padding(top = 0.dp)
-                    .size(3.5.dp)
-                    .clip(CircleShape)
-                    .background(Color.White.copy(alpha = 0.2f))
-            )
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(accentColor.copy(alpha = 0.95f), accentColor.copy(alpha = 0.85f))
+                        )
+                    )
+                    .padding(vertical = 6.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = bottomText,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.1.sp,
+                        fontSize = 11.sp 
+                    ),
+                    color = headerTextColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                // Day Number
+                Text(
+                    text = topText,
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontSize = 34.sp, 
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = IBMPlexArabic,
+                        letterSpacing = (-1).sp,
+                        lineHeight = 34.sp 
+                    ),
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.offset(y = (-2).dp) 
+                )
+                
+                // Subtle Dot Indicator
+                Box(
+                    modifier = Modifier
+                        .padding(top = 0.dp)
+                        .size(3.5.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.2f))
+                )
+            }
         }
     }
 }
