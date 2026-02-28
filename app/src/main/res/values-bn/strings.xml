@@ -97,6 +97,16 @@
     <string name="accuracy_low">নিম্ন</string>
     <string name="accuracy_poor">দুর্বল</string>
 
+    <!-- Weather Conditions -->
+    <string name="weather_clear">পরিষ্কার</string>
+    <string name="weather_partly_cloudy">আংশিক মেঘলা</string>
+    <string name="weather_cloudy">মেঘলা</string>
+    <string name="weather_foggy">কুয়াশাচ্ছন্ন</string>
+    <string name="weather_rainy">বৃষ্টি</string>
+    <string name="weather_snowy">তুষারপাত</string>
+    <string name="weather_thunderstorm">বজ্রঝড়</string>
+    <string name="weather_unknown">অজানা</string>
+
     <!-- General Settings -->
     <string name="settings_title">সেটিংস</string>
     <string name="settings_preferences">পছন্দসমূহ</string>
@@ -124,7 +134,7 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردো</string>
+    <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
     <string name="lang_fa">ফারসি</string>
     <string name="lang_ms">Bahasa Melayu</string>
@@ -251,7 +261,7 @@
     <string name="settings_donate">Waktiva উন্নয়নে সহায়তা করুন</string>
     <string name="donate_title">Waktiva-কে সহায়তা করুন</string>
     <string name="donate_header">Waktiva-কে সহায়তা করুন 🤍</string>
-    <string name="donate_desc">Waktiva একটি উদ্দেশ্য নিয়ে তৈরি করা হয়েছে:\nনামাজের জন্য একটি পরিচ্ছন্ন, ব্যক্তিগত এবং বিজ্ঞাপন-মুক্ত স্থান প্রদান করা।\n\nকোনো বিজ্ঞাপন নেই।\nকোনো ট্র্যাকিং নেই।\nকোনো ডেটা বিক্রি নেই।\nশুধুমাত্র একটি সৎ এবং দরকারী অ্যাপ।\n\nWaktiva-কে বিনামূল্যে রাখার অর্থ হলো অর্থ উপার্জনের চেয়ে স্বাধীনতাকে গুরুত্ব দেওয়া।\nএর অর্থ কোনো বিজ্ঞাপন যোগ না করা।\nএর অর্থ ব্যবহারকারীর ডেটা বিক্রি না করা।\nএর অর্থ হলো ধীরে ধীরে, সাবধানে এবং নৈতিকভাবে অ্যাপটি গড়ে তোলা।\n\nWaktiva যদি আপনার দৈনিক ইবাদতে সহায়ক হয়…\nআপনি যদি এমন একটি অ্যাপের প্রশংসা করেন যা আপনার গোপনীয়তাকে সম্মান করে…\nআপনি যদি এর ডিজাইন, ফিচার এবং লাইসেন্সকৃত কনটেন্ট উন্নত করতে সাহায্য করতে চান…\n\nআপনি দানের মাধ্যমে এর উন্নয়নে সহায়তা করতে পারেন।\n\nআপনার সহায়তা যা যা কভার করতে সাহায্য করবে:\n\n• সার্ভার এবং API খরচ\n• লাইসেন্সকৃত আজান রেকর্ডিং\n• আইকন, ইলাস্ট্রেশন এবং ডিজাইন রিসোর্স\n• ডেভেলপমেন্ট টুলস এবং পাবলিশিং ফি\n• ভবিষ্যৎ উন্নয়ন এবং নতুন ফিচারসমূহ\n\nপ্রতিটি অবদান — ছোট বা বড় — সত্যিই পরিবর্তন আনে।\n\nআপনার যদি দান করার সামর্থ্য না থাকে, তবে সেটি একদম ঠিক আছে।\nআপনার দোয়া এবং শুভকামনাই আমাদের জন্য যথেষ্ট।\n\nWaktiva-কে সহজ, ব্যক্তিগত এবং বিজ্ঞাপন-মুক্ত রাখতে সাহায্য করার জন্য ধন্যবাদ।</string>
+    <string name="donate_desc">Waktiva একটি উদ্দেশ্য নিয়ে তৈরি করা হয়েছে:\nনামাজের জন্য একটি পরিচ্ছন্ন, ব্যক্তিগত এবং বিজ্ঞাপন-মুক্ত স্থান প্রদান করা।\n\nকোনো বিজ্ঞাপন নেই।\nকোনো ট্র্যাকিং নেই।\nকোনো ডেটা বিক্রি নেই।\nশুধুমাত্র একটি সৎ এবং দরকারী অ্যাপ।\n\nWaktiva-কে বিনামূল্যে রাখার অর্থ হলো অর্থ উপার্জনের চেয়ে স্বাধীনতাকে গুরুত্ব দেওয়া।\nএর অর্থ কোনো বিজ্ঞাপন যোগ না করা।\nএর অর্থ ব্যবহারকারীর ডেটা বিক্রি না করা।\nএর অর্থ হলো ধীরে ধীরে, সাবধানে এবং নৈতিকভাবে অ্যাপটি গড়ে তোলা।\n\nWaktiva যদি আপনার দৈনিক ইবাদতে সহায়ক হয়…\nআপনি যদি এমন একটি অ্যাপের প্রশংসা করেন যা আপনার গোপনীয়তাকে সম্মান করে…\nআপনি যদি এর ডিজাইন, ফিচার এবং লাইসেন্সকৃত কনটেন্ট উন্নত করতে সাহায্য করতে চান…\n\nআপনি দানের মাধ্যমে এর উন্নয়নে সহায়তা করতে পারেন।\n\nআপনার সহায়তা যা যা কভার করতে সাহায্য করবে:\n\n• সার্ভার এবং API খরচ\n• লাইসেন্সকৃত আজান রেকর্ডিং\n• আইকন, ইলাস্ট্রেশন এবং ডিজাইন রিসোর্স\n• ডেভেলপমেন্ট টুলস এবং পাবলিশিং ফি\n• ভবিষ্যৎ উন্নয়ন এবং নতুন ফিচারসমূহ\n\nপ্রতি প্রতিটি অবদান — ছোট বা বড় — সত্যিই পরিবর্তন আনে।\n\nআপনার যদি দান করার সামর্থ্য না থাকে, তবে সেটি একদম ঠিক আছে।\nআপনার দোয়া এবং শুভকামনাই আমাদের জন্য যথেষ্ট।\n\nWaktiva-কে সহজ, ব্যক্তিগত এবং বিজ্ঞাপন-মুক্ত রাখতে সাহায্য করার জন্য ধন্যবাদ।</string>
     <string name="donate_footer">🤲 আল্লাহ আপনাকে ইহকাল ও পরকালে এর উত্তম প্রতিদান দান করুন।</string>
     <string name="donate_button">দান করুন</string>
     <string name="donate_thank_you">ওপেন-সোর্স সফটওয়্যারকে সমর্থন করার জন্য ধন্যবাদ!</string>
@@ -289,7 +299,7 @@
     <string name="rel_day_sacrifice_eid">ঈদুল আজহা</string>
     <string name="rel_day_hijri_new_year">হিজরি নববর্ষ</string>
     <string name="rel_day_ashura">আশুরা</string>
-    <string name="rel_day_mawlid">ঈদে মিলাদুнномী</string>
+    <string name="rel_day_mawlid">ঈদে মিলাদুন্নবী</string>
 
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">আজান মিউট করা হয়েছে</string>
@@ -348,7 +358,7 @@
     <string name="license_loc_usage_1">সঠিক নামাজের সময় গণনা করতে</string>
     <string name="license_loc_usage_2">কিবলার দিক নির্ধারণ করতে</string>
     <string name="license_loc_usage_3">হিজরি তারিখ এবং চাঁদের পর্যায় গণনা করতে</string>
-    <string name="license_loc_processing">অবস্থানের ডেটা আপনার ডিভাইসেই প্রসেস করা হয় এবং এটি কোথাও সংরক্ষণ বা শেয়ার করা হয় না।</string>
+    <string name="license_loc_processing">অবস্থানের ডেটা আপনার ডিভাইকেই প্রসেস করা হয় এবং এটি কোথাও সংরক্ষণ বা শেয়ার করা হয় না।</string>
     <string name="license_no_ads">৫. কোনো বিজ্ঞাপন বা ট্র্যাকিং নেই</string>
     <string name="license_no_ads_1">কোনো বিজ্ঞাপন দেখায় না</string>
     <string name="license_no_ads_2">কোনো ট্র্যাকিং এসডিকে ব্যবহার করে না</string>

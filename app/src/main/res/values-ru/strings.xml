@@ -97,6 +97,16 @@
     <string name="accuracy_low">Низкая</string>
     <string name="accuracy_poor">Плохая</string>
 
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Ясно</string>
+    <string name="weather_partly_cloudy">Переменная облачность</string>
+    <string name="weather_cloudy">Облачно</string>
+    <string name="weather_foggy">Туман</string>
+    <string name="weather_rainy">Дождь</string>
+    <string name="weather_snowy">Снег</string>
+    <string name="weather_thunderstorm">Гроза</string>
+    <string name="weather_unknown">Неизвестно</string>
+
     <!-- General Settings -->
     <string name="settings_title">Настройки</string>
     <string name="settings_preferences">Предпочтения</string>
@@ -126,7 +136,7 @@
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">فارسی</string>
+    <string name="lang_fa">فарси</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 

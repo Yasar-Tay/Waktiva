@@ -62,7 +62,7 @@
     <!-- Location Health Strings -->
     <string name="location_health_gps_off">GPS Disabilitato</string>
     <string name="location_health_permission_denied">Posizione Negata</string>
-    <string name="location_health_offline">Modalità Offline</string>
+    <string name="location_health_offline">Offline Modalità</string>
     <string name="location_health_notifications_off">Notifiche Negate</string>
     <string name="location_health_channels_muted">Canali Silenziati</string>
     <string name="location_health_dnd_active">Modalità DND Attiva</string>
@@ -96,6 +96,16 @@
     <string name="accuracy_med">Media</string>
     <string name="accuracy_low">Bassa</string>
     <string name="accuracy_poor">Scarsa</string>
+
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Sereno</string>
+    <string name="weather_partly_cloudy">Parzialmente Nuvoloso</string>
+    <string name="weather_cloudy">Nuvoloso</string>
+    <string name="weather_foggy">Nebbia</string>
+    <string name="weather_rainy">Pioggia</string>
+    <string name="weather_snowy">Neve</string>
+    <string name="weather_thunderstorm">Temporale</string>
+    <string name="weather_unknown">Sconosciuto</string>
 
     <!-- General Settings -->
     <string name="settings_title">Impostazioni</string>

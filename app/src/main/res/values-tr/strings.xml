@@ -97,6 +97,16 @@
     <string name="accuracy_low">Düşük</string>
     <string name="accuracy_poor">Zayıf</string>
 
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Açık</string>
+    <string name="weather_partly_cloudy">Parçalı Bulutlu</string>
+    <string name="weather_cloudy">Bulutlu</string>
+    <string name="weather_foggy">Sisli</string>
+    <string name="weather_rainy">Yağmurlu</string>
+    <string name="weather_snowy">Karlı</string>
+    <string name="weather_thunderstorm">Gök Gürültülü</string>
+    <string name="weather_unknown">Bilinmiyor</string>
+
     <!-- General Settings -->
     <string name="settings_title">Ayarlar</string>
     <string name="settings_preferences">Tercihler</string>
@@ -173,7 +183,7 @@
     <string name="audio_add_custom">Özel Ses Ekle</string>
     <string name="audio_delete_confirm">Ses dosyası silinsin mi?</string>
     <string name="audio_delete_description">Ses dosyasını sil</string>
-    <string name="audio_supported_formats">Desteklenenler: MP3, AAC, WAV, OGG</string>
+    <string name="audio_supported_formats">Supported: MP3, AAC, WAV, OGG</string>
     <string name="audio_preview_play">Önizlemeyi oynat</string>
     <string name="audio_preview_stop">Önizlemeyi durdur</string>
     <string name="audio_built_in">Dahili</string>

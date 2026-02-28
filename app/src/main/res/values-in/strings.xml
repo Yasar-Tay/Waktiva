@@ -97,6 +97,16 @@
     <string name="accuracy_low">Rendah</string>
     <string name="accuracy_poor">Buruk</string>
 
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Cerah</string>
+    <string name="weather_partly_cloudy">Berawan Sebagian</string>
+    <string name="weather_cloudy">Berawan</string>
+    <string name="weather_foggy">Berkabut</string>
+    <string name="weather_rainy">Hujan</string>
+    <string name="weather_snowy">Bersalju</string>
+    <string name="weather_thunderstorm">Badai Petir</string>
+    <string name="weather_unknown">Tidak Diketahui</string>
+
     <!-- General Settings -->
     <string name="settings_title">Pengaturan</string>
     <string name="settings_preferences">Preferensi</string>
@@ -126,7 +136,7 @@
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">فارسی</string>
+    <string name="lang_fa">فarsi</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -251,7 +261,7 @@
     <string name="settings_donate">Dukung Pengembang</string>
     <string name="donate_title">Dukung Waktiva</string>
     <string name="donate_header">Dukung Waktiva</string>
-    <string name="donate_desc">Waktiva dibangun dengan satu niat:\nuntuk menawarkan ruang yang bersih, pribadi, dan bebas iklan untuk shalat.\n\nTanpa iklan.\nTanpa pelacakan.\nTanpa penjualan data.\nHanya sesuatu yang jujur dan berguna.\n\nMenjaga Waktiva tetap gratis berarti memilih kemandirian daripada monetisasi.\nItu berarti tidak menambahkan iklan.\nItu berarti tidak menjual data pengguna.\nItu berarti membangun secara perlahan, hati-hati, dan etis.\n\nJika Waktiva membawa kemudahan bagi shalat harian Anda…\nJika Anda menghargai memiliki aplikasi shalat yang menghormati privasi Anda…\nJika Anda ingin membantu meningkatkan desain, fitur, dan konten berlisensinya…\n\nAnda dapat mendukung pengembangannya dengan donasi.\n\nDukungan Anda membantu menutupi:\n\n• Biaya server dan API\n• Rekaman Adzan berlisensi\n• Ikon, ilustrasi, dan aset desain\n• Alat pengembangan dan biaya penerbitan\n• Peningkatan masa depan dan fitur baru\n\nSetiap kontribusi — kecil atau besar — benar-benar membuat perbedaan.\n\nJika Anda tidak dalam posisi untuk berdonasi, itu tidak masalah.\nDoa dan kata-kata baik Anda sudah sangat dihargai.\n\nTerima kasih telah membantu menjaga Waktiva tetap sederhana, pribadi, dan bebas iklan.</string>
+    <string name="donate_desc">Waktiva dibangun dengan satu niat:\nuntuk menawarkan ruang yang bersih, pribadi, dan bebas iklan untuk shalat.\n\nTanpa iklan.\nTanpa pelacakan.\nTanpa penjualan data.\nHanya sesuatu yang jujur dan berguna.\n\nMenjaga Waktiva tetap gratis berarti memilih kemandirian daripada monetisasi.\nItu berarti tidak menambahkan iklan.\nItu berarti tidak menjual data pengguna.\nItu berarti membangun secara perlahan, hatiha-hati, dan etis.\n\nJika Waktiva membawa kemudahan bagi shalat harian Anda…\nJika Anda menghargai memiliki aplikasi shalat yang menghormati privasi Anda…\nJika Anda ingin membantu meningkatkan desain, fitur, dan konten berlisensinya…\n\nAnda dapat mendukung pengembangannya dengan donasi.\n\nDukungan Anda membantu menutupi:\n\n• Biaya server dan API\n• Rekaman Adzan berlisensi\n• Ikon, ilustrasi, dan aset desain\n• Alat pengembangan dan biaya penerbitan\n• Peningkatan masa depan dan fitur baru\n\nSetiap kontribusi — kecil atau besar — benar-benar membuat perbedaan.\n\nJika Anda tidak dalam posisi untuk berdonasi, itu tidak masalah.\nDoa dan kata-kata baik Anda sudah sangat dihargai.\n\nTerima kasih telah membantu menjaga Waktiva tetap sederhana, pribadi, dan bebas iklan.</string>
     <string name="donate_footer">🤲 Semoga bermanfaat bagi Anda di dunia dan akhirat.</string>
     <string name="donate_button">Donasi</string>
     <string name="donate_thank_you">Terima kasih telah mendukung perangkat lunak sumber terbuka!</string>

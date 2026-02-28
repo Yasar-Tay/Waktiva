@@ -75,7 +75,7 @@
     <string name="health_dnd_active">Do Not Disturb فعال ہے۔ اذان کی آوازیں بلاک ہو سکتی ہیں۔</string>
     <string name="health_fix_now">ابھی ٹھیک کریں</string>
     <string name="health_no_internet">انٹرنیٹ کنکشن نہیں ہے۔ Waktiva ذخیرہ شدہ ڈیٹا استعمال کر رہا ہے۔ براہ کرم نماز کے اوقات کو تازہ کرنے کے لیے منسلک ہوں۔</string>
-    <string name="health_no_internet_no_data">انٹرنیٹ کنکشن نہیں ہے۔ پہلی بار نماز کے اوقات حاصل کرنے کے لیے Waktiva کو انٹرنیٹ کی ضرورت ہے۔</string>
+    <string name="health_no_internet_no_data">انٹرنیٹ کنکشن نہیں ہے۔ Waktiva پہلی بار نماز کے اوقات حاصل کرنے کے لیے انٹرنیٹ کی ضرورت ہے۔</string>
     <string name="health_status_ok">تمام سسٹم فعال ہیں</string>
     <string name="health_overlay_subtitle">آپ کی ایپ کے تجربے کو بہتر بنا رہے ہیں</string>
     <string name="health_overlay_description">بیک گراؤنڈ میں اطلاعات اور مقام کی خدمات کے درست کام کے لیے نیچے دیے گئے مسائل حل کریں۔</string>
@@ -96,6 +96,16 @@
     <string name="accuracy_med">درمیانی</string>
     <string name="accuracy_low">کم</string>
     <string name="accuracy_poor">ناقص</string>
+
+    <!-- Weather Conditions -->
+    <string name="weather_clear">صاف</string>
+    <string name="weather_partly_cloudy">جزوی طور پر ابر آلود</string>
+    <string name="weather_cloudy">ابر آلود</string>
+    <string name="weather_foggy">دھند</string>
+    <string name="weather_rainy">بارش</string>
+    <string name="weather_snowy">برف باری</string>
+    <string name="weather_thunderstorm">گرج چمک</string>
+    <string name="weather_unknown">نامعلوم</string>
 
     <!-- General Settings -->
     <string name="settings_title">ترتیبات</string>
@@ -223,7 +233,7 @@
     <string name="welcome_alarm_desc">اذان کو بغیر کسی تاخیر کے بالکل وقت پر چلانے کے لیے ضروری ہے۔</string>
     <string name="welcome_grant_btn">اجازتیں دیں</string>
     <string name="welcome_continue_btn">جاری رکھیں</string>
-    <string name="welcome_personalize">اپنی پسند کے مطابق بنائیں</string>
+    <string name="welcome_personalize">آپنی پسند کے مطابق بنائیں</string>
     <string name="welcome_personalize_desc">نماز اور حساب کتاب کی ترتیبات ترتیب دیں</string>
     <string name="welcome_audio_desc">اذان کی آواز کے لیے اپنی ترجیحات طے کریں</string>
     <string name="welcome_adhan_audio">اذان آڈیو</string>

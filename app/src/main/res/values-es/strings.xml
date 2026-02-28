@@ -20,7 +20,7 @@
     <string name="qibla_signal">Señal</string>
     <string name="qibla_standard">Estándar</string>
     <string name="qibla_satellite">Satélite</string>
-    <string name="qibla_recenter">Recentrer</string>
+    <string name="qibla_recenter">Recenter</string>
     <string name="qibla_location_required">Se requiere acceso a la ubicación</string>
     <string name="qibla_location_required_desc">Necesario para un cálculo preciso de la Qibla.</string>
     <string name="qibla_grant_permission">Conceder permiso</string>
@@ -78,7 +78,7 @@
     <string name="health_no_internet_no_data">Sin conexión a Internet. Waktiva necesita una conexión activa para recuperar sus primeros horarios de oración.</string>
     <string name="health_status_ok">Todos los sistemas funcionan correctamente</string>
     <string name="health_overlay_subtitle">Optimizando su experiencia con la aplicación</string>
-    <string name="health_overlay_description">Solucione los problemas a continuación para garantizar que las notificaciones y los servicios de ubicación funcionen de manera confiable en segundo plano.</string>
+    <string name="health_overlay_description">Solucione los problemas a continuación para garantizar que las notificaciones y los servicios de ubicación funcionan de manera confiable en segundo plano.</string>
     <string name="health_overlay_dismiss">Entendido</string>
     <string name="health_overlay_issues_title">Problemas detectados</string>
 
@@ -96,6 +96,16 @@
     <string name="accuracy_med">Media</string>
     <string name="accuracy_low">Baja</string>
     <string name="accuracy_poor">Pobre</string>
+
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Despejado</string>
+    <string name="weather_partly_cloudy">Parcialmente Nublado</string>
+    <string name="weather_cloudy">Nublado</string>
+    <string name="weather_foggy">Niebla</string>
+    <string name="weather_rainy">Lluvia</string>
+    <string name="weather_snowy">Nieve</string>
+    <string name="weather_thunderstorm">Tormenta</string>
+    <string name="weather_unknown">Desconocido</string>
 
     <!-- General Settings -->
     <string name="settings_title">Ajustes</string>
@@ -244,14 +254,14 @@
     <string name="adhan_upcoming">Próximo adhan</string>
     <string name="adhan_test_alarm">Probar alarma</string>
     <string name="adhan_test_desc">Simulando activación de adhan</string>
-    <string name="adhan_stop_test">CANCEL PRUEBA</string>
+    <string name="adhan_stop_test">CANCELAR PRUEBA</string>
     <string name="adhan_metadata_title_format">Adhan de %s</string>
 
     <!-- Donations -->
     <string name="settings_donate">Apoya el desarrollo de Waktiva</string>
     <string name="donate_title">Apoya a Waktiva</string>
     <string name="donate_header">Apoya a Waktiva 🤍</string>
-    <string name="donate_desc">Waktiva fue creada con una sola intención:\nofrecer un espacio para la oración limpio, privado y libre de anuncios.\n\nSin anuncios.\nSin rastreo.\nSin venta de datos.\nSolo algo honesto y útil.\n\nMantener Waktiva gratuita significa elegir la independencia sobre la monetización.\nSignifica no añadir anuncios.\nSignifica no vender los datos de los usuarios.\nSignifica construir de forma lenta, cuidadosa y ética.\n\nSi Waktiva aporta facilidad a tus oraciones diarias…\nSi valoras tener una aplicación de oración que respete tu privacidad…\nSi quieres ayudar a mejorar su diseño, funciones y contenido bajo licencia…\n\nPuedes apoyar su desarrollo con una donación.\n\nTu apoyo ayuda a cubrir:\n\n• Costes de servidor y API\n• Grabaciones de Adhan bajo licencia\n• Iconos, ilustraciones y recursos de diseño\n• Herramientas de desarrollo y cuotas de publicación\n• Mejoras futuras y nuevas funciones\n\nCada contribución, pequeña o grande, marca realmente la diferencia.\n\nSi no estás en condiciones de donar, no pasa absolutamente nada.\nTus oraciones y palabras amables ya son valoradas.\n\nGracias por ayudar a mantener Waktiva simple, privada y libre de anuncios.</string>
+    <string name="donate_desc">Waktiva fue creada con una sola intención:\noffrecer un espacio para la oración limpio, privado y libre de anuncios.\n\nSin anuncios.\nSin rastreo.\nSin venta de datos.\nSolo algo honesto y útil.\n\nMantener Waktiva gratuita significa elegir la independencia sobre la monetización.\nSignifica no añadir anuncios.\nSignifica no vender los datos de los usuarios.\nSignifica construir de forma lenta, cuidadosa y ética.\n\nSi Waktiva aporta facilidad a tus oraciones diarias…\nSi valoras tener una aplicación de oración que respete tu privacidad…\nSi quieres ayudar a mejorar su diseño, funciones y contenido bajo licencia…\n\nPuedes apoyar su desarrollo con una donación.\n\nTu apoyo ayuda a cubrir:\n\n• Costes de servidor y API\n• Grabaciones de Adhan bajo licencia\n• Iconos, ilustraciones y recursos de diseño\n• Herramientas de desarrollo y cuotas de publicación\n• Mejoras futuras y nuevas funciones\n\nCada contribución, pequeña o grande, marca realmente la diferencia.\n\nSi no estás en condiciones de donar, no pasa absolutamente nada.\nTus oraciones y palabras amables ya son valoradas.\n\nGracias por ayudar a mantener Waktiva simple, privada y libre de anuncios.</string>
     <string name="donate_footer">🤲 Que te beneficie en esta vida y en la próxima.</string>
     <string name="donate_button">Donar</string>
     <string name="donate_thank_you">¡Gracias por apoyar el software de código abierto!</string>
@@ -341,7 +351,7 @@
     <string name="license_libs_property">Cada biblioteca sigue siendo propiedad de sus respectivos autores y se utiliza de acuerdo con su licencia.</string>
     <string name="license_adhan_audio">3. Licencia de audio de Adhan</string>
     <string name="license_adhan_reciter">Waktiva incluye grabaciones de Adhan de Muhsin Kara, Campeón Mundial de Adhan 2022.</string>
-    <string name="license_adhan_permission">Estas grabaciones se utilizan con permiso. Todos los derechos de audio pertenecen al recitador original.</string>
+    <string name="license_adhan_permission">Estas grabaciones se utilizan con permiso. Todos los derechos de audio pertenecen al recitatore originale.</string>
     <string name="license_adhan_restrictions">El audio de Adhan no se puede extraer, redistribuir ni reutilizar fuera de la aplicación Waktiva sin el permiso explícito del titular de los derechos.</string>
     <string name="license_location_permissions">4. Ubicación y permisos</string>
     <string name="license_location_usage">Waktiva solicita permiso de ubicación únicamente para:</string>

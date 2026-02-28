@@ -97,6 +97,16 @@
     <string name="accuracy_low">Low</string>
     <string name="accuracy_poor">Poor</string>
 
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Clear</string>
+    <string name="weather_partly_cloudy">Partly Cloudy</string>
+    <string name="weather_cloudy">Cloudy</string>
+    <string name="weather_foggy">Foggy</string>
+    <string name="weather_rainy">Rainy</string>
+    <string name="weather_snowy">Snowy</string>
+    <string name="weather_thunderstorm">Thunderstorm</string>
+    <string name="weather_unknown">Unknown</string>
+
     <!-- General Settings -->
     <string name="settings_title">Settings</string>
     <string name="settings_preferences">Preferences</string>

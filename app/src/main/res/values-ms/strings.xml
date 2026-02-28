@@ -97,6 +97,16 @@
     <string name="accuracy_low">Rendah</string>
     <string name="accuracy_poor">Lemah</string>
 
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Cerah</string>
+    <string name="weather_partly_cloudy">Berawan Sebahagian</string>
+    <string name="weather_cloudy">Berawan</string>
+    <string name="weather_foggy">Berkabus</string>
+    <string name="weather_rainy">Hujan</string>
+    <string name="weather_snowy">Bersalji</string>
+    <string name="weather_thunderstorm">Ribut Petir</string>
+    <string name="weather_unknown">Tidak Diketahui</string>
+
     <!-- General Settings -->
     <string name="settings_title">Tetapan</string>
     <string name="settings_preferences">Pilihan</string>

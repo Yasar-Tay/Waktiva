@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +43,17 @@ fun WeatherSection(
         WeatherCondition.RAINY -> R.drawable.rain_day_night
         WeatherCondition.SNOWY -> R.drawable.snow_day_night
         WeatherCondition.THUNDERSTORM -> R.drawable.thunderstorm_day_night
+        WeatherCondition.UNKNOWN -> R.drawable.cloudy_day_night
+    }
+
+    val weatherLabelRes = when (condition) {
+        WeatherCondition.CLEAR -> R.string.weather_clear
+        WeatherCondition.PARTLY_CLOUDY -> R.string.weather_partly_cloudy
+        WeatherCondition.CLOUDY -> R.string.weather_cloudy
+        WeatherCondition.FOGGY -> R.string.weather_foggy
+        WeatherCondition.RAINY -> R.string.weather_rainy
+        WeatherCondition.SNOWY -> R.string.weather_snowy
+        WeatherCondition.THUNDERSTORM -> R.string.weather_thunderstorm
         WeatherCondition.UNKNOWN -> null
     }
 
@@ -72,29 +84,41 @@ fun WeatherSection(
                     modifier = Modifier.padding(top = 8.dp)
                 )
                 
-                // Weather Icon
-                if (weatherIconRes != null) {
+                // Weather Icon & Condition Text
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(top = 12.dp, start = 4.dp)
+                ) {
                     Image(
                         painter = painterResource(id = weatherIconRes),
-                        contentDescription = condition.name,
-                        modifier = Modifier
-                            .padding(top = 12.dp, start = 4.dp)
-                            .size(36.dp),
+                        contentDescription = weatherLabelRes?.let { stringResource(it) } ?: condition.name,
+                        modifier = Modifier.size(36.dp),
                         alpha = 0.9f
                     )
+                    
+                    if (weatherLabelRes != null) {
+                        Text(
+                            text = stringResource(weatherLabelRes).uppercase(Locale.getDefault()),
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.5.sp
+                            ),
+                            color = contentColor.copy(alpha = 0.7f)
+                        )
+                    }
                 }
             }
         } else {
+            // Placeholder/Loading State
             Box(Modifier.width(60.dp).fillMaxHeight())
             
-            if (weatherIconRes != null) {
-                Image(
-                    painter = painterResource(id = weatherIconRes),
-                    contentDescription = condition.name,
-                    modifier = Modifier.size(42.dp),
-                    alpha = 0.9f
-                )
-            }
+            Image(
+                painter = painterResource(id = weatherIconRes),
+                contentDescription = condition.name,
+                modifier = Modifier.size(42.dp),
+                alpha = 0.9f
+            )
         }
     }
 }

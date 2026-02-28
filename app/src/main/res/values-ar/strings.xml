@@ -97,6 +97,16 @@
     <string name="accuracy_low">منخفضة</string>
     <string name="accuracy_poor">ضعيفة</string>
 
+    <!-- Weather Conditions -->
+    <string name="weather_clear">صافٍ</string>
+    <string name="weather_partly_cloudy">غائم جزئياً</string>
+    <string name="weather_cloudy">غائم</string>
+    <string name="weather_foggy">ضبابي</string>
+    <string name="weather_rainy">ماطر</string>
+    <string name="weather_snowy">مثلج</string>
+    <string name="weather_thunderstorm">عاصفة رعدية</string>
+    <string name="weather_unknown">غير معروف</string>
+
     <!-- General Settings -->
     <string name="settings_title">الإعدادات</string>
     <string name="settings_preferences">التفضيلات</string>
@@ -318,26 +328,26 @@
     <string name="license_aladhan_api">واجهة برمجة تطبيقات الأذان (Al-Adhan API)</string>
     <string name="license_aladhan_desc">يسترجع Waktiva مواقيت الصلاة من خدمة Al-Adhan API. يتم توفير حسابات مواقيت الصلاة وفقاً لمنهجياتهم وشروطهم المنشورة.</string>
     <string name="license_data_privacy">لا يقوم Waktiva بتخزين بيانات المستخدمين أو إعادة بيعها أو توزيعها.</string>
-    <string name="license_open_source_libs">2. مكتبات الطرف الثالث مفتوحة المصدر</string>
-    <string name="license_libs_intro">يتضمن Waktiva المكونات مفتوحة المصدر التالية:</string>
-    <string name="license_lib_androidx">مكتبات AndroidX (ترخيص Apache 2.0)</string>
-    <string name="license_lib_compose">Jetpack Compose (ترخيص Apache 2.0)</string>
-    <string name="license_lib_kotlin">Kotlin (ترخيص Apache 2.0)</string>
-    <string name="license_lib_hilt">Hilt (ترخيص Apache 2.0)</string>
-    <string name="license_lib_room">Room (ترخيص Apache 2.0)</string>
-    <string name="license_lib_datastore">DataStore (ترخيص Apache 2.0)</string>
-    <string name="license_lib_work">WorkManager (ترخيص Apache 2.0)</string>
-    <string name="license_lib_media3">Media3 (ترخيص Apache 2.0)</string>
-    <string name="license_lib_location">Google Play Services Location (شروط Google Play Services)</string>
-    <string name="license_lib_retrofit">Retrofit (ترخيص Apache 2.0)</string>
-    <string name="license_lib_okhttp">OkHttp (ترخيص Apache 2.0)</string>
-    <string name="license_lib_gson">Gson (ترخيص Apache 2.0)</string>
+    <string name="license_open_source_libs">2. Üçüncü Taraf Açık Kaynak Kütüphaneler</string>
+    <string name="license_libs_intro">Waktiva aşağıdaki açık kaynaklı bileşenleri içermektedir:</string>
+    <string name="license_lib_androidx">AndroidX Kütüphaneleri (Apache Lisansı 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Apache Lisansı 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Apache Lisansı 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Apache Lisansı 2.0)</string>
+    <string name="license_lib_room">Room (Apache Lisansı 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Apache Lisansı 2.0)</string>
+    <string name="license_lib_work">WorkManager (Apache Lisansı 2.0)</string>
+    <string name="license_lib_media3">Media3 (Apache Lisansı 2.0)</string>
+    <string name="license_lib_location">Google Play Hizmetleri Konum (Google Play Hizmet Şartları)</string>
+    <string name="license_lib_retrofit">Retrofit (Apache Lisansı 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Apache Lisansı 2.0)</string>
+    <string name="license_lib_gson">Gson (Apache Lisansı 2.0)</string>
     <string name="license_lib_adhan">مكتبة Adhan Kotlin (ترخيص MIT)</string>
-    <string name="license_lib_suncalc">SunCalc (ترخيص BSD)</string>
-    <string name="license_lib_maplibre">MapLibre Android SDK (ترخيص BSD 3-Clause)</string>
-    <string name="license_lib_osmdroid">OsmDroid (ترخيص Apache 2.0)</string>
-    <string name="license_lib_accompanist">Accompanist (ترخيص Apache 2.0)</string>
-    <string name="license_lib_billing">مكتبة Google Play Billing (شروط Google Play)</string>
+    <string name="license_lib_suncalc">SunCalc (BSD Lisansı)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (BSD 3-Clause License)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Apache Lisansı 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Apache Lisansı 2.0)</string>
+    <string name="license_lib_billing">Google Play Ödeme Kütüphanesi (Google Play Şartları)</string>
     <string name="license_libs_property">تظل كل مكتبة ملكاً لمؤلفيها المعنيين ويتم استخدامها بما يتوافق مع ترخيصها.</string>
     <string name="license_adhan_audio">3. ترخيص صوت الأذان</string>
     <string name="license_adhan_reciter">يتضمن Waktiva تسجيلات للأذان بصوت محسن كارا، بطل العالم في الأذان لعام 2022.</string>

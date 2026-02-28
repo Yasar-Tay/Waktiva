@@ -1,31 +1,40 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import android.content.res.Configuration
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.HijriData
 import com.ybugmobile.vaktiva.domain.model.ReligiousDay
+import com.ybugmobile.vaktiva.domain.model.WeatherCondition
 import com.ybugmobile.vaktiva.domain.provider.ReligiousDaysProvider
+import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.vaktiva.ui.theme.desaturate
+import com.ybugmobile.vaktiva.ui.theme.darken
 import java.time.LocalDate
+import java.util.Locale
 
 @Composable
 fun ReligiousBadge(
@@ -35,57 +44,86 @@ fun ReligiousBadge(
     hijriDate: HijriData? = null
 ) {
     val religiousDay = ReligiousDaysProvider.getReligiousDay(date) ?: return
+    val glassTheme = LocalGlassTheme.current
+    val weatherCondition = glassTheme.weatherCondition
     
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
     val label = stringResource(religiousDay.nameResId)
-    val accentColor = getCalendarAccentColor(date, hijriDate?.monthNumber, hijriDate?.day, contentColor)
+    val baseAccentColor = getCalendarAccentColor(date, hijriDate?.monthNumber, hijriDate?.day, contentColor)
+    
+    // Apply weather adjustments to the religious accent color
+    val accentColor = remember(baseAccentColor, weatherCondition) {
+        val isCloudy = weatherCondition != WeatherCondition.CLEAR && weatherCondition != WeatherCondition.UNKNOWN
+        val isSevere = weatherCondition == WeatherCondition.RAINY || 
+                      weatherCondition == WeatherCondition.THUNDERSTORM || 
+                      weatherCondition == WeatherCondition.SNOWY
 
-    val verticalPadding = if (isLandscape) 4.dp else 6.dp
-    val horizontalPadding = if (isLandscape) 10.dp else 12.dp
-    val iconBoxSize = if (isLandscape) 16.dp else 18.dp
-    val iconSize = if (isLandscape) 9.dp else 10.dp
-    val fontSize = if (isLandscape) 9.sp else 10.sp
+        if (isCloudy) {
+            val desaturateAmount = if (isSevere) 0.3f else 0.15f
+            val darkenAmount = if (isSevere) 0.15f else 0.05f
+            baseAccentColor.desaturate(desaturateAmount).darken(darkenAmount)
+        } else {
+            baseAccentColor
+        }
+    }
 
+    val infiniteTransition = rememberInfiniteTransition(label = "badgePulse")
+    val iconAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.6f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "iconAlpha"
+    )
+
+    // Apple Style: Squircle Pill
     Surface(
-        shape = CircleShape,
-        color = accentColor.copy(alpha = 0.12f),
-        modifier = modifier.graphicsLayer {
-            shadowElevation = 2f
-            shape = CircleShape
-            clip = true
-        },
-        border = BorderStroke(1.dp, accentColor.copy(alpha = 0.25f))
+        shape = RoundedCornerShape(14.dp), // Tighter squircle for small badge
+        color = Color.White.copy(alpha = 0.08f), // Matching card glass
+        modifier = modifier.height(if (isLandscape) 28.dp else 32.dp),
+        border = BorderStroke(
+            width = 0.5.dp, 
+            brush = Brush.verticalGradient(
+                listOf(Color.White.copy(alpha = 0.3f), Color.White.copy(alpha = 0.05f))
+            )
+        )
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+                .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(if (isLandscape) 6.dp else 8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // Accent Color Header Style (Mini version of card header)
             Box(
                 modifier = Modifier
-                    .size(iconBoxSize)
-                    .background(accentColor.copy(alpha = 0.2f), CircleShape),
+                    .size(if (isLandscape) 14.dp else 16.dp)
+                    .clip(CircleShape)
+                    .background(accentColor.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Rounded.AutoAwesome,
                     contentDescription = null,
-                    tint = accentColor,
-                    modifier = Modifier.size(iconSize)
+                    tint = accentColor.copy(alpha = iconAlpha),
+                    modifier = Modifier.size(if (isLandscape) 10.dp else 12.dp)
                 )
             }
 
             Text(
-                text = label.uppercase(),
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = 0.8.sp,
-                    fontSize = fontSize
+                text = label.uppercase(Locale.getDefault()),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.1.sp,
+                    fontSize = if (isLandscape) 9.sp else 10.sp
                 ),
-                color = contentColor.copy(alpha = 0.9f)
+                color = contentColor.copy(alpha = 0.9f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

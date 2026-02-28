@@ -31,7 +31,7 @@
     <string name="qibla_magnetic_interference">Magnetische Störung erkannt - Gerät kalibrieren</string>
     <string name="qibla_kaaba_aligned">Nach der Kaaba ausgerichtet</string>
     <string name="qibla_find_marker">Finden Sie die goldene Markierung</string>
-    <string name="qibla_calibrate">KALIBRIEREN</string>
+    <string name="qibla_calibrate">KALRIEREN</string>
     <string name="qibla_interference_tip">Tipp: In Gebäuden können Metallstrukturen den Kompass beeinflussen. Führen Sie für beste Genauigkeit eine Achter-Kalibrierung durch.</string>
 
     <!-- Home Screen -->
@@ -97,6 +97,16 @@
     <string name="accuracy_low">Niedrig</string>
     <string name="accuracy_poor">Schlecht</string>
 
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Klar</string>
+    <string name="weather_partly_cloudy">Leicht bewölkt</string>
+    <string name="weather_cloudy">Bewölkt</string>
+    <string name="weather_foggy">Neblig</string>
+    <string name="weather_rainy">Regnerisch</string>
+    <string name="weather_snowy">Schnee</string>
+    <string name="weather_thunderstorm">Gewitter</string>
+    <string name="weather_unknown">Unbekannt</string>
+
     <!-- General Settings -->
     <string name="settings_title">Einstellungen</string>
     <string name="settings_preferences">Präferenzen</string>
@@ -143,7 +153,7 @@
     <string name="method_karachi">Universität für Islamische Wissenschaften, Karatschi</string>
     <string name="method_tehran">Institut für Geophysik, Univ. Teheran</string>
     <string name="method_gulf">Golfregion</string>
-    <string name="method_kuwait">Kuwait</string>
+    <string name="method_kuwait">Kuveyt</string>
     <string name="method_qatar">Qatar</string>
     <string name="method_singapore">Majlis Ugama Islam Singapura</string>
     <string name="method_turkey">Türkei (Diyanet)</string>

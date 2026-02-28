@@ -97,6 +97,16 @@
     <string name="accuracy_low">Basse</string>
     <string name="accuracy_poor">Faible</string>
 
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Clair</string>
+    <string name="weather_partly_cloudy">Partiellement Nuageux</string>
+    <string name="weather_cloudy">Nuageux</string>
+    <string name="weather_foggy">Brumeux</string>
+    <string name="weather_rainy">Pluvieux</string>
+    <string name="weather_snowy">Neigeux</string>
+    <string name="weather_thunderstorm">Orageux</string>
+    <string name="weather_unknown">Inconnu</string>
+
     <!-- General Settings -->
     <string name="settings_title">Paramètres</string>
     <string name="settings_preferences">Préférences</string>
@@ -294,7 +304,7 @@
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">Adhan désactivé</string>
     <string name="notification_adhan_skipped_text">L\'Adhan pour %s est ignoré.</string>
-    <string name="notification_upcoming_adhan_title">Adhan à venir : %s</string>
+    <string name="notification_upcoming_adhan_title">Prossimo Adhan : %s</string>
     <string name="notification_upcoming_adhan_text">L\'Adhan sera joué dans %d minutes.</string>
     <string name="notification_skip_action">IGNORER POUR CETTE PRIÈRE</string>
     <string name="notification_adhan_title">Adhan : %s</string>
