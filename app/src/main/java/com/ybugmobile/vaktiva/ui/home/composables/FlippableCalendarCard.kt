@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,11 +42,6 @@ fun FlippableCalendarCard(
     pulseScale: Float,
     modifier: Modifier = Modifier
 ) {
-    // Suppress unused warning while keeping signature compatibility
-    SideEffect {
-        val _ignore = currentTime 
-    }
-
     val rotation by animateFloatAsState(
         targetValue = if (isHijriVisible) 180f else 0f,
         animationSpec = spring(
@@ -55,16 +51,16 @@ fun FlippableCalendarCard(
         label = "cardFlip"
     )
 
-    // Subtle breathing animation for "Today"
-    val infiniteTransition = rememberInfiniteTransition(label = "breathing")
-    val breathAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.1f,
-        targetValue = 0.35f,
+    // TIME ANIMATION: A slow, eternal rotation of a light sweep
+    val infiniteTransition = rememberInfiniteTransition(label = "chronos")
+    val timeAngle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2500, easing = EaseInOutSine),
-            repeatMode = RepeatMode.Reverse
+            animation = tween(20000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
         ),
-        label = "breathAlpha"
+        label = "timeSweep"
     )
 
     val context = LocalContext.current
@@ -84,23 +80,6 @@ fun FlippableCalendarCard(
             ) { onFlip() },
         contentAlignment = Alignment.Center
     ) {
-        // Today's Minimal Halo (Apple Style)
-        if (isSelectedDayToday) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .drawBehind {
-                        drawCircle(
-                            brush = Brush.radialGradient(
-                                colors = listOf(accentColor.copy(alpha = breathAlpha), Color.Transparent),
-                                center = center,
-                                radius = size.minDimension / 1.1f
-                            )
-                        )
-                    }
-            )
-        }
-
         // The Card Core
         Box(
             modifier = Modifier
@@ -115,7 +94,8 @@ fun FlippableCalendarCard(
                     topText = day.date.format(dayFormatter),
                     bottomText = day.date.format(monthFormatter).uppercase(Locale.getDefault()),
                     isBack = false,
-                    accentColor = accentColor
+                    accentColor = accentColor,
+                    timeAngle = timeAngle
                 )
             } else {
                 val hijri = day.hijriDate
@@ -124,14 +104,14 @@ fun FlippableCalendarCard(
                 } ?: 0
                 val monthName = if (monthResId != 0) stringResource(monthResId) else hijri?.monthEn ?: ""
                 
-                // For Hijri abbreviation, take first 3 letters as a standard short form
                 val displayMonth = if (monthName.length > 3) monthName.take(3) else monthName
 
                 CalendarSide(
                     topText = hijri?.day?.toString() ?: "",
                     bottomText = displayMonth.uppercase(Locale.getDefault()),
                     isBack = true,
-                    accentColor = accentColor
+                    accentColor = accentColor,
+                    timeAngle = timeAngle
                 )
             }
         }
@@ -143,7 +123,8 @@ private fun CalendarSide(
     topText: String,
     bottomText: String,
     isBack: Boolean,
-    accentColor: Color
+    accentColor: Color,
+    timeAngle: Float
 ) {
     val headerTextColor = remember(accentColor) {
         if (accentColor.luminance() > 0.5f) Color(0xFF1C1C1E) else Color.White
@@ -156,15 +137,29 @@ private fun CalendarSide(
         color = Color.White.copy(alpha = 0.08f), 
         shape = RoundedCornerShape(28.dp), 
         border = BorderStroke(
-            width = 0.5.dp, 
-            brush = Brush.verticalGradient(
-                listOf(Color.White.copy(alpha = 0.3f), Color.White.copy(alpha = 0.05f))
-            )
+            width = 0.6.dp, 
+            brush = Brush.sweepGradient(
+                0.0f to Color.White.copy(alpha = 0.1f),
+                0.5f to Color.White.copy(alpha = 0.6f),
+                1.0f to Color.White.copy(alpha = 0.1f),
+            ) 
         ),
         shadowElevation = 0.dp
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .drawBehind {
+                    // "Temporal Sheen": A subtle reflection that passes across the card
+                    rotate(timeAngle + 45f) {
+                        drawRect(
+                            brush = Brush.verticalGradient(
+                                listOf(Color.Transparent, Color.White.copy(alpha = 0.04f), Color.Transparent)
+                            ),
+                            size = size * 2.5f
+                        )
+                    }
+                },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Month Label (Solid Calendar Header)
@@ -212,13 +207,22 @@ private fun CalendarSide(
                     modifier = Modifier.offset(y = (-2).dp) 
                 )
                 
-                // Subtle Dot Indicator
+                // Active Time Dot (Minimal pulsing effect)
+                val dotAlpha by animateFloatAsState(
+                    targetValue = if (topText.isNotEmpty()) 0.4f else 0.1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(2000, easing = EaseInOutSine),
+                        repeatMode = RepeatMode.Reverse
+                    ),
+                    label = "dotPulse"
+                )
+
                 Box(
                     modifier = Modifier
                         .padding(top = 0.dp)
                         .size(3.5.dp)
                         .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.2f))
+                        .background(Color.White.copy(alpha = dotAlpha))
                 )
             }
         }
