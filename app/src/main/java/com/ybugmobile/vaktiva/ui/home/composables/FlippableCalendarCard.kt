@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
@@ -68,11 +69,11 @@ fun FlippableCalendarCard(
 
     val context = LocalContext.current
     val dayFormatter = remember { DateTimeFormatter.ofPattern("dd") }
-    val monthFormatter = remember { DateTimeFormatter.ofPattern("MMMM") } 
+    val monthFormatter = remember { DateTimeFormatter.ofPattern("MMM") } // Abbreviated (e.g., OCT)
 
     Box(
         modifier = modifier
-            .size(100.dp) // Reduced from 110.dp
+            .size(100.dp) 
             .graphicsLayer {
                 scaleX = if (isSelectedDayToday) pulseScale else 1f
                 scaleY = if (isSelectedDayToday) pulseScale else 1f
@@ -122,10 +123,13 @@ fun FlippableCalendarCard(
                     context.resources.getIdentifier("hijri_month_${it.monthNumber}", "string", context.packageName)
                 } ?: 0
                 val monthName = if (monthResId != 0) stringResource(monthResId) else hijri?.monthEn ?: ""
+                
+                // For Hijri abbreviation, take first 3 letters as a standard short form
+                val displayMonth = if (monthName.length > 3) monthName.take(3) else monthName
 
                 CalendarSide(
                     topText = hijri?.day?.toString() ?: "",
-                    bottomText = monthName.uppercase(Locale.getDefault()),
+                    bottomText = displayMonth.uppercase(Locale.getDefault()),
                     isBack = true,
                     accentColor = accentColor
                 )
@@ -147,10 +151,10 @@ private fun CalendarSide(
         modifier = Modifier
             .fillMaxSize()
             .graphicsLayer { if (isBack) rotationY = 180f },
-        color = Color.White.copy(alpha = 0.08f), // Ultra-translucent glass
-        shape = RoundedCornerShape(28.dp), // Slightly tighter radius for smaller card
+        color = Color.White.copy(alpha = 0.08f), 
+        shape = RoundedCornerShape(28.dp), 
         border = BorderStroke(
-            width = 0.5.dp, // Hairline border
+            width = 0.5.dp, 
             brush = Brush.verticalGradient(
                 listOf(Color.White.copy(alpha = 0.3f), Color.White.copy(alpha = 0.05f))
             )
@@ -160,6 +164,7 @@ private fun CalendarSide(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(horizontal = 4.dp)
                 .background(
                     Brush.verticalGradient(
                         listOf(Color.White.copy(alpha = 0.05f), Color.Transparent)
@@ -168,36 +173,38 @@ private fun CalendarSide(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Month Label
+            // Month Label (Abbreviated)
             Text(
                 text = bottomText,
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.1.sp,
-                    fontSize = 9.sp // Slightly smaller font
+                    fontSize = 11.sp 
                 ),
-                color = accentColor.copy(alpha = 0.9f)
+                color = accentColor.copy(alpha = 0.9f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             // Day Number
             Text(
                 text = topText,
                 style = MaterialTheme.typography.displayLarge.copy(
-                    fontSize = 34.sp, // Reduced from 38.sp
+                    fontSize = 34.sp, 
                     fontWeight = FontWeight.SemiBold,
                     fontFamily = IBMPlexArabic,
                     letterSpacing = (-1).sp,
-                    lineHeight = 34.sp // Tighter line height to reduce gap
+                    lineHeight = 34.sp 
                 ),
                 color = Color.White,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.offset(y = (-2).dp) // Nudge up to close gap with month
+                modifier = Modifier.offset(y = (-2).dp) 
             )
             
             // Subtle Dot Indicator
             Box(
                 modifier = Modifier
-                    .padding(top = 0.dp) // Reduced gap
+                    .padding(top = 0.dp)
                     .size(3.5.dp)
                     .clip(CircleShape)
                     .background(Color.White.copy(alpha = 0.2f))
