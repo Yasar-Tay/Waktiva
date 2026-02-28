@@ -43,8 +43,11 @@ import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
+import com.ybugmobile.vaktiva.domain.model.WeatherCondition
 import com.ybugmobile.vaktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.vaktiva.ui.theme.desaturate
+import com.ybugmobile.vaktiva.ui.theme.darken
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.delay
@@ -71,6 +74,8 @@ fun PrayerCircleVisualization(
     val layoutDirection = LocalLayoutDirection.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val glassTheme = LocalGlassTheme.current
+    val weatherCondition = glassTheme.weatherCondition
 
     var canvasSize by remember { mutableStateOf(Size.Zero) }
     var selectedInfo by remember { mutableStateOf<DetailedInfo?>(null) }
@@ -148,8 +153,8 @@ fun PrayerCircleVisualization(
     val fajrPainter = rememberVectorPainter(fajrIcon)
     val sunrisePainter = rememberVectorPainter(Icons.Default.WbTwilight)
     
-    val prayers = remember(day, fajrPainter, sunrisePainter, sunPainter, moonPainter) {
-        listOf(
+    val prayers = remember(day, fajrPainter, sunrisePainter, sunPainter, moonPainter, weatherCondition) {
+        val basePrayers = listOf(
             PrayerNodeInfo(PrayerType.FAJR, day.timings[PrayerType.FAJR] ?: LocalTime.MIN, Color(0xFF81D4FA), fajrPainter),
             PrayerNodeInfo(PrayerType.SUNRISE, day.timings[PrayerType.SUNRISE] ?: LocalTime.MIN, Color(0xFFFFE082), sunrisePainter),
             PrayerNodeInfo(PrayerType.DHUHR, day.timings[PrayerType.DHUHR] ?: LocalTime.MIN, Color(0xFFFFF59D), sunPainter),
@@ -157,6 +162,19 @@ fun PrayerCircleVisualization(
             PrayerNodeInfo(PrayerType.MAGHRIB, day.timings[PrayerType.MAGHRIB] ?: LocalTime.MIN, Color(0xFFCE93D8), sunrisePainter),
             PrayerNodeInfo(PrayerType.ISHA, day.timings[PrayerType.ISHA] ?: LocalTime.MIN, Color(0xFF9FA8DA), moonPainter)
         )
+        
+        val isCloudy = weatherCondition != WeatherCondition.CLEAR && weatherCondition != WeatherCondition.UNKNOWN
+        val isSevere = weatherCondition == WeatherCondition.RAINY || 
+                      weatherCondition == WeatherCondition.THUNDERSTORM || 
+                      weatherCondition == WeatherCondition.SNOWY
+
+        if (isCloudy) {
+            val desaturateAmount = if (isSevere) 0.35f else 0.2f
+            val darkenAmount = if (isSevere) 0.2f else 0.1f
+            basePrayers.map { it.copy(color = it.color.desaturate(desaturateAmount).darken(darkenAmount)) }
+        } else {
+            basePrayers
+        }
     }
 
     val currentPrayerType = remember(day, currentTime) {

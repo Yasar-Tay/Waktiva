@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
@@ -441,13 +442,3 @@ private data class Star(
     val twinkleSpeed: Float,
     val twinklePhase: Float
 )
-
-private fun Color.desaturate(amount: Float): Color { 
-    val r = red; val g = green; val b = blue
-    val gray = (r + g + b) / 3f
-    return Color(r + (gray - r) * amount, g + (gray - g) * amount, b + (gray - b) * amount, alpha) 
-}
-
-private fun Color.darken(amount: Float): Color { 
-    return Color(red * (1f - amount), green * (1f - amount), blue * (1f - amount), alpha) 
-}
