@@ -441,23 +441,57 @@ fun InfoGlassCard(info: DetailedInfo) {
     Surface(
         color = containerColor,
         shape = RoundedCornerShape(percent = 50),
-        modifier = Modifier.wrapContentSize().height(if (isLandscape) 36.dp else 44.dp).drawWithContent {
-            drawContent()
-            drawRoundRect(Brush.horizontalGradient(listOf(info.color.copy(0.25f), Color.Transparent), endX = size.width * 0.4f), size = size, cornerRadius = CornerRadius(size.height / 2), blendMode = BlendMode.Screen)
-            drawRoundRect(borderColor, size = size, cornerRadius = CornerRadius(size.height / 2), style = Stroke(1.dp.toPx()))
-        },
+        modifier = Modifier
+            .wrapContentSize()
+            .height(if (isLandscape) 40.dp else 48.dp) // Slightly increased to fit larger text
+            .drawWithContent {
+                drawContent()
+                drawRoundRect(Brush.horizontalGradient(listOf(info.color.copy(0.25f), Color.Transparent), endX = size.width * 0.4f), size = size, cornerRadius = CornerRadius(size.height / 2), blendMode = BlendMode.Screen)
+                drawRoundRect(borderColor, size = size, cornerRadius = CornerRadius(size.height / 2), style = Stroke(1.dp.toPx()))
+            },
         contentColor = Color.White
     ) {
-        Row(modifier = Modifier.padding(horizontal = if (isLandscape) 12.dp else 16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(if (isLandscape) 8.dp else 10.dp)) {
-            Box(modifier = Modifier.size(if (isLandscape) 24.dp else 30.dp).background(info.color.copy(0.2f), CircleShape).drawWithContent {
-                drawContent()
-                drawCircle(info.color.copy(0.7f), size.minDimension / 2, style = Stroke(1.2.dp.toPx()))
-            }, contentAlignment = Alignment.Center) {
-                Icon(info.icon, null, tint = Color.White, modifier = Modifier.size(if (isLandscape) 12.dp else 16.dp))
+        Row(
+            modifier = Modifier.padding(horizontal = if (isLandscape) 14.dp else 18.dp), 
+            verticalAlignment = Alignment.CenterVertically, 
+            horizontalArrangement = Arrangement.spacedBy(if (isLandscape) 10.dp else 12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(if (isLandscape) 32.dp else 38.dp) 
+                    .background(info.color.copy(0.2f), CircleShape)
+                    .drawWithContent {
+                        drawContent()
+                        drawCircle(info.color.copy(0.7f), size.minDimension / 2, style = Stroke(1.2.dp.toPx()))
+                    }, 
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(info.icon, null, tint = Color.White, modifier = Modifier.size(if (isLandscape) 14.dp else 18.dp))
             }
-            Column(verticalArrangement = Arrangement.Center) {
-                Text(info.title, style = TextStyle(fontSize = if (isLandscape) 8.sp else 10.sp, fontWeight = FontWeight.Bold, color = Color.White.copy(0.6f), letterSpacing = 0.4.sp))
-                Text(info.time, style = TextStyle(fontSize = if (isLandscape) 13.sp else 15.sp, fontFamily = IBMPlexArabic, fontWeight = FontWeight.Bold, color = Color.White, letterSpacing = (-0.3).sp))
+            Column(
+                verticalArrangement = Arrangement.spacedBy((-6).dp, Alignment.CenterVertically)
+            ) {
+                Text(
+                    text = info.title, 
+                    style = TextStyle(
+                        fontSize = if (isLandscape) 11.sp else 13.sp,
+                        lineHeight = if (isLandscape) 11.sp else 13.sp,
+                        fontWeight = FontWeight.Bold, 
+                        color = Color.White.copy(0.6f), 
+                        letterSpacing = 0.4.sp
+                    )
+                )
+                Text(
+                    text = info.time, 
+                    style = TextStyle(
+                        fontSize = if (isLandscape) 15.sp else 17.sp,
+                        lineHeight = if (isLandscape) 15.sp else 17.sp,
+                        fontFamily = IBMPlexArabic, 
+                        fontWeight = FontWeight.Bold, 
+                        color = Color.White, 
+                        letterSpacing = (-0.3).sp
+                    )
+                )
             }
         }
     }
