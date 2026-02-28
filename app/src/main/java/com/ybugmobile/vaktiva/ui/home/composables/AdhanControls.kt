@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
+import java.util.Locale
 
 /**
  * A specialized UI component that appears when an Adhan (call to prayer) is actively playing.
@@ -116,8 +117,12 @@ fun AdhanControls(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Column(modifier = Modifier.weight(1f)) {
-                        val title = if (isTest) stringResource(R.string.adhan_test_alarm).uppercase()
-                                   else (playingPrayerName?.uppercase() ?: stringResource(R.string.adhan_playing).uppercase())
+                        val locale = Locale.getDefault()
+                        val title = when {
+                            isTest -> stringResource(R.string.adhan_test_alarm).uppercase(locale)
+                            prayerType != null -> prayerType.displayName.uppercase(locale)
+                            else -> stringResource(R.string.adhan_playing).uppercase(locale)
+                        }
                         
                         Text(
                             text = title,
@@ -134,7 +139,6 @@ fun AdhanControls(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 // Reversed Stop Button
-                // Calculate if glass is Light (Night) or Dark (Day) to invert the button
                 val isLightGlass = glassTheme.containerColor.red > 0.5f
                 val buttonBgColor = if (isLightGlass) Color.Red.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.4f)
                 val buttonContentColor = if (isLightGlass) Color.White else Color.Black.copy(0.7f)
@@ -162,7 +166,7 @@ fun AdhanControls(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = stringResource(R.string.adhan_stop).uppercase(),
+                            text = stringResource(R.string.adhan_stop).uppercase(Locale.getDefault()),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Black,
                             color = buttonContentColor,
