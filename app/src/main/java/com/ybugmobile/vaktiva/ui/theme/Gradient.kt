@@ -260,15 +260,19 @@ fun StarryBackgroundLayer(currentTime: LocalTime, day: PrayerDay?) {
     val isha = timings[PrayerType.ISHA] ?: LocalTime.of(20, 0)
     val fajr = timings[PrayerType.FAJR] ?: LocalTime.of(5, 0)
     val sunrise = timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 30)
+    val maghrib = timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 30)
 
-    val isFullNight = currentTime.isAfter(isha) || currentTime.isBefore(fajr)
+    val isFullNight = !currentTime.isBefore(isha) || currentTime.isBefore(fajr)
     val isDawn = !isFullNight && currentTime.isBefore(sunrise)
+    val isDusk = !isFullNight && !currentTime.isBefore(maghrib) && currentTime.isBefore(isha)
 
-    if (!isFullNight && !isDawn) return
+    val isTransition = isDawn || isDusk
 
-    val starCount = if (isDawn) 15 else 50
-    val topCoverage = if (isDawn) 0.10f else 0.20f
-    val starAlphaMultiplier = if (isDawn) 0.5f else 1.0f
+    if (!isFullNight && !isTransition) return
+
+    val starCount = if (isTransition) 15 else 50
+    val topCoverage = if (isTransition) 0.10f else 0.20f
+    val starAlphaMultiplier = if (isTransition) 0.5f else 1.0f
 
     val infiniteTransition = rememberInfiniteTransition(label = "stars")
     val time by infiniteTransition.animateFloat(
@@ -281,7 +285,7 @@ fun StarryBackgroundLayer(currentTime: LocalTime, day: PrayerDay?) {
         label = "time"
     )
 
-    val stars = remember(isDawn, topCoverage) {
+    val stars = remember(isTransition, topCoverage) {
         val starColors = listOf(
             Color(0xFFFFFFFF), // Pure White
             Color(0xFFFFF9C4), // Warm White
@@ -302,8 +306,8 @@ fun StarryBackgroundLayer(currentTime: LocalTime, day: PrayerDay?) {
         }
     }
 
-    val distantStars = remember(isDawn, topCoverage) {
-        if (isDawn) emptyList() else List(80) {
+    val distantStars = remember(isTransition, topCoverage) {
+        if (isTransition) emptyList() else List(80) {
             Offset(Random.nextFloat(), Random.nextFloat() * topCoverage)
         }
     }
