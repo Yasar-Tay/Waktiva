@@ -405,20 +405,33 @@ fun HomeScreenContent(
                             )
 
                             // Weather Section in Top Right for Landscape
-                            WeatherSection(
-                                temperature = state.temperature,
-                                condition = state.weatherCondition,
-                                contentColor = contentColor,
-                                currentTime = localTime,
-                                currentPrayerDay = state.currentPrayerDay,
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .systemBarsPadding()
-                                    .padding(top = 6.dp, end = 24.dp) // Adjusted top padding to match HomeHeader inner padding (10dp + systemBars)
-                                    .graphicsLayer {
-                                        translationY = -scrollState.value.toFloat()
-                                    }
-                            )
+                            if (state.isNetworkAvailable) {
+                                WeatherSection(
+                                    temperature = state.temperature,
+                                    condition = state.weatherCondition,
+                                    contentColor = contentColor,
+                                    currentTime = localTime,
+                                    currentPrayerDay = state.currentPrayerDay,
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .systemBarsPadding()
+                                        .padding(top = 6.dp, end = 24.dp) // Adjusted top padding to match HomeHeader inner padding (10dp + systemBars)
+                                        .graphicsLayer {
+                                            translationY = -scrollState.value.toFloat()
+                                        }
+                                )
+                            } else {
+                                Spacer(
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .systemBarsPadding()
+                                        .padding(top = 6.dp, end = 24.dp)
+                                        .height(72.dp)
+                                        .graphicsLayer {
+                                            translationY = -scrollState.value.toFloat()
+                                        }
+                                )
+                            }
                         }
                     } else {
                         // Portrait Layout
@@ -450,17 +463,22 @@ fun HomeScreenContent(
                                     modifier = Modifier.padding(horizontal = 24.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    // Weather Summary replaced DatesSection
-                                    WeatherSection(
-                                        temperature = state.temperature,
-                                        condition = state.weatherCondition,
-                                        contentColor = contentColor,
-                                        currentTime = localTime,
-                                        currentPrayerDay = state.currentPrayerDay,
-                                        modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp)
-                                    )
+                                    if (state.isNetworkAvailable) {
+                                        // Weather Summary replaced DatesSection
+                                        WeatherSection(
+                                            temperature = state.temperature,
+                                            condition = state.weatherCondition,
+                                            contentColor = contentColor,
+                                            currentTime = localTime,
+                                            currentPrayerDay = state.currentPrayerDay,
+                                            modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp)
+                                        )
 
-                                    Spacer(modifier = Modifier.height(22.dp))
+                                        Spacer(modifier = Modifier.height(22.dp))
+                                    } else {
+                                        // Keep space reserved (10dp padding + 72dp height + 22dp spacer)
+                                        Spacer(modifier = Modifier.height(104.dp))
+                                    }
 
                                     Box(
                                         modifier = Modifier
