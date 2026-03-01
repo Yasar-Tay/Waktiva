@@ -11,7 +11,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -405,7 +407,14 @@ fun StarryBackgroundLayer(currentTime: LocalTime, day: PrayerDay?) {
 }
 
 @Composable
-fun AtmosphericBackgroundLayer(currentTime: LocalTime, day: PrayerDay?, sunAzimuth: Float = 0f, sunAltitude: Float = 0f, compassAzimuth: Float = 0f) {
+fun AtmosphericBackgroundLayer(
+    currentTime: LocalTime, 
+    day: PrayerDay?, 
+    weatherCondition: WeatherCondition = WeatherCondition.CLEAR,
+    sunAzimuth: Float = 0f, 
+    sunAltitude: Float = 0f, 
+    compassAzimuth: Float = 0f
+) {
     if (day == null) return
     val timings = day.timings
     val sunrise = timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 30)
@@ -416,22 +425,82 @@ fun AtmosphericBackgroundLayer(currentTime: LocalTime, day: PrayerDay?, sunAzimu
 
     val isMorning = currentTime.isBefore(dhuhur)
     val infiniteTransition = rememberInfiniteTransition(label = "atmosphere")
+    
     val bloomPulse by infiniteTransition.animateFloat(0.7f, 1.0f, infiniteRepeatable(tween(if (isMorning) 5000 else 4000, easing = LinearOutSlowInEasing), RepeatMode.Reverse), label = "bloomPulse")
     val particles = remember(isMorning) { List(if (isMorning) 15 else 25) { MutableParticle(Random.nextFloat(), Random.nextFloat(), if (isMorning) Random.nextFloat() * 1.5f + 0.5f else Random.nextFloat() * 2f + 1f, if (isMorning) Random.nextFloat() * 0.0006f + 0.0003f else Random.nextFloat() * 0.001f + 0.0005f) } }
     val step by infiniteTransition.animateFloat(0f, 1f, infiniteRepeatable(tween(10000, easing = LinearEasing), RepeatMode.Restart), label = "step")
 
+    // Birds logic
+    val birdProgress by infiniteTransition.animateFloat(
+        initialValue = -0.3f, targetValue = 1.3f,
+        animationSpec = infiniteRepeatable(tween(35000, easing = LinearEasing), RepeatMode.Restart),
+        label = "birds"
+    )
+    val birdWingFreq by infiniteTransition.animateFloat(
+        initialValue = 0f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(450), RepeatMode.Reverse),
+        label = "wings"
+    )
+
+    val canShowBirds = weatherCondition == WeatherCondition.CLEAR || 
+                       weatherCondition == WeatherCondition.PARTLY_CLOUDY || 
+                       weatherCondition == WeatherCondition.CLOUDY
+
     Canvas(modifier = Modifier.fillMaxSize()) {
         val w = size.width; val h = size.height
+        
+        // 1. Sun Flare
         val relativeAzimuth = (sunAzimuth - compassAzimuth + 540) % 360 - 180
         if (sunAltitude > 0 && kotlin.math.abs(relativeAzimuth) < 90) {
             val flareX = w / 2 + (relativeAzimuth / 90f) * (w / 2); val flareY = h / 2 - (sunAltitude / 90f) * (h / 2); val flareScale = (sunAltitude / 90f).coerceAtLeast(0.5f)
             drawCircle(Brush.radialGradient(listOf(Color.White.copy(alpha = 0.15f * bloomPulse), Color.Transparent), Offset(flareX, flareY), w * 0.4f * flareScale), w * 0.4f * flareScale, Offset(flareX, flareY))
             drawCircle(Color.White.copy(alpha = 0.05f), 10.dp.toPx(), Offset(w - flareX, h - flareY))
         }
+
+        // 2. Birds (Improved and conditional)
+        if (canShowBirds) {
+            val birdY = 0.12f * h
+            val birdAlpha = if (weatherCondition == WeatherCondition.CLOUDY) 0.06f else 0.12f
+            val birdColor = Color.Black.copy(alpha = birdAlpha)
+            
+            // Fade-in/out logic based on progress
+            val globalAlpha = when {
+                birdProgress < 0f -> (birdProgress + 0.3f) / 0.3f
+                birdProgress > 1f -> (1.3f - birdProgress) / 0.3f
+                else -> 1f
+            }.coerceIn(0f, 1f)
+
+            for (i in 0..2) {
+                // Individual bird timing offset for flapping
+                val birdFlapOffset = (i * 0.2f)
+                val flapVal = ((Math.sin((birdWingFreq + birdFlapOffset).toDouble() * Math.PI * 2).toFloat() + 1f) / 2f)
+
+                // V-formation positions with subtle organic swaying
+                val birdX = (birdProgress * w) + (i * 45.dp.toPx()) - (Math.sin(birdProgress.toDouble() * 4 + i).toFloat() * 8.dp.toPx())
+                val offsetBirdY = birdY + (i * 18.dp.toPx()) + (Math.cos(birdProgress.toDouble() * 2.5 + i).toFloat() * 12.dp.toPx())
+                
+                val wingSpan = (7.dp + (i.dp * 0.4f)).toPx()
+                val wingHeight = (2.5.dp + (i.dp * 0.2f)).toPx() * flapVal
+                
+                val path = Path().apply {
+                    // Start at left wing tip
+                    moveTo(birdX - wingSpan, offsetBirdY - wingHeight)
+                    // Curve to body center
+                    quadraticTo(birdX - wingSpan/2, offsetBirdY + (wingHeight/3), birdX, offsetBirdY + wingHeight/2)
+                    // Curve to right wing tip
+                    quadraticTo(birdX + wingSpan/2, offsetBirdY + (wingHeight/3), birdX + wingSpan, offsetBirdY - wingHeight)
+                }
+                drawPath(path, birdColor.copy(alpha = birdColor.alpha * globalAlpha), style = Stroke(1.3.dp.toPx(), cap = StrokeCap.Round))
+            }
+        }
+
+        // 3. Atmospheric Particles
         particles.forEach { p ->
             val yPos = (p.y - (step * p.speed * 100)).let { if (it < 0) it + 1f else it % 1f }
             drawCircle((if (isMorning) Color(0xFFFFF9C4) else Color.White).copy(alpha = 0.15f), p.size.dp.toPx(), Offset(p.x * w, yPos * h))
         }
+
+        // 4. Horizon Haze
         drawRect(Brush.verticalGradient(listOf(Color.Transparent, (if (isMorning) Color(0xFFFFECB3) else Color.White).copy(alpha = 0.06f)), startY = h * 0.7f, endY = h), topLeft = Offset(0f, h * 0.7f), size = Size(w, h * 0.3f))
     }
 }
