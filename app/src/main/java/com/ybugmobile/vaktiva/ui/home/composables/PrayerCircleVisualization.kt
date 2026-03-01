@@ -7,7 +7,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -15,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
@@ -435,41 +435,47 @@ fun InfoGlassCard(info: DetailedInfo) {
     val glassTheme = LocalGlassTheme.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val containerColor = remember(glassTheme.isLightMode) { if (glassTheme.isLightMode) Color.White.copy(0.22f) else Color.Black.copy(0.45f) }
+    val containerColor = remember(glassTheme.isLightMode) { if (glassTheme.isLightMode) Color.White.copy(0.22f) else Color.Black.copy(0.25f) }
     val borderColor = remember(glassTheme.isLightMode) { if (glassTheme.isLightMode) Color.White.copy(0.45f) else Color.White.copy(0.15f) }
+    val cardShape = RoundedCornerShape(percent = 50)
 
     Surface(
         color = containerColor,
-        shape = RoundedCornerShape(percent = 50),
+        shape = cardShape,
         modifier = Modifier
             .wrapContentSize()
-            .height(if (isLandscape) 40.dp else 48.dp) // Slightly increased to fit larger text
+            .height(if (isLandscape) 40.dp else 48.dp)
+            .clip(cardShape) // Ensure children are clipped to the pill shape
             .drawWithContent {
                 drawContent()
-                drawRoundRect(Brush.horizontalGradient(listOf(info.color.copy(0.25f), Color.Transparent), endX = size.width * 0.4f), size = size, cornerRadius = CornerRadius(size.height / 2), blendMode = BlendMode.Screen)
+                // Subtle card gradient
+                drawRoundRect(Brush.horizontalGradient(listOf(info.color.copy(0.15f), Color.Transparent), endX = size.width * 0.4f), size = size, cornerRadius = CornerRadius(size.height / 2), blendMode = BlendMode.Screen)
                 drawRoundRect(borderColor, size = size, cornerRadius = CornerRadius(size.height / 2), style = Stroke(1.dp.toPx()))
             },
         contentColor = Color.White
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = if (isLandscape) 14.dp else 18.dp), 
             verticalAlignment = Alignment.CenterVertically, 
-            horizontalArrangement = Arrangement.spacedBy(if (isLandscape) 10.dp else 12.dp)
         ) {
+            // Icon container covering the left side like a toggle
             Box(
                 modifier = Modifier
-                    .size(if (isLandscape) 32.dp else 38.dp) 
-                    .background(info.color.copy(0.2f), CircleShape)
-                    .drawWithContent {
-                        drawContent()
-                        drawCircle(info.color.copy(0.7f), size.minDimension / 2, style = Stroke(1.2.dp.toPx()))
-                    }, 
+                    .fillMaxHeight()
+                    .aspectRatio(1f)
+                    .background(info.color.copy(0.9f)), 
                 contentAlignment = Alignment.Center
             ) {
-                Icon(info.icon, null, tint = Color.White, modifier = Modifier.size(if (isLandscape) 14.dp else 18.dp))
+                Icon(
+                    info.icon, 
+                    null, 
+                    tint = if (info.color.luminance() > 0.5f) Color.Black else Color.White, 
+                    modifier = Modifier.size(if (isLandscape) 20.dp else 24.dp)
+                )
             }
+            
             Column(
-                verticalArrangement = Arrangement.spacedBy((-6).dp, Alignment.CenterVertically)
+                modifier = Modifier.padding(start = if (isLandscape) 12.dp else 16.dp, end = if (isLandscape) 16.dp else 20.dp),
+                verticalArrangement = Arrangement.spacedBy((-4).dp, Alignment.CenterVertically)
             ) {
                 Text(
                     text = info.title, 
