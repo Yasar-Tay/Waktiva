@@ -98,7 +98,7 @@ fun WeatherSection(
                         alpha = 0.9f
                     )
                     
-                    if (weatherLabelRes != null) {
+                    /*if (weatherLabelRes != null) {
                         Text(
                             text = stringResource(weatherLabelRes).uppercase(Locale.getDefault()),
                             style = MaterialTheme.typography.labelSmall.copy(
@@ -108,7 +108,7 @@ fun WeatherSection(
                             ),
                             color = contentColor.copy(alpha = 0.7f)
                         )
-                    }
+                    }*/
                 }
             }
         } else {
