@@ -301,7 +301,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                     SmallFloatingActionButton(
                         onClick = { 
                             timeManager.addMinutes(30)
-                            Toast.makeText(context, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(context, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
                         },
                         containerColor = MaterialTheme.colorScheme.secondaryContainer
                     ) {

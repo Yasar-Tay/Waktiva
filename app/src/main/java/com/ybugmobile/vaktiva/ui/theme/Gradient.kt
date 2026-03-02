@@ -1,6 +1,5 @@
 package com.ybugmobile.vaktiva.ui.theme
 
-import android.content.res.Configuration
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -17,10 +16,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
 import com.ybugmobile.vaktiva.domain.model.PrayerType
@@ -108,15 +105,57 @@ fun getGradientForTime(
     }
 
     val colors = when {
-        currentTime.isBefore(dawnStart) -> listOf(Color(0xFF020617), Color(0xFF0F141E), Color(0xFF1E1B4B))
-        currentTime.isBefore(sunrise) -> listOf(Color(0xFF020617), Color(0xFF0A1024), Color(0xFF1E1B4B), Color(0xFF2B2A6F))
-        currentTime.isBefore(dayStart) -> listOf(Color(0xFF1D405B), Color(0xFF3674A4), Color(0xFFB45309), Color(0xFFFCD34D))
-        currentTime.isBefore(dhuhur) -> listOf(Color(0xFF0F2A44), Color(0xFF1E5DA8), Color(0xFF68B298), Color(0xFF4593E5))
-        currentTime.isBefore(asr) -> listOf(Color(0xFF0F2A44), Color(0xFF1E5DA8), Color(0xFF4FA3C7), Color(0xFFE8D5A7))
-        currentTime.isBefore(sunsetStart) -> listOf(Color(0xFF081A2F), Color(0xFF123E7C), Color(0xFF3F8FD2), Color(0xFF9FD3F6))
-        currentTime.isBefore(maghrib) -> listOf(Color(0xFF0B1D33), Color(0xFF134E8A), Color(0xFFB45309), Color(0xFFB91C1C))
-        currentTime.isBefore(isha) -> listOf(Color(0xFF020617), Color(0xFF1E1B4B), Color(0xFF310F1A))
-        else -> listOf(Color(0xFF020617), Color(0xFF0F141E), Color(0xFF1C2533))
+        currentTime.isBefore(dawnStart) -> listOf(
+            Color(0xFF020617), 
+            Color(0xFF0F141E), 
+            Color(0xFF1E1B4B)
+        )
+        currentTime.isBefore(sunrise) -> listOf(
+            Color(0xFF020617), 
+            Color(0xFF0A1024), 
+            Color(0xFF1E1B4B), 
+            Color(0xFF2B2A6F)
+        )
+        currentTime.isBefore(dayStart) -> listOf(
+            Color(0xFF2773CE),
+            Color(0xFF1F5588),
+            Color(0xFF7C2D12),
+            Color(0xFF8D3E0D)
+        )
+        currentTime.isBefore(dhuhur) -> listOf(
+            Color(0xFF0F2A44),
+            Color(0xFF1E5DA8),
+            Color(0xFF4FA3C7),
+            Color(0xFFE8D5A7)
+        )
+        currentTime.isBefore(asr) -> listOf(
+            Color(0xFF0F2A44),
+            Color(0xFF1E5DA8),
+            Color(0xFF68B298),
+            Color(0xFF4593E5)
+        )
+        currentTime.isBefore(sunsetStart) -> listOf(
+            Color(0xFF081A2F), 
+            Color(0xFF123E7C), 
+            Color(0xFF3F8FD2), 
+            Color(0xFF9FD3F6)
+        )
+        currentTime.isBefore(maghrib) -> listOf(
+            Color(0xFF050E36),
+            Color(0xFF123E7C),
+            Color(0xFF450A0A), 
+            Color(0xFF7F1D1D)
+        )
+        currentTime.isBefore(isha) -> listOf(
+            Color(0xFF020617), 
+            Color(0xFF1E1B4B), 
+            Color(0xFF310F1A)
+        )
+        else -> listOf(
+            Color(0xFF020617), 
+            Color(0xFF0F141E), 
+            Color(0xFF1C2533)
+        )
     }
 
     return Brush.verticalGradient(colors.map { it.adjustForWeather() })

@@ -16,10 +16,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.ybugmobile.vaktiva.domain.model.PrayerDay
+import com.ybugmobile.vaktiva.domain.model.WeatherCondition
 import java.time.LocalTime
 import java.util.Locale
 
@@ -82,10 +84,11 @@ fun VaktivaTheme(
 fun VaktivaBackgroundWrapper(
     currentTime: LocalTime,
     prayerDay: PrayerDay?,
+    weatherCondition: WeatherCondition = WeatherCondition.CLEAR,
     content: @Composable () -> Unit
 ) {
-    val glassTheme = getGlassTheme(currentTime, prayerDay)
-    val backgroundGradient = getGradientForTime(currentTime, prayerDay)
+    val glassTheme = getGlassTheme(currentTime, prayerDay, weatherCondition)
+    val backgroundGradient = getGradientForTime(currentTime, prayerDay, weatherCondition)
 
     CompositionLocalProvider(
         LocalGlassTheme provides glassTheme,
