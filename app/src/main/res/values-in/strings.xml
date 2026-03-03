@@ -260,8 +260,8 @@
     <!-- Donations -->
     <string name="settings_donate">Dukung Pengembang</string>
     <string name="donate_title">Dukung Waktiva</string>
-    <string name="donate_header">Dukung Waktiva</string>
-    <string name="donate_desc">Waktiva dibangun dengan satu niat:\nuntuk menawarkan ruang yang bersih, pribadi, dan bebas iklan untuk shalat.\n\nTanpa iklan.\nTanpa pelacakan.\nTanpa penjualan data.\nHanya sesuatu yang jujur dan berguna.\n\nMenjaga Waktiva tetap gratis berarti memilih kemandirian daripada monetisasi.\nItu berarti tidak menambahkan iklan.\nItu berarti tidak menjual data pengguna.\nItu berarti membangun secara perlahan, hatiha-hati, dan etis.\n\nJika Waktiva membawa kemudahan bagi shalat harian Anda…\nJika Anda menghargai memiliki aplikasi shalat yang menghormati privasi Anda…\nJika Anda ingin membantu meningkatkan desain, fitur, dan konten berlisensinya…\n\nAnda dapat mendukung pengembangannya dengan donasi.\n\nDukungan Anda membantu menutupi:\n\n• Biaya server dan API\n• Rekaman Adzan berlisensi\n• Ikon, ilustrasi, dan aset desain\n• Alat pengembangan dan biaya penerbitan\n• Peningkatan masa depan dan fitur baru\n\nSetiap kontribusi — kecil atau besar — benar-benar membuat perbedaan.\n\nJika Anda tidak dalam posisi untuk berdonasi, itu tidak masalah.\nDoa dan kata-kata baik Anda sudah sangat dihargai.\n\nTerima kasih telah membantu menjaga Waktiva tetap sederhana, pribadi, dan bebas iklan.</string>
+    <string name="donate_header">Dukung Waktiva 🤍</string>
+    <string name="donate_desc">Tanpa iklan.\nTanpa pelacakan.\nTanpa penjualan data.\nHanya sesuatu yang jujur dan berguna.\n\nJika Waktiva membawa kemudahan bagi shalat harian Anda…\nJika Anda menghargai memiliki aplikasi shalat yang menghormati privasi Anda…\nJika Anda ingin membantu meningkatkan desain, fitur, dan konten berlisensinya…\n\nAnda dapat mendukung pengembangannya dengan donasi.\n\nSetiap kontribusi — kecil atau besar — benar-benar membuat perbedaan.\n\nTerima kasih telah membantu menjaga Waktiva tetap sederhana, pribadi, dan bebas iklan.</string>
     <string name="donate_footer">🤲 Semoga bermanfaat bagi Anda di dunia dan akhirat.</string>
     <string name="donate_button">Donasi</string>
     <string name="donate_thank_you">Terima kasih telah mendukung perangkat lunak sumber terbuka!</string>
@@ -323,7 +323,7 @@
     <string name="license_legal_info">Waktiva – Lisensi &amp; Informasi Hukum</string>
     <string name="license_app_copyright">Hak Cipta © 2026 YBugMobile\nSeluruh hak dilindungi undang-undang.</string>
     <string name="license_app_mit">Waktiva dirilis sebagai perangkat lunak sumber terbuka di bawah Lisensi MIT.</string>
-    <string name="license_app_warranty">PERANGKAT LUNAK INI DISEDIAKAN \"APA ADANYA\", TANPA JAMINAN APA PUN, BAIK TERSURAT MAUPUN TERSIRAT, TERMASUK NAMUN TIDAK TERBATAS PADA JAMINAN KELAYAKAN JUAL, KESESUAIAN UNTUK TUJUAN TERTENTU, DAN NON-PELANGGARAN.</string>
+    <string name="license_app_warranty">PERANGKAT LUNAK INI DISEDIAKAN \"APA ADANYA\", TANPA JAMINAN APA PUN، BAIK TERSURAT MAUPUN TERSIRAT.</string>
     <string name="license_third_party_services">1. Layanan Pihak Ketiga</string>
     <string name="license_aladhan_api">API Al-Adhan</string>
     <string name="license_aladhan_desc">Waktiva mengambil waktu shalat dari layanan API Al-Adhan. Perhitungan waktu shalat disediakan sesuai dengan metodologi dan ketentuan yang mereka publikasikan.</string>

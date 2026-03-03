@@ -1,7 +1,9 @@
 package com.ybugmobile.vaktiva.ui.donation
 
 import android.widget.Toast
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,16 +15,15 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -37,6 +38,9 @@ import com.ybugmobile.vaktiva.domain.manager.DonationProduct
 import com.ybugmobile.vaktiva.domain.manager.PurchaseResult
 import com.ybugmobile.vaktiva.ui.theme.GlassTheme
 import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,39 +101,47 @@ fun DonateScreen(
                 .padding(padding),
             contentPadding = PaddingValues(bottom = 60.dp),
         ) {
-            // HERO SECTION: Elevated Visual with App Icon
+            // HERO SECTION: Elevated Visual with Premium Starburst and Stunning Badges
             item {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(320.dp)
+                        .height(420.dp)
                         .padding(top = 24.dp),
                     contentAlignment = Alignment.Center
                 ) {
+                    // Premium Starburst Background
+                    PremiumStarburst(
+                        modifier = Modifier.size(340.dp),
+                        color = Color(0xFFF87171)
+                    )
+
                     // Multi-layered Glow
                     Box(
                         modifier = Modifier
-                            .size(240.dp)
-                            .blur(90.dp)
-                            .background(Color(0xFFF87171).copy(alpha = 0.12f), CircleShape)
+                            .size(260.dp)
+                            .blur(80.dp)
+                            .background(Color(0xFFF87171).copy(alpha = 0.15f), CircleShape)
                     )
 
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Box(contentAlignment = Alignment.BottomEnd) {
+                        Box(contentAlignment = Alignment.Center) {
                             // Main App Icon Container
                             Surface(
-                                modifier = Modifier.size(110.dp),
-                                shape = RoundedCornerShape(30.dp),
-                                color = Color.White.copy(alpha = 0.1f),
-                                border = BorderStroke(1.5.dp, Color.White.copy(alpha = 0.2f))
+                                modifier = Modifier.size(120.dp),
+                                shape = RoundedCornerShape(32.dp),
+                                color = Color.White.copy(alpha = 0.12f),
+                                border = BorderStroke(1.5.dp, Brush.linearGradient(
+                                    listOf(Color.White.copy(alpha = 0.4f), Color.White.copy(alpha = 0.05f))
+                                ))
                             ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
                                     contentDescription = null,
-                                    modifier = Modifier.padding(18.dp).clip(RoundedCornerShape(12.dp)),
+                                    modifier = Modifier.padding(20.dp).clip(RoundedCornerShape(12.dp)),
                                     contentScale = ContentScale.Fit
                                 )
                             }
@@ -138,11 +150,12 @@ fun DonateScreen(
                             Surface(
                                 modifier = Modifier
                                     .size(38.dp)
-                                    .offset(x = 12.dp, y = 12.dp),
+                                    .align(Alignment.BottomEnd)
+                                    .offset(x = 10.dp, y = 10.dp),
                                 shape = CircleShape,
                                 color = Color(0xFFF87171),
-                                border = BorderStroke(2.dp, Color.Black.copy(alpha = 0.5f)),
-                                shadowElevation = 8.dp
+                                border = BorderStroke(2.dp, Color.Black.copy(alpha = 0.3f)),
+                                shadowElevation = 12.dp
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
@@ -153,15 +166,41 @@ fun DonateScreen(
                                     )
                                 }
                             }
+
+                            // Principle Badges - Designed to be "Stunning"
+                            StunningInfoBadge(
+                                text = "No ads.",
+                                modifier = Modifier.align(Alignment.TopStart).offset(x = (-40).dp, y = (-20).dp),
+                                rotation = -12f,
+                                delayMillis = 0
+                            )
+                            StunningInfoBadge(
+                                text = "No tracking.",
+                                modifier = Modifier.align(Alignment.TopEnd).offset(x = 50.dp, y = 15.dp),
+                                rotation = 10f,
+                                delayMillis = 200
+                            )
+                            StunningInfoBadge(
+                                text = "No data selling.",
+                                modifier = Modifier.align(Alignment.BottomStart).offset(x = (-60).dp, y = 10.dp),
+                                rotation = -6f,
+                                delayMillis = 400
+                            )
+                            StunningInfoBadge(
+                                text = "Just something honest and useful.",
+                                isHighlight = true,
+                                modifier = Modifier.align(Alignment.BottomCenter).offset(y = 65.dp),
+                                delayMillis = 600
+                            )
                         }
                         
-                        Spacer(modifier = Modifier.height(32.dp))
+                        Spacer(modifier = Modifier.height(80.dp))
                         
                         Text(
                             text = stringResource(R.string.donate_header),
                             style = MaterialTheme.typography.headlineMedium.copy(
                                 fontWeight = FontWeight.Black,
-                                letterSpacing = (-1).sp
+                                letterSpacing = (-1.5).sp
                             ),
                             color = Color.White,
                             textAlign = TextAlign.Center,
@@ -256,6 +295,165 @@ fun DonateScreen(
             }
         }
     }
+}
+
+@Composable
+private fun PremiumStarburst(
+    modifier: Modifier = Modifier,
+    color: Color = Color.White
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "starburst")
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(60000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotation"
+    )
+    
+    val pulse by infiniteTransition.animateFloat(
+        initialValue = 0.8f,
+        targetValue = 1.1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(4000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulse"
+    )
+
+    Canvas(modifier = modifier.scale(pulse)) {
+        val center = Offset(size.width / 2, size.height / 2)
+        val radius = size.minDimension / 2
+        val rayCount = 12
+        val angleStep = (2 * PI / rayCount).toFloat()
+
+        withTransform({
+            rotate(rotation, center)
+        }) {
+            for (i in 0 until rayCount) {
+                val angle = i * angleStep
+                val x = center.x + cos(angle.toDouble()).toFloat() * radius
+                val y = center.y + sin(angle.toDouble()).toFloat() * radius
+                
+                drawLine(
+                    brush = Brush.radialGradient(
+                        colors = listOf(color.copy(alpha = 0.15f), Color.Transparent),
+                        center = center,
+                        radius = radius
+                    ),
+                    start = center,
+                    end = Offset(x, y),
+                    strokeWidth = 2.dp.toPx(),
+                    cap = StrokeCap.Round
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun StunningInfoBadge(
+    text: String,
+    modifier: Modifier = Modifier,
+    isHighlight: Boolean = false,
+    rotation: Float = 0f,
+    delayMillis: Int = 0
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "badgeFloating")
+
+    val floatOffset by infiniteTransition.animateFloat(
+        initialValue = -6f,
+        targetValue = 6f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2500, delayMillis = delayMillis, easing = SineWaveEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "float"
+    )
+
+    val pulse by infiniteTransition.animateFloat(
+        initialValue = 0.95f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulse"
+    )
+
+    Box(
+        modifier = modifier
+            .graphicsLayer {
+                rotationZ = rotation
+                translationY = floatOffset
+                scaleX = pulse
+                scaleY = pulse
+            },
+        contentAlignment = Alignment.Center
+    ) {
+
+        Canvas(
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .height(48.dp)
+        ) {
+            val center = Offset(size.width / 2, size.height / 2)
+            val outerRadius = size.minDimension / 2
+            val innerRadius = outerRadius * 0.6f
+            val points = 12
+
+            val path = Path()
+
+            for (i in 0 until points * 2) {
+                val angle = (Math.PI / points * i).toFloat()
+                val radius = if (i % 2 == 0) outerRadius else innerRadius
+
+                val x = center.x + cos(angle) * radius
+                val y = center.y + sin(angle) * radius
+
+                if (i == 0) {
+                    path.moveTo(x, y)
+                } else {
+                    path.lineTo(x, y)
+                }
+            }
+            path.close()
+
+            drawPath(
+                path = path,
+                brush = Brush.radialGradient(
+                    colors = if (isHighlight) {
+                        listOf(
+                            Color(0xFFF87171),
+                            Color(0xFFE11D48)
+                        )
+                    } else {
+                        listOf(
+                            Color(0xFFFF8A80),
+                            Color(0xFFEF4444)
+                        )
+                    }
+                )
+            )
+        }
+
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = if (isHighlight) 12.sp else 10.sp,
+                letterSpacing = 0.5.sp
+            ),
+            color = Color.White,
+            modifier = Modifier.padding(horizontal = 20.dp)
+        )
+    }
+}
+
+private val SineWaveEasing = Easing { fraction ->
+    sin(fraction * PI.toFloat() * 2f) / 2f + 0.5f
 }
 
 @Composable

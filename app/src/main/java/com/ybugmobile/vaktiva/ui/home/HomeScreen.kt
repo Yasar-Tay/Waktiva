@@ -471,10 +471,10 @@ fun HomeScreenContent(
                                             contentColor = contentColor,
                                             currentTime = localTime,
                                             currentPrayerDay = state.currentPrayerDay,
-                                            modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp)
+                                            modifier = Modifier.fillMaxWidth().padding(top = 20.dp, start = 10.dp)
                                         )
 
-                                        Spacer(modifier = Modifier.height(22.dp))
+                                        Spacer(modifier = Modifier.height(12.dp))
                                     } else {
                                         // Keep space reserved (10dp padding + 72dp height + 22dp spacer)
                                         Spacer(modifier = Modifier.height(104.dp))

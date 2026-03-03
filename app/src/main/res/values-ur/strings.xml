@@ -5,86 +5,86 @@
     <string name="nav_home">ہوم</string>
     <string name="nav_qibla">قبلہ</string>
     <string name="nav_settings">ترتیبات</string>
-    <string name="nav_donate">عطیہ کریں</string>
+    <string name="nav_donate">عطیہ</string>
     <string name="cd_back">واپس</string>
 
     <!-- Qibla Screen -->
     <string name="qibla_label">قبلہ</string>
     <string name="qibla_compass">کمپاس</string>
     <string name="qibla_map">نقشہ</string>
-    <string name="qibla_mecca_aligned">مکہ کی سمت میں</string>
+    <string name="qibla_mecca_aligned">مکہ کی سمت</string>
     <string name="qibla_rotate_phone">فون گھمائیں</string>
     <string name="qibla_direction">قبلہ: %d°</string>
-    <string name="qibla_locating">مقام تلاش کیا جا رہا ہے...</string>
+    <string name="qibla_locating">مقام کا تعین...</string>
     <string name="qibla_heading">رخ</string>
-    <string name="qibla_signal">سیگنل</string>
+    <string name="qibla_signal">سگنل</string>
     <string name="qibla_standard">معیاری</string>
     <string name="qibla_satellite">سیٹلائٹ</string>
-    <string name="qibla_recenter">درمیان میں لائیں</string>
-    <string name="qibla_location_required">مقام تک رسائی ضروری ہے</string>
-    <string name="qibla_location_required_desc">قبلہ کی درست سمت معلوم کرنے کے لیے ضروری ہے۔</string>
+    <string name="qibla_recenter">دوبارہ مرکز کریں</string>
+    <string name="qibla_location_required">لوکیشن تک رسائی درکار ہے</string>
+    <string name="qibla_location_required_desc">قبلہ کے درست حساب کے لیے درکار ہے۔</string>
     <string name="qibla_grant_permission">اجازت دیں</string>
-    <string name="qibla_calibration_needed">کیلیبریشن ضروری ہے</string>
-    <string name="qibla_calibration_desc">درستگی کو بہتر بنانے کے لیے اپنے فون کو آٹھ (8) کی شکل (∞) میں گھمائیں۔</string>
+    <string name="qibla_calibration_needed">کیلیبریشن درکار ہے</string>
+    <string name="qibla_calibration_desc">درستگی کو بہتر بنانے کے لیے اپنے فون کو 8 (∞) کی شکل میں گھمائیں۔</string>
     <string name="qibla_got_it">سمجھ گیا</string>
-    <string name="qibla_aligned_badge">سمت درست ہے</string>
-    <string name="qibla_magnetic_interference">مقناطیسی مداخلت محسوس کی گئی - آلہ کیلیبریٹ کریں</string>
-    <string name="qibla_kaaba_aligned">کعبہ کی سمت میں</string>
-    <string name="qibla_find_marker">سنہرا نشان تلاش کریں</string>
+    <string name="qibla_aligned_badge">درست سمت</string>
+    <string name="qibla_magnetic_interference">مقناطیسی مداخلت کا پتہ چلا - آلہ کیلیبریٹ کریں</string>
+    <string name="qibla_kaaba_aligned">کعبہ کی سمت</string>
+    <string name="qibla_find_marker">سنہری نشان تلاش کریں</string>
     <string name="qibla_calibrate">کیلیبریٹ</string>
-    <string name="qibla_interference_tip">ٹپ: عمارتوں کے اندر دھاتی ڈھانچے کمپاس پر اثر انداز ہو سکتے ہیں۔ بہترین نتائج کے لیے فون کو آٹھ کی شکل میں گھمائیں۔</string>
+    <string name="qibla_interference_tip">نصیحت: عمارتوں کے اندر، دھاتی ڈھانچے کمپاس کو متاثر کر سکتے ہیں۔ بہترین درستگی کے لیے 8 کی شکل میں کیلیبریشن کریں۔</string>
 
     <!-- Home Screen -->
     <string name="home_unknown_location">نامعلوم مقام</string>
     <string name="home_last_known_location">آخری مقام: %s</string>
-    <string name="home_gps_disabled_location">GPS بند ہے</string>
-    <string name="home_location_permission_denied">اجازت نہیں ملی</string>
+    <string name="home_gps_disabled_location">GPS غیر فعال</string>
+    <string name="home_location_permission_denied">لوکیشن مسترد کر دی گئی</string>
     <string name="home_offline_status">آف لائن</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">باقی وقت</string>
-    <string name="home_permissions_required">اجازتیں ضروری ہیں</string>
-    <string name="home_permissions_desc">ایپ کے درست طریقے سے کام کرنے کے لیے مقام اور اطلاعات کی اجازتیں ضروری ہیں۔</string>
+    <string name="home_permissions_required">اجازتیں درکار ہیں</string>
+    <string name="home_permissions_desc">ایپ کے درست کام کرنے کے لیے لوکیشن اور نوٹیفیکیشن کی اجازتیں درکار ہیں۔</string>
     <string name="home_grant_permissions">اجازتیں دیں</string>
     <string name="home_refresh_success">نماز کے اوقات اپ ڈیٹ کر دیے گئے</string>
     <string name="home_refresh_error">اوقات اپ ڈیٹ کرنے میں ناکامی</string>
     <string name="home_prayer_provider">ماخذ: </string>
-    <string name="home_skip_adhan">خاموش کریں</string>
-    <string name="home_unmute_adhan">آواز کھولیں</string>
+    <string name="home_skip_adhan">میوٹ</string>
+    <string name="home_unmute_adhan">ان میوٹ</string>
     <string name="home_return_to_today">آج پر واپس جائیں</string>
-    <string name="home_tomorrow_is">کل: %s</string>
+    <string name="home_tomorrow_is">کل ہے: %s</string>
     <string name="home_today_is">آج %s ہے</string>
-    <string name="home_adhan_muted">%s کے لیے اذان خاموش کر دی گئی</string>
-    <string name="home_adhan_unmuted">%s کے لیے اذان سنائی دے گی</string>
-    <string name="home_hijri_offline_note">آف لائن ہجری حساب کا استعمال</string>
+    <string name="home_adhan_muted">%s کے لیے اذان میوٹ کر دی گئی</string>
+    <string name="home_adhan_unmuted">%s کے لیے اذان فعال کر دی گئی</string>
+    <string name="home_hijri_offline_note">آف لائن ہجری حساب استعمال ہو رہا ہے</string>
     <string name="home_hijri_offline_indicator"> (*)</string>
     <string name="home_current_time">موجودہ وقت</string>
 
     <!-- Location Health Strings -->
-    <string name="location_health_gps_off">جی پی ایس بند ہے</string>
-    <string name="location_health_permission_denied">اجازت نہیں ملی</string>
+    <string name="location_health_gps_off">GPS غیر فعال</string>
+    <string name="location_health_permission_denied">لوکیشن مسترد کر دی گئی</string>
     <string name="location_health_offline">آف لائن موڈ</string>
-    <string name="location_health_notifications_off">اطلاعات بند ہیں</string>
-    <string name="location_health_channels_muted">آواز خاموش ہے</string>
-    <string name="location_health_dnd_active">ڈی این ڈی موڈ فعال ہے</string>
+    <string name="location_health_notifications_off">نوٹیفیکیشن مسترد کر دیے گئے</string>
+    <string name="location_health_channels_muted">چینلز میوٹ ہیں</string>
+    <string name="location_health_dnd_active">DND فعال ہے</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">سسٹم کی صحت</string>
     <string name="health_issues_detected">مسائل پائے گئے</string>
-    <string name="health_gps_off">GPS عالمی سطح پر غیر فعال ہے۔ نماز کے اوقات اپ ڈیٹ کرنے کے لیے مقام کی خدمات فعال کریں۔</string>
-    <string name="health_channels_muted">سسٹم سیٹنگز میں اذان نوٹیفکیشن چینلز خاموش ہیں۔</string>
-    <string name="health_dnd_active">Do Not Disturb فعال ہے۔ اذان کی آوازیں بلاک ہو سکتی ہیں۔</string>
+    <string name="health_gps_off">GPS عالمی سطح پر غیر فعال ہے۔ اوقاتِ نماز اپ ڈیٹ کرنے کے لیے لوکیشن سروسز فعال کریں۔</string>
+    <string name="health_channels_muted">سسٹم سیٹنگز میں اذان نوٹیفیکیشن چینلز میوٹ ہیں۔</string>
+    <string name="health_dnd_active">ڈو ناٹ ڈسٹرب فعال ہے۔ اذان کی آوازیں رک سکتی ہیں۔</string>
     <string name="health_fix_now">ابھی ٹھیک کریں</string>
-    <string name="health_no_internet">انٹرنیٹ کنکشن نہیں ہے۔ Waktiva ذخیرہ شدہ ڈیٹا استعمال کر رہا ہے۔ براہ کرم نماز کے اوقات کو تازہ کرنے کے لیے منسلک ہوں۔</string>
-    <string name="health_no_internet_no_data">انٹرنیٹ کنکشن نہیں ہے۔ Waktiva پہلی بار نماز کے اوقات حاصل کرنے کے لیے انٹرنیٹ کی ضرورت ہے۔</string>
-    <string name="health_status_ok">تمام سسٹم فعال ہیں</string>
-    <string name="health_overlay_subtitle">آپ کی ایپ کے تجربے کو بہتر بنا رہے ہیں</string>
-    <string name="health_overlay_description">بیک گراؤنڈ میں اطلاعات اور مقام کی خدمات کے درست کام کے لیے نیچے دیے گئے مسائل حل کریں۔</string>
+    <string name="health_no_internet">انٹرنیٹ کنکشن نہیں ہے۔ Waktiva محفوظ شدہ ڈیٹا استعمال کر رہا ہے۔ اوقاتِ نماز اپ ڈیٹ کرنے کے لیے براہ کرم کنیکٹ کریں۔</string>
+    <string name="health_no_internet_no_data">انٹرنیٹ کنکشن نہیں ہے۔ Waktiva کو پہلے اوقاتِ نماز حاصل کرنے کے لیے فعال کنکشن درکار ہے۔</string>
+    <string name="health_status_ok">تمام سسٹم نارمل کام کر رہے ہیں</string>
+    <string name="health_overlay_subtitle">آپ کے ایپ تجربے کو بہتر بنانا</string>
+    <string name="health_overlay_description">بیک گراؤنڈ میں نوٹیفیکیشنز اور لوکیشن سروسز کے درست کام کو یقینی بنانے کے لیے درج ذیل مسائل کو حل کریں۔</string>
     <string name="health_overlay_dismiss">سمجھ گیا</string>
-    <string name="health_overlay_issues_title">نشاندہی شدہ مسائل</string>
+    <string name="health_overlay_issues_title">پائے گئے مسائل</string>
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">فجر</string>
-    <string name="prayer_sunrise">طلوع آفتاب</string>
+    <string name="prayer_sunrise">طلوعِ آفتاب</string>
     <string name="prayer_dhuhr">ظہر</string>
     <string name="prayer_asr">عصر</string>
     <string name="prayer_maghrib">مغرب</string>
@@ -92,14 +92,14 @@
     <string name="adhan_default_prayer">نماز</string>
 
     <!-- Accuracy Labels -->
-    <string name="accuracy_high">بہترین</string>
+    <string name="accuracy_high">اعلی</string>
     <string name="accuracy_med">درمیانی</string>
     <string name="accuracy_low">کم</string>
     <string name="accuracy_poor">ناقص</string>
 
     <!-- Weather Conditions -->
     <string name="weather_clear">صاف</string>
-    <string name="weather_partly_cloudy">جزوی طور پر ابر آلود</string>
+    <string name="weather_partly_cloudy">جزوی ابر آلود</string>
     <string name="weather_cloudy">ابر آلود</string>
     <string name="weather_foggy">دھند</string>
     <string name="weather_rainy">بارش</string>
@@ -112,17 +112,17 @@
     <string name="settings_preferences">ترجیحات</string>
     <string name="settings_permissions">اجازتیں</string>
     <string name="settings_manage_system">سسٹم سیٹنگز میں انتظام کریں</string>
-    <string name="settings_location_access">مقام تک رسائی</string>
-    <string name="settings_location_desc">نماز کے اوقات کے حساب کتاب کے لیے انتہائی اہم ہے۔ اس کے بغیر، ایپ آپ کے مقام کے اوقات حاصل نہیں کر سکتی اور بیکار ہو جاتی ہے۔</string>
-    <string name="settings_notifications">اطلاعات</string>
-    <string name="settings_notifications_desc">نماز کے وقت کے الرٹس اور اذان کے نوٹیفکیشن دکھانے کے لیے ضروری ہے۔</string>
+    <string name="settings_location_access">لوکیشن تک رسائی</string>
+    <string name="settings_location_desc">اوقاتِ نماز کے حساب کے لیے انتہائی اہم ہے۔ اس کے بغیر، ایپ آپ کے مقام کے اوقات حاصل نہیں کر سکتی اور بے سود ہو جاتی ہے۔</string>
+    <string name="settings_notifications">نوٹیفیکیشنز</string>
+    <string name="settings_notifications_desc">اوقاتِ نماز کے الرٹس اور اذان نوٹیفیکیشن دکھانے کے لیے درکار ہے۔</string>
     <string name="settings_granted">دی گئی</string>
-    <string name="settings_denied">منع کی گئی</string>
+    <string name="settings_denied">مسترد</string>
     <string name="settings_language">ایپ کی زبان</string>
     <string name="settings_cancel">منسوخ</string>
     <string name="settings_confirm">تصدیق</string>
-    <string name="settings_weather_effects">موسم کے اثرات</string>
-    <string name="settings_weather_effects_desc">بیک گراؤنڈ میں موسم کے متحرک اثرات (بارش، برف باری، بادل) دکھائیں۔</string>
+    <string name="settings_weather_effects">موسمی اثرات</string>
+    <string name="settings_weather_effects_desc">بیک گراؤنڈ میں موسم کی متحرک صورتحال (بارش، برف، بادل) دکھائیں۔</string>
 
     <!-- Language Options -->
     <string name="lang_system">سسٹم ڈیفالٹ</string>
@@ -143,35 +143,35 @@
     <!-- Calculation Settings -->
     <string name="settings_calculation">حساب کی ترتیبات</string>
     <string name="settings_madhab">مذہب</string>
-    <string name="settings_method">طریقہ حساب</string>
+    <string name="settings_method">حساب کا طریقہ</string>
     <string name="madhab_shafi">شافعی / معیاری (مالکی، حنبلی)</string>
     <string name="madhab_hanafi">حنفی</string>
-    <string name="method_mwl">رابطہ عالم اسلامی</string>
+    <string name="method_mwl">رابطہ عالمِ اسلامی</string>
     <string name="method_isna">اسلامک سوسائٹی آف نارتھ امریکہ (ISNA)</string>
     <string name="method_egypt">مصری جنرل اتھارٹی آف سروے</string>
-    <string name="method_makkah">ام القریٰ یونیورسٹی، مکہ</string>
-    <string name="method_karachi">جامعہ علوم اسلامیہ، کراچی</string>
+    <string name="method_makkah">ام القراء یونیورسٹی، مکہ</string>
+    <string name="method_karachi">جامعہ علومِ اسلامیہ، کراچی</string>
     <string name="method_tehran">انسٹی ٹیوٹ آف جیو فزکس، تہران یونیورسٹی</string>
-    <string name="method_gulf">خلیجی خطہ</string>
+    <string name="method_gulf">خلیجی علاقہ</string>
     <string name="method_kuwait">کویت</string>
     <string name="method_qatar">قطر</string>
-    <string name="method_singapore">مجلس علماء اسلام سنگاپور</string>
+    <string name="method_singapore">مجلس علماءِ اسلام سنگاپور</string>
     <string name="method_turkey">ترکی (دیانت)</string>
 
     <!-- Audio & Notification Settings -->
-    <string name="settings_notifications_sound">اطلاعات اور آواز</string>
-    <string name="settings_play_adhan">اذان کی آڈیو چلائیں</string>
+    <string name="settings_notifications_sound">نوٹیفیکیشنز اور آواز</string>
+    <string name="settings_play_adhan">اذان کی آواز چلائیں</string>
     <string name="settings_play_adhan_desc">نماز کا وقت ہونے پر اذان کی آواز چلائیں</string>
     <string name="settings_adhan_sound_selection">اذان کی آواز کا انتخاب</string>
-    <string name="settings_adhan_sound_selection_desc">نماز کے اوقات میں چلنے والی آواز منتخب کریں</string>
+    <string name="settings_adhan_sound_selection_desc">اوقاتِ نماز کے دوران چلنے والی آواز منتخب کریں</string>
 
     <string name="audio_settings_title">اذان کی آوازیں</string>
-    <string name="audio_header_global">اذان کی آواز منتخب کریں (عمومی)</string>
+    <string name="audio_header_global">اذان کی آواز منتخب کریں (عالمی)</string>
     <string name="audio_header_all_prayers">تمام نمازیں</string>
     <string name="audio_header_specific">%1$s کے لیے اذان</string>
-    <string name="audio_select_prayer_prompt">نماز منتخب کریں</string>
-    <string name="audio_individual_sounds_title">نمازوں کی الگ الگ آوازیں</string>
-    <string name="audio_individual_sounds_desc">ہر نماز کے لیے الگ اذان ترتیب دیں</string>
+    <string name="audio_select_prayer_prompt">کنفیگر کرنے کے لیے نماز منتخب کریں</string>
+    <string name="audio_individual_sounds_title">انفرادی نماز کی آوازیں</string>
+    <string name="audio_individual_sounds_desc">ہر نماز کے وقت کے لیے الگ اذان سیٹ کریں</string>
 
     <string name="audio_setting_default">ڈیفالٹ اذان</string>
     <string name="audio_setting_fajr">فجر کی اذان</string>
@@ -183,154 +183,154 @@
     <string name="audio_add_custom">اپنی آواز شامل کریں</string>
     <string name="audio_delete_confirm">آڈیو فائل حذف کریں؟</string>
     <string name="audio_delete_description">آڈیو فائل حذف کریں</string>
-    <string name="audio_supported_formats">سپورٹڈ: MP3, AAC, WAV, OGG</string>
-    <string name="audio_preview_play">آواز سنیں</string>
-    <string name="audio_preview_stop">آواز بند کریں</string>
+    <string name="audio_supported_formats">تعاون یافتہ: MP3, AAC, WAV, OGG</string>
+    <string name="audio_preview_play">پریویو چلائیں</string>
+    <string name="audio_preview_stop">پریویو روکیں</string>
     <string name="audio_built_in">بلٹ ان</string>
     <string name="audio_selected_description">منتخب کردہ</string>
     <string name="audio_minutes_before">منٹ پہلے:</string>
 
     <!-- Fajr Sunrise Alarm -->
-    <string name="audio_fajr_sunrise_alarm">فجر کا الارم (طلوع آفتاب سے پہلے)</string>
-    <string name="audio_fajr_sunrise_alarm_desc">طلوع آفتاب کے وقت کے مطابق فجر کے الارم کا وقت طے کریں (رمضان کے علاوہ)۔</string>
+    <string name="audio_fajr_sunrise_alarm">فجر الارم (طلوعِ آفتاب سے پہلے)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">طلوعِ آفتاب کی بنیاد پر فجر الارم کا وقت طے کریں (سوائے ماہِ رمضان)۔</string>
 
     <!-- Battery & Reliability Settings -->
-    <string name="settings_reliability">کارکردگی اور بہتری</string>
-    <string name="settings_battery_opt">بیٹری آپٹیمائزیشن</string>
-    <string name="settings_battery_opt_enabled">بہترین کارکردگی کے لیے تیار</string>
-    <string name="settings_battery_opt_disabled">اذان کو وقت پر چلانے کے لیے ضروری ہے۔ بیٹری آپٹیمائزیشن مقررہ الرٹس میں تاخیر یا انہیں بلاک کر سکتی ہے۔</string>
-    <string name="settings_exact_alarm_title">بر وقت الارم</string>
-    <string name="settings_exact_alarm_desc">نماز کے اوقات کی درست نوٹیفکیشن اور بر وقت اذان کے لیے ضروری ہے۔</string>
+    <string name="settings_reliability">بھروسہ مندی اور اصلاح</string>
+    <string name="settings_battery_opt">بیٹری کی اصلاح</string>
+    <string name="settings_battery_opt_enabled">بھروسہ مندی کے لیے موزوں</string>
+    <string name="settings_battery_opt_disabled">اذان وقت پر چلانے کے لیے ضروری ہے۔ بیٹری کی اصلاحات الرٹس میں تاخیر کر سکتی ہیں یا انہیں روک سکتی ہیں۔</string>
+    <string name="settings_exact_alarm_title">درست وقت کے الارم</string>
+    <string name="settings_exact_alarm_desc">درست اوقاتِ نماز کے نوٹیفیکیشنز اور بروقت اذان کے لیے درکار ہے۔</string>
 
     <!-- Data Management -->
     <string name="settings_data_management">ڈیٹا مینجمنٹ</string>
-    <string name="settings_delete_history">نماز کی ہسٹری حذف کریں</string>
-    <string name="settings_delete_history_desc">جگہ بنانے کے لیے گزشتہ تمام ڈیٹا حذف کریں</string>
-    <string name="settings_delete_history_confirm_title">ہسٹری حذف کریں؟</string>
-    <string name="settings_delete_history_confirm_desc">اس سے آج سے پہلے کا تمام ریکارڈ ہمیشہ کے لیے ختم ہو جائے گا۔ یہ عمل واپس نہیں لیا جا سکتا۔</string>
+    <string name="settings_delete_history">نماز کی تاریخ حذف کریں</string>
+    <string name="settings_delete_history_desc">جگہ خالی کرنے کے لیے ماضی کا تمام ڈیٹا حذف کریں</string>
+    <string name="settings_delete_history_confirm_title">تاریخ حذف کریں؟</string>
+    <string name="settings_delete_history_confirm_desc">اس سے آج سے پہلے کے تمام ریکارڈز مستقل طور پر حذف ہو جائیں گے۔ یہ عمل واپس نہیں لیا جا سکتا۔</string>
 
     <!-- Pre-Adhan Warning -->
-    <string name="settings_pre_adhan_warning">اذان سے پہلے اطلاع</string>
-    <string name="settings_pre_adhan_warning_summary">نماز کے وقت سے پہلے اطلاع حاصل کریں۔</string>
-    <string name="pre_adhan_notification_title">نماز کا وقت قریب ہے</string>
-    <string name="pre_adhan_notification_text">%s نماز کا وقت 5 منٹ میں شروع ہو رہا ہے۔</string>
+    <string name="settings_pre_adhan_warning">اذان سے پہلے انتباہ</string>
+    <string name="settings_pre_adhan_warning_summary">وقتِ نماز سے پہلے نوٹیفیکیشن حاصل کریں۔</string>
+    <string name="pre_adhan_notification_title">نماز قریب ہے</string>
+    <string name="pre_adhan_notification_text">%s نماز کا وقت 5 منٹ میں۔</string>
     <string name="pre_adhan_cancel_action">ختم کریں</string>
-    <string name="pre_adhan_channel_name">اذان سے پہلے کی اطلاعات</string>
-    <string name="pre_adhan_channel_description">نماز کے وقت سے پہلے دکھائی جانے والی اطلاع۔</string>
+    <string name="pre_adhan_channel_name">اذان سے پہلے کے انتباہات</string>
+    <string name="pre_adhan_channel_description">وقتِ نماز سے پہلے دکھائے جانے والے نوٹیفیکیشنز۔</string>
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Waktiva میں خوش آمدید</string>
-    <string name="welcome_desc">نماز کے اوقات کے لیے آپ کا پیشہ ور ساتھی، جو درستگی اور جدید ڈیزائن کے ساتھ تیار کیا گیا ہے۔</string>
+    <string name="welcome_desc">اوقاتِ نماز کے لیے آپ کا پیشہ ور ساتھی، جو درستگی اور جدید ڈیزائن کے ساتھ تیار کیا گیا ہے۔</string>
     <string name="welcome_begin">سیٹ اپ شروع کریں</string>
     <string name="welcome_finish">سیٹ اپ مکمل کریں</string>
-    <string name="welcome_precision_settings">ترتیبات</string>
-    <string name="welcome_precision_desc">آپ کی بہتر خدمت کے لیے ایپ کو ان کی ضرورت ہے</string>
-    <string name="welcome_loc_title">درست مقام</string>
-    <string name="welcome_loc_desc">نماز کے اوقات کے حساب کتاب کے لیے انتہائی اہم ہے۔ اس کے بغیر، ایپ آپ کے مقام کے اوقات حاصل نہیں کر سکتی اور بیکار ہو جاتی ہے۔</string>
-    <string name="welcome_notif_title">اذان کے الرٹس</string>
-    <string name="welcome_notif_desc">نماز کے وقت اطلاع بھیجنے اور اذان سنانے کے لیے ضروری ہے۔</string>
+    <string name="welcome_precision_settings">درستگی کی ترتیبات</string>
+    <string name="welcome_precision_desc">Waktiva کو آپ کی بہتر خدمت کے لیے ان کی ضرورت ہے</string>
+    <string name="welcome_loc_title">درست لوکیشن</string>
+    <string name="welcome_loc_desc">اوقاتِ نماز کے حساب کے لیے انتہائی اہم ہے۔ اس کے بغیر ایپ اوقات حاصل نہیں کر سکتی۔</string>
+    <string name="welcome_notif_title">اذان الرٹس</string>
+    <string name="welcome_notif_desc">نماز کے وقت نوٹیفیکیشن بھیجنے اور اذان چلانے کے لیے درکار ہے۔</string>
     <string name="welcome_alarm_title">درست الارم</string>
-    <string name="welcome_alarm_desc">اذان کو بغیر کسی تاخیر کے بالکل وقت پر چلانے کے لیے ضروری ہے۔</string>
+    <string name="welcome_alarm_desc">اذان کو بغیر کسی تاخیر کے بالکل وقت پر چلانے کے لیے درکار ہے۔</string>
     <string name="welcome_grant_btn">اجازتیں دیں</string>
     <string name="welcome_continue_btn">جاری رکھیں</string>
-    <string name="welcome_personalize">آپنی پسند کے مطابق بنائیں</string>
-    <string name="welcome_personalize_desc">نماز اور حساب کتاب کی ترتیبات ترتیب دیں</string>
-    <string name="welcome_audio_desc">اذان کی آواز کے لیے اپنی ترجیحات طے کریں</string>
+    <string name="welcome_personalize">اپنی پسند کے مطابق بنائیں</string>
+    <string name="welcome_personalize_desc">اپنی نماز اور حساب کی ترتیبات کنفیگر کریں</string>
+    <string name="welcome_audio_desc">اپنی اذان کی ترجیحات سیٹ کریں</string>
     <string name="welcome_adhan_audio">اذان آڈیو</string>
-    <string name="welcome_adhan_audio_desc">نماز کے وقت اذان چلائیں</string>
+    <string name="welcome_adhan_audio_desc">نمازوں کے لیے آڈیو اذان چلائیں</string>
     <string name="welcome_select_sound">آواز منتخب کریں</string>
-    <string name="welcome_skip_btn">ویسے ہی جاری رکھیں</string>
-    <string name="welcome_permission_later_info">آپ کسی بھی وقت سیٹنگز اسکرین میں جا کر ان اجازتوں کا انتظام کر سکتے ہیں۔</string>
+    <string name="welcome_skip_btn">پھر بھی جاری رکھیں</string>
+    <string name="welcome_permission_later_info">آپ ہمیشہ ان اجازتوں کا انتظام بعد میں ترتیبات میں کر سکتے ہیں۔</string>
     <string name="welcome_general_settings">عمومی ترتیبات</string>
-    <string name="welcome_adhan_audio_header">اذان اور آواز</string>
-    <string name="welcome_battery_optimized">بہترین کارکردگی کے لیے تیار</string>
-    <string name="welcome_battery_optimize_desc">اذان کو وقت پر چلانے کے لیے ضروری ہے۔ بیٹری آپٹیمائزیشن مقررہ الرٹس میں تاخیر یا انہیں بلاک کر سکتی ہے۔</string>
+    <string name="welcome_adhan_audio_header">اذان اور آڈیو</string>
+    <string name="welcome_battery_optimized">بھروسہ مندی کے لیے موزوں</string>
+    <string name="welcome_battery_optimize_desc">اذان وقت پر چلانے کے لیے ضروری ہے۔ بیٹری کی اصلاحات الرٹس کو روک سکتی ہیں۔</string>
 
     <!-- Adhan Screen -->
-    <string name="adhan_its_time_for">وقت ہو گیا ہے</string>
-    <string name="adhan_stop">اذان بند کریں</string>
+    <string name="adhan_its_time_for">وقت ہو گیا ہے برائے</string>
+    <string name="adhan_stop">اذان روکیں</string>
     <string name="adhan_playing">اذان</string>
-    <string name="adhan_sounding">اذان ہو رہی ہے</string>
+    <string name="adhan_sounding">ابھی گونج رہی ہے</string>
     <string name="adhan_upcoming">اگلی اذان</string>
     <string name="adhan_test_alarm">ٹیسٹ الارم</string>
-    <string name="adhan_test_desc">اذان کے عمل کی جانچ کی جا رہی ہے</string>
-    <string name="adhan_stop_test">منسوخ کریں</string>
+    <string name="adhan_test_desc">اذان کے ٹریگر کی مشق</string>
+    <string name="adhan_stop_test">ٹیسٹ منسوخ کریں</string>
     <string name="adhan_metadata_title_format">%s اذان</string>
 
     <!-- Donations -->
-    <string name="settings_donate">ڈویلپر کی حمایت کریں</string>
-    <string name="donate_title">Waktiva کی حمایت کریں</string>
-    <string name="donate_header">Waktiva کی حمایت کریں</string>
-    <string name="donate_desc">Waktiva ایک مفت ایپ ہے، جسے بڑی محنت سے تیار کیا گیا ہے۔ آپ کا تعاون اسے اشتہارات سے پاک رکھنے اور مستقبل کی ترقی میں مدد دیتا ہے۔</string>
-    <string name="donate_footer">آپ کی سخاوت اس پروجیکٹ کو زندہ رکھتی ہے۔ اللہ اسے آپ کے لیے صدقہ جاریہ بنائے۔</string>
-    <string name="donate_button">عطیہ کریں</string>
-    <string name="donate_thank_you">آپ کے تعاون کا شکریہ!</string>
-    <string name="donate_error">عطیہ دینے میں ناکامی۔ دوبارہ کوشش کریں۔</string>
-    <string name="donate_billing_error">ادائیگی کی سروس سے رابطہ نہیں ہو سکا</string>
-    <string name="rate_title">Waktiva کی درجہ بندی کریں</string>
-    <string name="rate_desc">اگر آپ کو ایپ پسند آئی ہے تو براہ کرم اسے گوگل پلے پر 5 اسٹار دیں۔ اس سے ہمیں مزید لوگوں تک پہنچنے میں مدد ملتی ہے!</string>
-    <string name="rate_button">5 اسٹار دیں</string>
+    <string name="settings_donate">Waktiva کی ترقی میں تعاون کریں</string>
+    <string name="donate_title">Waktiva کا تعاون کریں</string>
+    <string name="donate_header">Waktiva کا تعاون کریں 🤍</string>
+    <string name="donate_desc">کوئی اشتہار نہیں۔\nکوئی ٹریکنگ نہیں۔\nڈیٹا کی فروخت نہیں۔\nصرف ایک ایماندارانہ اور مفید چیز۔\n\nاگر Waktiva آپ کی روزانہ کی نمازوں میں آسانی لاتا ہے…\nاگر آپ ایسی نماز ایپ کی قدر کرتے ہیں جو آپ کی پرائیویسی کا احترام کرتی ہے…\nاگر آپ اس کے ڈیزائن، خصوصیات اور لائسنس شدہ مواد کو بہتر بنانے میں مدد کرنا چاہتے ہیں…\n\nآپ عطیہ کے ذریعے اس کی ترقی میں تعاون کر سکتے ہیں۔\n\nہر تعاون — چاہے چھوٹا ہو یا بڑا — واقعی فرق ڈالتا ہے۔\n\nWaktiva کو سادہ، نجی اور اشتہارات سے پاک رکھنے میں مدد کرنے کے لیے آپ کا شکریہ۔</string>
+    <string name="donate_footer">🤲 اللہ آپ کو دنیا اور آخرت میں اس کا اجر عطا فرمائے۔</string>
+    <string name="donate_button">عطیہ دیں</string>
+    <string name="donate_thank_you">اوپن سورس سافٹ ویئر کی حمایت کرنے کا شکریہ!</string>
+    <string name="donate_error">عطیہ ناکام رہا۔ براہ کرم دوبارہ کوشش کریں۔</string>
+    <string name="donate_billing_error">بلنگ سروس سے رابطہ کرنے میں ناکامی</string>
+    <string name="rate_title">Waktiva کو ریٹنگ دیں</string>
+    <string name="rate_desc">اگر آپ Waktiva پسند کر رہے ہیں، تو براہ کرم اسے گوگل پلے پر 5 ستارے دیں۔ یہ ہمیں مزید لوگوں تک پہنچنے میں مدد دیتا ہے!</string>
+    <string name="rate_button">5 ستارے دیں</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">محرم</string>
     <string name="hijri_month_2">صفر</string>
-    <string name="hijri_month_3">ربیع الاول</string>
-    <string name="hijri_month_4">ربیع الثانی</string>
-    <string name="hijri_month_5">جمادی الاولیٰ</string>
-    <string name="hijri_month_6">جمادی الاخریٰ</string>
+    <string name="hijri_month_3">ربيع الاول</string>
+    <string name="hijri_month_4">ربيع الثاني</string>
+    <string name="hijri_month_5">جمادى الاولى</string>
+    <string name="hijri_month_6">جمادى الآخرة</string>
     <string name="hijri_month_7">رجب</string>
     <string name="hijri_month_8">شعبان</string>
     <string name="hijri_month_9">رمضان</string>
     <string name="hijri_month_10">شوال</string>
-    <string name="hijri_month_11">ذی القعدہ</string>
-    <string name="hijri_month_12">ذی الحجہ</string>
-    <string name="hijri_suffix">ہجری</string>
+    <string name="hijri_month_11">ذو القعدة</string>
+    <string name="hijri_month_12">ذو الحجة</string>
+    <string name="hijri_suffix">ھ</string>
 
     <!-- Religious Days -->
     <string name="rel_day_3_months">تین مہینوں کا آغاز</string>
-    <string name="rel_day_regaip">لیلتہ الرغائب</string>
-    <string name="rel_day_mirac">واقعہ معراج</string>
-    <string name="rel_day_berat">شب برات</string>
+    <string name="rel_day_regaip">لیلة الرغائب</string>
+    <string name="rel_day_mirac">شبِ معراج</string>
+    <string name="rel_day_berat">شبِ برات</string>
     <string name="rel_day_first_tarawih">پہلی تراویح</string>
-    <string name="rel_day_ramadan_start">رمضان کا آغاز</string>
-    <string name="rel_day_kadir">شب قدر</string>
-    <string name="rel_day_eid_eve">عید کی رات</string>
+    <string name="rel_day_ramadan_start">آغازِ رمضان</string>
+    <string name="rel_day_kadir">لیلة القدر</string>
+    <string name="rel_day_eid_eve">شبِ عید</string>
     <string name="rel_day_ramadan_eid">عید الفطر</string>
-    <string name="rel_day_sacrifice_eid">عید الاضحیٰ</string>
-    <string name="rel_day_hijri_new_year">ہجری نیا سال</string>
-    <string name="rel_day_ashura">یوم عاشورہ</string>
-    <string name="rel_day_mawlid">عید میلاد النبی ﷺ</string>
+    <string name="rel_day_sacrifice_eid">عید الاضحی</string>
+    <string name="rel_day_hijri_new_year">ہجری سالِ نو</string>
+    <string name="rel_day_ashura">یومِ عاشورہ</string>
+    <string name="rel_day_mawlid">میلاد النبی ﷺ</string>
 
     <!-- Notification Strings -->
-    <string name="notification_adhan_muted">اذان خاموش کر دی گئی</string>
-    <string name="notification_adhan_skipped_text">%s کے لیے اذان چھوڑ دی گئی ہے۔</string>
+    <string name="notification_adhan_muted">اذان میوٹ ہے</string>
+    <string name="notification_adhan_skipped_text">%s کے لیے اذان چھوڑ دی گئی۔</string>
     <string name="notification_upcoming_adhan_title">اگلی اذان: %s</string>
     <string name="notification_upcoming_adhan_text">اذان %d منٹ میں چلے گی۔</string>
-    <string name="notification_skip_action">صرف اس نماز کے لیے چھوڑ دیں</string>
+    <string name="notification_skip_action">اس نماز کے لیے چھوڑ دیں</string>
     <string name="notification_adhan_title">اذان: %s</string>
     <string name="notification_adhan_content">نماز کا وقت ہو گیا ہے</string>
     <string name="notification_adhan_disabled_title">اذان غیر فعال ہے</string>
     <string name="notification_adhan_skipped_title">اذان چھوڑ دی گئی</string>
-    <string name="notification_prayer_time_content">اب %s کا وقت ہے۔</string>
+    <string name="notification_prayer_time_content">یہ %s کا وقت ہے۔</string>
 
     <!-- Hijri Day Settings -->
     <string name="settings_hijri_day_start">ہجری دن کا آغاز</string>
-    <string name="settings_hijri_day_start_maghrib">مغرب سے شروع ہو</string>
+    <string name="settings_hijri_day_start_maghrib">مغرب سے شروع ہوتا ہے</string>
     <string name="settings_hijri_day_start_desc">ہجری تاریخ آدھی رات کے بجائے غروبِ آفتاب (مغرب) پر تبدیل کریں۔</string>
 
     <!-- Licenses Screen -->
     <string name="licenses_title">لائسنس</string>
     <string name="license_legal_info">Waktiva – لائسنس اور قانونی معلومات</string>
-    <string name="license_app_copyright">Copyright © 2026 YBugMobile\nجملہ حقوق محفوظ ہیں۔</string>
+    <string name="license_app_copyright">کاپی رائٹ © 2026 YBugMobile\nجملہ حقوق محفوظ ہیں۔</string>
     <string name="license_app_mit">Waktiva کو MIT لائسنس کے تحت اوپن سورس سافٹ ویئر کے طور پر جاری کیا گیا ہے۔</string>
-    <string name="license_app_warranty">یہ سافٹ ویئر \"جیسا ہے\" کی بنیاد پر فراہم کیا گیا ہے، کسی بھی قسم کی ضمانت کے بغیر، بشمول تجارت یا کسی خاص مقصد کے لیے موزوں ہونے کی ضمانت۔</string>
-    <string name="license_third_party_services">1. تھرڈ پارٹی سروسز</string>
-    <string name="license_aladhan_api">الاذان API</string>
-    <string name="license_aladhan_desc">Waktiva نماز کے اوقات الاذان API سروس سے حاصل کرتا ہے۔ نماز کے اوقات کا حساب ان کے شائع کردہ طریقہ کار اور شرائط کے مطابق فراہم کیا جاتا ہے۔</string>
-    <string name="license_data_privacy">Waktiva صارف کا ڈیٹا محفوظ، فروخت یا تقسیم نہیں کرتا۔</string>
-    <string name="license_open_source_libs">2. تھرڈ پارٹی اوپن سورس لائبریریاں</string>
+    <string name="license_app_warranty">یہ سافٹ ویئر \"جیسا ہے\" کی بنیاد پر فراہم کیا گیا ہے، کسی بھی قسم کی ضمانت کے بغیر۔</string>
+    <string name="license_third_party_services">1۔ تھرڈ پارٹی سروسز</string>
+    <string name="license_aladhan_api">Al-Adhan API</string>
+    <string name="license_aladhan_desc">Waktiva اوقاتِ نماز Al-Adhan API سروس سے حاصل کرتا ہے۔ حساب ان کے شائع کردہ طریقوں کے مطابق فراہم کیا جاتا ہے۔</string>
+    <string name="license_data_privacy">Waktiva صارف کا ڈیٹا اسٹور، فروخت یا تقسیم نہیں کرتا۔</string>
+    <string name="license_open_source_libs">2۔ تھرڈ پارٹی اوپن سورس لائبریریز</string>
     <string name="license_libs_intro">Waktiva میں درج ذیل اوپن سورس اجزاء شامل ہیں:</string>
-    <string name="license_lib_androidx">AndroidX لائبریریاں (Apache License 2.0)</string>
+    <string name="license_lib_androidx">AndroidX لائبریریز (Apache License 2.0)</string>
     <string name="license_lib_compose">Jetpack Compose (Apache License 2.0)</string>
     <string name="license_lib_kotlin">Kotlin (Apache License 2.0)</string>
     <string name="license_lib_hilt">Hilt (Apache License 2.0)</string>
@@ -338,30 +338,30 @@
     <string name="license_lib_datastore">DataStore (Apache License 2.0)</string>
     <string name="license_lib_work">WorkManager (Apache License 2.0)</string>
     <string name="license_lib_media3">Media3 (Apache License 2.0)</string>
-    <string name="license_lib_location">Google Play Services Location (Google Play Services Terms)</string>
+    <string name="license_lib_location">Google Play Services Location (Google Play شرائط)</string>
     <string name="license_lib_retrofit">Retrofit (Apache License 2.0)</string>
     <string name="license_lib_okhttp">OkHttp (Apache License 2.0)</string>
     <string name="license_lib_gson">Gson (Apache License 2.0)</string>
-    <string name="license_lib_adhan">Adhan Kotlin لائبریری (MIT License)</string>
-    <string name="license_lib_suncalc">SunCalc (BSD License)</string>
+    <string name="license_lib_adhan">Adhan Kotlin Library (MIT لائسنس)</string>
+    <string name="license_lib_suncalc">SunCalc (BSD لائسنس)</string>
     <string name="license_lib_maplibre">MapLibre Android SDK (BSD 3-Clause License)</string>
     <string name="license_lib_osmdroid">OsmDroid (Apache License 2.0)</string>
     <string name="license_lib_accompanist">Accompanist (Apache License 2.0)</string>
-    <string name="license_lib_billing">Google Play Billing لائبریری (Google Play Terms)</string>
-    <string name="license_libs_property">ہر لائبریری اپنے متعلقہ مصنفین کی ملکیت ہے اور اسے اس کے لائسنس کے مطابق استعمال کیا جاتا ہے۔</string>
-    <string name="license_adhan_audio">3. اذان آڈیو لائسنس</string>
-    <string name="license_adhan_reciter">Waktiva میں محسن کارا، 2022 کے عالمی اذان چیمپئن کی آواز میں اذان کی ریکارڈنگ شامل ہے۔</string>
-    <string name="license_adhan_permission">یہ ریکارڈنگز اجازت کے ساتھ استعمال کی گئی ہیں۔ تمام آڈیو حقوق اصل مؤذن کے پاس محفوظ ہیں۔</string>
-    <string name="license_adhan_restrictions">اذان کی آڈیو کو حقوق کے حامل کی واضح اجازت کے بغیر Waktiva ایپلیکیشن سے باہر نکالا، دوبارہ تقسیم یا دوبارہ استعمال نہیں کیا جا سکتا۔</string>
-    <string name="license_location_permissions">4. مقام اور اجازتیں</string>
-    <string name="license_location_usage">Waktiva مقام کی اجازت صرف درج ذیل کے لیے طلب کرتا ہے:</string>
-    <string name="license_loc_usage_1">نماز کے درست اوقات کا حساب لگانا</string>
-    <string name="license_loc_usage_2">قبلہ کی سمت کا تعین کرنا</string>
-    <string name="license_loc_usage_3">ہجری تاریخ اور چاند کے مراحل کا حساب فراہم کرنا</string>
-    <string name="license_loc_processing">مقام کا ڈیٹا مقامی طور پر پروسیس کیا جاتا ہے اور اسے محفوظ، ٹریک یا شیئر نہیں کیا جاتا۔ نماز کے اوقات تین ماہ تک کے لیے ڈاؤن لوڈ کیے جاتے ہیں تاکہ آف لائن استعمال ممکن ہو سکے۔</string>
-    <string name="license_no_ads">5. اشتہارات اور ٹریکنگ نہ کرنے کا عزم</string>
+    <string name="license_lib_billing">Google Play Billing Library (Google Play شرائط)</string>
+    <string name="license_libs_property">ہر لائبریری اپنے مصنفین کی ملکیت رہتی ہے اور اپنے لائسنس کے مطابق استعمال ہوتی ہے۔</string>
+    <string name="license_adhan_audio">3۔ اذان آڈیو لائسنس</string>
+    <string name="license_adhan_reciter">Waktiva میں 2022 کے عالمی چیمپیئن محسن کارا کی آواز میں اذان کی ریکارڈنگز شامل ہیں۔</string>
+    <string name="license_adhan_permission">یہ ریکارڈنگز اجازت کے ساتھ استعمال کی گئی ہیں۔ تمام حقوق اصلی مؤذن کے پاس محفوظ ہیں۔</string>
+    <string name="license_adhan_restrictions">اذان آڈیو کو Waktiva ایپ سے باہر نکالنے یا استعمال کرنے کی اجازت نہیں ہے۔</string>
+    <string name="license_location_permissions">4۔ لوکیشن اور اجازتیں</string>
+    <string name="license_location_usage">Waktiva لوکیشن کی اجازت صرف ان کے لیے مانگتا ہے:</string>
+    <string name="license_loc_usage_1">درست اوقاتِ نماز کا حساب لگانے کے لیے</string>
+    <string name="license_loc_usage_2">قبلہ کی سمت معلوم کرنے کے لیے</string>
+    <string name="license_loc_usage_3">ہجری تاریخ اور چاند کے مراحل کا حساب فراہم کرنے کے لیے</string>
+    <string name="license_loc_processing">لوکیشن ڈیٹا صرف آپ کے فون پر پراسیس ہوتا ہے اور اسے شیئر نہیں کیا جاتا۔</string>
+    <string name="license_no_ads">5۔ اشتہارات اور ٹریکنگ سے پاک ہونے کا عہد</string>
     <string name="license_no_ads_1">کوئی اشتہار نہیں دکھاتا</string>
-    <string name="license_no_ads_2">کوئی ٹریکنگ SDKs استعمال نہیں کرتا</string>
-    <string name="license_no_ads_3">اینالیٹکس جمع نہیں کرتا</string>
+    <string name="license_no_ads_2">کوئی ٹریکنگ SDK استعمال نہیں کرتا</string>
+    <string name="license_no_ads_3">تجزیاتی ڈیٹا جمع نہیں کرتا</string>
     <string name="license_no_ads_4">ذاتی ڈیٹا فروخت نہیں کرتا</string>
 </resources>
