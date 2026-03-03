@@ -3,6 +3,7 @@ package com.ybugmobile.vaktiva.ui.adhan
 import android.app.KeyguardManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -55,12 +56,14 @@ class AdhanActivity : ComponentActivity() {
 
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var controller: MediaController? = null
+    
+    private var prayerNameState = mutableStateOf("Prayer")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         showOnLockScreen()
         super.onCreate(savedInstanceState)
         
-        val prayerName = intent.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME) ?: "Prayer"
+        updatePrayerName(intent)
 
         setContent {
             val prayerDays by prayerRepository.getPrayerDays().collectAsState(initial = emptyList())
@@ -71,7 +74,7 @@ class AdhanActivity : ComponentActivity() {
 
             VaktivaTheme {
                 AdhanScreen(
-                    prayerName = prayerName,
+                    prayerName = prayerNameState.value,
                     adhanTitle = adhanTitle,
                     adhanArtist = adhanArtist,
                     currentPrayerDay = currentDay,
@@ -100,6 +103,18 @@ class AdhanActivity : ComponentActivity() {
                     })
                 }
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        updatePrayerName(intent)
+    }
+
+    private fun updatePrayerName(intent: Intent?) {
+        intent?.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME)?.let {
+            prayerNameState.value = it
         }
     }
 
