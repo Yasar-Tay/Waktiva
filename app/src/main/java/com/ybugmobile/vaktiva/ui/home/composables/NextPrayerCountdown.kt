@@ -1,5 +1,7 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
+import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -8,11 +10,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,6 +32,7 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.ui.theme.IBMPlexArabic
+import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 import java.time.LocalDate
 import java.util.Locale
 
@@ -44,7 +53,7 @@ fun NextPrayerCountdown(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(180.dp),
+            .height(200.dp),
         contentAlignment = Alignment.Center
     ) {
         if ((selectedDate == LocalDate.now()) && nextPrayer != null) {
@@ -81,39 +90,99 @@ fun NextPrayerCountdown(
                     )
                 }
 
-                // 3. Skip/Mute Adhan Button
+                // 3. Skip/Mute Adhan Button (Redesigned as InfoGlassCard)
                 if (playAdhanAudio) {
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    val glassTheme = LocalGlassTheme.current
+                    val configuration = LocalConfiguration.current
+                    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                    
+                    val containerColor = remember(glassTheme.isLightMode) { 
+                        if (glassTheme.isLightMode) Color.White.copy(0.22f) else Color.Black.copy(0.25f) 
+                    }
+                    val borderColor = remember(glassTheme.isLightMode) { 
+                        if (glassTheme.isLightMode) Color.White.copy(0.45f) else Color.White.copy(0.15f) 
+                    }
+                    val cardShape = RoundedCornerShape(percent = 50)
+
                     Surface(
                         onClick = { onSkipAudio(nextPrayer.type.name) },
-                        color = contentColor.copy(alpha = 0.15f),
-                        shape = RoundedCornerShape(24.dp)
+                        color = containerColor,
+                        shape = cardShape,
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .height(if (isLandscape) 40.dp else 48.dp)
+                            .clip(cardShape)
+                            .drawWithContent {
+                                drawContent()
+                                // Subtle card gradient matching InfoGlassCard style
+                                drawRoundRect(
+                                    Brush.horizontalGradient(
+                                        listOf(accentColor.copy(0.15f), Color.Transparent), 
+                                        endX = size.width * 0.4f
+                                    ), 
+                                    size = size, 
+                                    cornerRadius = CornerRadius(size.height / 2), 
+                                    blendMode = BlendMode.Screen
+                                )
+                                drawRoundRect(
+                                    borderColor, 
+                                    size = size, 
+                                    cornerRadius = CornerRadius(size.height / 2), 
+                                    style = Stroke(1.dp.toPx())
+                                )
+                            },
+                        contentColor = Color.White
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.Center
                         ) {
-                            Icon(
-                                imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
-                                contentDescription = null,
-                                tint = contentColor,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = (if (isMuted) stringResource(R.string.home_unmute_adhan) else stringResource(R.string.home_skip_adhan)).uppercase(),
-                                style = TextStyle(
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = contentColor,
-                                    letterSpacing = 1.sp,
-                                    platformStyle = PlatformTextStyle(
-                                        includeFontPadding = false
-                                    ),
-                                    lineHeight = 11.sp
+                            // Icon container covering the left side like a toggle
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .aspectRatio(1f)
+                                    .background(accentColor.copy(0.9f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
+                                    contentDescription = null,
+                                    tint = if (accentColor.luminance() > 0.5f) Color.Black else Color.White,
+                                    modifier = Modifier.size(if (isLandscape) 20.dp else 24.dp)
                                 )
-                            )
+                            }
+
+                            Column(
+                                modifier = Modifier.padding(
+                                    start = if (isLandscape) 12.dp else 16.dp, 
+                                    end = if (isLandscape) 16.dp else 20.dp
+                                ),
+                                verticalArrangement = Arrangement.spacedBy((-4).dp, Alignment.CenterVertically)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.adhan_playing).uppercase(),
+                                    style = TextStyle(
+                                        fontSize = if (isLandscape) 11.sp else 13.sp,
+                                        lineHeight = if (isLandscape) 11.sp else 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White.copy(0.6f),
+                                        letterSpacing = 0.4.sp
+                                    )
+                                )
+                                Text(
+                                    text = (if (isMuted) stringResource(R.string.home_unmute_adhan) else stringResource(R.string.home_skip_adhan)).uppercase(),
+                                    style = TextStyle(
+                                        fontSize = if (isLandscape) 15.sp else 17.sp,
+                                        lineHeight = if (isLandscape) 15.sp else 17.sp,
+                                        fontFamily = IBMPlexArabic,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White,
+                                        letterSpacing = (-0.3).sp
+                                    )
+                                )
+                            }
                         }
                     }
                 }
