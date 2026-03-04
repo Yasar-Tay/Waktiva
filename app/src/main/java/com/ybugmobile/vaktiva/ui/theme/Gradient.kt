@@ -119,23 +119,23 @@ fun getGradientForTime(
         currentTime.isBefore(dayStart) -> listOf(
             Color(0xFF2773CE),
             Color(0xFF1F5588),
-            Color(0xFF7C2D12),
-            Color(0xFF8D3E0D)
+            Color(0xFFFA930C),
+            Color(0xFFE8D5A7),
         )
         currentTime.isBefore(dhuhur) -> listOf(
-            Color(0xFF0F2A44),
+
             Color(0xFF1E5DA8),
             Color(0xFF4FA3C7),
             Color(0xFFE8D5A7)
         )
         currentTime.isBefore(asr) -> listOf(
-            Color(0xFF0F2A44),
+
             Color(0xFF1E5DA8),
             Color(0xFF68B298),
             Color(0xFF4593E5)
         )
         currentTime.isBefore(sunsetStart) -> listOf(
-            Color(0xFF081A2F), 
+
             Color(0xFF123E7C), 
             Color(0xFF3F8FD2), 
             Color(0xFF9FD3F6)
@@ -143,8 +143,8 @@ fun getGradientForTime(
         currentTime.isBefore(maghrib) -> listOf(
             Color(0xFF050E36),
             Color(0xFF123E7C),
-            Color(0xFF450A0A), 
-            Color(0xFF7F1D1D)
+            Color(0xFF8D3E0D),
+            Color(0xFF310F1A),
         )
         currentTime.isBefore(isha) -> listOf(
             Color(0xFF020617), 
