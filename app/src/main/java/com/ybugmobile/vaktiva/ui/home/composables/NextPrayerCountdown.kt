@@ -2,6 +2,7 @@ package com.ybugmobile.vaktiva.ui.home.composables
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -36,6 +37,7 @@ import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
 import java.time.LocalDate
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NextPrayerCountdown(
     nextPrayer: NextPrayer?,
@@ -106,82 +108,85 @@ fun NextPrayerCountdown(
                     }
                     val cardShape = RoundedCornerShape(percent = 50)
 
-                    Surface(
-                        onClick = { onSkipAudio(nextPrayer.type.name) },
-                        color = containerColor,
-                        shape = cardShape,
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .height(if (isLandscape) 40.dp else 48.dp)
-                            .clip(cardShape)
-                            .drawWithContent {
-                                drawContent()
-                                // Subtle card gradient matching InfoGlassCard style
-                                drawRoundRect(
-                                    Brush.horizontalGradient(
-                                        listOf(accentColor.copy(0.15f), Color.Transparent), 
-                                        endX = size.width * 0.4f
-                                    ), 
-                                    size = size, 
-                                    cornerRadius = CornerRadius(size.height / 2), 
-                                    blendMode = BlendMode.Screen
-                                )
-                                drawRoundRect(
-                                    borderColor, 
-                                    size = size, 
-                                    cornerRadius = CornerRadius(size.height / 2), 
-                                    style = Stroke(1.dp.toPx())
-                                )
-                            },
-                        contentColor = Color.White
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                    // Disable minimum interactive component size to allow 40dp height in landscape without gaps
+                    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                        Box(
+                            modifier = Modifier
+                                .height(if (isLandscape) 40.dp else 48.dp)
+                                .wrapContentWidth()
+                                .clip(cardShape)
+                                .background(containerColor)
+                                .clickable { onSkipAudio(nextPrayer.type.name) }
+                                .drawWithContent {
+                                    drawContent()
+                                    val radius = CornerRadius(size.height / 2f)
+                                    // Match InfoGlassCard style
+                                    drawRoundRect(
+                                        brush = Brush.horizontalGradient(
+                                            listOf(accentColor.copy(0.15f), Color.Transparent), 
+                                            endX = size.width * 0.4f
+                                        ), 
+                                        size = size, 
+                                        cornerRadius = radius, 
+                                        blendMode = BlendMode.Screen
+                                    )
+                                    drawRoundRect(
+                                        color = borderColor, 
+                                        size = size, 
+                                        cornerRadius = radius, 
+                                        style = Stroke(1.dp.toPx())
+                                    )
+                                },
+                            contentAlignment = Alignment.Center
                         ) {
-                            // Icon container covering the left side like a toggle
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .aspectRatio(1f)
-                                    .background(accentColor.copy(0.9f)),
-                                contentAlignment = Alignment.Center
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Icon(
-                                    imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
-                                    contentDescription = null,
-                                    tint = if (accentColor.luminance() > 0.5f) Color.Black else Color.White,
-                                    modifier = Modifier.size(if (isLandscape) 20.dp else 24.dp)
-                                )
-                            }
+                                // Icon container covering the left side like a toggle
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .aspectRatio(1f)
+                                        .background(accentColor.copy(0.9f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
+                                        contentDescription = null,
+                                        tint = if (accentColor.luminance() > 0.5f) Color.Black else Color.White,
+                                        modifier = Modifier.size(if (isLandscape) 18.dp else 22.dp)
+                                    )
+                                }
 
-                            Column(
-                                modifier = Modifier.padding(
-                                    start = if (isLandscape) 12.dp else 16.dp, 
-                                    end = if (isLandscape) 16.dp else 20.dp
-                                ),
-                                verticalArrangement = Arrangement.spacedBy((-4).dp, Alignment.CenterVertically)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.adhan_playing).uppercase(),
-                                    style = TextStyle(
-                                        fontSize = if (isLandscape) 11.sp else 13.sp,
-                                        lineHeight = if (isLandscape) 11.sp else 13.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White.copy(0.6f),
-                                        letterSpacing = 0.4.sp
+                                Column(
+                                    modifier = Modifier.padding(
+                                        start = if (isLandscape) 12.dp else 16.dp, 
+                                        end = if (isLandscape) 16.dp else 20.dp
+                                    ),
+                                    verticalArrangement = Arrangement.spacedBy((-4).dp, Alignment.CenterVertically)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.adhan_playing).uppercase(),
+                                        style = TextStyle(
+                                            fontSize = if (isLandscape) 10.sp else 12.sp,
+                                            lineHeight = if (isLandscape) 10.sp else 12.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White.copy(0.6f),
+                                            letterSpacing = 0.4.sp
+                                        )
                                     )
-                                )
-                                Text(
-                                    text = (if (isMuted) stringResource(R.string.home_unmute_adhan) else stringResource(R.string.home_skip_adhan)).uppercase(),
-                                    style = TextStyle(
-                                        fontSize = if (isLandscape) 15.sp else 17.sp,
-                                        lineHeight = if (isLandscape) 15.sp else 17.sp,
-                                        fontFamily = IBMPlexArabic,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White,
-                                        letterSpacing = (-0.3).sp
+                                    Text(
+                                        text = (if (isMuted) stringResource(R.string.home_unmute_adhan) else stringResource(R.string.home_skip_adhan)).uppercase(),
+                                        style = TextStyle(
+                                            fontSize = if (isLandscape) 13.sp else 16.sp,
+                                            lineHeight = if (isLandscape) 13.sp else 16.sp,
+                                            fontFamily = IBMPlexArabic,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White,
+                                            letterSpacing = (-0.3).sp
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }
