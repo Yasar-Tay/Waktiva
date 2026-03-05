@@ -73,13 +73,17 @@ class NotificationHelper @Inject constructor(
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
 
+            // Using DEFAULT importance but ensuring it's silent so it shows on Lock Screen reliably
             val persistentChannel = NotificationChannel(
                 CHANNEL_ID_PERSISTENT,
                 context.getString(R.string.settings_persistent_notification),
-                NotificationManager.IMPORTANCE_LOW
+                NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
                 description = context.getString(R.string.settings_persistent_notification_desc)
                 setShowBadge(false)
+                setSound(null, null)
+                enableLights(false)
+                enableVibration(false)
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
 
@@ -121,7 +125,7 @@ class NotificationHelper @Inject constructor(
             .setContentIntent(contentIntent)
             .setOngoing(true)
             .setSilent(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .build()
 

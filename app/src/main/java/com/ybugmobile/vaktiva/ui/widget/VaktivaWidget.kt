@@ -107,10 +107,12 @@ class VaktivaWidget : GlanceAppWidget() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Left side Column with Icon, Name, and Time
+                    val sidebarWidth = 76.dp
                     Column(
                         modifier = GlanceModifier
                             .fillMaxHeight()
-                            .width(80.dp)
+                            .fillMaxHeight()
+                            .width(sidebarWidth)
                             .background(accent),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -142,13 +144,10 @@ class VaktivaWidget : GlanceAppWidget() {
                     }
 
                     // Countdown side - Live Chronometer
-                    // Calculation: 8 chars (00:00:00) 
-                    // Width check: Monospace font width is roughly 0.6 of its size. 
-                    // 8 chars * 0.6 = 4.8. We use 5.5 to be safe with padding.
-                    val availableWidth = size.width.value - 80 - 16
-                    val fontSizeFromWidth = (availableWidth / 5.5f) 
-                    val fontSizeFromHeight = (size.height.value * 0.55f)
-                    val dynamicFontSize = minOf(fontSizeFromWidth, fontSizeFromHeight).coerceIn(24f, 64f)
+                    val availableWidth = size.width.value - sidebarWidth.value - 12
+                    val fontSizeFromWidth = (availableWidth / 5.2f) 
+                    val fontSizeFromHeight = (size.height.value * 0.6f)
+                    val dynamicFontSize = minOf(fontSizeFromWidth, fontSizeFromHeight).coerceIn(24f, 72f)
 
                     Column(
                         modifier = GlanceModifier
@@ -162,10 +161,7 @@ class VaktivaWidget : GlanceAppWidget() {
                         val hours = remainingDuration.toHours()
                         val baseTime = SystemClock.elapsedRealtime() + remainingDuration.toMillis()
                         
-                        // Logic to force 00:00:00 format:
-                        // If 0 hours, system shows "MM:SS", so we prepend "00:"
-                        // If 1-9 hours, system shows "H:MM:SS", so we prepend "0"
-                        // If 10+ hours, system shows "HH:MM:SS", so no prepend needed.
+                        // Reverting to simple prepend logic for 00:00:00
                         val format = when {
                             hours == 0L -> "00:%s"
                             hours < 10L -> "0%s"

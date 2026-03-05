@@ -5,19 +5,18 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <!--
-      fontFamily="monospace" and fontFeatureSettings="tnum"
-      ensures digits have fixed width to prevent "shaking"
-    -->
     <Chronometer
         android:id="@+id/prayer_chronometer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:countDown="true"
         android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:textSize="32sp"
-        android:fontFamily="monospace"
-        android:fontFeatureSettings="tnum" />
+        android:textStyle="normal"
+        android:fontFamily="@font/ibm_plex_arabic_light"
+        android:fontFeatureSettings="tnum"
+        android:letterSpacing="-0.02"
+        android:gravity="center"
+        android:maxLines="1"
+        android:includeFontPadding="false" />
 
 </LinearLayout>
