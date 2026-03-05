@@ -24,4 +24,5 @@ interface SettingsManagerInterface {
     suspend fun setTestAlarmEndTime(timeMillis: Long?)
     suspend fun updateCalendarType(isHijri: Boolean)
     suspend fun updateShowWeatherEffects(enabled: Boolean)
+    suspend fun updateShowPersistentNotification(enabled: Boolean)
 }

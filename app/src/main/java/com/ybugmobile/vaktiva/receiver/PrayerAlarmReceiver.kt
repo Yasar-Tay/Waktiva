@@ -11,6 +11,7 @@ import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.vaktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.vaktiva.data.notification.NotificationHelper
+import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import com.ybugmobile.vaktiva.service.AdhanService
@@ -22,7 +23,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 /**
@@ -49,12 +52,12 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action ?: return
         
-        // Handle BOOT_COMPLETED and other actions that don't have prayer extras
         if (action == Intent.ACTION_BOOT_COMPLETED) {
             val pendingResult = goAsync()
             scope.launch {
                 rescheduleNextPrayer()
                 VaktivaWidget().updateAll(context)
+                updatePersistentNotification()
                 pendingResult.finish()
             }
             return
@@ -70,6 +73,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 settingsManager.muteNextPrayer(prayerName, prayerDate)
                 notificationHelper.cancelWarningNotification()
                 VaktivaWidget().updateAll(context)
+                updatePersistentNotification()
             }
             return
         }
@@ -94,14 +98,10 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         )
                     }
                     AlarmScheduler.ACTION_PRAYER_ALARM -> {
-                        // 1. Refresh the widget content immediately so it flips to the next prayer
                         VaktivaWidget().updateAll(context)
-                        
-                        // 2. Handle Adhan logic
                         handleAdhanTrigger(context, prayerName, prayerDate)
-                        
-                        // 3. Schedule the next alarm
                         rescheduleNextPrayer()
+                        updatePersistentNotification()
                     }
                 }
             } catch (e: Exception) {
@@ -109,6 +109,34 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
             } finally {
                 pendingResult.finish()
             }
+        }
+    }
+
+    private suspend fun updatePersistentNotification() {
+        val settings = settingsManager.settingsFlow.first()
+        if (settings.showPersistentNotification) {
+            val prayerDays = prayerRepository.getPrayerDays().first()
+            val now = LocalDateTime.now()
+            val today = prayerDays.find { it.date == LocalDate.now() }
+            
+            val nextPrayer = today?.let { day ->
+                val nowTime = now.toLocalTime()
+                val nextReal = day.timings.entries
+                    .filter { it.value.isAfter(nowTime) }
+                    .minByOrNull { it.value }
+                
+                nextReal?.let {
+                    NextPrayer(it.key, it.value, day.date, Duration.between(now, day.date.atTime(it.value)))
+                }
+            }
+            
+            if (nextPrayer != null) {
+                notificationHelper.showPersistentNotification(nextPrayer)
+            } else {
+                notificationHelper.hidePersistentNotification()
+            }
+        } else {
+            notificationHelper.hidePersistentNotification()
         }
     }
 

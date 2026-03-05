@@ -69,4 +69,10 @@ class SettingsViewModel @Inject constructor(
             settingsManager.updateShowWeatherEffects(enabled)
         }
     }
+
+    fun setShowPersistentNotification(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updateShowPersistentNotification(enabled)
+        }
+    }
 }

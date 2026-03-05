@@ -7,12 +7,19 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.SystemClock
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.ybugmobile.vaktiva.MainActivity
 import com.ybugmobile.vaktiva.R
+import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.receiver.PrayerAlarmReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,12 +30,16 @@ class NotificationHelper @Inject constructor(
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.US)
+
     companion object {
         const val CHANNEL_ID_ADHAN = "adhan_playback_channel"
         const val CHANNEL_ID_WARNING = "pre_adhan_warning_channel_v1"
+        const val CHANNEL_ID_PERSISTENT = "persistent_countdown_channel"
         
         const val NOTIFICATION_ID_ADHAN = 1001
         const val NOTIFICATION_ID_WARNING = 2001
+        const val NOTIFICATION_ID_PERSISTENT = 3001
         
         const val ACTION_SKIP_ADHAN = "com.ybugmobile.vaktiva.ACTION_SKIP_ADHAN"
         const val EXTRA_PRAYER_NAME = "PRAYER_NAME"
@@ -62,8 +73,63 @@ class NotificationHelper @Inject constructor(
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
 
-            notificationManager.createNotificationChannels(listOf(adhanChannel, warningChannel))
+            val persistentChannel = NotificationChannel(
+                CHANNEL_ID_PERSISTENT,
+                context.getString(R.string.settings_persistent_notification),
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = context.getString(R.string.settings_persistent_notification_desc)
+                setShowBadge(false)
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            }
+
+            notificationManager.createNotificationChannels(listOf(adhanChannel, warningChannel, persistentChannel))
         }
+    }
+
+    fun showPersistentNotification(nextPrayer: NextPrayer) {
+        val prayerType = nextPrayer.type
+        val prayerName = prayerType.getDisplayName(context)
+        val prayerTime = nextPrayer.time.format(timeFormatter)
+        
+        val remainingMillis = nextPrayer.remainingDuration.toMillis()
+        val baseTime = SystemClock.elapsedRealtime() + remainingMillis
+
+        val remoteViews = RemoteViews(context.packageName, R.layout.notification_persistent).apply {
+            setTextViewText(R.id.notif_prayer_name, prayerName.uppercase())
+            setTextViewText(R.id.notif_prayer_time, prayerTime)
+            
+            val hours = nextPrayer.remainingDuration.toHours()
+            val format = when {
+                hours == 0L -> "00:%s"
+                hours < 10L -> "0%s"
+                else -> "%s"
+            }
+            setChronometer(R.id.notif_chronometer, baseTime, format, true)
+            setChronometerCountDown(R.id.notif_chronometer, true)
+        }
+
+        val contentIntent = PendingIntent.getActivity(
+            context, 0, Intent(context, MainActivity::class.java), 
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID_PERSISTENT)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setCustomContentView(remoteViews)
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            .setContentIntent(contentIntent)
+            .setOngoing(true)
+            .setSilent(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .build()
+
+        notificationManager.notify(NOTIFICATION_ID_PERSISTENT, notification)
+    }
+
+    fun hidePersistentNotification() {
+        notificationManager.cancel(NOTIFICATION_ID_PERSISTENT)
     }
 
     fun showPreAdhanWarning(prayerName: String, prayerDate: String, minutes: Int, isMuted: Boolean = false) {

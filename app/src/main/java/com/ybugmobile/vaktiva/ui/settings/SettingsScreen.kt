@@ -102,6 +102,7 @@ fun SettingsScreen(
                         NotificationSoundSection(
                             settings = settings,
                             onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
+                            onShowPersistentNotificationChange = { viewModel.setShowPersistentNotification(it) },
                             onNavigateToAudio = onNavigateToAudio
                         )
                         PreferencesSection(
@@ -150,6 +151,7 @@ fun SettingsScreen(
                     NotificationSoundSection(
                         settings = settings,
                         onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
+                        onShowPersistentNotificationChange = { viewModel.setShowPersistentNotification(it) },
                         onNavigateToAudio = onNavigateToAudio
                     )
 
@@ -213,6 +215,7 @@ fun SettingsScreen(
 private fun NotificationSoundSection(
     settings: UserSettings?,
     onPlayAdhanChange: (Boolean) -> Unit,
+    onShowPersistentNotificationChange: (Boolean) -> Unit,
     onNavigateToAudio: () -> Unit
 ) {
     val context = LocalContext.current
@@ -232,6 +235,14 @@ private fun NotificationSoundSection(
                 }
                 onPlayAdhanChange(enabled)
             }
+        )
+
+        SettingsToggleItem(
+            title = stringResource(R.string.settings_persistent_notification),
+            subtitle = stringResource(R.string.settings_persistent_notification_desc),
+            icon = Icons.Rounded.NotificationsActive,
+            checked = settings?.showPersistentNotification ?: false,
+            onCheckedChange = onShowPersistentNotificationChange
         )
 
         SettingsClickItem(

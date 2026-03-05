@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -123,6 +124,8 @@
     <string name="settings_confirm">Onayla</string>
     <string name="settings_weather_effects">Hava Durumu Efektleri</string>
     <string name="settings_weather_effects_desc">Arka planda animasyonlu hava durumunu (yağmur, kar, bulut) göster.</string>
+    <string name="settings_persistent_notification">Kalıcı Bildirim</string>
+    <string name="settings_persistent_notification_desc">Kilit ekranında ve bildirim çubuğunda namaz geri sayımını göster.</string>
 
     <!-- Language Options -->
     <string name="lang_system">Sistem Varsayılanı</string>
