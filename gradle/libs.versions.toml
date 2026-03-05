@@ -32,6 +32,7 @@ billing = "8.3.0"
 suncalc = "3.11"
 ossLicenses = "17.4.0"
 ossLicensesPlugin = "0.10.10"
+glance = "1.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -104,6 +105,11 @@ billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", versi
 
 # SunCalc
 suncalc = { group = "org.shredzone.commons", name = "commons-suncalc", version.ref = "suncalc" }
+
+# Glance (App Widgets)
+androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
+androidx-glance-preview = { group = "androidx.glance", name = "glance-appwidget-preview", version.ref = "glance" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

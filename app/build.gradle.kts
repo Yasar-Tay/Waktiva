@@ -110,6 +110,11 @@ dependencies {
     // Billing
     implementation(libs.billing.ktx)
 
+    // Glance (App Widgets)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.glance.preview)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.rules)
