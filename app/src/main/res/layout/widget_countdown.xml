@@ -14,7 +14,7 @@
         android:textStyle="normal"
         android:fontFamily="@font/ibm_plex_arabic_light"
         android:fontFeatureSettings="tnum"
-        android:letterSpacing="-0.02"
+        android:letterSpacing="0.05"
         android:gravity="center"
         android:maxLines="1"
         android:includeFontPadding="false" />

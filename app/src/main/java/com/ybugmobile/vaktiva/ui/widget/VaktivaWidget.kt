@@ -107,28 +107,39 @@ class VaktivaWidget : GlanceAppWidget() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Left side Column with Icon, Name, and Time
-                    val sidebarWidth = 76.dp
+                    val sidebarWidth = 92.dp
                     Column(
                         modifier = GlanceModifier
-                            .fillMaxHeight()
                             .fillMaxHeight()
                             .width(sidebarWidth)
                             .background(accent),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Image(
-                            provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
-                            contentDescription = null,
-                            modifier = GlanceModifier.size(24.dp),
-                            colorFilter = ColorFilter.tint(ColorProvider(day = onAccent, night = onAccent))
-                        )
-                        Spacer(modifier = GlanceModifier.height(4.dp))
+                        // Icon in a Circle - Sized down to prevent suppressing labels
+                        Box(
+                            modifier = GlanceModifier
+                                .size(42.dp)
+                                .cornerRadius(21.dp)
+                                .background(ColorProvider(day = onAccent.copy(alpha = 0.12f), night = onAccent.copy(alpha = 0.12f))),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
+                                contentDescription = null,
+                                modifier = GlanceModifier.size(22.dp),
+                                colorFilter = ColorFilter.tint(ColorProvider(day = onAccent, night = onAccent))
+                            )
+                        }
+                        
+                        Spacer(modifier = GlanceModifier.height(6.dp))
+
+                        // Increased font sizes for labels now that icon is smaller
                         Text(
                             text = nextPrayer.type.getDisplayName(context).uppercase(),
                             style = TextStyle(
                                 color = ColorProvider(day = onAccent, night = onAccent),
-                                fontSize = 11.sp,
+                                fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center
                             )
@@ -137,7 +148,7 @@ class VaktivaWidget : GlanceAppWidget() {
                             text = nextPrayer.time.format(timeFormatter),
                             style = TextStyle(
                                 color = ColorProvider(day = onAccent.copy(alpha = 0.8f), night = onAccent.copy(alpha = 0.8f)),
-                                fontSize = 11.sp,
+                                fontSize = 12.sp,
                                 textAlign = TextAlign.Center
                             )
                         )
