@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -32,8 +33,8 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.domain.model.CurrentPrayer
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
-import com.ybugmobile.vaktiva.ui.theme.IBMPlexArabic
-import com.ybugmobile.vaktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.vaktiva.domain.model.PrayerType
+import com.ybugmobile.vaktiva.ui.theme.*
 import java.time.LocalDate
 import java.util.Locale
 
@@ -52,6 +53,8 @@ fun NextPrayerCountdown(
     showIdleState: Boolean = true,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -108,8 +111,37 @@ fun NextPrayerCountdown(
                     }
                     val cardShape = RoundedCornerShape(percent = 50)
 
-                    // Disable minimum interactive component size to allow 40dp height in landscape without gaps
-                    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                    // Get background color for the icon based on nextPrayer.type
+                    val nextPrayerColor = remember(nextPrayer.type, glassTheme.weatherCondition) {
+                        val baseColor = when (nextPrayer.type) {
+                            PrayerType.FAJR -> Color(0xFF81D4FA)
+                            PrayerType.SUNRISE -> Color(0xFFFFE082)
+                            PrayerType.DHUHR -> Color(0xFFFFF59D)
+                            PrayerType.ASR -> Color(0xFFFFCC80)
+                            PrayerType.MAGHRIB -> Color(0xFFCE93D8)
+                            PrayerType.ISHA -> Color(0xFF9FA8DA)
+                        }
+                        
+                        // Apply same weather adjustments as in PrayerCircleVisualization
+                        val isCloudy = glassTheme.weatherCondition != com.ybugmobile.vaktiva.domain.model.WeatherCondition.CLEAR && 
+                                       glassTheme.weatherCondition != com.ybugmobile.vaktiva.domain.model.WeatherCondition.UNKNOWN
+                        val isSevere = glassTheme.weatherCondition == com.ybugmobile.vaktiva.domain.model.WeatherCondition.RAINY || 
+                                      glassTheme.weatherCondition == com.ybugmobile.vaktiva.domain.model.WeatherCondition.THUNDERSTORM || 
+                                      glassTheme.weatherCondition == com.ybugmobile.vaktiva.domain.model.WeatherCondition.SNOWY
+
+                        if (isCloudy) {
+                            val desaturateAmount = if (isSevere) 0.35f else 0.2f
+                            val darkenAmount = if (isSevere) 0.2f else 0.1f
+                            baseColor.desaturate(desaturateAmount).darken(darkenAmount)
+                        } else {
+                            baseColor
+                        }
+                    }
+
+                    CompositionLocalProvider(
+                        LocalMinimumInteractiveComponentSize provides 0.dp,
+                        LocalContentColor provides Color.White
+                    ) {
                         Box(
                             modifier = Modifier
                                 .height(if (isLandscape) 40.dp else 48.dp)
@@ -123,7 +155,7 @@ fun NextPrayerCountdown(
                                     // Match InfoGlassCard style
                                     drawRoundRect(
                                         brush = Brush.horizontalGradient(
-                                            listOf(accentColor.copy(0.15f), Color.Transparent), 
+                                            listOf(nextPrayerColor.copy(0.15f), Color.Transparent), 
                                             endX = size.width * 0.4f
                                         ), 
                                         size = size, 
@@ -142,18 +174,18 @@ fun NextPrayerCountdown(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                // Icon container covering the left side like a toggle
+                                // Icon container using nextPrayer color
                                 Box(
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .aspectRatio(1f)
-                                        .background(accentColor.copy(0.9f)),
+                                        .background(nextPrayerColor.copy(0.9f)),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
                                         imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
                                         contentDescription = null,
-                                        tint = if (accentColor.luminance() > 0.5f) Color.Black else Color.White,
+                                        tint = if (nextPrayerColor.luminance() > 0.5f) Color.Black else Color.White,
                                         modifier = Modifier.size(if (isLandscape) 18.dp else 22.dp)
                                     )
                                 }
@@ -166,7 +198,7 @@ fun NextPrayerCountdown(
                                     verticalArrangement = Arrangement.spacedBy((-4).dp, Alignment.CenterVertically)
                                 ) {
                                     Text(
-                                        text = stringResource(R.string.adhan_playing).uppercase(),
+                                        text = "${nextPrayer.type.getDisplayName(context)} Adhan".uppercase(),
                                         style = TextStyle(
                                             fontSize = if (isLandscape) 10.sp else 12.sp,
                                             lineHeight = if (isLandscape) 10.sp else 12.sp,
