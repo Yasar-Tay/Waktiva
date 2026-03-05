@@ -312,7 +312,11 @@ class HomeViewModel @Inject constructor(
         val prayerName = args[17] as? String
         val allDaysList = args[18] as List<PrayerDay>
         
-        val isMuted = currentSettings.mutedPrayerName.equals(next?.type?.name, ignoreCase = true) &&
+        // If the immediate next event is SUNRISE (which has no adhan),
+        // we check the mute state for DHUHR instead, as the button targets it.
+        val adhanTargetType = if (next?.type == PrayerType.SUNRISE) PrayerType.DHUHR else next?.type
+        
+        val isMuted = currentSettings.mutedPrayerName.equals(adhanTargetType?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == next?.date?.toString()
 
         val effectiveHijri = HijriUtils.getEffectiveHijriDate(

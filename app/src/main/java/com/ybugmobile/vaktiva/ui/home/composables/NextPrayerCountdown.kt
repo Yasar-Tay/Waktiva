@@ -1,8 +1,12 @@
 package com.ybugmobile.vaktiva.ui.home.composables
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,9 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalConfiguration
@@ -111,9 +113,14 @@ fun NextPrayerCountdown(
                     }
                     val cardShape = RoundedCornerShape(percent = 50)
 
-                    // Get background color for the icon based on nextPrayer.type
-                    val nextPrayerColor = remember(nextPrayer.type, glassTheme.weatherCondition) {
-                        val baseColor = when (nextPrayer.type) {
+                    // Determine which prayer the skip button should target.
+                    // If the immediate next event is SUNRISE (which has no adhan), 
+                    // the button targets DHUHR instead.
+                    val targetPrayerType = if (nextPrayer.type == PrayerType.SUNRISE) PrayerType.DHUHR else nextPrayer.type
+
+                    // Get background color for the icon based on targetPrayerType
+                    val buttonColor = remember(targetPrayerType, glassTheme.weatherCondition) {
+                        val baseColor = when (targetPrayerType) {
                             PrayerType.FAJR -> Color(0xFF81D4FA)
                             PrayerType.SUNRISE -> Color(0xFFFFE082)
                             PrayerType.DHUHR -> Color(0xFFFFF59D)
@@ -138,6 +145,19 @@ fun NextPrayerCountdown(
                         }
                     }
 
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val isPressed by interactionSource.collectIsPressedAsState()
+                    val scale by animateFloatAsState(
+                        targetValue = if (isPressed) 0.92f else 1f,
+                        animationSpec = tween(durationMillis = 80),
+                        label = "buttonScale"
+                    )
+                    val alpha by animateFloatAsState(
+                        targetValue = if (isPressed) 0.7f else 1f,
+                        animationSpec = tween(durationMillis = 80),
+                        label = "buttonAlpha"
+                    )
+
                     CompositionLocalProvider(
                         LocalMinimumInteractiveComponentSize provides 0.dp,
                         LocalContentColor provides Color.White
@@ -146,16 +166,25 @@ fun NextPrayerCountdown(
                             modifier = Modifier
                                 .height(if (isLandscape) 40.dp else 48.dp)
                                 .wrapContentWidth()
+                                .graphicsLayer {
+                                    scaleX = scale
+                                    scaleY = scale
+                                    this.alpha = alpha
+                                }
                                 .clip(cardShape)
                                 .background(containerColor)
-                                .clickable { onSkipAudio(nextPrayer.type.name) }
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null, // Disable default ripple for glass effect
+                                    onClick = { onSkipAudio(targetPrayerType.name) }
+                                )
                                 .drawWithContent {
                                     drawContent()
                                     val radius = CornerRadius(size.height / 2f)
                                     // Match InfoGlassCard style
                                     drawRoundRect(
                                         brush = Brush.horizontalGradient(
-                                            listOf(nextPrayerColor.copy(0.15f), Color.Transparent), 
+                                            listOf(buttonColor.copy(0.15f), Color.Transparent), 
                                             endX = size.width * 0.4f
                                         ), 
                                         size = size, 
@@ -174,18 +203,18 @@ fun NextPrayerCountdown(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                // Icon container using nextPrayer color
+                                // Icon container using buttonColor
                                 Box(
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .aspectRatio(1f)
-                                        .background(nextPrayerColor.copy(0.9f)),
+                                        .background(buttonColor.copy(0.9f)),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
                                         imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
                                         contentDescription = null,
-                                        tint = if (nextPrayerColor.luminance() > 0.5f) Color.Black else Color.White,
+                                        tint = if (buttonColor.luminance() > 0.5f) Color.Black else Color.White,
                                         modifier = Modifier.size(if (isLandscape) 18.dp else 22.dp)
                                     )
                                 }
@@ -198,7 +227,10 @@ fun NextPrayerCountdown(
                                     verticalArrangement = Arrangement.spacedBy((-4).dp, Alignment.CenterVertically)
                                 ) {
                                     Text(
-                                        text = "${nextPrayer.type.getDisplayName(context)} Adhan".uppercase(),
+                                        text = stringResource(
+                                            R.string.adhan_metadata_title_format,
+                                            targetPrayerType.getDisplayName(context)
+                                        ).uppercase(),
                                         style = TextStyle(
                                             fontSize = if (isLandscape) 10.sp else 12.sp,
                                             lineHeight = if (isLandscape) 10.sp else 12.sp,
