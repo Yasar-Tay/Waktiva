@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <!--
+      fontFamily="monospace" and fontFeatureSettings="tnum"
+      ensures digits have fixed width to prevent "shaking"
+    -->
+    <Chronometer
+        android:id="@+id/prayer_chronometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:countDown="true"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="32sp"
+        android:fontFamily="monospace"
+        android:fontFeatureSettings="tnum" />
+
+</LinearLayout>

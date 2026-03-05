@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
 import android.util.Log
+import androidx.glance.appwidget.updateAll
 import com.ybugmobile.vaktiva.R
 import com.ybugmobile.vaktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.vaktiva.domain.manager.SettingsManagerInterface
@@ -13,6 +14,7 @@ import com.ybugmobile.vaktiva.data.notification.NotificationHelper
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
 import com.ybugmobile.vaktiva.service.AdhanService
+import com.ybugmobile.vaktiva.ui.widget.VaktivaWidget
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,17 +27,6 @@ import javax.inject.Inject
 
 /**
  * A [BroadcastReceiver] responsible for handling all prayer-related alarm events.
- * It serves as the primary entry point for timed triggers from [AlarmScheduler].
- *
- * This receiver manages:
- * - Triggering the [AdhanService] for prayer calls.
- * - Displaying pre-Adhan warning notifications.
- * - Handling the "Skip" action for upcoming prayers.
- * - Rescheduling alarms after a device reboot or prayer completion.
- *
- * Since many operations are asynchronous (DataStore, Database access), it utilizes
- * [goAsync] and a supervised [CoroutineScope] to ensure tasks complete without 
- * the receiver being killed prematurely.
  */
 @AndroidEntryPoint
 class PrayerAlarmReceiver : BroadcastReceiver() {
@@ -57,19 +48,28 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action ?: return
+        
+        // Handle BOOT_COMPLETED and other actions that don't have prayer extras
+        if (action == Intent.ACTION_BOOT_COMPLETED) {
+            val pendingResult = goAsync()
+            scope.launch {
+                rescheduleNextPrayer()
+                VaktivaWidget().updateAll(context)
+                pendingResult.finish()
+            }
+            return
+        }
+
         val prayerName = intent.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME) ?: return
         val prayerDate = intent.getStringExtra(NotificationHelper.EXTRA_PRAYER_DATE) ?: LocalDate.now().toString()
 
         Log.d("PrayerAlarmReceiver", "onReceive: action=$action, prayer=$prayerName, date=$prayerDate")
         
-        // Handle immediate "Skip" action from notification
         if (action == NotificationHelper.ACTION_SKIP_ADHAN) {
             runBlocking {
                 settingsManager.muteNextPrayer(prayerName, prayerDate)
-                Log.d("PrayerAlarmReceiver", "SKIP SUCCESS: $prayerName muted for $prayerDate")
-                
-                // Just dismiss the notification immediately
                 notificationHelper.cancelWarningNotification()
+                VaktivaWidget().updateAll(context)
             }
             return
         }
@@ -80,21 +80,12 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 when (action) {
                     AlarmScheduler.ACTION_PRE_ADHAN_NOTIFICATION -> {
                         val settings = settingsManager.settingsFlow.first()
-                        
-                        // If adhan audio or warnings are disabled, do not show the skip notification (even for tests)
-                        if (!settings.playAdhanAudio || !settings.enablePreAdhanWarning) {
-                            Log.d("PrayerAlarmReceiver", "PRE-ADHAN SUPPRESSED: Setting disabled.")
-                            return@launch
-                        }
+                        if (!settings.playAdhanAudio || !settings.enablePreAdhanWarning) return@launch
 
                         val isMuted = settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && 
                                      settings.mutedPrayerDate == prayerDate
                         
-                        // If specifically muted/skipped, do not show the warning (even for tests)
-                        if (isMuted) {
-                            Log.d("PrayerAlarmReceiver", "PRE-ADHAN SUPPRESSED: Prayer is already muted.")
-                            return@launch
-                        }
+                        if (isMuted) return@launch
                         
                         notificationHelper.showPreAdhanWarning(
                             prayerName = prayerName,
@@ -103,11 +94,13 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         )
                     }
                     AlarmScheduler.ACTION_PRAYER_ALARM -> {
+                        // 1. Refresh the widget content immediately so it flips to the next prayer
+                        VaktivaWidget().updateAll(context)
+                        
+                        // 2. Handle Adhan logic
                         handleAdhanTrigger(context, prayerName, prayerDate)
-                        rescheduleNextPrayer()
-                    }
-                    Intent.ACTION_BOOT_COMPLETED -> {
-                        // Reschedule all alarms when device finishes booting
+                        
+                        // 3. Schedule the next alarm
                         rescheduleNextPrayer()
                     }
                 }
@@ -119,9 +112,6 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    /**
-     * Refreshes the alarm queue by identifying the next upcoming prayer from the database.
-     */
     private suspend fun rescheduleNextPrayer() {
         val settings = settingsManager.settingsFlow.first()
         val prayerDays = prayerRepository.getPrayerDays().first()
@@ -134,24 +124,16 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    /**
-     * Orchestrates the starting of the Adhan audio.
-     * Checks for user-defined skip/mute settings before initiating the [AdhanService].
-     */
     private suspend fun handleAdhanTrigger(context: Context, prayerName: String, prayerDate: String) {
         val settings = settingsManager.settingsFlow.first()
         
-        // strictly honor the playAdhanAudio switch for all alarms including tests
         if (!settings.playAdhanAudio) {
-            Log.d("PrayerAlarmReceiver", "ADHAN SUPPRESSED: playAdhanAudio is disabled.")
             settingsManager.clearMutedPrayer()
             notificationHelper.cancelWarningNotification()
             return
         }
 
-        // strictly honor the muted/skipped state for all alarms including tests
         if (settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && settings.mutedPrayerDate == prayerDate) {
-            Log.d("PrayerAlarmReceiver", "ADHAN SKIPPED: Logic recognized skip for $prayerName.")
             settingsManager.clearMutedPrayer()
             notificationHelper.cancelWarningNotification()
             return
@@ -161,12 +143,10 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
         val wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Vaktiva:AdhanWakeLock")
-        // Acquire wake lock to ensure the CPU doesn't sleep before the service starts
         wakeLock.acquire(5 * 60 * 1000L)
 
         try {
             notificationHelper.cancelWarningNotification()
-
             val prayerType = PrayerType.fromString(prayerName)
             val audioPath = if (settings.useSpecificAdhanForEachPrayer && prayerType != null) {
                 settings.prayerSpecificAdhanPaths[prayerType] ?: getDefaultAdhanForPrayer(context, prayerType)
@@ -189,9 +169,6 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    /**
-     * Returns a built-in default Adhan audio resource path for a given prayer type.
-     */
     private fun getDefaultAdhanForPrayer(context: Context, prayerType: PrayerType): String {
         val resId = when (prayerType) {
             PrayerType.FAJR -> R.raw.muhsinkara_fajr
