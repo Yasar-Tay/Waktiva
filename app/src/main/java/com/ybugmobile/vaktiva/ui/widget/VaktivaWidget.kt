@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.*
@@ -16,14 +16,13 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.*
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.color.ColorProvider
 import androidx.glance.layout.*
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
 import com.ybugmobile.vaktiva.MainActivity
 import com.ybugmobile.vaktiva.R
-import com.ybugmobile.vaktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.vaktiva.domain.model.NextPrayer
 import com.ybugmobile.vaktiva.domain.model.PrayerType
 import com.ybugmobile.vaktiva.domain.repository.PrayerRepository
@@ -35,22 +34,24 @@ import dagger.hilt.components.SingletonComponent
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class VaktivaWidget : GlanceAppWidget() {
+
+    override val sizeMode: SizeMode = SizeMode.Exact
+
+    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.US)
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface WidgetEntryPoint {
         fun prayerRepository(): PrayerRepository
-        fun settingsManager(): SettingsManagerInterface
     }
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             val entryPoint = EntryPointAccessors.fromApplication(context, WidgetEntryPoint::class.java)
-            val settings by entryPoint.settingsManager().settingsFlow.collectAsState(initial = null)
             val prayerDays by entryPoint.prayerRepository().getPrayerDays().collectAsState(initial = emptyList())
             
             val now = LocalDateTime.now()
@@ -67,7 +68,7 @@ class VaktivaWidget : GlanceAppWidget() {
                 }
             }
 
-            // Sync this state from your AdhanService in a real implementation
+            // In a real app, this would be reactive
             val isAdhanPlaying = false 
 
             WidgetContent(context, nextPrayer, isAdhanPlaying)
@@ -80,71 +81,103 @@ class VaktivaWidget : GlanceAppWidget() {
         nextPrayer: NextPrayer?,
         isAdhanPlaying: Boolean
     ) {
-        val background = ColorProvider(Color(0xFF1A1C1E))
-        val accent = nextPrayer?.type?.let { getPrayerColor(it) } ?: Color(0xFF4CA1AF)
-
+        val size = LocalSize.current
+        val containerColor = ColorProvider(day = Color.Black.copy(0.25f), night = Color.Black.copy(0.25f))
+        
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .appWidgetBackground()
-                .background(background)
-                .cornerRadius(16.dp)
-                .padding(12.dp)
+                .background(containerColor)
+                .cornerRadius(32.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
             if (isAdhanPlaying) {
                 AdhanPlayingView(context)
-            } else {
-                CountdownView(context, nextPrayer, accent)
-            }
-        }
-    }
+            } else if (nextPrayer != null) {
+                val accent = getPrayerColor(nextPrayer.type)
+                val onAccent = if (accent.luminance() > 0.5f) Color.Black else Color.White
+                
+                Row(
+                    modifier = GlanceModifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Left side Icon
+                    Box(
+                        modifier = GlanceModifier
+                            .fillMaxHeight()
+                            .width(64.dp)
+                            .background(accent),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
+                            contentDescription = null,
+                            modifier = GlanceModifier.size(24.dp),
+                            colorFilter = ColorFilter.tint(ColorProvider(day = onAccent, night = onAccent))
+                        )
+                    }
 
-    @Composable
-    private fun CountdownView(context: Context, nextPrayer: NextPrayer?, accent: Color) {
-        Column(
-            modifier = GlanceModifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (nextPrayer != null) {
-                Text(
-                    text = nextPrayer.type.getDisplayName(context).uppercase(),
-                    style = TextStyle(
-                        color = ColorProvider(Color.White.copy(alpha = 0.6f)),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-                Spacer(modifier = GlanceModifier.height(4.dp))
-                
-                val remaining = formatDuration(nextPrayer.remainingDuration)
-                Text(
-                    text = remaining,
-                    style = TextStyle(
-                        color = ColorProvider(accent),
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                )
-                
-                Spacer(modifier = GlanceModifier.height(4.dp))
-                Text(
-                    text = nextPrayer.time.toString(),
-                    style = TextStyle(
-                        color = ColorProvider(Color.White.copy(alpha = 0.4f)),
-                        fontSize = 14.sp
-                    )
-                )
+                    // Prayer Name and Time Column
+                    Column(
+                        modifier = GlanceModifier
+                            .padding(start = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = nextPrayer.type.getDisplayName(context).uppercase(),
+                            style = TextStyle(
+                                color = ColorProvider(day = Color.White, night = Color.White),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Text(
+                            text = nextPrayer.time.format(timeFormatter),
+                            style = TextStyle(
+                                color = ColorProvider(day = Color.White.copy(alpha = 0.6f), night = Color.White.copy(alpha = 0.6f)),
+                                fontSize = 12.sp
+                            )
+                        )
+                    }
+
+                    // Countdown side - Responsive font size
+                    val remaining = formatDuration(nextPrayer.remainingDuration)
+                    
+                    // Responsive calculation: height-based but capped for reasonable widget sizes
+                    // Using 40% of widget height as a baseline, but limiting it between 24 and 48 sp.
+                    val dynamicFontSize = (size.height.value * 0.4f).coerceIn(24f, 48f).sp
+
+                    Column(
+                        modifier = GlanceModifier
+                            .fillMaxHeight()
+                            .defaultWeight()
+                            .padding(end = 20.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Text(
+                            text = remaining,
+                            style = TextStyle(
+                                color = ColorProvider(day = Color.White, night = Color.White),
+                                fontSize = dynamicFontSize,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
+                }
             } else {
-                Text(
-                    text = "VAKTIVA",
-                    style = TextStyle(
-                        color = ColorProvider(Color.White.copy(alpha = 0.2f)),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "VAKTIVA",
+                        style = TextStyle(
+                            color = ColorProvider(day = Color.White.copy(alpha = 0.2f), night = Color.White.copy(alpha = 0.2f)),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -152,27 +185,25 @@ class VaktivaWidget : GlanceAppWidget() {
     @Composable
     private fun AdhanPlayingView(context: Context) {
         Row(
-            modifier = GlanceModifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = GlanceModifier.fillMaxSize().padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = GlanceModifier.defaultWeight()) {
-                Text(
-                    text = context.getString(R.string.adhan_playing).uppercase(),
-                    style = TextStyle(
-                        color = ColorProvider(Color.White),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+            Text(
+                text = context.getString(R.string.adhan_playing).uppercase(),
+                modifier = GlanceModifier.defaultWeight(),
+                style = TextStyle(
+                    color = ColorProvider(day = Color.White, night = Color.White),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
                 )
-            }
+            )
             
             Button(
                 text = context.getString(R.string.adhan_stop).uppercase(),
                 onClick = actionRunCallback<StopAdhanCallback>(),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = ColorProvider(Color.Red.copy(alpha = 0.6f)),
-                    contentColor = ColorProvider(Color.White)
+                    backgroundColor = ColorProvider(day = Color.Red.copy(alpha = 0.6f), night = Color.Red.copy(alpha = 0.6f)),
+                    contentColor = ColorProvider(day = Color.White, night = Color.White)
                 )
             )
         }
@@ -189,10 +220,23 @@ class VaktivaWidget : GlanceAppWidget() {
         }
     }
 
+    private fun getPrayerIconRes(type: PrayerType): Int {
+        return when (type) {
+            PrayerType.FAJR -> R.drawable.water_lux_rotated
+            PrayerType.SUNRISE -> R.drawable.partly_cloudy_day
+            PrayerType.DHUHR -> R.drawable.clear_day
+            PrayerType.ASR -> R.drawable.clear_day
+            PrayerType.MAGHRIB -> R.drawable.partly_cloudy_day
+            PrayerType.ISHA -> R.drawable.clear_night
+        }
+    }
+
     private fun formatDuration(duration: Duration): String {
-        val hours = duration.toHours()
-        val minutes = (duration.toMinutes() % 60)
-        return String.format(Locale.US, "%02d:%02d", hours, minutes)
+        val secondsTotal = duration.seconds
+        val hours = secondsTotal / 3600
+        val minutes = (secondsTotal % 3600) / 60
+        val seconds = secondsTotal % 60
+        return String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
     }
 }
 
@@ -207,35 +251,4 @@ class StopAdhanCallback : ActionCallback {
 
 class VaktivaWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = VaktivaWidget()
-}
-
-/**
- * Preview for the Vaktiva Widget.
- * Note: Glance components need a special host to be previewed.
- */
-@Preview(widthDp = 200, heightDp = 100)
-@Composable
-fun VaktivaWidgetCountdownPreview() {
-    val context = androidx.compose.ui.platform.LocalContext.current
-    VaktivaWidget().WidgetContent(
-        context = context,
-        nextPrayer = NextPrayer(
-            type = PrayerType.ASR,
-            time = LocalTime.of(15, 45),
-            date = LocalDate.now(),
-            remainingDuration = Duration.ofHours(1).plusMinutes(20)
-        ),
-        isAdhanPlaying = false
-    )
-}
-
-@Preview(widthDp = 200, heightDp = 100)
-@Composable
-fun VaktivaWidgetAdhanPlayingPreview() {
-    val context = androidx.compose.ui.platform.LocalContext.current
-    VaktivaWidget().WidgetContent(
-        context = context,
-        nextPrayer = null,
-        isAdhanPlaying = true
-    )
 }
