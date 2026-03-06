@@ -11,10 +11,10 @@
         android:layout_height="match_parent"
         android:countDown="true"
         android:textColor="#FFFFFF"
-        android:textStyle="normal"
-        android:fontFamily="@font/ibm_plex_arabic_light"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        android:fontFamily="monospace"
         android:fontFeatureSettings="tnum"
-        android:letterSpacing="0.05"
         android:gravity="center"
         android:maxLines="1"
         android:includeFontPadding="false" />

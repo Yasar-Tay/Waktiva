@@ -174,8 +174,8 @@ class WaktivaWidget : GlanceAppWidget() {
                         
                         // Reverting to simple prepend logic for 00:00:00
                         val format = when {
-                            hours == 0L -> "00 : %s"
-                            hours < 10L -> "0%s"
+                            hours == 0L -> "00:%s"
+                            hours < 10L -> "0%s:"
                             else -> "%s"
                         }
 
