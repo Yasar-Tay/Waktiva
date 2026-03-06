@@ -243,11 +243,11 @@ class WaktivaWidget : GlanceAppWidget() {
 
     private fun getPrayerIconRes(type: PrayerType): Int {
         return when (type) {
-            PrayerType.FAJR -> R.drawable.water_lux_rotated
-            PrayerType.SUNRISE -> R.drawable.partly_cloudy_day
+            PrayerType.FAJR -> R.drawable.haze_day
+            PrayerType.SUNRISE -> R.drawable.sunrise
             PrayerType.DHUHR -> R.drawable.clear_day
             PrayerType.ASR -> R.drawable.clear_day
-            PrayerType.MAGHRIB -> R.drawable.partly_cloudy_day
+            PrayerType.MAGHRIB -> R.drawable.sunset
             PrayerType.ISHA -> R.drawable.clear_night
         }
     }
