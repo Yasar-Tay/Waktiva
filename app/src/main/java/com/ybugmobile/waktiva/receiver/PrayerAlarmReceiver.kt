@@ -11,8 +11,6 @@ import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.waktiva.data.notification.NotificationHelper
-import com.ybugmobile.waktiva.domain.model.NextPrayer
-import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.service.AdhanService
 import com.ybugmobile.waktiva.ui.widget.WaktivaWidget
@@ -23,9 +21,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.time.Duration
 import java.time.LocalDate
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 /**
@@ -57,7 +53,6 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
             scope.launch {
                 rescheduleNextPrayer()
                 WaktivaWidget().updateAll(context)
-                updatePersistentNotification()
                 pendingResult.finish()
             }
             return
@@ -73,7 +68,6 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 settingsManager.muteNextPrayer(prayerName, prayerDate)
                 notificationHelper.cancelWarningNotification()
                 WaktivaWidget().updateAll(context)
-                updatePersistentNotification()
             }
             return
         }
@@ -101,7 +95,6 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         WaktivaWidget().updateAll(context)
                         handleAdhanTrigger(context, prayerName, prayerDate)
                         rescheduleNextPrayer()
-                        updatePersistentNotification()
                     }
                 }
             } catch (e: Exception) {
@@ -109,34 +102,6 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
             } finally {
                 pendingResult.finish()
             }
-        }
-    }
-
-    private suspend fun updatePersistentNotification() {
-        val settings = settingsManager.settingsFlow.first()
-        if (settings.showPersistentNotification) {
-            val prayerDays = prayerRepository.getPrayerDays().first()
-            val now = LocalDateTime.now()
-            val today = prayerDays.find { it.date == LocalDate.now() }
-            
-            val nextPrayer = today?.let { day ->
-                val nowTime = now.toLocalTime()
-                val nextReal = day.timings.entries
-                    .filter { it.value.isAfter(nowTime) }
-                    .minByOrNull { it.value }
-                
-                nextReal?.let {
-                    NextPrayer(it.key, it.value, day.date, Duration.between(now, day.date.atTime(it.value)))
-                }
-            }
-            
-            if (nextPrayer != null) {
-                notificationHelper.showPersistentNotification(nextPrayer)
-            } else {
-                notificationHelper.hidePersistentNotification()
-            }
-        } else {
-            notificationHelper.hidePersistentNotification()
         }
     }
 
@@ -175,7 +140,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
         try {
             notificationHelper.cancelWarningNotification()
-            val prayerType = PrayerType.fromString(prayerName)
+            val prayerType = com.ybugmobile.waktiva.domain.model.PrayerType.fromString(prayerName)
             val audioPath = if (settings.useSpecificAdhanForEachPrayer && prayerType != null) {
                 settings.prayerSpecificAdhanPaths[prayerType] ?: getDefaultAdhanForPrayer(context, prayerType)
             } else {
@@ -197,13 +162,13 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun getDefaultAdhanForPrayer(context: Context, prayerType: PrayerType): String {
+    private fun getDefaultAdhanForPrayer(context: Context, prayerType: com.ybugmobile.waktiva.domain.model.PrayerType): String {
         val resId = when (prayerType) {
-            PrayerType.FAJR -> R.raw.muhsinkara_fajr
-            PrayerType.DHUHR -> R.raw.muhsinkara_muhayyerkurdi_ezan
-            PrayerType.ASR -> R.raw.muhsinkara_asr
-            PrayerType.MAGHRIB -> R.raw.muhsinkara_maghrib
-            PrayerType.ISHA -> R.raw.muhsinkara_isha
+            com.ybugmobile.waktiva.domain.model.PrayerType.FAJR -> R.raw.muhsinkara_fajr
+            com.ybugmobile.waktiva.domain.model.PrayerType.DHUHR -> R.raw.muhsinkara_muhayyerkurdi_ezan
+            com.ybugmobile.waktiva.domain.model.PrayerType.ASR -> R.raw.muhsinkara_asr
+            com.ybugmobile.waktiva.domain.model.PrayerType.MAGHRIB -> R.raw.muhsinkara_maghrib
+            com.ybugmobile.waktiva.domain.model.PrayerType.ISHA -> R.raw.muhsinkara_isha
             else -> R.raw.muhsinkara_muhayyerkurdi_ezan
         }
         return "android.resource://${context.packageName}/$resId"
