@@ -1,7 +1,6 @@
 package com.ybugmobile.waktiva.ui.widget
 
 import android.content.Context
-import android.content.Intent
 import android.os.SystemClock
 import android.util.TypedValue
 import android.widget.RemoteViews
@@ -13,12 +12,9 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.*
-import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.*
-import androidx.glance.appwidget.action.ActionCallback
-import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.color.ColorProvider
 import androidx.glance.layout.*
 import androidx.glance.text.FontWeight
@@ -30,7 +26,6 @@ import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
-import com.ybugmobile.waktiva.service.AdhanService
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -72,18 +67,14 @@ class WaktivaWidget : GlanceAppWidget() {
                 }
             }
 
-            // In a real app, this would be reactive
-            val isAdhanPlaying = false 
-
-            WidgetContent(context, nextPrayer, isAdhanPlaying)
+            WidgetContent(context, nextPrayer)
         }
     }
 
     @Composable
     fun WidgetContent(
         context: Context,
-        nextPrayer: NextPrayer?,
-        isAdhanPlaying: Boolean
+        nextPrayer: NextPrayer?
     ) {
         val size = LocalSize.current
         val containerColor = ColorProvider(day = Color.Black.copy(0.25f), night = Color.Black.copy(0.25f))
@@ -96,9 +87,7 @@ class WaktivaWidget : GlanceAppWidget() {
                 .cornerRadius(32.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
-            if (isAdhanPlaying) {
-                AdhanPlayingView(context)
-            } else if (nextPrayer != null) {
+            if (nextPrayer != null) {
                 val accent = getPrayerColor(nextPrayer.type)
                 val onAccent = if (accent.luminance() > 0.5f) Color.Black else Color.White
                 
@@ -169,19 +158,11 @@ class WaktivaWidget : GlanceAppWidget() {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         val remainingDuration = nextPrayer.remainingDuration
-                        val hours = remainingDuration.toHours()
                         val baseTime = SystemClock.elapsedRealtime() + remainingDuration.toMillis()
-                        
-                        // Reverting to simple prepend logic for 00:00:00
-                        val format = when {
-                            hours == 0L -> "00:%s"
-                            hours < 10L -> "0%s:"
-                            else -> "%s"
-                        }
 
                         AndroidRemoteViews(
                             remoteViews = RemoteViews(context.packageName, R.layout.widget_countdown).apply {
-                                setChronometer(R.id.prayer_chronometer, baseTime, format, true)
+                                setChronometer(R.id.prayer_chronometer, baseTime, null, true)
                                 setChronometerCountDown(R.id.prayer_chronometer, true)
                                 setTextViewTextSize(R.id.prayer_chronometer, TypedValue.COMPLEX_UNIT_SP, dynamicFontSize)
                             }
@@ -200,33 +181,6 @@ class WaktivaWidget : GlanceAppWidget() {
                     )
                 }
             }
-        }
-    }
-
-    @Composable
-    private fun AdhanPlayingView(context: Context) {
-        Row(
-            modifier = GlanceModifier.fillMaxSize().padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = context.getString(R.string.adhan_playing).uppercase(),
-                modifier = GlanceModifier.defaultWeight(),
-                style = TextStyle(
-                    color = ColorProvider(day = Color.White, night = Color.White),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            )
-            
-            Button(
-                text = context.getString(R.string.adhan_stop).uppercase(),
-                onClick = actionRunCallback<StopAdhanCallback>(),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = ColorProvider(day = Color.Red.copy(alpha = 0.6f), night = Color.Red.copy(alpha = 0.6f)),
-                    contentColor = ColorProvider(day = Color.White, night = Color.White)
-                )
-            )
         }
     }
 
@@ -250,15 +204,6 @@ class WaktivaWidget : GlanceAppWidget() {
             PrayerType.MAGHRIB -> R.drawable.sunset
             PrayerType.ISHA -> R.drawable.clear_night
         }
-    }
-}
-
-class StopAdhanCallback : ActionCallback {
-    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        val intent = Intent(context, AdhanService::class.java).apply {
-            action = AdhanService.ACTION_STOP_ADHAN
-        }
-        context.startService(intent)
     }
 }
 
