@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
-        android:name=".VaktivaApp"
+        android:name=".WaktivaApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -26,13 +26,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:localeConfig="@xml/locales_config"
-        android:theme="@style/Theme.Vaktiva">
+        android:theme="@style/Theme.Waktiva">
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Vaktiva">
+            android:theme="@style/Theme.Waktiva">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -47,7 +47,7 @@
             android:launchMode="singleTop"
             android:excludeFromRecents="true"
             android:noHistory="true"
-            android:theme="@style/Theme.Vaktiva" />
+            android:theme="@style/Theme.Waktiva" />
 
         <service
             android:name=".service.AdhanService"
@@ -73,9 +73,9 @@
             android:name=".receiver.PrayerAlarmReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.ybugmobile.vaktiva.ACTION_PRAYER_ALARM" />
-                <action android:name="com.ybugmobile.vaktiva.ACTION_PRE_ADHAN_NOTIFICATION" />
-                <action android:name="com.ybugmobile.vaktiva.ACTION_SKIP_ADHAN" />
+                <action android:name="com.ybugmobile.waktiva.ACTION_PRAYER_ALARM" />
+                <action android:name="com.ybugmobile.waktiva.ACTION_PRE_ADHAN_NOTIFICATION" />
+                <action android:name="com.ybugmobile.waktiva.ACTION_SKIP_ADHAN" />
             </intent-filter>
         </receiver>
 
@@ -89,14 +89,14 @@
 
         <!-- Glance Widget Receiver -->
         <receiver
-            android:name=".ui.widget.VaktivaWidgetReceiver"
+            android:name=".ui.widget.WaktivaWidgetReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/vaktiva_widget_info" />
+                android:resource="@xml/waktiva_widget_info" />
         </receiver>
 
         <provider

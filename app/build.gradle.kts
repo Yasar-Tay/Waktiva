@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.ybugmobile.vaktiva"
+    namespace = "com.ybugmobile.waktiva"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.ybugmobile.vaktiva"
+        applicationId = "com.ybugmobile.waktiva"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

@@ -1,4 +1,4 @@
-package com.ybugmobile.vaktiva.ui.navigation
+package com.ybugmobile.waktiva.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home

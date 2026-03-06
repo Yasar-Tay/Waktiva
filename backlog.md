@@ -1,4 +1,4 @@
-# 🕌 Vaktiva - Professional Backlog & Architecture
+# 🕌 Waktiva - Professional Backlog & Architecture
 
 ## 🏛️ Architectural Overview
 The project follows **Professional Clean Architecture** with **Uni-directional Data Flow (UDF)** and is fully **Testable**.

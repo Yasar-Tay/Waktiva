@@ -1,0 +1,79 @@
+package com.ybugmobile.waktiva.ui.home.composables
+
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.ybugmobile.waktiva.domain.model.HijriData
+import java.time.LocalDate
+
+@Composable
+fun HomeHeader(
+    locationName: String,
+    date: LocalDate,
+    hijriDate: HijriData?,
+    contentColor: Color,
+    onStatusClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isNetworkAvailable: Boolean = true,
+    isLocationEnabled: Boolean = true,
+    isLocationPermissionGranted: Boolean = true
+) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .padding(top = 10.dp)
+    ) {
+        if (isLandscape) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                LocationSection(
+                    locationName = locationName, 
+                    contentColor = contentColor, 
+                    isNetworkAvailable = isNetworkAvailable, 
+                    isLocationEnabled = isLocationEnabled,
+                    isLocationPermissionGranted = isLocationPermissionGranted,
+                    onStatusClick = onStatusClick
+                )
+            }
+        } else {
+            Column(horizontalAlignment = Alignment.Start) {
+                LocationSection(
+                    locationName = locationName, 
+                    contentColor = contentColor, 
+                    isNetworkAvailable = isNetworkAvailable, 
+                    isLocationEnabled = isLocationEnabled,
+                    isLocationPermissionGranted = isLocationPermissionGranted,
+                    onStatusClick = onStatusClick
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000)
+@Composable
+fun HomeHeaderPreview() {
+    MaterialTheme {
+        HomeHeader(
+            locationName = "Istanbul, Turkey",
+            date = LocalDate.of(2026, 3, 17),
+            hijriDate = HijriData(30, 8, "Sha'ban", 1446),
+            contentColor = Color.White,
+            onStatusClick = {}
+        )
+    }
+}

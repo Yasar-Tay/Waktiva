@@ -224,7 +224,7 @@
     <string name="welcome_begin">সেটআপ শুরু করুন</string>
     <string name="welcome_finish">সেটআপ শেষ করুন</string>
     <string name="welcome_precision_settings">নির্ভুলতা সেটিংস</string>
-    <string name="welcome_precision_desc">আপনাকে আরও ভালো সেবা দিতে Vaktiva-র এগুলো প্রয়োজন</string>
+    <string name="welcome_precision_desc">আপনাকে আরও ভালো সেবা দিতে Waktiva-র এগুলো প্রয়োজন</string>
     <string name="welcome_loc_title">সঠিক অবস্থান</string>
     <string name="welcome_loc_desc">নামাজের সময় গণনার জন্য অত্যন্ত গুরুত্বপূর্ণ। এটি ছাড়া অ্যাপটি আপনার অবস্থানের জন্য সময় আনতে পারবে না এবং নিরর্থক হয়ে পড়বে।</string>
     <string name="welcome_notif_title">আজান অ্যালার্ট</string>
@@ -267,8 +267,8 @@
     <string name="donate_thank_you">ওপেন-সোর্স সফটওয়্যারকে সমর্থন করার জন্য ধন্যবাদ!</string>
     <string name="donate_error">দান সফল হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
     <string name="donate_billing_error">বিলিং সার্ভিসের সাথে সংযোগ করতে ব্যর্থ হয়েছে</string>
-    <string name="rate_title">Vaktiva-কে রেটিং দিন</string>
-    <string name="rate_desc">Vaktiva ভালো লাগলে গুগল প্লে-তে ৫ স্টার দিন। এটি আমাদের আরও মানুষের কাছে পৌঁছাতে সাহায্য করবে!</string>
+    <string name="rate_title">Waktiva-কে রেটিং দিন</string>
+    <string name="rate_desc">Waktiva ভালো লাগলে গুগল প্লে-তে ৫ স্টার দিন। এটি আমাদের আরও মানুষের কাছে পৌঁছাতে সাহায্য করবে!</string>
     <string name="rate_button">৫ স্টার দিন</string>
 
     <!-- Hijri Months -->

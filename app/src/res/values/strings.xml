@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaktiva</string>
+    <string name="app_name">Waktiva</string>
 
     <!-- Qibla Screen -->
     <string name="qibla_compass">Compass</string>
@@ -90,12 +90,12 @@
     <string name="audio_delete_confirm">Delete audio file?</string>
 
     <!-- Welcome Screen -->
-    <string name="welcome_title">Welcome to Vaktiva</string>
+    <string name="welcome_title">Welcome to Waktiva</string>
     <string name="welcome_desc">Your professional companion for prayer times, built with precision and modern design.</string>
     <string name="welcome_begin">Begin Setup</string>
     <string name="welcome_finish">Finish Setup</string>
     <string name="welcome_precision_settings">Precision Settings</string>
-    <string name="welcome_precision_desc">Vaktiva needs these to serve you better</string>
+    <string name="welcome_precision_desc">Waktiva needs these to serve you better</string>
     <string name="welcome_loc_title">Accurate Location</string>
     <string name="welcome_loc_desc">Used to calculate precise prayer times based on your coordinates.</string>
     <string name="welcome_notif_title">Adhan Alerts</string>
@@ -129,8 +129,8 @@
 
     <!-- Donations (from EPIC 6) -->
     <string name="settings_donate">Support the Developer</string>
-    <string name="donate_title">Support Vaktiva</string>
-    <string name="donate_description">Vaktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
+    <string name="donate_title">Support Waktiva</string>
+    <string name="donate_description">Waktiva is a free app, developed with care. Your support helps keep it ad-free and allows for future development.</string>
     <string name="donate_button">Donate</string>
     <string name="donate_thank_you">Thank you for your support!</string>
     <string name="donate_error">Donation failed. Please try again.</string>

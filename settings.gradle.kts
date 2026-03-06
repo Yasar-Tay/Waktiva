@@ -23,5 +23,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Vaktiva"
+rootProject.name = "Waktiva"
 include(":app")
