@@ -41,12 +41,12 @@ fun PrayerTimeList(
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
     val prayers = listOf(
-        PrayerItem(PrayerType.FAJR, R.string.prayer_fajr, day.timings[PrayerType.FAJR]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.water_lux_rotated), Color(0xFF81D4FA)),
-        PrayerItem(PrayerType.SUNRISE, R.string.prayer_sunrise, day.timings[PrayerType.SUNRISE]?.format(timeFormatter) ?: "", Icons.Default.WbTwilight, Color(0xFFFFE082)),
-        PrayerItem(PrayerType.DHUHR, R.string.prayer_dhuhr, day.timings[PrayerType.DHUHR]?.format(timeFormatter) ?: "", Icons.Default.WbSunny, Color(0xFFFFF59D)),
-        PrayerItem(PrayerType.ASR, R.string.prayer_asr, day.timings[PrayerType.ASR]?.format(timeFormatter) ?: "", Icons.Default.WbSunny, Color(0xFFFFCC80)),
-        PrayerItem(PrayerType.MAGHRIB, R.string.prayer_maghrib, day.timings[PrayerType.MAGHRIB]?.format(timeFormatter) ?: "", Icons.Default.WbTwilight, Color(0xFFCE93D8)),
-        PrayerItem(PrayerType.ISHA, R.string.prayer_isha, day.timings[PrayerType.ISHA]?.format(timeFormatter) ?: "", Icons.Default.NightsStay, Color(0xFF9FA8DA))
+        PrayerItem(PrayerType.FAJR, R.string.prayer_fajr, day.timings[PrayerType.FAJR]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.haze_day_rotated), Color(0xFF81D4FA)),
+        PrayerItem(PrayerType.SUNRISE, R.string.prayer_sunrise, day.timings[PrayerType.SUNRISE]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.sunrise), Color(0xFFFFE082)),
+        PrayerItem(PrayerType.DHUHR, R.string.prayer_dhuhr, day.timings[PrayerType.DHUHR]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.clear_day), Color(0xFFFFF59D)),
+        PrayerItem(PrayerType.ASR, R.string.prayer_asr, day.timings[PrayerType.ASR]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.clear_day), Color(0xFFFFCC80)),
+        PrayerItem(PrayerType.MAGHRIB, R.string.prayer_maghrib, day.timings[PrayerType.MAGHRIB]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.sunset), Color(0xFFCE93D8)),
+        PrayerItem(PrayerType.ISHA, R.string.prayer_isha, day.timings[PrayerType.ISHA]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.clear_night), Color(0xFF9FA8DA))
     )
 
     val commonShadow = if (contentColor.red > 0.5f) Shadow(

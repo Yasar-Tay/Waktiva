@@ -53,12 +53,12 @@ fun AdhanControls(
     val prayerType = playingPrayerName?.let { PrayerType.fromString(it) }
     
     val prayerIcon = when (prayerType) {
-        PrayerType.FAJR -> ImageVector.vectorResource(R.drawable.water_lux_rotated)
-        PrayerType.SUNRISE -> Icons.Default.WbTwilight
-        PrayerType.DHUHR -> Icons.Default.WbSunny
-        PrayerType.ASR -> Icons.Default.WbSunny
-        PrayerType.MAGHRIB -> Icons.Default.WbTwilight
-        PrayerType.ISHA -> Icons.Default.NightsStay
+        PrayerType.FAJR -> ImageVector.vectorResource(R.drawable.haze_day_rotated)
+        PrayerType.SUNRISE -> ImageVector.vectorResource(R.drawable.sunrise)
+        PrayerType.DHUHR -> ImageVector.vectorResource(R.drawable.clear_day)
+        PrayerType.ASR -> ImageVector.vectorResource(R.drawable.clear_day)
+        PrayerType.MAGHRIB -> ImageVector.vectorResource(R.drawable.sunset)
+        PrayerType.ISHA -> ImageVector.vectorResource(R.drawable.clear_night)
         else -> Icons.Rounded.VolumeUp
     }
 

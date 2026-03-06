@@ -132,14 +132,14 @@ class WaktivaWidget : GlanceAppWidget() {
                             )
                         }
                         
-                        Spacer(modifier = GlanceModifier.height(6.dp))
+                        Spacer(modifier = GlanceModifier.height(3.dp))
 
                         // Increased font sizes for labels now that icon is smaller
                         Text(
                             text = nextPrayer.type.getDisplayName(context).uppercase(),
                             style = TextStyle(
                                 color = ColorProvider(day = onAccent, night = onAccent),
-                                fontSize = 13.sp,
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center
                             )
@@ -148,7 +148,7 @@ class WaktivaWidget : GlanceAppWidget() {
                             text = nextPrayer.time.format(timeFormatter),
                             style = TextStyle(
                                 color = ColorProvider(day = onAccent.copy(alpha = 0.8f), night = onAccent.copy(alpha = 0.8f)),
-                                fontSize = 12.sp,
+                                fontSize = 13.sp,
                                 textAlign = TextAlign.Center
                             )
                         )

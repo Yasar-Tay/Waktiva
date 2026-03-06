@@ -148,20 +148,28 @@ fun PrayerCircleVisualization(
         )
     }
 
-    val moonPainter = rememberVectorPainter(Icons.Default.NightsStay)
-    val sunPainter = rememberVectorPainter(Icons.Default.WbSunny)
-    val fajrIcon = ImageVector.vectorResource(R.drawable.water_lux_rotated)
+    val fajrIcon = ImageVector.vectorResource(R.drawable.haze_day_rotated)
+    val sunriseIcon = ImageVector.vectorResource(R.drawable.sunrise)
+    val dhuhrIcon = ImageVector.vectorResource(R.drawable.clear_day)
+    val asrIcon = ImageVector.vectorResource(R.drawable.clear_day)
+    val maghribIcon = ImageVector.vectorResource(R.drawable.sunset)
+    val ishaIcon = ImageVector.vectorResource(R.drawable.clear_night)
+
     val fajrPainter = rememberVectorPainter(fajrIcon)
-    val sunrisePainter = rememberVectorPainter(Icons.Default.WbTwilight)
+    val sunrisePainter = rememberVectorPainter(sunriseIcon)
+    val dhuhrPainter = rememberVectorPainter(dhuhrIcon)
+    val asrPainter = rememberVectorPainter(asrIcon)
+    val maghribPainter = rememberVectorPainter(maghribIcon)
+    val ishaPainter = rememberVectorPainter(ishaIcon)
     
-    val prayers = remember(day, fajrPainter, sunrisePainter, sunPainter, moonPainter, weatherCondition) {
+    val prayers = remember(day, fajrPainter, sunrisePainter, dhuhrPainter, asrPainter, maghribPainter, ishaPainter, weatherCondition) {
         val basePrayers = listOf(
             PrayerNodeInfo(PrayerType.FAJR, day.timings[PrayerType.FAJR] ?: LocalTime.MIN, Color(0xFF81D4FA), fajrPainter),
             PrayerNodeInfo(PrayerType.SUNRISE, day.timings[PrayerType.SUNRISE] ?: LocalTime.MIN, Color(0xFFFFE082), sunrisePainter),
-            PrayerNodeInfo(PrayerType.DHUHR, day.timings[PrayerType.DHUHR] ?: LocalTime.MIN, Color(0xFFFFF59D), sunPainter),
-            PrayerNodeInfo(PrayerType.ASR, day.timings[PrayerType.ASR] ?: LocalTime.MIN, Color(0xFFFFCC80), sunPainter),
-            PrayerNodeInfo(PrayerType.MAGHRIB, day.timings[PrayerType.MAGHRIB] ?: LocalTime.MIN, Color(0xFFCE93D8), sunrisePainter),
-            PrayerNodeInfo(PrayerType.ISHA, day.timings[PrayerType.ISHA] ?: LocalTime.MIN, Color(0xFF9FA8DA), moonPainter)
+            PrayerNodeInfo(PrayerType.DHUHR, day.timings[PrayerType.DHUHR] ?: LocalTime.MIN, Color(0xFFFFF59D), dhuhrPainter),
+            PrayerNodeInfo(PrayerType.ASR, day.timings[PrayerType.ASR] ?: LocalTime.MIN, Color(0xFFFFCC80), asrPainter),
+            PrayerNodeInfo(PrayerType.MAGHRIB, day.timings[PrayerType.MAGHRIB] ?: LocalTime.MIN, Color(0xFFCE93D8), maghribPainter),
+            PrayerNodeInfo(PrayerType.ISHA, day.timings[PrayerType.ISHA] ?: LocalTime.MIN, Color(0xFF9FA8DA), ishaPainter)
         )
         
         val isCloudy = weatherCondition != WeatherCondition.CLEAR && weatherCondition != WeatherCondition.UNKNOWN
@@ -256,11 +264,11 @@ fun PrayerCircleVisualization(
                                         prayer.time.format(formatter), prayer.color, 
                                         when(prayer.type) {
                                             PrayerType.FAJR -> fajrIcon
-                                            PrayerType.SUNRISE -> Icons.Default.WbTwilight
-                                            PrayerType.DHUHR -> Icons.Default.WbSunny
-                                            PrayerType.ASR -> Icons.Default.WbSunny
-                                            PrayerType.MAGHRIB -> Icons.Default.WbTwilight
-                                            PrayerType.ISHA -> Icons.Default.NightsStay
+                                            PrayerType.SUNRISE -> sunriseIcon
+                                            PrayerType.DHUHR -> dhuhrIcon
+                                            PrayerType.ASR -> asrIcon
+                                            PrayerType.MAGHRIB -> maghribIcon
+                                            PrayerType.ISHA -> ishaIcon
                                         }
                                     )
                                     break

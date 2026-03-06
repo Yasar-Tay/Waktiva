@@ -21,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -263,12 +265,12 @@ fun AdhanScreen(
                 // Relevant Icon
                 Icon(
                     imageVector = when(prayerType) {
-                        PrayerType.FAJR -> Icons.Rounded.NightsStay
-                        PrayerType.SUNRISE -> Icons.Rounded.WbTwilight
-                        PrayerType.DHUHR -> Icons.Rounded.WbSunny
-                        PrayerType.ASR -> Icons.Rounded.WbSunny
-                        PrayerType.MAGHRIB -> Icons.Rounded.WbTwilight
-                        PrayerType.ISHA -> Icons.Rounded.NightsStay
+                        PrayerType.FAJR -> ImageVector.vectorResource(R.drawable.haze_day_rotated)
+                        PrayerType.SUNRISE -> ImageVector.vectorResource(R.drawable.sunrise)
+                        PrayerType.DHUHR -> ImageVector.vectorResource(R.drawable.clear_day)
+                        PrayerType.ASR -> ImageVector.vectorResource(R.drawable.clear_day)
+                        PrayerType.MAGHRIB -> ImageVector.vectorResource(R.drawable.sunset)
+                        PrayerType.ISHA -> ImageVector.vectorResource(R.drawable.clear_night)
                         else -> Icons.Rounded.NotificationsActive
                     },
                     contentDescription = null,
