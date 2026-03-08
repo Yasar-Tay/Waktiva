@@ -30,6 +30,20 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/**
+ * An interactive calendar component that flips between Gregorian and Hijri dates.
+ * Features 3D-like rotation animations, temporal "sheen" effects, and contextual color matching.
+ *
+ * @param day The prayer day data containing both Gregorian and Hijri information.
+ * @param isHijriVisible Current flip state (true for Hijri side).
+ * @param onFlip Callback triggered when the card is tapped.
+ * @param contentColor Base color for text.
+ * @param accentColor Primary color used for the card's header (derived from active prayer).
+ * @param currentTime Current system time used for subtle temporal animations.
+ * @param isSelectedDayToday Flag to apply pulsing effects if focused on today.
+ * @param pulseScale Current animated scale value for the container.
+ * @param modifier Root layout modifier.
+ */
 @Composable
 fun FlippableCalendarCard(
     day: PrayerDay,
@@ -42,6 +56,7 @@ fun FlippableCalendarCard(
     pulseScale: Float,
     modifier: Modifier = Modifier
 ) {
+    // 3D Flip animation state
     val rotation by animateFloatAsState(
         targetValue = if (isHijriVisible) 180f else 0f,
         animationSpec = spring(
@@ -51,7 +66,7 @@ fun FlippableCalendarCard(
         label = "cardFlip"
     )
 
-    // TIME ANIMATION: A slow, eternal rotation of a light sweep
+    // "Chronos" Animation: A slow, eternal rotation of a light sweep across the card's surface
     val infiniteTransition = rememberInfiniteTransition(label = "chronos")
     val timeAngle by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -65,12 +80,13 @@ fun FlippableCalendarCard(
 
     val context = LocalContext.current
     val dayFormatter = remember { DateTimeFormatter.ofPattern("dd") }
-    val monthFormatter = remember { DateTimeFormatter.ofPattern("MMM") } // Abbreviated (e.g., OCT)
+    val monthFormatter = remember { DateTimeFormatter.ofPattern("MMM") }
 
     Box(
         modifier = modifier
             .size(100.dp) 
             .graphicsLayer {
+                // Apply external pulsing scale if today
                 scaleX = if (isSelectedDayToday) pulseScale else 1f
                 scaleY = if (isSelectedDayToday) pulseScale else 1f
             }
@@ -80,16 +96,17 @@ fun FlippableCalendarCard(
             ) { onFlip() },
         contentAlignment = Alignment.Center
     ) {
-        // The Card Core
+        // Rotatable Card Core
         Box(
             modifier = Modifier
                 .fillMaxSize(0.85f)
                 .graphicsLayer {
                     rotationY = rotation
-                    cameraDistance = 12f * density
+                    cameraDistance = 12f * density // Enhance 3D effect depth
                 }
         ) {
             if (rotation <= 90f) {
+                // Front Side: Gregorian
                 CalendarSide(
                     topText = day.date.format(dayFormatter),
                     bottomText = day.date.format(monthFormatter).uppercase(Locale.getDefault()),
@@ -98,12 +115,14 @@ fun FlippableCalendarCard(
                     timeAngle = timeAngle
                 )
             } else {
+                // Back Side: Hijri
                 val hijri = remember(day) { day.hijriDate ?: HijriUtils.calculateFallbackHijri(day.date) }
                 val monthResId = hijri?.let {
                     context.resources.getIdentifier("hijri_month_${it.monthNumber}", "string", context.packageName)
                 } ?: 0
                 val monthName = if (monthResId != 0) stringResource(monthResId) else hijri?.monthEn ?: ""
                 
+                // Abbreviate long Hijri month names for the small header
                 val displayMonth = if (monthName.length > 3) monthName.take(3) else monthName
 
                 CalendarSide(
@@ -118,6 +137,9 @@ fun FlippableCalendarCard(
     }
 }
 
+/**
+ * Represents a single face of the [FlippableCalendarCard].
+ */
 @Composable
 private fun CalendarSide(
     topText: String,
@@ -126,6 +148,7 @@ private fun CalendarSide(
     accentColor: Color,
     timeAngle: Float
 ) {
+    // Dynamic contrast adjustment for the header text
     val headerTextColor = remember(accentColor) {
         if (accentColor.luminance() > 0.5f) Color(0xFF1C1C1E) else Color.White
     }
@@ -150,7 +173,7 @@ private fun CalendarSide(
             modifier = Modifier
                 .fillMaxSize()
                 .drawBehind {
-                    // "Temporal Sheen": A subtle reflection that passes across the card
+                    // "Temporal Sheen": A subtle reflection that passes across the card surface
                     rotate(timeAngle + 45f) {
                         drawRect(
                             brush = Brush.verticalGradient(
@@ -162,7 +185,7 @@ private fun CalendarSide(
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Month Label (Solid Calendar Header)
+            // Month Label (Solid header bar with gradient)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -192,7 +215,7 @@ private fun CalendarSide(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                // Day Number
+                // Day Number - Central large text
                 Text(
                     text = topText,
                     style = MaterialTheme.typography.displayLarge.copy(
@@ -207,7 +230,7 @@ private fun CalendarSide(
                     modifier = Modifier.offset(y = (-2).dp) 
                 )
                 
-                // Active Time Dot (Minimal pulsing effect)
+                // Active status dot with a minimal pulse
                 val dotAlpha by animateFloatAsState(
                     targetValue = if (topText.isNotEmpty()) 0.4f else 0.1f,
                     animationSpec = infiniteRepeatable(

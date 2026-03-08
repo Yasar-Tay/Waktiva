@@ -54,6 +54,23 @@ import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.delay
 import kotlin.math.*
 
+/**
+ * A sophisticated circular visualization of the day's prayer times.
+ * Features interactive nodes, dynamic weather-based color adjustments,
+ * and high-fidelity astronomical animations.
+ *
+ * @param day The prayer data for the selected day.
+ * @param currentTime Current system time for accurate indicator placement.
+ * @param nextPrayer Information about the upcoming prayer event.
+ * @param currentPrayer Information about the active prayer period.
+ * @param isSelectedDayToday Flag indicating if the view is focused on the current date.
+ * @param isHijriVisible Toggle for Hijri calendar display.
+ * @param onToggleHijri Callback for calendar switch.
+ * @param contentColor Base color for text and icons.
+ * @param isMuted Whether the audio for the next prayer is silenced.
+ * @param playAdhanAudio General preference for adhan playback.
+ * @param onSkipAudio Callback for muting the next specific prayer audio.
+ */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PrayerCircleVisualization(
@@ -81,6 +98,7 @@ fun PrayerCircleVisualization(
     var canvasSize by remember { mutableStateOf(Size.Zero) }
     var selectedInfo by remember { mutableStateOf<DetailedInfo?>(null) }
     
+    // Auto-dismiss interaction card
     LaunchedEffect(selectedInfo) {
         if (selectedInfo != null) {
             delay(4000)
@@ -90,7 +108,7 @@ fun PrayerCircleVisualization(
 
     val infiniteTransition = rememberInfiniteTransition(label = "celestial")
     
-    // Gravitational Flux: Subtle movement of markers
+    // Gravitational Flux: Subtle periodic movement of prayer markers (breathing effect)
     val gravityFlux by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
@@ -101,6 +119,7 @@ fun PrayerCircleVisualization(
         label = "gravityFlux"
     )
 
+    // Slow background rotation to simulate stellar movement
     val stellarRotation by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
@@ -111,6 +130,7 @@ fun PrayerCircleVisualization(
         label = "stellarRotation"
     )
 
+    // Pulse effect applied to the entire container if viewing "Today"
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = if (isSelectedDayToday) 1.05f else 1f,
@@ -121,6 +141,7 @@ fun PrayerCircleVisualization(
         label = "pulseScale"
     )
 
+    // Smooth indicator rotation synchronized with current time
     val rotationAngle by animateFloatAsState(
         targetValue = if (isSelectedDayToday) {
             val totalMinutes = currentTime.hour * 60 + currentTime.minute
@@ -134,6 +155,9 @@ fun PrayerCircleVisualization(
     val sunrise = remember(day) { day.timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 0) }
     val sunset = remember(day) { day.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0) }
 
+    /**
+     * Maps a given time to coordinates on the circle's circumference.
+     */
     fun getPosition(time: LocalTime, radius: Float, center: Offset): Offset {
         val totalMinutes = time.hour * 60 + time.minute
         val angle = if (layoutDirection == LayoutDirection.Rtl) {
@@ -148,6 +172,7 @@ fun PrayerCircleVisualization(
         )
     }
 
+    // Load painters once to avoid re-allocation in the draw loop
     val fajrIcon = ImageVector.vectorResource(R.drawable.haze_day_rotated)
     val sunriseIcon = ImageVector.vectorResource(R.drawable.sunrise)
     val dhuhrIcon = ImageVector.vectorResource(R.drawable.clear_day)
@@ -162,6 +187,7 @@ fun PrayerCircleVisualization(
     val maghribPainter = rememberVectorPainter(maghribIcon)
     val ishaPainter = rememberVectorPainter(ishaIcon)
     
+    // Process prayer nodes with adaptive styling based on weather
     val prayers = remember(day, fajrPainter, sunrisePainter, dhuhrPainter, asrPainter, maghribPainter, ishaPainter, weatherCondition) {
         val basePrayers = listOf(
             PrayerNodeInfo(PrayerType.FAJR, day.timings[PrayerType.FAJR] ?: LocalTime.MIN, Color(0xFF81D4FA), fajrPainter),
@@ -186,6 +212,7 @@ fun PrayerCircleVisualization(
         }
     }
 
+    // Determine currently active prayer period
     val currentPrayerType = remember(day, currentTime) {
         val sortedTimings = day.timings.toList().sortedBy { it.second }
         var current: PrayerType? = null
@@ -202,6 +229,7 @@ fun PrayerCircleVisualization(
         prayers.find { it.type == currentPrayerType }?.color ?: Color.White
     }
 
+    // Pre-measure time labels to avoid layout phase overhead in draw loop
     val measuredTimeLabels = remember(prayers, contentColor, isLandscape) {
         prayers.map { prayer ->
             textMeasurer.measure(
@@ -216,6 +244,7 @@ fun PrayerCircleVisualization(
         }
     }
 
+    // Individual animations for tapped nodes
     val prayerScales = prayers.map { prayer ->
         animateFloatAsState(
             targetValue = if (selectedInfo?.id == prayer.type.name) 1.25f else 1f,
@@ -240,6 +269,7 @@ fun PrayerCircleVisualization(
                 }
                 .onSizeChanged { canvasSize = Size(it.width.toFloat(), it.height.toFloat()) }
                 .pointerInput(day, currentTime, isSelectedDayToday, canvasSize, layoutDirection) {
+                    // Interaction: Detect taps on current time indicator or prayer nodes
                     detectTapGestures { tapOffset ->
                         val center = Offset(canvasSize.width / 2, canvasSize.height / 2)
                         val radius = canvasSize.width / 2 - 24.dp.toPx()
@@ -284,6 +314,7 @@ fun PrayerCircleVisualization(
                     val sunriseMinutes = sunrise.hour * 60 + sunrise.minute
                     val sunsetMinutes = sunset.hour * 60 + sunset.minute
                     
+                    // Arc angles derived from sunrise and sunset
                     val startAngle = if (layoutDirection == LayoutDirection.Rtl) {
                         -(sunriseMinutes.toFloat() / (24 * 60)) * 360f + 90f
                     } else {
@@ -310,7 +341,7 @@ fun PrayerCircleVisualization(
                     )
 
                     onDrawBehind {
-                        // Subtle Gravitational Ripple (Flat style)
+                        // Background Decor: Ripples
                         val rippleProgress = (gravityFlux) % 1f
                         drawCircle(
                             color = contentColor.copy(alpha = 0.04f * (1f - rippleProgress)),
@@ -319,6 +350,7 @@ fun PrayerCircleVisualization(
                             style = Stroke(width = 1.dp.toPx())
                         )
 
+                        // Stellar rotation ring
                         withTransform({ rotate(stellarRotation, center) }) {
                             drawCircle(
                                 brush = Brush.sweepGradient(listOf(contentColor.copy(0f), contentColor.copy(0.12f), contentColor.copy(0f))),
@@ -326,9 +358,12 @@ fun PrayerCircleVisualization(
                                 style = Stroke(1.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(1f, 12f), 0f))
                             )
                         }
+
+                        // Static clock rings and day arc
                         drawCircle(contentColor.copy(0.05f), radius, center, style = Stroke(1.dp.toPx()))
                         drawArc(arcBrush, startAngle, sweepAngle, false, Offset(center.x - radius, center.y - radius), Size(radius * 2, radius * 2), style = Stroke((if (isLandscape) 3.dp else 4.dp).toPx(), cap = StrokeCap.Round))
                         
+                        // Hourly ticks
                         for (i in 0 until 24) {
                             val angle = i * 15f + 90f
                             val angleRad = Math.toRadians(angle.toDouble())
@@ -344,6 +379,7 @@ fun PrayerCircleVisualization(
             val center = Offset(size.width / 2, size.height / 2)
             val radius = size.width / 2 - 24.dp.toPx()
 
+            // Time hand indicator
             if (isSelectedDayToday) {
                 withTransform({ rotate(rotationAngle, center) }) {
                     drawLine(Brush.verticalGradient(listOf(currentPrayerColor.copy(0.3f), Color.Transparent), startY = center.y - radius, endY = center.y), Offset(center.x, center.y), Offset(center.x, center.y - radius + 10.dp.toPx()), 5.dp.toPx(), StrokeCap.Round)
@@ -351,8 +387,9 @@ fun PrayerCircleVisualization(
                 }
             }
 
+            // Draw individual prayer nodes (markers)
             prayers.forEachIndexed { index, prayer ->
-                // Subtle orbital pull: markers move slightly toward/away from center
+                // Apply subtle breathing to node radius
                 val pullRadius = radius * (1f - (0.02f * gravityFlux))
                 val pos = getPosition(prayer.time, pullRadius, center)
                 
@@ -363,7 +400,7 @@ fun PrayerCircleVisualization(
                     val markerRadius = if (isCurrent) (if (isLandscape) 11.dp else 14.dp).toPx() else (if (isLandscape) 9.dp else 12.dp).toPx()
                     val iconSize = if (isCurrent) (if (isLandscape) 13.dp else 16.dp).toPx() else (if (isLandscape) 11.dp else 14.dp).toPx()
 
-                    // Flat Atmospheric Halo for Active Prayer
+                    // Glow effect for currently active prayer marker
                     if (isCurrent) {
                         drawCircle(
                             color = prayer.color.copy(alpha = 0.15f * pulseScale),
@@ -372,30 +409,26 @@ fun PrayerCircleVisualization(
                         )
                     }
 
-                    // Main Marker (Planet body): Solid Flat Style
+                    // Base circle for the marker
                     drawCircle(
                         color = prayer.color,
                         radius = markerRadius,
                         center = pos
                     )
 
-                    // Contrast-aware Icon Tint
-                    val iconTint = if (prayer.color.luminance() > 0.5f) {
-                        Color.Black.copy(alpha = 0.7f)
-                    } else {
-                        Color.White
-                    }
-
+                    // Icon placement within the marker
+                    val iconTint = if (prayer.color.luminance() > 0.5f) Color.Black.copy(0.7f) else Color.White
                     translate(pos.x - iconSize / 2, pos.y - iconSize / 2) {
                         with(prayer.painter) { draw(Size(iconSize, iconSize), colorFilter = ColorFilter.tint(iconTint)) }
                     }
                     
-                    // Time labels
+                    // Pre-measured time labels rendered below markers
                     val textResult = measuredTimeLabels[index]
                     drawText(textResult, topLeft = Offset(pos.x - textResult.size.width / 2, pos.y + (if (isLandscape) 14.dp else 18.dp).toPx()))
                 }
             }
 
+            // Current time dot/indicator
             if (isSelectedDayToday) {
                 val currentPos = getPosition(currentTime, radius, center)
                 drawCircle(Brush.radialGradient(listOf(currentPrayerColor.copy(0.3f), Color.Transparent), currentPos, 12.dp.toPx()), 12.dp.toPx(), currentPos)
@@ -407,6 +440,7 @@ fun PrayerCircleVisualization(
             }
         }
 
+        // Center Content: Calendar Card and Religious Badge
         Column(
             modifier = Modifier.zIndex(5f),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -426,8 +460,10 @@ fun PrayerCircleVisualization(
             ReligiousBadge(day.date, contentColor, hijriDate = day.hijriDate)
         }
 
+        // Top Content: Header for current prayer status
         CurrentPrayerHeader(currentPrayer, contentColor, currentPrayerColor)
 
+        // Interactive Tooltip: Appears when a prayer node is tapped
         Box(modifier = Modifier.fillMaxSize().zIndex(10f), contentAlignment = Alignment.BottomCenter) {
             AnimatedContent(
                 targetState = selectedInfo,
@@ -439,6 +475,9 @@ fun PrayerCircleVisualization(
     }
 }
 
+/**
+ * A floating "glass" card providing details about a selected prayer node.
+ */
 @Composable
 fun InfoGlassCard(info: DetailedInfo) {
     val glassTheme = LocalGlassTheme.current
@@ -454,19 +493,17 @@ fun InfoGlassCard(info: DetailedInfo) {
         modifier = Modifier
             .wrapContentSize()
             .height(if (isLandscape) 40.dp else 48.dp)
-            .clip(cardShape) // Ensure children are clipped to the pill shape
+            .clip(cardShape) 
             .drawWithContent {
                 drawContent()
-                // Subtle card gradient
+                // Card accent gradient
                 drawRoundRect(Brush.horizontalGradient(listOf(info.color.copy(0.15f), Color.Transparent), endX = size.width * 0.4f), size = size, cornerRadius = CornerRadius(size.height / 2), blendMode = BlendMode.Screen)
                 drawRoundRect(borderColor, size = size, cornerRadius = CornerRadius(size.height / 2), style = Stroke(1.dp.toPx()))
             },
         contentColor = Color.White
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically, 
-        ) {
-            // Icon container covering the left side like a toggle
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            // Icon Pill on the left
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -482,6 +519,7 @@ fun InfoGlassCard(info: DetailedInfo) {
                 )
             }
             
+            // Info text on the right
             Column(
                 modifier = Modifier.padding(start = if (isLandscape) 12.dp else 16.dp, end = if (isLandscape) 16.dp else 20.dp),
                 verticalArrangement = Arrangement.spacedBy((-4).dp, Alignment.CenterVertically)
@@ -512,5 +550,8 @@ fun InfoGlassCard(info: DetailedInfo) {
     }
 }
 
+/** Metadata for a single prayer point on the circle. */
 data class PrayerNodeInfo(val type: PrayerType, val time: LocalTime, val color: Color, val painter: androidx.compose.ui.graphics.vector.VectorPainter)
+
+/** State for the interactive information card. */
 data class DetailedInfo(val id: String, val title: String, val time: String, val color: Color, val icon: androidx.compose.ui.graphics.vector.ImageVector)

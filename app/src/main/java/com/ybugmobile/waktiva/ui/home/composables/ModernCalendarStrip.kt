@@ -36,6 +36,18 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/**
+ * A modern, horizontal calendar strip that allows users to select different days.
+ * Supports both Gregorian and Hijri calendar systems with a smooth transition.
+ * Includes visual cues for current day, selected day, and religious events (Ramadan, Eid).
+ *
+ * @param selectedDate The date currently selected and focused.
+ * @param availableDays The list of days available for selection.
+ * @param isHijriSelected Whether the Hijri calendar system is currently active.
+ * @param onToggleCalendarType Callback to switch between Gregorian and Hijri views.
+ * @param onDateSelected Callback when a date is picked by the user.
+ * @param contentColor Base color for text and unselected elements.
+ */
 @Composable
 fun ModernCalendarStrip(
     selectedDate: LocalDate,
@@ -55,6 +67,7 @@ fun ModernCalendarStrip(
     val currentLocale = Locale.getDefault()
     val isNonLatin = currentLocale.language in listOf("ar", "fa", "ur", "bn")
 
+    // Automatically scroll to the selected date whenever it changes
     LaunchedEffect(selectedDate) {
         val index = availableDays.indexOfFirst { it.date == selectedDate }
         if (index != -1) {
@@ -76,6 +89,7 @@ fun ModernCalendarStrip(
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
+        // Header Row: Calendar toggle and religious indicators
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -83,6 +97,7 @@ fun ModernCalendarStrip(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Gregorian/Hijri Toggle
             Surface(
                 color = contentColor.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(20.dp)
@@ -103,6 +118,7 @@ fun ModernCalendarStrip(
                 }
             }
 
+            // High-level religious information for the selected day
             val effectiveHijri = remember(selectedDate, availableDays) {
                 HijriUtils.getEffectiveHijriDate(
                     targetDate = selectedDate,
@@ -113,6 +129,7 @@ fun ModernCalendarStrip(
             ReligiousBadge(gregorianDate = selectedDate, contentColor = contentColor, hijriDate = effectiveHijri)
         }
 
+        // Horizontal List of individual day cards
         LazyRow(
             state = listState,
             modifier = Modifier.fillMaxWidth(),
@@ -136,6 +153,7 @@ fun ModernCalendarStrip(
                 val hijriMonth = hijri?.monthNumber
                 val hijriDayNum = hijri?.day
                 
+                // Color coding for special religious periods
                 val accentColor = getCalendarAccentColor(date, hijriMonth, hijriDayNum, contentColor)
                 val isRamadan = isRamadan(hijriMonth, religiousDay)
                 val isEid = isEid(religiousDay)
@@ -156,6 +174,7 @@ fun ModernCalendarStrip(
                     modifier = Modifier
                         .width(62.dp)
                         .then(
+                            // Dynamic border highlighting for focus/selection
                             when {
                                 isSelected -> Modifier.border(1.5.dp, contentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
                                 isToday -> Modifier.border(2.dp, accentColor.copy(alpha = 0.6f), RoundedCornerShape(12.dp))
@@ -168,6 +187,7 @@ fun ModernCalendarStrip(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        // Month Indicator (Top Bar)
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -183,6 +203,7 @@ fun ModernCalendarStrip(
                             contentAlignment = Alignment.Center
                         ) {
                             val monthText = if (isHijriSelected && hijri != null) {
+                                // Extract and translate Hijri month name
                                 val resId = context.resources.getIdentifier(
                                     "hijri_month_${hijri.monthNumber}",
                                     "string",
@@ -204,6 +225,7 @@ fun ModernCalendarStrip(
 
                         Spacer(Modifier.height(8.dp))
 
+                        // Day Number (Center)
                         val dayNumber = if (isHijriSelected && hijri != null) hijri.day.toString() else date.dayOfMonth.toString()
                         Text(
                             text = dayNumber,
@@ -213,6 +235,7 @@ fun ModernCalendarStrip(
                             lineHeight = 22.sp
                         )
 
+                        // Short Day Name (Bottom)
                         Text(
                             text = date.format(dayNameFormatter).uppercase(),
                             color = contentColor.copy(alpha = if (isSelected || isToday) 1f else 0.4f),
@@ -227,6 +250,7 @@ fun ModernCalendarStrip(
     }
 }
 
+/** Individual toggle button for switching calendar systems. */
 @Composable
 private fun CalendarToggleOption(
     icon: ImageVector,
@@ -248,6 +272,7 @@ private fun CalendarToggleOption(
     }
 }
 
+/** Determines the thematic accent color based on religious significance. */
 private fun getCalendarAccentColor(
     date: LocalDate,
     hijriMonth: Int?,
@@ -261,10 +286,12 @@ private fun getCalendarAccentColor(
     }
 }
 
+/** Returns true if the given data corresponds to the month of Ramadan. */
 private fun isRamadan(hijriMonth: Int?, religiousDay: ReligiousDay?): Boolean {
     return hijriMonth == 9 || religiousDay?.nameResId == R.string.rel_day_ramadan_start
 }
 
+/** Returns true if the given data corresponds to an Eid holiday. */
 private fun isEid(religiousDay: ReligiousDay?): Boolean {
     return religiousDay?.nameResId in listOf(R.string.rel_day_ramadan_eid, R.string.rel_day_sacrifice_eid)
 }

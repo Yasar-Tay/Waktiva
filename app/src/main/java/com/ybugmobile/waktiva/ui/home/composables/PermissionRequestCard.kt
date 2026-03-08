@@ -19,6 +19,13 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.ybugmobile.waktiva.R
 
+/**
+ * An inline card component that appears when critical permissions are missing.
+ * Provides a clear explanation and a direct action to grant permissions, 
+ * either via the system dialog or the application settings page.
+ *
+ * @param permissionState The [MultiplePermissionsState] instance managing location/notifications.
+ */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PermissionRequestCard(permissionState: MultiplePermissionsState) {
@@ -49,8 +56,10 @@ fun PermissionRequestCard(permissionState: MultiplePermissionsState) {
             Button(
                 onClick = {
                     if (permissionState.shouldShowRationale) {
+                        // Request via system dialog if rationale is appropriate
                         permissionState.launchMultiplePermissionRequest()
                     } else {
+                        // Navigate to system settings if the user previously denied permanently
                         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                             data = Uri.fromParts("package", context.packageName, null)
                         }

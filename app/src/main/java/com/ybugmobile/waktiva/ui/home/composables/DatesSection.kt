@@ -19,6 +19,17 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/**
+ * Component for displaying both Gregorian and Hijri date information.
+ * Handles localization and formatting of calendar data.
+ *
+ * @param date The Gregorian date to display.
+ * @param hijriDate The optional Hijri date information.
+ * @param contentColor Base color for text elements.
+ * @param context Android context for resource lookups.
+ * @param modifier Root layout modifier.
+ * @param isOffline Whether the Hijri date is calculated offline (estimates).
+ */
 @Composable
 fun DatesSection(
     date: LocalDate,
@@ -37,6 +48,7 @@ fun DatesSection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
+        // Gregorian Date Column
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 text = date.format(dayFormatter).uppercase(),
@@ -53,6 +65,7 @@ fun DatesSection(
         }
 
         if (hijriDate != null) {
+            // Vertical Separator
             Box(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
@@ -61,6 +74,7 @@ fun DatesSection(
                     .background(contentColor.copy(alpha = 0.1f))
             )
 
+            // Dynamic resource lookup for Hijri month translations
             val hijriMonthResId = context.resources.getIdentifier(
                 "hijri_month_${hijriDate.monthNumber}",
                 "string",
@@ -68,6 +82,7 @@ fun DatesSection(
             )
             val translatedMonth = if (hijriMonthResId != 0) stringResource(hijriMonthResId) else hijriDate.monthEn
 
+            // Hijri Date Column
             Column(horizontalAlignment = Alignment.Start) {
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(

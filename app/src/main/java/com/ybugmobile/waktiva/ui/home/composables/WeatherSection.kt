@@ -21,6 +21,17 @@ import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import java.time.LocalTime
 import java.util.Locale
 
+/**
+ * Component for displaying current weather information including temperature and condition icons.
+ * Automatically adjusts icons based on day/night cycles derived from prayer times.
+ *
+ * @param temperature The current temperature value in Celsius/Fahrenheit.
+ * @param condition The [WeatherCondition] enum representing current weather state.
+ * @param contentColor The base color for text and icon tinting.
+ * @param modifier Root layout modifier.
+ * @param currentTime Current system time used to determine day/night status.
+ * @param currentPrayerDay Current day's prayer timings to extract sunrise/sunset for icon selection.
+ */
 @Composable
 fun WeatherSection(
     temperature: Double?,
@@ -30,12 +41,14 @@ fun WeatherSection(
     currentTime: LocalTime = LocalTime.now(),
     currentPrayerDay: PrayerDay? = null
 ) {
+    // Determine if it's currently day or night to choose appropriate weather icons
     val isDay = remember(currentTime, currentPrayerDay) {
         val sunrise = currentPrayerDay?.timings?.get(PrayerType.SUNRISE) ?: LocalTime.of(6, 0)
         val sunset = currentPrayerDay?.timings?.get(PrayerType.MAGHRIB) ?: LocalTime.of(18, 0)
         currentTime.isAfter(sunrise) && currentTime.isBefore(sunset)
     }
 
+    // Icon resource selection logic
     val weatherIconRes = when (condition) {
         WeatherCondition.CLEAR -> if (isDay) R.drawable.clear_day else R.drawable.clear_night
         WeatherCondition.PARTLY_CLOUDY -> if (isDay) R.drawable.partly_cloudy_day else R.drawable.partly_cloudy_night
@@ -47,6 +60,7 @@ fun WeatherSection(
         WeatherCondition.UNKNOWN -> R.drawable.cloudy_day_night
     }
 
+    // Label resource selection logic (translations)
     val weatherLabelRes = when (condition) {
         WeatherCondition.CLEAR -> R.string.weather_clear
         WeatherCondition.PARTLY_CLOUDY -> R.string.weather_partly_cloudy
@@ -64,7 +78,7 @@ fun WeatherSection(
     ) {
         if (temperature != null) {
             Row(verticalAlignment = Alignment.Top) {
-                // Temperature Number
+                // Temperature numeric display
                 Text(
                     text = String.format(Locale.US, "%.0f", temperature),
                     style = MaterialTheme.typography.displayLarge.copy(
@@ -74,7 +88,7 @@ fun WeatherSection(
                     color = contentColor
                 )
                 
-                // Degree Symbol (Smaller and elevated)
+                // Degree symbol (styled differently for better visual balance)
                 Text(
                     text = "°",
                     style = MaterialTheme.typography.displayLarge.copy(
@@ -85,7 +99,7 @@ fun WeatherSection(
                     modifier = Modifier.padding(top = 8.dp)
                 )
                 
-                // Weather Icon & Condition Text
+                // Weather icon container
                 Column(
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.SpaceBetween,
@@ -97,22 +111,10 @@ fun WeatherSection(
                         modifier = Modifier.size(30.dp),
                         alpha = 0.9f
                     )
-                    
-                    /*if (weatherLabelRes != null) {
-                        Text(
-                            text = stringResource(weatherLabelRes).uppercase(Locale.getDefault()),
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 0.5.sp
-                            ),
-                            color = contentColor.copy(alpha = 0.7f)
-                        )
-                    }*/
                 }
             }
         } else {
-            // Placeholder/Loading State
+            // Placeholder/Loading state when temperature data is pending
             Box(Modifier.width(60.dp).fillMaxHeight())
             
             Image(

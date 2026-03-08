@@ -12,6 +12,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ybugmobile.waktiva.R
 
+/**
+ * A dialog that allows users to choose from various prayer calculation methods.
+ * Displays a list of available methods with radio buttons for selection.
+ *
+ * @param showDialog Whether the dialog is currently visible.
+ * @param onDismiss Callback invoked when the dialog should be closed without selection or via the OK button.
+ * @param calculationMethods List of pairs where the first element is the string resource ID for the method name
+ *                           and the second element is the method's unique ID.
+ * @param selectedMethod The ID of the currently active calculation method.
+ * @param onMethodSelected Callback invoked when a new method is chosen from the list.
+ */
 @Composable
 fun CalculationMethodDialog(
     showDialog: Boolean,
@@ -38,7 +49,7 @@ fun CalculationMethodDialog(
                         ) {
                             RadioButton(
                                 selected = selectedMethod == method.second,
-                                onClick = null
+                                onClick = null // Handled by row clickable
                             )
                             Spacer(modifier = Modifier.width(16.dp))
                             Text(stringResource(method.first))

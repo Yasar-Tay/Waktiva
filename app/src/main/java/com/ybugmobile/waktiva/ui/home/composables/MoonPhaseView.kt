@@ -26,6 +26,15 @@ import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.MoonPhase
 import java.util.Locale
 
+/**
+ * A highly accurate Moon Phase visualization component.
+ * Uses custom Canvas drawing to represent the moon's illumination, rotation (parallactic angle),
+ * and surface texture. Includes a subtle atmospheric glow animation.
+ *
+ * @param moonPhase Data object containing illumination percentage, phase progress, and angle.
+ * @param contentColor The primary color used for the illuminated part and text.
+ * @param modifier Layout modifier.
+ */
 @Composable
 fun MoonPhaseView(
     moonPhase: MoonPhase?,
@@ -34,6 +43,7 @@ fun MoonPhaseView(
 ) {
     if (moonPhase == null) return
 
+    // Subtle atmospheric glow animation
     val infiniteTransition = rememberInfiniteTransition(label = "moonGlow")
     val glowAlpha by infiniteTransition.animateFloat(
         initialValue = 0.3f,
@@ -60,13 +70,13 @@ fun MoonPhaseView(
                 val radius = size.minDimension / 2.5f
 
                 // Use the parallactic angle from the accurate SunCalc calculation
-                // to rotate the moon exactly as it appears in the sky
+                // to rotate the moon exactly as it appears in the sky relative to the observer
                 val rotationAngle = moonPhase.parallacticAngle.toFloat()
 
                 withTransform({
                     rotate(degrees = rotationAngle, pivot = center)
                 }) {
-                    // 1. Atmospheric Glow
+                    // 1. Atmospheric Glow - Radial gradient for soft lighting
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(contentColor.copy(alpha = glowAlpha * 0.4f), Color.Transparent),
@@ -82,7 +92,7 @@ fun MoonPhaseView(
                     }
 
                     clipPath(moonClipPath) {
-                        // 2. Dark Background (The unlit part of the moon)
+                        // 2. Dark Background - The unlit portion of the moon
                         drawCircle(
                             color = Color.Black.copy(alpha = 0.4f), 
                             radius = radius,
@@ -90,19 +100,22 @@ fun MoonPhaseView(
                             style = Fill
                         )
 
-                        // 3. The Illuminated Part (Mask)
+                        // 3. The Illuminated Mask - Calculated based on current phase
                         val illumination = moonPhase.illumination.toFloat()
                         val isWaning = moonPhase.phaseProgress >= 0.5
 
                         withTransform({
+                            // Flip mask horizontally for waning phases
                             if (isWaning) {
                                 scale(scaleX = -1f, scaleY = 1f, pivot = center)
                             }
                         }) {
                             if (illumination > 0) {
                                 if (illumination >= 0.98f) {
+                                    // Full Moon optimization
                                     drawCircle(contentColor.copy(alpha = 0.85f), radius, center)
                                 } else {
+                                    // Draw crescent/gibbous using cubic bezier curves
                                     val maskPath = Path()
                                     maskPath.addArc(
                                         oval = Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius),
@@ -122,7 +135,7 @@ fun MoonPhaseView(
                             }
                         }
 
-                        // 4. Moon Surface Texture
+                        // 4. Moon Surface Texture Overlay
                         withTransform({
                             translate(center.x - radius, center.y - radius)
                         }) {
@@ -135,7 +148,7 @@ fun MoonPhaseView(
                         }
                     }
 
-                    // 5. Moon Outline
+                    // 5. Subtle Outline
                     drawCircle(
                         color = contentColor.copy(alpha = 0.3f),
                         radius = radius,
@@ -146,6 +159,7 @@ fun MoonPhaseView(
             }
         }
         
+        // Illumination Percentage Label
         Text(
             text = String.format(Locale.US, "%.1f%%", moonPhase.illumination * 100),
             style = MaterialTheme.typography.labelSmall.copy(

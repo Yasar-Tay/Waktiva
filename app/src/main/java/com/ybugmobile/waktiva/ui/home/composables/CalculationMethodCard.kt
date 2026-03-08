@@ -17,6 +17,16 @@ import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.ui.theme.GlassTheme
 
+/**
+ * An interactive card that displays the currently active prayer calculation method.
+ * Provides a clear summary and serves as a trigger for the method selection dialog.
+ *
+ * @param settings The user's preferences containing the current method ID.
+ * @param calculationMethods Map of method IDs to their localized string resources.
+ * @param onClick Callback to trigger when the card is tapped.
+ * @param contentColor Primary text color.
+ * @param glassTheme Theme object for deriving secondary colors and consistent glass styling.
+ */
 @Composable
 fun CalculationMethodCard(
     settings: UserSettings?,
@@ -42,6 +52,7 @@ fun CalculationMethodCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
+                    // Label identifying the section
                     Text(
                         stringResource(R.string.settings_method).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
@@ -49,6 +60,7 @@ fun CalculationMethodCard(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp
                     )
+                    // The name of the currently selected method
                     Text(
                         calculationMethods.find { it.second == s.calculationMethod }?.first?.let { stringResource(it) }
                             ?: "Default",
@@ -56,6 +68,7 @@ fun CalculationMethodCard(
                         color = contentColor
                     )
                 }
+                // Visual cue for interactivity
                 Icon(
                     Icons.Default.Settings,
                     null,

@@ -40,6 +40,23 @@ import com.ybugmobile.waktiva.ui.theme.*
 import java.time.LocalDate
 import java.util.Locale
 
+/**
+ * Component that displays a high-visibility countdown timer to the next prayer event.
+ * Includes interactive controls for muting/unmuting the next adhan and provides
+ * fallbacks for future date views.
+ *
+ * @param nextPrayer Information about the upcoming prayer event.
+ * @param currentPrayer Information about the active prayer period.
+ * @param selectedDate The date currently being viewed.
+ * @param contentColor Base color for secondary text elements.
+ * @param accentColor Primary color for the countdown timer.
+ * @param playAdhanAudio General preference for whether adhan should play.
+ * @param isMuted Whether the next adhan is specifically silenced for this occurrence.
+ * @param onSkipAudio Callback to toggle the mute state of the next adhan.
+ * @param onResetDate Callback to return the view to today.
+ * @param showIdleState Whether to show the app logo/idle state when no prayer is pending.
+ * @param modifier Root layout modifier.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NextPrayerCountdown(
@@ -63,6 +80,7 @@ fun NextPrayerCountdown(
             .height(200.dp),
         contentAlignment = Alignment.Center
     ) {
+        // Active Countdown State (Only for Today)
         if ((selectedDate == LocalDate.now()) && nextPrayer != null) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -87,7 +105,7 @@ fun NextPrayerCountdown(
                     )
                 }
                 
-                // 2. Countdown Timer
+                // 2. Countdown Timer - Forced LTR for numerical consistency across locales
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     ResponsiveCountdownText(
                         text = remainingTime,
@@ -97,7 +115,7 @@ fun NextPrayerCountdown(
                     )
                 }
 
-                // 3. Skip/Mute Adhan Button (Redesigned as InfoGlassCard)
+                // 3. Skip/Mute Adhan Control (Pill-shaped glass button)
                 if (playAdhanAudio) {
                     Spacer(modifier = Modifier.height(16.dp))
                     
@@ -113,12 +131,10 @@ fun NextPrayerCountdown(
                     }
                     val cardShape = RoundedCornerShape(percent = 50)
 
-                    // Determine which prayer the skip button should target.
-                    // If the immediate next event is SUNRISE (which has no adhan), 
-                    // the button targets DHUHR instead.
+                    // Target logic: If next event is Sunrise (no adhan), target Dhuhr instead.
                     val targetPrayerType = if (nextPrayer.type == PrayerType.SUNRISE) PrayerType.DHUHR else nextPrayer.type
 
-                    // Get background color for the icon based on targetPrayerType
+                    // Dynamic button accent color with weather-aware desaturation
                     val buttonColor = remember(targetPrayerType, glassTheme.weatherCondition) {
                         val baseColor = when (targetPrayerType) {
                             PrayerType.FAJR -> Color(0xFF81D4FA)
@@ -129,7 +145,6 @@ fun NextPrayerCountdown(
                             PrayerType.ISHA -> Color(0xFF9FA8DA)
                         }
                         
-                        // Apply same weather adjustments as in PrayerCircleVisualization
                         val isCloudy = glassTheme.weatherCondition != com.ybugmobile.waktiva.domain.model.WeatherCondition.CLEAR &&
                                        glassTheme.weatherCondition != com.ybugmobile.waktiva.domain.model.WeatherCondition.UNKNOWN
                         val isSevere = glassTheme.weatherCondition == com.ybugmobile.waktiva.domain.model.WeatherCondition.RAINY ||
@@ -145,6 +160,7 @@ fun NextPrayerCountdown(
                         }
                     }
 
+                    // Button press animations
                     val interactionSource = remember { MutableInteractionSource() }
                     val isPressed by interactionSource.collectIsPressedAsState()
                     val scale by animateFloatAsState(
@@ -175,13 +191,13 @@ fun NextPrayerCountdown(
                                 .background(containerColor)
                                 .clickable(
                                     interactionSource = interactionSource,
-                                    indication = null, // Disable default ripple for glass effect
+                                    indication = null,
                                     onClick = { onSkipAudio(targetPrayerType.name) }
                                 )
                                 .drawWithContent {
                                     drawContent()
                                     val radius = CornerRadius(size.height / 2f)
-                                    // Match InfoGlassCard style
+                                    // Layered glass effect drawing
                                     drawRoundRect(
                                         brush = Brush.horizontalGradient(
                                             listOf(buttonColor.copy(0.15f), Color.Transparent), 
@@ -200,10 +216,8 @@ fun NextPrayerCountdown(
                                 },
                             contentAlignment = Alignment.Center
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                // Icon container using buttonColor
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                // Left Icon Pill
                                 Box(
                                     modifier = Modifier
                                         .fillMaxHeight()
@@ -219,6 +233,7 @@ fun NextPrayerCountdown(
                                     )
                                 }
 
+                                // Button Text Content
                                 Column(
                                     modifier = Modifier.padding(
                                         start = if (isLandscape) 12.dp else 16.dp, 
@@ -257,7 +272,7 @@ fun NextPrayerCountdown(
                 }
             }
         } else if (selectedDate.isAfter(LocalDate.now())) {
-            // Fallback element for future dates
+            // Future Date View: Show a prompt to return to the current day
             Surface(
                 onClick = onResetDate,
                 color = contentColor.copy(alpha = 0.08f),
@@ -289,11 +304,15 @@ fun NextPrayerCountdown(
                 }
             }
         } else if (showIdleState) {
+            // Idle state / Logo display
             IdleState(contentColor, accentColor)
         }
     }
 }
 
+/**
+ * Text component that automatically reduces its font size to fit within the available width.
+ */
 @Composable
 private fun ResponsiveCountdownText(
     text: String,
@@ -330,6 +349,9 @@ private fun ResponsiveCountdownText(
     )
 }
 
+/**
+ * Visual representation of the app's idle state (logo and branding).
+ */
 @Composable
 private fun IdleState(contentColor: Color, accentColor: Color) {
     Column(
@@ -353,6 +375,7 @@ private fun IdleState(contentColor: Color, accentColor: Color) {
     }
 }
 
+/** Formats a duration in seconds into a 'HH : MM : SS' string. */
 private fun formatRemainingTime(totalSeconds: Long): String {
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60

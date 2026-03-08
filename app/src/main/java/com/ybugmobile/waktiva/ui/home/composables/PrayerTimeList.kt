@@ -23,6 +23,15 @@ import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import java.time.format.DateTimeFormatter
 
+/**
+ * A structured list component that displays all prayer times for a given day.
+ * Highlights the current active prayer and uses thematic icons and colors.
+ *
+ * @param day The prayer data for the selected day.
+ * @param currentPrayerType The type of prayer currently active (used for highlighting).
+ * @param contentColor Base color for text and unselected icons.
+ * @param highlightColor Background color for the current prayer's list item.
+ */
 @Composable
 fun PrayerTimeList(
     day: PrayerDay,
@@ -30,6 +39,7 @@ fun PrayerTimeList(
     contentColor: Color = Color.White,
     highlightColor: Color = Color.Black.copy(alpha = 0.2f)
 ) {
+    /** Internal model for prayer list entries. */
     data class PrayerItem(
         val type: PrayerType,
         val resId: Int,
@@ -40,6 +50,7 @@ fun PrayerTimeList(
 
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
+    // Define the sequence of prayers with their respective icons and colors
     val prayers = listOf(
         PrayerItem(PrayerType.FAJR, R.string.prayer_fajr, day.timings[PrayerType.FAJR]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.haze_day_rotated), Color(0xFF81D4FA)),
         PrayerItem(PrayerType.SUNRISE, R.string.prayer_sunrise, day.timings[PrayerType.SUNRISE]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.sunrise), Color(0xFFFFE082)),
@@ -49,6 +60,7 @@ fun PrayerTimeList(
         PrayerItem(PrayerType.ISHA, R.string.prayer_isha, day.timings[PrayerType.ISHA]?.format(timeFormatter) ?: "", ImageVector.vectorResource(R.drawable.clear_night), Color(0xFF9FA8DA))
     )
 
+    // Optional text shadow for better readability on light/busy backgrounds
     val commonShadow = if (contentColor.red > 0.5f) Shadow(
         color = Color.Black.copy(alpha = 0.5f),
         offset = Offset(0f, 2f),
@@ -63,7 +75,7 @@ fun PrayerTimeList(
         prayers.forEach { item ->
             val isCurrent = item.type == currentPrayerType
             
-            // Highlight container for current prayer
+            // Visual state determination based on active prayer status
             val itemContainerColor = if (isCurrent) highlightColor else Color.Transparent
             val itemContentColor = if (isCurrent) contentColor else contentColor.copy(alpha = 0.7f)
             val iconTint = if (isCurrent) item.color else itemContentColor
@@ -78,6 +90,7 @@ fun PrayerTimeList(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Left side: Icon and Prayer Name
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = item.icon,
@@ -97,6 +110,7 @@ fun PrayerTimeList(
                     )
                 }
                 
+                // Right side: Formatted Time
                 Text(
                     text = item.time,
                     color = itemContentColor,

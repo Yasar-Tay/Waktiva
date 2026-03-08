@@ -13,6 +13,20 @@ import androidx.compose.ui.unit.dp
 import com.ybugmobile.waktiva.domain.model.HijriData
 import java.time.LocalDate
 
+/**
+ * Header component for the Home screen.
+ * Displays the current location information and provides access to system health status.
+ *
+ * @param locationName The name of the current location.
+ * @param date The selected Gregorian date.
+ * @param hijriDate The corresponding Hijri date data.
+ * @param contentColor The preferred color for text and icons.
+ * @param onStatusClick Callback when the location/status area is tapped.
+ * @param modifier Modifier for the root container.
+ * @param isNetworkAvailable Connectivity status.
+ * @param isLocationEnabled System-level location toggle status.
+ * @param isLocationPermissionGranted App-level location permission status.
+ */
 @Composable
 fun HomeHeader(
     locationName: String,

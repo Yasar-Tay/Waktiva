@@ -1,5 +1,6 @@
 package com.ybugmobile.waktiva.ui.home.composables
 
+import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,19 @@ import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthIndicator
 import com.ybugmobile.waktiva.utils.PermissionUtils
 
+/**
+ * Component for displaying the current location name and system health status.
+ * Dynamically switches between showing the location name and health issue titles
+ * based on whether there are blockers (e.g., missing permissions, offline status).
+ *
+ * @param locationName The name of the current location (e.g., "City, Country").
+ * @param contentColor Base color for text and icons.
+ * @param isNetworkAvailable Connectivity status.
+ * @param isLocationEnabled System-level location toggle status.
+ * @param isLocationPermissionGranted App-level location permission status.
+ * @param onStatusClick Callback when the section is tapped to view details or fix issues.
+ * @param modifier Root layout modifier.
+ */
 @Composable
 fun LocationSection(
     locationName: String,
@@ -37,7 +51,7 @@ fun LocationSection(
     
     val unknownStr = stringResource(R.string.home_unknown_location)
     
-    // Check all health issues that SystemHealth handles
+    // Check various system health factors
     val isNotificationGranted = PermissionUtils.isNotificationPermissionGranted(context)
     val areChannelsMuted = PermissionUtils.areNotificationChannelsMuted(context)
     val isDndActive = PermissionUtils.isDoNotDisturbActive(context)
@@ -45,9 +59,11 @@ fun LocationSection(
     val hasIssue = !isLocationPermissionGranted || !isLocationEnabled || !isNetworkAvailable || 
                    !isNotificationGranted || areChannelsMuted || isDndActive
 
+    // Process location name to extract city or fallback
     val rawCity = locationName.substringBefore(",")
     val city = if (rawCity == "Unknown" || rawCity.isEmpty()) unknownStr else rawCity
     
+    // Select an appropriate title if there's a system health issue
     val healthIssueTitle = when {
         !isLocationPermissionGranted -> stringResource(R.string.location_health_permission_denied)
         !isLocationEnabled -> stringResource(R.string.location_health_gps_off)
@@ -58,6 +74,7 @@ fun LocationSection(
         else -> ""
     }
 
+    // Determine subtitle text based on issue status
     val subTitle = if (hasIssue) {
         if (city != unknownStr && city.isNotEmpty()) {
             stringResource(R.string.home_last_known_location, city)
@@ -70,17 +87,19 @@ fun LocationSection(
         modifier = modifier.clickable { onStatusClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Column 1: Icon / Status Indicator
+        // Icon / Status Indicator container
         Box(
             modifier = Modifier.size(32.dp),
             contentAlignment = Alignment.Center
         ) {
             if (hasIssue) {
+                // Shows a special indicator if there are system health problems
                 SystemHealthIndicator(
                     onClick = onStatusClick,
                     modifier = Modifier.fillMaxSize()
                 )
             } else {
+                // Standard location pin icon when everything is healthy
                 Icon(
                     imageVector = Icons.Rounded.LocationOn,
                     contentDescription = null,
@@ -92,7 +111,7 @@ fun LocationSection(
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        // Column 2: Location Information
+        // Location text information
         Column(
             modifier = Modifier.weight(1f, fill = false),
             verticalArrangement = Arrangement.Center

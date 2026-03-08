@@ -21,6 +21,10 @@ import com.ybugmobile.waktiva.ui.theme.GlassTheme
 import java.time.LocalDate
 import java.time.LocalTime
 
+/**
+ * Portrait-specific layout for the Home screen.
+ * Organizes the core prayer information, countdowns, and interaction cards in a vertical scroll.
+ */
 @Composable
 fun HomePortraitContent(
     state: HomeViewState,
@@ -41,7 +45,7 @@ fun HomePortraitContent(
     onMethodClick: () -> Unit,
     onShowSnackbar: (String) -> Unit
 ) {
-    // Optimization: Pre-calculate values that depend on state to avoid redundant work in sub-composables
+    // Optimization: Filter and memoize available days to prevent redundant calculations during scrolls
     val isToday = remember(state.selectedDate) { state.selectedDate == LocalDate.now() }
     val availableDays = remember(allDays) { allDays.filter { !it.date.isBefore(LocalDate.now()) } }
     
@@ -53,6 +57,7 @@ fun HomePortraitContent(
                 .systemBarsPadding()
                 .verticalScroll(scrollState)
         ) {
+            // Screen Header containing Location and System Health status
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.TopStart
@@ -73,6 +78,7 @@ fun HomePortraitContent(
                 modifier = Modifier.padding(horizontal = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Weather information (only shown if network is available)
                 if (state.isNetworkAvailable) {
                     WeatherSection(
                         temperature = state.temperature,
@@ -87,6 +93,7 @@ fun HomePortraitContent(
                     Spacer(modifier = Modifier.height(104.dp))
                 }
 
+                // Central Visualization: Circular representation of the day's prayer times
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -116,6 +123,7 @@ fun HomePortraitContent(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Toggle between Adhan Playback Controls and Next Prayer Countdown
                 AnimatedContent(
                     targetState = state.isAdhanPlaying,
                     transitionSpec = {
@@ -156,6 +164,7 @@ fun HomePortraitContent(
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
+            // Bottom Glass Surface: Detailed calendar and calculation method info
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -170,6 +179,7 @@ fun HomePortraitContent(
                 Column(
                     modifier = Modifier.padding(24.dp)
                 ) {
+                    // Date picker/strip for selecting different days
                     ModernCalendarStrip(
                         selectedDate = state.selectedDate,
                         availableDays = availableDays,
@@ -181,6 +191,7 @@ fun HomePortraitContent(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
+                    // Explicit list of prayer times for the selected day
                     state.currentPrayerDay?.let { prayerDay ->
                         PrayerTimeList(
                             day = prayerDay,
@@ -192,6 +203,7 @@ fun HomePortraitContent(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    // Interaction card for viewing/editing calculation methods
                     CalculationMethodCard(
                         settings = settings,
                         calculationMethods = calculationMethods,
@@ -204,7 +216,7 @@ fun HomePortraitContent(
             Spacer(modifier = Modifier.height(80.dp))
         }
 
-        // Optimization: Defer translation reading using graphicsLayer lambda
+        // Overlay: Moon Phase indicator fixed to the top right
         MoonPhaseView(
             moonPhase = state.moonPhase,
             contentColor = contentColor,
@@ -212,6 +224,7 @@ fun HomePortraitContent(
                 .align(Alignment.TopEnd)
                 .padding(top = 24.dp, end = 24.dp)
                 .graphicsLayer {
+                    // Parallax effect: moves with the scroll but remains visible
                     translationY = -scrollState.value.toFloat()
                     scaleX = 0.85f
                     scaleY = 0.85f

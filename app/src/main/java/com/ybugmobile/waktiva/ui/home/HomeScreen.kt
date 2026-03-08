@@ -34,12 +34,20 @@ import com.ybugmobile.waktiva.ui.theme.getGradientForTime
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+/**
+ * Entry point for the Home screen.
+ * Handles ViewModel initialization, lifecycle observations, and state collection.
+ *
+ * @param viewModel The [HomeViewModel] instance providing state and logic.
+ */
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    
+    // Sync ViewModel with Lifecycle events (specifically for refreshing on resume)
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME || event == Lifecycle.Event.ON_START) {
@@ -54,14 +62,14 @@ fun HomeScreen(
     val settings by viewModel.settings.collectAsState(initial = null)
     val allDays by viewModel.allPrayerDays.collectAsState()
 
+    // Automatic refresh if data is missing but conditions are met
     LaunchedEffect(state.isNetworkAvailable, state.hasSystemIssues, state.currentPrayerDay) {
         if (state.currentPrayerDay == null && state.isNetworkAvailable && !state.hasSystemIssues) {
             viewModel.refresh()
         }
     }
 
-    // Optimization: Remember all callbacks to avoid unnecessary recompositions
-    // Ensure all callbacks explicitly return Unit to avoid type mismatches when calling ViewModel methods that return Job
+    // Callbacks hoisted and remembered to optimize recompositions
     val onRefresh = remember(viewModel) { { viewModel.refresh(); Unit } }
     val onMethodSelected = remember(viewModel) { { it: Int -> viewModel.updateCalculationMethod(it); Unit } }
     val onDateSelected = remember(viewModel) { { it: LocalDate -> viewModel.selectDate(it); Unit } }
@@ -89,6 +97,24 @@ fun HomeScreen(
     )
 }
 
+/**
+ * Main UI content for the Home screen.
+ * Orchestrates background, progress indicators, pull-to-refresh, and orientation-specific layouts.
+ *
+ * @param state Current UI state containing prayer data, time, and system health status.
+ * @param settings User preferences for visual effects and calculation methods.
+ * @param allDays List of all fetched prayer days for calendar interaction.
+ * @param calculationMethods Available prayer calculation methods.
+ * @param onRefresh Callback for manual refresh triggered by the user.
+ * @param onMethodSelected Callback when a new calculation method is chosen.
+ * @param onDateSelected Callback when the user picks a date from the calendar.
+ * @param onToggleCalendarType Callback for switching between Gregorian and Hijri views.
+ * @param onSkipNextAudio Callback to mute/unmute adhan for a specific prayer.
+ * @param onStopAdhan Callback to silence currently playing adhan.
+ * @param onStopTest Callback to end an active test alarm sequence.
+ * @param onResetDate Callback to return the view to the current date.
+ * @param onDebugWeather Callback for overriding weather condition (debug purposes).
+ */
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
@@ -110,6 +136,7 @@ fun HomeScreenContent(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    // Location and Notification permissions handling
     val permissions = remember {
         val list = mutableListOf(
             android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -127,6 +154,7 @@ fun HomeScreenContent(
         }
     }
 
+    // Determine if weather effects should be rendered based on settings
     val effectiveWeather = remember(settings?.showWeatherEffects, state.weatherCondition) {
         if (settings?.showWeatherEffects == true) {
             state.weatherCondition
@@ -135,7 +163,7 @@ fun HomeScreenContent(
         }
     }
 
-    // Optimization: Calculate gradient and theme at minute precision to avoid object churn
+    // Optimization: Calculate gradient and theme at minute precision to avoid heavy object churn
     val minuteTime = remember(state.currentTime.minute, state.currentTime.hour, state.currentTime.dayOfYear) {
         state.currentTime.toLocalTime().withSecond(0).withNano(0)
     }
@@ -160,7 +188,7 @@ fun HomeScreenContent(
     val scope = rememberCoroutineScope()
     val contentColor = glassTheme.contentColor
 
-    // Optimization: Hoist the snackbar lambda and ensure it returns Unit
+    // Snackbar handler for adhan mute/unmute feedback
     val handleShowSnackbar = remember(context, state.isMuted, snackbarHostState, scope) {
         { prayerName: String ->
             scope.launch {
@@ -181,6 +209,7 @@ fun HomeScreenContent(
         containerColor = Color.Transparent,
         contentWindowInsets = WindowInsets.systemBars,
         floatingActionButton = {
+            // Debug button for weather testing
             Box(Modifier.fillMaxSize()) {
                 LargeFloatingActionButton(
                     onClick = { showDebugWeather = true },
@@ -202,6 +231,7 @@ fun HomeScreenContent(
                 .fillMaxSize()
                 .padding(padding)
         ) {
+            // Dynamic atmosphere rendering
             HomeBackground(
                 backgroundGradient = backgroundGradient,
                 currentTime = state.currentTime.toLocalTime(),
@@ -219,6 +249,7 @@ fun HomeScreenContent(
                     color = contentColor
                 )
             } else if (state.currentPrayerDay == null && (!permissionState.allPermissionsGranted || !state.isNetworkAvailable || state.hasSystemIssues)) {
+                // Show empty state if data is missing and there are blockers (permissions/network)
                 SystemHealthEmptyState(
                     isRefreshing = state.isRefreshing,
                     hasPrayerData = false,
@@ -235,6 +266,7 @@ fun HomeScreenContent(
                     val scrollState = rememberScrollState()
                     val localTime = state.currentTime.toLocalTime()
 
+                    // Orientation-specific layout injection
                     if (isLandscape) {
                         HomeLandscapeContent(
                             state = state,
@@ -279,6 +311,7 @@ fun HomeScreenContent(
                 }
             }
 
+            // Overlays & Dialogs
             if (showMethodDialog) {
                 CalculationMethodDialog(
                     showDialog = showMethodDialog,

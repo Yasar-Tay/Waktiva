@@ -22,6 +22,14 @@ import com.ybugmobile.waktiva.domain.model.HijriData
 import com.ybugmobile.waktiva.domain.provider.ReligiousDaysProvider
 import java.time.LocalDate
 
+/**
+ * A contextual badge that appears when the selected date coincides with a religious holiday or significant day.
+ *
+ * @param gregorianDate The date to check for religious significance.
+ * @param contentColor Base color for the text.
+ * @param hijriDate Optional Hijri data for more accurate identification.
+ * @param modifier Root layout modifier.
+ */
 @Composable
 fun ReligiousBadge(
     gregorianDate: LocalDate,
@@ -31,6 +39,7 @@ fun ReligiousBadge(
 ) {
     var religiousDayName by remember { mutableStateOf<Int?>(null) }
 
+    // Check for religious significance whenever the date changes
     LaunchedEffect(gregorianDate, hijriDate) {
         religiousDayName = ReligiousDaysProvider.getReligiousDay(gregorianDate)?.nameResId
     }

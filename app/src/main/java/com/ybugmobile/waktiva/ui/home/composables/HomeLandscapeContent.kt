@@ -21,6 +21,11 @@ import com.ybugmobile.waktiva.ui.theme.GlassTheme
 import java.time.LocalDate
 import java.time.LocalTime
 
+/**
+ * Landscape-optimized layout for the Home screen.
+ * Reorganizes the UI into a more horizontal flow, placing the central visualization
+ * alongside the countdown timer to better utilize wide screen space.
+ */
 @Composable
 fun HomeLandscapeContent(
     state: HomeViewState,
@@ -49,10 +54,11 @@ fun HomeLandscapeContent(
                 .displayCutoutPadding()
                 .verticalScroll(scrollState)
                 .padding(horizontal = 24.dp, vertical = 12.dp)
-                .padding(start = 72.dp),
+                .padding(start = 72.dp), // Compensate for side navigation if present or branding
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
+            // Screen Header containing Location and System Health status
             HomeHeader(
                 locationName = state.locationName,
                 date = state.selectedDate,
@@ -64,6 +70,7 @@ fun HomeLandscapeContent(
                 isLocationPermissionGranted = state.isLocationPermissionGranted
             )
 
+            // Horizontal split for main content: Circular Visualization + Countdown
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -97,6 +104,7 @@ fun HomeLandscapeContent(
                 Spacer(modifier = Modifier.width(32.dp))
 
                 Box(modifier = Modifier.weight(1f)) {
+                    // Toggle between Adhan Playback Controls and Next Prayer Countdown
                     AnimatedContent(
                         targetState = state.isAdhanPlaying,
                         transitionSpec = {
@@ -136,6 +144,7 @@ fun HomeLandscapeContent(
                 }
             }
 
+            // Bottom Glass Surface: Detailed calendar and calculation method info
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 color = glassTheme.containerColor,
@@ -148,6 +157,7 @@ fun HomeLandscapeContent(
                 Column(
                     modifier = Modifier.padding(24.dp)
                 ) {
+                    // Date picker/strip for selecting different days
                     ModernCalendarStrip(
                         selectedDate = state.selectedDate,
                         availableDays = allDays.filter { !it.date.isBefore(LocalDate.now()) },
@@ -159,6 +169,7 @@ fun HomeLandscapeContent(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
+                    // Explicit list of prayer times for the selected day
                     state.currentPrayerDay?.let { prayerDay ->
                         PrayerTimeList(
                             day = prayerDay,
@@ -170,6 +181,7 @@ fun HomeLandscapeContent(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    // Interaction card for viewing/editing calculation methods
                     CalculationMethodCard(
                         settings = settings,
                         calculationMethods = calculationMethods,
@@ -182,7 +194,7 @@ fun HomeLandscapeContent(
             Spacer(modifier = Modifier.height(80.dp))
         }
 
-        // Moon Phase in Top Middle for Landscape
+        // Overlay: Moon Phase indicator placed Top Middle in landscape to avoid conflict with edge content
         MoonPhaseView(
             moonPhase = state.moonPhase,
             contentColor = contentColor,
@@ -194,7 +206,7 @@ fun HomeLandscapeContent(
                 }
         )
 
-        // Weather Section in Top Right for Landscape
+        // Overlay: Weather Section in Top Right for Landscape
         if (state.isNetworkAvailable) {
             WeatherSection(
                 temperature = state.temperature,

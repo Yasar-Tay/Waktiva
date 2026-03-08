@@ -32,6 +32,7 @@ import java.util.Locale
 /**
  * A specialized UI component that appears when an Adhan (call to prayer) is actively playing.
  * It provides visual feedback through a pulsing icon and a clear action to stop the audio.
+ * Uses the global GlassTheme for consistent styling.
  *
  * @param isAdhanPlaying Whether the Adhan audio is currently active.
  * @param playingPrayerName The name of the prayer currently being announced (e.g., "Fajr").
@@ -52,6 +53,7 @@ fun AdhanControls(
     val glassTheme = LocalGlassTheme.current
     val prayerType = playingPrayerName?.let { PrayerType.fromString(it) }
     
+    // Select appropriate icon based on the prayer type
     val prayerIcon = when (prayerType) {
         PrayerType.FAJR -> ImageVector.vectorResource(R.drawable.haze_day_rotated)
         PrayerType.SUNRISE -> ImageVector.vectorResource(R.drawable.sunrise)
@@ -62,6 +64,7 @@ fun AdhanControls(
         else -> Icons.Rounded.VolumeUp
     }
 
+    // Pulse animation for the playback indicator
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -98,7 +101,7 @@ fun AdhanControls(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f)
                 ) {
-                    // Pulsing Icon
+                    // Pulsing Icon container
                     Box(
                         modifier = Modifier
                             .size(48.dp)
@@ -138,7 +141,7 @@ fun AdhanControls(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                // Reversed Stop Button
+                // Stop Button with high-contrast styling
                 val isLightGlass = glassTheme.containerColor.red > 0.5f
                 val buttonBgColor = if (isLightGlass) Color.Red.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.4f)
                 val buttonContentColor = if (isLightGlass) Color.White else Color.Black.copy(0.7f)

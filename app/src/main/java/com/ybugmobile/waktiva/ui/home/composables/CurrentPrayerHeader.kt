@@ -14,6 +14,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.domain.model.CurrentPrayer
 
+/**
+ * A floating header component that identifies the currently active prayer period.
+ * Positioned relative to the central visualization.
+ *
+ * @param currentPrayer Information about the active prayer period.
+ * @param contentColor Base color for the text.
+ * @param iconColor Secondary color for decorative elements (defaults to contentColor).
+ * @param modifier Root layout modifier.
+ */
 @Composable
 fun CurrentPrayerHeader(
     currentPrayer: CurrentPrayer?,
@@ -26,6 +35,7 @@ fun CurrentPrayerHeader(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
+    // Adaptive sizing based on device orientation
     val fontSize = if (isLandscape) 11.sp else 14.sp
     val offsetY = if (isLandscape) (-60.dp) else (-74.dp)
 

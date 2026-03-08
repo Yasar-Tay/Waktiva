@@ -15,6 +15,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.ui.theme.GlassTheme
 
+/**
+ * A customized SnackbarHost tailored for the Home screen's visual style.
+ * Supports custom message formatting (e.g., "TYPE:Message") to show relevant icons.
+ * Adheres to the global [GlassTheme] for background and content coloring.
+ *
+ * @param hostState State object for managing snackbar queue and visibility.
+ * @param glassTheme The current theme configuration (light/dark mode).
+ * @param modifier Root layout modifier.
+ */
 @Composable
 fun HomeSnackbarHost(
     hostState: SnackbarHostState,
@@ -25,6 +34,7 @@ fun HomeSnackbarHost(
         hostState = hostState,
         modifier = modifier,
         snackbar = { data ->
+            // Parse message format "TYPE:Message" to determine iconography
             val parts = data.visuals.message.split(":", limit = 2)
             val type = parts.getOrNull(0)
             val message = parts.getOrNull(1) ?: data.visuals.message
@@ -35,6 +45,7 @@ fun HomeSnackbarHost(
                 else -> null
             }
 
+            // Thematic color selection based on active theme mode
             val snackbarBackgroundColor = if (glassTheme.isLightMode) {
                 Color.White.copy(alpha = 0.9f)
             } else {
@@ -47,6 +58,7 @@ fun HomeSnackbarHost(
                 Color.White
             }
 
+            // Pill-shaped floating snackbar
             Surface(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
