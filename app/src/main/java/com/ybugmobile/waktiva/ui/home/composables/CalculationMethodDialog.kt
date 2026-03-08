@@ -16,7 +16,7 @@ import com.ybugmobile.waktiva.R
 fun CalculationMethodDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
-    calculationMethods: List<Pair<String, Int>>,
+    calculationMethods: List<Pair<Int, Int>>,
     selectedMethod: Int,
     onMethodSelected: (Int) -> Unit
 ) {
@@ -32,7 +32,6 @@ fun CalculationMethodDialog(
                                 .fillMaxWidth()
                                 .clickable {
                                     onMethodSelected(method.second)
-                                    onDismiss()
                                 }
                                 .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
@@ -42,7 +41,7 @@ fun CalculationMethodDialog(
                                 onClick = null
                             )
                             Spacer(modifier = Modifier.width(16.dp))
-                            Text(method.first)
+                            Text(stringResource(method.first))
                         }
                     }
                 }

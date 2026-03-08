@@ -1,45 +1,26 @@
 package com.ybugmobile.waktiva.ui.home
 
-import android.Manifest
-import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
-import androidx.compose.animation.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.*
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.rounded.CloudQueue
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.google.accompanist.permissions.*
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.domain.model.PrayerDay
@@ -50,12 +31,8 @@ import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthOverlay
 import com.ybugmobile.waktiva.ui.theme.getGlassTheme
 import com.ybugmobile.waktiva.ui.theme.getGradientForTime
-import com.ybugmobile.waktiva.ui.theme.StarryBackgroundLayer
-import com.ybugmobile.waktiva.ui.theme.AtmosphericBackgroundLayer
-import com.ybugmobile.waktiva.ui.theme.WeatherBackgroundLayer
-import java.time.LocalDate
-import java.time.LocalTime
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -123,11 +100,11 @@ fun HomeScreenContent(
 
     val permissions = remember {
         val list = mutableListOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            list.add(Manifest.permission.POST_NOTIFICATIONS)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            list.add(android.Manifest.permission.POST_NOTIFICATIONS)
         }
         list
     }
@@ -138,7 +115,6 @@ fun HomeScreenContent(
         }
     }
 
-    // Determine the effective weather condition based on user setting
     val effectiveWeather = remember(settings?.showWeatherEffects, state.weatherCondition) {
         if (settings?.showWeatherEffects == true) {
             state.weatherCondition
@@ -149,7 +125,6 @@ fun HomeScreenContent(
 
     val localTime = remember(state.currentTime) { state.currentTime.toLocalTime() }
 
-    // Pass effective weatherCondition to dynamic gradient calculation
     val backgroundGradient = remember(localTime, state.currentPrayerDay, effectiveWeather) {
         getGradientForTime(
             currentTime = localTime, 
@@ -168,16 +143,13 @@ fun HomeScreenContent(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-
     val contentColor = glassTheme.contentColor
 
     Scaffold(
         containerColor = Color.Transparent,
-        snackbarHost = { },
         contentWindowInsets = WindowInsets.systemBars,
         floatingActionButton = {
             Box(Modifier.fillMaxSize()) {
-                // Debug Weather FAB - Positioned on the Bottom Left
                 LargeFloatingActionButton(
                     onClick = { showDebugWeather = true },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
@@ -196,30 +168,18 @@ fun HomeScreenContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(brush = backgroundGradient)
+                .padding(padding)
         ) {
-            // Environmental Background
-            Box(Modifier.fillMaxSize()) {
-                StarryBackgroundLayer(
-                    currentTime = localTime,
-                    day = state.currentPrayerDay
-                )
-                
-                AtmosphericBackgroundLayer(
-                    currentTime = localTime,
-                    day = state.currentPrayerDay,
-                    sunAzimuth = state.sunAzimuth,
-                    sunAltitude = state.sunAltitude,
-                    compassAzimuth = state.compassAzimuth
-                )
-
-                if (settings?.showWeatherEffects == true) {
-                    WeatherBackgroundLayer(
-                        condition = effectiveWeather,
-                        isDay = true
-                    )
-                }
-            }
+            HomeBackground(
+                backgroundGradient = backgroundGradient,
+                currentTime = localTime,
+                currentPrayerDay = state.currentPrayerDay,
+                sunAzimuth = state.sunAzimuth,
+                sunAltitude = state.sunAltitude,
+                compassAzimuth = state.compassAzimuth,
+                showWeatherEffects = settings?.showWeatherEffects == true,
+                weatherCondition = effectiveWeather
+            )
 
             if (state.isLoading) {
                 CircularProgressIndicator(
@@ -241,386 +201,60 @@ fun HomeScreenContent(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     val scrollState = rememberScrollState()
+                    
+                    val handleShowSnackbar: (String) -> Unit = { prayerName ->
+                        scope.launch {
+                            val localizedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context)
+                                ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
+
+                            val message = if (!state.isMuted)
+                                "MUTED:" + context.getString(R.string.home_adhan_muted, localizedPrayerName)
+                            else
+                                "UNMUTED:" + context.getString(R.string.home_adhan_unmuted, localizedPrayerName)
+                            snackbarHostState.showSnackbar(message)
+                        }
+                    }
+
                     if (isLandscape) {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .systemBarsPadding()
-                                    .displayCutoutPadding()
-                                    .verticalScroll(scrollState)
-                                    .padding(horizontal = 24.dp, vertical = 12.dp)
-                                    .padding(start = 72.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Top
-                            ) {
-                                HomeHeader(
-                                    locationName = state.locationName,
-                                    date = state.selectedDate,
-                                    hijriDate = state.effectiveHijriDate,
-                                    contentColor = contentColor,
-                                    onStatusClick = { showHealthOverlay = true },
-                                    isNetworkAvailable = state.isNetworkAvailable,
-                                    isLocationEnabled = state.isLocationEnabled,
-                                    isLocationPermissionGranted = state.isLocationPermissionGranted
-                                )
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Box(
-                                        modifier = Modifier.size(280.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        state.currentPrayerDay?.let { prayerDay ->
-                                            PrayerCircleVisualization(
-                                                day = prayerDay,
-                                                currentTime = if (state.selectedDate == LocalDate.now()) localTime else LocalTime.MIDNIGHT,
-                                                nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
-                                                currentPrayer = if (state.selectedDate == LocalDate.now()) state.currentPrayer else null,
-                                                isSelectedDayToday = state.selectedDate == LocalDate.now(),
-                                                isHijriVisible = state.isHijriSelected,
-                                                onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
-                                                contentColor = contentColor,
-                                                isMuted = state.isMuted,
-                                                playAdhanAudio = settings?.playAdhanAudio ?: false,
-                                                onSkipAudio = { prayerName ->
-                                                    state.nextPrayer?.let { next ->
-                                                        onSkipNextAudio(prayerName, next.date)
-                                                    }
-                                                }
-                                            )
-                                        }
-                                    }
-
-                                    Spacer(modifier = Modifier.width(32.dp))
-
-                                    Box(modifier = Modifier.weight(1f)) {
-                                        AnimatedContent(
-                                            targetState = state.isAdhanPlaying,
-                                            transitionSpec = {
-                                                fadeIn() togetherWith fadeOut()
-                                            },
-                                            label = "NextPrayerOrAdhan"
-                                        ) { playing ->
-                                            if (playing) {
-                                                AdhanControls(
-                                                    isAdhanPlaying = true,
-                                                    playingPrayerName = state.playingPrayerName,
-                                                    isTest = state.nextPrayer?.isTest == true,
-                                                    onStopAdhan = onStopAdhan,
-                                                    onStopTest = onStopTest,
-                                                    modifier = Modifier.fillMaxWidth()
-                                                )
-                                            } else {
-                                                NextPrayerCountdown(
-                                                    nextPrayer = state.nextPrayer,
-                                                    selectedDate = state.selectedDate,
-                                                    contentColor = contentColor,
-                                                    currentPrayer = state.currentPrayer,
-                                                    playAdhanAudio = settings?.playAdhanAudio ?: false,
-                                                    isMuted = state.isMuted,
-                                                    onSkipAudio = { prayerName ->
-                                                        state.nextPrayer?.let { next ->
-                                                            onSkipNextAudio(prayerName, next.date)
-                                                            scope.launch {
-                                                                val localizedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context)
-                                                                    ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
-
-                                                                val message = if (!state.isMuted)
-                                                                    "MUTED:" + context.getString(R.string.home_adhan_muted, localizedPrayerName)
-                                                                else
-                                                                    "UNMUTED:" + context.getString(R.string.home_adhan_unmuted, localizedPrayerName)
-                                                                snackbarHostState.showSnackbar(message)
-                                                            }
-                                                        }
-                                                    },
-                                                    onResetDate = onResetDate,
-                                                    accentColor = Color.White,
-                                                    showIdleState = false
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-
-                                Surface(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    color = glassTheme.containerColor,
-                                    shape = RoundedCornerShape(32.dp),
-                                    border = androidx.compose.foundation.BorderStroke(
-                                        1.dp,
-                                        glassTheme.borderColor
-                                    )
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(24.dp)
-                                    ) {
-                                        ModernCalendarStrip(
-                                            selectedDate = state.selectedDate,
-                                            availableDays = allDays.filter { !it.date.isBefore(LocalDate.now()) },
-                                            isHijriSelected = state.isHijriSelected,
-                                            onToggleCalendarType = onToggleCalendarType,
-                                            onDateSelected = onDateSelected,
-                                            contentColor = contentColor
-                                        )
-
-                                        Spacer(modifier = Modifier.height(32.dp))
-
-                                        state.currentPrayerDay?.let { prayerDay ->
-                                            PrayerTimeList(
-                                                day = prayerDay,
-                                                currentPrayerType = if (state.selectedDate == LocalDate.now()) state.currentPrayer?.type else null,
-                                                contentColor = contentColor,
-                                                highlightColor = contentColor.copy(alpha = 0.15f)
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.height(24.dp))
-
-                                        CalculationMethodCard(
-                                            settings = settings,
-                                            calculationMethods = calculationMethods,
-                                            onClick = { showMethodDialog = true },
-                                            contentColor = contentColor,
-                                            glassTheme = glassTheme
-                                        )
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(80.dp))
-                            }
-
-                            // Moon Phase in Top Middle for Landscape
-                            MoonPhaseView(
-                                moonPhase = state.moonPhase,
-                                contentColor = contentColor,
-                                modifier = Modifier
-                                    .align(Alignment.TopCenter)
-                                    .padding(top = 16.dp)
-                                    .graphicsLayer {
-                                        translationY = -scrollState.value.toFloat()
-                                    }
-                            )
-
-                            // Weather Section in Top Right for Landscape
-                            if (state.isNetworkAvailable) {
-                                WeatherSection(
-                                    temperature = state.temperature,
-                                    condition = state.weatherCondition,
-                                    contentColor = contentColor,
-                                    currentTime = localTime,
-                                    currentPrayerDay = state.currentPrayerDay,
-                                    modifier = Modifier
-                                        .align(Alignment.TopEnd)
-                                        .systemBarsPadding()
-                                        .padding(top = 6.dp, end = 24.dp) // Adjusted top padding to match HomeHeader inner padding (10dp + systemBars)
-                                        .graphicsLayer {
-                                            translationY = -scrollState.value.toFloat()
-                                        }
-                                )
-                            } else {
-                                Spacer(
-                                    modifier = Modifier
-                                        .align(Alignment.TopEnd)
-                                        .systemBarsPadding()
-                                        .padding(top = 6.dp, end = 24.dp)
-                                        .height(72.dp)
-                                        .graphicsLayer {
-                                            translationY = -scrollState.value.toFloat()
-                                        }
-                                )
-                            }
-                        }
+                        HomeLandscapeContent(
+                            state = state,
+                            settings = settings,
+                            allDays = allDays,
+                            calculationMethods = calculationMethods,
+                            glassTheme = glassTheme,
+                            scrollState = scrollState,
+                            localTime = localTime,
+                            contentColor = contentColor,
+                            onStatusClick = { showHealthOverlay = true },
+                            onToggleCalendarType = onToggleCalendarType,
+                            onDateSelected = onDateSelected,
+                            onSkipNextAudio = onSkipNextAudio,
+                            onStopAdhan = onStopAdhan,
+                            onStopTest = onStopTest,
+                            onResetDate = onResetDate,
+                            onMethodClick = { showMethodDialog = true },
+                            onShowSnackbar = handleShowSnackbar
+                        )
                     } else {
-                        // Portrait Layout
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(top = 16.dp)
-                                    .systemBarsPadding()
-                                    .verticalScroll(scrollState)
-                            ) {
-                                Box(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.TopStart
-                                ) {
-                                    HomeHeader(
-                                        locationName = state.locationName,
-                                        date = state.selectedDate,
-                                        hijriDate = state.effectiveHijriDate,
-                                        contentColor = contentColor,
-                                        onStatusClick = { showHealthOverlay = true },
-                                        isNetworkAvailable = state.isNetworkAvailable,
-                                        isLocationEnabled = state.isLocationEnabled,
-                                        isLocationPermissionGranted = state.isLocationPermissionGranted
-                                    )
-                                }
-
-                                Column(
-                                    modifier = Modifier.padding(horizontal = 24.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    if (state.isNetworkAvailable) {
-                                        // Weather Summary replaced DatesSection
-                                        WeatherSection(
-                                            temperature = state.temperature,
-                                            condition = state.weatherCondition,
-                                            contentColor = contentColor,
-                                            currentTime = localTime,
-                                            currentPrayerDay = state.currentPrayerDay,
-                                            modifier = Modifier.fillMaxWidth().padding(top = 20.dp, start = 10.dp)
-                                        )
-
-                                        Spacer(modifier = Modifier.height(12.dp))
-                                    } else {
-                                        // Keep space reserved (10dp padding + 72dp height + 22dp spacer)
-                                        Spacer(modifier = Modifier.height(104.dp))
-                                    }
-
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(300.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        state.currentPrayerDay?.let { prayerDay ->
-                                            PrayerCircleVisualization(
-                                                day = prayerDay,
-                                                currentTime = if (state.selectedDate == LocalDate.now()) localTime else LocalTime.MIDNIGHT,
-                                                nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
-                                                currentPrayer = if (state.selectedDate == LocalDate.now()) state.currentPrayer else null,
-                                                isSelectedDayToday = state.selectedDate == LocalDate.now(),
-                                                isHijriVisible = state.isHijriSelected,
-                                                onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
-                                                contentColor = contentColor,
-                                                isMuted = state.isMuted,
-                                                playAdhanAudio = settings?.playAdhanAudio ?: false,
-                                                onSkipAudio = { prayerName ->
-                                                    state.nextPrayer?.let { next ->
-                                                        onSkipNextAudio(prayerName, next.date)
-                                                    }
-                                                }
-                                            )
-                                        }
-                                    }
-
-                                    Spacer(modifier = Modifier.height(16.dp))
-
-                                    AnimatedContent(
-                                        targetState = state.isAdhanPlaying,
-                                        transitionSpec = {
-                                            fadeIn() togetherWith fadeOut()
-                                        },
-                                        label = "NextPrayerOrAdhan"
-                                    ) { playing ->
-                                        if (playing) {
-                                            AdhanControls(
-                                                isAdhanPlaying = true,
-                                                playingPrayerName = state.playingPrayerName,
-                                                isTest = state.nextPrayer?.isTest == true,
-                                                onStopAdhan = onStopAdhan,
-                                                onStopTest = onStopTest,
-                                                modifier = Modifier.fillMaxWidth()
-                                            )
-                                        } else {
-                                            NextPrayerCountdown(
-                                                nextPrayer = state.nextPrayer,
-                                                selectedDate = state.selectedDate,
-                                                contentColor = contentColor,
-                                                currentPrayer = state.currentPrayer,
-                                                playAdhanAudio = settings?.playAdhanAudio ?: false,
-                                                isMuted = state.isMuted,
-                                                onSkipAudio = { prayerName ->
-                                                    state.nextPrayer?.let { next ->
-                                                        onSkipNextAudio(prayerName, next.date)
-                                                        scope.launch {
-                                                            val localizedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context)
-                                                                ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
-
-                                                            val message = if (!state.isMuted)
-                                                                "MUTED:" + context.getString(R.string.home_adhan_muted, localizedPrayerName)
-                                                            else
-                                                                "UNMUTED:" + context.getString(R.string.home_adhan_unmuted, localizedPrayerName)
-                                                            snackbarHostState.showSnackbar(message)
-                                                        }
-                                                    }
-                                                },
-                                                onResetDate = onResetDate,
-                                                accentColor = Color.White,
-                                                showIdleState = false
-                                            )
-                                        }
-                                    }
-
-                                    Spacer(modifier = Modifier.height(24.dp))
-                                }
-
-                                Surface(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(10.dp),
-                                    color = glassTheme.containerColor,
-                                    shape = RoundedCornerShape(32.dp),
-                                    border = androidx.compose.foundation.BorderStroke(
-                                        1.dp,
-                                        glassTheme.borderColor
-                                    )
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .padding(24.dp)
-                                    ) {
-                                        ModernCalendarStrip(
-                                            selectedDate = state.selectedDate,
-                                            availableDays = allDays.filter { !it.date.isBefore(LocalDate.now()) },
-                                            isHijriSelected = state.isHijriSelected,
-                                            onToggleCalendarType = onToggleCalendarType,
-                                            onDateSelected = onDateSelected,
-                                            contentColor = contentColor
-                                        )
-
-                                        Spacer(modifier = Modifier.height(32.dp))
-
-                                        state.currentPrayerDay?.let { prayerDay ->
-                                            PrayerTimeList(
-                                                day = prayerDay,
-                                                currentPrayerType = if (state.selectedDate == LocalDate.now()) state.currentPrayer?.type else null,
-                                                contentColor = contentColor,
-                                                highlightColor = contentColor.copy(alpha = 0.15f)
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.height(24.dp))
-
-                                        CalculationMethodCard(
-                                            settings = settings,
-                                            calculationMethods = calculationMethods,
-                                            onClick = { showMethodDialog = true },
-                                            contentColor = contentColor,
-                                            glassTheme = glassTheme
-                                        )
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(80.dp))
-                            }
-
-                            // Moon Phase
-                            MoonPhaseView(
-                                moonPhase = state.moonPhase,
-                                contentColor = contentColor,
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .padding(top = 24.dp, end = 24.dp)
-                                    .graphicsLayer {
-                                        translationY = -scrollState.value.toFloat()
-                                        scaleX = 0.85f
-                                        scaleY = 0.85f
-                                    }
-                            )
-                        }
+                        HomePortraitContent(
+                            state = state,
+                            settings = settings,
+                            allDays = allDays,
+                            calculationMethods = calculationMethods,
+                            glassTheme = glassTheme,
+                            scrollState = scrollState,
+                            localTime = localTime,
+                            contentColor = contentColor,
+                            onStatusClick = { showHealthOverlay = true },
+                            onToggleCalendarType = onToggleCalendarType,
+                            onDateSelected = onDateSelected,
+                            onSkipNextAudio = onSkipNextAudio,
+                            onStopAdhan = onStopAdhan,
+                            onStopTest = onStopTest,
+                            onResetDate = onResetDate,
+                            onMethodClick = { showMethodDialog = true },
+                            onShowSnackbar = handleShowSnackbar
+                        )
                     }
                 }
             }
@@ -635,242 +269,31 @@ fun HomeScreenContent(
             }
 
             if (showDebugWeather) {
-                AlertDialog(
-                    onDismissRequest = { showDebugWeather = false },
-                    title = { Text("Test Weather Conditions") },
-                    text = {
-                        LazyColumn {
-                            items(WeatherCondition.entries.filter { it != WeatherCondition.UNKNOWN }) { condition ->
-                                TextButton(
-                                    onClick = { 
-                                        onDebugWeather(condition)
-                                        showDebugWeather = false
-                                    },
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(condition.name)
-                                }
-                            }
-                        }
-                    },
-                    confirmButton = {
-                        TextButton(onClick = { showDebugWeather = false }) { Text("Close") }
+                DebugWeatherDialog(
+                    onDismiss = { showDebugWeather = false },
+                    onConditionSelected = {
+                        onDebugWeather(it)
+                        showDebugWeather = false
                     }
                 )
             }
 
-            SnackbarHost(
+            HomeSnackbarHost(
                 hostState = snackbarHostState,
-                modifier = Modifier.align(Alignment.Center),
-                snackbar = { data ->
-                    val parts = data.visuals.message.split(":", limit = 2)
-                    val type = parts.getOrNull(0)
-                    val message = parts.getOrNull(1) ?: data.visuals.message
+                glassTheme = glassTheme,
+                modifier = Modifier.align(Alignment.Center)
+            )
 
-                    val icon = when (type) {
-                        "MUTED" -> Icons.AutoMirrored.Filled.VolumeOff
-                        "UNMUTED" -> Icons.AutoMirrored.Filled.VolumeUp
-                        else -> null
-                    }
-
-                    val snackbarBackgroundColor = if (glassTheme.isLightMode) {
-                        Color.White.copy(alpha = 0.9f)
-                    } else {
-                        Color(0xFF1C1B1F).copy(alpha = 0.8f)
-                    }
-
-                    val snackbarContentColor = if (glassTheme.isLightMode) {
-                        Color(0xFF1C1B1F)
-                    } else {
-                        Color.White
-                    }
-
-                    Surface(
-                        modifier = Modifier
-                            .padding(horizontal = 24.dp)
-                            .wrapContentWidth(),
-                        shape = RoundedCornerShape(percent = 50),
-                        color = snackbarBackgroundColor,
-                        contentColor = snackbarContentColor,
-                        border = androidx.compose.foundation.BorderStroke(
-                            0.5.dp,
-                            snackbarContentColor.copy(alpha = 0.12f)
-                        ),
-                        shadowElevation = 12.dp
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            if (icon != null) {
-                                Icon(
-                                    imageVector = icon,
-                                    contentDescription = null,
-                                    tint = snackbarContentColor,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(Modifier.width(10.dp))
-                            }
-                            Text(
-                                text = message,
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    letterSpacing = 0.3.sp
-                                ),
-                                color = snackbarContentColor
-                            )
-                        }
-                    }
+            CalculationMethodDialog(
+                showDialog = showMethodDialog,
+                onDismiss = { showMethodDialog = false },
+                calculationMethods = calculationMethods,
+                selectedMethod = settings?.calculationMethod ?: -1,
+                onMethodSelected = {
+                    onMethodSelected(it)
+                    showMethodDialog = false
                 }
             )
-
-            if (showMethodDialog) {
-                AlertDialog(
-                    onDismissRequest = { showMethodDialog = false },
-                    title = { Text(stringResource(R.string.settings_method)) },
-                    text = {
-                        LazyColumn {
-                            items(calculationMethods) { method ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            onMethodSelected(method.second)
-                                            showMethodDialog = false
-                                        }
-                                        .padding(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    RadioButton(
-                                        selected = settings?.calculationMethod == method.second,
-                                        onClick = null
-                                    )
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                    Text(stringResource(method.first))
-                                }
-                            }
-                        }
-                    },
-                    confirmButton = {
-                        TextButton(onClick = { showMethodDialog = false }) {
-                            Text(stringResource(android.R.string.ok))
-                        }
-                    }
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-private fun PermissionRequiredFallback(permissionState: MultiplePermissionsState) {
-    val context = LocalContext.current
-    var denialCount by rememberSaveable { mutableIntStateOf(0) }
-
-    fun openAppSettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = Uri.fromParts("package", context.packageName, null)
-        }
-        context.startActivity(intent)
-    }
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .systemBarsPadding()
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                Icons.Default.LocationOn,
-                contentDescription = null,
-                modifier = Modifier.size(80.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = stringResource(R.string.home_permissions_required),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = stringResource(R.string.home_permissions_desc),
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = {
-                    if (denialCount >= 2 || permissionState.shouldShowRationale) {
-                        openAppSettings()
-                    } else {
-                        permissionState.launchMultiplePermissionRequest()
-                        denialCount++
-                    }
-                },
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(stringResource(R.string.home_grant_permissions))
-            }
-        }
-    }
-}
-
-@Composable
-private fun CalculationMethodCard(
-    settings: UserSettings?,
-    calculationMethods: List<Pair<Int, Int>>,
-    onClick: () -> Unit,
-    contentColor: Color,
-    glassTheme: com.ybugmobile.waktiva.ui.theme.GlassTheme
-) {
-    settings?.let { s ->
-        Card(
-            onClick = onClick,
-            colors = CardDefaults.cardColors(
-                containerColor = glassTheme.secondaryContentColor.copy(alpha = 0.1f)
-            ),
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(
-                Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Text(
-                        stringResource(R.string.settings_method).uppercase(),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = glassTheme.secondaryContentColor,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    )
-                    Text(
-                        calculationMethods.find { it.second == s.calculationMethod }?.first?.let { stringResource(it) }
-                            ?: "Default",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = contentColor
-                    )
-                }
-                Icon(
-                    Icons.Default.Settings,
-                    null,
-                    tint = glassTheme.secondaryContentColor
-                )
-            }
         }
     }
 }
