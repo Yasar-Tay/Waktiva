@@ -15,7 +15,7 @@ class GetNextPrayerUseCase @Inject constructor() {
         val currentTime = now.toLocalTime()
         
         // Find the first prayer today that is after now
-        val nextToday = PrayerType.values()
+        val nextToday = PrayerType.entries
             .map { it to today.timings[it]!! }
             .firstOrNull { it.second.isAfter(currentTime) }
 
@@ -24,19 +24,17 @@ class GetNextPrayerUseCase @Inject constructor() {
                 type = nextToday.first,
                 time = nextToday.second,
                 date = today.date,
-                remainingDuration = Duration.between(currentTime, nextToday.second)
+                remainingDuration = Duration.between(now, today.date.atTime(nextToday.second))
             )
         } else if (tomorrow != null) {
             // If no more prayers today, it's Fajr tomorrow
             val firstTomorrow = tomorrow.timings[PrayerType.FAJR]!!
-            val durationToMidnight = Duration.between(currentTime, LocalTime.MAX)
-            val durationFromMidnight = Duration.between(LocalTime.MIN, firstTomorrow)
             
             NextPrayer(
                 type = PrayerType.FAJR,
                 time = firstTomorrow,
                 date = tomorrow.date,
-                remainingDuration = durationToMidnight.plus(durationFromMidnight).plusSeconds(1)
+                remainingDuration = Duration.between(now, tomorrow.date.atTime(firstTomorrow))
             )
         } else {
             null

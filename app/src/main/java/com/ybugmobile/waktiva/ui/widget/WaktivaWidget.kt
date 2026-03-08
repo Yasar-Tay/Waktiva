@@ -26,11 +26,11 @@ import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
+import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -46,6 +46,7 @@ class WaktivaWidget : GlanceAppWidget() {
     @InstallIn(SingletonComponent::class)
     interface WidgetEntryPoint {
         fun prayerRepository(): PrayerRepository
+        fun getNextPrayerUseCase(): GetNextPrayerUseCase
     }
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
@@ -55,17 +56,9 @@ class WaktivaWidget : GlanceAppWidget() {
             
             val now = LocalDateTime.now()
             val today = prayerDays.find { it.date == LocalDate.now() }
+            val tomorrow = prayerDays.find { it.date == LocalDate.now().plusDays(1) }
             
-            val nextPrayer = today?.let { day ->
-                val nowTime = now.toLocalTime()
-                val nextReal = day.timings.entries
-                    .filter { it.value.isAfter(nowTime) }
-                    .minByOrNull { it.value }
-                
-                nextReal?.let {
-                    NextPrayer(it.key, it.value, day.date, Duration.between(now, day.date.atTime(it.value)))
-                }
-            }
+            val nextPrayer = entryPoint.getNextPrayerUseCase()(today, tomorrow, now)
 
             WidgetContent(context, nextPrayer)
         }
