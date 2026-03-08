@@ -60,20 +60,32 @@ fun HomeScreen(
         }
     }
 
+    // Optimization: Remember all callbacks to avoid unnecessary recompositions
+    // Ensure all callbacks explicitly return Unit to avoid type mismatches when calling ViewModel methods that return Job
+    val onRefresh = remember(viewModel) { { viewModel.refresh(); Unit } }
+    val onMethodSelected = remember(viewModel) { { it: Int -> viewModel.updateCalculationMethod(it); Unit } }
+    val onDateSelected = remember(viewModel) { { it: LocalDate -> viewModel.selectDate(it); Unit } }
+    val onToggleCalendarType = remember(viewModel) { { it: Boolean -> viewModel.toggleCalendarType(it); Unit } }
+    val onSkipNextAudio = remember(viewModel) { { name: String, date: LocalDate -> viewModel.toggleSkipNextPrayerAudio(name, date); Unit } }
+    val onStopAdhan = remember(viewModel) { { viewModel.stopAdhan(); Unit } }
+    val onStopTest = remember(viewModel) { { viewModel.stopTestAlarm(); Unit } }
+    val onResetDate = remember(viewModel) { { viewModel.selectDate(LocalDate.now()); Unit } }
+    val onDebugWeather = remember(viewModel) { { it: WeatherCondition -> viewModel.debugSetWeather(it); Unit } }
+
     HomeScreenContent(
         state = state,
         settings = settings,
         allDays = allDays,
         calculationMethods = viewModel.calculationMethods,
-        onRefresh = { viewModel.refresh() },
-        onMethodSelected = { viewModel.updateCalculationMethod(it) },
-        onDateSelected = { viewModel.selectDate(it) },
-        onToggleCalendarType = { viewModel.toggleCalendarType(it) },
-        onSkipNextAudio = { name, date -> viewModel.toggleSkipNextPrayerAudio(name, date) },
-        onStopAdhan = { viewModel.stopAdhan() },
-        onStopTest = { viewModel.stopTestAlarm() },
-        onResetDate = { viewModel.selectDate(LocalDate.now()) },
-        onDebugWeather = { viewModel.debugSetWeather(it) }
+        onRefresh = onRefresh,
+        onMethodSelected = onMethodSelected,
+        onDateSelected = onDateSelected,
+        onToggleCalendarType = onToggleCalendarType,
+        onSkipNextAudio = onSkipNextAudio,
+        onStopAdhan = onStopAdhan,
+        onStopTest = onStopTest,
+        onResetDate = onResetDate,
+        onDebugWeather = onDebugWeather
     )
 }
 
@@ -123,18 +135,21 @@ fun HomeScreenContent(
         }
     }
 
-    val localTime = remember(state.currentTime) { state.currentTime.toLocalTime() }
+    // Optimization: Calculate gradient and theme at minute precision to avoid object churn
+    val minuteTime = remember(state.currentTime.minute, state.currentTime.hour, state.currentTime.dayOfYear) {
+        state.currentTime.toLocalTime().withSecond(0).withNano(0)
+    }
 
-    val backgroundGradient = remember(localTime, state.currentPrayerDay, effectiveWeather) {
+    val backgroundGradient = remember(minuteTime, state.currentPrayerDay, effectiveWeather) {
         getGradientForTime(
-            currentTime = localTime, 
+            currentTime = minuteTime, 
             day = state.currentPrayerDay,
             weatherCondition = effectiveWeather
         )
     }
     
-    val glassTheme = remember(localTime, state.currentPrayerDay) {
-        getGlassTheme(localTime, state.currentPrayerDay)
+    val glassTheme = remember(minuteTime, state.currentPrayerDay) {
+        getGlassTheme(minuteTime, state.currentPrayerDay)
     }
     
     var showMethodDialog by remember { mutableStateOf(false) }
@@ -144,6 +159,23 @@ fun HomeScreenContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val contentColor = glassTheme.contentColor
+
+    // Optimization: Hoist the snackbar lambda and ensure it returns Unit
+    val handleShowSnackbar = remember(context, state.isMuted, snackbarHostState, scope) {
+        { prayerName: String ->
+            scope.launch {
+                val localizedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context)
+                    ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
+
+                val message = if (!state.isMuted)
+                    "MUTED:" + context.getString(R.string.home_adhan_muted, localizedPrayerName)
+                else
+                    "UNMUTED:" + context.getString(R.string.home_adhan_unmuted, localizedPrayerName)
+                snackbarHostState.showSnackbar(message)
+            }
+            Unit
+        }
+    }
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -172,11 +204,11 @@ fun HomeScreenContent(
         ) {
             HomeBackground(
                 backgroundGradient = backgroundGradient,
-                currentTime = localTime,
+                currentTime = state.currentTime.toLocalTime(),
                 currentPrayerDay = state.currentPrayerDay,
-                sunAzimuth = state.sunAzimuth,
-                sunAltitude = state.sunAltitude,
-                compassAzimuth = state.compassAzimuth,
+                sunAzimuth = { state.sunAzimuth },
+                sunAltitude = { state.sunAltitude },
+                compassAzimuth = { state.compassAzimuth },
                 showWeatherEffects = settings?.showWeatherEffects == true,
                 weatherCondition = effectiveWeather
             )
@@ -201,19 +233,7 @@ fun HomeScreenContent(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     val scrollState = rememberScrollState()
-                    
-                    val handleShowSnackbar: (String) -> Unit = { prayerName ->
-                        scope.launch {
-                            val localizedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context)
-                                ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
-
-                            val message = if (!state.isMuted)
-                                "MUTED:" + context.getString(R.string.home_adhan_muted, localizedPrayerName)
-                            else
-                                "UNMUTED:" + context.getString(R.string.home_adhan_unmuted, localizedPrayerName)
-                            snackbarHostState.showSnackbar(message)
-                        }
-                    }
+                    val localTime = state.currentTime.toLocalTime()
 
                     if (isLandscape) {
                         HomeLandscapeContent(
@@ -259,40 +279,53 @@ fun HomeScreenContent(
                 }
             }
 
+            if (showMethodDialog) {
+                CalculationMethodDialog(
+                    showDialog = showMethodDialog,
+                    onDismiss = { showMethodDialog = false },
+                    calculationMethods = calculationMethods,
+                    selectedMethod = settings?.calculationMethod ?: 3,
+                    onMethodSelected = {
+                        onMethodSelected(it)
+                        showMethodDialog = false
+                    }
+                )
+            }
+
             if (showHealthOverlay) {
                 SystemHealthOverlay(
-                    onDismiss = { 
-                        showHealthOverlay = false 
-                        onRefresh()
-                    }
+                    hasPrayerData = state.currentPrayerDay != null,
+                    onDismiss = { showHealthOverlay = false }
                 )
             }
-
+            
             if (showDebugWeather) {
-                DebugWeatherDialog(
-                    onDismiss = { showDebugWeather = false },
-                    onConditionSelected = {
-                        onDebugWeather(it)
-                        showDebugWeather = false
+                AlertDialog(
+                    onDismissRequest = { showDebugWeather = false },
+                    title = { Text("Debug Weather") },
+                    text = {
+                        Column {
+                            WeatherCondition.entries.forEach { condition ->
+                                TextButton(onClick = { 
+                                    onDebugWeather(condition)
+                                    showDebugWeather = false
+                                }) {
+                                    Text(condition.name)
+                                }
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { showDebugWeather = false }) {
+                            Text("Close")
+                        }
                     }
                 )
             }
 
-            HomeSnackbarHost(
+            SnackbarHost(
                 hostState = snackbarHostState,
-                glassTheme = glassTheme,
-                modifier = Modifier.align(Alignment.Center)
-            )
-
-            CalculationMethodDialog(
-                showDialog = showMethodDialog,
-                onDismiss = { showMethodDialog = false },
-                calculationMethods = calculationMethods,
-                selectedMethod = settings?.calculationMethod ?: -1,
-                onMethodSelected = {
-                    onMethodSelected(it)
-                    showMethodDialog = false
-                }
+                modifier = Modifier.align(Alignment.BottomCenter)
             )
         }
     }

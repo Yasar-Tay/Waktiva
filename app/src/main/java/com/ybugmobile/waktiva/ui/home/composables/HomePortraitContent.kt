@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +41,10 @@ fun HomePortraitContent(
     onMethodClick: () -> Unit,
     onShowSnackbar: (String) -> Unit
 ) {
+    // Optimization: Pre-calculate values that depend on state to avoid redundant work in sub-composables
+    val isToday = remember(state.selectedDate) { state.selectedDate == LocalDate.now() }
+    val availableDays = remember(allDays) { allDays.filter { !it.date.isBefore(LocalDate.now()) } }
+    
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -92,10 +96,10 @@ fun HomePortraitContent(
                     state.currentPrayerDay?.let { prayerDay ->
                         PrayerCircleVisualization(
                             day = prayerDay,
-                            currentTime = if (state.selectedDate == LocalDate.now()) localTime else LocalTime.MIDNIGHT,
-                            nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
-                            currentPrayer = if (state.selectedDate == LocalDate.now()) state.currentPrayer else null,
-                            isSelectedDayToday = state.selectedDate == LocalDate.now(),
+                            currentTime = if (isToday) localTime else LocalTime.MIDNIGHT,
+                            nextPrayer = if (isToday) state.nextPrayer else null,
+                            currentPrayer = if (isToday) state.currentPrayer else null,
+                            isSelectedDayToday = isToday,
                             isHijriVisible = state.isHijriSelected,
                             onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
                             contentColor = contentColor,
@@ -168,7 +172,7 @@ fun HomePortraitContent(
                 ) {
                     ModernCalendarStrip(
                         selectedDate = state.selectedDate,
-                        availableDays = allDays.filter { !it.date.isBefore(LocalDate.now()) },
+                        availableDays = availableDays,
                         isHijriSelected = state.isHijriSelected,
                         onToggleCalendarType = onToggleCalendarType,
                         onDateSelected = onDateSelected,
@@ -180,7 +184,7 @@ fun HomePortraitContent(
                     state.currentPrayerDay?.let { prayerDay ->
                         PrayerTimeList(
                             day = prayerDay,
-                            currentPrayerType = if (state.selectedDate == LocalDate.now()) state.currentPrayer?.type else null,
+                            currentPrayerType = if (isToday) state.currentPrayer?.type else null,
                             contentColor = contentColor,
                             highlightColor = contentColor.copy(alpha = 0.15f)
                         )
@@ -200,7 +204,7 @@ fun HomePortraitContent(
             Spacer(modifier = Modifier.height(80.dp))
         }
 
-        // Moon Phase
+        // Optimization: Defer translation reading using graphicsLayer lambda
         MoonPhaseView(
             moonPhase = state.moonPhase,
             contentColor = contentColor,

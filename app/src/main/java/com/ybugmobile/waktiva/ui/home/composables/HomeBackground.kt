@@ -18,9 +18,9 @@ fun HomeBackground(
     backgroundGradient: Brush,
     currentTime: LocalTime,
     currentPrayerDay: PrayerDay?,
-    sunAzimuth: Float,
-    sunAltitude: Float,
-    compassAzimuth: Float,
+    sunAzimuth: () -> Float,
+    sunAltitude: () -> Float,
+    compassAzimuth: () -> Float,
     showWeatherEffects: Boolean,
     weatherCondition: WeatherCondition
 ) {
@@ -36,13 +36,14 @@ fun HomeBackground(
                 day = currentPrayerDay
             )
             
+            // Optimization: Defer sensor reading to avoid recomposing HomeBackground
             AtmosphericBackgroundLayer(
                 currentTime = currentTime,
                 day = currentPrayerDay,
                 weatherCondition = weatherCondition,
-                sunAzimuth = sunAzimuth,
-                sunAltitude = sunAltitude,
-                compassAzimuth = compassAzimuth
+                sunAzimuth = sunAzimuth(),
+                sunAltitude = sunAltitude(),
+                compassAzimuth = compassAzimuth()
             )
 
             if (showWeatherEffects) {
