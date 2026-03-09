@@ -75,7 +75,7 @@ class WaktivaWidget : GlanceAppWidget() {
     ) {
         val size = LocalSize.current
         val contentColor = Color.White
-        val secondaryContentColor = Color.White.copy(alpha = 0.7f)
+        val secondaryContentColor = Color.White.copy(alpha = 0.8f)
         
         Box(
             modifier = GlanceModifier
