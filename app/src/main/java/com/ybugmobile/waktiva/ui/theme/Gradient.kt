@@ -77,12 +77,12 @@ fun dynamicTimeGradient(
     return getGradientForTime(currentTime, currentDay, weatherCondition)
 }
 
-fun getGradientForTime(
-    currentTime: LocalTime, 
-    day: PrayerDay?, 
+fun getGradientColorsForTime(
+    currentTime: LocalTime,
+    day: PrayerDay?,
     weatherCondition: WeatherCondition = WeatherCondition.CLEAR
-): Brush {
-    if (day == null) return Brush.verticalGradient(listOf(Color(0xFF0F172A), Color(0xFF1E293B)))
+): List<Color> {
+    if (day == null) return listOf(Color(0xFF0F172A), Color(0xFF1E293B))
 
     val timings = day.timings
     val fajr = timings[PrayerType.FAJR] ?: LocalTime.of(5, 0)
@@ -123,19 +123,16 @@ fun getGradientForTime(
             Color(0xFFE8D5A7),
         )
         currentTime.isBefore(dhuhur) -> listOf(
-
             Color(0xFF1E5DA8),
             Color(0xFF4FA3C7),
             Color(0xFFE8D5A7)
         )
         currentTime.isBefore(asr) -> listOf(
-
             Color(0xFF1E5DA8),
             Color(0xFF68B298),
             Color(0xFF4593E5)
         )
         currentTime.isBefore(sunsetStart) -> listOf(
-
             Color(0xFF123E7C), 
             Color(0xFF3F8FD2), 
             Color(0xFF9FD3F6)
@@ -158,7 +155,15 @@ fun getGradientForTime(
         )
     }
 
-    return Brush.verticalGradient(colors.map { it.adjustForWeather() })
+    return colors.map { it.adjustForWeather() }
+}
+
+fun getGradientForTime(
+    currentTime: LocalTime, 
+    day: PrayerDay?, 
+    weatherCondition: WeatherCondition = WeatherCondition.CLEAR
+): Brush {
+    return Brush.verticalGradient(getGradientColorsForTime(currentTime, day, weatherCondition))
 }
 
 @Composable

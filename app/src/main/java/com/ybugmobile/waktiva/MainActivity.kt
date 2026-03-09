@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import androidx.work.*
+import androidx.glance.appwidget.updateAll
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.worker.LocationUpdateWorker
 import com.ybugmobile.waktiva.data.worker.PrayerUpdateWorker
@@ -54,7 +55,9 @@ import com.ybugmobile.waktiva.ui.settings.SettingsScreen
 import com.ybugmobile.waktiva.ui.theme.WaktivaBackgroundWrapper
 import com.ybugmobile.waktiva.ui.theme.WaktivaTheme
 import com.ybugmobile.waktiva.ui.welcome.WelcomeScreen
+import com.ybugmobile.waktiva.ui.widget.WaktivaWidget
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -138,6 +141,7 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: TimeManager) {
     val navController = rememberNavController()
+    val scope = rememberCoroutineScope()
     val settings by homeViewModel.settings.collectAsState(initial = null)
     val homeState by homeViewModel.state.collectAsState()
     val configuration = LocalConfiguration.current
@@ -302,6 +306,9 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                     SmallFloatingActionButton(
                         onClick = { 
                             timeManager.addMinutes(30)
+                            scope.launch {
+                                WaktivaWidget().updateAll(context)
+                            }
                             //Toast.makeText(context, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
                         },
                         containerColor = MaterialTheme.colorScheme.secondaryContainer
