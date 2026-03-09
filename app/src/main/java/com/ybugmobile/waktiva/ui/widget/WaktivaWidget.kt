@@ -98,7 +98,7 @@ class WaktivaWidget : GlanceAppWidget() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Left Side: Prayer Info (Sidebar)
-                    val sidebarWidth = 92.dp
+                    val sidebarWidth = 84.dp // Reduced sidebar width to give more space for the timer
                     Column(
                         modifier = GlanceModifier
                             .width(sidebarWidth)
@@ -150,7 +150,7 @@ class WaktivaWidget : GlanceAppWidget() {
                         modifier = GlanceModifier
                             .fillMaxHeight()
                             .defaultWeight()
-                            .padding(horizontal = 8.dp),
+                            .padding(end = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -168,7 +168,8 @@ class WaktivaWidget : GlanceAppWidget() {
                         }
 
                         val availableWidth = size.width.value - sidebarWidth.value - 16
-                        val dynamicFontSize = (availableWidth / 6.5f).coerceIn(24f, 64f)
+                        // Adjusted dynamic sizing to make it bigger
+                        val dynamicFontSize = (availableWidth / 5.2f).coerceIn(28f, 76f)
 
                         AndroidRemoteViews(
                             remoteViews = RemoteViews(context.packageName, R.layout.widget_countdown).apply {
