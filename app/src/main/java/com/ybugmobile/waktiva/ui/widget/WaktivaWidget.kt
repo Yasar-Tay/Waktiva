@@ -98,7 +98,7 @@ class WaktivaWidget : GlanceAppWidget() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Left Side: Prayer Info (Sidebar)
-                    val sidebarWidth = 84.dp // Reduced sidebar width to give more space for the timer
+                    val sidebarWidth = 84.dp
                     Column(
                         modifier = GlanceModifier
                             .width(sidebarWidth)
@@ -115,11 +115,12 @@ class WaktivaWidget : GlanceAppWidget() {
                                 .cornerRadius(18.dp),
                             contentAlignment = Alignment.Center
                         ) {
+                            val prayerColor = getPrayerColor(nextPrayer.type)
                             Image(
                                 provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
                                 contentDescription = null,
                                 modifier = GlanceModifier.size(20.dp),
-                                colorFilter = ColorFilter.tint(ColorProvider(day = contentColor, night = contentColor))
+                                colorFilter = ColorFilter.tint(ColorProvider(day = prayerColor, night = prayerColor))
                             )
                         }
                         
@@ -193,6 +194,17 @@ class WaktivaWidget : GlanceAppWidget() {
                     )
                 }
             }
+        }
+    }
+
+    private fun getPrayerColor(type: PrayerType): Color {
+        return when (type) {
+            PrayerType.FAJR -> Color(0xFF81D4FA)
+            PrayerType.SUNRISE -> Color(0xFFFFE082)
+            PrayerType.DHUHR -> Color(0xFFFFF59D)
+            PrayerType.ASR -> Color(0xFFFFCC80)
+            PrayerType.MAGHRIB -> Color(0xFFCE93D8)
+            PrayerType.ISHA -> Color(0xFF9FA8DA)
         }
     }
 
