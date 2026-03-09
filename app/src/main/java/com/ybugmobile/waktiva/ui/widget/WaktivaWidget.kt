@@ -86,27 +86,37 @@ class WaktivaWidget : GlanceAppWidget() {
         val isBackgroundLight = startColor.luminance() > 0.5f
         val contentColor = if (isBackgroundLight) Color.Black else Color.White
         
+        // Transparency factor (0.4f - 0.6f is usually best for a glass feel)
+        val transparency = 0.85f
+        
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .appWidgetBackground()
-                .background(endColor) // The bottom color of the gradient
+                .background(Color.Black.copy(alpha = 0.15f))
                 .cornerRadius(32.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
-            // Gradient Overlay
+            // Step 1: Base color layer
+            Box(
+                modifier = GlanceModifier
+                    .fillMaxSize()
+                    .background(endColor.copy(alpha = transparency))
+            ) {}
+
+            // Step 2: Tinted Gradient Mask
             Image(
                 provider = ImageProvider(R.drawable.mask_gradient),
                 contentDescription = null,
                 modifier = GlanceModifier.fillMaxSize(),
-                colorFilter = ColorFilter.tint(ColorProvider(day = startColor, night = startColor))
+                colorFilter = ColorFilter.tint(ColorProvider(day = startColor.copy(alpha = transparency), night = startColor.copy(alpha = transparency)))
             )
             
-            // Subtle dark overlay for depth
+            // Step 3: Glass Sheen Layer (Highlight and Border)
             Box(
                 modifier = GlanceModifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.1f))
+                    .background(ImageProvider(R.drawable.widget_glass_sheen))
             ) {}
 
             if (nextPrayer != null) {
@@ -118,10 +128,9 @@ class WaktivaWidget : GlanceAppWidget() {
                     Column(
                         modifier = GlanceModifier
                             .width(sidebarWidth)
-                            .padding(vertical = 6.dp),
+                            .padding(vertical = 12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Icon now uses its own prayer-specific color
                         val iconColor = getPrayerColor(nextPrayer.type)
                         Image(
                             provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
@@ -132,7 +141,6 @@ class WaktivaWidget : GlanceAppWidget() {
                         
                         Spacer(modifier = GlanceModifier.height(8.dp))
 
-                        // Texts strictly follow the dark/light content color for legibility
                         Text(
                             text = nextPrayer.type.getDisplayName(context).uppercase(),
                             style = TextStyle(
