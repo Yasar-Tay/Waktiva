@@ -98,7 +98,7 @@ class WaktivaWidget : GlanceAppWidget() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Left Side: Prayer Info (Sidebar)
-                    val sidebarWidth = 84.dp
+                    val sidebarWidth = 92.dp
                     Column(
                         modifier = GlanceModifier
                             .width(sidebarWidth)
@@ -115,12 +115,11 @@ class WaktivaWidget : GlanceAppWidget() {
                                 .cornerRadius(18.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            val prayerColor = getPrayerColor(nextPrayer.type)
                             Image(
                                 provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
                                 contentDescription = null,
                                 modifier = GlanceModifier.size(20.dp),
-                                colorFilter = ColorFilter.tint(ColorProvider(day = prayerColor, night = prayerColor))
+                                colorFilter = ColorFilter.tint(ColorProvider(day = contentColor, night = contentColor))
                             )
                         }
                         
@@ -170,7 +169,7 @@ class WaktivaWidget : GlanceAppWidget() {
 
                         val availableWidth = size.width.value - sidebarWidth.value - 16
                         // Adjusted dynamic sizing to make it bigger
-                        val dynamicFontSize = (availableWidth / 5.2f).coerceIn(28f, 76f)
+                        val dynamicFontSize = (availableWidth / 5.5f).coerceIn(24f, 72f)
 
                         AndroidRemoteViews(
                             remoteViews = RemoteViews(context.packageName, R.layout.widget_countdown).apply {
@@ -194,17 +193,6 @@ class WaktivaWidget : GlanceAppWidget() {
                     )
                 }
             }
-        }
-    }
-
-    private fun getPrayerColor(type: PrayerType): Color {
-        return when (type) {
-            PrayerType.FAJR -> Color(0xFF81D4FA)
-            PrayerType.SUNRISE -> Color(0xFFFFE082)
-            PrayerType.DHUHR -> Color(0xFFFFF59D)
-            PrayerType.ASR -> Color(0xFFFFCC80)
-            PrayerType.MAGHRIB -> Color(0xFFCE93D8)
-            PrayerType.ISHA -> Color(0xFF9FA8DA)
         }
     }
 

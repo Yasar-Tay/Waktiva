@@ -15,6 +15,7 @@
         android:typeface="monospace"
         android:fontFamily="monospace"
         android:fontFeatureSettings="tnum"
+        android:letterSpacing="-0.02"
         android:gravity="center"
         android:maxLines="1"
         android:includeFontPadding="false" />
