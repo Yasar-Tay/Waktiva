@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,14 +30,11 @@ import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
-import com.ybugmobile.waktiva.ui.theme.getGlassTheme
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -68,34 +64,24 @@ class WaktivaWidget : GlanceAppWidget() {
             
             val nextPrayer = entryPoint.getNextPrayerUseCase()(today, tomorrow, now)
 
-            WidgetContent(context, nextPrayer, now, today)
+            WidgetContent(context, nextPrayer)
         }
     }
 
     @Composable
     fun WidgetContent(
         context: Context,
-        nextPrayer: NextPrayer?,
-        currentTime: LocalDateTime,
-        today: PrayerDay?
+        nextPrayer: NextPrayer?
     ) {
         val size = LocalSize.current
-        
-        // Match the glass effect from GlassTheme.kt
-        val glassTheme = getGlassTheme(
-            currentTime = currentTime.toLocalTime(),
-            day = today,
-            weatherCondition = WeatherCondition.CLEAR
-        )
-        
-        val containerColor = glassTheme.containerColor
-        val contentColor = glassTheme.contentColor
+        val contentColor = Color.White
+        val secondaryContentColor = Color.White.copy(alpha = 0.7f)
         
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .appWidgetBackground()
-                .background(containerColor)
+                .background(ImageProvider(R.drawable.widget_background))
                 .cornerRadius(32.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
@@ -111,43 +97,55 @@ class WaktivaWidget : GlanceAppWidget() {
                     modifier = GlanceModifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // Left Side: Prayer Info (Sidebar)
                     val sidebarWidth = 92.dp
                     Column(
                         modifier = GlanceModifier
                             .width(sidebarWidth)
-                            .padding(vertical = 12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .fillMaxHeight()
+                            .padding(vertical = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        val iconColor = getPrayerColor(nextPrayer.type)
-                        Image(
-                            provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
-                            contentDescription = null,
-                            modifier = GlanceModifier.size(28.dp),
-                            colorFilter = ColorFilter.tint(ColorProvider(day = iconColor, night = iconColor))
-                        )
+                        // Circular background for the icon
+                        Box(
+                            modifier = GlanceModifier
+                                .size(36.dp)
+                                .background(Color.White.copy(alpha = 0.15f))
+                                .cornerRadius(18.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
+                                contentDescription = null,
+                                modifier = GlanceModifier.size(20.dp),
+                                colorFilter = ColorFilter.tint(ColorProvider(day = contentColor, night = contentColor))
+                            )
+                        }
                         
-                        Spacer(modifier = GlanceModifier.height(8.dp))
+                        Spacer(modifier = GlanceModifier.height(4.dp))
 
                         Text(
                             text = nextPrayer.type.getDisplayName(context).uppercase(),
                             style = TextStyle(
                                 color = ColorProvider(day = contentColor, night = contentColor),
-                                fontSize = 13.sp,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center
                             )
                         )
+                        
                         Text(
                             text = nextPrayer.time.format(timeFormatter),
                             style = TextStyle(
-                                color = ColorProvider(day = glassTheme.secondaryContentColor, night = glassTheme.secondaryContentColor),
-                                fontSize = 12.sp,
+                                color = ColorProvider(day = secondaryContentColor, night = secondaryContentColor),
+                                fontSize = 11.sp,
                                 textAlign = TextAlign.Center
                             )
                         )
                     }
 
-                    // Countdown side
+                    // Right Side: Countdown Hero
                     Column(
                         modifier = GlanceModifier
                             .fillMaxHeight()
@@ -160,7 +158,6 @@ class WaktivaWidget : GlanceAppWidget() {
                         val baseTime = SystemClock.elapsedRealtime() + remainingDuration.toMillis()
                         
                         // Chronometer format hack to show leading zeros for hours (e.g. 09:51:23).
-                        // DateUtils.formatElapsedTime returns "H:MM:SS" or "MM:SS", so we prepend zeros as needed.
                         val hours = remainingDuration.toHours()
                         val minutes = remainingDuration.toMinutes() % 60
                         val chronometerFormat = when {
@@ -171,7 +168,6 @@ class WaktivaWidget : GlanceAppWidget() {
                         }
 
                         val availableWidth = size.width.value - sidebarWidth.value - 16
-                        // Adjusted divisor from 5.5f to 6.5f to account for the extra digit in "09:51:23"
                         val dynamicFontSize = (availableWidth / 6.5f).coerceIn(24f, 64f)
 
                         AndroidRemoteViews(
@@ -189,24 +185,13 @@ class WaktivaWidget : GlanceAppWidget() {
                     Text(
                         text = "WAKTIVA",
                         style = TextStyle(
-                            color = ColorProvider(day = contentColor.copy(alpha = 0.3f), night = contentColor.copy(alpha = 0.3f)),
+                            color = ColorProvider(day = contentColor.copy(alpha = 0.2f), night = contentColor.copy(alpha = 0.2f)),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
                     )
                 }
             }
-        }
-    }
-
-    private fun getPrayerColor(type: PrayerType): Color {
-        return when (type) {
-            PrayerType.FAJR -> Color(0xFF81D4FA)
-            PrayerType.SUNRISE -> Color(0xFFFFE082)
-            PrayerType.DHUHR -> Color(0xFFFFF59D)
-            PrayerType.ASR -> Color(0xFFFFCC80)
-            PrayerType.MAGHRIB -> Color(0xFFCE93D8)
-            PrayerType.ISHA -> Color(0xFF9FA8DA)
         }
     }
 
