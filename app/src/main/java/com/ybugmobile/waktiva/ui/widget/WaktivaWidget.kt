@@ -28,8 +28,10 @@ import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
+import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
+import com.ybugmobile.waktiva.ui.theme.getGlassTheme
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -79,40 +81,25 @@ class WaktivaWidget : GlanceAppWidget() {
     ) {
         val size = LocalSize.current
         
-        // Get dynamic start and end colors for the gradient
-        val (startColor, endColor) = getWidgetGradientColors(currentTime, today)
+        // Match the glass effect from GlassTheme.kt
+        val glassTheme = getGlassTheme(
+            currentTime = currentTime.toLocalTime(),
+            day = today,
+            weatherCondition = WeatherCondition.CLEAR
+        )
         
-        // Determine content color (for text) based on the average brightness
-        val isBackgroundLight = startColor.luminance() > 0.5f
-        val contentColor = if (isBackgroundLight) Color.Black else Color.White
-        
-        // Transparency factor (0.4f - 0.6f is usually best for a glass feel)
-        val transparency = 0.85f
+        val containerColor = glassTheme.containerColor
+        val contentColor = glassTheme.contentColor
         
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .appWidgetBackground()
-                .background(Color.Black.copy(alpha = 0.15f))
+                .background(containerColor)
                 .cornerRadius(32.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
-            // Step 1: Base color layer
-            Box(
-                modifier = GlanceModifier
-                    .fillMaxSize()
-                    .background(endColor.copy(alpha = transparency))
-            ) {}
-
-            // Step 2: Tinted Gradient Mask
-            Image(
-                provider = ImageProvider(R.drawable.mask_gradient),
-                contentDescription = null,
-                modifier = GlanceModifier.fillMaxSize(),
-                colorFilter = ColorFilter.tint(ColorProvider(day = startColor.copy(alpha = transparency), night = startColor.copy(alpha = transparency)))
-            )
-            
-            // Step 3: Glass Sheen Layer (Highlight and Border)
+            // Glass Sheen Layer (Highlight and Border) - Provides the edge definition and light play
             Box(
                 modifier = GlanceModifier
                     .fillMaxSize()
@@ -153,7 +140,7 @@ class WaktivaWidget : GlanceAppWidget() {
                         Text(
                             text = nextPrayer.time.format(timeFormatter),
                             style = TextStyle(
-                                color = ColorProvider(day = contentColor, night = contentColor),
+                                color = ColorProvider(day = glassTheme.secondaryContentColor, night = glassTheme.secondaryContentColor),
                                 fontSize = 12.sp,
                                 textAlign = TextAlign.Center
                             )
@@ -195,30 +182,6 @@ class WaktivaWidget : GlanceAppWidget() {
                     )
                 }
             }
-        }
-    }
-
-    private fun getWidgetGradientColors(currentTime: LocalDateTime, day: PrayerDay?): Pair<Color, Color> {
-        if (day == null) return Color(0xFF0F172A) to Color(0xFF1E293B)
-
-        val timings = day.timings
-        val localTime = currentTime.toLocalTime()
-        val fajr = timings[PrayerType.FAJR] ?: LocalTime.of(5, 0)
-        val sunrise = timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 30)
-        val dhuhur = timings[PrayerType.DHUHR] ?: LocalTime.of(13, 0)
-        val asr = timings[PrayerType.ASR] ?: LocalTime.of(17, 0)
-        val maghrib = timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 30)
-        val isha = timings[PrayerType.ISHA] ?: LocalTime.of(20, 0)
-
-        return when {
-            localTime.isBefore(fajr) -> Color(0xFF020617) to Color(0xFF0F141E)    // Pre-Dawn
-            localTime.isBefore(sunrise) -> Color(0xFF0A1024) to Color(0xFF1E1B4B) // Fajr/Dawn
-            localTime.isBefore(dhuhur) -> Color(0xFF1E5DA8) to Color(0xFF4FA3C7)  // Morning
-            localTime.isBefore(asr) -> Color(0xFF1E5DA8) to Color(0xFF68B298)     // Noon
-            localTime.isBefore(maghrib.minusMinutes(45)) -> Color(0xFF123E7C) to Color(0xFF3F8FD2) // Afternoon
-            localTime.isBefore(maghrib) -> Color(0xFF050E36) to Color(0xFF8D3E0D) // Maghrib/Sunset
-            localTime.isBefore(isha) -> Color(0xFF020617) to Color(0xFF310F1A)    // Dusk
-            else -> Color(0xFF020617) to Color(0xFF0F141E)                        // Isha/Night
         }
     }
 
