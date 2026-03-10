@@ -150,30 +150,21 @@ class WaktivaWidget : GlanceAppWidget() {
                         modifier = GlanceModifier
                             .fillMaxHeight()
                             .defaultWeight()
-                            .padding(end = 8.dp),
+                            .padding(end = 16.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.End
                     ) {
                         val remainingDuration = nextPrayer.remainingDuration
                         val baseTime = SystemClock.elapsedRealtime() + remainingDuration.toMillis()
                         
-                        // Chronometer format hack to show leading zeros for hours (e.g. 09:51:23).
-                        val hours = remainingDuration.toHours()
-                        val minutes = remainingDuration.toMinutes() % 60
-                        val chronometerFormat = when {
-                            hours >= 10 -> null
-                            hours >= 1 -> "0%s"
-                            minutes >= 10 -> "00:%s"
-                            else -> "00:0%s"
-                        }
-
                         val availableWidth = size.width.value - sidebarWidth.value - 16
                         // Adjusted dynamic sizing to make it bigger
                         val dynamicFontSize = (availableWidth / 5.5f).coerceIn(24f, 72f)
 
                         AndroidRemoteViews(
+                            modifier = GlanceModifier.fillMaxWidth(),
                             remoteViews = RemoteViews(context.packageName, R.layout.widget_countdown).apply {
-                                setChronometer(R.id.prayer_chronometer, baseTime, chronometerFormat, true)
+                                setChronometer(R.id.prayer_chronometer, baseTime, null, true)
                                 setChronometerCountDown(R.id.prayer_chronometer, true)
                                 setTextViewTextSize(R.id.prayer_chronometer, TypedValue.COMPLEX_UNIT_SP, dynamicFontSize)
                                 setTextColor(R.id.prayer_chronometer, contentColor.toArgb())

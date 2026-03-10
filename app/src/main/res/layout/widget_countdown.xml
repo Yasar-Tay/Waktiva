@@ -2,13 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:gravity="end|center_vertical"
+    android:orientation="vertical"
+    android:paddingEnd="4dp">
 
     <Chronometer
         android:id="@+id/prayer_chronometer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:countDown="true"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
@@ -16,7 +17,7 @@
         android:fontFamily="monospace"
         android:fontFeatureSettings="tnum"
         android:letterSpacing="-0.02"
-        android:gravity="center"
+        android:gravity="end"
         android:maxLines="1"
         android:includeFontPadding="false" />
 
