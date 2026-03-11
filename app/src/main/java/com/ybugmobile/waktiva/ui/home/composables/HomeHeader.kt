@@ -46,7 +46,7 @@ fun HomeHeader(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .padding(top = 10.dp)
+
     ) {
         if (isLandscape) {
             Row(

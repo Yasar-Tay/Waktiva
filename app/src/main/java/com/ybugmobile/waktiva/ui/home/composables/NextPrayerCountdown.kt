@@ -97,7 +97,7 @@ fun NextPrayerCountdown(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.home_remaining_time).uppercase(),
+                        text = stringResource(R.string.home_remaining_time).uppercase(Locale.getDefault()),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         color = contentColor.copy(alpha = 0.5f),
@@ -245,7 +245,7 @@ fun NextPrayerCountdown(
                                         text = stringResource(
                                             R.string.adhan_metadata_title_format,
                                             targetPrayerType.getDisplayName(context)
-                                        ).uppercase(),
+                                        ),
                                         style = TextStyle(
                                             fontSize = if (isLandscape) 10.sp else 12.sp,
                                             lineHeight = if (isLandscape) 10.sp else 12.sp,
@@ -255,7 +255,7 @@ fun NextPrayerCountdown(
                                         )
                                     )
                                     Text(
-                                        text = (if (isMuted) stringResource(R.string.home_unmute_adhan) else stringResource(R.string.home_skip_adhan)).uppercase(),
+                                        text = (if (isMuted) stringResource(R.string.home_unmute_adhan) else stringResource(R.string.home_skip_adhan)).uppercase(Locale.getDefault()),
                                         style = TextStyle(
                                             fontSize = if (isLandscape) 13.sp else 16.sp,
                                             lineHeight = if (isLandscape) 13.sp else 16.sp,

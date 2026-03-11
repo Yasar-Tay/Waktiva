@@ -203,7 +203,7 @@ fun AdhanScreen(
         while (true) {
             val now = Date()
             currentTimeStr = SimpleDateFormat("HH:mm", Locale.getDefault()).format(now)
-            currentDateStr = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(now).uppercase()
+            currentDateStr = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(now).uppercase(Locale.getDefault())
             currentTime = LocalTime.now()
             delay(1000)
         }
@@ -281,7 +281,7 @@ fun AdhanScreen(
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = stringResource(R.string.adhan_its_time_for).uppercase(),
+                    text = stringResource(R.string.adhan_its_time_for).uppercase(Locale.getDefault()),
                     style = MaterialTheme.typography.labelLarge,
                     color = Color.White.copy(alpha = 0.5f),
                     fontWeight = FontWeight.Black,
@@ -289,7 +289,7 @@ fun AdhanScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = displayedPrayerName.uppercase(),
+                    text = displayedPrayerName.uppercase(Locale.getDefault()),
                     style = MaterialTheme.typography.displayMedium.copy(
                         fontSize = 48.sp,
                         fontWeight = FontWeight.Black,
@@ -359,7 +359,7 @@ fun AdhanScreen(
                 Spacer(modifier = Modifier.height(24.dp))
                 
                 Text(
-                    text = stringResource(R.string.adhan_stop).uppercase(),
+                    text = stringResource(R.string.adhan_stop).uppercase(Locale.getDefault()),
                     style = MaterialTheme.typography.labelLarge,
                     color = Color.White.copy(alpha = 0.6f),
                     fontWeight = FontWeight.Black,

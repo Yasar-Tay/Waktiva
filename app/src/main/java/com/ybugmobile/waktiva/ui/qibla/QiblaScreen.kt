@@ -165,7 +165,7 @@ private fun QiblaContent(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     val lightGlassTheme = GlassTheme(
-        containerColor = Color.White.copy(alpha = 0.7f),
+        containerColor = Color.White.copy(alpha = 0.9f),
         contentColor = Color.Black,
         borderColor = Color.White.copy(alpha = 0.3f),
         secondaryContentColor = Color.Black.copy(alpha = 0.6f),

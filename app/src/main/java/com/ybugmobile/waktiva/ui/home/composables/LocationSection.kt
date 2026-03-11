@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthIndicator
 import com.ybugmobile.waktiva.utils.PermissionUtils
+import java.util.Locale
 
 /**
  * Component for displaying the current location name and system health status.
@@ -126,7 +127,7 @@ fun LocationSection(
             
             if (subTitle.isNotEmpty()) {
                 Text(
-                    text = subTitle.uppercase(),
+                    text = subTitle.uppercase(Locale.getDefault()),
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontSize = if (isArabic) 14.sp else 11.sp
                     ),

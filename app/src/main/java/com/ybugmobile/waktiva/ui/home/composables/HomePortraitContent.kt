@@ -53,7 +53,7 @@ fun HomePortraitContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 16.dp)
+
                 .systemBarsPadding()
                 .verticalScroll(scrollState)
         ) {
@@ -86,7 +86,7 @@ fun HomePortraitContent(
                         contentColor = contentColor,
                         currentTime = localTime,
                         currentPrayerDay = state.currentPrayerDay,
-                        modifier = Modifier.fillMaxWidth().padding(top = 20.dp, start = 10.dp)
+                        modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 } else {
@@ -222,7 +222,7 @@ fun HomePortraitContent(
             contentColor = contentColor,
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 24.dp, end = 24.dp)
+                .padding(top = 10.dp, end = 24.dp)
                 .graphicsLayer {
                     // Parallax effect: moves with the scroll but remains visible
                     translationY = -scrollState.value.toFloat()

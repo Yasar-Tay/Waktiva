@@ -349,7 +349,7 @@ fun SmoothTouchNavigationRail(
     Surface(
         color = Color(0xFFF8F9FA), // Solid light color
         tonalElevation = 4.dp,
-        shape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp),
+        shape = RoundedCornerShape(24.dp),
         modifier = Modifier
             .fillMaxHeight()
             .width(80.dp)
@@ -435,7 +435,7 @@ fun SmoothTouchNavigationBar(
         tonalElevation = 4.dp,
         shape = RoundedCornerShape(24.dp),
         modifier = Modifier
-            .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
+            .padding(start = 24.dp, end = 24.dp)
             .fillMaxWidth()
             .height(64.dp)
     ) {
