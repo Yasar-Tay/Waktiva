@@ -1,5 +1,6 @@
 package com.ybugmobile.waktiva.ui.home.composables
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,9 @@ fun MoonPhaseView(
 ) {
     if (moonPhase == null) return
 
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     // Subtle atmospheric glow animation
     val infiniteTransition = rememberInfiniteTransition(label = "moonGlow")
     val glowAlpha by infiniteTransition.animateFloat(
@@ -57,10 +62,7 @@ fun MoonPhaseView(
 
     val surfacePainter = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_moon_surface))
 
-    Column(
-        modifier = modifier, // Removed padding(8.dp) as requested for top alignment
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    val moonContent = @Composable {
         Box(
             modifier = Modifier.size(96.dp),
             contentAlignment = Alignment.Center
@@ -69,14 +71,11 @@ fun MoonPhaseView(
                 val center = Offset(size.width / 2, size.height / 2)
                 val radius = size.minDimension / 2.5f
 
-                // Use the parallactic angle from the accurate SunCalc calculation
-                // to rotate the moon exactly as it appears in the sky relative to the observer
                 val rotationAngle = moonPhase.parallacticAngle.toFloat()
 
                 withTransform({
                     rotate(degrees = rotationAngle, pivot = center)
                 }) {
-                    // 1. Atmospheric Glow - Radial gradient for soft lighting
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(contentColor.copy(alpha = glowAlpha * 0.4f), Color.Transparent),
@@ -92,7 +91,6 @@ fun MoonPhaseView(
                     }
 
                     clipPath(moonClipPath) {
-                        // 2. Dark Background - The unlit portion of the moon
                         drawCircle(
                             color = Color.Black.copy(alpha = 0.4f), 
                             radius = radius,
@@ -100,22 +98,18 @@ fun MoonPhaseView(
                             style = Fill
                         )
 
-                        // 3. The Illuminated Mask - Calculated based on current phase
                         val illumination = moonPhase.illumination.toFloat()
                         val isWaning = moonPhase.phaseProgress >= 0.5
 
                         withTransform({
-                            // Flip mask horizontally for waning phases
                             if (isWaning) {
                                 scale(scaleX = -1f, scaleY = 1f, pivot = center)
                             }
                         }) {
                             if (illumination > 0) {
                                 if (illumination >= 0.98f) {
-                                    // Full Moon optimization
                                     drawCircle(contentColor.copy(alpha = 0.85f), radius, center)
                                 } else {
-                                    // Draw crescent/gibbous using cubic bezier curves
                                     val maskPath = Path()
                                     maskPath.addArc(
                                         oval = Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius),
@@ -135,7 +129,6 @@ fun MoonPhaseView(
                             }
                         }
 
-                        // 4. Moon Surface Texture Overlay
                         withTransform({
                             translate(center.x - radius, center.y - radius)
                         }) {
@@ -148,7 +141,6 @@ fun MoonPhaseView(
                         }
                     }
 
-                    // 5. Subtle Outline
                     drawCircle(
                         color = contentColor.copy(alpha = 0.3f),
                         radius = radius,
@@ -158,8 +150,9 @@ fun MoonPhaseView(
                 }
             }
         }
-        
-        // Illumination Percentage Label
+    }
+
+    val labelContent = @Composable {
         Text(
             text = String.format(Locale.US, "%.1f%%", moonPhase.illumination * 100),
             style = MaterialTheme.typography.labelSmall.copy(
@@ -168,5 +161,25 @@ fun MoonPhaseView(
             ),
             color = contentColor.copy(alpha = 0.8f)
         )
+    }
+
+    if (isLandscape) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        ) {
+            labelContent()
+            Spacer(modifier = Modifier.width(4.dp))
+            moonContent()
+        }
+    } else {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            moonContent()
+            labelContent()
+        }
     }
 }

@@ -58,7 +58,6 @@ fun HomeLandscapeContent(
             // Add status bar padding inside the scrollable area
             Spacer(Modifier.statusBarsPadding())
 
-
             // Unified Header Row: Sol (Location), Orta (Weather), Sağ (Moon)
             Row(
                 modifier = Modifier
@@ -92,7 +91,11 @@ fun HomeLandscapeContent(
                             condition = state.weatherCondition,
                             contentColor = contentColor,
                             currentTime = localTime,
-                            currentPrayerDay = state.currentPrayerDay
+                            currentPrayerDay = state.currentPrayerDay,
+                            modifier = Modifier.graphicsLayer {
+                                scaleX = 0.85f
+                                scaleY = 0.85f
+                            }
                         )
                     }
                 }
