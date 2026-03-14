@@ -58,7 +58,7 @@ fun MoonPhaseView(
     val surfacePainter = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_moon_surface))
 
     Column(
-        modifier = modifier.padding(8.dp),
+        modifier = modifier, // Removed padding(8.dp) as requested for top alignment
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(

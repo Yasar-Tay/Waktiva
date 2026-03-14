@@ -50,30 +50,78 @@ fun HomeLandscapeContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .systemBarsPadding()
-                .displayCutoutPadding()
                 .verticalScroll(scrollState)
-                .padding(horizontal = 24.dp, vertical = 12.dp)
-                .padding(start = 72.dp), // Compensate for side navigation if present or branding
+                .padding(start = 96.dp, end = 24.dp), // Base layout padding
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // Screen Header containing Location and System Health status
-            HomeHeader(
-                locationName = state.locationName,
-                date = state.selectedDate,
-                hijriDate = state.effectiveHijriDate,
-                contentColor = contentColor,
-                onStatusClick = onStatusClick,
-                isNetworkAvailable = state.isNetworkAvailable,
-                isLocationEnabled = state.isLocationEnabled,
-                isLocationPermissionGranted = state.isLocationPermissionGranted
-            )
+            // Add status bar padding inside the scrollable area
+            Spacer(Modifier.statusBarsPadding())
+
+
+            // Unified Header Row: Sol (Location), Orta (Weather), Sağ (Moon)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp), // Extra padding as requested (+24dp)
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Left Part: Location
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    LocationSection(
+                        locationName = state.locationName,
+                        contentColor = contentColor,
+                        isNetworkAvailable = state.isNetworkAvailable,
+                        isLocationEnabled = state.isLocationEnabled,
+                        isLocationPermissionGranted = state.isLocationPermissionGranted,
+                        onStatusClick = onStatusClick
+                    )
+                }
+
+                // Middle Part: Weather (Absolute Center)
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (state.isNetworkAvailable) {
+                        WeatherSection(
+                            temperature = state.temperature,
+                            condition = state.weatherCondition,
+                            contentColor = contentColor,
+                            currentTime = localTime,
+                            currentPrayerDay = state.currentPrayerDay
+                        )
+                    }
+                }
+
+                // Right Part: Moon Phase
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    MoonPhaseView(
+                        moonPhase = state.moonPhase,
+                        contentColor = contentColor,
+                        modifier = Modifier
+                            .graphicsLayer {
+                                scaleX = 0.75f
+                                scaleY = 0.75f
+                            }
+                    )
+                }
+            }
+
+            //Spacer(modifier = Modifier.height(24.dp))
 
             // Horizontal split for main content: Circular Visualization + Countdown
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp), // Extra padding as requested (+24dp)
+                verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Box(
@@ -144,9 +192,13 @@ fun HomeLandscapeContent(
                 }
             }
 
+            Spacer(modifier = Modifier.height(24.dp))
+
             // Bottom Glass Surface: Detailed calendar and calculation method info
             Surface(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp), // Extra padding as requested (+24dp)
                 color = glassTheme.containerColor,
                 shape = RoundedCornerShape(32.dp),
                 border = androidx.compose.foundation.BorderStroke(
@@ -191,37 +243,10 @@ fun HomeLandscapeContent(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(80.dp))
-        }
-
-        // Overlay: Moon Phase indicator placed Top Middle in landscape to avoid conflict with edge content
-        MoonPhaseView(
-            moonPhase = state.moonPhase,
-            contentColor = contentColor,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 16.dp)
-                .graphicsLayer {
-                    translationY = -scrollState.value.toFloat()
-                }
-        )
-
-        // Overlay: Weather Section in Top Right for Landscape
-        if (state.isNetworkAvailable) {
-            WeatherSection(
-                temperature = state.temperature,
-                condition = state.weatherCondition,
-                contentColor = contentColor,
-                currentTime = localTime,
-                currentPrayerDay = state.currentPrayerDay,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .systemBarsPadding()
-                    .padding(top = 6.dp, end = 24.dp)
-                    .graphicsLayer {
-                        translationY = -scrollState.value.toFloat()
-                    }
-            )
+            
+            // Add navigation bar padding inside scrollable area
+            Spacer(Modifier.navigationBarsPadding())
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

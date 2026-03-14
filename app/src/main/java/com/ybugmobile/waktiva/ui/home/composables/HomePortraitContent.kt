@@ -55,6 +55,7 @@ fun HomePortraitContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
+                .padding(top = 24.dp)
         ) {
             // Add status bar padding inside the scrollable area so content can scroll under it
             Spacer(Modifier.statusBarsPadding())
