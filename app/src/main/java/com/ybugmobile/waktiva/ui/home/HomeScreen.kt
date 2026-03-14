@@ -207,7 +207,7 @@ fun HomeScreenContent(
 
     Scaffold(
         containerColor = Color.Transparent,
-        contentWindowInsets = WindowInsets.systemBars,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             // Debug button for weather testing
             Box(Modifier.fillMaxSize()) {
@@ -227,9 +227,7 @@ fun HomeScreenContent(
         }
     ) { padding ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
+            modifier = Modifier.fillMaxSize()
         ) {
             // Dynamic atmosphere rendering
             HomeBackground(
@@ -261,7 +259,9 @@ fun HomeScreenContent(
                 PullToRefreshBox(
                     isRefreshing = state.isRefreshing,
                     onRefresh = onRefresh,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = padding.calculateTopPadding()) // Respect TopBar if any, though here it's mostly for PullToRefresh placement
                 ) {
                     val scrollState = rememberScrollState()
                     val localTime = state.currentTime.toLocalTime()
@@ -358,7 +358,7 @@ fun HomeScreenContent(
 
             SnackbarHost(
                 hostState = snackbarHostState,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = padding.calculateBottomPadding())
             )
         }
     }

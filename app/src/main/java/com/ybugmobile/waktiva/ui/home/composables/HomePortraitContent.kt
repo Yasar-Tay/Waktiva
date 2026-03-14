@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,10 +54,11 @@ fun HomePortraitContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-
-                .systemBarsPadding()
                 .verticalScroll(scrollState)
         ) {
+            // Add status bar padding inside the scrollable area so content can scroll under it
+            Spacer(Modifier.statusBarsPadding())
+
             // Screen Header containing Location and System Health status
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -213,7 +215,9 @@ fun HomePortraitContent(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(80.dp))
+            // Respect navigation bars at the bottom
+            Spacer(Modifier.navigationBarsPadding())
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         // Overlay: Moon Phase indicator fixed to the top right
@@ -222,6 +226,7 @@ fun HomePortraitContent(
             contentColor = contentColor,
             modifier = Modifier
                 .align(Alignment.TopEnd)
+                .statusBarsPadding() // Also pad this overlay to stay below status bar
                 .padding(top = 10.dp, end = 24.dp)
                 .graphicsLayer {
                     // Parallax effect: moves with the scroll but remains visible
