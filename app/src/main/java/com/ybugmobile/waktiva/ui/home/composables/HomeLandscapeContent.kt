@@ -58,7 +58,7 @@ fun HomeLandscapeContent(
             // Add status bar padding inside the scrollable area
             Spacer(Modifier.statusBarsPadding())
 
-            // Unified Header Row: Sol (Location), Orta (Weather), Sağ (Moon)
+            // Unified Header Row: Sol (Location), Orta (Moon), Sağ (Weather)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -80,10 +80,26 @@ fun HomeLandscapeContent(
                     )
                 }
 
-                // Middle Part: Weather (Absolute Center)
+                // Middle Part: Moon Phase (Absolute Center)
                 Box(
                     modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.Center
+                ) {
+                    MoonPhaseView(
+                        moonPhase = state.moonPhase,
+                        contentColor = contentColor,
+                        modifier = Modifier
+                            .graphicsLayer {
+                                scaleX = 0.75f
+                                scaleY = 0.75f
+                            }
+                    )
+                }
+
+                // Right Part: Weather
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.CenterEnd
                 ) {
                     if (state.isNetworkAvailable) {
                         WeatherSection(
@@ -99,32 +115,14 @@ fun HomeLandscapeContent(
                         )
                     }
                 }
-
-                // Right Part: Moon Phase
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    MoonPhaseView(
-                        moonPhase = state.moonPhase,
-                        contentColor = contentColor,
-                        modifier = Modifier
-                            .graphicsLayer {
-                                scaleX = 0.75f
-                                scaleY = 0.75f
-                            }
-                    )
-                }
             }
-
-            //Spacer(modifier = Modifier.height(24.dp))
 
             // Horizontal split for main content: Circular Visualization + Countdown
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp), // Extra padding as requested (+24dp)
-                verticalAlignment = Alignment.Top,
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Box(
