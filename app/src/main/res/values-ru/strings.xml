@@ -166,6 +166,8 @@
     <string name="settings_adhan_sound_selection_desc">Выберите звук, который будет воспроизводиться во время молитвы</string>
 
     <string name="audio_settings_title">Звуки Азана</string>
+    <string name="audio_settings_desc">Установите разные Азаны для каждого времени молитвы</string>
+
     <string name="audio_header_global">Выберите звук Азана (общий)</string>
     <string name="audio_header_all_prayers">Все молитвы</string>
     <string name="audio_header_specific">Азан для %1$s</string>
@@ -260,7 +262,7 @@
     <!-- Donations -->
     <string name="settings_donate">Поддержать разработку Waktiva</string>
     <string name="donate_title">Поддержать Waktiva</string>
-    <string name="donate_header">Поддержать Waktiva 🤍</string>
+    <string name="donate_header">Поддержать Waktiva</string>
     <string name="donate_desc">Спасибо, что помогаете сохранять Waktiva простым, частным и свободным от рекламы.</string>
     <string name="donate_footer">🤲 Пусть это принесет вам пользу в этой жизни и в следующей.</string>
     <string name="donate_button">Пожертвовать</string>
@@ -339,17 +341,17 @@
     <string name="license_lib_hilt">Hilt (Лицензия Apache 2.0)</string>
     <string name="license_lib_room">Room (Лицензия Apache 2.0)</string>
     <string name="license_lib_datastore">DataStore (Лицензия Apache 2.0)</string>
-    <string name="license_lib_work">WorkManager (Лицензия Apache 2.0)</string>
-    <string name="license_lib_media3">Media3 (Лицензия Apache 2.0)</string>
+    <string name="license_lib_work">WorkManager (Apache License 2.0)</string>
+    <string name="license_lib_media3">Media3 (Apache License 2.0)</string>
     <string name="license_lib_location">Местоположение Google Play Services (Условия Google Play Services)</string>
-    <string name="license_lib_retrofit">Retrofit (Лицензия Apache 2.0)</string>
-    <string name="license_lib_okhttp">OkHttp (Лицензия Apache 2.0)</string>
-    <string name="license_lib_gson">Gson (Лицензия Apache 2.0)</string>
+    <string name="license_lib_retrofit">Retrofit (Apache License 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Apache License 2.0)</string>
+    <string name="license_lib_gson">Gson (Apache License 2.0)</string>
     <string name="license_lib_adhan">Библиотека Adhan Kotlin (Лицензия MIT)</string>
     <string name="license_lib_suncalc">SunCalc (Лицензия BSD)</string>
     <string name="license_lib_maplibre">MapLibre Android SDK (Лицензия BSD 3-Clause)</string>
-    <string name="license_lib_osmdroid">OsmDroid (Лицензия Apache 2.0)</string>
-    <string name="license_lib_accompanist">Accompanist (Лицензия Apache 2.0)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Apache License 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Apache License 2.0)</string>
     <string name="license_lib_billing">Библиотека платежей Google Play (Условия Google Play)</string>
     <string name="license_libs_property">Каждая библиотека остается собственностью своих авторов и используется в соответствии с ее лицензией.</string>
     <string name="license_adhan_audio">3. Лицензия на аудио Азана</string>

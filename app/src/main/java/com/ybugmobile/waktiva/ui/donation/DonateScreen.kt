@@ -104,7 +104,7 @@ fun DonateScreen(
                         // Reproducing the exact Adaptive Icon look (SplashScreen look)
                         Surface(
                             modifier = Modifier.size(150.dp),
-                            shape = RoundedCornerShape(60.dp),
+                            shape = RoundedCornerShape(40.dp),
                             color = Color.Transparent,
                             border = BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
                         ) {
@@ -176,14 +176,18 @@ fun DonateScreen(
                 }
             }
 
-            // Trust Badges in a Row
+            // Trust Badges in a Row - Using translatable resources
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    val badges = listOf("No Ads", "No Tracking", "Open Source")
-                    badges.forEach { badge ->
+                    val badgeResources = listOf(
+                        R.string.badge_no_ads,
+                        R.string.badge_no_tracking,
+                        R.string.badge_open_source
+                    )
+                    badgeResources.forEach { badgeRes ->
                         Surface(
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
@@ -191,11 +195,12 @@ fun DonateScreen(
                             border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.1f))
                         ) {
                             Text(
-                                text = badge,
+                                text = stringResource(badgeRes),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = Color.White.copy(alpha = 0.6f),
-                                modifier = Modifier.padding(vertical = 8.dp),
-                                textAlign = TextAlign.Center
+                                modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp),
+                                textAlign = TextAlign.Center,
+                                maxLines = 1
                             )
                         }
                     }

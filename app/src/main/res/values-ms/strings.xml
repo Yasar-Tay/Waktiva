@@ -43,7 +43,7 @@
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">Masa Berbaki</string>
     <string name="home_permissions_required">Kebenaran Diperlukan</string>
-    <string name="home_permissions_desc">Kebenaran Lokasi dan Notifikasi diperlukan agar aplikasi berfungsi dengan betul.</string>
+    <string name="home_permissions_desc">Kebenaran Lokasi ve Notifikasi diperlukan agar aplikasi berfungsi dengan betul.</string>
     <string name="home_grant_permissions">Berikan Kebenaran</string>
     <string name="home_refresh_success">Waktu solat dikemas kini</string>
     <string name="home_refresh_error">Gagal mengemas kini waktu solat</string>
@@ -220,7 +220,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Selamat Datang ke Waktiva</string>
-    <string name="welcome_desc">Teman profesional anda untuk waktu solat, dibina with ketepatan and reka bentuk moden.</string>
+    <string name="welcome_desc">aplikasi solat moden yang menghormati privasi anda dan kekal bebas daripada iklan.</string>
     <string name="welcome_begin">Mulakan Persediaan</string>
     <string name="welcome_finish">Tamat Persediaan</string>
     <string name="welcome_precision_settings">Tetapan Ketepatan</string>
@@ -270,6 +270,9 @@
     <string name="rate_title">Nilaikan Waktiva</string>
     <string name="rate_desc">Jika anda menikmati Waktiva, sila luangkan masa seketika untuk menilaikan ia 5 bintang di Google Play. Ia membantu kami menjangkau lebih ramai orang!</string>
     <string name="rate_button">Nilai 5 Bintang</string>
+    <string name="badge_no_ads">Tanpa Iklan</string>
+    <string name="badge_no_tracking">Tanpa Penjejakan</string>
+    <string name="badge_open_source">Sumber Terbuka</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>
@@ -295,8 +298,8 @@
     <string name="rel_day_ramadan_start">Awal Ramadan</string>
     <string name="rel_day_kadir">Malam Lailatulqadar</string>
     <string name="rel_day_eid_eve">Malam Raya</string>
-    <string name="rel_day_ramadan_eid">Hari Raya Aidilfitri</string>
-    <string name="rel_day_sacrifice_eid">Hari Raya Aidiladha</string>
+    <string name="rel_day_ramadan_eid">Hari Raya Idul Fitri</string>
+    <string name="rel_day_sacrifice_eid">Hari Raya Idul Adha</string>
     <string name="rel_day_hijri_new_year">Awal Muharram</string>
     <string name="rel_day_ashura">Hari Asyura</string>
     <string name="rel_day_mawlid">Maulidur Rasul</string>

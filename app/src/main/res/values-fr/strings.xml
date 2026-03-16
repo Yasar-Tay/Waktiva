@@ -260,7 +260,7 @@
     <!-- Donations -->
     <string name="settings_donate">Soutenir le développement de Waktiva</string>
     <string name="donate_title">Soutenir Waktiva</string>
-    <string name="donate_header">Soutenir Waktiva 🤍</string>
+    <string name="donate_header">Soutenir Waktiva</string>
     <string name="donate_desc">Merci d\'aider à garder Waktiva simple, privé et sans publicité.</string>
     <string name="donate_footer">🤲 Puisse cela vous être bénéfique dans cette vie et dans l\'au-delà.</string>
     <string name="donate_button">Faire un don</string>

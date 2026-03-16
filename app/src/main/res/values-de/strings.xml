@@ -261,7 +261,7 @@
     <!-- Donations -->
     <string name="settings_donate">Waktiva-Entwicklung unterstützen</string>
     <string name="donate_title">Waktiva unterstützen</string>
-    <string name="donate_header">Waktiva unterstützen 🤍</string>
+    <string name="donate_header">Waktiva unterstützen</string>
     <string name="donate_desc">Vielen Dank, dass Sie dazu beitragen, Waktiva einfach, privat und werbefrei zu halten.</string>
     <string name="donate_footer">🤲 Möge es Ihnen in diesem und im nächsten Leben nützen.</string>
     <string name="donate_button">Spenden</string>
