@@ -220,7 +220,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">مرحباً بك في Waktiva</string>
-    <string name="welcome_desc">رفيقك المهني لمواقيت الصلاة، صُمم بدقة وتصميم عصري.</string>
+    <string name="welcome_desc">تطبيق صلاة حديث يحترم خصوصيتك ويظل خالياً من الإعلانات.</string>
     <string name="welcome_begin">بدء الإعداد</string>
     <string name="welcome_finish">إنهاء الإعداد</string>
     <string name="welcome_precision_settings">إعدادات الدقة</string>

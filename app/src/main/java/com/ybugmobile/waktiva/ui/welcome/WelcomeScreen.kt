@@ -7,6 +7,8 @@ import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,7 +16,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -26,15 +27,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -49,7 +54,9 @@ import com.ybugmobile.waktiva.utils.PermissionUtils
 
 private val WelcomeGradientStart = Color(0xFF0F172A)
 private val WelcomeGradientEnd = Color(0xFF1E293B)
-private val AccentColor = Color(0xFF38BDF8)
+
+// Brand Color matching the App Icon color
+private val BrandColor = Color(0xFFAF56FA)
 
 enum class WelcomeStep {
     INTRO,
@@ -102,17 +109,34 @@ private fun IntroStep(onNext: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Surface(
-            modifier = Modifier.size(120.dp),
-            shape = CircleShape,
-            color = AccentColor.copy(alpha = 0.1f)
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = AccentColor, modifier = Modifier.size(64.dp))
+        Box(contentAlignment = Alignment.Center) {
+            Surface(
+                modifier = Modifier.size(150.dp),
+                shape = RoundedCornerShape(60.dp),
+                color = Color.Transparent,
+                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_launcher_background),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.FillBounds
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .scale(1.5f),
+                        contentScale = ContentScale.Fit
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(32.dp))
-        Text(stringResource(R.string.welcome_title), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, color = Color.White)
+        Text(stringResource(R.string.welcome_title), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             stringResource(R.string.welcome_desc),
@@ -121,13 +145,21 @@ private fun IntroStep(onNext: () -> Unit) {
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(48.dp))
+
         Button(
             onClick = onNext,
             modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = AccentColor, contentColor = Color.Black),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = BrandColor,
+                contentColor = Color.White
+            ),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Text(stringResource(R.string.welcome_begin), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(
+                stringResource(R.string.welcome_begin),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
@@ -270,17 +302,17 @@ private fun PermissionsStep(onNext: () -> Unit) {
         }
 
         Button(
-            onClick = {
-                onNext()
-            },
+            onClick = onNext,
             modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = if (allGranted) AccentColor else Color.White.copy(alpha = 0.2f)),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (allGranted) BrandColor else Color.White.copy(alpha = 0.1f),
+                contentColor = Color.White
+            ),
             shape = RoundedCornerShape(16.dp)
         ) {
             Text(
                 text = if (allGranted) stringResource(R.string.welcome_continue_btn) else stringResource(R.string.welcome_skip_btn),
-                fontWeight = FontWeight.Bold,
-                color = if (allGranted) Color.Black else Color.White
+                fontWeight = FontWeight.Bold
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -327,6 +359,14 @@ private fun PreferencesStep(
 
     val context = LocalContext.current
 
+    val switchColors = SwitchDefaults.colors(
+        checkedThumbColor = Color.White,
+        checkedTrackColor = BrandColor,
+        uncheckedThumbColor = Color.White.copy(alpha = 0.4f),
+        uncheckedTrackColor = Color.White.copy(alpha = 0.1f),
+        uncheckedBorderColor = Color.Transparent
+    )
+
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp).systemBarsPadding()
     ) {
@@ -339,7 +379,6 @@ private fun PreferencesStep(
             modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // General Preferences
             PreferenceSection(title = stringResource(R.string.welcome_general_settings)) {
                 WelcomeSettingsClickItem(
                     title = stringResource(R.string.settings_language),
@@ -363,7 +402,6 @@ private fun PreferencesStep(
                 )
             }
 
-            // Adhan Audio
             PreferenceSection(title = stringResource(R.string.welcome_adhan_audio_header)) {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
@@ -381,7 +419,7 @@ private fun PreferencesStep(
                         Switch(
                             checked = settings?.playAdhanAudio ?: true,
                             onCheckedChange = { settingsViewModel.setPlayAdhanAudio(it) },
-                            colors = SwitchDefaults.colors(checkedThumbColor = AccentColor)
+                            colors = switchColors
                         )
                     }
                 }
@@ -408,7 +446,7 @@ private fun PreferencesStep(
                             Switch(
                                 checked = settings?.enablePreAdhanWarning ?: true,
                                 onCheckedChange = { audioViewModel.togglePreAdhanWarning(it) },
-                                colors = SwitchDefaults.colors(checkedThumbColor = AccentColor)
+                                colors = switchColors
                             )
                         }
                         
@@ -424,13 +462,13 @@ private fun PreferencesStep(
                                     onValueChange = { audioViewModel.updatePreAdhanWarningMinutes(it.toInt()) },
                                     valueRange = 1f..30f,
                                     modifier = Modifier.weight(1f),
-                                    colors = SliderDefaults.colors(thumbColor = AccentColor, activeTrackColor = AccentColor)
+                                    colors = SliderDefaults.colors(thumbColor = BrandColor, activeTrackColor = BrandColor)
                                 )
                                 Text(
                                     text = "${settings?.preAdhanWarningMinutes ?: 5}",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = AccentColor
+                                    color = BrandColor
                                 )
                             }
                         }
@@ -453,7 +491,7 @@ private fun PreferencesStep(
                         Switch(
                             checked = settings?.useSpecificAdhanForEachPrayer ?: false,
                             onCheckedChange = { audioViewModel.toggleUseSpecificAdhan(it) },
-                            colors = SwitchDefaults.colors(checkedThumbColor = AccentColor)
+                            colors = switchColors
                         )
                     }
                 }
@@ -511,7 +549,10 @@ private fun PreferencesStep(
         Button(
             onClick = onComplete,
             modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = AccentColor, contentColor = Color.Black),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = BrandColor,
+                contentColor = Color.White
+            ),
             shape = RoundedCornerShape(16.dp)
         ) {
             Text(stringResource(R.string.welcome_finish), fontWeight = FontWeight.Bold)
@@ -582,8 +623,9 @@ private fun PreferenceSection(title: String, content: @Composable ColumnScope.()
         Text(
             text = title.uppercase(),
             style = MaterialTheme.typography.labelMedium,
-            color = AccentColor,
-            fontWeight = FontWeight.Bold
+            color = Color.White.copy(alpha = 0.4f),
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 1.sp
         )
         content()
     }
@@ -607,7 +649,7 @@ private fun WelcomeSettingsClickItem(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(icon, contentDescription = null, tint = AccentColor, modifier = Modifier.size(24.dp))
+            Icon(icon, contentDescription = null, tint = BrandColor, modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold, color = Color.White)
@@ -624,18 +666,18 @@ private fun PermissionCard(icon: ImageVector, title: String, description: String
         modifier = Modifier
             .fillMaxWidth()
             .clickable(enabled = onClick != null) { onClick?.invoke() }
-            .border(1.dp, if (isGranted) AccentColor.copy(alpha = 0.5f) else Color.White.copy(alpha = 0.1f), RoundedCornerShape(16.dp)),
+            .border(1.dp, if (isGranted) BrandColor.copy(alpha = 0.5f) else Color.White.copy(alpha = 0.1f), RoundedCornerShape(16.dp)),
         shape = RoundedCornerShape(16.dp),
-        color = if (isGranted) AccentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.05f)
+        color = if (isGranted) BrandColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.05f)
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, contentDescription = null, tint = if (isGranted) AccentColor else Color.White.copy(alpha = 0.5f))
+            Icon(icon, contentDescription = null, tint = if (isGranted) BrandColor else Color.White.copy(alpha = 0.5f))
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(title, fontWeight = FontWeight.Bold, color = Color.White)
                 Text(description, style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
             }
-            if (isGranted) Icon(Icons.Default.CheckCircle, contentDescription = null, tint = AccentColor)
+            if (isGranted) Icon(Icons.Default.CheckCircle, contentDescription = null, tint = BrandColor)
         }
     }
 }
@@ -646,20 +688,20 @@ private fun AudioSelectionItem(name: String, isSelected: Boolean, isPlaying: Boo
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onSelect() }
-            .border(1.dp, if (isSelected) AccentColor.copy(alpha = 0.5f) else Color.Transparent, RoundedCornerShape(12.dp)),
+            .border(1.dp, if (isSelected) BrandColor.copy(alpha = 0.5f) else Color.Transparent, RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
-        color = if (isSelected) AccentColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.05f)
+        color = if (isSelected) BrandColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.05f)
     ) {
         Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 if (isSelected) Icons.Default.RadioButtonChecked else Icons.Default.RadioButtonUnchecked,
                 contentDescription = null,
-                tint = if (isSelected) AccentColor else Color.White.copy(alpha = 0.3f)
+                tint = if (isSelected) BrandColor else Color.White.copy(alpha = 0.3f)
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(name, color = Color.White, modifier = Modifier.weight(1f))
             IconButton(onClick = onTogglePreview) {
-                Icon(if (isPlaying) Icons.Default.Stop else Icons.Default.PlayArrow, contentDescription = null, tint = if (isPlaying) Color.Red else AccentColor)
+                Icon(if (isPlaying) Icons.Default.Stop else Icons.Default.PlayArrow, contentDescription = null, tint = if (isPlaying) Color.Red else BrandColor)
             }
         }
     }
@@ -701,7 +743,7 @@ private fun <T> WelcomeSelectionDialog(
                         Surface(
                             onClick = { onSelected(id) },
                             shape = RoundedCornerShape(16.dp),
-                            color = if (isSelected) AccentColor.copy(alpha = 0.1f) else Color.Transparent,
+                            color = if (isSelected) BrandColor.copy(alpha = 0.1f) else Color.Transparent,
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Row(
@@ -712,7 +754,7 @@ private fun <T> WelcomeSelectionDialog(
                                     selected = isSelected,
                                     onClick = null,
                                     colors = RadioButtonDefaults.colors(
-                                        selectedColor = AccentColor,
+                                        selectedColor = BrandColor,
                                         unselectedColor = Color.White.copy(alpha = 0.3f)
                                     )
                                 )
@@ -734,7 +776,7 @@ private fun <T> WelcomeSelectionDialog(
                     onClick = onDismiss,
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text(stringResource(R.string.settings_cancel), color = AccentColor, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.settings_cancel), color = BrandColor, fontWeight = FontWeight.Bold)
                 }
             }
         }

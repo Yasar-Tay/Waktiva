@@ -223,7 +223,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Welcome to Waktiva</string>
-    <string name="welcome_desc">Your professional companion for prayer times, built with precision and modern design.</string>
+    <string name="welcome_desc">a modern prayer app that respects your privacy and stays free of ads.</string>
     <string name="welcome_begin">Begin Setup</string>
     <string name="welcome_finish">Finish Setup</string>
     <string name="welcome_precision_settings">Precision Settings</string>

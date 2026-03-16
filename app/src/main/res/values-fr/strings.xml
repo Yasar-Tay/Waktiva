@@ -199,7 +199,7 @@
     <string name="settings_battery_opt">Optimisation de la batterie</string>
     <string name="settings_battery_opt_enabled">Optimisé pour la fiabilité</string>
     <string name="settings_battery_opt_disabled">Essentiel pour jouer l\'Adhan à l\'heure. Les optimisations de batterie peuvent retarder ou bloquer les alertes programmées.</string>
-    <string name="settings_exact_alarm_title">Alarmes exactes</string>
+    <string name="settings_exact_alarm_title">Alarmes exactas</string>
     <string name="settings_exact_alarm_desc">Nécessaire pour des notifications d\'heures de prière précises et des Adhans à l\'heure.</string>
 
     <!-- Data Management -->
@@ -220,7 +220,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Bienvenue sur Waktiva</string>
-    <string name="welcome_desc">Votre compagnon professionnel pour les heures de prière, conçu avec précision et modernité.</string>
+    <string name="welcome_desc">une application de prière moderne qui respecte votre vie privée et reste sans publicité.</string>
     <string name="welcome_begin">Commencer la configuration</string>
     <string name="welcome_finish">Terminer la configuration</string>
     <string name="welcome_precision_settings">Paramètres de précision</string>
@@ -229,7 +229,7 @@
     <string name="welcome_loc_desc">Crucial pour le calcul des heures de prière. Sans cela, l\'application ne peut pas récupérer les heures pour votre emplacement et devient inutile.</string>
     <string name="welcome_notif_title">Alertes Adhan</string>
     <string name="welcome_notif_desc">Nécessaire pour envoyer des notifications et faire sonner l\'Adhan au moment de la prière.</string>
-    <string name="welcome_alarm_title">Alarmes exactes</string>
+    <string name="welcome_alarm_title">Alarmes exactas</string>
     <string name="welcome_alarm_desc">Requises pour que l\'Adhan soit joué exactement à l\'heure sans délai.</string>
     <string name="welcome_grant_btn">Autoriser les permissions</string>
     <string name="welcome_continue_btn">Continuer</string>
@@ -261,7 +261,7 @@
     <string name="settings_donate">Soutenir le développement de Waktiva</string>
     <string name="donate_title">Soutenir Waktiva</string>
     <string name="donate_header">Soutenir Waktiva 🤍</string>
-    <string name="donate_desc">Waktiva a été conçu avec une seule intention :\noffrir un espace de prière propre, privé et sans publicité.\n\nPas de publicité.\nPas de suivi.\nPas de vente de données.\nJuste quelque chose d\'honnête et d\'utile.\n\nGarder Waktiva gratuit signifie choisir l\'indépendance plutôt que la monétisation.\nCela signifie ne pas ajouter de publicité.\nCela signifie ne pas vendre les données des utilisateurs.\nCela signifie construire lentement, soigneusement et de manière éthique.\n\nSi Waktiva facilite vos prières quotidiennes…\nSi vous appréciez avoir une application de prière qui respecte votre vie privée…\nSi vous voulez aider à améliorer son design, ses fonctionnalités et son contenu sous licence…\n\nVous pouvez soutenir son développement par un don.\n\nVotre soutien aide à couvrir :\n\n• Les coûts de serveur et d\'API\n• Les enregistrements d\'Adhan sous licence\n• Les icônes, illustrations et ressources de design\n• Les outils de développement et les frais de publication\n• Les améliorations futures et les nouvelles fonctionnalités\n\nChaque contribution — petite ou grande — fait vraiment une différence.\n\nSi vous n\'êtes pas en mesure de faire un don, ce n\'est pas grave du tout.\nVos prières et vos paroles bienveillantes sont déjà appréciées.\n\nMerci d\'aider à garder Waktiva simple, privé et sans publicité.</string>
+    <string name="donate_desc">Merci d\'aider à garder Waktiva simple, privé et sans publicité.</string>
     <string name="donate_footer">🤲 Puisse cela vous être bénéfique dans cette vie et dans l\'au-delà.</string>
     <string name="donate_button">Faire un don</string>
     <string name="donate_thank_you">Merci de soutenir les logiciels libres !</string>
@@ -331,7 +331,7 @@
     <string name="license_open_source_libs">2. Bibliothèques Open-Source Tierces</string>
     <string name="license_libs_intro">Waktiva inclut les composants open-source suivants :</string>
     <string name="license_lib_androidx">Bibliothèques AndroidX (Licence Apache 2.0)</string>
-    <string name="license_lib_compose">Jetpack Compose (Licence Apache 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Licencia Apache 2.0)</string>
     <string name="license_lib_kotlin">Kotlin (Licence Apache 2.0)</string>
     <string name="license_lib_hilt">Hilt (Licence Apache 2.0)</string>
     <string name="license_lib_room">Room (Licence Apache 2.0)</string>

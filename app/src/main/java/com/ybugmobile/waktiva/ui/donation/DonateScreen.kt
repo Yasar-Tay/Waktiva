@@ -103,8 +103,8 @@ fun DonateScreen(
                     Box(contentAlignment = Alignment.Center) {
                         // Reproducing the exact Adaptive Icon look (SplashScreen look)
                         Surface(
-                            modifier = Modifier.size(180.dp),
-                            shape = RoundedCornerShape(48.dp),
+                            modifier = Modifier.size(150.dp),
+                            shape = RoundedCornerShape(60.dp),
                             color = Color.Transparent,
                             border = BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
                         ) {
