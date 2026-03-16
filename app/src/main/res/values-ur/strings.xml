@@ -271,6 +271,10 @@
     <string name="rate_desc">اگر آپ Waktiva پسند کر رہے ہیں، تو براہ کرم اسے گوگل پلے پر 5 ستارے دیں۔ یہ ہمیں مزید لوگوں تک پہنچنے میں مدد دیتا ہے!</string>
     <string name="rate_button">5 ستارے دیں</string>
 
+    <string name="badge_no_ads">اشتہارات کے بغیر</string>
+    <string name="badge_no_tracking">کوئی ٹریکنگ نہیں</string>
+    <string name="badge_open_source">اوپن سورس</string>
+
     <!-- Hijri Months -->
     <string name="hijri_month_1">محرم</string>
     <string name="hijri_month_2">صفر</string>

@@ -124,8 +124,6 @@
     <string name="settings_confirm">Onayla</string>
     <string name="settings_weather_effects">Hava Durumu Efektleri</string>
     <string name="settings_weather_effects_desc">Arka planda animasyonlu hava durumunu (yağmur, kar, bulut) göster.</string>
-    <string name="settings_persistent_notification">Kalıcı Bildirim</string>
-    <string name="settings_persistent_notification_desc">Kilit ekranında ve bildirim çubuğunda namaz geri sayımını göster.</string>
 
     <!-- Language Options -->
     <string name="lang_system">Sistem Varsayılanı</string>
@@ -169,8 +167,6 @@
     <string name="settings_adhan_sound_selection_desc">Namaz vakitlerinde çalınacak sesi seçin</string>
 
     <string name="audio_settings_title">Ezan Sesleri</string>
-    <string name="audio_settings_desc">Her vakit için farklı ezanlar ayarlayın</string>
-
     <string name="audio_header_global">Ezan Sesini Seç (Genel)</string>
     <string name="audio_header_all_prayers">Tüm Vakitler</string>
     <string name="audio_header_specific">%1$s için Ezan</string>

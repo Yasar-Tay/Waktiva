@@ -271,6 +271,10 @@
     <string name="rate_desc">Si disfrutas de Waktiva, tómate un momento para calificarla con 5 estrellas en Google Play. ¡Nos ayuda a llegar a más gente!</string>
     <string name="rate_button">Dar 5 estrellas</string>
 
+    <string name="badge_no_ads">Sin anuncios</string>
+    <string name="badge_no_tracking">Sin rastreo</string>
+    <string name="badge_open_source">Código abierto</string>
+
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>
     <string name="hijri_month_2">Safar</string>

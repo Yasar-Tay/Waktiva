@@ -271,6 +271,10 @@
     <string name="rate_desc">اگر از Waktiva لذت می‌برید، لطفاً لحظه‌ای وقت بگذارید و در گوگل پلی به آن ۵ ستاره بدهید. این کار به ما کمک می‌کند تا به افراد بیشتری برسیم!</string>
     <string name="rate_button">دادن ۵ ستاره</string>
 
+    <string name="badge_no_ads">بدون تبلیغات</string>
+    <string name="badge_no_tracking">بدون ردیابی</string>
+    <string name="badge_open_source">متن‌باز</string>
+
     <!-- Hijri Months -->
     <string name="hijri_month_1">محرم</string>
     <string name="hijri_month_2">صفر</string>
@@ -359,7 +363,7 @@
     <string name="license_loc_usage_2">تعیین جهت قبله</string>
     <string name="license_loc_usage_3">ارائه تاریخ هجری و محاسبات فاز ماه</string>
     <string name="license_loc_processing">داده‌های مکان به صورت محلی پردازش می‌شوند و ذخیره، ردیابی یا به اشتراک گذاشته نمی‌شوند. اوقات شرعی تا سه ماه برای استفاده آفلاین دانلود می‌شوند.</string>
-    <string name="license_no_ads">۵. تعهد عدم تبلیغات / عدم ردیابی</string>
+    <string name="license_no_ads">٥. تعهد عدم تبلیغات / عدم ردیابی</string>
     <string name="license_no_ads_1">هیچ تبلیغی نمایش نمی‌دهد</string>
     <string name="license_no_ads_2">از هیچ SDK ردیابی استفاده نمی‌کند</string>
     <string name="license_no_ads_3">هیچ داده تحلیلی جمع‌آوری نمی‌کند</string>

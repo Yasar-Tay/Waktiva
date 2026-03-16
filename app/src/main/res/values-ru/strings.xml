@@ -166,8 +166,6 @@
     <string name="settings_adhan_sound_selection_desc">Выберите звук, который будет воспроизводиться во время молитвы</string>
 
     <string name="audio_settings_title">Звуки Азана</string>
-    <string name="audio_settings_desc">Установите разные Азаны для каждого времени молитвы</string>
-
     <string name="audio_header_global">Выберите звук Азана (общий)</string>
     <string name="audio_header_all_prayers">Все молитвы</string>
     <string name="audio_header_specific">Азан для %1$s</string>

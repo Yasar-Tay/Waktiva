@@ -224,7 +224,7 @@
     <string name="welcome_desc">নামাজের সময়ের জন্য আপনার পেশাদার সঙ্গী, নির্ভুলতা এবং আধুনিক ডিজাইনে তৈরি।</string>
     <string name="welcome_begin">সেটআপ শুরু করুন</string>
     <string name="welcome_finish">সেটআপ শেষ করুন</string>
-    <string name="welcome_precision_settings">নির্ভুলতা সেটিংস</string>
+    <string name="welcome_precision_settings">নির্ভুলতা সেটিিংস</string>
     <string name="welcome_precision_desc">আপনাকে আরও ভালো সেবা দিতে Waktiva-র এগুলো প্রয়োজন</string>
     <string name="welcome_loc_title">সঠিক অবস্থান</string>
     <string name="welcome_loc_desc">নামাজের সময় গণনার জন্য অত্যন্ত গুরুত্বপূর্ণ। এটি ছাড়া অ্যাপটি আপনার অবস্থানের জন্য সময় আনতে পারবে না এবং নিরর্থক হয়ে পড়বে।</string>
@@ -271,6 +271,10 @@
     <string name="rate_title">Waktiva-কে রেটিং দিন</string>
     <string name="rate_desc">Waktiva ভালো লাগলে গুগল প্লে-তে ৫ স্টার দিন। এটি আমাদের আরও মানুষের কাছে পৌঁছাতে সাহায্য করবে!</string>
     <string name="rate_button">৫ স্টার দিন</string>
+
+    <string name="badge_no_ads">কোনো বিজ্ঞাপন নেই</string>
+    <string name="badge_no_tracking">ট্র্যাকিং নেই</string>
+    <string name="badge_open_source">ওপেন সোর্স</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">মুহররম</string>

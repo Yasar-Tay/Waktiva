@@ -356,11 +356,11 @@
     <string name="license_adhan_reciter">Waktiva شامل ضبط‌های اذان توسط محسن کارا، قهرمان جهان در مسابقات اذان ٢٠٢٢ است.</string>
     <string name="license_adhan_permission">این ضبط‌ها با اجازه استفاده می‌شوند. تمامی حقوق صوتی نزد مؤذن اصلی محفوظ است.</string>
     <string name="license_adhan_restrictions">صوت اذان نباید بدون اجازه صریح صاحب حق، از برنامه Waktiva استخراج، بازتوزیع یا خارج از آن استفاده شود.</string>
-    <string name="license_location_permissions">٤. مکان و مجوزها</string>
+    <string name="license_location_permissions">٤. مكان و مجوزها</string>
     <string name="license_location_usage">Waktiva اجازه مکان را صرفاً برای موارد زیر درخواست می‌کند:</string>
     <string name="license_loc_usage_1">محاسبه دقیق اوقات شرعی</string>
     <string name="license_loc_usage_2">تعیین جهت قبله</string>
-    <string name="license_loc_usage_3">ارائه تاریخ هجری و محاسبات فاز ماه</string>
+    <string name="license_loc_usage_3">ارائه تاریخ هجري و محاسبات فاز ماه</string>
     <string name="license_loc_processing">داده‌های مکان به صورت محلی پردازش می‌شوند و ذخیره، ردیابی یا به اشتراک گذاشته نمی‌شوند. اوقات شرعی تا سه ماه برای استفاده آفلاین دانلود می‌شوند.</string>
     <string name="license_no_ads">٥. تعهد عدم تبلیغات / عدم ردیابی</string>
     <string name="license_no_ads_1">هیچ تبلیغی نمایش نمی‌دهد</string>

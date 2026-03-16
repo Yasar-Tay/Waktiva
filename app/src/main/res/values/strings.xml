@@ -124,8 +124,6 @@
     <string name="settings_confirm">Confirm</string>
     <string name="settings_weather_effects">Weather Effects</string>
     <string name="settings_weather_effects_desc">Show animated weather conditions (rain, snow, clouds) in the background.</string>
-    <string name="settings_persistent_notification">Persistent Notification</string>
-    <string name="settings_persistent_notification_desc">Show a prayer countdown on the lock screen and in the notification drawer.</string>
 
     <!-- Language Options -->
     <string name="lang_system">System Default</string>
