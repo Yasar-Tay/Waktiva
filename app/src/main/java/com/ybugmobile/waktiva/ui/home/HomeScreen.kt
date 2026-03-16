@@ -289,7 +289,7 @@ fun HomeScreenContent(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
+                                .navigationBarsPadding()
                         ) {
                             HomePortraitContent(
                                 state = state,

@@ -220,7 +220,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Bienvenue sur Waktiva</string>
-    <string name="welcome_desc">une application de prière moderne qui respecte votre vie privée et reste sans publicité.</string>
+    <string name="welcome_desc">Une application de prière moderne qui respecte votre vie privée et reste sans publicité.</string>
     <string name="welcome_begin">Commencer la configuration</string>
     <string name="welcome_finish">Terminer la configuration</string>
     <string name="welcome_precision_settings">Paramètres de précision</string>

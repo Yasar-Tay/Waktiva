@@ -221,7 +221,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Waktiva\'ya Hoş Geldiniz</string>
-    <string name="welcome_desc">gizliliğinize saygı duyan ve reklamsız kalan modern bir namaz uygulaması.</string>
+    <string name="welcome_desc">Gizliliğinize saygı duyan, reklamsız ve modern bir namaz uygulaması.</string>
     <string name="welcome_begin">Kuruluma Başla</string>
     <string name="welcome_finish">Kurulumu Tamamla</string>
     <string name="welcome_precision_settings">Hassasiyet Ayarları</string>

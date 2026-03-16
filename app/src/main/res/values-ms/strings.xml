@@ -220,7 +220,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Selamat Datang ke Waktiva</string>
-    <string name="welcome_desc">aplikasi solat moden yang menghormati privasi anda dan kekal bebas daripada iklan.</string>
+    <string name="welcome_desc">Aplikasi solat moden yang menghormati privasi anda dan kekal bebas daripada iklan.</string>
     <string name="welcome_begin">Mulakan Persediaan</string>
     <string name="welcome_finish">Tamat Persediaan</string>
     <string name="welcome_precision_settings">Tetapan Ketepatan</string>

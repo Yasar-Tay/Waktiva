@@ -221,7 +221,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Willkommen bei Waktiva</string>
-    <string name="welcome_desc">eine moderne Gebets-App, die Ihre Privatsphäre respektiert und werbefrei bleibt.</string>
+    <string name="welcome_desc">Eine moderne Gebets-App, die Ihre Privatsphäre respektiert und werbefrei bleibt.</string>
     <string name="welcome_begin">Einrichtung beginnen</string>
     <string name="welcome_finish">Einrichtung abschließen</string>
     <string name="welcome_precision_settings">Präcisionseinstellungen</string>

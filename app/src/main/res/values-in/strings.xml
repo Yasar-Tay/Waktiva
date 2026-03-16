@@ -220,7 +220,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Selamat Datang di Waktiva</string>
-    <string name="welcome_desc">aplikasi shalat modern yang menghormati privasi Anda dan tetap bebas iklan.</string>
+    <string name="welcome_desc">Aplikasi shalat modern yang menghormati privasi Anda dan tetap bebas iklan.</string>
     <string name="welcome_begin">Mulai Pengaturan</string>
     <string name="welcome_finish">Selesaikan Pengaturan</string>
     <string name="welcome_precision_settings">Pengaturan Presisi</string>
