@@ -136,7 +136,7 @@
     <string name="lang_in">Bahasa Indonesia</string>
     <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">فарси</string>
+    <string name="lang_fa">فارسی</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
@@ -220,7 +220,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Добро пожаловать в Waktiva</string>
-    <string name="welcome_desc">Ваш профессиональный помощник для времени молитв, созданный с точностью и современным дизайном.</string>
+    <string name="welcome_desc">современное молитвенное приложение, которое уважает вашу конфиденциальность и остается без рекламы.</string>
     <string name="welcome_begin">Начать настройку</string>
     <string name="welcome_finish">Завершить настройку</string>
     <string name="welcome_precision_settings">Настройки точности</string>
@@ -261,7 +261,7 @@
     <string name="settings_donate">Поддержать разработку Waktiva</string>
     <string name="donate_title">Поддержать Waktiva</string>
     <string name="donate_header">Поддержать Waktiva 🤍</string>
-    <string name="donate_desc">Waktiva была создана с одной целью:\nпредложить чистое, частное и свободное от рекламы пространство для молитвы.\n\nБез рекламы.\nБез слежки.\nБез продажи данных.\nПросто что-то честное и полезное.\n\nСохранение Waktiva бесплатной означает выбор независимости вместо монетизации.\nЭто значит не добавлять рекламу.\nЭто значит не продавать данные пользователей.\nЭто значит строить медленно, тщательно и этично.\n\nЕсли Waktiva приносит легкость в ваши ежедневные молитвы…\nЕсли вы цените приложение для молитв, которое уважает вашу конфиденциальность…\nЕсли вы хотите помочь улучшить его дизайн, функции и лицензионный контент…\n\nВы можете поддержать разработку пожертвованием.\n\nВаша поддержка помогает покрыть:\n\n• Расходы на сервер и API\n• Лицензионные записи Азана\n• Иконки, иллюстрации и ресурсы дизайна\n• Инструменты разработки и сборы за публикацию\n• Будущие улучшения и новые функции\n\nКаждый вклад — маленький или большой — действительно имеет значение.\n\nЕсли вы не в состоянии сделать пожертвование, это совершенно нормально.\nВаши молитвы и добрые слова уже ценны.\n\nСпасибо, что помогаете сохранять Waktiva простым, частным и свободным от рекламы.</string>
+    <string name="donate_desc">Спасибо, что помогаете сохранять Waktiva простым, частным и свободным от рекламы.</string>
     <string name="donate_footer">🤲 Пусть это принесет вам пользу в этой жизни и в следующей.</string>
     <string name="donate_button">Пожертвовать</string>
     <string name="donate_thank_you">Спасибо за поддержку свободного ПО!</string>
@@ -270,6 +270,9 @@
     <string name="rate_title">Оценить Waktiva</string>
     <string name="rate_desc">Если вам нравится Waktiva, пожалуйста, найдите минутку, чтобы оценить его на 5 звезд в Google Play. Это помогает нам охватить больше людей!</string>
     <string name="rate_button">Поставить 5 звезд</string>
+    <string name="badge_no_ads">Без рекламы</string>
+    <string name="badge_no_tracking">Без слежки</string>
+    <string name="badge_open_source">Открытый код</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Мухаррам</string>

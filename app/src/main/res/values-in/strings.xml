@@ -53,8 +53,8 @@
     <string name="home_return_to_today">Kembali ke Hari Ini</string>
     <string name="home_tomorrow_is">Besok: %s</string>
     <string name="home_today_is">Hari ini %s</string>
-    <string name="home_adhan_muted">Adzan disenyapkan untuk %s</string>
-    <string name="home_adhan_unmuted">Adzan dibunyikan untuk %s</string>
+    <string name="home_adhan_muted">Adzan dibisukan untuk %s</string>
+    <string name="home_adhan_unmuted">Adzan diaktifkan untuk %s</string>
     <string name="home_hijri_offline_note">Menggunakan perhitungan Hijriah offline</string>
     <string name="home_hijri_offline_indicator"> (*)</string>
     <string name="home_current_time">Waktu Sekarang</string>
@@ -144,7 +144,7 @@
     <string name="settings_calculation">Pengaturan Perhitungan</string>
     <string name="settings_madhab">Madzhab</string>
     <string name="settings_method">Metode Perhitungan</string>
-    <string name="madhab_shafi">Syafi\'i / Standar (Maliki, Hanbali)</string>
+    <string name="madhab_shafi">Syafi\'i / Standart (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanafi</string>
     <string name="method_mwl">Liga Muslim Dunia</string>
     <string name="method_isna">Masyarakat Islam Amerika Utara (ISNA)</string>
@@ -203,7 +203,7 @@
     <string name="settings_exact_alarm_desc">Diperlukan untuk notifikasi waktu shalat yang presisi dan Adzan tepat waktu.</string>
 
     <!-- Data Management -->
-    <string name="settings_data_management">Manajemen Data</string>
+    <string name="settings_data_management">Data Manajemen</string>
     <string name="settings_delete_history">Hapus Riwayat Shalat</string>
     <string name="settings_delete_history_desc">Hapus semua data shalat masa lalu untuk mengosongkan ruang</string>
     <string name="settings_delete_history_confirm_title">Hapus Riwayat?</string>
@@ -220,7 +220,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Selamat Datang di Waktiva</string>
-    <string name="welcome_desc">Pendamping profesional Anda untuk waktu shalat, dibangun dengan presisi dan desain modern.</string>
+    <string name="welcome_desc">aplikasi shalat modern yang menghormati privasi Anda dan tetap bebas iklan.</string>
     <string name="welcome_begin">Mulai Pengaturan</string>
     <string name="welcome_finish">Selesaikan Pengaturan</string>
     <string name="welcome_precision_settings">Pengaturan Presisi</string>
@@ -258,10 +258,10 @@
     <string name="adhan_metadata_title_format">Adzan %s</string>
 
     <!-- Donations -->
-    <string name="settings_donate">Dukung Pengembang</string>
+    <string name="settings_donate">Dukung Waktiva</string>
     <string name="donate_title">Dukung Waktiva</string>
     <string name="donate_header">Dukung Waktiva 🤍</string>
-    <string name="donate_desc">Tanpa iklan.\nTanpa pelacakan.\nTanpa penjualan data.\nHanya sesuatu yang jujur dan berguna.\n\nJika Waktiva membawa kemudahan bagi shalat harian Anda…\nJika Anda menghargai memiliki aplikasi shalat yang menghormati privasi Anda…\nJika Anda ingin membantu meningkatkan desain, fitur, dan konten berlisensinya…\n\nAnda dapat mendukung pengembangannya dengan donasi.\n\nSetiap kontribusi — kecil atau besar — benar-benar membuat perbedaan.\n\nTerima kasih telah membantu menjaga Waktiva tetap sederhana, pribadi, dan bebas iklan.</string>
+    <string name="donate_desc">Terima kasih telah membantu menjaga Waktiva tetap sederhana, pribadi, dan bebas iklan.</string>
     <string name="donate_footer">🤲 Semoga bermanfaat bagi Anda di dunia dan akhirat.</string>
     <string name="donate_button">Donasi</string>
     <string name="donate_thank_you">Terima kasih telah mendukung perangkat lunak sumber terbuka!</string>
@@ -270,6 +270,9 @@
     <string name="rate_title">Beri Rating Waktiva</string>
     <string name="rate_desc">Jika Anda menyukai Waktiva, harap beri rating 5 bintang di Google Play. Ini membantu kami menjangkau lebih banyak orang!</string>
     <string name="rate_button">Beri 5 Bintang</string>
+    <string name="badge_no_ads">Tanpa Iklan</string>
+    <string name="badge_no_tracking">Tanpa Pelacakan</string>
+    <string name="badge_open_source">Sumber Terbuka</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>

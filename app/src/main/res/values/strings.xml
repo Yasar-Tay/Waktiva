@@ -273,6 +273,9 @@
     <string name="rate_title">Rate Waktiva</string>
     <string name="rate_desc">If you enjoy Waktiva, please take a moment to rate it 5 stars on Google Play. It helps us reach more people!</string>
     <string name="rate_button">Rate 5 Stars</string>
+    <string name="badge_no_ads">No Ads</string>
+    <string name="badge_no_tracking">No Tracking</string>
+    <string name="badge_open_source">Open Source</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>

@@ -275,6 +275,9 @@
     <string name="rate_title">Waktiva\'yı Puanlayın</string>
     <string name="rate_desc">Waktiva\'yı beğendiyseniz, lütfen Google Play\'de 5 yıldız vererek daha fazla kişiye ulaşmamıza yardımcı olun!</string>
     <string name="rate_button">5 Yıldız Ver</string>
+    <string name="badge_no_ads">Reklamsız</string>
+    <string name="badge_no_tracking">Takipsiz</string>
+    <string name="badge_open_source">Açık Kaynak</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharrem</string>

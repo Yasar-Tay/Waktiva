@@ -221,7 +221,7 @@
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Willkommen bei Waktiva</string>
-    <string name="welcome_desc">Ihr professioneller Begleiter für Gebetszeiten, entwickelt mit Präzision und modernem Design.</string>
+    <string name="welcome_desc">eine moderne Gebets-App, die Ihre Privatsphäre respektiert und werbefrei bleibt.</string>
     <string name="welcome_begin">Einrichtung beginnen</string>
     <string name="welcome_finish">Einrichtung abschließen</string>
     <string name="welcome_precision_settings">Präcisionseinstellungen</string>
@@ -271,6 +271,9 @@
     <string name="rate_title">Waktiva bewerten</string>
     <string name="rate_desc">Wenn Ihnen Waktiva gefällt, nehmen Sie sich bitte einen Moment Zeit, um es mit 5 Sternen im Google Play Store zu bewerten. Es hilft uns, mehr Menschen zu erreichen!</string>
     <string name="rate_button">5 Sterne geben</string>
+    <string name="badge_no_ads">Keine Werbung</string>
+    <string name="badge_no_tracking">Kein Tracking</string>
+    <string name="badge_open_source">Open Source</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>
