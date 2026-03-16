@@ -259,9 +259,7 @@ fun HomeScreenContent(
                 PullToRefreshBox(
                     isRefreshing = state.isRefreshing,
                     onRefresh = onRefresh,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = padding.calculateTopPadding()) // Respect TopBar if any, though here it's mostly for PullToRefresh placement
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     val scrollState = rememberScrollState()
                     val localTime = state.currentTime.toLocalTime()
@@ -288,25 +286,31 @@ fun HomeScreenContent(
                             onShowSnackbar = handleShowSnackbar
                         )
                     } else {
-                        HomePortraitContent(
-                            state = state,
-                            settings = settings,
-                            allDays = allDays,
-                            calculationMethods = calculationMethods,
-                            glassTheme = glassTheme,
-                            scrollState = scrollState,
-                            localTime = localTime,
-                            contentColor = contentColor,
-                            onStatusClick = { showHealthOverlay = true },
-                            onToggleCalendarType = onToggleCalendarType,
-                            onDateSelected = onDateSelected,
-                            onSkipNextAudio = onSkipNextAudio,
-                            onStopAdhan = onStopAdhan,
-                            onStopTest = onStopTest,
-                            onResetDate = onResetDate,
-                            onMethodClick = { showMethodDialog = true },
-                            onShowSnackbar = handleShowSnackbar
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
+                        ) {
+                            HomePortraitContent(
+                                state = state,
+                                settings = settings,
+                                allDays = allDays,
+                                calculationMethods = calculationMethods,
+                                glassTheme = glassTheme,
+                                scrollState = scrollState,
+                                localTime = localTime,
+                                contentColor = contentColor,
+                                onStatusClick = { showHealthOverlay = true },
+                                onToggleCalendarType = onToggleCalendarType,
+                                onDateSelected = onDateSelected,
+                                onSkipNextAudio = onSkipNextAudio,
+                                onStopAdhan = onStopAdhan,
+                                onStopTest = onStopTest,
+                                onResetDate = onResetDate,
+                                onMethodClick = { showMethodDialog = true },
+                                onShowSnackbar = handleShowSnackbar
+                            )
+                        }
                     }
                 }
             }
