@@ -13,7 +13,7 @@
     <string name="qibla_label">Qibla</string>
     <string name="qibla_compass">Compass</string>
     <string name="qibla_map">Map</string>
-    <string name="qibla_mecca_aligned">Mecca Aligned</string>
+    <string name="qibla_mecca_aligned">Aligned to Makkah</string>
     <string name="qibla_rotate_phone">Rotate Phone</string>
     <string name="qibla_direction">Qibla: %d°</string>
     <string name="qibla_locating">Locating...</string>
@@ -26,36 +26,36 @@
     <string name="qibla_location_required_desc">Required for accurate Qibla calculation.</string>
     <string name="qibla_grant_permission">Grant Permission</string>
     <string name="qibla_calibration_needed">Calibration Needed</string>
-    <string name="qibla_calibration_desc">Move your phone in a figure-8 pattern to improve accuracy.</string>
+    <string name="qibla_calibration_desc">Move your phone in a figure-8 pattern (∞) to improve accuracy.</string>
     <string name="qibla_got_it">Got it</string>
     <string name="qibla_aligned_badge">ALIGNED</string>
     <string name="qibla_magnetic_interference">Magnetic Interference Detected - Calibrate Device</string>
-    <string name="qibla_kaaba_aligned">Kaaba Aligned</string>
-    <string name="qibla_find_marker">Find the Golden Marker</string>
+    <string name="qibla_kaaba_aligned">Aligned to Kaaba</string>
+    <string name="qibla_find_marker">Find the Gold Marker</string>
     <string name="qibla_calibrate">CALIBRATE</string>
-    <string name="qibla_interference_tip">Tip: Inside buildings, metal structures can affect the compass. For the best accuracy, perform a figure-8 calibration.</string>
+    <string name="qibla_interference_tip">Tip: Inside buildings, metal structures can affect the compass. For best accuracy, perform a figure-8 calibration.</string>
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Unknown Location</string>
-    <string name="home_last_known_location">Last Location: %s</string>
+    <string name="home_last_known_location">Last known: %s</string>
     <string name="home_gps_disabled_location">GPS Disabled</string>
     <string name="home_location_permission_denied">Location Denied</string>
     <string name="home_offline_status">Offline</string>
     <string name="home_next_prayer">%s</string>
-    <string name="home_remaining_time">Remaining Time</string>
+    <string name="home_remaining_time">Time remaining</string>
     <string name="home_permissions_required">Permissions Required</string>
-    <string name="home_permissions_desc">Location and Notification permissions are needed for the app to function correctly.</string>
+    <string name="home_permissions_desc">Location and Notification permissions are required for the app to function properly.</string>
     <string name="home_grant_permissions">Grant Permissions</string>
     <string name="home_refresh_success">Prayer times updated</string>
     <string name="home_refresh_error">Failed to update times</string>
     <string name="home_prayer_provider">Provider: </string>
-    <string name="home_skip_adhan">Mute</string>
-    <string name="home_unmute_adhan">Unmute</string>
+    <string name="home_skip_adhan">Mute Adhan</string>
+    <string name="home_unmute_adhan">Unmute Adhan</string>
     <string name="home_return_to_today">Return to Today</string>
     <string name="home_tomorrow_is">Tomorrow: %s</string>
     <string name="home_today_is">Today is %s</string>
     <string name="home_adhan_muted">Adhan muted for %s</string>
-    <string name="home_adhan_unmuted">Adhan unmuted for %s</string>
+    <string name="home_adhan_unmuted">Adhan enabled for %s</string>
     <string name="home_hijri_offline_note">Using offline Hijri calculation</string>
     <string name="home_hijri_offline_indicator"> (*)</string>
     <string name="home_current_time">Current Time</string>
@@ -73,14 +73,14 @@
     <string name="health_issues_detected">Issues Detected</string>
     <string name="health_gps_off">GPS is disabled globally. Enable location services to update prayer times.</string>
     <string name="health_channels_muted">Adhan notification channels are muted in system settings.</string>
-    <string name="health_dnd_active">Do Not Disturb is active. Adhan sounds might be blocked.</string>
+    <string name="health_dnd_active">Do Not Disturb mode is on. Adhan sounds may be blocked.</string>
     <string name="health_fix_now">Fix Now</string>
-    <string name="health_no_internet">No Internet Connection. Waktiva is using stored data. Please connect to refresh prayer times.</string>
-    <string name="health_no_internet_no_data">No Internet Connection. Waktiva needs an active connection to fetch your first prayer times.</string>
-    <string name="health_status_ok">All systems functional</string>
+    <string name="health_no_internet">No Internet Connection. Waktiva is using stored data. Please connect to update prayer times.</string>
+    <string name="health_no_internet_no_data">No Internet Connection. Waktiva needs an active connection to fetch the first prayer times.</string>
+    <string name="health_status_ok">All systems operational</string>
     <string name="health_overlay_subtitle">Optimizing your app experience</string>
     <string name="health_overlay_description">Address the issues below to ensure notifications and location services work reliably in the background.</string>
-    <string name="health_overlay_dismiss">Got it</string>
+    <string name="health_overlay_dismiss">I understand</string>
     <string name="health_overlay_issues_title">Detected Issues</string>
 
     <!-- Prayer Names -->
@@ -94,7 +94,7 @@
 
     <!-- Accuracy Labels -->
     <string name="accuracy_high">High</string>
-    <string name="accuracy_med">Med</string>
+    <string name="accuracy_med">Medium</string>
     <string name="accuracy_low">Low</string>
     <string name="accuracy_poor">Poor</string>
 
@@ -125,7 +125,7 @@
     <string name="settings_weather_effects">Weather Effects</string>
     <string name="settings_weather_effects_desc">Show animated weather conditions (rain, snow, clouds) in the background.</string>
     <string name="settings_persistent_notification">Persistent Notification</string>
-    <string name="settings_persistent_notification_desc">Show prayer countdown on lock screen and notification shade.</string>
+    <string name="settings_persistent_notification_desc">Show a prayer countdown on the lock screen and in the notification drawer.</string>
 
     <!-- Language Options -->
     <string name="lang_system">System Default</string>
@@ -154,7 +154,7 @@
     <string name="method_egypt">Egyptian General Authority of Survey</string>
     <string name="method_makkah">Umm al-Qura University, Makkah</string>
     <string name="method_karachi">University of Islamic Sciences, Karachi</string>
-    <string name="method_tehran">Institute of Geophysics, Univ. of Tehran</string>
+    <string name="method_tehran">Institute of Geophysics, University of Tehran</string>
     <string name="method_gulf">Gulf Region</string>
     <string name="method_kuwait">Kuwait</string>
     <string name="method_qatar">Qatar</string>
@@ -163,8 +163,8 @@
 
     <!-- Audio & Notification Settings -->
     <string name="settings_notifications_sound">Notifications &amp; Sound</string>
-    <string name="settings_play_adhan">Play Adhan Audio</string>
-    <string name="settings_play_adhan_desc">Play adhan sound when it\'s time for prayer</string>
+    <string name="settings_play_adhan">Play Adhan Sound</string>
+    <string name="settings_play_adhan_desc">Sound the Adhan when it\'s time to pray</string>
     <string name="settings_adhan_sound_selection">Adhan Sound Selection</string>
     <string name="settings_adhan_sound_selection_desc">Select the sound played during prayer times</string>
 
@@ -264,7 +264,7 @@
     <string name="settings_donate">Support Waktiva Development</string>
     <string name="donate_title">Support Waktiva</string>
     <string name="donate_header">Support Waktiva</string>
-    <string name="donate_desc">No ads.\nNo tracking.\nNo data selling.\nJust something honest and useful.\n\nIf Waktiva brings ease to your daily prayers…\nIf you appreciate having a prayer app that respects your privacy…\nIf you want to help improve its design, features, and licensed content…\n\nYou can support its development with a donation.\n\nEvery contribution — small or large — truly makes a difference.\n\nThank you for helping keep Waktiva simple, private, and ad-free.</string>
+    <string name="donate_desc">Thank you for helping keep Waktiva simple, private, and ad-free.</string>
     <string name="donate_footer">🤲 May it benefit you in this life and the next.</string>
     <string name="donate_button">Donate</string>
     <string name="donate_thank_you">Thank you for supporting open-source software!</string>
@@ -353,18 +353,18 @@
     <string name="license_lib_billing">Google Play Billing Library (Google Play Terms)</string>
     <string name="license_libs_property">Each library remains the property of its respective authors and is used in compliance with its license.</string>
     <string name="license_adhan_audio">3. Adhan Audio License</string>
-    <string name="license_adhan_reciter">Waktiva includes Adhan recordings by Muhsin Kara, 2022 World Champion of the Adhan.</string>
-    <string name="license_adhan_permission">These recordings are used with permission. All audio rights remain with the original reciter.</string>
-    <string name="license_adhan_restrictions">The Adhan audio may not be extracted, redistributed, or reused outside of the Waktiva application without explicit permission from the rights holder.</string>
-    <string name="license_location_permissions">4. Location &amp; Permissions</string>
-    <string name="license_location_usage">Waktiva requests location permission solely to:</string>
+    <string name="license_adhan_reciter">Waktiva includes Adhan recordings by Muhsin Kara, the 2022 World Champion of the Adhan Recitation Contest.</string>
+    <string name="license_adhan_permission">These recordings are used with permission. All audio rights belong to the original reciter.</string>
+    <string name="license_adhan_restrictions">Adhan audio may not be extracted, redistributed, or used outside the Waktiva application without explicit permission from the rights holder.</string>
+    <string name="license_location_permissions">4. Location and Permissions</string>
+    <string name="license_location_usage">Waktiva requests location permission exclusively to:</string>
     <string name="license_loc_usage_1">Calculate accurate prayer times</string>
     <string name="license_loc_usage_2">Determine Qibla direction</string>
     <string name="license_loc_usage_3">Provide Hijri date and moon phase calculations</string>
-    <string name="license_loc_processing">Location data is processed locally and is not stored, tracked, or shared. Prayer times are downloaded for up to three months to enable offline usage.</string>
+    <string name="license_loc_processing">Location data is processed locally and is not stored, tracked, or shared. Up to three months of prayer times are downloaded to enable offline usage.</string>
     <string name="license_no_ads">5. No Ads / No Tracking Commitment</string>
-    <string name="license_no_ads_1">Displays no advertisements</string>
-    <string name="license_no_ads_2">Uses no tracking SDKs</string>
+    <string name="license_no_ads_1">Does not show any advertisements</string>
+    <string name="license_no_ads_2">Does not use any tracking SDKs</string>
     <string name="license_no_ads_3">Does not collect analytics</string>
     <string name="license_no_ads_4">Does not sell personal data</string>
 </resources>

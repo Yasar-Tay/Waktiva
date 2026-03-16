@@ -137,7 +137,7 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردو</string>
+    <string name="lang_ur">اردu</string>
     <string name="lang_bn">বাংলা</string>
     <string name="lang_fa">Farsça</string>
     <string name="lang_ms">Bahasa Melayu</string>
@@ -169,7 +169,9 @@
     <string name="settings_adhan_sound_selection_desc">Namaz vakitlerinde çalınacak sesi seçin</string>
 
     <string name="audio_settings_title">Ezan Sesleri</string>
-    <string name="audio_header_global">Ezan Sesini Seçin (Genel)</string>
+    <string name="audio_settings_desc">Her vakit için farklı ezanlar ayarlayın</string>
+
+    <string name="audio_header_global">Ezan Sesini Seç (Genel)</string>
     <string name="audio_header_all_prayers">Tüm Vakitler</string>
     <string name="audio_header_specific">%1$s için Ezan</string>
     <string name="audio_select_prayer_prompt">Yapılandırılacak Vakti Seçin</string>
@@ -186,7 +188,7 @@
     <string name="audio_add_custom">Özel Ses Ekle</string>
     <string name="audio_delete_confirm">Ses dosyası silinsin mi?</string>
     <string name="audio_delete_description">Ses dosyasını sil</string>
-    <string name="audio_supported_formats">Supported: MP3, AAC, WAV, OGG</string>
+    <string name="audio_supported_formats">Desteklenen: MP3, AAC, WAV, OGG</string>
     <string name="audio_preview_play">Önizlemeyi oynat</string>
     <string name="audio_preview_stop">Önizlemeyi durdur</string>
     <string name="audio_built_in">Dahili</string>
@@ -264,7 +266,7 @@
     <string name="settings_donate">Waktiva Gelişimini Destekleyin</string>
     <string name="donate_title">Waktiva\'yı Destekle</string>
     <string name="donate_header">Waktiva\'yı Destekle</string>
-    <string name="donate_desc">Reklam yok.\nTakip yok.\nVeri satışı yok.\nSadece dürüst ve faydalı bir araç.\n\nEğer Waktiva günlük dualarınıza kolaylık getiriyorsa…\nGizliliğinize saygı duyan bir namaz uygulamasını takdir ediyorsanız…\nUygulamanın tasarımını, özelliklerini ve lisanslı içeriklerini geliştirmeye yardımcı olmak istiyorsanız…\n\nBir bağış ile geliştirme sürecini destekleyebilirsiniz.\n\nKüçük veya büyük her katkı gerçekten bir fark yaratır.\n\nWaktiva\'nın basit, özel ve reklamsız kalmasına yardımcı olduğunuz için teşekkürler.</string>
+    <string name="donate_desc">Waktiva\'nın basit, özel ve reklamsız kalmasına yardımcı olduğunuz için teşekkürler.</string>
     <string name="donate_footer">🤲 Dünyada ve ahirette size fayda getirmesi dileğiyle.</string>
     <string name="donate_button">Bağış Yap</string>
     <string name="donate_thank_you">Açık kaynaklı yazılımı desteklediğiniz için teşekkürler!</string>

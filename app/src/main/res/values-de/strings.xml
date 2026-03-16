@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -115,7 +116,7 @@
     <string name="settings_location_access">Standortzugriff</string>
     <string name="settings_location_desc">Entscheidend für die Berechnung der Gebetszeiten. Ohne diese kann die App keine Zeiten für Ihren Standort abrufen und wird unbrauchbar.</string>
     <string name="settings_notifications">Benachrichtigungen</string>
-    <string name="settings_notifications_desc">Erforderlich, um Gebetszeit-Warnungen und Adhan-Benachrichtigungen anzuzeigen.</string>
+    <string name="settings_notifications_desc">Erforderlich, um Gebetszeit-Warnungen and Adhan-Benachrichtigungen anzuzeigen.</string>
     <string name="settings_granted">Erteilt</string>
     <string name="settings_denied">Abgelehnt</string>
     <string name="settings_language">App-Sprache</string>
@@ -261,7 +262,7 @@
     <string name="settings_donate">Waktiva-Entwicklung unterstützen</string>
     <string name="donate_title">Waktiva unterstützen</string>
     <string name="donate_header">Waktiva unterstützen 🤍</string>
-    <string name="donate_desc">Waktiva wurde mit einer Absicht entwickelt:\neinen sauberen, privaten und werbefreien Raum für das Gebet zu bieten.\n\nKeine Werbung.\nKein Tracking.\nKein Datenverkauf.\nEinfach etwas Ehrliches und Nützliches.\n\nWaktiva kostenlos zu halten bedeutet, Unabhängigkeit über Monetarisierung zu stellen.\nEs bedeutet, keine Werbung hinzuzufügen.\nEs bedeutet, keine Nutzerdaten zu verkaufen.\nEs bedeutet, langsam, sorgfältig und ethisch zu bauen.\n\nWenn Waktiva Erleichterung in Ihre täglichen Gebete bringt…\nWenn Sie es schätzen, eine Gebets-App zu haben, die Ihre Privatsphäre respektiert…\nWenn Sie helfen möchten, Design, Funktionen und lizenzierte Inhalte zu verbessern…\n\nKönnen Sie die Entwicklung mit einer Spende unterstützen.\n\nIhre Unterstützung hilft bei:\n\n• Server- und API-Kosten\n• Lizenzierte Adhan-Aufnahmen\n• Icons, Illustrationen und Design-Assets\n• Entwicklungstools und Veröffentlichungsgebühren\n• Zukünftige Verbesserungen und neue Funktionen\n\nJeder Beitrag – ob klein oder groß – macht wirklich einen Unterschied.\n\nWenn Sie nicht in der Lage sind zu spenden, ist das völlig in Ordnung.\nIhre Gebete und freundlichen Worte werden bereits geschätzt.\n\nVielen Dank, dass Sie helfen, Waktiva einfach, privat und werbefrei zu halten.</string>
+    <string name="donate_desc">Vielen Dank, dass Sie dazu beitragen, Waktiva einfach, privat und werbefrei zu halten.</string>
     <string name="donate_footer">🤲 Möge es Ihnen in diesem und im nächsten Leben nützen.</string>
     <string name="donate_button">Spenden</string>
     <string name="donate_thank_you">Vielen Dank für Ihre Unterstützung von Open-Source-Software!</string>

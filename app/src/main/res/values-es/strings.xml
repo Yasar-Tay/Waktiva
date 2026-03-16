@@ -261,7 +261,7 @@
     <string name="settings_donate">Apoya el desarrollo de Waktiva</string>
     <string name="donate_title">Apoya a Waktiva</string>
     <string name="donate_header">Apoya a Waktiva 🤍</string>
-    <string name="donate_desc">Sin anuncios.\nSin rastreo.\nSin venta de datos.\nSolo algo honesto y útil.\n\nSi Waktiva aporta facilidad a tus oraciones diarias…\nSi valoras tener una aplicación de oración que respete tu privacidad…\nSi quieres ayudar a mejorar su diseño, funciones y contenido bajo licencia…\n\nPuedes apoyar su desarrollo con una donación.\n\nCada contribución, pequeña o grande, marca realmente la diferencia.\n\nGracias por ayudar a mantener Waktiva simple, privada y libre de anuncios.</string>
+    <string name="donate_desc">Gracias por ayudarnos a mantener Waktiva simple, privado y libre de anuncios.</string>
     <string name="donate_footer">🤲 Que te beneficie en esta vida y en la próxima.</string>
     <string name="donate_button">Donar</string>
     <string name="donate_thank_you">¡Gracias por apoyar el software de código abierto!</string>

@@ -261,7 +261,7 @@
     <string name="settings_donate">ادعم تطوير Waktiva</string>
     <string name="donate_title">ادعم Waktiva</string>
     <string name="donate_header">ادعم Waktiva 🤍</string>
-    <string name="donate_desc">لا إعلانات.\nلا تتبع.\nلا بيع للبيانات.\nمجرد شيء صادق ومفيد.\n\nإذا كان Waktiva يسهل صلواتك اليومية...\nإذا كنت تقدر وجود تطبيق صلاة يحترم خصوصيتك...\nإذا كنت ترغب في المساعدة في تحسين تصميمه وميزاته ومحتواه المرخص...\n\nيمكنك دعم تطويره بتبرع.\n\nكل مساهمة - صغيرة كانت أم كبيرة - تصنع فرقاً حقاً.\n\nشكراً لك على مساعدتنا في إبقاء Waktiva بسيطاً وخاصاً وخالياً من الإعلانات.</string>
+    <string name="donate_desc">شكرًا لك على مساعدتنا في إبقاء Waktiva بسيطًا وخاصًا وخاليًا من الإعلانات.</string>
     <string name="donate_footer">🤲 نفعك الله بها في الدنيا والآخرة.</string>
     <string name="donate_button">تبرع</string>
     <string name="donate_thank_you">شكراً لك على دعم البرمجيات مفتوحة المصدر!</string>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -260,8 +261,8 @@
     <!-- Donations -->
     <string name="settings_donate">Waktiva উন্নয়নে সহায়তা করুন</string>
     <string name="donate_title">Waktiva-কে সহায়তা করুন</string>
-    <string name="donate_header">Waktiva-কে সহায়তা করুন 🤍</string>
-    <string name="donate_desc">কোনো বিজ্ঞাপন নেই।\nকোনো ট্র্যাকিং নেই।\nকোনো ডেটা বিক্রি নেই।\nশুধুমাত্র একটি সৎ এবং দরকারী অ্যাপ।\n\nWaktiva যদি আপনার দৈনিক ইবাদতে সহায়ক হয়…\nআপনি যদি এমন একটি অ্যাপের প্রশংসা করেন যা আপনার গোপনীয়তাকে সম্মান করে…\nআপনি যদি এর ডিজাইন, ফিচার এবং লাইসেন্সকৃত কনটেন্ট উন্নত করতে সাহায্য করতে চান…\n\nআপনি দানের মাধ্যমে এর উন্নয়নে সহায়তা করতে পারেন।\n\nপ্রতি প্রতিটি অবদান — ছোট বা বড় — সত্যিই পরিবর্তন আনে।\n\nWaktiva-কে সহজ, ব্যক্তিগত এবং বিজ্ঞাপন-মুক্ত রাখতে সাহায্য করার জন্য ধন্যবাদ।</string>
+    <string name="donate_header">Waktiva-কে সহায়তা করুন</string>
+    <string name="donate_desc">Waktiva-কে সহজ, ব্যক্তিগত এবং বিজ্ঞাপন-মুক্ত রাখতে সাহায্য করার জন্য আপনাকে ধন্যবাদ।</string>
     <string name="donate_footer">🤲 আল্লাহ আপনাকে ইহকাল ও পরকালে এর উত্তম প্রতিদান দান করুন।</string>
     <string name="donate_button">দান করুন</string>
     <string name="donate_thank_you">ওপেন-সোর্স সফটওয়্যারকে সমর্থন করার জন্য ধন্যবাদ!</string>
@@ -288,12 +289,12 @@
 
     <!-- Religious Days -->
     <string name="rel_day_3_months">তিন মাস শুরু</string>
-    <string name="rel_day_regaip">লাইলাতুর রাগায়েব</string>
-    <string name="rel_day_mirac">লাইলাতুল মেরাজ</string>
-    <string name="rel_day_berat">লাইলাতুল বরাত</string>
+    <string name="rel_day_regaip">লাইlaতুর রাগায়েব</string>
+    <string name="rel_day_mirac">লাইlaতুল মেরাজ</string>
+    <string name="rel_day_berat">লাইlaতুল বরাত</string>
     <string name="rel_day_first_tarawih">প্রথম তারাবি</string>
     <string name="rel_day_ramadan_start">রমজান শুরু</string>
-    <string name="rel_day_kadir">লাইলাতুল কদর</string>
+    <string name="rel_day_kadir">লাইlaতুল কদর</string>
     <string name="rel_day_eid_eve">ঈদের রাত</string>
     <string name="rel_day_ramadan_eid">ঈদুল ফিতর</string>
     <string name="rel_day_sacrifice_eid">ঈদুল আজহা</string>

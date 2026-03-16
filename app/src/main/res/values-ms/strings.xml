@@ -260,8 +260,8 @@
     <!-- Donations -->
     <string name="settings_donate">Sokong Pembangun</string>
     <string name="donate_title">Sokong Waktiva</string>
-    <string name="donate_header">Perkasakan Pembangunan Waktiva</string>
-    <string name="donate_desc">Waktiva adalah sumber terbuka and bebas iklan. Sumbangan anda membantu menampung kos pelayan and pembangunan berterusan untuk menyediakan pengalaman solat terbaik untuk semua orang.</string>
+    <string name="donate_header">Sokong Waktiva</string>
+    <string name="donate_desc">Terima kasih kerana membantu mengekalkan Waktiva ringkas, peribadi dan bebas iklan.</string>
     <string name="donate_footer">Kemurahan hati anda mengekalkan projek ini hidup. Semoga ia menjadi punca rahmat yang berterusan.</string>
     <string name="donate_button">Derma</string>
     <string name="donate_thank_you">Terima kasih atas sokongan anda!</string>
@@ -323,7 +323,7 @@
     <string name="license_legal_info">Waktiva – Lesen &amp; Maklumat Undang-undang</string>
     <string name="license_app_copyright">Hak Cipta © 2026 YBugMobile\nHak cipta terpelihara.</string>
     <string name="license_app_mit">Waktiva dikeluarkan sebagai perisian sumber terbuka di bawah Lesen MIT.</string>
-    <string name="license_app_warranty">PERISIAN INI DISEDIAKAN \"SEBAGAIMANA ADANYA\", TANPA SEBARANG JENIS JAMINAN, SAMA ADA TERSURAT ATAU TERSIRAT, TERMASUK TETAPI TIDAK TERHAD KEPADA JAMINAN KEBOLEHPERDAGANGAN, KESESUAIAN UNTUK TUJUAN TERTENTU, DAN KETIDAKPELANGGARAN.</string>
+    <string name="license_app_warranty">PERISIAN INI DISEDIAKAN \"SEBAGAIMANA ADANYA\", TANPA SEBARANG JENIS JAMINAN, SAMA ADA TERSURAT ATAU TERSIRAT, TERMASUK TETAPI TIDAK TERHAD KEPADA JAMINAN KEBOLEHPERDAGANGAN, KESESUAIAN UNTUK TUJUAN TERTENTU, AND KETIDAKPELANGGARAN.</string>
     <string name="license_third_party_services">1. Perkhidmatan Pihak Ketiga</string>
     <string name="license_aladhan_api">API Al-Adhan</string>
     <string name="license_aladhan_desc">Waktiva mengambil waktu solat daripada perkhidmatan API Al-Adhan. Pengiraan waktu solat disediakan mengikut metodologi and syarat yang mereka terbitkan.</string>
@@ -334,7 +334,7 @@
     <string name="license_lib_compose">Jetpack Compose (Lesen Apache 2.0)</string>
     <string name="license_lib_kotlin">Kotlin (Lesen Apache 2.0)</string>
     <string name="license_lib_hilt">Hilt (Lesen Apache 2.0)</string>
-    <string name="license_lib_room">Room (Lesen Apache 2.0)</string>
+    <string name="license_lib_room">Room (Apache License 2.0)</string>
     <string name="license_lib_datastore">DataStore (Lesen Apache 2.0)</string>
     <string name="license_lib_work">WorkManager (Lesen Apache 2.0)</string>
     <string name="license_lib_media3">Media3 (Lesen Apache 2.0)</string>
