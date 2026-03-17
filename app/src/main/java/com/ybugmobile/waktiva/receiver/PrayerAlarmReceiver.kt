@@ -96,6 +96,13 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         handleAdhanTrigger(context, prayerName, prayerDate)
                         rescheduleNextPrayer()
                     }
+                    AlarmScheduler.ACTION_WIDGET_REFRESH -> {
+                        // This action wakes the app to ensure transitions like Sunrise -> Dhuhr
+                        // happen exactly on time in the widget without a negative countdown.
+                        Log.d("PrayerAlarmReceiver", "Executing WIDGET REFRESH milestone transition")
+                        WaktivaWidget().updateAll(context)
+                        rescheduleNextPrayer()
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("PrayerAlarmReceiver", "Error in onReceive", e)
@@ -120,6 +127,11 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
     private suspend fun handleAdhanTrigger(context: Context, prayerName: String, prayerDate: String) {
         val settings = settingsManager.settingsFlow.first()
         
+        // Don't trigger adhan for Sunrise (it's handled by ACTION_WIDGET_REFRESH)
+        if (prayerName.equals(com.ybugmobile.waktiva.domain.model.PrayerType.SUNRISE.name, ignoreCase = true)) {
+            return
+        }
+
         if (!settings.playAdhanAudio) {
             settingsManager.clearMutedPrayer()
             notificationHelper.cancelWarningNotification()

@@ -21,8 +21,8 @@ import java.time.ZoneId
 import javax.inject.Inject
 
 /**
- * Handles the scheduling and cancellation of high-precision alarms for Adhan (Call to Prayer)
- * and pre-Adhan notifications.
+ * Handles the scheduling and cancellation of high-precision alarms for Adhan (Call to Prayer),
+ * pre-Adhan notifications, and widget refresh milestones (like Sunrise).
  */
 class AlarmScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -33,9 +33,11 @@ class AlarmScheduler @Inject constructor(
     companion object {
         const val ACTION_PRAYER_ALARM = "com.ybugmobile.waktiva.ACTION_PRAYER_ALARM"
         const val ACTION_PRE_ADHAN_NOTIFICATION = "com.ybugmobile.waktiva.ACTION_PRE_ADHAN_NOTIFICATION"
+        const val ACTION_WIDGET_REFRESH = "com.ybugmobile.waktiva.ACTION_WIDGET_REFRESH"
         
         const val REQUEST_CODE_ADHAN = 1001
         const val REQUEST_CODE_PRE_ADHAN = 1002
+        const val REQUEST_CODE_WIDGET_REFRESH = 1003
         const val REQUEST_CODE_TEST = 9999
         const val REQUEST_CODE_TEST_PRE = 9998
     }
@@ -64,7 +66,8 @@ class AlarmScheduler @Inject constructor(
         val now = LocalDateTime.now()
         val settings = runBlocking { settingsManager.settingsFlow.first() }
         
-        val nextPrayer = prayerDays
+        // 1. Identify all upcoming "milestones" (all prayer times + sunrise)
+        val allMilestones = prayerDays
             .flatMap { day -> 
                 day.timings.map { (type, time) -> 
                     var triggerDateTime = day.date.atTime(time)
@@ -80,13 +83,14 @@ class AlarmScheduler @Inject constructor(
                     Triple(type, triggerDateTime, day) 
                 }
             }
-            .filter { (type, dateTime, _) -> 
-                dateTime.isAfter(now) && type != PrayerType.SUNRISE 
-            }
-            .minByOrNull { it.second }
+            .filter { (_, dateTime, _) -> dateTime.isAfter(now) }
+            .sortedBy { it.second }
 
-        if (nextPrayer != null) {
-            val (type, dateTime, prayerDay) = nextPrayer
+        // 2. Schedule the next Adhan Alarm (Skips Sunrise as it's not a prayer)
+        val nextAdhan = allMilestones.find { it.first != PrayerType.SUNRISE }
+        
+        if (nextAdhan != null) {
+            val (type, dateTime, prayerDay) = nextAdhan
             val epochMillis = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
             val prayerDateStr = prayerDay.date.toString()
             
@@ -95,18 +99,24 @@ class AlarmScheduler @Inject constructor(
 
             if (enablePreAdhan && preAdhanMinutes > 0) {
                 val preTime = dateTime.minusMinutes(preAdhanMinutes.toLong())
-                
-                // FIX: Only schedule pre-adhan if it's in the future.
-                // If it's already past the warning time but before the prayer, 
-                // we don't schedule it here to avoid duplicate triggers during refreshes.
                 if (preTime.isAfter(now)) {
                     val preEpochMillis = preTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
                     Log.d("AlarmScheduler", "Scheduling PRE-ADHAN alarm for: ${type.name} at $preTime")
                     scheduleAlarm(preEpochMillis, type.name, prayerDateStr, ACTION_PRE_ADHAN_NOTIFICATION, REQUEST_CODE_PRE_ADHAN)
-                } else {
-                    Log.d("AlarmScheduler", "Already inside warning window, skipping PRE-ADHAN to avoid duplicates")
                 }
             }
+        }
+
+        // 3. Schedule the absolute next milestone (could be Sunrise) to ensure Widget updates
+        val absoluteNext = allMilestones.firstOrNull()
+        if (absoluteNext != null) {
+            val (type, dateTime, prayerDay) = absoluteNext
+            val epochMillis = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            
+            // Only schedule if this is different from the Adhan alarm or if it's Sunrise
+            // This prevents "Double-waking" but ensures we wake up for Sunrise specifically.
+            Log.d("AlarmScheduler", "Scheduling WIDGET REFRESH milestone: ${type.name} at $dateTime")
+            scheduleAlarm(epochMillis, type.name, prayerDay.date.toString(), ACTION_WIDGET_REFRESH, REQUEST_CODE_WIDGET_REFRESH)
         }
     }
 
@@ -145,6 +155,7 @@ class AlarmScheduler @Inject constructor(
     fun cancelAllAlarms() {
         cancelAlarm(REQUEST_CODE_ADHAN)
         cancelAlarm(REQUEST_CODE_PRE_ADHAN)
+        cancelAlarm(REQUEST_CODE_WIDGET_REFRESH)
         cancelAlarm(REQUEST_CODE_TEST)
         cancelAlarm(REQUEST_CODE_TEST_PRE)
     }
