@@ -1,7 +1,6 @@
 package com.ybugmobile.waktiva
 
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -36,6 +35,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import androidx.work.*
@@ -88,6 +90,23 @@ class MainActivity : AppCompatActivity() {
         setContent {
             WaktivaTheme {
                 val homeViewModel: HomeViewModel = hiltViewModel()
+
+                // Trigger widget update whenever the app is launched (onStart)
+                val lifecycleOwner = LocalLifecycleOwner.current
+                val scope = rememberCoroutineScope()
+                DisposableEffect(lifecycleOwner) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        if (event == Lifecycle.Event.ON_START) {
+                            scope.launch {
+                                WaktivaWidget().updateAll(this@MainActivity)
+                            }
+                        }
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose {
+                        lifecycleOwner.lifecycle.removeObserver(observer)
+                    }
+                }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -145,7 +164,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
     val settings by homeViewModel.settings.collectAsState(initial = null)
     val homeState by homeViewModel.state.collectAsState()
     val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     
     // Determine where to send the user based on onboarding status
     val startDestination = remember(settings) {
