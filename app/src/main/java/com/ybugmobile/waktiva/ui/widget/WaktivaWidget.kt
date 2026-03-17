@@ -126,7 +126,7 @@ class WaktivaWidget : GlanceAppWidget() {
                         Spacer(modifier = GlanceModifier.height(4.dp))
 
                         Text(
-                            text = nextPrayer.type.getDisplayName(context).uppercase(),
+                            text = nextPrayer.type.getDisplayName(context).uppercase(Locale.getDefault()),
                             style = TextStyle(
                                 color = ColorProvider(day = contentColor, night = contentColor),
                                 fontSize = 12.sp,

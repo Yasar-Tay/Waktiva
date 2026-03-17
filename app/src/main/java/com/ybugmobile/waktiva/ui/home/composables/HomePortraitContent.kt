@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +43,7 @@ fun HomePortraitContent(
     onStopTest: () -> Unit,
     onResetDate: () -> Unit,
     onMethodClick: () -> Unit,
-    onShowSnackbar: (String) -> Unit
+    onShowToast: (String) -> Unit
 ) {
     // Optimization: Filter and memoize available days to prevent redundant calculations during scrolls
     val isToday = remember(state.selectedDate) { state.selectedDate == LocalDate.now() }
@@ -154,7 +153,7 @@ fun HomePortraitContent(
                             onSkipAudio = { prayerName ->
                                 state.nextPrayer?.let { next ->
                                     onSkipNextAudio(prayerName, next.date)
-                                    onShowSnackbar(prayerName)
+                                    onShowToast(prayerName)
                                 }
                             },
                             onResetDate = onResetDate,

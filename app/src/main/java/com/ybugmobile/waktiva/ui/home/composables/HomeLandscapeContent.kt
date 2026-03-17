@@ -44,7 +44,7 @@ fun HomeLandscapeContent(
     onStopTest: () -> Unit,
     onResetDate: () -> Unit,
     onMethodClick: () -> Unit,
-    onShowSnackbar: (String) -> Unit
+    onShowToast: (String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -181,7 +181,7 @@ fun HomeLandscapeContent(
                                 onSkipAudio = { prayerName ->
                                     state.nextPrayer?.let { next ->
                                         onSkipNextAudio(prayerName, next.date)
-                                        onShowSnackbar(prayerName)
+                                        onShowToast(prayerName)
                                     }
                                 },
                                 onResetDate = onResetDate,

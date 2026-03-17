@@ -29,16 +29,15 @@ import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.ui.home.composables.*
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthOverlay
+import com.ybugmobile.waktiva.ui.theme.LocalBackgroundGradient
+import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.waktiva.ui.theme.getGlassTheme
 import com.ybugmobile.waktiva.ui.theme.getGradientForTime
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 /**
  * Entry point for the Home screen.
  * Handles ViewModel initialization, lifecycle observations, and state collection.
- *
- * @param viewModel The [HomeViewModel] instance providing state and logic.
  */
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +46,6 @@ fun HomeScreen(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     
-    // Sync ViewModel with Lifecycle events (specifically for refreshing on resume)
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME || event == Lifecycle.Event.ON_START) {
@@ -62,14 +60,12 @@ fun HomeScreen(
     val settings by viewModel.settings.collectAsState(initial = null)
     val allDays by viewModel.allPrayerDays.collectAsState()
 
-    // Automatic refresh if data is missing but conditions are met
     LaunchedEffect(state.isNetworkAvailable, state.hasSystemIssues, state.currentPrayerDay) {
         if (state.currentPrayerDay == null && state.isNetworkAvailable && !state.hasSystemIssues) {
             viewModel.refresh()
         }
     }
 
-    // Callbacks hoisted and remembered to optimize recompositions
     val onRefresh = remember(viewModel) { { viewModel.refresh(); Unit } }
     val onMethodSelected = remember(viewModel) { { it: Int -> viewModel.updateCalculationMethod(it); Unit } }
     val onDateSelected = remember(viewModel) { { it: LocalDate -> viewModel.selectDate(it); Unit } }
@@ -99,21 +95,6 @@ fun HomeScreen(
 
 /**
  * Main UI content for the Home screen.
- * Orchestrates background, progress indicators, pull-to-refresh, and orientation-specific layouts.
- *
- * @param state Current UI state containing prayer data, time, and system health status.
- * @param settings User preferences for visual effects and calculation methods.
- * @param allDays List of all fetched prayer days for calendar interaction.
- * @param calculationMethods Available prayer calculation methods.
- * @param onRefresh Callback for manual refresh triggered by the user.
- * @param onMethodSelected Callback when a new calculation method is chosen.
- * @param onDateSelected Callback when the user picks a date from the calendar.
- * @param onToggleCalendarType Callback for switching between Gregorian and Hijri views.
- * @param onSkipNextAudio Callback to mute/unmute adhan for a specific prayer.
- * @param onStopAdhan Callback to silence currently playing adhan.
- * @param onStopTest Callback to end an active test alarm sequence.
- * @param onResetDate Callback to return the view to the current date.
- * @param onDebugWeather Callback for overriding weather condition (debug purposes).
  */
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -136,7 +117,6 @@ fun HomeScreenContent(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    // Location and Notification permissions handling
     val permissions = remember {
         val list = mutableListOf(
             android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -154,7 +134,6 @@ fun HomeScreenContent(
         }
     }
 
-    // Determine if weather effects should be rendered based on settings
     val effectiveWeather = remember(settings?.showWeatherEffects, state.weatherCondition) {
         if (settings?.showWeatherEffects == true) {
             state.weatherCondition
@@ -163,7 +142,6 @@ fun HomeScreenContent(
         }
     }
 
-    // Optimization: Calculate gradient and theme at minute precision to avoid heavy object churn
     val minuteTime = remember(state.currentTime.minute, state.currentTime.hour, state.currentTime.dayOfYear) {
         state.currentTime.toLocalTime().withSecond(0).withNano(0)
     }
@@ -176,122 +154,96 @@ fun HomeScreenContent(
         )
     }
     
-    val glassTheme = remember(minuteTime, state.currentPrayerDay) {
-        getGlassTheme(minuteTime, state.currentPrayerDay)
+    val glassTheme = remember(minuteTime, state.currentPrayerDay, effectiveWeather) {
+        getGlassTheme(minuteTime, state.currentPrayerDay, effectiveWeather)
     }
     
     var showMethodDialog by remember { mutableStateOf(false) }
     var showHealthOverlay by remember { mutableStateOf(false) }
     var showDebugWeather by remember { mutableStateOf(false) }
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    var toastMessage by remember { mutableStateOf<String?>(null) }
+    var showToast by remember { mutableStateOf(false) }
     val contentColor = glassTheme.contentColor
 
-    // Snackbar handler for adhan mute/unmute feedback
-    val handleShowSnackbar = remember(context, state.isMuted, snackbarHostState, scope) {
+    val handleShowToast = remember(context, state.isMuted) {
         { prayerName: String ->
-            scope.launch {
-                val localizedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context)
-                    ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
+            val localizedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context)
+                ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
 
-                val message = if (!state.isMuted)
-                    "MUTED:" + context.getString(R.string.home_adhan_muted, localizedPrayerName)
-                else
-                    "UNMUTED:" + context.getString(R.string.home_adhan_unmuted, localizedPrayerName)
-                snackbarHostState.showSnackbar(message)
-            }
+            toastMessage = if (!state.isMuted)
+                context.getString(R.string.home_adhan_muted, localizedPrayerName)
+            else
+                context.getString(R.string.home_adhan_unmuted, localizedPrayerName)
+            showToast = true
             Unit
         }
     }
 
-    Scaffold(
-        containerColor = Color.Transparent,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        floatingActionButton = {
-            // Debug button for weather testing
-            Box(Modifier.fillMaxSize()) {
-                LargeFloatingActionButton(
-                    onClick = { showDebugWeather = true },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 16.dp, bottom = 80.dp)
-                        .size(48.dp)
-                ) {
-                    Icon(Icons.Rounded.CloudQueue, "Debug Weather")
+    CompositionLocalProvider(
+        LocalGlassTheme provides glassTheme,
+        LocalBackgroundGradient provides backgroundGradient
+    ) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            floatingActionButton = {
+                Box(Modifier.fillMaxSize()) {
+                    LargeFloatingActionButton(
+                        onClick = { showDebugWeather = true },
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(start = 16.dp, bottom = 80.dp)
+                            .size(48.dp)
+                    ) {
+                        Icon(Icons.Rounded.CloudQueue, "Debug Weather")
+                    }
                 }
             }
-        }
-    ) { padding ->
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Dynamic atmosphere rendering
-            HomeBackground(
-                backgroundGradient = backgroundGradient,
-                currentTime = state.currentTime.toLocalTime(),
-                currentPrayerDay = state.currentPrayerDay,
-                sunAzimuth = { state.sunAzimuth },
-                sunAltitude = { state.sunAltitude },
-                compassAzimuth = { state.compassAzimuth },
-                showWeatherEffects = settings?.showWeatherEffects == true,
-                weatherCondition = effectiveWeather
-            )
-
-            if (state.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = contentColor
+        ) { padding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                HomeBackground(
+                    backgroundGradient = backgroundGradient,
+                    currentTime = state.currentTime.toLocalTime(),
+                    currentPrayerDay = state.currentPrayerDay,
+                    sunAzimuth = { state.sunAzimuth },
+                    sunAltitude = { state.sunAltitude },
+                    compassAzimuth = { state.compassAzimuth },
+                    showWeatherEffects = settings?.showWeatherEffects == true,
+                    weatherCondition = effectiveWeather
                 )
-            } else if (state.currentPrayerDay == null && (!permissionState.allPermissionsGranted || !state.isNetworkAvailable || state.hasSystemIssues)) {
-                // Show empty state if data is missing and there are blockers (permissions/network)
-                SystemHealthEmptyState(
-                    isRefreshing = state.isRefreshing,
-                    hasPrayerData = false,
-                    contentColor = contentColor,
-                    glassTheme = glassTheme,
-                    onStatusClick = { showHealthOverlay = true }
-                )
-            } else {
-                PullToRefreshBox(
-                    isRefreshing = state.isRefreshing,
-                    onRefresh = onRefresh,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    val scrollState = rememberScrollState()
-                    val localTime = state.currentTime.toLocalTime()
 
-                    // Orientation-specific layout injection
-                    if (isLandscape) {
-                        HomeLandscapeContent(
-                            state = state,
-                            settings = settings,
-                            allDays = allDays,
-                            calculationMethods = calculationMethods,
-                            glassTheme = glassTheme,
-                            scrollState = scrollState,
-                            localTime = localTime,
-                            contentColor = contentColor,
-                            onStatusClick = { showHealthOverlay = true },
-                            onToggleCalendarType = onToggleCalendarType,
-                            onDateSelected = onDateSelected,
-                            onSkipNextAudio = onSkipNextAudio,
-                            onStopAdhan = onStopAdhan,
-                            onStopTest = onStopTest,
-                            onResetDate = onResetDate,
-                            onMethodClick = { showMethodDialog = true },
-                            onShowSnackbar = handleShowSnackbar
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .navigationBarsPadding()
-                        ) {
-                            HomePortraitContent(
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        color = contentColor
+                    )
+                } else if (state.currentPrayerDay == null && (!permissionState.allPermissionsGranted || !state.isNetworkAvailable || state.hasSystemIssues)) {
+                    SystemHealthEmptyState(
+                        isRefreshing = state.isRefreshing,
+                        hasPrayerData = false,
+                        contentColor = contentColor,
+                        glassTheme = glassTheme,
+                        onStatusClick = { showHealthOverlay = true }
+                    )
+                } else {
+                    PullToRefreshBox(
+                        isRefreshing = state.isRefreshing,
+                        onRefresh = onRefresh,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        val scrollState = rememberScrollState()
+                        val localTime = state.currentTime.toLocalTime()
+
+                        if (isLandscape) {
+                            HomeLandscapeContent(
                                 state = state,
                                 settings = settings,
                                 allDays = allDays,
@@ -308,62 +260,88 @@ fun HomeScreenContent(
                                 onStopTest = onStopTest,
                                 onResetDate = onResetDate,
                                 onMethodClick = { showMethodDialog = true },
-                                onShowSnackbar = handleShowSnackbar
+                                onShowToast = handleShowToast
                             )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .navigationBarsPadding()
+                            ) {
+                                HomePortraitContent(
+                                    state = state,
+                                    settings = settings,
+                                    allDays = allDays,
+                                    calculationMethods = calculationMethods,
+                                    glassTheme = glassTheme,
+                                    scrollState = scrollState,
+                                    localTime = localTime,
+                                    contentColor = contentColor,
+                                    onStatusClick = { showHealthOverlay = true },
+                                    onToggleCalendarType = onToggleCalendarType,
+                                    onDateSelected = onDateSelected,
+                                    onSkipNextAudio = onSkipNextAudio,
+                                    onStopAdhan = onStopAdhan,
+                                    onStopTest = onStopTest,
+                                    onResetDate = onResetDate,
+                                    onMethodClick = { showMethodDialog = true },
+                                    onShowToast = handleShowToast
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            // Overlays & Dialogs
-            if (showMethodDialog) {
-                CalculationMethodDialog(
-                    showDialog = showMethodDialog,
-                    onDismiss = { showMethodDialog = false },
-                    calculationMethods = calculationMethods,
-                    selectedMethod = settings?.calculationMethod ?: 3,
-                    onMethodSelected = {
-                        onMethodSelected(it)
-                        showMethodDialog = false
-                    }
-                )
-            }
+                if (showMethodDialog) {
+                    CalculationMethodDialog(
+                        showDialog = showMethodDialog,
+                        onDismiss = { showMethodDialog = false },
+                        calculationMethods = calculationMethods,
+                        selectedMethod = settings?.calculationMethod ?: 3,
+                        onMethodSelected = {
+                            onMethodSelected(it)
+                            showMethodDialog = false
+                        }
+                    )
+                }
 
-            if (showHealthOverlay) {
-                SystemHealthOverlay(
-                    hasPrayerData = state.currentPrayerDay != null,
-                    onDismiss = { showHealthOverlay = false }
-                )
-            }
-            
-            if (showDebugWeather) {
-                AlertDialog(
-                    onDismissRequest = { showDebugWeather = false },
-                    title = { Text("Debug Weather") },
-                    text = {
-                        Column {
-                            WeatherCondition.entries.forEach { condition ->
-                                TextButton(onClick = { 
-                                    onDebugWeather(condition)
-                                    showDebugWeather = false
-                                }) {
-                                    Text(condition.name)
+                if (showHealthOverlay) {
+                    SystemHealthOverlay(
+                        hasPrayerData = state.currentPrayerDay != null,
+                        onDismiss = { showHealthOverlay = false }
+                    )
+                }
+                
+                if (showDebugWeather) {
+                    AlertDialog(
+                        onDismissRequest = { showDebugWeather = false },
+                        title = { Text("Debug Weather") },
+                        text = {
+                            Column {
+                                WeatherCondition.entries.forEach { condition ->
+                                    TextButton(onClick = { 
+                                        onDebugWeather(condition)
+                                        showDebugWeather = false
+                                    }) {
+                                        Text(condition.name)
+                                    }
                                 }
                             }
+                        },
+                        confirmButton = {
+                            TextButton(onClick = { showDebugWeather = false }) {
+                                Text("Close")
+                            }
                         }
-                    },
-                    confirmButton = {
-                        TextButton(onClick = { showDebugWeather = false }) {
-                            Text("Close")
-                        }
-                    }
+                    )
+                }
+
+                GlassToast(
+                    message = toastMessage ?: "",
+                    isVisible = showToast,
+                    onDismiss = { showToast = false }
                 )
             }
-
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = padding.calculateBottomPadding())
-            )
         }
     }
 }

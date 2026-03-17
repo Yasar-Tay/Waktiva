@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.domain.model.HijriData
 import com.ybugmobile.waktiva.domain.provider.ReligiousDaysProvider
 import java.time.LocalDate
+import java.util.Locale
 
 /**
  * A contextual badge that appears when the selected date coincides with a religious holiday or significant day.
@@ -52,7 +53,7 @@ fun ReligiousBadge(
     ) {
         religiousDayName?.let {
             Text(
-                text = stringResource(it).uppercase(),
+                text = stringResource(it).uppercase(Locale.getDefault()),
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontWeight = FontWeight.Black,
                     letterSpacing = 1.sp
