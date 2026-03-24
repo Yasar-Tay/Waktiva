@@ -312,38 +312,41 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
             }
 
             // Global floating actions (Debug/Development only in current state)
-            Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                val density = LocalDensity.current
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(bottom = if (showNavigationLayout && !isLandscape) 100.dp else 0.dp)
-                        .navigationBarsPadding(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    SmallFloatingActionButton(
-                        onClick = { 
-                            timeManager.addMinutes(30)
-                            scope.launch {
-                                WaktivaWidget().updateAll(context)
-                            }
-                            //Toast.makeText(context, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
-                        },
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+            val isDebugEnabled = false // Toggle for development
+            if (isDebugEnabled) {
+                Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                    val density = LocalDensity.current
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(bottom = if (showNavigationLayout && !isLandscape) 100.dp else 0.dp)
+                            .navigationBarsPadding(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalAlignment = Alignment.End
                     ) {
-                        Icon(Icons.Default.Update, contentDescription = "Shift Time")
-                    }
+                        SmallFloatingActionButton(
+                            onClick = { 
+                                timeManager.addMinutes(30)
+                                scope.launch {
+                                    WaktivaWidget().updateAll(context)
+                                }
+                                //Toast.makeText(context, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
+                            },
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        ) {
+                            Icon(Icons.Default.Update, contentDescription = "Shift Time")
+                        }
 
-                    FloatingActionButton(
-                        onClick = { 
-                            val seconds = 5
-                            homeViewModel.triggerTestAlarm(seconds)
-                            Toast.makeText(context, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
-                        },
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                    ) {
-                        Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
+                        FloatingActionButton(
+                            onClick = { 
+                                val seconds = 5
+                                homeViewModel.triggerTestAlarm(seconds)
+                                Toast.makeText(context, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
+                            },
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                        ) {
+                            Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
+                        }
                     }
                 }
             }

@@ -39,13 +39,13 @@ fun SettingsClickItem(
         Box(
             modifier = Modifier
                 .size(44.dp)
-                .background(iconColor.copy(alpha = 0.1f), CircleShape),
+                .background(iconColor.copy(alpha = 0.4f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon, 
                 contentDescription = null, 
-                tint = iconColor.copy(alpha = 0.8f), 
+                tint = Color.White,
                 modifier = Modifier.size(22.dp)
             )
         }

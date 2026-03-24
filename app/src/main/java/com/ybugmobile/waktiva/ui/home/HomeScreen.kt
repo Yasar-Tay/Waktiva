@@ -180,6 +180,8 @@ fun HomeScreenContent(
         }
     }
 
+    val isDebugEnabled = false // Toggle for development
+
     CompositionLocalProvider(
         LocalGlassTheme provides glassTheme,
         LocalBackgroundGradient provides backgroundGradient
@@ -188,18 +190,20 @@ fun HomeScreenContent(
             containerColor = Color.Transparent,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             floatingActionButton = {
-                Box(Modifier.fillMaxSize()) {
-                    LargeFloatingActionButton(
-                        onClick = { showDebugWeather = true },
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        shape = CircleShape,
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(start = 16.dp, bottom = 80.dp)
-                            .size(48.dp)
-                    ) {
-                        Icon(Icons.Rounded.CloudQueue, "Debug Weather")
+                if (isDebugEnabled) {
+                    Box(Modifier.fillMaxSize()) {
+                        LargeFloatingActionButton(
+                            onClick = { showDebugWeather = true },
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(start = 16.dp, bottom = 80.dp)
+                                .size(48.dp)
+                        ) {
+                            Icon(Icons.Rounded.CloudQueue, "Debug Weather")
+                        }
                     }
                 }
             }
@@ -312,7 +316,7 @@ fun HomeScreenContent(
                     )
                 }
                 
-                if (showDebugWeather) {
+                if (showDebugWeather && isDebugEnabled) {
                     AlertDialog(
                         onDismissRequest = { showDebugWeather = false },
                         title = { Text("Debug Weather") },
