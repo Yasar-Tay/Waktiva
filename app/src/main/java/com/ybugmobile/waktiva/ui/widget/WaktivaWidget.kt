@@ -1,12 +1,18 @@
 package com.ybugmobile.waktiva.ui.widget
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.LinearGradient
+import android.graphics.Paint
+import android.graphics.Shader
 import android.os.SystemClock
 import android.util.TypedValue
 import android.widget.RemoteViews
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
@@ -30,6 +36,7 @@ import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
+import com.ybugmobile.waktiva.ui.theme.getGradientColorsForTime
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -60,18 +67,31 @@ class WaktivaWidget : GlanceAppWidget() {
             
             val now = currentTime
             val today = prayerDays.find { it.date == now.toLocalDate() }
-            val tomorrow = prayerDays.find { it.date == now.toLocalDate().plusDays(1) }
             
+            // Get colors from Gradient.kt and use the first two for the widget background as requested
+            val colors = getGradientColorsForTime(now.toLocalTime(), today)
+            val widgetColors = colors.take(2)
+            
+            val backgroundProvider = remember(widgetColors) {
+                if (widgetColors.size >= 2) {
+                    ImageProvider(createGradientBitmap(widgetColors))
+                } else {
+                    ImageProvider(R.drawable.widget_background)
+                }
+            }
+
+            val tomorrow = prayerDays.find { it.date == now.toLocalDate().plusDays(1) }
             val nextPrayer = entryPoint.getNextPrayerUseCase()(today, tomorrow, now)
 
-            WidgetContent(context, nextPrayer)
+            WidgetContent(context, nextPrayer, backgroundProvider)
         }
     }
 
     @Composable
     fun WidgetContent(
         context: Context,
-        nextPrayer: NextPrayer?
+        nextPrayer: NextPrayer?,
+        backgroundProvider: ImageProvider
     ) {
         val size = LocalSize.current
         val contentColor = Color.White
@@ -81,7 +101,7 @@ class WaktivaWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .fillMaxSize()
                 .appWidgetBackground()
-                .background(ImageProvider(R.drawable.widget_background))
+                .background(backgroundProvider)
                 .cornerRadius(32.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
@@ -185,6 +205,36 @@ class WaktivaWidget : GlanceAppWidget() {
                 }
             }
         }
+    }
+
+    private fun createGradientBitmap(colors: List<Color>): Bitmap {
+        val width = 100
+        val height = 200
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val intColors = colors.map { it.toArgb() }.toIntArray()
+
+        val shader = if (intColors.size > 1) {
+            LinearGradient(
+                0f, 0f, 0f, height.toFloat(),
+                intColors,
+                null,
+                Shader.TileMode.CLAMP
+            )
+        } else {
+            null
+        }
+
+        val paint = Paint().apply {
+            if (shader != null) {
+                this.shader = shader
+            } else {
+                this.color = intColors.firstOrNull() ?: android.graphics.Color.BLACK
+            }
+        }
+
+        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+        return bitmap
     }
 
     private fun getPrayerIconRes(type: PrayerType): Int {
