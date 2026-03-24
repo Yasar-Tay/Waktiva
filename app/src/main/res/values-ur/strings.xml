@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -261,11 +262,11 @@
     <string name="settings_donate">Waktiva کی ترقی میں تعاون کریں</string>
     <string name="donate_title">Waktiva کا تعاون کریں</string>
     <string name="donate_header">Waktiva کا تعاون کریں</string>
-    <string name="donate_desc">کوئی اشتہار نہیں۔\nکوئی ٹریکنگ نہیں۔\nڈیٹا کی فروخت نہیں۔\nصرف ایک ایماندارانہ اور مفید چیز۔\n\nاگر Waktiva آپ کی روزانہ کی نمازوں میں آسانی لاتا ہے…\nاگر آپ ایسی نماز ایپ کی قدر کرتے ہیں جو آپ کی پرائیویسی کا احترام کرتی ہے…\nاگر آپ اس کے ڈیزائن، خصوصیات اور لائسنس شدہ مواد کو بہتر بنانے میں مدد کرنا چاہتے ہیں…\n\nآپ عطیہ کے ذریعے اس کی ترقی میں تعاون کر سکتے ہیں۔\n\nہر تعاون — چاہے چھوٹا ہو یا بڑا — واقعی فرق ڈالتا ہے۔\n\nWaktiva کو سادہ، نجی اور اشتہارات سے پاک رکھنے میں مدد کرنے کے لیے آپ کا شکریہ۔</string>
+    <string name="donate_desc">کوئی اشتہار نہیں۔\nکوئی ٹریکنگ نہیں۔\nڈیٹا کی فروخت نہیں۔\nصرف ایک ایماندارانہ اور مفید چیز۔\n\nاگر Waktiva آپ کی روزانہ کی نمازوں میں آسانی لاتا ہے…\nاگر آپ ایسی نماز ایپ کی قدر کرتے ہیں جو آپ کی پرائیویسی کا احترام کرتی ہے…\nاگر آپ اس کے ڈیزائن، خصوصیات اور لائسنس شدہ مواد کو بہتر بنانے میں مدد کرنا چاہتے ہیں…\n\nآپ عطیہ کے ذریعے اس کی ترقی میں تعاون کر سکتے ہیں۔\n\nهر تعاون — چاہے چھوٹا ہو یا بڑا — واقعی فرق ڈالتا ہے۔\n\nWaktiva کو سادہ، نجی اور اشتہارات سے پاک رکھنے میں مدد کرنے کے لیے آپ کا شکریہ۔</string>
     <string name="donate_footer">🤲 اللہ آپ کو دنیا اور آخرت میں اس کا اجر عطا فرمائے۔</string>
     <string name="donate_button">عطیہ دیں</string>
     <string name="donate_thank_you">اوپن سورس سافٹ ویئر کی حمایت کرنے کا شکریہ!</string>
-    <string name="donate_error">عطیہ ناکام رہا۔ براہ کرم دوبارہ کوشش کریں۔</string>
+    <string name="donate_error">عطیہ ناکام رہا। براہ کرم دوبارہ کوشش کریں۔</string>
     <string name="donate_billing_error">بلنگ سروس سے رابطہ کرنے میں ناکامی</string>
     <string name="rate_title">Waktiva کو ریٹنگ دیں</string>
     <string name="rate_desc">اگر آپ Waktiva پسند کر رہے ہیں، تو براہ کرم اسے گوگل پلے پر 5 ستارے دیں۔ یہ ہمیں مزید لوگوں تک پہنچنے میں مدد دیتا ہے!</string>
@@ -321,6 +322,10 @@
     <string name="settings_hijri_day_start">ہجری دن کا آغاز</string>
     <string name="settings_hijri_day_start_maghrib">مغرب سے شروع ہوتا ہے</string>
     <string name="settings_hijri_day_start_desc">ہجری تاریخ آدھی رات کے بجائے غروبِ آفتاب (مغرب) پر تبدیل کریں۔</string>
+
+    <!-- About Section -->
+    <string name="settings_about">متعلق</string>
+    <string name="settings_licenses_desc">اوپن سورس سافٹ ویئر کے لائسنس کی تفصیلات</string>
 
     <!-- Licenses Screen -->
     <string name="licenses_title">لائسنس</string>

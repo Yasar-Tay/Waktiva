@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -321,6 +322,10 @@
     <string name="settings_hijri_day_start">آغاز روز هجری</string>
     <string name="settings_hijri_day_start_maghrib">شروع از مغرب</string>
     <string name="settings_hijri_day_start_desc">تغيير تاریخ هجری در هنگام غروب خورشید (مغرب) به جای نیمه‌شب.</string>
+
+    <!-- About Section -->
+    <string name="settings_about">درباره برنامه</string>
+    <string name="settings_licenses_desc">جزئیات مجوزهای نرم‌افزارهای متن‌باز</string>
 
     <!-- Licenses Screen -->
     <string name="licenses_title">مجوزها</string>

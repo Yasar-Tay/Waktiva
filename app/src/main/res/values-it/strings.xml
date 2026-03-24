@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -321,6 +322,10 @@
     <string name="settings_hijri_day_start">Inizio giorno Hijri</string>
     <string name="settings_hijri_day_start_maghrib">Inizia al Maghrib</string>
     <string name="settings_hijri_day_start_desc">Cambia la data Hijri al tramonto (Maghrib) invece che a mezzanotte.</string>
+
+    <!-- About Section -->
+    <string name="settings_about">Informazioni</string>
+    <string name="settings_licenses_desc">Dettagli della licenza per il software open source</string>
 
     <!-- Licenses Screen -->
     <string name="licenses_title">LICENZE</string>

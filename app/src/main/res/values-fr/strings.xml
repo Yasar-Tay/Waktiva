@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -32,7 +33,7 @@
     <string name="qibla_kaaba_aligned">Aligné sur la Kaaba</string>
     <string name="qibla_find_marker">Trouvez le marqueur doré</string>
     <string name="qibla_calibrate">CALIBRER</string>
-    <string name="qibla_interference_tip">Astuce : À l\'intérieur des bâtiments, les structures métalliques peuvent affecter la boussole. Pour une meilleure précision, effectuez un calibrage en forme de 8.</string>
+    <string name="qibla_interference_tip">Astuce : À l\'intérieur des bâtiments, le structures métalliques peuvent affecter la boussole. Pour une meilleure précision, effectuez un calibrage en forme de 8.</string>
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Lieu inconnu</string>
@@ -308,7 +309,7 @@
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">Adhan désactivé</string>
     <string name="notification_adhan_skipped_text">L\'Adhan pour %s est ignoré.</string>
-    <string name="notification_upcoming_adhan_title">Prossimo Adhan : %s</string>
+    <string name="notification_upcoming_adhan_title">Prochain Adhan : %s</string>
     <string name="notification_upcoming_adhan_text">L\'Adhan sera joué dans %d minutes.</string>
     <string name="notification_skip_action">IGNORER POUR CETTE PRIÈRE</string>
     <string name="notification_adhan_title">Adhan : %s</string>
@@ -321,6 +322,10 @@
     <string name="settings_hijri_day_start">Début du jour Hijri</string>
     <string name="settings_hijri_day_start_maghrib">Commence au Maghrib</string>
     <string name="settings_hijri_day_start_desc">Changer la date Hijri au coucher du soleil (Maghrib) au lieu de minuit.</string>
+
+    <!-- About Section -->
+    <string name="settings_about">À propos</string>
+    <string name="settings_licenses_desc">Détails des licences pour les logiciels open source</string>
 
     <!-- Licenses Screen -->
     <string name="licenses_title">LICENCES</string>

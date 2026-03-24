@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -321,6 +322,10 @@
     <string name="settings_hijri_day_start_maghrib">يبدأ عند المغرب</string>
     <string name="settings_hijri_day_start_desc">تغيير التاريخ الهجري عند غروب الشمس (المغرب) بدلاً من منتصف الليل.</string>
 
+    <!-- About Section -->
+    <string name="settings_about">حول</string>
+    <string name="settings_licenses_desc">تفاصيل الترخيص للبرمجيات مفتوحة المصدر</string>
+
     <!-- Licenses Screen -->
     <string name="licenses_title">التراخيص</string>
     <string name="license_legal_info">Waktiva – الترخيص والمعلومات القانونية</string>
@@ -329,42 +334,42 @@
     <string name="license_app_warranty">هذا البرنامج \"كما هو\" وبدون أي ضمان من أي نوع.</string>
     <string name="license_third_party_services">١. خدمات شخص ثالث</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
-    <string name="license_aladhan_desc">Waktiva اوقات شرعية را از سرويس Al-Adhan API دریافت می‌کند. محاسبات طبق روش‌ها و شرایط منتشر شده آن‌ها ارائه می‌شود.</string>
-    <string name="license_data_privacy">Waktiva داده‌های کاربران را ذخیره نمی‌کند، نمی‌فروشد و توزیع نمی‌کند.</string>
-    <string name="license_open_source_libs">٢. کتابخانه‌های متن‌باز شخص ثالث</string>
-    <string name="license_libs_intro">Waktiva شامل مؤلفه‌های متن‌باز زیر است:</string>
-    <string name="license_lib_androidx">کتابخانه‌های AndroidX (مجوز Apache 2.0)</string>
-    <string name="license_lib_compose">Jetpack Compose (مجوز Apache 2.0)</string>
-    <string name="license_lib_kotlin">Kotlin (مجوز Apache 2.0)</string>
-    <string name="license_lib_hilt">Hilt (مجوز Apache 2.0)</string>
-    <string name="license_lib_room">Room (مجوز Apache 2.0)</string>
-    <string name="license_lib_datastore">DataStore (مجوز Apache 2.0)</string>
-    <string name="license_lib_work">WorkManager (مجوز Apache 2.0)</string>
-    <string name="license_lib_media3">Media3 (مجوز Apache 2.0)</string>
-    <string name="license_lib_location">خدمات مکان Google Play (شرایط Google Play)</string>
-    <string name="license_lib_retrofit">Retrofit (مجوز Apache 2.0)</string>
-    <string name="license_lib_okhttp">OkHttp (مجوز Apache 2.0)</string>
-    <string name="license_lib_gson">Gson (مجوز Apache 2.0)</string>
-    <string name="license_lib_adhan">کتابخانه Adhan Kotlin (مجوز MIT)</string>
-    <string name="license_lib_suncalc">SunCalc (مجوز BSD)</string>
-    <string name="license_lib_maplibre">MapLibre Android SDK (مجوز BSD 3-Clause)</string>
-    <string name="license_lib_osmdroid">OsmDroid (مجوز Apache 2.0)</string>
-    <string name="license_lib_accompanist">Accompanist (مجوز Apache 2.0)</string>
-    <string name="license_lib_billing">کتابخانه پرداخت Google Play (شرایط Google Play)</string>
-    <string name="license_libs_property">تفر هر کتابخانه در مالکیت نویسندگان مربوطه باقی می‌ماند و مطابق با مجوز آن استفاده می‌شود.</string>
-    <string name="license_adhan_audio">٣. مجوز صوت اذان</string>
-    <string name="license_adhan_reciter">Waktiva شامل ضبط‌های اذان توسط محسن کارا، قهرمان جهان در مسابقات اذان ٢٠٢٢ است.</string>
-    <string name="license_adhan_permission">این ضبط‌ها با اجازه استفاده می‌شوند. تمامی حقوق صوتی نزد مؤذن اصلی محفوظ است.</string>
-    <string name="license_adhan_restrictions">صوت اذان نباید بدون اجازه صریح صاحب حق، از برنامه Waktiva استخراج، بازتوزیع یا خارج از آن استفاده شود.</string>
-    <string name="license_location_permissions">٤. مكان و مجوزها</string>
-    <string name="license_location_usage">Waktiva اجازه مکان را صرفاً برای موارد زیر درخواست می‌کند:</string>
-    <string name="license_loc_usage_1">محاسبه دقیق اوقات شرعی</string>
-    <string name="license_loc_usage_2">تعیین جهت قبله</string>
-    <string name="license_loc_usage_3">ارائه تاریخ هجري و محاسبات فاز ماه</string>
-    <string name="license_loc_processing">داده‌های مکان به صورت محلی پردازش می‌شوند و ذخیره، ردیابی یا به اشتراک گذاشته نمی‌شوند. اوقات شرعی تا سه ماه برای استفاده آفلاین دانلود می‌شوند.</string>
-    <string name="license_no_ads">٥. تعهد عدم تبلیغات / عدم ردیابی</string>
-    <string name="license_no_ads_1">هیچ تبلیغی نمایش نمی‌دهد</string>
-    <string name="license_no_ads_2">از هیچ SDK ردیابی استفاده نمی‌کند</string>
-    <string name="license_no_ads_3">هیچ داده تحلیلی جمع‌آوری نمی‌کند</string>
-    <string name="license_no_ads_4">داده‌های شخصی را نمی‌فروشد</string>
+    <string name="license_aladhan_desc">يسترجع Waktiva مواقيت الصلاة من خدمة Al-Adhan API. يتم تقديم حسابات وقت الصلاة وفقًا لمنهجياتها وشروطها المنشورة.</string>
+    <string name="license_data_privacy">لا يقوم Waktiva بتخزين بيانات المستخدم أو إعادة بيعها أو توزيعها.</string>
+    <string name="license_open_source_libs">٢. مكتبات خارجية مفتوحة المصدر</string>
+    <string name="license_libs_intro">يتضمن Waktiva المكونات مفتوحة المصدر التالية:</string>
+    <string name="license_lib_androidx">مكتبات AndroidX (ترخيص Apache 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (ترخيص Apache 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (ترخيص Apache 2.0)</string>
+    <string name="license_lib_hilt">Hilt (ترخيص Apache 2.0)</string>
+    <string name="license_lib_room">Room (ترخيص Apache 2.0)</string>
+    <string name="license_lib_datastore">DataStore (ترخيص Apache 2.0)</string>
+    <string name="license_lib_work">WorkManager (ترخيص Apache 2.0)</string>
+    <string name="license_lib_media3">Media3 (ترخيص Apache 2.0)</string>
+    <string name="license_lib_location">خدمات Google Play للموقع (شروط خدمات Google Play)</string>
+    <string name="license_lib_retrofit">Retrofit (ترخيص Apache 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (ترخيص Apache 2.0)</string>
+    <string name="license_lib_gson">Gson (ترخيص Apache 2.0)</string>
+    <string name="license_lib_adhan">مكتبة Adhan Kotlin (ترخيص MIT)</string>
+    <string name="license_lib_suncalc">SunCalc (ترخيص BSD)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (ترخيص BSD 3-Clause)</string>
+    <string name="license_lib_osmdroid">OsmDroid (ترخيص Apache 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (ترخيص Apache 2.0)</string>
+    <string name="license_lib_billing">مكتبة فوترة Google Play (شروط Google Play)</string>
+    <string name="license_libs_property">تظل كل مكتبة ملكًا لمؤلفيها المعنيين ويتم استخدامها وفقًا لترخيصها.</string>
+    <string name="license_adhan_audio">٣. ترخيص صوت الأذان</string>
+    <string name="license_adhan_reciter">يتضمن Waktiva تسجيلات الأذان للمؤذن محسن كارا، بطل العالم لعام ٢٠٢٢ في مسابقة تلاوة الأذان.</string>
+    <string name="license_adhan_permission">تستخدم هذه التسجيلات بإذن. جميع حقوق الصوت تعود للمؤذن الأصلي.</string>
+    <string name="license_adhan_restrictions">لا يجوز استخراج صوت الأذان أو إعادة توزيعه أو استخدامه خارج تطبيق Waktiva دون إذن صريح من صاحب الحقوق.</string>
+    <string name="license_location_permissions">٤. الموقع والأذونات</string>
+    <string name="license_location_usage">يطلب Waktiva إذن الموقع حصريًا لـ:</string>
+    <string name="license_loc_usage_1">حساب مواقيت الصلاة بدقة</string>
+    <string name="license_loc_usage_2">تحديد اتجاه القبلة</string>
+    <string name="license_loc_usage_3">توفير حسابات التاريخ الهجري ومراحل القمر</string>
+    <string name="license_loc_processing">تتم معالجة بيانات الموقع محليًا ولا يتم تخزينها أو تتبعها أو مشاركتها. يتم تنزيل مواقيت الصلاة لمدة تصل إلى ثلاثة أشهر لتمكين الاستخدام في وضع عدم الاتصال.</string>
+    <string name="license_no_ads">٥. التزام عدم وجود إعلانات / عدم تتبع</string>
+    <string name="license_no_ads_1">لا يعرض أي إعلانات</string>
+    <string name="license_no_ads_2">لا يستخدم أي حزم أدوات تتبع (SDK)</string>
+    <string name="license_no_ads_3">لا يجمع تحليلات</string>
+    <string name="license_no_ads_4">لا يبيع البيانات الشخصية</string>
 </resources>

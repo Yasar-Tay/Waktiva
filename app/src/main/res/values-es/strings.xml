@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -322,6 +323,10 @@
     <string name="settings_hijri_day_start_maghrib">Comienza en el Maghrib</string>
     <string name="settings_hijri_day_start_desc">Cambia la fecha Hijri al atardecer (Maghrib) en lugar de a medianoche.</string>
 
+    <!-- About Section -->
+    <string name="settings_about">Acerca de</string>
+    <string name="settings_licenses_desc">Detalles de las licencias de software de código abierto</string>
+
     <!-- Licenses Screen -->
     <string name="licenses_title">LICENCIAS</string>
     <string name="license_legal_info">Waktiva – Información legal y licencias</string>
@@ -358,7 +363,7 @@
     <string name="license_adhan_permission">Estas grabaciones se utilizan con permiso. Todos los derechos de audio pertenecen al recitatore originale.</string>
     <string name="license_adhan_restrictions">El audio de Adhan no se puede extraer, redistribuir ni reutilizar fuera de la aplicación Waktiva sin el permiso explícito del titular de los derechos.</string>
     <string name="license_location_permissions">4. Ubicación y permisos</string>
-    <string name="license_location_usage">Waktiva solicita permiso de ubicación únicamente para:</string>
+    <string name="license_location_usage">Waktiva solicita permiso de ubicación únicamente para :</string>
     <string name="license_loc_usage_1">Calcular horarios de oración precisos</string>
     <string name="license_loc_usage_2">Determinar la dirección de la Qibla</string>
     <string name="license_loc_usage_3">Proporcionar la fecha Hijri y cálculos de fase lunar</string>

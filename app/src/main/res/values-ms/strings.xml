@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -320,6 +321,10 @@
     <string name="settings_hijri_day_start">Permulaan Hari Hijriah</string>
     <string name="settings_hijri_day_start_maghrib">Bermula pada Maghrib</string>
     <string name="settings_hijri_day_start_desc">Tukar tarikh Hijriah pada waktu matahari terbenam (Maghrib) bukannya tengah malam.</string>
+
+    <!-- About Section -->
+    <string name="settings_about">Mengenai</string>
+    <string name="settings_licenses_desc">Butiran lesen bagi perisian sumber terbuka</string>
 
     <!-- Licenses Screen -->
     <string name="licenses_title">Lesen</string>

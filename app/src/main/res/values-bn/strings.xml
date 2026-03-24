@@ -323,6 +323,10 @@
     <string name="settings_hijri_day_start_maghrib">মাগরিব থেকে শুরু</string>
     <string name="settings_hijri_day_start_desc">মধ্যরাতের পরিবর্তে সূর্যাস্তের (মাগরিব) সময় হিজরি তারিখ পরিবর্তন করুন।</string>
 
+    <!-- About Section -->
+    <string name="settings_about">সম্পর্কে</string>
+    <string name="settings_licenses_desc">ওপেন সোর্স সফটওয়্যারের লাইসেন্স বিস্তারিত</string>
+
     <!-- Licenses Screen -->
     <string name="licenses_title">লাইসেন্সসমূহ</string>
     <string name="license_legal_info">Waktiva – লাইসেন্স এবং আইনি তথ্য</string>

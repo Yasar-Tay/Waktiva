@@ -390,11 +390,11 @@ private fun DataManagementSection(
 @Composable
 private fun AboutSection(onShowLicensesClick: () -> Unit) {
     SettingsSection(
-        title = "About"
+        title = stringResource(R.string.settings_about)
     ) {
         SettingsClickItem(
-            title = "Open Source Licenses",
-            subtitle = "License details for open source software",
+            title = stringResource(R.string.licenses_title),
+            subtitle = stringResource(R.string.settings_licenses_desc),
             icon = Icons.Rounded.Description,
             onClick = onShowLicensesClick
         )

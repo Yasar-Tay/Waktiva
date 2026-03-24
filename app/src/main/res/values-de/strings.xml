@@ -322,6 +322,10 @@
     <string name="settings_hijri_day_start_maghrib">Beginnt bei Maghrib</string>
     <string name="settings_hijri_day_start_desc">Das Hijri-Datum bei Sonnenuntergang (Maghrib) anstelle von Mitternacht umschalten.</string>
 
+    <!-- About Section -->
+    <string name="settings_about">Über</string>
+    <string name="settings_licenses_desc">Lizenzdetails für Open-Source-Software</string>
+
     <!-- Licenses Screen -->
     <string name="licenses_title">Lizenzen</string>
     <string name="license_legal_info">Waktiva – Lizenz &amp; rechtliche Informationen</string>
