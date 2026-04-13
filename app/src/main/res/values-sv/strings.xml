@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Waktiva</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Hem</string>
+    <string name="nav_qibla">Qibla</string>
+    <string name="nav_settings">Inställningar</string>
+    <string name="nav_donate">Donera</string>
+    <string name="cd_back">Bakåt</string>
+
+    <!-- Qibla Screen -->
+    <string name="qibla_label">Qibla</string>
+    <string name="qibla_compass">Kompass</string>
+    <string name="qibla_map">Karta</string>
+    <string name="qibla_mecca_aligned">Inriktad mot Mecka</string>
+    <string name="qibla_rotate_phone">Rotera telefonen</string>
+    <string name="qibla_direction">Qibla: %d°</string>
+    <string name="qibla_locating">Lokaliserar…</string>
+    <string name="qibla_heading">Kurs</string>
+    <string name="qibla_signal">Signal</string>
+    <string name="qibla_standard">Standard</string>
+    <string name="qibla_satellite">Satellit</string>
+    <string name="qibla_recenter">Centrera om</string>
+    <string name="qibla_location_required">Platstillgång krävs</string>
+    <string name="qibla_location_required_desc">Krävs för exakt Qibla-beräkning.</string>
+    <string name="qibla_grant_permission">Ge tillstånd</string>
+    <string name="qibla_calibration_needed">Kalibrering krävs</string>
+    <string name="qibla_calibration_desc">Flytta telefonen i ett mönster som liknar siffran 8 (∞) för att förbättra noggrannheten.</string>
+    <string name="qibla_got_it">Uppfattat</string>
+    <string name="qibla_aligned_badge">INRIKTAD</string>
+    <string name="qibla_magnetic_interference">Magnetisk störning upptäckt - Kalibrera enheten</string>
+    <string name="qibla_kaaba_aligned">Inriktad mot Kaba</string>
+    <string name="qibla_find_marker">Hitta den gyllene markören</string>
+    <string name="qibla_calibrate">KALIBRERA</string>
+    <string name="qibla_interference_tip">Tips: Inuti byggnader kan metallstrukturer påverka kompassen. För bästa noggrannhet, utför en kalibrering i form av en åtta.</string>
+
+    <!-- Home Screen -->
+    <string name="home_unknown_location">Okänd plats</string>
+    <string name="home_last_known_location">Senast kända: %s</string>
+    <string name="home_gps_disabled_location">GPS avstängd</string>
+    <string name="home_location_permission_denied">Platstillgång nekad</string>
+    <string name="home_offline_status">Offline</string>
+    <string name="home_next_prayer">%s</string>
+    <string name="home_remaining_time">Återstående tid</string>
+    <string name="home_permissions_required">Tillstånd krävs</string>
+    <string name="home_permissions_desc">Plats- och aviseringsbehörighet krävs för att appen ska fungera korrekt.</string>
+    <string name="home_grant_permissions">Ge tillstånd</string>
+    <string name="home_refresh_success">Bönetider uppdaterade</string>
+    <string name="home_refresh_error">Misslyckades att uppdatera tider</string>
+    <string name="home_prayer_provider">Leverantör: </string>
+    <string name="home_skip_adhan">Tysta Adhan</string>
+    <string name="home_unmute_adhan">Aktivera Adhan</string>
+    <string name="home_return_to_today">Återgå till idag</string>
+    <string name="home_tomorrow_is">Imorgon: %s</string>
+    <string name="home_today_is">Idag är %s</string>
+    <string name="home_adhan_muted">Adhan tystad för %s</string>
+    <string name="home_adhan_unmuted">Adhan aktiverad för %s</string>
+    <string name="home_hijri_offline_note">Använder offline Hijri-beräkning</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
+    <string name="home_current_time">Nuvarande tid</string>
+
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">GPS avstängd</string>
+    <string name="location_health_permission_denied">Platstillgång nekad</string>
+    <string name="location_health_offline">Offline-läge</string>
+    <string name="location_health_notifications_off">Aviseringar nekade</string>
+    <string name="location_health_channels_muted">Kanaler tystade</string>
+    <string name="location_health_dnd_active">Stör ej aktivt</string>
+
+    <!-- System Health & Warnings -->
+    <string name="health_title">Systemhälsa</string>
+    <string name="health_issues_detected">Problem upptäckta</string>
+    <string name="health_gps_off">GPS är inaktiverad globalt. Aktivera platstjänster för att uppdatera bönetider.</string>
+    <string name="health_channels_muted">Adhan-aviseringskanaler är tystade i systeminställningarna.</string>
+    <string name="health_dnd_active">Stör ej-läge är på. Adhan-ljud kan blockeras.</string>
+    <string name="health_fix_now">Åtgärda nu</string>
+    <string name="health_no_internet">Ingen internetanslutning. Waktiva använder lagrad data. Anslut för att uppdatera bönetider.</string>
+    <string name="health_no_internet_no_data">Ingen internetanslutning. Waktiva behöver en aktiv anslutning för att hämta de första bönetiderna.</string>
+    <string name="health_status_ok">Alla system fungerar</string>
+    <string name="health_overlay_subtitle">Optimerar din appupplevelse</string>
+    <string name="health_overlay_description">Åtgärda problemen nedan för att säkerställa att aviseringar och platstjänster fungerar tillförlitligt i bakgrunden.</string>
+    <string name="health_overlay_dismiss">Jag förstår</string>
+    <string name="health_overlay_issues_title">Upptäckta problem</string>
+
+    <!-- Prayer Names -->
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_sunrise">Soluppgång</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+    <string name="adhan_default_prayer">Bön</string>
+
+    <!-- Accuracy Labels -->
+    <string name="accuracy_high">Hög</string>
+    <string name="accuracy_med">Medium</string>
+    <string name="accuracy_low">Låg</string>
+    <string name="accuracy_poor">Dålig</string>
+
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Klart</string>
+    <string name="weather_mainly_clear">Mestadels klart</string>
+    <string name="weather_partly_cloudy">Växlande molnighet</string>
+    <string name="weather_overcast">Mulet</string>
+    <string name="weather_foggy">Dimmigt</string>
+    <string name="weather_drizzle">Duggregn</string>
+    <string name="weather_freezing_drizzle">Underkylt duggregn</string>
+    <string name="weather_rainy">Regnigt</string>
+    <string name="weather_heavy_rain">Kraftigt regn</string>
+    <string name="weather_freezing_rain">Underkylt regn</string>
+    <string name="weather_snowy">Snöigt</string>
+    <string name="weather_heavy_snow">Kraftigt snöfall</string>
+    <string name="weather_snow_grains">Snökorn</string>
+    <string name="weather_rain_showers">Regnskurar</string>
+    <string name="weather_snow_showers">Snöbyar</string>
+    <string name="weather_thunderstorm">Åska</string>
+    <string name="weather_thunderstorm_hail">Åska med hagel</string>
+    <string name="weather_unknown">Okänt</string>
+
+    <!-- General Settings -->
+    <string name="settings_title">Inställningar</string>
+    <string name="settings_preferences">Preferenser</string>
+    <string name="settings_permissions">Behörigheter</string>
+    <string name="settings_manage_system">Hantera i systeminställningar</string>
+    <string name="settings_location_access">Platstillgång</string>
+    <string name="settings_location_desc">Avgörande för att beräkna bönetider. Utan detta kan appen inte hämta tider för din plats.</string>
+    <string name="settings_notifications">Aviseringar</string>
+    <string name="settings_notifications_desc">Krävs för att visa varningar om bönetider och Adhan-aviseringar.</string>
+    <string name="settings_granted">Beviljat</string>
+    <string name="settings_denied">Nekat</string>
+    <string name="settings_language">Appens språk</string>
+    <string name="settings_cancel">Avbryt</string>
+    <string name="settings_confirm">Bekräfta</string>
+    <string name="settings_weather_effects">Vädereffekter</string>
+    <string name="settings_weather_effects_desc">Visa animerade väderförhållanden (regn, snö, moln) i bakgrunden.</string>
+
+    <!-- Language Options -->
+    <string name="lang_system">Systemstandard</string>
+    <string name="lang_en">English</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_in">Bahasa Indonesia</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_bn">বাংলা</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_ms">Bahasa Melayu</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_sq">Shqip</string>
+    <string name="lang_bs">Bosanski</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_pl">Polski</string>
+    <string name="lang_nl">Nederlands</string>
+    <string name="lang_sv">Svenska</string>
+    <string name="lang_fi">Suomi</string>
+
+    <!-- Calculation Settings -->
+    <string name="settings_calculation">Beräkningsinställningar</string>
+    <string name="settings_madhab">Madhab</string>
+    <string name="settings_method">Beräkningsmetod</string>
+    <string name="madhab_shafi">Shafi / Standard (Maliki, Hanbali)</string>
+    <string name="madhab_hanafi">Hanafi</string>
+    <string name="method_mwl">Muslim World League</string>
+    <string name="method_isna">Islamic Society of North America (ISNA)</string>
+    <string name="method_egypt">Egyptian General Authority of Survey</string>
+    <string name="method_makkah">Umm al-Qura University, Makkah</string>
+    <string name="method_karachi">University of Islamic Sciences, Karachi</string>
+    <string name="method_tehran">Institute of Geophysics, University of Tehran</string>
+    <string name="method_gulf">Gulf-regionen</string>
+    <string name="method_kuwait">Kuwait</string>
+    <string name="method_qatar">Qatar</string>
+    <string name="method_singapore">Majlis Ugama Islam Singapura</string>
+    <string name="method_turkey">Turkiet (Diyanet)</string>
+
+    <!-- Audio & Notification Settings -->
+    <string name="settings_notifications_sound">Aviseringar och ljud</string>
+    <string name="settings_play_adhan">Spela upp Adhan-ljud</string>
+    <string name="settings_play_adhan_desc">Låt Adhan ljuda när det är dags för bön</string>
+    <string name="settings_adhan_sound_selection">Val av Adhan-ljud</string>
+    <string name="settings_adhan_sound_selection_desc">Välj det ljud som spelas under bönetider</string>
+
+    <string name="audio_settings_title">Adhan-ljud</string>
+    <string name="audio_header_global">Välj Adhan-ljud (Globalt)</string>
+    <string name="audio_header_all_prayers">Alla böner</string>
+    <string name="audio_header_specific">Adhan för %1$s</string>
+    <string name="audio_select_prayer_prompt">Välj bön att konfigurera</string>
+    <string name="audio_individual_sounds_title">Individuella böneljud</string>
+    <string name="audio_individual_sounds_desc">Ställ in olika Adhans för varje bönetid</string>
+
+    <string name="audio_setting_default">Standard Adhan</string>
+    <string name="audio_setting_fajr">Fajr Adhan</string>
+    <string name="audio_setting_dhuhr">Dhuhr Adhan</string>
+    <string name="audio_setting_asr">Asr Adhan</string>
+    <string name="audio_setting_maghrib">Maghrib Adhan</string>
+    <string name="audio_setting_isha">Isha Adhan</string>
+
+    <string name="audio_add_custom">Lägg till eget ljud</string>
+    <string name="audio_delete_confirm">Radera ljudfil?</string>
+    <string name="audio_delete_description">Radera ljudfil</string>
+    <string name="audio_supported_formats">Stödjer: MP3, AAC, WAV, OGG</string>
+    <string name="audio_preview_play">Provlyssna</string>
+    <string name="audio_preview_stop">Stoppa provlyssning</string>
+    <string name="audio_built_in">Inbyggd</string>
+    <string name="audio_selected_description">Vald</string>
+    <string name="audio_minutes_before">Minuter före:</string>
+
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">Fajr-larm (före soluppgång)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">Bestäm Fajr-larmtid baserat på soluppgången (utom i Ramadan).</string>
+
+    <!-- Battery & Reliability Settings -->
+    <string name="settings_reliability">Tillförlitlighet och optimering</string>
+    <string name="settings_battery_opt">Batterioptimering</string>
+    <string name="settings_battery_opt_enabled">Optimerad för tillförlitlighet</string>
+    <string name="settings_battery_opt_disabled">Nödvändigt för att spela Adhan i tid. Batterioptimeringar kan fördröja eller blockera larm.</string>
+    <string name="settings_exact_alarm_title">Exakta larm</string>
+    <string name="settings_exact_alarm_desc">Behövs för exakta bönetidsaviseringar och Adhan i rätt tid.</string>
+
+    <!-- Data Management -->
+    <string name="settings_data_management">Datahantering</string>
+    <string name="settings_delete_history">Radera bönehistorik</string>
+    <string name="settings_delete_history_desc">Radera all tidigare bönedata</string>
+    <string name="settings_delete_history_confirm_title">Radera historik?</string>
+    <string name="settings_delete_history_confirm_desc">Detta kommer att permanent radera alla böneposter före idag. Denna åtgärd kan inte ångras.</string>
+
+    <!-- Pre-Adhan Warning -->
+    <string name="settings_pre_adhan_warning">Förvarning inför Adhan</string>
+    <string name="settings_pre_adhan_warning_summary">Få en avisering före bönetiden.</string>
+    <string name="pre_adhan_notification_title">Dags för bön snart</string>
+    <string name="pre_adhan_notification_text">Tid för %s-bönen om 5 minuter.</string>
+    <string name="pre_adhan_cancel_action">Avfärda</string>
+    <string name="pre_adhan_channel_name">Förvarningar inför Adhan</string>
+    <string name="pre_adhan_channel_description">Aviseringar som visas före bönetiden.</string>
+
+    <!-- Welcome / Onboarding -->
+    <string name="welcome_title">Välkommen till Waktiva</string>
+    <string name="welcome_desc">En modern böneapp som respekterar din integritet och är fri från reklam.</string>
+    <string name="welcome_begin">Börja konfigurationen</string>
+    <string name="welcome_finish">Slutför konfigurationen</string>
+    <string name="welcome_precision_settings">Precisionsinställningar</string>
+    <string name="welcome_precision_desc">Waktiva behöver dessa för att tjäna dig bättre</string>
+    <string name="welcome_loc_title">Exakt plats</string>
+    <string name="welcome_loc_desc">Avgörande för att beräkna bönetider. Utan detta kan appen inte hämta tider för din plats.</string>
+    <string name="welcome_notif_title">Adhan-varningar</string>
+    <string name="welcome_notif_desc">Krävs för att skicka aviseringar och låta Adhan ljuda när det är dags för bön.</string>
+    <string name="welcome_alarm_title">Exakta larm</string>
+    <string name="welcome_alarm_desc">Krävs för att Adhan ska spelas exakt i tid utan fördröjning.</string>
+    <string name="welcome_grant_btn">Ge tillstånd</string>
+    <string name="welcome_continue_btn">Fortsätt</string>
+    <string name="welcome_personalize">Anpassa</string>
+    <string name="welcome_personalize_desc">Konfigurera dina böne- och beräkningsinställningar</string>
+    <string name="welcome_audio_desc">Ställ in dina preferenser för böneutrop</string>
+    <string name="welcome_adhan_audio">Adhan-ljud</string>
+    <string name="welcome_adhan_audio_desc">Spela upp ljudanrop för böner</string>
+    <string name="welcome_select_sound">Välj ljud</string>
+    <string name="welcome_skip_btn">Fortsätt ändå</string>
+    <string name="welcome_permission_later_info">Du kan alltid hantera dessa behörigheter i inställningarna senare.</string>
+    <string name="welcome_general_settings">Allmänna inställningar</string>
+    <string name="welcome_adhan_audio_header">Adhan och ljud</string>
+    <string name="welcome_battery_optimized">Optimerad för tillförlitlighet</string>
+    <string name="welcome_battery_optimize_desc">Nödvändigt för att spela Adhan i tid. Batterioptimeringar kan fördröja larm.</string>
+
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">Det är dags för</string>
+    <string name="adhan_stop">STOPPA ADHAN</string>
+    <string name="adhan_playing">Adhan</string>
+    <string name="adhan_sounding">Ljuder nu</string>
+    <string name="adhan_upcoming">Kommande adhan</string>
+    <string name="adhan_test_alarm">Testa larm</string>
+    <string name="adhan_test_desc">Simulerar adhan-utlösning</string>
+    <string name="adhan_stop_test">AVBRYT TEST</string>
+    <string name="adhan_metadata_title_format">%s Adhan</string>
+
+    <!-- Donations -->
+    <string name="settings_donate">Stöd Waktivas utveckling</string>
+    <string name="donate_title">Stöd Waktiva</string>
+    <string name="donate_header">Stöd Waktiva</string>
+    <string name="donate_desc">Tack för att du hjälper till att hålla Waktiva enkelt, privat och reklamfritt.</string>
+    <string name="donate_footer">🤲 Må det vara till nytta för dig i detta liv och nästa.</string>
+    <string name="donate_button">Donera</string>
+    <string name="donate_thank_you">Tack för att du stöder programvara med öppen källkod!</string>
+    <string name="donate_error">Donationen misslyckades. Försök igen.</string>
+    <string name="donate_billing_error">Misslyckades att ansluta till faktureringstjänsten</string>
+    <string name="rate_title">Betygsätt Waktiva</string>
+    <string name="rate_desc">Om du gillar Waktiva, ta gärna en minut att betygsätta den med 5 stjärnor på Google Play!</string>
+    <string name="rate_button">Betygsätt med 5 stjärnor</string>
+    <string name="badge_no_ads">Ingen reklam</string>
+    <string name="badge_no_tracking">Ingen spårning</string>
+    <string name="badge_open_source">Öppen källkod</string>
+
+    <!-- Hijri Months -->
+    <string name="hijri_month_1">Muharram</string>
+    <string name="hijri_month_2">Safar</string>
+    <string name="hijri_month_3">Rabi‘ al-Awwal</string>
+    <string name="hijri_month_4">Rabi‘ al-Thani</string>
+    <string name="hijri_month_5">Jumada al-Ula</string>
+    <string name="hijri_month_6">Jumada al-Akhirah</string>
+    <string name="hijri_month_7">Rajab</string>
+    <string name="hijri_month_8">Sha‘ban</string>
+    <string name="hijri_month_9">Ramadan</string>
+    <string name="hijri_month_10">Shawwal</string>
+    <string name="hijri_month_11">Dhu al-Qi‘dah</string>
+    <string name="hijri_month_12">Dhu al-Hijjah</string>
+    <string name="hijri_suffix">AH</string>
+
+    <!-- Religious Days -->
+    <string name="rel_day_3_months">De tre månaderna börjar</string>
+    <string name="rel_day_regaip">Laylat al-Raghaib</string>
+    <string name="rel_day_mirac">Laylat al-Mi‘raj</string>
+    <string name="rel_day_berat">Laylat al-Bara’ah</string>
+    <string name="rel_day_first_tarawih">Första Tarawih</string>
+    <string name="rel_day_ramadan_start">Ramadan börjar</string>
+    <string name="rel_day_kadir">Laylat al-Qadr</string>
+    <string name="rel_day_eid_eve">Eid-afton</string>
+    <string name="rel_day_ramadan_eid">Eid al-Fitr</string>
+    <string name="rel_day_sacrifice_eid">Eid al-Adha</string>
+    <string name="rel_day_hijri_new_year">Hijri nyår</string>
+    <string name="rel_day_ashura">Ashura-dagen</string>
+    <string name="rel_day_mawlid">Mawlid Kandili</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">Adhan tystad</string>
+    <string name="notification_adhan_skipped_text">Adhan för %s hoppas över.</string>
+    <string name="notification_upcoming_adhan_title">Kommande Adhan: %s</string>
+    <string name="notification_upcoming_adhan_text">Adhan spelas upp om %d minuter.</string>
+    <string name="notification_skip_action">HOPPA ÖVER DENNA BÖN</string>
+    <string name="notification_adhan_title">Adhan: %s</string>
+    <string name="notification_adhan_content">Det är dags för bön</string>
+    <string name="notification_adhan_disabled_title">Adhan inaktiverad</string>
+    <string name="notification_adhan_skipped_title">Adhan hoppas över</string>
+    <string name="notification_prayer_time_content">Det är dags för %s.</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">Början på Hijri-dagen</string>
+    <string name="settings_hijri_day_start_maghrib">Börjar vid Maghrib</string>
+    <string name="settings_hijri_day_start_desc">Byt Hijri-datum vid solnedgången (Maghrib) istället för vid midnatt.</string>
+
+    <!-- About Section -->
+    <string name="settings_about">Om</string>
+    <string name="settings_licenses_desc">Licensdetaljer för programvara med öppen källkod</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">Licenser</string>
+    <string name="license_legal_info">Waktiva – Licens och juridisk information</string>
+    <string name="license_app_copyright">Copyright © 2026 YBugMobile\nMed ensamrätt.</string>
+    <string name="license_app_mit">Waktiva ges ut som programvara med öppen källkod under MIT-licensen.</string>
+    <string name="license_app_warranty">PROGRAMVARAN TILLHANDAHÅLLS \"I BEFINTLIGT SKICK\", UTAN GARANTIER AV NÅGOT SLAG.</string>
+    <string name="license_third_party_services">1. Tredjepartstjänster</string>
+    <string name="license_aladhan_api">Al-Adhan API</string>
+    <string name="license_aladhan_desc">Waktiva hämtar bönetider från Al-Adhan API-tjänsten.</string>
+    <string name="license_data_privacy">Waktiva lagrar, säljer eller distribuerar inte användardata.</string>
+    <string name="license_open_source_libs">2. Tredjepartsbibliotek med öppen källkod</string>
+    <string name="license_libs_intro">Waktiva innehåller följande komponenter:</string>
+    <string name="license_lib_androidx">AndroidX-bibliotek (Apache License 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Apache License 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Apache License 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Apache License 2.0)</string>
+    <string name="license_lib_room">Room (Apache License 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Apache License 2.0)</string>
+    <string name="license_lib_work">WorkManager (Apache License 2.0)</string>
+    <string name="license_lib_media3">Media3 (Apache License 2.0)</string>
+    <string name="license_lib_location">Google Play Services Location</string>
+    <string name="license_lib_retrofit">Retrofit (Apache License 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Apache License 2.0)</string>
+    <string name="license_lib_gson">Gson (Apache License 2.0)</string>
+    <string name="license_lib_adhan">Adhan Kotlin Library (MIT License)</string>
+    <string name="license_lib_suncalc">SunCalc (BSD License)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (BSD 3-Clause License)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Apache License 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Apache License 2.0)</string>
+    <string name="license_lib_billing">Google Play Billing Library</string>
+    <string name="license_libs_property">Varje bibliotek förblir respektive författares egendom.</string>
+    <string name="license_adhan_audio">3. Licens för Adhan-ljud</string>
+    <string name="license_adhan_reciter">Waktiva innehåller Adhan-inspelningar av Muhsin Kara, 2022 års världsmästare i Adhan-recitation.</string>
+    <string name="license_adhan_permission">Dessa inspelningar används med tillstånd. Alla ljudrättigheter tillhör recitatören.</string>
+    <string name="license_adhan_restrictions">Adhan-ljud får inte extraheras eller användas utanför Waktiva-appen.</string>
+    <string name="license_location_permissions">4. Plats och behörigheter</string>
+    <string name="license_location_usage">Waktiva begär platsbehörighet uteslutande för att:</string>
+    <string name="license_loc_usage_1">Beräkna exakta bönetider</string>
+    <string name="license_loc_usage_2">Bestämma Qibla-riktningen</string>
+    <string name="license_loc_usage_3">Tillhandahålla Hijri-datum och månfaser</string>
+    <string name="license_loc_processing">Platsdata behandlas lokalt och lagras eller delas inte.</string>
+    <string name="license_no_ads">5. Åtagande om ingen reklam / ingen spårning</string>
+    <string name="license_no_ads_1">Visar inga annonser</string>
+    <string name="license_no_ads_2">Använder inga spårnings-SDK:er</string>
+    <string name="license_no_ads_3">Samlar inte in analysdata</string>
+    <string name="license_no_ads_4">Säljer inte personuppgifter</string>
+</resources>

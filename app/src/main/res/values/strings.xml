@@ -150,6 +150,13 @@
     <string name="lang_fa">فارسی</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
+    <string name="lang_sq">Shqip</string>
+    <string name="lang_bs">Bosanski</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_pl">Polski</string>
+    <string name="lang_nl">Nederlands</string>
+    <string name="lang_sv">Svenska</string>
+    <string name="lang_fi">Suomi</string>
 
     <!-- Calculation Settings -->
     <string name="settings_calculation">Calculation Settings</string>

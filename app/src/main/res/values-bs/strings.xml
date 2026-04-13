@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Waktiva</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Početna</string>
+    <string name="nav_qibla">Kibla</string>
+    <string name="nav_settings">Postavke</string>
+    <string name="nav_donate">Doniraj</string>
+    <string name="cd_back">Nazad</string>
+
+    <!-- Qibla Screen -->
+    <string name="qibla_label">Kibla</string>
+    <string name="qibla_compass">Kompas</string>
+    <string name="qibla_map">Mapa</string>
+    <string name="qibla_mecca_aligned">Usmjereno prema Mekki</string>
+    <string name="qibla_rotate_phone">Rotirajte telefon</string>
+    <string name="qibla_direction">Kibla: %d°</string>
+    <string name="qibla_locating">Lociranje...</string>
+    <string name="qibla_heading">Smjer</string>
+    <string name="qibla_signal">Signal</string>
+    <string name="qibla_standard">Standardno</string>
+    <string name="qibla_satellite">Satelit</string>
+    <string name="qibla_recenter">Recentriraj</string>
+    <string name="qibla_location_required">Potreban pristup lokaciji</string>
+    <string name="qibla_location_required_desc">Potrebno za precizno izračunavanje Kible.</string>
+    <string name="qibla_grant_permission">Dozvoli pristup</string>
+    <string name="qibla_calibration_needed">Potrebna kalibracija</string>
+    <string name="qibla_calibration_desc">Pomjerajte telefon u obliku cifre 8 (∞) kako biste poboljšali preciznost.</string>
+    <string name="qibla_got_it">Razumijem</string>
+    <string name="qibla_aligned_badge">USMJERENO</string>
+    <string name="qibla_magnetic_interference">Otkrivene magnetne smetnje - kalibrirajte uređaj</string>
+    <string name="qibla_kaaba_aligned">Usmjereno prema Kabi</string>
+    <string name="qibla_find_marker">Pronađite zlatni marker</string>
+    <string name="qibla_calibrate">KALIBRIRAJ</string>
+    <string name="qibla_interference_tip">Savjet: Unutar zgrada metalne konstrukcije mogu utjecati na kompas. Za najbolju preciznost izvršite kalibraciju u obliku cifre 8.</string>
+
+    <!-- Home Screen -->
+    <string name="home_unknown_location">Nepoznata lokacija</string>
+    <string name="home_last_known_location">Zadnja poznata: %s</string>
+    <string name="home_gps_disabled_location">GPS isključen</string>
+    <string name="home_location_permission_denied">Lokacija odbijena</string>
+    <string name="home_offline_status">Offline</string>
+    <string name="home_next_prayer">%s</string>
+    <string name="home_remaining_time">Preostalo vrijeme</string>
+    <string name="home_permissions_required">Potrebne dozvole</string>
+    <string name="home_permissions_desc">Dozvole za lokaciju i obavijesti su potrebne za pravilan rad aplikacije.</string>
+    <string name="home_grant_permissions">Dozvoli pristup</string>
+    <string name="home_refresh_success">Vaktija ažurirana</string>
+    <string name="home_refresh_error">Ažuriranje neuspješno</string>
+    <string name="home_prayer_provider">Izvor: </string>
+    <string name="home_skip_adhan">Utišaj Ezan</string>
+    <string name="home_unmute_adhan">Uključi Ezan</string>
+    <string name="home_return_to_today">Vrati se na danas</string>
+    <string name="home_tomorrow_is">Sutra: %s</string>
+    <string name="home_today_is">Danas je %s</string>
+    <string name="home_adhan_muted">Ezan utišan za %s</string>
+    <string name="home_adhan_unmuted">Ezan uključen za %s</string>
+    <string name="home_hijri_offline_note">Koristi se offline Hidžretski kalendar</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
+    <string name="home_current_time">Trenutno vrijeme</string>
+
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">GPS isključen</string>
+    <string name="location_health_permission_denied">Lokacija odbijena</string>
+    <string name="location_health_offline">Offline način rada</string>
+    <string name="location_health_notifications_off">Obavijesti odbijene</string>
+    <string name="location_health_channels_muted">Kanali utišani</string>
+    <string name="location_health_dnd_active">DND način aktivan</string>
+
+    <!-- System Health & Warnings -->
+    <string name="health_title">Sistemsko zdravlje</string>
+    <string name="health_issues_detected">Otkriveni problemi</string>
+    <string name="health_gps_off">GPS je isključen. Omogućite lokacijske usluge za ažuriranje vaktije.</string>
+    <string name="health_channels_muted">Kanali obavijesti za Ezan su utišani u postavkama sistema.</string>
+    <string name="health_dnd_active">Način rada „Ne uznemiravaj“ je uključen. Zvuk Ezana može biti blokiran.</string>
+    <string name="health_fix_now">Popravi sada</string>
+    <string name="health_no_internet">Nema internet konekcije. Waktiva koristi pohranjene podatke. Povežite se za ažuriranje vaktije.</string>
+    <string name="health_no_internet_no_data">Nema internet konekcije. Waktiva treba aktivnu vezu za prvo preuzimanje vaktije.</string>
+    <string name="health_status_ok">Svi sistemi rade ispravno</string>
+    <string name="health_overlay_subtitle">Optimizacija vašeg iskustva</string>
+    <string name="health_overlay_description">Riješite probleme u nastavku kako biste osigurali pouzdan rad obavijesti i lokacijskih usluga u pozadini.</string>
+    <string name="health_overlay_dismiss">Razumijem</string>
+    <string name="health_overlay_issues_title">Otkriveni problemi</string>
+
+    <!-- Prayer Names -->
+    <string name="prayer_fajr">Zora</string>
+    <string name="prayer_sunrise">Izlazak sunca</string>
+    <string name="prayer_dhuhr">Podne</string>
+    <string name="prayer_asr">Ikindija</string>
+    <string name="prayer_maghrib">Akšam</string>
+    <string name="prayer_isha">Jacija</string>
+    <string name="adhan_default_prayer">Namaz</string>
+
+    <!-- Accuracy Labels -->
+    <string name="accuracy_high">Visoka</string>
+    <string name="accuracy_med">Srednja</string>
+    <string name="accuracy_low">Niska</string>
+    <string name="accuracy_poor">Loša</string>
+
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Vedro</string>
+    <string name="weather_mainly_clear">Pretežno vedro</string>
+    <string name="weather_partly_cloudy">Djelomično oblačno</string>
+    <string name="weather_overcast">Oblačno</string>
+    <string name="weather_foggy">Maglovito</string>
+    <string name="weather_drizzle">Rominjanje</string>
+    <string name="weather_freezing_drizzle">Ledena kišica</string>
+    <string name="weather_rainy">Kiša</string>
+    <string name="weather_heavy_rain">Jaka kiša</string>
+    <string name="weather_freezing_rain">Ledena kiša</string>
+    <string name="weather_snowy">Snijeg</string>
+    <string name="weather_heavy_snow">Jak snijeg</string>
+    <string name="weather_snow_grains">Inje</string>
+    <string name="weather_rain_showers">Pljuskovi</string>
+    <string name="weather_snow_showers">Pljuskovi snijega</string>
+    <string name="weather_thunderstorm">Grmljavina</string>
+    <string name="weather_thunderstorm_hail">Grmljavina s gradom</string>
+    <string name="weather_unknown">Nepoznato</string>
+
+    <!-- General Settings -->
+    <string name="settings_title">Postavke</string>
+    <string name="settings_preferences">Preference</string>
+    <string name="settings_permissions">Dozvole</string>
+    <string name="settings_manage_system">Upravljaj u postavkama sistema</string>
+    <string name="settings_location_access">Pristup lokaciji</string>
+    <string name="settings_location_desc">Ključno za izračunavanje vaktije. Bez ovoga, aplikacija ne može preuzeti vremena za vašu lokaciju.</string>
+    <string name="settings_notifications">Obavijesti</string>
+    <string name="settings_notifications_desc">Potrebno za prikazivanje upozorenja o vaktiji i Ezan obavijesti.</string>
+    <string name="settings_granted">Odobreno</string>
+    <string name="settings_denied">Odbijeno</string>
+    <string name="settings_language">Jezik aplikacije</string>
+    <string name="settings_cancel">Otkaži</string>
+    <string name="settings_confirm">Potvrdi</string>
+    <string name="settings_weather_effects">Vremenski efekti</string>
+    <string name="settings_weather_effects_desc">Prikazuj animirane vremenske prilike (kiša, snijeg, oblaci) u pozadini.</string>
+
+    <!-- Language Options -->
+    <string name="lang_system">Sistemski zadano</string>
+    <string name="lang_en">English</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_in">Bahasa Indonesia</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_bn">বাংলা</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_ms">Bahasa Melayu</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_sq">Shqip</string>
+    <string name="lang_bs">Bosanski</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_pl">Polski</string>
+    <string name="lang_nl">Nederlands</string>
+    <string name="lang_sv">Svenska</string>
+    <string name="lang_fi">Suomi</string>
+
+    <!-- Calculation Settings -->
+    <string name="settings_calculation">Postavke obračuna</string>
+    <string name="settings_madhab">Mezheb</string>
+    <string name="settings_method">Metoda obračuna</string>
+    <string name="madhab_shafi">Šafijski / Standardni (Malikijski, Hanbelijski)</string>
+    <string name="madhab_hanafi">Hanefijski</string>
+    <string name="method_mwl">Muslim World League</string>
+    <string name="method_isna">Islamic Society of North America (ISNA)</string>
+    <string name="method_egypt">Egyptian General Authority of Survey</string>
+    <string name="method_makkah">Umm al-Qura University, Makkah</string>
+    <string name="method_karachi">University of Islamic Sciences, Karachi</string>
+    <string name="method_tehran">Institute of Geophysics, University of Tehran</string>
+    <string name="method_gulf">Zaljevska regija</string>
+    <string name="method_kuwait">Kuvajt</string>
+    <string name="method_qatar">Katar</string>
+    <string name="method_singapore">Majlis Ugama Islam Singapura</string>
+    <string name="method_turkey">Turska (Diyanet)</string>
+
+    <!-- Audio & Notification Settings -->
+    <string name="settings_notifications_sound">Obavijesti i zvuk</string>
+    <string name="settings_play_adhan">Reproduciraj zvuk Ezana</string>
+    <string name="settings_play_adhan_desc">Oglasi Ezan kada nastupi namasko vrijeme</string>
+    <string name="settings_adhan_sound_selection">Izbor zvuka Ezana</string>
+    <string name="settings_adhan_sound_selection_desc">Odaberite zvuk koji će se reproducirati tokom vaktije</string>
+
+    <string name="audio_settings_title">Zvukovi Ezana</string>
+    <string name="audio_header_global">Odaberite zvuk Ezana (globalno)</string>
+    <string name="audio_header_all_prayers">Svi namazi</string>
+    <string name="audio_header_specific">Ezan za %1$s</string>
+    <string name="audio_select_prayer_prompt">Odaberite namaz za konfiguraciju</string>
+    <string name="audio_individual_sounds_title">Individualni zvukovi namaza</string>
+    <string name="audio_individual_sounds_desc">Postavite različite Ezane za svako namasko vrijeme</string>
+
+    <string name="audio_setting_default">Zadani Ezan</string>
+    <string name="audio_setting_fajr">Sabahski Ezan</string>
+    <string name="audio_setting_dhuhr">Podnevni Ezan</string>
+    <string name="audio_setting_asr">Ikindijski Ezan</string>
+    <string name="audio_setting_maghrib">Akšamski Ezan</string>
+    <string name="audio_setting_isha">Jacijski Ezan</string>
+
+    <string name="audio_add_custom">Dodaj vlastiti audio</string>
+    <string name="audio_delete_confirm">Obrisati audio datoteku?</string>
+    <string name="audio_delete_description">Obriši audio datoteku</string>
+    <string name="audio_supported_formats">Podržano: MP3, AAC, WAV, OGG</string>
+    <string name="audio_preview_play">Pusti pregled</string>
+    <string name="audio_preview_stop">Zaustavi pregled</string>
+    <string name="audio_built_in">Ugrađeno</string>
+    <string name="audio_selected_description">Odabrano</string>
+    <string name="audio_minutes_before">Minuta ranije:</string>
+
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">Sabahski alarm (prije izlaska sunca)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">Odredite vrijeme sabahskog alarma na osnovu izlaska sunca (osim u ramazanu).</string>
+
+    <!-- Battery & Reliability Settings -->
+    <string name="settings_reliability">Pouzdanost i optimizacija</string>
+    <string name="settings_battery_opt">Optimizacija baterije</string>
+    <string name="settings_battery_opt_enabled">Optimizirano za pouzdanost</string>
+    <string name="settings_battery_opt_disabled">Neophodno za pravovremeno oglašavanje Ezana. Optimizacija baterije može odgoditi ili blokirati alarme.</string>
+    <string name="settings_exact_alarm_title">Precizni alarmi</string>
+    <string name="settings_exact_alarm_desc">Potrebno za precizne obavijesti o vaktiji i pravovremene Ezane.</string>
+
+    <!-- Data Management -->
+    <string name="settings_data_management">Upravljanje podacima</string>
+    <string name="settings_delete_history">Obriši historiju namaza</string>
+    <string name="settings_delete_history_desc">Obrišite sve prošle podatke o namazima</string>
+    <string name="settings_delete_history_confirm_title">Obrisati historiju?</string>
+    <string name="settings_delete_history_confirm_desc">Ovo će trajno obrisati sve zapise o namazima prije današnjeg dana. Ova radnja se ne može poništiti.</string>
+
+    <!-- Pre-Adhan Warning -->
+    <string name="settings_pre_adhan_warning">Upozorenje prije Ezana</string>
+    <string name="settings_pre_adhan_warning_summary">Dobijte obavijest prije nastupa namaskog vremena.</string>
+    <string name="pre_adhan_notification_title">Namaz se približava</string>
+    <string name="pre_adhan_notification_text">Vrijeme za %s namaz za 5 minuta.</string>
+    <string name="pre_adhan_cancel_action">Odbaci</string>
+    <string name="pre_adhan_channel_name">Upozorenja prije Ezana</string>
+    <string name="pre_adhan_channel_description">Obavijesti koje se prikazuju prije nastupa namaskog vremena.</string>
+
+    <!-- Welcome / Onboarding -->
+    <string name="welcome_title">Dobrodošli u Waktiva</string>
+    <string name="welcome_desc">Moderna aplikacija za namaz koja poštuje vašu privatnost i ne sadrži reklame.</string>
+    <string name="welcome_begin">Započni postavljanje</string>
+    <string name="welcome_finish">Završi postavljanje</string>
+    <string name="welcome_precision_settings">Postavke preciznosti</string>
+    <string name="welcome_precision_desc">Waktiva treba ove postavke kako bi vam pružila najbolju uslugu</string>
+    <string name="welcome_loc_title">Precizna lokacija</string>
+    <string name="welcome_loc_desc">Ključno za izračunavanje vaktije. Bez ovoga aplikacija ne može preuzeti vremena za vašu lokaciju.</string>
+    <string name="welcome_notif_title">Ezan upozorenja</string>
+    <string name="welcome_notif_desc">Potrebno za slanje obavijesti i oglašavanje Ezana kada nastupi namasko vrijeme.</string>
+    <string name="welcome_alarm_title">Precizni alarmi</string>
+    <string name="welcome_alarm_desc">Neophodno da bi se Ezan oglasio tačno na vrijeme bez odgađanja.</string>
+    <string name="welcome_grant_btn">Dozvoli pristup</string>
+    <string name="welcome_continue_btn">Nastavi</string>
+    <string name="welcome_personalize">Personalizuj</string>
+    <string name="welcome_personalize_desc">Konfigurišite svoje postavke namaza i obračuna</string>
+    <string name="welcome_audio_desc">Postavite svoje preference za poziv na namaz</string>
+    <string name="welcome_adhan_audio">Ezan audio</string>
+    <string name="welcome_adhan_audio_desc">Reproduciraj audio poziv za namaze</string>
+    <string name="welcome_select_sound">Odaberi zvuk</string>
+    <string name="welcome_skip_btn">Nastavi ipak</string>
+    <string name="welcome_permission_later_info">Ovim dozvolama uvijek možete upravljati kasnije u Postavkama.</string>
+    <string name="welcome_general_settings">Opće postavke</string>
+    <string name="welcome_adhan_audio_header">Ezan i audio</string>
+    <string name="welcome_battery_optimized">Optimizirano za pouzdanost</string>
+    <string name="welcome_battery_optimize_desc">Neophodno za pravovremeno oglašavanje Ezana. Optimizacija baterije može odgoditi alarme.</string>
+
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">Vrijeme je za</string>
+    <string name="adhan_stop">ZAUSTAVI EZAN</string>
+    <string name="adhan_playing">Ezan</string>
+    <string name="adhan_sounding">Trenutno se oglašava</string>
+    <string name="adhan_upcoming">Predstojeći ezan</string>
+    <string name="adhan_test_alarm">Testiraj alarm</string>
+    <string name="adhan_test_desc">Simulacija aktivacije ezana</string>
+    <string name="adhan_stop_test">OTKAŽI TEST</string>
+    <string name="adhan_metadata_title_format">%s Ezan</string>
+
+    <!-- Donations -->
+    <string name="settings_donate">Podržite razvoj Waktiva aplikacije</string>
+    <string name="donate_title">Podrži Waktiva</string>
+    <string name="donate_header">Podrži Waktiva</string>
+    <string name="donate_desc">Hvala vam što pomažete da Waktiva ostane jednostavna, privatna i bez reklama.</string>
+    <string name="donate_footer">🤲 Neka vam bude od koristi na ovom i budućem svijetu.</string>
+    <string name="donate_button">Doniraj</string>
+    <string name="donate_thank_you">Hvala vam što podržavate open-source softver!</string>
+    <string name="donate_error">Donacija neuspješna. Molimo pokušajte ponovo.</string>
+    <string name="donate_billing_error">Neuspješno povezivanje s uslugom naplate</string>
+    <string name="rate_title">Ocijeni Waktiva</string>
+    <string name="rate_desc">Ako uživate u korištenju aplikacije Waktiva, odvojite trenutak da je ocijenite sa 5 zvjezdica na Google Play-u. Pomaže nam da dosegnemo više ljudi!</string>
+    <string name="rate_button">Ocijeni sa 5 zvjezdica</string>
+    <string name="badge_no_ads">Bez reklama</string>
+    <string name="badge_no_tracking">Bez praćenja</string>
+    <string name="badge_open_source">Open Source</string>
+
+    <!-- Hijri Months -->
+    <string name="hijri_month_1">Muharrem</string>
+    <string name="hijri_month_2">Safer</string>
+    <string name="hijri_month_3">Rebiu-l-evvel</string>
+    <string name="hijri_month_4">Rebiu-l-ahir</string>
+    <string name="hijri_month_5">Džumade-l-ula</string>
+    <string name="hijri_month_6">Džumade-l-uhra</string>
+    <string name="hijri_month_7">Redžeb</string>
+    <string name="hijri_month_8">Ša\'ban</string>
+    <string name="hijri_month_9">Ramazan</string>
+    <string name="hijri_month_10">Ševval</string>
+    <string name="hijri_month_11">Zu-l-ka\'de</string>
+    <string name="hijri_month_12">Zu-l-hidždže</string>
+    <string name="hijri_suffix">H</string>
+
+    <!-- Religious Days -->
+    <string name="rel_day_3_months">Početak tri mubarek mjeseca</string>
+    <string name="rel_day_regaip">Lejletu-l-regaib</string>
+    <string name="rel_day_mirac">Lejletu-l-mi\'radž</string>
+    <string name="rel_day_berat">Lejletu-l-berat</string>
+    <string name="rel_day_first_tarawih">Prva teravija</string>
+    <string name="rel_day_ramadan_start">Početak ramazana</string>
+    <string name="rel_day_kadir">Lejletu-l-kadr</string>
+    <string name="rel_day_eid_eve">Uoči Bajrama</string>
+    <string name="rel_day_ramadan_eid">Ramazanski bajram</string>
+    <string name="rel_day_sacrifice_eid">Kurban-bajram</string>
+    <string name="rel_day_hijri_new_year">Nova hidžretska godina</string>
+    <string name="rel_day_ashura">Dan Ašure</string>
+    <string name="rel_day_mawlid">Mevlud</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">Ezan utišan</string>
+    <string name="notification_adhan_skipped_text">Ezan za %s je preskočen.</string>
+    <string name="notification_upcoming_adhan_title">Predstojeći Ezan: %s</string>
+    <string name="notification_upcoming_adhan_text">Ezan će se oglasiti za %d minuta.</string>
+    <string name="notification_skip_action">PRESKOČI ZA OVAJ NAMAZ</string>
+    <string name="notification_adhan_title">Ezan: %s</string>
+    <string name="notification_adhan_content">Vrijeme je za namaz</string>
+    <string name="notification_adhan_disabled_title">Ezan isključen</string>
+    <string name="notification_adhan_skipped_title">Ezan preskočen</string>
+    <string name="notification_prayer_time_content">Vrijeme je za %s.</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">Početak hidžretskog dana</string>
+    <string name="settings_hijri_day_start_maghrib">Počinje od Akšama</string>
+    <string name="settings_hijri_day_start_desc">Promjena hidžretskog datuma prilikom zalaska sunca (Akšama) umjesto u ponoć.</string>
+
+    <!-- About Section -->
+    <string name="settings_about">O aplikaciji</string>
+    <string name="settings_licenses_desc">Detalji licenci za softver otvorenog koda</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">Licence</string>
+    <string name="license_legal_info">Waktiva – Licence i pravne informacije</string>
+    <string name="license_app_copyright">Copyright © 2026 YBugMobile\nSva prava zadržana.</string>
+    <string name="license_app_mit">Waktiva je objavljena kao open-source softver pod MIT licencom.</string>
+    <string name="license_app_warranty">SOFTVER SE ISPORUČUJE \"KAKAV JESTE\", BEZ BILO KAKVE GARANCIJE.</string>
+    <string name="license_third_party_services">1. Usluge trećih strana</string>
+    <string name="license_aladhan_api">Al-Adhan API</string>
+    <string name="license_aladhan_desc">Waktiva preuzima vaktije putem usluge Al-Adhan API.</string>
+    <string name="license_data_privacy">Waktiva ne pohranjuje, ne preprodaje niti distribuira korisničke podatke.</string>
+    <string name="license_open_source_libs">2. Open-source biblioteke trećih strana</string>
+    <string name="license_libs_intro">Waktiva uključuje sljedeće open-source komponente:</string>
+    <string name="license_lib_androidx">AndroidX Libraries (Apache License 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Apache License 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Apache License 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Apache License 2.0)</string>
+    <string name="license_lib_room">Room (Apache License 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Apache License 2.0)</string>
+    <string name="license_lib_work">WorkManager (Apache License 2.0)</string>
+    <string name="license_lib_media3">Media3 (Apache License 2.0)</string>
+    <string name="license_lib_location">Google Play Services Location</string>
+    <string name="license_lib_retrofit">Retrofit (Apache License 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Apache License 2.0)</string>
+    <string name="license_lib_gson">Gson (Apache License 2.0)</string>
+    <string name="license_lib_adhan">Adhan Kotlin Library (MIT License)</string>
+    <string name="license_lib_suncalc">SunCalc (BSD License)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (BSD 3-Clause License)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Apache License 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Apache License 2.0)</string>
+    <string name="license_lib_billing">Google Play Billing Library</string>
+    <string name="license_libs_property">Svaka biblioteka ostaje vlasništvo njenih autora.</string>
+    <string name="license_adhan_audio">3. Licenca za audio Ezana</string>
+    <string name="license_adhan_reciter">Waktiva uključuje snimke Ezana koje izvodi Muhsin Kara, svjetski prvak u učenju Ezana iz 2022. godine.</string>
+    <string name="license_adhan_permission">Ovi snimci se koriste uz dozvolu. Sva audio prava pripadaju originalnom izvođaču.</string>
+    <string name="license_adhan_restrictions">Audio snimak Ezana se ne smije izdvajati, redistribuirati ili koristiti izvan Waktiva aplikacije bez izričite dozvole vlasnika prava.</string>
+    <string name="license_location_permissions">4. Lokacija i dozvole</string>
+    <string name="license_location_usage">Waktiva zahtijeva dozvolu za lokaciju isključivo radi:</string>
+    <string name="license_loc_usage_1">Izračunavanja precizne vaktije</string>
+    <string name="license_loc_usage_2">Određivanja smjera Kible</string>
+    <string name="license_loc_usage_3">Omogućavanja izračuna hidžretskog datuma i mjesečevih mijena</string>
+    <string name="license_loc_processing">Podaci o lokaciji se obrađuju lokalno i ne pohranjuju se niti dijele.</string>
+    <string name="license_no_ads">5. Opredjeljenje: Bez reklama i bez praćenja</string>
+    <string name="license_no_ads_1">Ne prikazuje reklame</string>
+    <string name="license_no_ads_2">Ne koristi SDK-ove za praćenje</string>
+    <string name="license_no_ads_3">Ne prikuplja analitičke podatke</string>
+    <string name="license_no_ads_4">Ne prodaje lične podatke</string>
+</resources>

@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Waktiva</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Kreu</string>
+    <string name="nav_qibla">Kibla</string>
+    <string name="nav_settings">Cilësimet</string>
+    <string name="nav_donate">Dhuro</string>
+    <string name="cd_back">Mbrapa</string>
+
+    <!-- Qibla Screen -->
+    <string name="qibla_label">Kibla</string>
+    <string name="qibla_compass">Busulla</string>
+    <string name="qibla_map">Harta</string>
+    <string name="qibla_mecca_aligned">Drejtuar nga Mekka</string>
+    <string name="qibla_rotate_phone">Rrotulloni telefonin</string>
+    <string name="qibla_direction">Kibla: %d°</string>
+    <string name="qibla_locating">Duke u lokalizuar...</string>
+    <string name="qibla_heading">Drejtimi</string>
+    <string name="qibla_signal">Sinjali</string>
+    <string name="qibla_standard">Standard</string>
+    <string name="qibla_satellite">Satelit</string>
+    <string name="qibla_recenter">Riqendërzoni</string>
+    <string name="qibla_location_required">Kërkohet Qasja në Vendndodhje</string>
+    <string name="qibla_location_required_desc">Kërkohet për llogaritjen e saktë të Kiblës.</string>
+    <string name="qibla_grant_permission">Jepni Lejen</string>
+    <string name="qibla_calibration_needed">Kërkohet Kalibrimi</string>
+    <string name="qibla_calibration_desc">Lëvizni telefonin tuaj në formën e figurës 8 (∞) për të përmirësuar saktësinë.</string>
+    <string name="qibla_got_it">E kuptova</string>
+    <string name="qibla_aligned_badge">I DREJTUAR</string>
+    <string name="qibla_magnetic_interference">U detektua ndërhyrje magnetike - Kalibroni pajisjen</string>
+    <string name="qibla_kaaba_aligned">Drejtuar nga Qabja</string>
+    <string name="qibla_find_marker">Gjeni shënuesin e artë</string>
+    <string name="qibla_calibrate">KALIBRO</string>
+    <string name="qibla_interference_tip">Këshillë: Brenda ndërtesave, strukturat metalike mund të ndikojnë në busull. Për saktësi më të mirë, kryeni një kalibrim në formë 8-she.</string>
+
+    <!-- Home Screen -->
+    <string name="home_unknown_location">Vendndodhje e panjohur</string>
+    <string name="home_last_known_location">E njohur së fundmi: %s</string>
+    <string name="home_gps_disabled_location">GPS i çaktivizuar</string>
+    <string name="home_location_permission_denied">Vendndodhja u refuzua</string>
+    <string name="home_offline_status">Jashtë linje</string>
+    <string name="home_next_prayer">%s</string>
+    <string name="home_remaining_time">Koha e mbetur</string>
+    <string name="home_permissions_required">Kërkohen Lejet</string>
+    <string name="home_permissions_desc">Lejet e vendndodhjes dhe njoftimeve kërkohen që aplikacioni të funksionojë siç duhet.</string>
+    <string name="home_grant_permissions">Jepni Lejet</string>
+    <string name="home_refresh_success">Koha e lutjes u përditësua</string>
+    <string name="home_refresh_error">Dështoi përditësimi i kohës</string>
+    <string name="home_prayer_provider">Ofruesi: </string>
+    <string name="home_skip_adhan">Hesht Ezanin</string>
+    <string name="home_unmute_adhan">Aktivizo Ezanin</string>
+    <string name="home_return_to_today">Kthehu te Sot</string>
+    <string name="home_tomorrow_is">Nesër: %s</string>
+    <string name="home_today_is">Sot është %s</string>
+    <string name="home_adhan_muted">Ezani u hesht për %s</string>
+    <string name="home_adhan_unmuted">Ezani u aktivizua për %s</string>
+    <string name="home_hijri_offline_note">Duke përdorur llogaritjen Hixhri jashtë linje</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
+    <string name="home_current_time">Koha aktuale</string>
+
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">GPS i çaktivizuar</string>
+    <string name="location_health_permission_denied">Vendndodhja u refuzua</string>
+    <string name="location_health_offline">Modaliteti jashtë linje</string>
+    <string name="location_health_notifications_off">Njoftimet u refuzuan</string>
+    <string name="location_health_channels_muted">Kanalet u heshtën</string>
+    <string name="location_health_dnd_active">Modaliteti DND aktiv</string>
+
+    <!-- System Health & Warnings -->
+    <string name="health_title">Shëndeti i Sistemit</string>
+    <string name="health_issues_detected">Problemet e Detektuara</string>
+    <string name="health_gps_off">GPS është i çaktivizuar globalisht. Aktivizoni shërbimet e vendndodhjes për të përditësuar kohët e lutjes.</string>
+    <string name="health_channels_muted">Kanalet e njoftimeve të Ezanit janë të heshtura në cilësimet e sistemit.</string>
+    <string name="health_dnd_active">Modaliteti Mos Shqetëso është aktiv. Tingujt e Ezanit mund të bllokohen.</string>
+    <string name="health_fix_now">Rregullo Tani</string>
+    <string name="health_no_internet">Nuk ka lidhje interneti. Waktiva po përdor të dhënat e ruajtura. Ju lutemi lidhuni për të përditësuar kohët e lutjes.</string>
+    <string name="health_no_internet_no_data">Nuk ka lidhje interneti. Waktiva ka nevojë për një lidhje aktive për të marrë kohët e para të lutjes.</string>
+    <string name="health_status_ok">Të gjitha sistemet në rregull</string>
+    <string name="health_overlay_subtitle">Duke optimizuar përvojën tuaj</string>
+    <string name="health_overlay_description">Adresoni problemet më poshtë për të siguruar që njoftimet dhe shërbimet e vendndodhjes të funksionojnë mirë në prapavijë.</string>
+    <string name="health_overlay_dismiss">E kuptova</string>
+    <string name="health_overlay_issues_title">Problemet e Detektuara</string>
+
+    <!-- Prayer Names -->
+    <string name="prayer_fajr">Sabahu</string>
+    <string name="prayer_sunrise">Lindja e Diellit</string>
+    <string name="prayer_dhuhr">Dreka</string>
+    <string name="prayer_asr">Iqindia</string>
+    <string name="prayer_maghrib">Akshami</string>
+    <string name="prayer_isha">Jacia</string>
+    <string name="adhan_default_prayer">Lutja</string>
+
+    <!-- Accuracy Labels -->
+    <string name="accuracy_high">E lartë</string>
+    <string name="accuracy_med">Mesatare</string>
+    <string name="accuracy_low">E ulët</string>
+    <string name="accuracy_poor">E dobët</string>
+
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Qartë</string>
+    <string name="weather_mainly_clear">Kryesisht qartë</string>
+    <string name="weather_partly_cloudy">Vranësira të pjesëshme</string>
+    <string name="weather_overcast">Vranët</string>
+    <string name="weather_foggy">Mjegull</string>
+    <string name="weather_drizzle">Rigë shiu</string>
+    <string name="weather_freezing_drizzle">Rigë shiu ngrirëse</string>
+    <string name="weather_rainy">Shi</string>
+    <string name="weather_heavy_rain">Shi i rrëmbyeshëm</string>
+    <string name="weather_freezing_rain">Shi ngrirës</string>
+    <string name="weather_snowy">Borë</string>
+    <string name="weather_heavy_snow">Borë e madhe</string>
+    <string name="weather_snow_grains">Kokrra bore</string>
+    <string name="weather_rain_showers">Rrebeshe shiu</string>
+    <string name="weather_snow_showers">Rrebeshe bore</string>
+    <string name="weather_thunderstorm">Shtrëngatë</string>
+    <string name="weather_thunderstorm_hail">Shtrëngatë me breshër</string>
+    <string name="weather_unknown">E panjohur</string>
+
+    <!-- General Settings -->
+    <string name="settings_title">Cilësimet</string>
+    <string name="settings_preferences">Preferencat</string>
+    <string name="settings_permissions">Lejet</string>
+    <string name="settings_manage_system">Menaxho në Cilësimet e Sistemit</string>
+    <string name="settings_location_access">Qasja në Vendndodhje</string>
+    <string name="settings_location_desc">E rëndësishme për llogaritjen e kohëve të lutjes. Pa këtë, aplikacioni nuk mund të marrë kohët për vendndodhjen tuaj.</string>
+    <string name="settings_notifications">Njoftimet</string>
+    <string name="settings_notifications_desc">Kërkohet për të treguar alarmet e kohës së lutjes dhe njoftimet e Ezanit.</string>
+    <string name="settings_granted">U dha</string>
+    <string name="settings_denied">U refuzua</string>
+    <string name="settings_language">Gjuha e aplikacionit</string>
+    <string name="settings_cancel">Anulo</string>
+    <string name="settings_confirm">Konfirmo</string>
+    <string name="settings_weather_effects">Efektet e motit</string>
+    <string name="settings_weather_effects_desc">Shfaq kushtet e animuara të motit (shi, borë, vranësira) në prapavijë.</string>
+
+    <!-- Language Options -->
+    <string name="lang_system">Parazgjedhur nga sistemi</string>
+    <string name="lang_en">English</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_in">Bahasa Indonesia</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_bn">বাংলা</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_ms">Bahasa Melayu</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_sq">Shqip</string>
+    <string name="lang_bs">Bosanski</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_pl">Polski</string>
+    <string name="lang_nl">Nederlands</string>
+    <string name="lang_sv">Svenska</string>
+    <string name="lang_fi">Suomi</string>
+
+    <!-- Calculation Settings -->
+    <string name="settings_calculation">Cilësimet e Llogaritjes</string>
+    <string name="settings_madhab">Medh’hebi</string>
+    <string name="settings_method">Metoda e Llogaritjes</string>
+    <string name="madhab_shafi">Shafi / Standard (Maliki, Hanbeli)</string>
+    <string name="madhab_hanafi">Hanefi</string>
+    <string name="method_mwl">Lidhja e Botës Islame (MWL)</string>
+    <string name="method_isna">Shoqëria Islame e Amerikës së Veriut (ISNA)</string>
+    <string name="method_egypt">Autoriteti i Përgjithshëm Egjiptian i Anketimeve</string>
+    <string name="method_makkah">Universiteti Umm al-Qura, Mekkë</string>
+    <string name="method_karachi">Universiteti i Shkencave Islame, Karaçi</string>
+    <string name="method_tehran">Instituti i Gjeofizikës, Universiteti i Teheranit</string>
+    <string name="method_gulf">Rajoni i Gjirit</string>
+    <string name="method_kuwait">Kuvajt</string>
+    <string name="method_qatar">Katar</string>
+    <string name="method_singapore">Majlis Ugama Islam Singapura</string>
+    <string name="method_turkey">Turqi (Diyanet)</string>
+
+    <!-- Audio & Notification Settings -->
+    <string name="settings_notifications_sound">Njoftimet dhe Tingulli</string>
+    <string name="settings_play_adhan">Luaj Tingullin e Ezanit</string>
+    <string name="settings_play_adhan_desc">Dëgjoni Ezanin kur është koha e lutjes</string>
+    <string name="settings_adhan_sound_selection">Zgjedhja e Tingullit të Ezanit</string>
+    <string name="settings_adhan_sound_selection_desc">Zgjidhni tingullin që do të luhet gjatë kohës së lutjes</string>
+
+    <string name="audio_settings_title">Tingujt e Ezanit</string>
+    <string name="audio_header_global">Zgjidhni Tingullin e Ezanit (Global)</string>
+    <string name="audio_header_all_prayers">Të gjitha Lutjet</string>
+    <string name="audio_header_specific">Ezani për %1$s</string>
+    <string name="audio_select_prayer_prompt">Zgjidhni Lutjen për të Konfiguruar</string>
+    <string name="audio_individual_sounds_title">Tingujt Individualë të Lutjes</string>
+    <string name="audio_individual_sounds_desc">Vendosni Ezane të ndryshme për çdo kohë lutjeje</string>
+
+    <string name="audio_setting_default">Ezani i Parazgjedhur</string>
+    <string name="audio_setting_fajr">Ezani i Sabahut</string>
+    <string name="audio_setting_dhuhr">Ezani i Drekës</string>
+    <string name="audio_setting_asr">Ezani i Iqindisë</string>
+    <string name="audio_setting_maghrib">Ezani i Akshamit</string>
+    <string name="audio_setting_isha">Ezani i Jacisë</string>
+
+    <string name="audio_add_custom">Shto Audio Personale</string>
+    <string name="audio_delete_confirm">Fshi skedarin audio?</string>
+    <string name="audio_delete_description">Fshi skedarin audio</string>
+    <string name="audio_supported_formats">Mbështetet: MP3, AAC, WAV, OGG</string>
+    <string name="audio_preview_play">Dëgjo paraprakisht</string>
+    <string name="audio_preview_stop">Ndalo dëgjimin</string>
+    <string name="audio_built_in">I integruar</string>
+    <string name="audio_selected_description">I zgjedhur</string>
+    <string name="audio_minutes_before">Minuta përpara:</string>
+
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">Alarmi i Sabahut (Para Lindjes së Diellit)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">Përcaktoni kohën e alarmit të Sabahut bazuar në lindjen e diellit (përveç Ramazanit).</string>
+
+    <!-- Battery & Reliability Settings -->
+    <string name="settings_reliability">Besueshmëria dhe Optimizimi</string>
+    <string name="settings_battery_opt">Optimizimi i Baterisë</string>
+    <string name="settings_battery_opt_enabled">Optimizuar për besueshmëri</string>
+    <string name="settings_battery_opt_disabled">Thelbësore për luajtjen e Ezanit në kohë. Optimizimet e baterisë mund të vonojnë ose bllokojnë alarmet.</string>
+    <string name="settings_exact_alarm_title">Alarme të Saktë</string>
+    <string name="settings_exact_alarm_desc">Nevojiten për njoftime precize të kohës së lutjes dhe Ezane në kohë.</string>
+
+    <!-- Data Management -->
+    <string name="settings_data_management">Menaxhimi i të Dhënave</string>
+    <string name="settings_delete_history">Fshi Historikun e Lutjeve</string>
+    <string name="settings_delete_history_desc">Fshini të gjitha të dhënat e lutjeve nga e kaluara</string>
+    <string name="settings_delete_history_confirm_title">Fshini Historikun?</string>
+    <string name="settings_delete_history_confirm_desc">Kjo do të fshijë përgjithmonë të gjitha të dhënat para ditës së sotme. Ky veprim nuk mund të kthehet.</string>
+
+    <!-- Pre-Adhan Warning -->
+    <string name="settings_pre_adhan_warning">Paralajmërim Para Ezanit</string>
+    <string name="settings_pre_adhan_warning_summary">Merrni një njoftim para kohës së lutjes.</string>
+    <string name="pre_adhan_notification_title">Po afrohet Koha e Lutjes</string>
+    <string name="pre_adhan_notification_text">Koha për lutjen %s pas 5 minutash.</string>
+    <string name="pre_adhan_cancel_action">Mbyll</string>
+    <string name="pre_adhan_channel_name">Paralajmërimet Para Ezanit</string>
+    <string name="pre_adhan_channel_description">Njoftimet e shfaqura para kohës së lutjes.</string>
+
+    <!-- Welcome / Onboarding -->
+    <string name="welcome_title">Mirë se vini në Waktiva</string>
+    <string name="welcome_desc">Një aplikacion modern lutjesh që respekton privatësinë tuaj dhe mbetet pa reklama.</string>
+    <string name="welcome_begin">Fillo Setup-in</string>
+    <string name="welcome_finish">Përfundo Setup-in</string>
+    <string name="welcome_precision_settings">Cilësimet e Saktësisë</string>
+    <string name="welcome_precision_desc">Waktiva ka nevojë për këto që t\'ju shërbejë më mirë</string>
+    <string name="welcome_loc_title">Vendndodhje e Saktë</string>
+    <string name="welcome_loc_desc">E rëndësishme për llogaritjen e kohëve të lutjes. Pa këtë, aplikacioni nuk mund të marrë kohët për vendndodhjen tuaj.</string>
+    <string name="welcome_notif_title">Alarmet e Ezanit</string>
+    <string name="welcome_notif_desc">Nevojiten për të dërguar njoftime dhe për të dëgjuar Ezanin kur është koha e lutjes.</string>
+    <string name="welcome_alarm_title">Alarme të Saktë</string>
+    <string name="welcome_alarm_desc">Kërkohet që Ezani të luhet saktësisht në kohë pa vonesë.</string>
+    <string name="welcome_grant_btn">Jepni Lejet</string>
+    <string name="welcome_continue_btn">Vazhdo</string>
+    <string name="welcome_personalize">Personalizo</string>
+    <string name="welcome_personalize_desc">Konfiguroni preferencat tuaja të lutjes dhe llogaritjes</string>
+    <string name="welcome_audio_desc">Vendosni preferencat tuaja për thirrjen e lutjes</string>
+    <string name="welcome_adhan_audio">Audio e Ezanit</string>
+    <string name="welcome_adhan_audio_desc">Luaj thirrjen audio për lutjet</string>
+    <string name="welcome_select_sound">Zgjidhni Tingullin</string>
+    <string name="welcome_skip_btn">Vazhdo gjithsesi</string>
+    <string name="welcome_permission_later_info">Ju mund t\'i menaxhoni gjithmonë këto leje në ekranin e Cilësimeve më vonë.</string>
+    <string name="welcome_general_settings">Cilësimet e Përgjithshme</string>
+    <string name="welcome_adhan_audio_header">Ezani dhe Audio</string>
+    <string name="welcome_battery_optimized">Optimizuar për besueshmëri</string>
+    <string name="welcome_battery_optimize_desc">Thelbësore për luajtjen e Ezanit në kohë. Optimizimet e baterisë mund të vonojnë ose bllokojnë alarmet.</string>
+
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">Është koha për</string>
+    <string name="adhan_stop">NDALO EZANIN</string>
+    <string name="adhan_playing">Ezani</string>
+    <string name="adhan_sounding">Duke thirrur tani</string>
+    <string name="adhan_upcoming">Ezani i ardhshëm</string>
+    <string name="adhan_test_alarm">Testo Alarmin</string>
+    <string name="adhan_test_desc">Duke simuluar aktivizimin e ezanit</string>
+    <string name="adhan_stop_test">ANULO TESTIN</string>
+    <string name="adhan_metadata_title_format">Ezani i %s</string>
+
+    <!-- Donations -->
+    <string name="settings_donate">Mbështetni Zhvillimin e Waktiva</string>
+    <string name="donate_title">Mbështetni Waktiva</string>
+    <string name="donate_header">Mbështetni Waktiva</string>
+    <string name="donate_desc">Faleminderit që ndihmoni që Waktiva të mbetet e thjeshtë, private dhe pa reklama.</string>
+    <string name="donate_footer">🤲 Paftë dobi për ju në këtë jetë dhe në tjetrën.</string>
+    <string name="donate_button">Dhuro</string>
+    <string name="donate_thank_you">Faleminderit që mbështetni softuerin me burim të hapur!</string>
+    <string name="donate_error">Dhurimi dështoi. Ju lutemi provoni përsëri.</string>
+    <string name="donate_billing_error">Dështoi lidhja me shërbimin e faturimit</string>
+    <string name="rate_title">Vlerësoni Waktiva</string>
+    <string name="rate_desc">Nëse ju pëlqen Waktiva, ju lutemi kushtoni një moment për ta vlerësuar me 5 yje në Google Play. Na ndihmon të arrijmë te më shumë njerëz!</string>
+    <string name="rate_button">Vlerësoni me 5 Yje</string>
+    <string name="badge_no_ads">Pa Reklama</string>
+    <string name="badge_no_tracking">Pa Gjurmim</string>
+    <string name="badge_open_source">Burim i Hapur</string>
+
+    <!-- Hijri Months -->
+    <string name="hijri_month_1">Muharrem</string>
+    <string name="hijri_month_2">Safer</string>
+    <string name="hijri_month_3">Rebiul Evvel</string>
+    <string name="hijri_month_4">Rebiul Thani</string>
+    <string name="hijri_month_5">Xhumadel Ula</string>
+    <string name="hijri_month_6">Xhumadel Ahire</string>
+    <string name="hijri_month_7">Rexheb</string>
+    <string name="hijri_month_8">Shaban</string>
+    <string name="hijri_month_9">Ramazan</string>
+    <string name="hijri_month_10">Sheval</string>
+    <string name="hijri_month_11">Dhul Kade</string>
+    <string name="hijri_month_12">Dhul Hixhe</string>
+    <string name="hijri_suffix">H</string>
+
+    <!-- Religious Days -->
+    <string name="rel_day_3_months">Fillimi i Tre Muajve</string>
+    <string name="rel_day_regaip">Nata e Regajbit</string>
+    <string name="rel_day_mirac">Nata e Mi’raxhit</string>
+    <string name="rel_day_berat">Nata e Beratit</string>
+    <string name="rel_day_first_tarawih">Teravia e Parë</string>
+    <string name="rel_day_ramadan_start">Fillimi i Ramazanit</string>
+    <string name="rel_day_kadir">Nata e Kadrit</string>
+    <string name="rel_day_eid_eve">Arafa e Bajramit</string>
+    <string name="rel_day_ramadan_eid">Fitër Bajrami</string>
+    <string name="rel_day_sacrifice_eid">Kurban Bajrami</string>
+    <string name="rel_day_hijri_new_year">Viti i Ri Hixhri</string>
+    <string name="rel_day_ashura">Dita e Ashures</string>
+    <string name="rel_day_mawlid">Mevludi</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">Ezani u Hesht</string>
+    <string name="notification_adhan_skipped_text">Ezani për %s u anashkalua.</string>
+    <string name="notification_upcoming_adhan_title">Ezani i Ardhshëm: %s</string>
+    <string name="notification_upcoming_adhan_text">Ezani do të luhet pas %d minutash.</string>
+    <string name="notification_skip_action">ANASHKALO PËR KËTË LUTJE</string>
+    <string name="notification_adhan_title">Ezani: %s</string>
+    <string name="notification_adhan_content">Është koha për lutje</string>
+    <string name="notification_adhan_disabled_title">Ezani i Çaktivizuar</string>
+    <string name="notification_adhan_skipped_title">Ezani u Anashkalua</string>
+    <string name="notification_prayer_time_content">Është koha për %s.</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">Fillimi i Ditës Hixhri</string>
+    <string name="settings_hijri_day_start_maghrib">Fillon në Aksham</string>
+    <string name="settings_hijri_day_start_desc">Ndërroni datën Hixhri në perëndim të diellit (Aksham) në vend të mesnatës.</string>
+
+    <!-- About Section -->
+    <string name="settings_about">Rreth</string>
+    <string name="settings_licenses_desc">Detajet e licencës për softuerin me burim të hapur</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">Licencat</string>
+    <string name="license_legal_info">Waktiva – Licenca dhe Informacioni Ligjor</string>
+    <string name="license_app_copyright">Të gjitha të drejtat e rezervuara © 2026 YBugMobile\nAll rights reserved.</string>
+    <string name="license_app_mit">Waktiva lëshohet si softuer me burim të hapur nën Licencën MIT.</string>
+    <string name="license_app_warranty">SOFTUERI OFROHET \"SIÇ ËSHTË\", PA ASNJË LLOJ GARANCIE, TË SHPREHUR OSE TË NËNKUPTUAR.</string>
+    <string name="license_third_party_services">1. Shërbimet e Palëve të Treta</string>
+    <string name="license_aladhan_api">Al-Adhan API</string>
+    <string name="license_aladhan_desc">Waktiva merr kohët e lutjes nga shërbimi Al-Adhan API.</string>
+    <string name="license_data_privacy">Waktiva nuk ruan, rishit ose shpërndan të dhënat e përdoruesit.</string>
+    <string name="license_open_source_libs">2. Bibliotekat e Palëve të Treta me Burim të Hapur</string>
+    <string name="license_libs_intro">Waktiva përfshin komponentët e mëposhtëm me burim të hapur:</string>
+    <string name="license_lib_androidx">AndroidX Libraries (Apache License 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Apache License 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Apache License 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Apache License 2.0)</string>
+    <string name="license_lib_room">Room (Apache License 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Apache License 2.0)</string>
+    <string name="license_lib_work">WorkManager (Apache License 2.0)</string>
+    <string name="license_lib_media3">Media3 (Apache License 2.0)</string>
+    <string name="license_lib_location">Google Play Services Location</string>
+    <string name="license_lib_retrofit">Retrofit (Apache License 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Apache License 2.0)</string>
+    <string name="license_lib_gson">Gson (Apache License 2.0)</string>
+    <string name="license_lib_adhan">Adhan Kotlin Library (MIT License)</string>
+    <string name="license_lib_suncalc">SunCalc (BSD License)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (BSD 3-Clause License)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Apache License 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Apache License 2.0)</string>
+    <string name="license_lib_billing">Google Play Billing Library</string>
+    <string name="license_libs_property">Secila bibliotekë mbetet pronë e autorëve të tyre përkatës.</string>
+    <string name="license_adhan_audio">3. Licenca e Audios së Ezanit</string>
+    <string name="license_adhan_reciter">Waktiva përfshin regjistrime të Ezanit nga Muhsin Kara, Kampioni Botëror i vitit 2022 i Konkursit të Recitimit të Ezanit.</string>
+    <string name="license_adhan_permission">Këto regjistrime përdoren me leje. Të gjitha të drejtat audio i takojnë recituesit origjinal.</string>
+    <string name="license_adhan_restrictions">Audioja e ezanit nuk mund të nxirret, rishpërndahet ose përdoret jashtë aplikacionit Waktiva pa lejen e qartë.</string>
+    <string name="license_location_permissions">4. Vendndodhja dhe Lejet</string>
+    <string name="license_location_usage">Waktiva kërkon lejen e vendndodhjes ekskluzivisht për:</string>
+    <string name="license_loc_usage_1">Llogaritjen e saktë të kohëve të lutjes</string>
+    <string name="license_loc_usage_2">Përcaktimin e drejtimit të Kiblës</string>
+    <string name="license_loc_usage_3">Sigurimin e llogaritjeve të datës Hixhri dhe fazave të hënës</string>
+    <string name="license_loc_processing">Të dhënat e vendndodhjes përpunohen lokalisht dhe nuk ruhen, gjurmohen ose ndahen.</string>
+    <string name="license_no_ads">5. Angazhimi pa Reklama / pa Gjurmim</string>
+    <string name="license_no_ads_1">Nuk shfaq asnjë reklamë</string>
+    <string name="license_no_ads_2">Nuk përdor asnjë SDK gjurmimi</string>
+    <string name="license_no_ads_3">Nuk mbledh analitikë</string>
+    <string name="license_no_ads_4">Nuk shet të dhëna personale</string>
+</resources>

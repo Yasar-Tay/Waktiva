@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Waktiva</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Koti</string>
+    <string name="nav_qibla">Qibla</string>
+    <string name="nav_settings">Asetukset</string>
+    <string name="nav_donate">Lahjoita</string>
+    <string name="cd_back">Takaisin</string>
+
+    <!-- Qibla Screen -->
+    <string name="qibla_label">Qibla</string>
+    <string name="qibla_compass">Kompassi</string>
+    <string name="qibla_map">Kartta</string>
+    <string name="qibla_mecca_aligned">Suunnattu Mekkaan</string>
+    <string name="qibla_rotate_phone">Käännä puhelinta</string>
+    <string name="qibla_direction">Qibla: %d°</string>
+    <string name="qibla_locating">Paikannetaan…</string>
+    <string name="qibla_heading">Suunta</string>
+    <string name="qibla_signal">Signaali</string>
+    <string name="qibla_standard">Standardi</string>
+    <string name="qibla_satellite">Satelliitti</string>
+    <string name="qibla_recenter">Keskitä uudelleen</string>
+    <string name="qibla_location_required">Sijainnin käyttöoikeus vaaditaan</string>
+    <string name="qibla_location_required_desc">Vaaditaan tarkkaa Qibla-laskentaa varten.</string>
+    <string name="qibla_grant_permission">Myönnä lupa</string>
+    <string name="qibla_calibration_needed">Kalibrointi vaaditaan</string>
+    <string name="qibla_calibration_desc">Liikuta puhelintasi kahdeksikon (∞) muotoisessa kuviossa tarkkuuden parantamiseksi.</string>
+    <string name="qibla_got_it">Selvä</string>
+    <string name="qibla_aligned_badge">SUUNNATTU</string>
+    <string name="qibla_magnetic_interference">Magneettinen häiriö havaittu - Kalibroi laite</string>
+    <string name="qibla_kaaba_aligned">Suunnattu Kaabaan</string>
+    <string name="qibla_find_marker">Etsi kultainen merkki</string>
+    <string name="qibla_calibrate">KALIBROI</string>
+    <string name="qibla_interference_tip">Vinkki: Rakennusten sisällä metallirakenteet voivat vaikuttaa kompassiin. Parhaan tarkkuuden saavuttamiseksi suorita kahdeksikko-kalibrointi.</string>
+
+    <!-- Home Screen -->
+    <string name="home_unknown_location">Tuntematon sijainti</string>
+    <string name="home_last_known_location">Viimeksi tiedossa: %s</string>
+    <string name="home_gps_disabled_location">GPS pois päältä</string>
+    <string name="home_location_permission_denied">Sijainti evätty</string>
+    <string name="home_offline_status">Offline-tila</string>
+    <string name="home_next_prayer">%s</string>
+    <string name="home_remaining_time">Aikaa jäljellä</string>
+    <string name="home_permissions_required">Käyttöoikeudet vaaditaan</string>
+    <string name="home_permissions_desc">Sijainti- ja ilmoitusluvat vaaditaan, jotta sovellus toimii oikein.</string>
+    <string name="home_grant_permissions">Myönnä luvat</string>
+    <string name="home_refresh_success">Rukousajat päivitetty</string>
+    <string name="home_refresh_error">Aikojen päivittäminen epäonnistui</string>
+    <string name="home_prayer_provider">Tarjoaja: </string>
+    <string name="home_skip_adhan">Mykistä Adhan</string>
+    <string name="home_unmute_adhan">Aktivoi Adhan</string>
+    <string name="home_return_to_today">Palaa tähän päivään</string>
+    <string name="home_tomorrow_is">Huomenna: %s</string>
+    <string name="home_today_is">Tänään on %s</string>
+    <string name="home_adhan_muted">Adhan mykistetty: %s</string>
+    <string name="home_adhan_unmuted">Adhan käytössä: %s</string>
+    <string name="home_hijri_offline_note">Käytetään offline-tilassa olevaa Hijri-laskentaa</string>
+    <string name="home_hijri_offline_indicator"> (*)</string>
+    <string name="home_current_time">Nykyinen aika</string>
+
+    <!-- Location Health Strings -->
+    <string name="location_health_gps_off">GPS pois päältä</string>
+    <string name="location_health_permission_denied">Sijainti evätty</string>
+    <string name="location_health_offline">Offline-tila</string>
+    <string name="location_health_notifications_off">Ilmoitukset evätty</string>
+    <string name="location_health_channels_muted">Kanavat mykistetty</string>
+    <string name="location_health_dnd_active">Älä häiritse -tila käytössä</string>
+
+    <!-- System Health & Warnings -->
+    <string name="health_title">Järjestelmän tila</string>
+    <string name="health_issues_detected">Ongelmia havaittu</string>
+    <string name="health_gps_off">GPS on poissa käytöstä. Ota sijaintipalvelut käyttöön päivittääksesi rukousajat.</string>
+    <string name="health_channels_muted">Adhan-ilmoituskanavat on mykistetty järjestelmän asetuksissa.</string>
+    <string name="health_dnd_active">Älä häiritse -tila on päällä. Adhan-äänet saattavat estyä.</string>
+    <string name="health_fix_now">Korjaa nyt</string>
+    <string name="health_no_internet">Ei internetyhteyttä. Waktiva käyttää tallennettuja tietoja. Muodosta yhteys päivittääksesi rukousajat.</string>
+    <string name="health_no_internet_no_data">Ei internetyhteyttä. Waktiva tarvitsee aktiivisen yhteyden ensimmäisten rukousaikojen noutamiseen.</string>
+    <string name="health_status_ok">Kaikki järjestelmät kunnossa</string>
+    <string name="health_overlay_subtitle">Optimoidaan sovelluskokemustasi</string>
+    <string name="health_overlay_description">Korjaa alla olevat ongelmat varmistaaksesi, että ilmoitukset ja sijaintipalvelut toimivat luotettavasti taustalla.</string>
+    <string name="health_overlay_dismiss">Ymmärrän</string>
+    <string name="health_overlay_issues_title">Havaitut ongelmat</string>
+
+    <!-- Prayer Names -->
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_sunrise">Auringonnousu</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+    <string name="adhan_default_prayer">Rukous</string>
+
+    <!-- Accuracy Labels -->
+    <string name="accuracy_high">Korkea</string>
+    <string name="accuracy_med">Keskitaso</string>
+    <string name="accuracy_low">Matala</string>
+    <string name="accuracy_poor">Heikko</string>
+
+    <!-- Weather Conditions -->
+    <string name="weather_clear">Selkeää</string>
+    <string name="weather_mainly_clear">Pääosin selkeää</string>
+    <string name="weather_partly_cloudy">Puolipilvistä</string>
+    <string name="weather_overcast">Pilvistä</string>
+    <string name="weather_foggy">Sumuista</string>
+    <string name="weather_drizzle">Tihkusadetta</string>
+    <string name="weather_freezing_drizzle">Jäätävää tihkua</string>
+    <string name="weather_rainy">Sadetta</string>
+    <string name="weather_heavy_rain">Rankkasadetta</string>
+    <string name="weather_freezing_rain">Jäätävää sadetta</string>
+    <string name="weather_snowy">Lumisadetta</string>
+    <string name="weather_heavy_snow">Runsasta lumisadetta</string>
+    <string name="weather_snow_grains">Lumijyväsiä</string>
+    <string name="weather_rain_showers">Sadekuuroja</string>
+    <string name="weather_snow_showers">Lumikuuroja</string>
+    <string name="weather_thunderstorm">Ukkosta</string>
+    <string name="weather_thunderstorm_hail">Ukkosta ja rakeita</string>
+    <string name="weather_unknown">Tuntematon</string>
+
+    <!-- General Settings -->
+    <string name="settings_title">Asetukset</string>
+    <string name="settings_preferences">Mieltymykset</string>
+    <string name="settings_permissions">Käyttöoikeudet</string>
+    <string name="settings_manage_system">Hallitse järjestelmän asetuksissa</string>
+    <string name="settings_location_access">Sijainnin käyttöoikeus</string>
+    <string name="settings_location_desc">Välttämätön rukousaikojen laskemiseksi. Ilman tätä sovellus ei voi noutaa aikoja sijainnillesi.</string>
+    <string name="settings_notifications">Ilmoitukset</string>
+    <string name="settings_notifications_desc">Vaaditaan rukousaikahälytysten ja Adhan-ilmoitusten näyttämiseen.</string>
+    <string name="settings_granted">Myönnetty</string>
+    <string name="settings_denied">Evätty</string>
+    <string name="settings_language">Sovelluksen kieli</string>
+    <string name="settings_cancel">Peruuta</string>
+    <string name="settings_confirm">Vahvista</string>
+    <string name="settings_weather_effects">Sääefektit</string>
+    <string name="settings_weather_effects_desc">Näytä animoidut sääolosuhteet (sade, lumi, pilvet) taustalla.</string>
+
+    <!-- Language Options -->
+    <string name="lang_system">Järjestelmän oletus</string>
+    <string name="lang_en">English</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_in">Bahasa Indonesia</string>
+    <string name="lang_ur">اردو</string>
+    <string name="lang_bn">বাংলা</string>
+    <string name="lang_fa">فarsi</string>
+    <string name="lang_ms">Bahasa Melayu</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_sq">Shqip</string>
+    <string name="lang_bs">Bosanski</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_pl">Polski</string>
+    <string name="lang_nl">Nederlands</string>
+    <string name="lang_sv">Svenska</string>
+    <string name="lang_fi">Suomi</string>
+
+    <!-- Calculation Settings -->
+    <string name="settings_calculation">Laskenta-asetukset</string>
+    <string name="settings_madhab">Madhab</string>
+    <string name="settings_method">Laskentamenetelmä</string>
+    <string name="madhab_shafi">Shafi / Standardi (Maliki, Hanbali)</string>
+    <string name="madhab_hanafi">Hanafi</string>
+    <string name="method_mwl">Muslim World League</string>
+    <string name="method_isna">Islamic Society of North America (ISNA)</string>
+    <string name="method_egypt">Egyptian General Authority of Survey</string>
+    <string name="method_makkah">Umm al-Qura University, Makkah</string>
+    <string name="method_karachi">University of Islamic Sciences, Karachi</string>
+    <string name="method_tehran">Institute of Geophysics, University of Tehran</string>
+    <string name="method_gulf">Persianlahden alue</string>
+    <string name="method_kuwait">Kuwait</string>
+    <string name="method_qatar">Qatar</string>
+    <string name="method_singapore">Majlis Ugama Islam Singapura</string>
+    <string name="method_turkey">Turkki (Diyanet)</string>
+
+    <!-- Audio & Notification Settings -->
+    <string name="settings_notifications_sound">Ilmoitukset ja äänet</string>
+    <string name="settings_play_adhan">Toista Adhan-ääni</string>
+    <string name="settings_play_adhan_desc">Kuuluta Adhan, kun on rukousaika</string>
+    <string name="settings_adhan_sound_selection">Adhan-äänen valinta</string>
+    <string name="settings_adhan_sound_selection_desc">Valitse rukousaikoina toistettava ääni</string>
+
+    <string name="audio_settings_title">Adhan-äänet</string>
+    <string name="audio_header_global">Valitse Adhan-ääni (Yleinen)</string>
+    <string name="audio_header_all_prayers">Kaikki rukoukset</string>
+    <string name="audio_header_specific">Adhan rukoukselle %1$s</string>
+    <string name="audio_select_prayer_prompt">Valitse määritettävä rukous</string>
+    <string name="audio_individual_sounds_title">Yksittäiset rukousäänet</string>
+    <string name="audio_individual_sounds_desc">Aseta eri Adhan jokaiselle rukousajalle</string>
+
+    <string name="audio_setting_default">Oletus-Adhan</string>
+    <string name="audio_setting_fajr">Fajr Adhan</string>
+    <string name="audio_setting_dhuhr">Dhuhr Adhan</string>
+    <string name="audio_setting_asr">Asr Adhan</string>
+    <string name="audio_setting_maghrib">Maghrib Adhan</string>
+    <string name="audio_setting_isha">Isha Adhan</string>
+
+    <string name="audio_add_custom">Lisää oma ääni</string>
+    <string name="audio_delete_confirm">Poistetaanko äänitiedosto?</string>
+    <string name="audio_delete_description">Poista äänitiedosto</string>
+    <string name="audio_supported_formats">Tuetut: MP3, AAC, WAV, OGG</string>
+    <string name="audio_preview_play">Toista esikatselu</string>
+    <string name="audio_preview_stop">Pysäytä esikatselu</string>
+    <string name="audio_built_in">Sisäänrakennettu</string>
+    <string name="audio_selected_description">Valittu</string>
+    <string name="audio_minutes_before">Minuuttia ennen:</string>
+
+    <!-- Fajr Sunrise Alarm -->
+    <string name="audio_fajr_sunrise_alarm">Fajr-hälytys (ennen auringonnousua)</string>
+    <string name="audio_fajr_sunrise_alarm_desc">Määritä Fajr-hälytysaika auringonnousun perusteella (paitsi Ramadanina).</string>
+
+    <!-- Battery & Reliability Settings -->
+    <string name="settings_reliability">Luotettavuus ja optimointi</string>
+    <string name="settings_battery_opt">Akun optimointi</string>
+    <string name="settings_battery_opt_enabled">Optimoitu luotettavuuden saavuttamiseksi</string>
+    <string name="settings_battery_opt_disabled">Välttämätön Adhanin toistamiseksi ajallaan. Akun optimoinnit voivat viivästyttää tai estää hälytyksiä.</string>
+    <string name="settings_exact_alarm_title">Tarkat hälytykset</string>
+    <string name="settings_exact_alarm_desc">Tarvitaan tarkkoja rukousaikailmoituksia ja oikea-aikaisia Adhaneja varten.</string>
+
+    <!-- Data Management -->
+    <string name="settings_data_management">Tietojen hallinta</string>
+    <string name="settings_delete_history">Poista rukoushistoria</string>
+    <string name="settings_delete_history_desc">Poista kaikki aiemmat rukoustiedot</string>
+    <string name="settings_delete_history_confirm_title">Poistetaanko historia?</string>
+    <string name="settings_delete_history_confirm_desc">Tämä poistaa pysyvästi kaikki rukousmerkinnät ennen tätä päivää. Tätä toimintoa ei voi peruuttaa.</string>
+
+    <!-- Pre-Adhan Warning -->
+    <string name="settings_pre_adhan_warning">Ennakkoilmoitus ennen Adhania</string>
+    <string name="settings_pre_adhan_warning_summary">Saa ilmoitus ennen rukousaikaa.</string>
+    <string name="pre_adhan_notification_title">Rukousaika lähestyy</string>
+    <string name="pre_adhan_notification_text">Rukouksen %s aika 5 minuutin kuluttua.</string>
+    <string name="pre_adhan_cancel_action">Hylkää</string>
+    <string name="pre_adhan_channel_name">Ennakkoilmoitukset ennen Adhania</string>
+    <string name="pre_adhan_channel_description">Ilmoitukset, jotka näytetään ennen rukousaikaa.</string>
+
+    <!-- Welcome / Onboarding -->
+    <string name="welcome_title">Tervetuloa Waktivaan</string>
+    <string name="welcome_desc">Nykyaikainen rukoussovellus, joka kunnioittaa yksityisyyttäsi ja pysyy mainoksettomana.</string>
+    <string name="welcome_begin">Aloita asennus</string>
+    <string name="welcome_finish">Lopeta asennus</string>
+    <string name="welcome_precision_settings">Tarkkuusasetukset</string>
+    <string name="welcome_precision_desc">Waktiva tarvitsee nämä palvellakseen sinua paremmin</string>
+    <string name="welcome_loc_title">Tarkka sijainti</string>
+    <string name="welcome_loc_desc">Välttämätön rukousaikojen laskemiseksi. Ilman tätä sovellus on hyödytön.</string>
+    <string name="welcome_notif_title">Adhan-hälytykset</string>
+    <string name="welcome_notif_desc">Tarvitaan ilmoitusten lähettämiseen ja Adhanin kuuluttamiseen rukousaikoina.</string>
+    <string name="welcome_alarm_title">Tarkat hälytykset</string>
+    <string name="welcome_alarm_desc">Vaaditaan, jotta Adhan toistetaan täsmälleen ajallaan ilman viivettä.</string>
+    <string name="welcome_grant_btn">Myönnä luvat</string>
+    <string name="welcome_continue_btn">Jatka</string>
+    <string name="welcome_personalize">Personoi</string>
+    <string name="welcome_personalize_desc">Määritä rukous- ja laskenta-asetuksesi</string>
+    <string name="welcome_audio_desc">Aseta rukouskutsun mieltymyksesi</string>
+    <string name="welcome_adhan_audio">Adhan-ääni</string>
+    <string name="welcome_adhan_audio_desc">Toista äänikutsu rukouksiin</string>
+    <string name="welcome_select_sound">Valitse ääni</string>
+    <string name="welcome_skip_btn">Jatka silti</string>
+    <string name="welcome_permission_later_info">Voit aina hallita näitä oikeuksia myöhemmin Asetukset-näytössä.</string>
+    <string name="welcome_general_settings">Yleiset asetukset</string>
+    <string name="welcome_adhan_audio_header">Adhan ja ääni</string>
+    <string name="welcome_battery_optimized">Optimoitu luotettavuuden saavuttamiseksi</string>
+    <string name="welcome_battery_optimize_desc">Välttämätön Adhanin toistamiseksi ajallaan. Akun optimoinnit voivat viivästyttää larm.</string>
+
+    <!-- Adhan Screen -->
+    <string name="adhan_its_time_for">On aika:</string>
+    <string name="adhan_stop">LOPETA ADHAN</string>
+    <string name="adhan_playing">Adhan</string>
+    <string name="adhan_sounding">Kuuluu nyt</string>
+    <string name="adhan_upcoming">Tuleva adhan</string>
+    <string name="adhan_test_alarm">Testaa hälytys</string>
+    <string name="adhan_test_desc">Simuloidaan adhan-laukaisua</string>
+    <string name="adhan_stop_test">PERUUTA TESTI</string>
+    <string name="adhan_metadata_title_format">%s Adhan</string>
+
+    <!-- Donations -->
+    <string name="settings_donate">Tue Waktivan kehitystä</string>
+    <string name="donate_title">Tue Waktivaa</string>
+    <string name="donate_header">Tue Waktivaa</string>
+    <string name="donate_desc">Kiitos, että autat pitämään Waktivan yksinkertaisena, yksityisenä ja mainoksettomana.</string>
+    <string name="donate_footer">🤲 Toivottavasti se hyödyttää sinua tässä elämässä ja seuraavassa.</string>
+    <string name="donate_button">Lahjoita</string>
+    <string name="donate_thank_you">Kiitos avoimen lähdekoodin ohjelmistojen tukemisesta!</string>
+    <string name="donate_error">Lahjoitus epäonnistui. Yritä uudelleen.</string>
+    <string name="donate_billing_error">Yhteyden muodostaminen laskutuspalveluun epäonnistui</string>
+    <string name="rate_title">Arvostele Waktiva</string>
+    <string name="rate_desc">Jos nautit Waktivasta, käytä hetki ja arvostele se 5 tähdellä Google Playssa!</string>
+    <string name="rate_button">Arvostele 5 tähdellä</string>
+    <string name="badge_no_ads">Ei mainoksia</string>
+    <string name="badge_no_tracking">Ei seurantaa</string>
+    <string name="badge_open_source">Avoin lähdekoodi</string>
+
+    <!-- Hijri Months -->
+    <string name="hijri_month_1">Muharram</string>
+    <string name="hijri_month_2">Safar</string>
+    <string name="hijri_month_3">Rabi‘ al-Awwal</string>
+    <string name="hijri_month_4">Rabi‘ al-Thani</string>
+    <string name="hijri_month_5">Jumada al-Ula</string>
+    <string name="hijri_month_6">Jumada al-Akhirah</string>
+    <string name="hijri_month_7">Rajab</string>
+    <string name="hijri_month_8">Sha‘ban</string>
+    <string name="hijri_month_9">Ramadan</string>
+    <string name="hijri_month_10">Shawwal</string>
+    <string name="hijri_month_11">Dhu al-Qi‘dah</string>
+    <string name="hijri_month_12">Dhu al-Hijjah</string>
+    <string name="hijri_suffix">AH</string>
+
+    <!-- Religious Days -->
+    <string name="rel_day_3_months">Kolmen kuukauden alku</string>
+    <string name="rel_day_regaip">Laylat al-Raghaib</string>
+    <string name="rel_day_mirac">Laylat al-Mi‘raj</string>
+    <string name="rel_day_berat">Laylat al-Bara’ah</string>
+    <string name="rel_day_first_tarawih">Ensimmäinen Tarawih</string>
+    <string name="rel_day_ramadan_start">Ramadan alkaa</string>
+    <string name="rel_day_kadir">Laylat al-Qadr</string>
+    <string name="rel_day_eid_eve">Eid-aatton</string>
+    <string name="rel_day_ramadan_eid">Eid al-Fitr</string>
+    <string name="rel_day_sacrifice_eid">Eid al-Adha</string>
+    <string name="rel_day_hijri_new_year">Hijri-uusi vuosi</string>
+    <string name="rel_day_ashura">Ashura-päivä</string>
+    <string name="rel_day_mawlid">Mawlid Kandili</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_adhan_muted">Adhan mykistetty</string>
+    <string name="notification_adhan_skipped_text">Rukouksen %s Adhan ohitetaan.</string>
+    <string name="notification_upcoming_adhan_title">Tuleva Adhan: %s</string>
+    <string name="notification_upcoming_adhan_text">Adhan toistetaan %d minuutin kuluttua.</string>
+    <string name="notification_skip_action">OHITA TÄMÄ RUKOUS</string>
+    <string name="notification_adhan_title">Adhan: %s</string>
+    <string name="notification_adhan_content">On aika rukoilla</string>
+    <string name="notification_adhan_disabled_title">Adhan poistettu käytöstä</string>
+    <string name="notification_adhan_skipped_title">Adhan ohitettu</string>
+    <string name="notification_prayer_time_content">On aika rukoukselle %s.</string>
+
+    <!-- Hijri Day Settings -->
+    <string name="settings_hijri_day_start">Hijri-päivän alku</string>
+    <string name="settings_hijri_day_start_maghrib">Alkaa Maghribista</string>
+    <string name="settings_hijri_day_start_desc">Vaihda Hijri-päivämäärä auringonlaskun aikaan (Maghrib) keskiyön sijaan.</string>
+
+    <!-- About Section -->
+    <string name="settings_about">Tietoja</string>
+    <string name="settings_licenses_desc">Avoimen lähdekoodin ohjelmistojen lisenssitiedot</string>
+
+    <!-- Licenses Screen -->
+    <string name="licenses_title">Lisenssit</string>
+    <string name="license_legal_info">Waktiva – Lisenssi- ja oikeudelliset tiedot</string>
+    <string name="license_app_copyright">Copyright © 2026 YBugMobile\nKaikki oikeudet pidätetään.</string>
+    <string name="license_app_mit">Waktiva julkaistaan avoimen lähdekoodin ohjelmistona MIT-lisenssillä.</string>
+    <string name="license_app_warranty">OHJELMISTO TARJOTAAN \"SELLAISENA KUIN SE ON\", ILMAN MINKÄÄNLAISTA TAKUUTA.</string>
+    <string name="license_third_party_services">1. Kolmannen osapuolen palvelut</string>
+    <string name="license_aladhan_api">Al-Adhan API</string>
+    <string name="license_aladhan_desc">Waktiva noutaa rukousajat Al-Adhan API -palvelusta.</string>
+    <string name="license_data_privacy">Waktiva ei tallenna, myy tai jaa käyttäjätietoja.</string>
+    <string name="license_open_source_libs">2. Kolmannen osapuolen avoimen lähdekoodin kirjastot</string>
+    <string name="license_libs_intro">Waktiva sisältää seuraavat avoimen lähdekoodin komponentit:</string>
+    <string name="license_lib_androidx">AndroidX-kirjastot (Apache License 2.0)</string>
+    <string name="license_lib_compose">Jetpack Compose (Apache License 2.0)</string>
+    <string name="license_lib_kotlin">Kotlin (Apache License 2.0)</string>
+    <string name="license_lib_hilt">Hilt (Apache License 2.0)</string>
+    <string name="license_lib_room">Room (Apache License 2.0)</string>
+    <string name="license_lib_datastore">DataStore (Apache License 2.0)</string>
+    <string name="license_lib_work">WorkManager (Apache License 2.0)</string>
+    <string name="license_lib_media3">Media3 (Apache License 2.0)</string>
+    <string name="license_lib_location">Google Play Services Location</string>
+    <string name="license_lib_retrofit">Retrofit (Apache License 2.0)</string>
+    <string name="license_lib_okhttp">OkHttp (Apache License 2.0)</string>
+    <string name="license_lib_gson">Gson (Apache License 2.0)</string>
+    <string name="license_lib_adhan">Adhan Kotlin Library (MIT License)</string>
+    <string name="license_lib_suncalc">SunCalc (BSD License)</string>
+    <string name="license_lib_maplibre">MapLibre Android SDK (BSD 3-Clause License)</string>
+    <string name="license_lib_osmdroid">OsmDroid (Apache License 2.0)</string>
+    <string name="license_lib_accompanist">Accompanist (Apache License 2.0)</string>
+    <string name="license_lib_billing">Google Play Billing Library</string>
+    <string name="license_libs_property">Kukin kirjasto pysyy vastaavien tekijöiden omaisuutena.</string>
+    <string name="license_adhan_audio">3. Adhan-äänen lisenssi</string>
+    <string name="license_adhan_reciter">Waktiva sisältää Adhan-tallenteita Muhsin Karalta, vuoden 2022 Adhan-lausuntakilpailun maailmanmestarilta.</string>
+    <string name="license_adhan_permission">Näitä tallenteita käytetään luvalla. Kaikki oikeudet kuuluvat alkuperäiselle lausujalle.</string>
+    <string name="license_adhan_restrictions">Adhan-ääntä ei saa purkaa, jakaa edelleen tai käyttää Waktiva-sovelluksen ulkopuolella ilman nimenomaista lupaa.</string>
+    <string name="license_location_permissions">4. Sijainti ja käyttöoikeudet</string>
+    <string name="license_location_usage">Waktiva pyytää sijaintilupaa yksinomaan:</string>
+    <string name="license_loc_usage_1">Tarkkojen rukousaikojen laskemiseen</string>
+    <string name="license_loc_usage_2">Qibla-suunnan määrittämiseen</string>
+    <string name="license_loc_usage_3">Hijri-päivämäärän ja kuunvaiheiden laskemiseen</string>
+    <string name="license_loc_processing">Sijaintitiedot käsitellään paikallisesti, eikä niitä tallenneta, seurata tai jaeta.</string>
+    <string name="license_no_ads">5. Mainokseton / Ei seurantaa -sitoumus</string>
+    <string name="license_no_ads_1">Ei näytä mainoksia</string>
+    <string name="license_no_ads_2">Ei käytä seurantakirjastoja</string>
+    <string name="license_no_ads_3">Ei kerää analytiikkaa</string>
+    <string name="license_no_ads_4">Ei myy henkilötietoja</string>
+</resources>
