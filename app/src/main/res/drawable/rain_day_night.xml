@@ -6,9 +6,9 @@
                   
             <gradient android:endX="223.94" android:endY="213.44" android:startX="223.94" android:startY="185.48" android:type="linear">
                         
-                <item android:color="#FF1976D2" android:offset="0"/>
+                <item android:color="#FFECEFF1" android:offset="0"/>
                         
-                <item android:color="#FF0D47A1" android:offset="1"/>
+                <item android:color="#FFB0BEC5" android:offset="1"/>
                       
             </gradient>
                 
@@ -22,9 +22,9 @@
                   
             <gradient android:endX="176.07" android:endY="243.19" android:startX="176.07" android:startY="205.91" android:type="linear">
                         
-                <item android:color="#FF1976D2" android:offset="0"/>
+                <item android:color="#FFECEFF1" android:offset="0"/>
                         
-                <item android:color="#FF0D47A1" android:offset="1"/>
+                <item android:color="#FFB0BEC5" android:offset="1"/>
                       
             </gradient>
                 
@@ -38,9 +38,9 @@
                   
             <gradient android:endX="128.2" android:endY="213.44" android:startX="128.2" android:startY="185.48" android:type="linear">
                         
-                <item android:color="#FF1976D2" android:offset="0"/>
+                <item android:color="#FFECEFF1" android:offset="0"/>
                         
-                <item android:color="#FF0D47A1" android:offset="1"/>
+                <item android:color="#FFB0BEC5" android:offset="1"/>
                       
             </gradient>
                 
@@ -54,9 +54,9 @@
                   
             <gradient android:endX="80.33" android:endY="243.19" android:startX="80.33" android:startY="205.91" android:type="linear">
                         
-                <item android:color="#FF1976D2" android:offset="0"/>
+                <item android:color="#FFECEFF1" android:offset="0"/>
                         
-                <item android:color="#FF0D47A1" android:offset="1"/>
+                <item android:color="#FFB0BEC5" android:offset="1"/>
                       
             </gradient>
                 
@@ -70,9 +70,9 @@
                   
             <gradient android:endX="32.46" android:endY="213.44" android:startX="32.46" android:startY="185.48" android:type="linear">
                         
-                <item android:color="#FF1976D2" android:offset="0"/>
+                <item android:color="#FFECEFF1" android:offset="0"/>
                         
-                <item android:color="#FF0D47A1" android:offset="1"/>
+                <item android:color="#FFB0BEC5" android:offset="1"/>
                       
             </gradient>
                 
