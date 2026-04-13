@@ -32,7 +32,14 @@ object LanguageUtils {
         "bn", // Bengali
         "fa", // Persian
         "ms", // Malay
-        "ru"  // Russian
+        "ru", // Russian
+        "bs", // Bosnian
+        "fi", // Finnish
+        "nl", // Dutch
+        "pl", // Polish
+        "pt", // Portuguese
+        "sq", // Albanian
+        "sv"  // Swedish
     )
 
     /**
@@ -65,8 +72,12 @@ object LanguageUtils {
      */
     @Composable
     fun getLanguageOptions(): List<Pair<String, String>> {
-        return supportedLanguages.map { code ->
+        val options = supportedLanguages.map { code ->
             getNativeLanguageName(code) to code
         }
+        val systemOption = options.find { it.second == "system" }
+        val rest = options.filter { it.second != "system" }.sortedBy { it.first }
+
+        return if (systemOption != null) listOf(systemOption) + rest else rest
     }
 }

@@ -40,7 +40,7 @@ private val WeatherCondition.isSevere: Boolean
 private val WeatherCondition.cloudCount: Int
     get() = when (this) {
         WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM, WeatherCondition.SNOWY -> 20
-        WeatherCondition.CLOUDY, WeatherCondition.FOGGY -> 12
+        WeatherCondition.OVERCAST, WeatherCondition.FOGGY -> 12
         WeatherCondition.PARTLY_CLOUDY -> 5
         else -> 0
     }
@@ -488,7 +488,7 @@ fun AtmosphericBackgroundLayer(
 
     val canShowBirds = weatherCondition == WeatherCondition.CLEAR || 
                        weatherCondition == WeatherCondition.PARTLY_CLOUDY || 
-                       weatherCondition == WeatherCondition.CLOUDY
+                       weatherCondition == WeatherCondition.OVERCAST
 
     Canvas(modifier = Modifier.fillMaxSize()) {
         val w = size.width; val h = size.height
@@ -504,7 +504,7 @@ fun AtmosphericBackgroundLayer(
         // 2. Birds (Improved and conditional)
         if (canShowBirds) {
             val birdY = 0.12f * h
-            val birdAlpha = if (weatherCondition == WeatherCondition.CLOUDY) 0.06f else 0.12f
+            val birdAlpha = if (weatherCondition == WeatherCondition.OVERCAST) 0.06f else 0.12f
             val birdColor = Color.Black.copy(alpha = birdAlpha)
             
             // Fade-in/out logic based on progress
