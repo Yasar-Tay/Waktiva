@@ -1,75 +1,198 @@
-# Waktiva 🕋
+# Waktiva
 
-Waktiva is a modern, privacy-focused, and feature-rich Android application designed to provide accurate prayer times and religious tools for Muslims. Built with the latest Android technologies, it offers a seamless and ad-free experience.
+Waktiva is a privacy-first Android prayer companion built with a modern native stack. The project combines accurate prayer time calculations, Qibla direction tools, customizable Adhan playback, system reliability checks, multilingual support, and a polished Compose UI in a single codebase.
 
-## ✨ Features
+This repository already includes:
 
--   **📍 High-Precision Prayer Times:** Automatically calculates prayer times based on your precise location.
--   **🧭 Advanced Qibla Finder:** 
-    -   **Compass Mode:** A beautiful, responsive compass to find the Kaaba.
-    -   **Map Mode:** Visual confirmation of Qibla direction on a satellite or standard map.
-    -   **Calibration Support:** Built-in guidance to ensure sensor accuracy.
--   **🔊 Customizable Adhan Notifications:**
-    -   Multiple built-in Adhan sounds.
-    -   Support for custom audio files (MP3, WAV, etc.).
-    -   Individual sound settings for each prayer time.
-    -   Pre-Adhan warnings to help you prepare.
--   **🛠️ System Health & Reliability:**
-    -   Proactive monitoring of battery optimizations, "Do Not Disturb" settings, and GPS status.
-    -   Guidance to ensure Adhans play exactly on time.
--   **📅 Hijri Calendar:** Includes a Hijri date display and a list of upcoming significant religious days.
--   **🌍 Multi-Language Support:** Available in English, Turkish, Arabic, French, German, Spanish, Indonesian, Urdu, Bengali, Persian, Malay, Russian, and Italian.
--   **🌓 Modern UI/UX:** Built entirely with Jetpack Compose, featuring Material 3 design and dynamic themes.
--   **🔒 Privacy First:** No ads, no tracking, and no unnecessary data collection. Open-source and transparent.
+- Location-aware prayer times with offline fallback calculation
+- Qibla screen with compass and map modes
+- Per-prayer Adhan selection and pre-Adhan warnings
+- Onboarding flow for permissions and personalization
+- Hijri and religious-day context
+- Dynamic backgrounds, weather-aware UI hooks, and a Glance widget
+- Clean Architecture inspired layering with Hilt, Room, DataStore, and WorkManager
 
-## 🚀 Tech Stack
+## Feature Highlights
 
-Waktiva is built using modern Android development practices:
+### Accurate Prayer Times
 
--   **UI:** [Jetpack Compose](https://developer.android.com/jetpack/compose) (Material 3)
--   **Architecture:** Clean Architecture with [MVVM](https://developer.android.com/topic/libraries/architecture/viewmodel)
--   **Dependency Injection:** [Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
--   **Local Database:** [Room](https://developer.android.com/training/data-storage/room)
--   **Asynchronous Programming:** [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) & [Flow](https://kotlinlang.org/docs/flow.html)
--   **Background Tasks:** [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
--   **Preferences:** [DataStore](https://developer.android.com/topic/libraries/architecture/datastore)
--   **Audio Playback:** [Media3 / ExoPlayer](https://developer.android.com/guide/topics/media/media3)
--   **Widgets:** [Jetpack Glance](https://developer.android.com/jetpack/compose/glance)
--   **Networking:** [Retrofit](https://square.github.io/retrofit/)
+- Hybrid data approach with remote APIs plus local calculation fallback
+- Multiple calculation methods including Turkey/Diyanet, MWL, ISNA, Egypt, Makkah, Karachi, and more
+- Madhab-aware Asr handling
+- Cached prayer data for a more resilient offline experience
 
-## 📸 Screenshots
+### Reliable Adhan Experience
 
-| Home Screen | Qibla Finder | Settings |
-| :---: | :---: | :---: |
-| ![Home](https://via.placeholder.com/300x600?text=Home+Screen) | ![Qibla](https://via.placeholder.com/300x600?text=Qibla+Finder) | ![Settings](https://via.placeholder.com/300x600?text=Settings) |
+- Exact-alarm based scheduling for timely notifications
+- Foreground audio playback with Media3
+- Individual Adhan sound selection for each prayer
+- Pre-Adhan warning support
+- Boot rescheduling and battery optimization guidance
 
-## 🛠️ Installation & Build
+### Qibla Tools
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/your-username/Waktiva.git
-    ```
-2.  **Open in Android Studio:** Use the latest stable version of Android Studio (Ladybug or newer).
-3.  **Build:** Let Gradle sync and build the project.
-4.  **Run:** Deploy to an emulator or physical device running Android 8.0 (API 26) or higher.
+- Real-time compass-based Qibla guidance
+- Map-based Qibla view powered by MapLibre and OpenStreetMap tooling
+- Sensor calibration guidance for better accuracy
 
-## 🤝 Contributing
+### Modern Muslim Utility App
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+- Hijri date and religious-day support
+- Prayer-focused home screen with countdown and status awareness
+- Localized app strings across 20 language packs, including RTL locales
+- Jetpack Glance widget for next-prayer visibility from the home screen
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## Tech Stack
 
-## 📜 License
+- Kotlin + Java 17
+- Android SDK 36, target SDK 35, min SDK 24
+- Jetpack Compose + Material 3
+- Hilt for dependency injection
+- Room for local persistence
+- DataStore for user preferences
+- WorkManager for periodic sync/update flows
+- Media3 for Adhan playback
+- Retrofit + OkHttp for network access
+- Adhan Java for prayer calculation support
+- MapLibre + osmdroid for Qibla/map features
+- Glance for app widgets
 
-Distributed under the MIT License. See `LICENSE` for more information.
+## Architecture
 
-## 💖 Support
+The codebase follows a practical layered structure:
 
-If you find this app helpful, please consider giving it a ⭐ on GitHub and sharing it with others. You can also support the developer through the in-app donation feature.
+- `domain`: business models, contracts, and use cases
+- `data`: repositories, local storage, remote services, alarms, workers, and device integrations
+- `ui`: Compose screens, view models, navigation, theme, and widgets
+- `di`: dependency injection modules
 
----
-*Developed with care for the Ummah.*
+The app is organized around state-driven screens, background workers for refresh flows, and Android services/receivers for reliable Adhan behavior.
+
+## Project Structure
+
+```text
+Waktiva/
+|- app/
+|  |- src/main/java/com/ybugmobile/waktiva/
+|  |  |- data/
+|  |  |- di/
+|  |  |- domain/
+|  |  |- receiver/
+|  |  |- service/
+|  |  |- ui/
+|  |  \- utils/
+|  \- src/main/res/
+|- gradle/
+|- build.gradle.kts
+\- settings.gradle.kts
+```
+
+## Getting Started
+
+### Requirements
+
+- Android Studio with a recent stable build
+- JDK 17
+- Android device or emulator running Android 7.0+ (API 24+)
+
+### Run Locally
+
+```bash
+git clone <your-fork-or-repo-url>
+cd Waktiva
+./gradlew assembleDebug
+```
+
+Open the project in Android Studio, let Gradle sync, then run the `app` configuration on an emulator or physical device.
+
+## Localization
+
+Waktiva already ships with a broad translation base. The repository includes localized resources for languages such as:
+
+- English
+- Arabic
+- Bengali
+- Bosnian
+- Dutch
+- Finnish
+- French
+- German
+- Indonesian
+- Italian
+- Malay
+- Persian
+- Polish
+- Portuguese
+- Russian
+- Albanian
+- Spanish
+- Swedish
+- Turkish
+- Urdu
+
+In Android resource terms, the project currently includes these locale folders:
+
+- `values`
+- `values-ar`
+- `values-bn`
+- `values-bs`
+- `values-de`
+- `values-es`
+- `values-fa`
+- `values-fi`
+- `values-fr`
+- `values-in`
+- `values-it`
+- `values-ms`
+- `values-nl`
+- `values-pl`
+- `values-pt`
+- `values-ru`
+- `values-sq`
+- `values-sv`
+- `values-tr`
+- `values-ur`
+
+## Testing
+
+The project currently includes unit tests around local prayer time calculation logic.
+
+```bash
+./gradlew testDebugUnitTest
+```
+
+## Roadmap Direction
+
+Based on the current repository state and backlog, the product direction includes:
+
+- stronger UI test coverage
+- richer widget interactions
+- deeper moon and weather experiences
+- continued polish around reliability, onboarding, and donations
+
+## Contributing
+
+Contributions are welcome. If you want to improve the app:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run relevant checks
+5. Open a pull request
+
+## License and Privacy
+
+The repository currently does not include a top-level `LICENSE` file, but the in-app license screen states that:
+
+- Waktiva is released as open-source software under the MIT License
+- the app is provided "as is" without warranty
+- user data is not stored, resold, or distributed
+- the app does not show ads, use tracking SDKs, collect analytics, or sell personal data
+- bundled Adhan recordings are used with permission and should not be redistributed outside the app
+
+The same in-app license content also references third-party components such as AndroidX, Jetpack Compose, Kotlin, Hilt, Room, DataStore, WorkManager, Media3, Retrofit, OkHttp, MapLibre, osmdroid, SunCalc, the Adhan library, Google Play Services Location, and Google Play Billing.
+
+## Notes
+
+- Adding a real `LICENSE` file at the repository root would make the project much clearer for GitHub visitors and contributors.
+- If you want a stronger storefront presentation, adding real screenshots or a short demo GIF would make this README even more compelling.
