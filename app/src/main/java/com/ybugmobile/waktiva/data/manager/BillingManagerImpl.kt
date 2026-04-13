@@ -46,19 +46,37 @@ class BillingManagerImpl @Inject constructor(
             }
 
             override fun onBillingServiceDisconnected() {
-                // Reconnection logic can be added here
+                // Reconnection logic: You might want to call startConnection again with a backoff strategy
             }
         })
         
         try {
             connectDeferred.await()
             queryProducts()
+            queryPurchases() // Uygulama açıldığında işlenmemiş satın alımları kontrol et
         } catch (e: Exception) {
             throw e
         }
     }
 
+    private fun queryPurchases() {
+        if (!billingClient.isReady) return
+
+        val params = QueryPurchasesParams.newBuilder()
+            .setProductType(BillingClient.ProductType.INAPP)
+            .build()
+
+        billingClient.queryPurchasesAsync(params) { billingResult, purchases ->
+            if (billingResult.responseCode == BillingResponseCode.OK) {
+                for (purchase in purchases) {
+                    handlePurchase(purchase)
+                }
+            }
+        }
+    }
+
     override suspend fun queryProducts() {
+        // ... mevcut kodun devamı (donation_small vb.)
         val productList = listOf(
             QueryProductDetailsParams.Product.newBuilder()
                 .setProductId("donation_small")
@@ -84,27 +102,20 @@ class BillingManagerImpl @Inject constructor(
 
         if (productDetailsResult.billingResult.responseCode == BillingResponseCode.OK) {
             val productDetails = productDetailsResult.productDetailsList
-            if (productDetails.isNullOrEmpty()) {
-                // If the list is empty, it means IDs were not found in Play Console
-                throw Exception("No products found in Play Store. Ensure IDs match Play Console.")
-            }
             
-            val products = productDetails.map {
+            val products = productDetails?.map {
                 DonationProduct(
                     id = it.productId,
                     title = it.name,
                     price = it.oneTimePurchaseOfferDetails?.formattedPrice ?: "N/A",
                     description = it.description
                 )
-            }
+            } ?: emptyList()
             _donationProducts.value = products
-        } else {
-            throw Exception("Query failed: ${productDetailsResult.billingResult.debugMessage}")
         }
     }
 
     override suspend fun purchaseProduct(product: DonationProduct) {
-        // Find the activity from context or use a better approach for production
         val activity = context as? Activity 
             ?: (context as? android.content.ContextWrapper)?.baseContext as? Activity
 
@@ -113,59 +124,86 @@ class BillingManagerImpl @Inject constructor(
              return
         }
 
-        val productDetailsList = withContext(Dispatchers.IO) {
-            val params = QueryProductDetailsParams.newBuilder()
-                .setProductList(listOf(
-                    QueryProductDetailsParams.Product.newBuilder()
-                        .setProductId(product.id)
-                        .setProductType(BillingClient.ProductType.INAPP)
-                        .build()
-                ))
-                .build()
-            billingClient.queryProductDetails(params).productDetailsList
-        }
-
-        val productDetails = productDetailsList?.find { it.productId == product.id } ?: return
-
-        val flowParams = BillingFlowParams.newBuilder()
-            .setProductDetailsParamsList(listOf(
-                BillingFlowParams.ProductDetailsParams.newBuilder()
-                    .setProductDetails(productDetails)
+        // ProductDetails'i tekrar sorgulamak yerine daha önce saklanan listeden bulmak daha hızlı olabilir
+        // Ancak güvenlik ve güncellik için kısa bir sorgu yapıyoruz
+        val params = QueryProductDetailsParams.newBuilder()
+            .setProductList(listOf(
+                QueryProductDetailsParams.Product.newBuilder()
+                    .setProductId(product.id)
+                    .setProductType(BillingClient.ProductType.INAPP)
                     .build()
             ))
             .build()
 
-        billingClient.launchBillingFlow(activity, flowParams)
+        val productDetailsResult = withContext(Dispatchers.IO) {
+            billingClient.queryProductDetails(params)
+        }
+
+        val productDetails = productDetailsResult.productDetailsList?.firstOrNull()
+        
+        if (productDetails != null) {
+            val flowParams = BillingFlowParams.newBuilder()
+                .setProductDetailsParamsList(listOf(
+                    BillingFlowParams.ProductDetailsParams.newBuilder()
+                        .setProductDetails(productDetails)
+                        .build()
+                ))
+                .build()
+
+            billingClient.launchBillingFlow(activity, flowParams)
+        } else {
+            _purchaseEvents.emit(PurchaseResult.Error("Ürün detayları alınamadı."))
+        }
     }
 
     override fun onPurchasesUpdated(billingResult: BillingResult, purchases: List<Purchase>?) {
-        if (billingResult.responseCode == BillingResponseCode.OK && purchases != null) {
-            for (purchase in purchases) {
-                handlePurchase(purchase)
+        when (billingResult.responseCode) {
+            BillingResponseCode.OK -> {
+                purchases?.forEach { handlePurchase(it) }
             }
-        } else if (billingResult.responseCode == BillingResponseCode.USER_CANCELED) {
-            CoroutineScope(Dispatchers.Main).launch {
-                _purchaseEvents.emit(PurchaseResult.UserCancelled)
+            BillingResponseCode.USER_CANCELED -> {
+                CoroutineScope(Dispatchers.Main).launch {
+                    _purchaseEvents.emit(PurchaseResult.UserCancelled)
+                }
             }
-        } else {
-            CoroutineScope(Dispatchers.Main).launch {
-                _purchaseEvents.emit(PurchaseResult.Error(billingResult.debugMessage))
+            else -> {
+                CoroutineScope(Dispatchers.Main).launch {
+                    _purchaseEvents.emit(PurchaseResult.Error(billingResult.debugMessage))
+                }
             }
         }
     }
 
     private fun handlePurchase(purchase: Purchase) {
         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
-            // Donations are non-consumable usually, but for "Buy me a coffee" style, 
-            // we consume them so they can be bought again.
-            val consumeParams = ConsumeParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken)
-                .build()
+            // Eğer ürün bir bağış ise (tüketilebilir), tekrar alınabilmesi için consume ediyoruz.
+            // Eğer "Reklamları Kaldır" gibi kalıcı bir ürünse acknowledge edilmelidir.
             
-            billingClient.consumeAsync(consumeParams) { billingResult, _ ->
-                if (billingResult.responseCode == BillingResponseCode.OK) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        _purchaseEvents.emit(PurchaseResult.Success)
+            // Mevcut ID'lerin hepsi bağış olduğu için consume ediyoruz:
+            val isConsumable = true // İleride kalıcı ürün gelirse burayı kontrol ederiz
+
+            if (isConsumable) {
+                val consumeParams = ConsumeParams.newBuilder()
+                    .setPurchaseToken(purchase.purchaseToken)
+                    .build()
+                
+                billingClient.consumeAsync(consumeParams) { billingResult, _ ->
+                    if (billingResult.responseCode == BillingResponseCode.OK) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            _purchaseEvents.emit(PurchaseResult.Success)
+                        }
+                    }
+                }
+            } else if (!purchase.isAcknowledged) {
+                val acknowledgeParams = AcknowledgePurchaseParams.newBuilder()
+                    .setPurchaseToken(purchase.purchaseToken)
+                    .build()
+                
+                billingClient.acknowledgePurchase(acknowledgeParams) { billingResult ->
+                    if (billingResult.responseCode == BillingResponseCode.OK) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            _purchaseEvents.emit(PurchaseResult.Success)
+                        }
                     }
                 }
             }

@@ -290,7 +290,12 @@
     <string name="rate_button">Ocijeni sa 5 zvjezdica</string>
     <string name="badge_no_ads">Bez reklama</string>
     <string name="badge_no_tracking">Bez praćenja</string>
-    <string name="badge_open_source">Open Source</string>
+    <string name="donate_item_small_title">Iskrena podrška</string>
+    <string name="donate_item_small_desc">Dajte mali, ali značajan doprinos za Waktiva.</string>
+    <string name="donate_item_medium_title">Volonter dobre volje</string>
+    <string name="donate_item_medium_desc">Podržite opstanak ovog open-source projekta bez oglasa.</string>
+    <string name="donate_item_large_title">Jedinstvo srca</string>
+    <string name="donate_item_large_desc">Pružite najjaču podršku da Waktiva napreduje dalje.</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharrem</string>

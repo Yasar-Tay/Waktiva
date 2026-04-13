@@ -283,7 +283,12 @@
     <string name="rate_button">Поставить 5 звезд</string>
     <string name="badge_no_ads">Без рекламы</string>
     <string name="badge_no_tracking">Без слежки</string>
-    <string name="badge_open_source">Открытый код</string>
+    <string name="donate_item_small_title">Сердечная поддержка</string>
+    <string name="donate_item_small_desc">Сделайте небольшой, но значимый вклад в Waktiva.</string>
+    <string name="donate_item_medium_title">Волонтер доброй воли</string>
+    <string name="donate_item_medium_desc">Поддержите существование этого проекта с открытым исходным кодом без рекламы.</string>
+    <string name="donate_item_large_title">Единство сердец</string>
+    <string name="donate_item_large_desc">Окажите максимальную поддержку для дальнейшего развития Waktiva.</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Мухаррам</string>

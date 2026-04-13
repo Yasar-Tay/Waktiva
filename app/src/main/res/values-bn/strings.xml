@@ -284,7 +284,12 @@
 
     <string name="badge_no_ads">কোনো বিজ্ঞাপন নেই</string>
     <string name="badge_no_tracking">ট্র্যাকিং নেই</string>
-    <string name="badge_open_source">ওপেন সোর্স</string>
+    <string name="donate_item_small_title">আন্তরিক সমর্থন</string>
+    <string name="donate_item_small_desc">Waktiva-তে একটি ছোট কিন্তু অর্থপূর্ণ অবদান রাখুন।</string>
+    <string name="donate_item_medium_title">সদিচ্ছা স্বেচ্ছাসেবক</string>
+    <string name="donate_item_medium_desc">এই বিজ্ঞাপন-মুক্ত এবং ওপেন সোর্স প্রজেক্টটিকে টিকিয়ে রাখতে সাহায্য করুন।</string>
+    <string name="donate_item_large_title">হৃদয়ের ঐক্য</string>
+    <string name="donate_item_large_desc">Waktiva-কে আরও এগিয়ে নিতে শক্তিশালী সমর্থন প্রদান করুন।</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">মুহররম</string>

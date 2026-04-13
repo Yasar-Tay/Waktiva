@@ -225,8 +225,18 @@ fun DonateScreen(
 
             // Donation Items
             items(products) { product ->
+                val (titleRes, descRes, icon) = when (product.id) {
+                    "donation_small" -> Triple(R.string.donate_item_small_title, R.string.donate_item_small_desc, "✨")
+                    "donation_medium" -> Triple(R.string.donate_item_medium_title, R.string.donate_item_medium_desc, "🤝")
+                    "donation_large" -> Triple(R.string.donate_item_large_title, R.string.donate_item_large_desc, "🌟")
+                    else -> Triple(null, null, "💝")
+                }
+
                 PremiumSupportCard(
                     product = product,
+                    displayTitle = if (titleRes != null) stringResource(titleRes) else product.title,
+                    displayDesc = if (descRes != null) stringResource(descRes) else product.description,
+                    icon = icon,
                     glassTheme = glassTheme,
                     onClick = { viewModel.onDonateClick(product) }
                 )
@@ -288,6 +298,9 @@ fun CommunityRatingCard(onClick: () -> Unit) {
 @Composable
 fun PremiumSupportCard(
     product: DonationProduct,
+    displayTitle: String,
+    displayDesc: String,
+    icon: String,
     glassTheme: GlassTheme,
     onClick: () -> Unit
 ) {
@@ -302,18 +315,18 @@ fun PremiumSupportCard(
             modifier = Modifier.padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("☕", fontSize = 24.sp)
+            Text(text = icon, fontSize = 24.sp)
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = product.title,
+                    text = displayTitle,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
-                if (product.description.isNotEmpty()) {
+                if (displayDesc.isNotEmpty()) {
                     Text(
-                        text = product.description,
+                        text = displayDesc,
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(alpha = 0.5f),
                         maxLines = 1

@@ -284,7 +284,12 @@
 
     <string name="badge_no_ads">بدون تبلیغات</string>
     <string name="badge_no_tracking">بدون ردیابی</string>
-    <string name="badge_open_source">متن‌باز</string>
+    <string name="donate_item_small_title">حمایت قلبی</string>
+    <string name="donate_item_small_desc">کمک کوچک اما معناداری به Waktiva کنید.</string>
+    <string name="donate_item_medium_title">داوطلب نیکوکاری</string>
+    <string name="donate_item_medium_desc">از پایداری این پروژه متن‌باز و بدون تبلیغات حمایت کنید.</string>
+    <string name="donate_item_large_title">اتحاد دل‌ها</string>
+    <string name="donate_item_large_desc">قوی‌ترین حمایت را برای پیشرفت بیشتر Waktiva ارائه دهید.</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">محرم</string>

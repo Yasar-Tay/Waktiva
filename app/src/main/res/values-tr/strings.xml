@@ -278,6 +278,13 @@
     <string name="donate_thank_you">Açık kaynaklı yazılımı desteklediğiniz için teşekkürler!</string>
     <string name="donate_error">Bağış başarısız oldu. Lütfen tekrar deneyin.</string>
     <string name="donate_billing_error">Ödeme servisine bağlanılamadı</string>
+
+    <string name="donate_item_small_title">Gönül Desteği</string>
+    <string name="donate_item_small_desc">Waktiva\'ya küçük ama anlamlı bir katkı sağlayın.</string>
+    <string name="donate_item_medium_title">İyilik Gönüllüsü</string>
+    <string name="donate_item_medium_desc">Reklamsız ve açık kaynaklı bu projenin yaşamasına destek olun.</string>
+    <string name="donate_item_large_title">Gönül Birliği</string>
+    <string name="donate_item_large_desc">Waktiva\'yı daha ileriye taşımak için en güçlü desteği verin.</string>
     <string name="rate_title">Waktiva\'yı Puanlayın</string>
     <string name="rate_desc">Waktiva\'yı beğendiyseniz, lütfen Google Play\'de 5 yıldız vererek daha fazla kişiye ulaşmamıza yardımcı olun!</string>
     <string name="rate_button">5 Yıldız Ver</string>

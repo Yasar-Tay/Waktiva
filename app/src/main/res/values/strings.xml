@@ -290,7 +290,12 @@
     <string name="rate_button">Rate 5 Stars</string>
     <string name="badge_no_ads">No Ads</string>
     <string name="badge_no_tracking">No Tracking</string>
-    <string name="badge_open_source">Open Source</string>
+    <string name="donate_item_small_title">Heartfelt Support</string>
+    <string name="donate_item_small_desc">Make a small but meaningful contribution.</string>
+    <string name="donate_item_medium_title">Goodwill Volunteer</string>
+    <string name="donate_item_medium_desc">Support the survival of this ad-free project.</string>
+    <string name="donate_item_large_title">Unity of Hearts</string>
+    <string name="donate_item_large_desc">Provide the strongest support to take Waktiva further.</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>

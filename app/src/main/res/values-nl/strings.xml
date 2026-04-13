@@ -290,7 +290,12 @@
     <string name="rate_button">Geef 5 Sterren</string>
     <string name="badge_no_ads">Geen Reclame</string>
     <string name="badge_no_tracking">Geen Tracking</string>
-    <string name="badge_open_source">Open Source</string>
+    <string name="donate_item_small_title">Hartelijke Steun</string>
+    <string name="donate_item_small_desc">Doe een kleine maar betekenisvolle bijdrage aan Waktiva.</string>
+    <string name="donate_item_medium_title">Vrijwilliger van Goede Wil</string>
+    <string name="donate_item_medium_desc">Steun het voortbestaan van dit advertentievrije open-source project.</string>
+    <string name="donate_item_large_title">Eenheid van Harten</string>
+    <string name="donate_item_large_desc">Geef de sterkste steun om Waktiva verder vooruit te helpen.</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>

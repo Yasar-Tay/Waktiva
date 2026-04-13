@@ -290,7 +290,12 @@
     <string name="rate_button">Vlerësoni me 5 Yje</string>
     <string name="badge_no_ads">Pa Reklama</string>
     <string name="badge_no_tracking">Pa Gjurmim</string>
-    <string name="badge_open_source">Burim i Hapur</string>
+    <string name="donate_item_small_title">Mbështetje e Sinqertë</string>
+    <string name="donate_item_small_desc">Bëni një kontribut të vogël por domethënës për Waktiva.</string>
+    <string name="donate_item_medium_title">Vullnetar i Vullnetit të Mirë</string>
+    <string name="donate_item_medium_desc">Mbështetni vazhdimësinë e këtij projekti me kod të hapur dhe pa reklama.</string>
+    <string name="donate_item_large_title">Bashkimi i Zemrave</string>
+    <string name="donate_item_large_desc">Jepni mbështetjen më të fortë për ta çuar Waktiva më tej.</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharrem</string>

@@ -284,7 +284,12 @@
 
     <string name="badge_no_ads">Sin anuncios</string>
     <string name="badge_no_tracking">Sin rastreo</string>
-    <string name="badge_open_source">Código abierto</string>
+    <string name="donate_item_small_title">Apoyo del Corazón</string>
+    <string name="donate_item_small_desc">Haz una pequeña pero significativa contribución a Waktiva.</string>
+    <string name="donate_item_medium_title">Voluntario de Buena Voluntad</string>
+    <string name="donate_item_medium_desc">Apoya la continuidad de este proyecto de código abierto y sin anuncios.</string>
+    <string name="donate_item_large_title">Unión de Corazones</string>
+    <string name="donate_item_large_desc">Brinda el mayor apoyo para llevar a Waktiva más lejos.</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>

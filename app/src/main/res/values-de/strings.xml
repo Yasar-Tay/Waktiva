@@ -283,7 +283,12 @@
     <string name="rate_button">5 Sterne geben</string>
     <string name="badge_no_ads">Keine Werbung</string>
     <string name="badge_no_tracking">Kein Tracking</string>
-    <string name="badge_open_source">Open Source</string>
+    <string name="donate_item_small_title">Herzliche Unterstützung</string>
+    <string name="donate_item_small_desc">Leisten Sie einen kleinen, aber sinnvollen Beitrag für Waktiva.</string>
+    <string name="donate_item_medium_title">Freiwilliger des guten Willens</string>
+    <string name="donate_item_medium_desc">Unterstützen Sie den Fortbestand dieses werbefreien Open-Source-Projekts.</string>
+    <string name="donate_item_large_title">Einigkeit der Herzen</string>
+    <string name="donate_item_large_desc">Geben Sie die stärkste Unterstützung, um Waktiva weiter voranzubringen.</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>
