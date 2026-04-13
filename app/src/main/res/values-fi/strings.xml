@@ -389,4 +389,6 @@
     <string name="license_no_ads_2">Ei käytä seurantakirjastoja</string>
     <string name="license_no_ads_3">Ei kerää analytiikkaa</string>
     <string name="license_no_ads_4">Ei myy henkilötietoja</string>
+    <string name="license_source_code">6. Lähdekoodi ja repositorio</string>
+    <string name="license_github_link">Waktiva on avoimen lähdekoodin projekti. Löydät lähdekoodin, voit ilmoittaa ongelmista tai osallistua osoitteessa:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 </resources>

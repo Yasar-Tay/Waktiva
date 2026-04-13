@@ -382,4 +382,6 @@
     <string name="license_no_ads_2">Takip (tracking) SDK\'ları kullanmaz</string>
     <string name="license_no_ads_3">Analitik verisi toplamaz</string>
     <string name="license_no_ads_4">Kişisel verileri satmaz</string>
+    <string name="license_source_code">6. Kaynak Kod ve Depo</string>
+    <string name="license_github_link">Waktiva açık kaynaklı bir projedir. Kaynak koduna ulaşabilir, hata bildirebilir veya katkıda bulunabilirsiniz:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 </resources>

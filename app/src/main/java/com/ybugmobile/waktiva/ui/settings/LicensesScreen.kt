@@ -115,6 +115,11 @@ fun LicensesScreen(
                         "• ${stringResource(R.string.license_no_ads_3)}\n" +
                         "• ${stringResource(R.string.license_no_ads_4)}"
             )
+
+            LicenseSection(
+                title = stringResource(R.string.license_source_code),
+                content = stringResource(R.string.license_github_link)
+            )
             
             Spacer(modifier = Modifier.height(32.dp))
         }

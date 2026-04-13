@@ -382,4 +382,6 @@
     <string name="license_no_ads_2">Tidak menggunakan SDK pelacakan</string>
     <string name="license_no_ads_3">Tidak mengumpulkan analitik</string>
     <string name="license_no_ads_4">Tidak menjual data pribadi</string>
+    <string name="license_source_code">6. Kode Sumber dan Repositori</string>
+    <string name="license_github_link">Waktiva adalah proyek sumber terbuka. Anda dapat menemukan kode sumber, melaporkan masalah, atau berkontribusi di:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 </resources>

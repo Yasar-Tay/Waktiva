@@ -389,4 +389,6 @@
     <string name="license_no_ads_2">Ne koristi SDK-ove za praćenje</string>
     <string name="license_no_ads_3">Ne prikuplja analitičke podatke</string>
     <string name="license_no_ads_4">Ne prodaje lične podatke</string>
+    <string name="license_source_code">6. Izvorni kod i repozitorij</string>
+    <string name="license_github_link">Waktiva je open-source projekat. Izvorni kod možete pronaći, prijaviti probleme ili doprinijeti na:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 </resources>

@@ -383,4 +383,6 @@
     <string name="license_no_ads_2">কোনো ট্র্যাকিং এসডিকে ব্যবহার করে না</string>
     <string name="license_no_ads_3">অ্যানালিটিক্স সংগ্রহ করে না</string>
     <string name="license_no_ads_4">ব্যক্তিগত ডেটা বিক্রি করে না</string>
+    <string name="license_source_code">৬. সোর্স কোড এবং রিপোজিটরি</string>
+    <string name="license_github_link">Waktiva একটি ওপেন-সোর্স প্রকল্প। আপনি সোর্স কোড খুঁজে পেতে পারেন, সমস্যা রিপোর্ট করতে পারেন বা অবদান রাখতে পারেন এখানে:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 </resources>

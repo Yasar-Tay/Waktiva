@@ -389,4 +389,6 @@
     <string name="license_no_ads_2">Använder inga spårnings-SDK:er</string>
     <string name="license_no_ads_3">Samlar inte in analysdata</string>
     <string name="license_no_ads_4">Säljer inte personuppgifter</string>
+    <string name="license_source_code">6. Källkod och lagringsplats</string>
+    <string name="license_github_link">Waktiva är ett open source-projekt. Du hittar källkoden, kan rapportera problem eller bidra på:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 </resources>

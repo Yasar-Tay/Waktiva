@@ -382,4 +382,6 @@
     <string name="license_no_ads_2">لا يستخدم أي حزم أدوات تتبع (SDK)</string>
     <string name="license_no_ads_3">لا يجمع تحليلات</string>
     <string name="license_no_ads_4">لا يبيع البيانات الشخصية</string>
+    <string name="license_source_code">6. رمز المصدر والمستودع</string>
+    <string name="license_github_link">Waktiva هو مشروع مفتوح المصدر. يمكنك العثور على رمز المصدر أو الإبلاغ عن المشكلات أو المساهمة في:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 </resources>

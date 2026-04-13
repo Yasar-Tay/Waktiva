@@ -389,4 +389,6 @@
     <string name="license_no_ads_2">Nuk përdor asnjë SDK gjurmimi</string>
     <string name="license_no_ads_3">Nuk mbledh analitikë</string>
     <string name="license_no_ads_4">Nuk shet të dhëna personale</string>
+    <string name="license_source_code">6. Kodi burimor dhe depoja</string>
+    <string name="license_github_link">Waktiva është një projekt me burim të hapur. Mund të gjeni kodin burimor, të raportoni probleme ose të kontribuoni në:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 </resources>

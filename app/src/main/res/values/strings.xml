@@ -389,4 +389,6 @@
     <string name="license_no_ads_2">Does not use any tracking SDKs</string>
     <string name="license_no_ads_3">Does not collect analytics</string>
     <string name="license_no_ads_4">Does not sell personal data</string>
+    <string name="license_source_code">6. Source Code and Repository</string>
+    <string name="license_github_link">Waktiva is an open-source project. You can find the source code, report issues, or contribute at:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 </resources>

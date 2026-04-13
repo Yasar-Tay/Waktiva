@@ -383,4 +383,6 @@
     <string name="license_no_ads_2">از هیچ SDK ردیابی استفاده نمی‌کند</string>
     <string name="license_no_ads_3">هیچ داده تحلیلی جمع‌آوری نمی‌کند</string>
     <string name="license_no_ads_4">داده‌های شخصی را نمی‌فروشد</string>
+    <string name="license_source_code">۶. کد منبع و مخزن</string>
+    <string name="license_github_link">Waktiva یک پروژه متن‌باز است. می‌توانید کد منبع را بیابید، مشکلات را گزارش کنید یا در اینجا مشارکت کنید:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 </resources>
