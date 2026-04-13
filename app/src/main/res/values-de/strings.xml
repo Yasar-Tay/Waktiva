@@ -100,12 +100,22 @@
 
     <!-- Weather Conditions -->
     <string name="weather_clear">Klar</string>
+    <string name="weather_mainly_clear">Überwiegend klar</string>
     <string name="weather_partly_cloudy">Leicht bewölkt</string>
-    <string name="weather_cloudy">Bewölkt</string>
+    <string name="weather_overcast">Bedeckt</string>
     <string name="weather_foggy">Neblig</string>
+    <string name="weather_drizzle">Nieselregen</string>
+    <string name="weather_freezing_drizzle">Gefrierender Nieselregen</string>
     <string name="weather_rainy">Regnerisch</string>
+    <string name="weather_heavy_rain">Starker Regen</string>
+    <string name="weather_freezing_rain">Gefrierender Regen</string>
     <string name="weather_snowy">Schnee</string>
+    <string name="weather_heavy_snow">Starker Schneefall</string>
+    <string name="weather_snow_grains">Schneegriesel</string>
+    <string name="weather_rain_showers">Regenschauer</string>
+    <string name="weather_snow_showers">Schneeschauer</string>
     <string name="weather_thunderstorm">Gewitter</string>
+    <string name="weather_thunderstorm_hail">Gewitter mit Hagel</string>
     <string name="weather_unknown">Unbekannt</string>
 
     <!-- General Settings -->

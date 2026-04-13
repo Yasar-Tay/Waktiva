@@ -100,12 +100,22 @@
 
     <!-- Weather Conditions -->
     <string name="weather_clear">Ясно</string>
+    <string name="weather_mainly_clear">Преимущественно ясно</string>
     <string name="weather_partly_cloudy">Переменная облачность</string>
-    <string name="weather_cloudy">Облачно</string>
+    <string name="weather_overcast">Пасмурно</string>
     <string name="weather_foggy">Туман</string>
+    <string name="weather_drizzle">Морось</string>
+    <string name="weather_freezing_drizzle">Ледяная морось</string>
     <string name="weather_rainy">Дождь</string>
+    <string name="weather_heavy_rain">Сильный дождь</string>
+    <string name="weather_freezing_rain">Ледяной дождь</string>
     <string name="weather_snowy">Снег</string>
+    <string name="weather_heavy_snow">Сильный снегопад</string>
+    <string name="weather_snow_grains">Снежная крупа</string>
+    <string name="weather_rain_showers">Ливневый дождь</string>
+    <string name="weather_snow_showers">Ливневый снег</string>
     <string name="weather_thunderstorm">Гроза</string>
+    <string name="weather_thunderstorm_hail">Гроза с градом</string>
     <string name="weather_unknown">Неизвестно</string>
 
     <!-- General Settings -->

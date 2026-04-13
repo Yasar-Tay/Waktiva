@@ -100,12 +100,22 @@
 
     <!-- Weather Conditions -->
     <string name="weather_clear">Açık</string>
+    <string name="weather_mainly_clear">Az Bulutlu</string>
     <string name="weather_partly_cloudy">Parçalı Bulutlu</string>
-    <string name="weather_cloudy">Bulutlu</string>
+    <string name="weather_overcast">Kapalı</string>
     <string name="weather_foggy">Sisli</string>
+    <string name="weather_drizzle">Çiseleme</string>
+    <string name="weather_freezing_drizzle">Dondurucu Çiseleme</string>
     <string name="weather_rainy">Yağmurlu</string>
+    <string name="weather_heavy_rain">Şiddetli Yağmur</string>
+    <string name="weather_freezing_rain">Dondurucu Yağmur</string>
     <string name="weather_snowy">Karlı</string>
-    <string name="weather_thunderstorm">Gök Gürültülü</string>
+    <string name="weather_heavy_snow">Yoğun Kar</string>
+    <string name="weather_snow_grains">Kar Taneleri</string>
+    <string name="weather_rain_showers">Sağanak Yağış</string>
+    <string name="weather_snow_showers">Kar Sağanağı</string>
+    <string name="weather_thunderstorm">Gök Gürültülü Fırtına</string>
+    <string name="weather_thunderstorm_hail">Dolu ile Gök Gürültülü Fırtına</string>
     <string name="weather_unknown">Bilinmiyor</string>
 
     <!-- General Settings -->

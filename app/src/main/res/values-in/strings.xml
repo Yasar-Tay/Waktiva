@@ -100,13 +100,23 @@
 
     <!-- Weather Conditions -->
     <string name="weather_clear">Cerah</string>
-    <string name="weather_partly_cloudy">Berawan Sebagian</string>
-    <string name="weather_cloudy">Berawan</string>
-    <string name="weather_foggy">Berkabut</string>
+    <string name="weather_mainly_clear">Sebagian besar cerah</string>
+    <string name="weather_partly_cloudy">Cerah berawan</string>
+    <string name="weather_overcast">Mendung</string>
+    <string name="weather_foggy">Kabut</string>
+    <string name="weather_drizzle">Gerimis</string>
+    <string name="weather_freezing_drizzle">Gerimis membeku</string>
     <string name="weather_rainy">Hujan</string>
+    <string name="weather_heavy_rain">Hujan lebat</string>
+    <string name="weather_freezing_rain">Hujan membeku</string>
     <string name="weather_snowy">Bersalju</string>
-    <string name="weather_thunderstorm">Badai Petir</string>
-    <string name="weather_unknown">Tidak Diketahui</string>
+    <string name="weather_heavy_snow">Salju lebat</string>
+    <string name="weather_snow_grains">Butiran salju</string>
+    <string name="weather_rain_showers">Hujan lokal</string>
+    <string name="weather_snow_showers">Hujan salju lokal</string>
+    <string name="weather_thunderstorm">Badai petir</string>
+    <string name="weather_thunderstorm_hail">Badai petir dengan hujan es</string>
+    <string name="weather_unknown">Tidak diketahui</string>
 
     <!-- General Settings -->
     <string name="settings_title">Pengaturan</string>

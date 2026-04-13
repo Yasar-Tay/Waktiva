@@ -100,12 +100,22 @@
 
     <!-- Weather Conditions -->
     <string name="weather_clear">صافٍ</string>
+    <string name="weather_mainly_clear">صافٍ غالباً</string>
     <string name="weather_partly_cloudy">غائم جزئياً</string>
-    <string name="weather_cloudy">غائم</string>
+    <string name="weather_overcast">غائم كلياً</string>
     <string name="weather_foggy">ضبابي</string>
+    <string name="weather_drizzle">رذاذ</string>
+    <string name="weather_freezing_drizzle">رذاذ متجمد</string>
     <string name="weather_rainy">ماطر</string>
+    <string name="weather_heavy_rain">مطر غزير</string>
+    <string name="weather_freezing_rain">مطر متجمد</string>
     <string name="weather_snowy">مثلج</string>
+    <string name="weather_heavy_snow">ثلج كثيف</string>
+    <string name="weather_snow_grains">حبيبات ثلجية</string>
+    <string name="weather_rain_showers">زخات مطر</string>
+    <string name="weather_snow_showers">زخات ثلج</string>
     <string name="weather_thunderstorm">عاصفة رعدية</string>
+    <string name="weather_thunderstorm_hail">عاصفة رعدية مع برد</string>
     <string name="weather_unknown">غير معروف</string>
 
     <!-- General Settings -->

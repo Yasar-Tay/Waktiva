@@ -100,12 +100,22 @@
 
     <!-- Weather Conditions -->
     <string name="weather_clear">Despejado</string>
-    <string name="weather_partly_cloudy">Parcialmente Nublado</string>
-    <string name="weather_cloudy">Nublado</string>
+    <string name="weather_mainly_clear">Mayormente despejado</string>
+    <string name="weather_partly_cloudy">Parcialmente nublado</string>
+    <string name="weather_overcast">Cubierto</string>
     <string name="weather_foggy">Niebla</string>
-    <string name="weather_rainy">Lluvia</string>
+    <string name="weather_drizzle">Llovizna</string>
+    <string name="weather_freezing_drizzle">Llovizna gélida</string>
+    <string name="weather_rainy">Lluvioso</string>
+    <string name="weather_heavy_rain">Lluvia intensa</string>
+    <string name="weather_freezing_rain">Lluvia gélida</string>
     <string name="weather_snowy">Nieve</string>
+    <string name="weather_heavy_snow">Nieve intensa</string>
+    <string name="weather_snow_grains">Cincha</string>
+    <string name="weather_rain_showers">Chubascos</string>
+    <string name="weather_snow_showers">Chubascos de nieve</string>
     <string name="weather_thunderstorm">Tormenta</string>
+    <string name="weather_thunderstorm_hail">Tormenta con granizo</string>
     <string name="weather_unknown">Desconocido</string>
 
     <!-- General Settings -->

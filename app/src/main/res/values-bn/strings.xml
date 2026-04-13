@@ -100,12 +100,22 @@
 
     <!-- Weather Conditions -->
     <string name="weather_clear">পরিষ্কার</string>
+    <string name="weather_mainly_clear">প্রধানত পরিষ্কার</string>
     <string name="weather_partly_cloudy">আংশিক মেঘলা</string>
-    <string name="weather_cloudy">মেঘলা</string>
+    <string name="weather_overcast">মেঘলা</string>
     <string name="weather_foggy">কুয়াশাচ্ছন্ন</string>
+    <string name="weather_drizzle">গুঁড়ি গুঁড়ি বৃষ্টি</string>
+    <string name="weather_freezing_drizzle">হিমায়িত গুঁড়ি গুঁড়ি বৃষ্টি</string>
     <string name="weather_rainy">বৃষ্টি</string>
+    <string name="weather_heavy_rain">ভারী বৃষ্টি</string>
+    <string name="weather_freezing_rain">হিমায়িত বৃষ্টি</string>
     <string name="weather_snowy">তুষারপাত</string>
+    <string name="weather_heavy_snow">ভারী তুষারপাত</string>
+    <string name="weather_snow_grains">তুষার দানা</string>
+    <string name="weather_rain_showers">বৃষ্টির ঝাপটা</string>
+    <string name="weather_snow_showers">তুষার ঝাপটা</string>
     <string name="weather_thunderstorm">বজ্রঝড়</string>
+    <string name="weather_thunderstorm_hail">শিলাবৃষ্টিসহ বজ্রঝড়</string>
     <string name="weather_unknown">অজানা</string>
 
     <!-- General Settings -->

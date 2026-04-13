@@ -99,13 +99,23 @@
     <string name="accuracy_poor">ضعیف</string>
 
     <!-- Weather Conditions -->
-    <string name="weather_clear">آفتابی</string>
+    <string name="weather_clear">صاف</string>
+    <string name="weather_mainly_clear">عمدتاً صاف</string>
     <string name="weather_partly_cloudy">کمی ابری</string>
-    <string name="weather_cloudy">ابری</string>
+    <string name="weather_overcast">تمام ابری</string>
     <string name="weather_foggy">مه‌آلود</string>
+    <string name="weather_drizzle">نرمه باران</string>
+    <string name="weather_freezing_drizzle">نرمه باران منجمد</string>
     <string name="weather_rainy">بارانی</string>
+    <string name="weather_heavy_rain">باران شدید</string>
+    <string name="weather_freezing_rain">باران منجمد</string>
     <string name="weather_snowy">برفی</string>
+    <string name="weather_heavy_snow">برف سنگین</string>
+    <string name="weather_snow_grains">دانه برف</string>
+    <string name="weather_rain_showers">رگبار باران</string>
+    <string name="weather_snow_showers">رگبار برف</string>
     <string name="weather_thunderstorm">رعد و برق</string>
+    <string name="weather_thunderstorm_hail">رعد و برق و تگرگ</string>
     <string name="weather_unknown">نامشخص</string>
 
     <!-- General Settings -->

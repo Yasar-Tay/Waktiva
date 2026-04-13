@@ -100,12 +100,22 @@
 
     <!-- Weather Conditions -->
     <string name="weather_clear">صاف</string>
+    <string name="weather_mainly_clear">زیادہ تر صاف</string>
     <string name="weather_partly_cloudy">جزوی ابر آلود</string>
-    <string name="weather_cloudy">ابر آلود</string>
+    <string name="weather_overcast">ابر آلود</string>
     <string name="weather_foggy">دھند</string>
+    <string name="weather_drizzle">بوندا باندی</string>
+    <string name="weather_freezing_drizzle">جمی ہوئی بوندا باندی</string>
     <string name="weather_rainy">بارش</string>
+    <string name="weather_heavy_rain">تیز بارش</string>
+    <string name="weather_freezing_rain">جمی ہوئی بارش</string>
     <string name="weather_snowy">برف باری</string>
+    <string name="weather_heavy_snow">بھاری برف باری</string>
+    <string name="weather_snow_grains">برف کے دانے</string>
+    <string name="weather_rain_showers">بارش کے چھینٹے</string>
+    <string name="weather_snow_showers">برف کے چھینٹے</string>
     <string name="weather_thunderstorm">گرج چمک</string>
+    <string name="weather_thunderstorm_hail">گرج چمک اور اولے</string>
     <string name="weather_unknown">نامعلوم</string>
 
     <!-- General Settings -->

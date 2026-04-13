@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
@@ -70,27 +71,7 @@ fun WeatherSection(
         WeatherCondition.UNKNOWN -> R.drawable.cloudy_day_night
     }
 
-    // Label resource selection logic (translations)
-    val weatherLabelRes = when (condition) {
-        WeatherCondition.CLEAR -> R.string.weather_clear
-        WeatherCondition.MAINLY_CLEAR -> R.string.weather_mainly_clear
-        WeatherCondition.PARTLY_CLOUDY -> R.string.weather_partly_cloudy
-        WeatherCondition.OVERCAST -> R.string.weather_overcast
-        WeatherCondition.FOGGY -> R.string.weather_foggy
-        WeatherCondition.DRIZZLE -> R.string.weather_drizzle
-        WeatherCondition.FREEZING_DRIZZLE -> R.string.weather_freezing_drizzle
-        WeatherCondition.RAINY -> R.string.weather_rainy
-        WeatherCondition.HEAVY_RAIN -> R.string.weather_heavy_rain
-        WeatherCondition.FREEZING_RAIN -> R.string.weather_freezing_rain
-        WeatherCondition.SNOWY -> R.string.weather_snowy
-        WeatherCondition.HEAVY_SNOW -> R.string.weather_heavy_snow
-        WeatherCondition.SNOW_GRAINS -> R.string.weather_snow_grains
-        WeatherCondition.RAIN_SHOWERS -> R.string.weather_rain_showers
-        WeatherCondition.SNOW_SHOWERS -> R.string.weather_snow_showers
-        WeatherCondition.THUNDERSTORM -> R.string.weather_thunderstorm
-        WeatherCondition.THUNDERSTORM_HAIL -> R.string.weather_thunderstorm_hail
-        WeatherCondition.UNKNOWN -> null
-    }
+    val weatherLabel = condition.displayName
 
     Row(
         modifier = modifier.height(72.dp),
@@ -122,12 +103,12 @@ fun WeatherSection(
                 // Weather icon container
                 Column(
                     horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxHeight().padding(top = 14.dp, bottom = 6.dp, start = 4.dp)
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxHeight().padding(top = 10.dp, bottom = 6.dp, start = 4.dp)
                 ) {
                     Image(
                         painter = painterResource(id = weatherIconRes),
-                        contentDescription = weatherLabelRes?.let { stringResource(it) } ?: condition.name,
+                        contentDescription = weatherLabel,
                         modifier = Modifier.size(30.dp),
                         alpha = 0.9f
                     )

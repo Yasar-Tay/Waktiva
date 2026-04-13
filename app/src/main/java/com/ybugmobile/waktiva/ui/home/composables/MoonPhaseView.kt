@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.MoonPhase
+import java.time.LocalDate
 import java.util.Locale
+import kotlin.math.abs
 
 /**
  * A highly accurate Moon Phase visualization component.
@@ -117,12 +119,22 @@ fun MoonPhaseView(
                                         sweepAngleDegrees = 180f
                                     )
                                     
-                                    val curveXControl = radius * (1f - 2f * illumination)
-                                    maskPath.cubicTo(
-                                        center.x + curveXControl, center.y + radius,
-                                        center.x + curveXControl, center.y - radius,
-                                        center.x, center.y - radius
-                                    )
+                                    val terminatorWidth = radius * abs(1f - 2f * illumination) * 2f
+                                    if (terminatorWidth < 0.5f) {
+                                        maskPath.lineTo(center.x, center.y - radius)
+                                    } else {
+                                        maskPath.arcTo(
+                                            rect = Rect(
+                                                center.x - terminatorWidth / 2f,
+                                                center.y - radius,
+                                                center.x + terminatorWidth / 2f,
+                                                center.y + radius
+                                            ),
+                                            startAngleDegrees = 90f,
+                                            sweepAngleDegrees = if (illumination > 0.5f) 180f else -180f,
+                                            forceMoveTo = false
+                                        )
+                                    }
                                     
                                     drawPath(maskPath, color = contentColor.copy(alpha = 0.85f), style = Fill)
                                 }
