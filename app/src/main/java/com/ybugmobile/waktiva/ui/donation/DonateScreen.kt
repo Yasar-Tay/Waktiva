@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,6 +45,16 @@ fun DonateScreen(
 ) {
     val glassTheme = LocalGlassTheme.current
     val products by viewModel.donationProducts.collectAsState(initial = emptyList())
+    val sortedProducts = remember(products) {
+        products.sortedBy { product ->
+            when {
+                product.id.contains("small") -> 1
+                product.id.contains("medium") -> 2
+                product.id.contains("large") -> 3
+                else -> 4
+            }
+        }
+    }
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -229,7 +240,7 @@ fun DonateScreen(
             }
 
             // Donation Items
-            items(products) { product ->
+            items(sortedProducts) { product ->
                 val (titleRes, descRes, icon) = when {
                     product.id.contains("donation_small") -> Triple(R.string.donate_item_small_title, R.string.donate_item_small_desc, "✨")
                     product.id.contains("donation_medium") -> Triple(R.string.donate_item_medium_title, R.string.donate_item_medium_desc, "🤝")
@@ -334,17 +345,21 @@ fun PremiumSupportCard(
                     text = displayTitle,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 if (displayDesc.isNotEmpty()) {
                     Text(
                         text = displayDesc,
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(alpha = 0.5f),
-                        maxLines = 1
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
+            Spacer(modifier = Modifier.width(12.dp))
             Surface(
                 color = Color.White,
                 shape = RoundedCornerShape(12.dp)
