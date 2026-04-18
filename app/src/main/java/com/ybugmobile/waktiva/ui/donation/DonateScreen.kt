@@ -53,7 +53,9 @@ fun DonateScreen(
                     Toast.makeText(context, R.string.donate_thank_you, Toast.LENGTH_LONG).show()
                 }
                 is PurchaseResult.Error -> {
-                    Toast.makeText(context, result.message, Toast.LENGTH_LONG).show()
+                    if (result.message.isNotBlank()) {
+                        Toast.makeText(context, result.message, Toast.LENGTH_LONG).show()
+                    }
                 }
                 is PurchaseResult.UserCancelled -> {}
             }
@@ -228,10 +230,10 @@ fun DonateScreen(
 
             // Donation Items
             items(products) { product ->
-                val (titleRes, descRes, icon) = when (product.id) {
-                    "donation_small" -> Triple(R.string.donate_item_small_title, R.string.donate_item_small_desc, "✨")
-                    "donation_medium" -> Triple(R.string.donate_item_medium_title, R.string.donate_item_medium_desc, "🤝")
-                    "donation_large" -> Triple(R.string.donate_item_large_title, R.string.donate_item_large_desc, "🌟")
+                val (titleRes, descRes, icon) = when {
+                    product.id.contains("donation_small") -> Triple(R.string.donate_item_small_title, R.string.donate_item_small_desc, "✨")
+                    product.id.contains("donation_medium") -> Triple(R.string.donate_item_medium_title, R.string.donate_item_medium_desc, "🤝")
+                    product.id.contains("donation_large") -> Triple(R.string.donate_item_large_title, R.string.donate_item_large_desc, "🌟")
                     else -> Triple(null, null, "💝")
                 }
 
