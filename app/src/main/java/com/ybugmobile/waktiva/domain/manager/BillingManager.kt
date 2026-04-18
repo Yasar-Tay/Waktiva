@@ -1,5 +1,6 @@
 package com.ybugmobile.waktiva.domain.manager
 
+import android.app.Activity
 import kotlinx.coroutines.flow.Flow
 
 interface BillingManager {
@@ -8,7 +9,7 @@ interface BillingManager {
 
     suspend fun startConnection()
     suspend fun queryProducts()
-    suspend fun purchaseProduct(product: DonationProduct)
+    suspend fun purchaseProduct(activity: Activity, product: DonationProduct)
 }
 
 data class DonationProduct(

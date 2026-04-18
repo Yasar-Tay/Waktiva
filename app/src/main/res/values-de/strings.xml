@@ -13,11 +13,11 @@
     <string name="qibla_label">Qibla</string>
     <string name="qibla_compass">Kompass</string>
     <string name="qibla_map">Karte</string>
-    <string name="qibla_mecca_aligned">Nach Mekka ausgerichtet</string>
+    <string name="qibla_mecca_aligned">Auf Mekka ausgerichtet</string>
     <string name="qibla_rotate_phone">Telefon drehen</string>
     <string name="qibla_direction">Qibla: %d°</string>
     <string name="qibla_locating">Ortung...</string>
-    <string name="qibla_heading">Kurs</string>
+    <string name="qibla_heading">Ausrichtung</string>
     <string name="qibla_signal">Signal</string>
     <string name="qibla_standard">Standard</string>
     <string name="qibla_satellite">Satellit</string>
@@ -26,59 +26,59 @@
     <string name="qibla_location_required_desc">Erforderlich für eine genaue Qibla-Berechnung.</string>
     <string name="qibla_grant_permission">Berechtigung erteilen</string>
     <string name="qibla_calibration_needed">Kalibrierung erforderlich</string>
-    <string name="qibla_calibration_desc">Bewegen Sie Ihr Telefon in einer Achter-Form (∞), um die Genauigkeit zu verbessern.</string>
+    <string name="qibla_calibration_desc">Bewegen Sie Ihr Telefon in einer Achterform (∞), um die Genauigkeit zu verbessern.</string>
     <string name="qibla_got_it">Verstanden</string>
     <string name="qibla_aligned_badge">AUSGERICHTET</string>
     <string name="qibla_magnetic_interference">Magnetische Störung erkannt - Gerät kalibrieren</string>
-    <string name="qibla_kaaba_aligned">Nach der Kaaba ausgerichtet</string>
-    <string name="qibla_find_marker">Finden Sie die goldene Markierung</string>
-    <string name="qibla_calibrate">KALRIEREN</string>
+    <string name="qibla_kaaba_aligned">Auf Kaaba ausgerichtet</string>
+    <string name="qibla_find_marker">Finden Sie die Goldmarkierung</string>
+    <string name="qibla_calibrate">KALIBRIEREN</string>
     <string name="qibla_interference_tip">Tipp: In Gebäuden können Metallstrukturen den Kompass beeinflussen. Führen Sie für beste Genauigkeit eine Achter-Kalibrierung durch.</string>
 
     <!-- Home Screen -->
     <string name="home_unknown_location">Unbekannter Standort</string>
-    <string name="home_last_known_location">Letzter Standort: %s</string>
-    <string name="home_gps_disabled_location">GPS Deaktiviert</string>
-    <string name="home_location_permission_denied">Standort Abgelehnt</string>
+    <string name="home_last_known_location">Zuletzt bekannt: %s</string>
+    <string name="home_gps_disabled_location">GPS deaktiviert</string>
+    <string name="home_location_permission_denied">Standort abgelehnt</string>
     <string name="home_offline_status">Offline</string>
     <string name="home_next_prayer">%s</string>
     <string name="home_remaining_time">Verbleibende Zeit</string>
     <string name="home_permissions_required">Berechtigungen erforderlich</string>
-    <string name="home_permissions_desc">Standort- und Benachrichtigungsberechtigungen werden benötigt, damit die App korrekt funktioniert.</string>
+    <string name="home_permissions_desc">Standort- und Benachrichtigungsberechtigungen sind erforderlich, damit die App ordnungsgemäß funktioniert.</string>
     <string name="home_grant_permissions">Berechtigungen erteilen</string>
     <string name="home_refresh_success">Gebetszeiten aktualisiert</string>
     <string name="home_refresh_error">Fehler beim Aktualisieren der Zeiten</string>
-    <string name="home_prayer_provider">Anbieter: </string>
-    <string name="home_skip_adhan">Stummschalten</string>
+    <string name="home_prayer_provider">Quelle: </string>
+    <string name="home_skip_adhan">Adhan stummschalten</string>
     <string name="home_unmute_adhan">Stummschaltung aufheben</string>
     <string name="home_return_to_today">Zurück zu Heute</string>
     <string name="home_tomorrow_is">Morgen: %s</string>
     <string name="home_today_is">Heute ist %s</string>
-    <string name="home_adhan_muted">Adhan stummgeschaltet für %s</string>
-    <string name="home_adhan_unmuted">Adhan aktiviert für %s</string>
-    <string name="home_hijri_offline_note">Offline-Hijri-Berechnung wird verwendet</string>
+    <string name="home_adhan_muted">Adhan für %s stummgeschaltet</string>
+    <string name="home_adhan_unmuted">Adhan für %s aktiviert</string>
+    <string name="home_hijri_offline_note">Verwendung der Offline-Hicri-Berechnung</string>
     <string name="home_hijri_offline_indicator"> (*)</string>
-    <string name="home_current_time">Aktuelle Uhrzeit</string>
+    <string name="home_current_time">Aktuelle Zeit</string>
 
     <!-- Location Health Strings -->
-    <string name="location_health_gps_off">GPS Deaktiviert</string>
-    <string name="location_health_permission_denied">Standort Abgelehnt</string>
+    <string name="location_health_gps_off">GPS deaktiviert</string>
+    <string name="location_health_permission_denied">Standort abgelehnt</string>
     <string name="location_health_offline">Offline-Modus</string>
-    <string name="location_health_notifications_off">Benachrichtigung Abgelehnt</string>
-    <string name="location_health_channels_muted">Kanäle Stummgeschaltet</string>
-    <string name="location_health_dnd_active">DND-Modus Aktiv</string>
+    <string name="location_health_notifications_off">Benachrichtigungen abgelehnt</string>
+    <string name="location_health_channels_muted">Kanäle stummgeschaltet</string>
+    <string name="location_health_dnd_active">DND-Modus aktiv</string>
 
     <!-- System Health & Warnings -->
     <string name="health_title">Systemstatus</string>
     <string name="health_issues_detected">Probleme erkannt</string>
-    <string name="health_gps_off">GPS ist global deaktiviert. Aktivieren Sie die Standortdienste, um die Gebetszeiten zu aktualisieren.</string>
+    <string name="health_gps_off">GPS ist global deaktiviert. Aktivieren Sie den Standort, um die Gebetszeiten zu aktualisieren.</string>
     <string name="health_channels_muted">Adhan-Benachrichtigungskanäle sind in den Systemeinstellungen stummgeschaltet.</string>
-    <string name="health_dnd_active">„Nicht stören“ ist aktiv. Adhan-Töne könnten blockiert werden.</string>
+    <string name="health_dnd_active">Nicht-Stören-Modus ist aktiviert. Adhan-Töne können blockiert werden.</string>
     <string name="health_fix_now">Jetzt beheben</string>
     <string name="health_no_internet">Keine Internetverbindung. Waktiva verwendet gespeicherte Daten. Bitte verbinden Sie sich, um die Gebetszeiten zu aktualisieren.</string>
     <string name="health_no_internet_no_data">Keine Internetverbindung. Waktiva benötigt eine aktive Verbindung, um die ersten Gebetszeiten abzurufen.</string>
-    <string name="health_status_ok">Alle Systeme funktionsfähig</string>
-    <string name="health_overlay_subtitle">App-Erlebnis optimieren</string>
+    <string name="health_status_ok">Alle Systeme betriebsbereit</string>
+    <string name="health_overlay_subtitle">Optimierung Ihres App-Erlebnisses</string>
     <string name="health_overlay_description">Beheben Sie die unten stehenden Probleme, um sicherzustellen, dass Benachrichtigungen und Standortdienste zuverlässig im Hintergrund funktionieren.</string>
     <string name="health_overlay_dismiss">Verstanden</string>
     <string name="health_overlay_issues_title">Erkannte Probleme</string>
@@ -100,8 +100,8 @@
 
     <!-- Weather Conditions -->
     <string name="weather_clear">Klar</string>
-    <string name="weather_mainly_clear">Überwiegend klar</string>
-    <string name="weather_partly_cloudy">Leicht bewölkt</string>
+    <string name="weather_mainly_clear">Überwiegend Klar</string>
+    <string name="weather_partly_cloudy">Teilweise Bewölkt</string>
     <string name="weather_overcast">Bedeckt</string>
     <string name="weather_foggy">Neblig</string>
     <string name="weather_drizzle">Nieselregen</string>
@@ -109,7 +109,7 @@
     <string name="weather_rainy">Regnerisch</string>
     <string name="weather_heavy_rain">Starker Regen</string>
     <string name="weather_freezing_rain">Gefrierender Regen</string>
-    <string name="weather_snowy">Schnee</string>
+    <string name="weather_snowy">Schneebedeckt</string>
     <string name="weather_heavy_snow">Starker Schneefall</string>
     <string name="weather_snow_grains">Schneegriesel</string>
     <string name="weather_rain_showers">Regenschauer</string>
@@ -122,18 +122,18 @@
     <string name="settings_title">Einstellungen</string>
     <string name="settings_preferences">Präferenzen</string>
     <string name="settings_permissions">Berechtigungen</string>
-    <string name="settings_manage_system">In den Systemeinstellungen verwalten</string>
+    <string name="settings_manage_system">In Systemeinstellungen verwalten</string>
     <string name="settings_location_access">Standortzugriff</string>
-    <string name="settings_location_desc">Entscheidend für die Berechnung der Gebetszeiten. Ohne diese kann die App keine Zeiten für Ihren Standort abrufen und wird unbrauchbar.</string>
+    <string name="settings_location_desc">Entscheidend für die Berechnung der Gebetszeiten. Ohne diesen Zugriff kann die App keine Zeiten abrufen.</string>
     <string name="settings_notifications">Benachrichtigungen</string>
-    <string name="settings_notifications_desc">Erforderlich, um Gebetszeit-Warnungen and Adhan-Benachrichtigungen anzuzeigen.</string>
-    <string name="settings_granted">Erteilt</string>
+    <string name="settings_notifications_desc">Erforderlich, um Gebetszeit-Warnungen und Adhan-Benachrichtigungen anzuzeigen.</string>
+    <string name="settings_granted">Gewährt</string>
     <string name="settings_denied">Abgelehnt</string>
     <string name="settings_language">App-Sprache</string>
     <string name="settings_cancel">Abbrechen</string>
     <string name="settings_confirm">Bestätigen</string>
     <string name="settings_weather_effects">Wettereffekte</string>
-    <string name="settings_weather_effects_desc">Zeige animierte Wetterbedingungen (Regen, Schnee, Wolken) im Hintergrund.</string>
+    <string name="settings_weather_effects_desc">Animierte Wetterbedingungen (Regen, Schnee, Wolken) im Hintergrund anzeigen.</string>
 
     <!-- Language Options -->
     <string name="lang_system">Systemstandard</string>
@@ -145,34 +145,34 @@
     <string name="lang_it">Italiano</string>
     <string name="lang_ar">العربية</string>
     <string name="lang_in">Bahasa Indonesia</string>
-    <string name="lang_ur">اردu</string>
+    <string name="lang_ur">اردو</string>
     <string name="lang_bn">বাংলা</string>
-    <string name="lang_fa">Farsça</string>
+    <string name="lang_fa">فارسی</string>
     <string name="lang_ms">Bahasa Melayu</string>
     <string name="lang_ru">Русский</string>
 
     <!-- Calculation Settings -->
     <string name="settings_calculation">Berechnungseinstellungen</string>
-    <string name="settings_madhab">Madhhab</string>
+    <string name="settings_madhab">Madhab</string>
     <string name="settings_method">Berechnungsmethode</string>
-    <string name="madhab_shafi">Schafii / Standard (Maliki, Hanbali)</string>
+    <string name="madhab_shafi">Schafi\'i / Standard (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanafi</string>
     <string name="method_mwl">Islamische Weltliga</string>
-    <string name="method_isna">Islamische Gesellschaft Nordamerikas (ISNA)</string>
-    <string name="method_egypt">Ägyptische Generalbehörde für Vermessungswesen</string>
-    <string name="method_makkah">Umm al-Qura Universität, Mekke</string>
-    <string name="method_karachi">Universität für Islamische Wissenschaften, Karatschi</string>
-    <string name="method_tehran">Institut für Geophysik, Univ. Teheran</string>
+    <string name="method_isna">Islamic Society of North America (ISNA)</string>
+    <string name="method_egypt">Egyptian General Authority of Survey</string>
+    <string name="method_makkah">Umm al-Qura Universität, Mekka</string>
+    <string name="method_karachi">University of Islamic Sciences, Karatschi</string>
+    <string name="method_tehran">Institut für Geophysik, Universität Teheran</string>
     <string name="method_gulf">Golfregion</string>
-    <string name="method_kuwait">Kuveyt</string>
-    <string name="method_qatar">Qatar</string>
+    <string name="method_kuwait">Kuwait</string>
+    <string name="method_qatar">Katar</string>
     <string name="method_singapore">Majlis Ugama Islam Singapura</string>
     <string name="method_turkey">Türkei (Diyanet)</string>
 
     <!-- Audio & Notification Settings -->
     <string name="settings_notifications_sound">Benachrichtigungen &amp; Ton</string>
-    <string name="settings_play_adhan">Adhan-Audio abspielen</string>
-    <string name="settings_play_adhan_desc">Adhan-Ton abspielen, wenn es Zeit zum Gebet ist</string>
+    <string name="settings_play_adhan">Adhan-Ton abspielen</string>
+    <string name="settings_play_adhan_desc">Den Adhan abspielen, wenn es Zeit zum Beten ist</string>
     <string name="settings_adhan_sound_selection">Adhan-Tonauswahl</string>
     <string name="settings_adhan_sound_selection_desc">Wählen Sie den Ton aus, der während der Gebetszeiten abgespielt wird</string>
 
@@ -182,7 +182,7 @@
     <string name="audio_header_specific">Adhan für %1$s</string>
     <string name="audio_select_prayer_prompt">Gebet zum Konfigurieren auswählen</string>
     <string name="audio_individual_sounds_title">Individuelle Gebetstöne</string>
-    <string name="audio_individual_sounds_desc">Verschiedene Adhans für jede Gebetszeit festlegen</string>
+    <string name="audio_individual_sounds_desc">Verschiedene Adhans für jede Gebetszeit einstellen</string>
 
     <string name="audio_setting_default">Standard-Adhan</string>
     <string name="audio_setting_fajr">Fajr-Adhan</string>
@@ -191,202 +191,103 @@
     <string name="audio_setting_maghrib">Maghrib-Adhan</string>
     <string name="audio_setting_isha">Isha-Adhan</string>
 
-    <string name="audio_add_custom">Benutzerdefiniertes Audio hinzufügen</string>
+    <string name="audio_add_custom">Eigenen Ton hinzufügen</string>
     <string name="audio_delete_confirm">Audiodatei löschen?</string>
     <string name="audio_delete_description">Audiodatei löschen</string>
     <string name="audio_supported_formats">Unterstützt: MP3, AAC, WAV, OGG</string>
     <string name="audio_preview_play">Vorschau abspielen</string>
     <string name="audio_preview_stop">Vorschau stoppen</string>
-    <string name="audio_built_in">Eingebaut</string>
+    <string name="audio_built_in">Integriert</string>
     <string name="audio_selected_description">Ausgewählt</string>
     <string name="audio_minutes_before">Minuten vorher:</string>
 
     <!-- Fajr Sunrise Alarm -->
     <string name="audio_fajr_sunrise_alarm">Fajr-Alarm (Vor Sonnenaufgang)</string>
-    <string name="audio_fajr_sunrise_alarm_desc">Fajr-Alarmzeit basierend auf dem Sonnenaufgang bestimmen (außer im Ramadan).</string>
+    <string name="audio_fajr_sunrise_alarm_desc">Bestimmen Sie die Fajr-Alarmzeit basierend auf dem Sonnenaufgang (außer im Ramadan).</string>
 
     <!-- Battery & Reliability Settings -->
     <string name="settings_reliability">Zuverlässigkeit &amp; Optimierung</string>
     <string name="settings_battery_opt">Akku-Optimierung</string>
     <string name="settings_battery_opt_enabled">Auf Zuverlässigkeit optimiert</string>
-    <string name="settings_battery_opt_disabled">Unerlässlich, um den Adhan pünktlich abzuspielen. Akku-Optimierungen können geplante Warnungen verzögern oder blockieren.</string>
-    <string name="settings_exact_alarm_title">Exakte Alarme</string>
+    <string name="settings_battery_opt_disabled">Entscheidend für das pünktliche Abspielen des Adhans. Akku-Optimierungen können Warnungen verzögern.</string>
+    <string name="settings_exact_alarm_title">Genaue Alarme</string>
     <string name="settings_exact_alarm_desc">Erforderlich für präzise Gebetszeit-Benachrichtigungen und pünktliche Adhans.</string>
 
     <!-- Data Management -->
     <string name="settings_data_management">Datenverwaltung</string>
-    <string name="settings_delete_history">Gebetsverlauf löschen</string>
-    <string name="settings_delete_history_desc">Alle vergangenen Gebetsdaten löschen, um Platz freizugeben</string>
-    <string name="settings_delete_history_confirm_title">Verlauf löschen?</string>
-    <string name="settings_delete_history_confirm_desc">Dies wird alle Gebetsaufzeichnungen vor heute dauerhaft löschen. Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="settings_delete_history">Gebetshistorie löschen</string>
+    <string name="settings_delete_history_desc">Alle Gebetsdaten aus der Vergangenheit löschen, um Platz freizugeben</string>
+    <string name="settings_delete_history_confirm_title">Historie löschen?</string>
+    <string name="settings_delete_history_confirm_desc">Dies löscht alle Gebetsaufzeichnungen vor heute dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.</string>
 
     <!-- Pre-Adhan Warning -->
-    <string name="settings_pre_adhan_warning">Vor-Adhan-Warnung</string>
-    <string name="settings_pre_adhan_warning_summary">Erhalten Sie eine Benachrichtigung vor der Gebetszeit.</string>
-    <string name="pre_adhan_notification_title">Gebet nähert sich</string>
-    <string name="pre_adhan_notification_text">Zeit für das %s-Gebet in 5 Minuten.</string>
+    <string name="settings_pre_adhan_warning">Vor-Adhan Warnung</string>
+    <string name="settings_pre_adhan_warning_summary">Benachrichtigung vor der Gebetszeit erhalten.</string>
+    <string name="pre_adhan_notification_title">Bevorstehendes Gebet</string>
+    <string name="pre_adhan_notification_text">Zeit für %s Gebet in 5 Minuten.</string>
     <string name="pre_adhan_cancel_action">Verwerfen</string>
-    <string name="pre_adhan_channel_name">Vor-Adhan-Warnungen</string>
-    <string name="pre_adhan_channel_description">Benachrichtigungen, die vor der Gebetszeit angezeigt werden.</string>
+    <string name="pre_adhan_channel_name">Vor-Adhan Warnungen</string>
+    <string name="pre_adhan_channel_description">Benachrichtigungen vor der Gebetszeit.</string>
 
     <!-- Welcome / Onboarding -->
     <string name="welcome_title">Willkommen bei Waktiva</string>
     <string name="welcome_desc">Eine moderne Gebets-App, die Ihre Privatsphäre respektiert und werbefrei bleibt.</string>
-    <string name="welcome_begin">Einrichtung beginnen</string>
-    <string name="welcome_finish">Einrichtung abschließen</string>
-    <string name="welcome_precision_settings">Präcisionseinstellungen</string>
+    <string name="welcome_begin">Setup beginnen</string>
+    <string name="welcome_finish">Setup abschließen</string>
+    <string name="welcome_precision_settings">Präzisionseinstellungen</string>
     <string name="welcome_precision_desc">Waktiva benötigt diese, um Ihnen besser zu dienen</string>
     <string name="welcome_loc_title">Genauer Standort</string>
-    <string name="welcome_loc_desc">Entscheidend für die Berechnung der Gebetszeiten. Ohne diese kann die App keine Zeiten für Ihren Standort abrufen und wird unbrauchbar.</string>
+    <string name="welcome_loc_desc">Entscheidend für die Berechnung der Gebetszeiten. Ohne dies kann die App keine Zeiten abrufen.</string>
     <string name="welcome_notif_title">Adhan-Warnungen</string>
-    <string name="welcome_notif_desc">Erforderlich, um Benachrichtigungen zu senden und den Adhan abzuspielen, wenn es Zeit zum Beten ist.</string>
-    <string name="welcome_alarm_title">Exakte Alarme</string>
+    <string name="welcome_notif_desc">Erforderlich, um Benachrichtigungen zu senden ve den Adhan abzuspielen.</string>
+    <string name="welcome_alarm_title">Genaue Alarme</string>
     <string name="welcome_alarm_desc">Erforderlich, damit der Adhan exakt pünktlich ohne Verzögerung abgespielt wird.</string>
     <string name="welcome_grant_btn">Berechtigungen erteilen</string>
     <string name="welcome_continue_btn">Weiter</string>
     <string name="welcome_personalize">Personalisieren</string>
     <string name="welcome_personalize_desc">Konfigurieren Sie Ihre Gebets- und Berechnungseinstellungen</string>
-    <string name="welcome_audio_desc">Stellen Sie Ihre Ruf-zum-Gebet-Präferenzen ein</string>
+    <string name="welcome_audio_desc">Stellen Sie Ihre Gebetsruf-Präferenzen ein</string>
     <string name="welcome_adhan_audio">Adhan-Audio</string>
     <string name="welcome_adhan_audio_desc">Audio-Ruf für Gebete abspielen</string>
     <string name="welcome_select_sound">Ton auswählen</string>
     <string name="welcome_skip_btn">Trotzdem fortfahren</string>
-    <string name="welcome_permission_later_info">Sie können diese Berechtigungen jederzeit später in den Einstellungen verwalten.</string>
+    <string name="welcome_permission_later_info">Sie können diese Berechtigungen später jederzeit in den Einstellungen verwalten.</string>
     <string name="welcome_general_settings">Allgemeine Einstellungen</string>
     <string name="welcome_adhan_audio_header">Adhan &amp; Audio</string>
     <string name="welcome_battery_optimized">Auf Zuverlässigkeit optimiert</string>
-    <string name="welcome_battery_optimize_desc">Unerlässlich, um den Adhan pünktlich abzuspielen. Akku-Optimierungen können geplante Warnungen verzögern oder blockieren.</string>
+    <string name="welcome_battery_optimize_desc">Entscheidend für das pünktliche Abspielen des Adhans. Akku-Optimierungen können Alarme verzögern.</string>
 
     <!-- Adhan Screen -->
     <string name="adhan_its_time_for">Es ist Zeit für</string>
     <string name="adhan_stop">ADHAN STOPPEN</string>
     <string name="adhan_playing">Adhan</string>
-    <string name="adhan_sounding">Ertönt jetzt</string>
+    <string name="adhan_sounding">Wird jetzt abgespielt</string>
     <string name="adhan_upcoming">Bevorstehender Adhan</string>
-    <string name="adhan_test_alarm">Test-Alarm</string>
-    <string name="adhan_test_desc">Adhan-Auslösung simulieren</string>
+    <string name="adhan_test_alarm">Testalarm</string>
+    <string name="adhan_test_desc">Simuliere Adhan-Auslösung</string>
     <string name="adhan_stop_test">TEST ABBRECHEN</string>
-    <string name="adhan_metadata_title_format">Adhan %s</string>
+    <string name="adhan_metadata_title_format">%s Adhan</string>
 
     <!-- Donations -->
     <string name="settings_donate">Waktiva-Entwicklung unterstützen</string>
     <string name="donate_title">Waktiva unterstützen</string>
     <string name="donate_header">Waktiva unterstützen</string>
-    <string name="donate_desc">Vielen Dank, dass Sie dazu beitragen, Waktiva einfach, privat und werbefrei zu halten.</string>
-    <string name="donate_footer">🤲 Möge es Ihnen in diesem und im nächsten Leben nützen.</string>
+    <string name="donate_desc">Vielen Dank, dass Sie helfen, Waktiva einfach, privat und werbefrei zu halten.</string>
+    <string name="donate_footer">🤲 Möge es dir in diesem und im nächsten Leben nützen.</string>
     <string name="donate_button">Spenden</string>
-    <string name="donate_thank_you">Vielen Dank für Ihre Unterstützung von Open-Source-Software!</string>
+    <string name="donate_thank_you">Vielen Dank für die Unterstützung von Open-Source-Software!</string>
     <string name="donate_error">Spende fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
-    <string name="donate_billing_error">Verbindung zum Abrechnungsdienst fehlgeschlagen</string>
+    <string name="donate_billing_error">Verbindung zum Zahlungsdienst fehlgeschlagen</string>
     <string name="rate_title">Waktiva bewerten</string>
-    <string name="rate_desc">Wenn Ihnen Waktiva gefällt, nehmen Sie sich bitte einen Moment Zeit, um es mit 5 Sternen im Google Play Store zu bewerten. Es hilft uns, mehr Menschen zu erreichen!</string>
+    <string name="rate_desc">Wenn dir Waktiva gefällt, nimm dir bitte einen Moment Zeit, um uns mit 5 Sternen bei Google Play zu bewerten!</string>
     <string name="rate_button">5 Sterne geben</string>
     <string name="badge_no_ads">Keine Werbung</string>
     <string name="badge_no_tracking">Kein Tracking</string>
+    <string name="badge_open_source">Open Source</string>
     <string name="donate_item_small_title">Herzliche Unterstützung</string>
     <string name="donate_item_small_desc">Leisten Sie einen kleinen, aber sinnvollen Beitrag für Waktiva.</string>
     <string name="donate_item_medium_title">Freiwilliger des guten Willens</string>
     <string name="donate_item_medium_desc">Unterstützen Sie den Fortbestand dieses werbefreien Open-Source-Projekts.</string>
     <string name="donate_item_large_title">Einigkeit der Herzen</string>
     <string name="donate_item_large_desc">Geben Sie die stärkste Unterstützung, um Waktiva weiter voranzubringen.</string>
-
-    <!-- Hijri Months -->
-    <string name="hijri_month_1">Muharram</string>
-    <string name="hijri_month_2">Safar</string>
-    <string name="hijri_month_3">Rabi‘ al-Awwal</string>
-    <string name="hijri_month_4">Rabi‘ al-Thani</string>
-    <string name="hijri_month_5">Dschumada l-ula</string>
-    <string name="hijri_month_6">Dschumada l-achira</string>
-    <string name="hijri_month_7">Radschab</string>
-    <string name="hijri_month_8">Scha‘ban</string>
-    <string name="hijri_month_9">Ramadan</string>
-    <string name="hijri_month_10">Schawwal</string>
-    <string name="hijri_month_11">Dhu l-qa‘da</string>
-    <string name="hijri_month_12">Dhu l-hiddscha</string>
-    <string name="hijri_suffix">AH</string>
-
-    <!-- Religious Days -->
-    <string name="rel_day_3_months">Beginn der drei Monate</string>
-    <string name="rel_day_regaip">Lailat ar-Ragha\'ib</string>
-    <string name="rel_day_mirac">Lailat al-Mi\'radsch</string>
-    <string name="rel_day_berat">Lailat al-Bara\'a</string>
-    <string name="rel_day_first_tarawih">Erster Tarawih</string>
-    <string name="rel_day_ramadan_start">Beginn des Ramadan</string>
-    <string name="rel_day_kadir">Lailat al-Qadr</string>
-    <string name="rel_day_eid_eve">Eid-Vorabend</string>
-    <string name="rel_day_ramadan_eid">Eid al-Fitr</string>
-    <string name="rel_day_sacrifice_eid">Eid al-Adha</string>
-    <string name="rel_day_hijri_new_year">Hidschri Neujahr</string>
-    <string name="rel_day_ashura">Aschura-Tag</string>
-    <string name="rel_day_mawlid">Maulid an-Nabi</string>
-
-    <!-- Notification Strings -->
-    <string name="notification_adhan_muted">Adhan stummgeschaltet</string>
-    <string name="notification_adhan_skipped_text">Adhan für %s wurde übersprungen.</string>
-    <string name="notification_upcoming_adhan_title">Bevorstehender Adhan: %s</string>
-    <string name="notification_upcoming_adhan_text">Adhan wird in %d Minuten abgespielt.</string>
-    <string name="notification_skip_action">FÜR DIESES GEBET ÜBERSPRINGEN</string>
-    <string name="notification_adhan_title">Adhan: %s</string>
-    <string name="notification_adhan_content">Es ist Zeit zum Gebet</string>
-    <string name="notification_adhan_disabled_title">Adhan Deaktiviert</string>
-    <string name="notification_adhan_skipped_title">Adhan Übersprungen</string>
-    <string name="notification_prayer_time_content">Es ist Zeit für das %s-Gebet.</string>
-
-    <!-- Hijri Day Settings -->
-    <string name="settings_hijri_day_start">Beginn des Hijri-Tages</string>
-    <string name="settings_hijri_day_start_maghrib">Beginnt bei Maghrib</string>
-    <string name="settings_hijri_day_start_desc">Das Hijri-Datum bei Sonnenuntergang (Maghrib) anstelle von Mitternacht umschalten.</string>
-
-    <!-- About Section -->
-    <string name="settings_about">Über</string>
-    <string name="settings_licenses_desc">Lizenzdetails für Open-Source-Software</string>
-
-    <!-- Licenses Screen -->
-    <string name="licenses_title">Lizenzen</string>
-    <string name="license_legal_info">Waktiva – Lizenz &amp; rechtliche Informationen</string>
-    <string name="license_app_copyright">Copyright © 2026 YBugMobile\nAlle Rechte vorbehalten.</string>
-    <string name="license_app_mit">Waktiva wird als Open-Source-Software unter der MIT-Lizenz veröffentlicht.</string>
-    <string name="license_app_warranty">DIE SOFTWARE WIRD OHNE MÄNGELGEWÄHR UND OHNE JEGLICHE AUSDRÜCKLICHE ODER STILLSCHWEIGENDE GEWÄHRLEISTUNG ZUR VERFÜGUNG GESTELLT.</string>
-    <string name="license_third_party_services">1. Dienste von Drittanbietern</string>
-    <string name="license_aladhan_api">Al-Adhan API</string>
-    <string name="license_aladhan_desc">Waktiva ruft Gebetszeiten vom Al-Adhan API-Dienst ab. Die Berechnungen der Gebetszeiten erfolgen gemäß deren veröffentlichten Methoden und Bedingungen.</string>
-    <string name="license_data_privacy">Waktiva speichert, verkauft oder verbreitet keine Nutzerdaten.</string>
-    <string name="license_open_source_libs">2. Open-Source-Bibliotheken von Drittanbietern</string>
-    <string name="license_libs_intro">Waktiva enthält die folgenden Open-Source-Komponenten:</string>
-    <string name="license_lib_androidx">AndroidX-Bibliotheken (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_compose">Jetpack Compose (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_kotlin">Kotlin (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_hilt">Hilt (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_room">Room (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_datastore">DataStore (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_work">WorkManager (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_media3">Media3 (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_location">Google Play Services Standort (Google Play Services Bedingungen)</string>
-    <string name="license_lib_retrofit">Retrofit (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_okhttp">OkHttp (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_gson">Gson (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_adhan">Adhan Kotlin-Bibliothek (MIT-Lizenz)</string>
-    <string name="license_lib_suncalc">SunCalc (BSD-Lizenz)</string>
-    <string name="license_lib_maplibre">MapLibre Android SDK (BSD 3-Clause Lizenz)</string>
-    <string name="license_lib_osmdroid">OsmDroid (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_accompanist">Accompanist (Apache-Lizenz 2.0)</string>
-    <string name="license_lib_billing">Google Play Billing Library (Google Play Bedingungen)</string>
-    <string name="license_libs_property">Jede Bibliothek bleibt Eigentum ihrer jeweiligen Autoren und wird in Übereinstimmung mit ihrer Lizenz verwendet.</string>
-    <string name="license_adhan_audio">3. Adhan Audio-Lizenz</string>
-    <string name="license_adhan_reciter">Waktiva enthält Adhan-Aufnahmen von Muhsin Kara, dem Weltmeister des Adhan 2022.</string>
-    <string name="license_adhan_permission">Diese Aufnahmen werden mit Genehmigung verwendet. Alle Audiorechte verbleiben beim ursprünglichen Rezitator.</string>
-    <string name="license_adhan_restrictions">Das Adhan-Audio darf ohne ausdrückliche Genehmigung des Rechteinhabers nicht aus der Waktiva-Anwendung extrahiert, weiterverteilt oder außerhalb dieser wiederverwendet werden.</string>
-    <string name="license_location_permissions">4. Standort &amp; Berechtigungen</string>
-    <string name="license_location_usage">Waktiva fordert die Standortberechtigung ausschließlich an, um:</string>
-    <string name="license_loc_usage_1">Genaue Gebetszeiten zu berechnen</string>
-    <string name="license_loc_usage_2">Die Qibla-Richtung zu bestimmen</string>
-    <string name="license_loc_usage_3">Hidschri-Datum und Mondphasenberechnungen bereitzustellen</string>
-    <string name="license_loc_processing">Standortdaten werden lokal verarbeitet und nicht gespeichert, verfolgt oder weitergegeben. Gebetszeiten werden für bis zu drei Monate heruntergeladen, um eine Offline-Nutzung zu ermöglichen.</string>
-    <string name="license_no_ads">5. Keine Werbung / Keine Tracking-Verpflichtung</string>
-    <string name="license_no_ads_1">Zeigt keine Werbung an</string>
-    <string name="license_no_ads_2">Verwendet keine Tracking-SDKs</string>
-    <string name="license_no_ads_3">Sammelt keine Analysedaten</string>
-    <string name="license_no_ads_4">Verkauft keine persönlichen Daten</string>
-    <string name="license_source_code">6. Quellcode und Repository</string>
-    <string name="license_github_link">Waktiva ist ein Open-Source-Projekt. Sie finden den Quellcode, können Probleme melden oder beitragen unter:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 </resources>

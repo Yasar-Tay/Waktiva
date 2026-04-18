@@ -37,9 +37,9 @@ class DonateViewModel @Inject constructor(
         }
     }
 
-    fun onDonateClick(product: DonationProduct) {
+    fun onDonateClick(activity: android.app.Activity, product: DonationProduct) {
         viewModelScope.launch {
-            billingManager.purchaseProduct(product)
+            billingManager.purchaseProduct(activity, product)
         }
     }
 

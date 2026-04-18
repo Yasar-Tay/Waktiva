@@ -283,12 +283,14 @@
     <string name="rate_button">Beri 5 Bintang</string>
     <string name="badge_no_ads">Tanpa Iklan</string>
     <string name="badge_no_tracking">Tanpa Pelacakan</string>
+    <string name="badge_open_source">Sumber Terbuka</string>
     <string name="donate_item_small_title">Dukungan Tulus</string>
     <string name="donate_item_small_desc">Berikan kontribusi kecil namun berarti untuk Waktiva.</string>
     <string name="donate_item_medium_title">Relawan Kebaikan</string>
     <string name="donate_item_medium_desc">Dukung keberlangsungan proyek sumber terbuka dan bebas iklan ini.</string>
     <string name="donate_item_large_title">Kesatuan Hati</string>
     <string name="donate_item_large_desc">Berikan dukungan terkuat untuk membawa Waktiva lebih maju.</string>
+
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>

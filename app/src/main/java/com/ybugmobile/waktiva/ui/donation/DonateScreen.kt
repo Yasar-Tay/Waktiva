@@ -1,5 +1,8 @@
 package com.ybugmobile.waktiva.ui.donation
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -238,7 +241,14 @@ fun DonateScreen(
                     displayDesc = if (descRes != null) stringResource(descRes) else product.description,
                     icon = icon,
                     glassTheme = glassTheme,
-                    onClick = { viewModel.onDonateClick(product) }
+                    onClick = {
+                        val activity = context.findActivity()
+                        if (activity != null) {
+                            viewModel.onDonateClick(activity, product)
+                        } else {
+                            Toast.makeText(context, "Activity not found", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 )
             }
 
@@ -347,4 +357,13 @@ fun PremiumSupportCard(
             }
         }
     }
+}
+
+private fun Context.findActivity(): Activity? {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    return null
 }

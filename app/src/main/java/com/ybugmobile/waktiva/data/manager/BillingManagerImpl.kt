@@ -115,15 +115,7 @@ class BillingManagerImpl @Inject constructor(
         }
     }
 
-    override suspend fun purchaseProduct(product: DonationProduct) {
-        val activity = context as? Activity 
-            ?: (context as? android.content.ContextWrapper)?.baseContext as? Activity
-
-        if (activity == null) {
-             _purchaseEvents.emit(PurchaseResult.Error("Activity context not found"))
-             return
-        }
-
+    override suspend fun purchaseProduct(activity: Activity, product: DonationProduct) {
         // ProductDetails'i tekrar sorgulamak yerine daha önce saklanan listeden bulmak daha hızlı olabilir
         // Ancak güvenlik ve güncellik için kısa bir sorgu yapıyoruz
         val params = QueryProductDetailsParams.newBuilder()
