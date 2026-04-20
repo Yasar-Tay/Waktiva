@@ -107,7 +107,7 @@ Open the project in Android Studio, let Gradle sync, then run the `app` configur
 
 ## Localization
 
-Waktiva already ships with a broad translation base. The repository includes localized resources for languages such as:
+Waktiva already ships with a broad translation base. The repository includes localized resources for 20 languages:
 
 - English
 - Arabic
