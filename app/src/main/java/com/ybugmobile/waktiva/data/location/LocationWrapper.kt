@@ -17,12 +17,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.*
 
+import android.location.LocationManager
+// ...
 @Singleton
 class LocationWrapper @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
+    private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     /**
      * Retrieves the current location.
@@ -38,14 +41,36 @@ class LocationWrapper @Inject constructor(
                 Priority.PRIORITY_BALANCED_POWER_ACCURACY
             }
             
-            fusedLocationClient.getCurrentLocation(
-                priority,
-                null
-            ).await()
+            // 1. Try Fused Location Provider (Fresh)
+            val currentLocation = withContext(Dispatchers.IO) {
+                try {
+                    fusedLocationClient.getCurrentLocation(priority, null).await()
+                } catch (e: Exception) { null }
+            }
+
+            if (currentLocation != null) return currentLocation
+
+            // 2. Try Fused Location Provider (Last Known)
+            val lastLocation = withContext(Dispatchers.IO) {
+                try {
+                    fusedLocationClient.lastLocation.await()
+                } catch (e: Exception) { null }
+            }
+
+            if (lastLocation != null) return lastLocation
+
+            // 3. Last Fallback: Legacy Location Manager (Common in some emulators)
+            withContext(Dispatchers.IO) {
+                try {
+                    val provider = if (highAccuracy) LocationManager.GPS_PROVIDER else LocationManager.NETWORK_PROVIDER
+                    locationManager.getLastKnownLocation(provider)
+                } catch (e: Exception) { null }
+            }
         } catch (e: Exception) {
             null
         }
     }
+// ...
 
     suspend fun getAddressFromLocation(latitude: Double, longitude: Double): String? = withContext(Dispatchers.IO) {
         try {
