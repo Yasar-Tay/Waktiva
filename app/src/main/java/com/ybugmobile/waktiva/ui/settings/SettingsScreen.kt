@@ -87,7 +87,7 @@ fun SettingsScreen(
                         .systemBarsPadding()
                         .displayCutoutPadding()
                         .padding(horizontal = 20.dp)
-                        .padding(start = 72.dp),
+                        .padding(start = 52.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     Column(

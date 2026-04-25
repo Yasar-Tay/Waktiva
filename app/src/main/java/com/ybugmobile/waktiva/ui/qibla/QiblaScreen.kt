@@ -213,7 +213,7 @@ private fun QiblaContent(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 80.dp)
+                    .padding(start = 60.dp)
                     .systemBarsPadding()
                     .displayCutoutPadding()
             ) {

@@ -51,7 +51,7 @@ fun HomeLandscapeContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(start = 96.dp, end = 24.dp), // Base layout padding
+                .padding(start = 76.dp, end = 24.dp), // Base layout padding (60dp rail + 16dp margin)
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {

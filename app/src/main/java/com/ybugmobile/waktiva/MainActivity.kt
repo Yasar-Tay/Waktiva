@@ -219,11 +219,11 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
     ) {
         Box(modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection)) {
             NavHost(
-                navController, 
-                startDestination = startDestination, 
+                navController,
+                startDestination = startDestination,
                 modifier = Modifier.fillMaxSize()
             ) {
-                composable(Screen.Welcome.route) { 
+                composable(Screen.Welcome.route) {
                     WelcomeScreen(
                         onSetupComplete = {
                             navController.navigate(Screen.Home.route) {
@@ -232,14 +232,14 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                         }
                     )
                 }
-                composable(Screen.Home.route) { 
-                    HomeScreen(viewModel = homeViewModel) 
+                composable(Screen.Home.route) {
+                    HomeScreen(viewModel = homeViewModel)
                 }
                 composable(Screen.Qibla.route) { QiblaScreen() }
-                composable(Screen.Donate.route) { 
-                    DonateScreen(onBack = { navController.popBackStack() }) 
+                composable(Screen.Donate.route) {
+                    DonateScreen(onBack = { navController.popBackStack() })
                 }
-                composable(Screen.Settings.route) { 
+                composable(Screen.Settings.route) {
                     SettingsScreen(
                         onNavigateToAudio = {
                             navController.navigate(Screen.AudioSettings.route)
@@ -247,7 +247,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                         onNavigateToLicenses = {
                             navController.navigate(Screen.Licenses.route)
                         }
-                    ) 
+                    )
                 }
                 composable(Screen.AudioSettings.route) {
                     AudioSettingsScreen(
@@ -267,7 +267,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .displayCutoutPadding() 
-                        .systemBarsPadding()   
+                        .systemBarsPadding()
                 ) {
                     SmoothTouchNavigationRail(
                         items = items,
@@ -374,7 +374,7 @@ fun SmoothTouchNavigationRail(
         shape = RoundedCornerShape(24.dp),
         modifier = Modifier
             .fillMaxHeight()
-            .width(80.dp)
+            .width(60.dp)
             .padding(vertical = 40.dp)
     ) {
         Box(
