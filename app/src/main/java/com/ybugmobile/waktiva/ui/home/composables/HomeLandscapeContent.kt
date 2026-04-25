@@ -58,102 +58,110 @@ fun HomeLandscapeContent(
             // Add status bar padding inside the scrollable area
             Spacer(Modifier.statusBarsPadding())
 
-            // Unified Header Row: Sol (Location), Orta (Moon), Sağ (Weather)
+            // Main Layout: Left Half (Visualization) | Right Half (Header + Countdown)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp), // Extra padding as requested (+24dp)
+                    .padding(horizontal = 24.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Left Part: Location
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    LocationSection(
-                        locationName = state.locationName,
-                        contentColor = contentColor,
-                        isNetworkAvailable = state.isNetworkAvailable,
-                        isLocationEnabled = state.isLocationEnabled,
-                        isLocationPermissionGranted = state.isLocationPermissionGranted,
-                        onStatusClick = onStatusClick
-                    )
-                }
-
-                // Middle Part: Moon Phase (Absolute Center)
+                // LEFT HALF: Circular Visualization
                 Box(
                     modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
-                    MoonPhaseView(
-                        moonPhase = state.moonPhase,
-                        contentColor = contentColor,
-                        modifier = Modifier
-                            .graphicsLayer {
-                                scaleX = 0.75f
-                                scaleY = 0.75f
-                            }
-                    )
-                }
-
-                // Right Part: Weather
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    if (state.isNetworkAvailable) {
-                        WeatherSection(
-                            temperature = state.temperature,
-                            condition = state.weatherCondition,
-                            contentColor = contentColor,
-                            currentTime = localTime,
-                            currentPrayerDay = state.currentPrayerDay,
-                            modifier = Modifier.graphicsLayer {
-                                scaleX = 0.85f
-                                scaleY = 0.85f
-                            }
-                        )
-                    }
-                }
-            }
-
-            // Horizontal split for main content: Circular Visualization + Countdown
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp), // Extra padding as requested (+24dp)
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier.size(280.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    state.currentPrayerDay?.let { prayerDay ->
-                        PrayerCircleVisualization(
-                            day = prayerDay,
-                            currentTime = if (state.selectedDate == LocalDate.now()) localTime else LocalTime.MIDNIGHT,
-                            nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
-                            currentPrayer = if (state.selectedDate == LocalDate.now()) state.currentPrayer else null,
-                            isSelectedDayToday = state.selectedDate == LocalDate.now(),
-                            isHijriVisible = state.isHijriSelected,
-                            onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
-                            contentColor = contentColor,
-                            isMuted = state.isMuted,
-                            playAdhanAudio = settings?.playAdhanAudio ?: false,
-                            onSkipAudio = { prayerName ->
-                                state.nextPrayer?.let { next ->
-                                    onSkipNextAudio(prayerName, next.date)
+                    Box(
+                        modifier = Modifier.size(320.dp), // Increased size for tablet visibility
+                        contentAlignment = Alignment.Center
+                    ) {
+                        state.currentPrayerDay?.let { prayerDay ->
+                            PrayerCircleVisualization(
+                                day = prayerDay,
+                                currentTime = if (state.selectedDate == LocalDate.now()) localTime else LocalTime.MIDNIGHT,
+                                nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
+                                currentPrayer = if (state.selectedDate == LocalDate.now()) state.currentPrayer else null,
+                                isSelectedDayToday = state.selectedDate == LocalDate.now(),
+                                isHijriVisible = state.isHijriSelected,
+                                onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
+                                contentColor = contentColor,
+                                isMuted = state.isMuted,
+                                playAdhanAudio = settings?.playAdhanAudio ?: false,
+                                onSkipAudio = { prayerName ->
+                                    state.nextPrayer?.let { next ->
+                                        onSkipNextAudio(prayerName, next.date)
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.width(32.dp))
+                // RIGHT HALF: Header Section + Next Prayer Countdown
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    // Unified Header Row (Inside Right Half)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Left Part: Location
+                        Box(
+                            modifier = Modifier.weight(1f),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            LocationSection(
+                                locationName = state.locationName,
+                                contentColor = contentColor,
+                                isNetworkAvailable = state.isNetworkAvailable,
+                                isLocationEnabled = state.isLocationEnabled,
+                                isLocationPermissionGranted = state.isLocationPermissionGranted,
+                                onStatusClick = onStatusClick
+                            )
+                        }
 
-                Box(modifier = Modifier.weight(1f)) {
-                    // Toggle between Adhan Playback Controls and Next Prayer Countdown
+                        // Middle Part: Moon Phase
+                        Box(
+                            modifier = Modifier.weight(1f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            MoonPhaseView(
+                                moonPhase = state.moonPhase,
+                                contentColor = contentColor,
+                                modifier = Modifier
+                                    .graphicsLayer {
+                                        scaleX = 0.6f
+                                        scaleY = 0.6f
+                                    }
+                            )
+                        }
+
+                        // Right Part: Weather
+                        Box(
+                            modifier = Modifier.weight(1f),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            if (state.isNetworkAvailable) {
+                                WeatherSection(
+                                    temperature = state.temperature,
+                                    condition = state.weatherCondition,
+                                    contentColor = contentColor,
+                                    currentTime = localTime,
+                                    currentPrayerDay = state.currentPrayerDay,
+                                    modifier = Modifier.graphicsLayer {
+                                        scaleX = 0.85f
+                                        scaleY = 0.85f
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    // Adhan Controls or Next Prayer Countdown
                     AnimatedContent(
                         targetState = state.isAdhanPlaying,
                         transitionSpec = {
