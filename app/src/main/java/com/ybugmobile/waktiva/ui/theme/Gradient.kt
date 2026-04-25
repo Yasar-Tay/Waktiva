@@ -470,7 +470,7 @@ fun AtmosphericBackgroundLayer(
     val isMorning = currentTime.isBefore(dhuhur)
     val infiniteTransition = rememberInfiniteTransition(label = "atmosphere")
     
-    val bloomPulse by infiniteTransition.animateFloat(0.7f, 1.0f, infiniteRepeatable(tween(if (isMorning) 5000 else 4000, easing = LinearOutSlowInEasing), RepeatMode.Reverse), label = "bloomPulse")
+    // val bloomPulse by infiniteTransition.animateFloat(0.7f, 1.0f, infiniteRepeatable(tween(if (isMorning) 5000 else 4000, easing = LinearOutSlowInEasing), RepeatMode.Reverse), label = "bloomPulse")
     val particles = remember(isMorning) { List(if (isMorning) 15 else 25) { MutableParticle(Random.nextFloat(), Random.nextFloat(), if (isMorning) Random.nextFloat() * 1.5f + 0.5f else Random.nextFloat() * 2f + 1f, if (isMorning) Random.nextFloat() * 0.0006f + 0.0003f else Random.nextFloat() * 0.001f + 0.0005f) } }
     val step by infiniteTransition.animateFloat(0f, 1f, infiniteRepeatable(tween(10000, easing = LinearEasing), RepeatMode.Restart), label = "step")
 
@@ -493,13 +493,15 @@ fun AtmosphericBackgroundLayer(
     Canvas(modifier = Modifier.fillMaxSize()) {
         val w = size.width; val h = size.height
         
-        // 1. Sun Flare
+        // 1. Sun Flare (Disabled)
+        /*
         val relativeAzimuth = (sunAzimuth - compassAzimuth + 540) % 360 - 180
         if (sunAltitude > 0 && kotlin.math.abs(relativeAzimuth) < 90) {
             val flareX = w / 2 + (relativeAzimuth / 90f) * (w / 2); val flareY = h / 2 - (sunAltitude / 90f) * (h / 2); val flareScale = (sunAltitude / 90f).coerceAtLeast(0.5f)
             drawCircle(Brush.radialGradient(listOf(Color.White.copy(alpha = 0.15f * bloomPulse), Color.Transparent), Offset(flareX, flareY), w * 0.4f * flareScale), w * 0.4f * flareScale, Offset(flareX, flareY))
             drawCircle(Color.White.copy(alpha = 0.05f), 10.dp.toPx(), Offset(w - flareX, h - flareY))
         }
+        */
 
         // 2. Birds (Improved and conditional)
         if (canShowBirds) {
