@@ -213,15 +213,16 @@ private fun QiblaContent(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 60.dp)
+                    .padding(start = 60.dp) // Offset for navigation rail
                     .systemBarsPadding()
                     .displayCutoutPadding()
             ) {
+                // LEFT HALF: Professional Compass
                 Box(
-                    modifier = Modifier.weight(1.3f).fillMaxHeight(),
-                    contentAlignment = Alignment.CenterEnd
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(modifier = Modifier.size(340.dp), contentAlignment = Alignment.Center) {
+                    Box(modifier = Modifier.size(360.dp), contentAlignment = Alignment.Center) {
                         if (!isMapView) {
                             ProfessionalCompass(
                                 azimuth = currentAzimuth,
@@ -236,16 +237,18 @@ private fun QiblaContent(
                     }
                 }
 
+                // RIGHT HALF: Header, Info Card, and Switcher
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .padding(start = 12.dp, end = 24.dp, top = 24.dp, bottom = 24.dp),
-                    contentAlignment = Alignment.CenterStart
+                        .padding(start = 12.dp, end = 32.dp, top = 24.dp, bottom = 24.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Column(
                         modifier = Modifier.fillMaxHeight(),
-                        verticalArrangement = Arrangement.SpaceBetween
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         LocationHeader(
                             state = state,
@@ -271,8 +274,7 @@ private fun QiblaContent(
                             onViewChange = { isMapView = it },
                             contentColor = currentTheme.contentColor,
                             containerColor = currentTheme.containerColor,
-                            borderColor = currentTheme.borderColor,
-                            modifier = Modifier.align(Alignment.Start)
+                            borderColor = currentTheme.borderColor
                         )
                     }
                 }
