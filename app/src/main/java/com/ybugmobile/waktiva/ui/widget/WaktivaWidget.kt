@@ -111,18 +111,18 @@ class WaktivaWidget : GlanceAppWidget() {
             ) {}
 
             if (nextPrayer != null) {
-                // Creative Watermark: Large faint icon in the background
+                // Creative Watermark: Large faint icon in the background (Moved to Start for impact)
                 Box(
                     modifier = GlanceModifier.fillMaxSize(),
-                    contentAlignment = Alignment.CenterEnd
+                    contentAlignment = Alignment.CenterStart
                 ) {
                     Image(
                         provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
                         contentDescription = null,
                         modifier = GlanceModifier
-                            .size(160.dp)
-                            .padding(end = (-40).dp), // Partially bleed off the edge
-                        colorFilter = ColorFilter.tint(ColorProvider(day = Color.White.copy(alpha = 0.05f), night = Color.White.copy(alpha = 0.05f)))
+                            .size(140.dp)
+                            .padding(start = (-50).dp), // Partially bleed off the edge
+                        colorFilter = ColorFilter.tint(ColorProvider(day = Color.White.copy(alpha = 0.07f), night = Color.White.copy(alpha = 0.07f)))
                     )
                 }
 
@@ -140,9 +140,9 @@ class WaktivaWidget : GlanceAppWidget() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = nextPrayer.type.getDisplayName(context).uppercase(),
+                            text = nextPrayer.type.getDisplayName(context).uppercase(Locale.getDefault()),
                             style = TextStyle(
-                                color = ColorProvider(day = contentColor.copy(alpha = 0.7f), night = contentColor.copy(alpha = 0.7f)),
+                                color = ColorProvider(day = contentColor.copy(alpha = 0.85f), night = contentColor.copy(alpha = 0.85f)),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -152,8 +152,8 @@ class WaktivaWidget : GlanceAppWidget() {
                             text = nextPrayer.time.format(timeFormatter),
                             style = TextStyle(
                                 color = ColorProvider(day = contentColor, night = contentColor),
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.Medium
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold
                             )
                         )
                     }
