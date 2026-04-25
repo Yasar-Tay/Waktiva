@@ -54,10 +54,16 @@ fun HomePortraitContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(top = 24.dp)
         ) {
-            // Add status bar padding inside the scrollable area so content can scroll under it
-            Spacer(Modifier.statusBarsPadding())
+            // Respect status bar height and display cutouts (notches)
+            Spacer(
+                Modifier
+                    .windowInsetsTopHeight(WindowInsets.statusBars)
+                    .displayCutoutPadding()
+            )
+            
+            // Safe margin after system bar
+            Spacer(Modifier.height(16.dp))
 
             // Screen Header containing Location and System Health status
             Box(
@@ -226,8 +232,9 @@ fun HomePortraitContent(
             contentColor = contentColor,
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .statusBarsPadding() // Also pad this overlay to stay below status bar
-                .padding(top = 10.dp, end = 24.dp)
+                .windowInsetsPadding(WindowInsets.statusBars)
+                .displayCutoutPadding()
+                .padding(top = 16.dp, end = 24.dp)
                 .graphicsLayer {
                     // Parallax effect: moves with the scroll but remains visible
                     translationY = -scrollState.value.toFloat()
