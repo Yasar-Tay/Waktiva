@@ -186,6 +186,12 @@ class AudioSettingsViewModel @Inject constructor(
         }
     }
 
+    fun togglePlayAdhanAudio(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updatePlayAdhanAudio(enabled)
+        }
+    }
+
     fun togglePreAdhanWarning(enabled: Boolean) {
         viewModelScope.launch {
             settingsManager.updatePreAdhanWarning(enabled)

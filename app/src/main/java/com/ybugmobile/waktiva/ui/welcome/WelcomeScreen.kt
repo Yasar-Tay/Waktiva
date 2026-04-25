@@ -418,7 +418,7 @@ private fun PreferencesStep(
                         }
                         Switch(
                             checked = settings?.playAdhanAudio ?: true,
-                            onCheckedChange = { settingsViewModel.setPlayAdhanAudio(it) },
+                            onCheckedChange = { audioViewModel.togglePlayAdhanAudio(it) },
                             colors = switchColors
                         )
                     }
@@ -466,6 +466,57 @@ private fun PreferencesStep(
                                 )
                                 Text(
                                     text = "${settings?.preAdhanWarningMinutes ?: 5}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = BrandColor
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.White.copy(alpha = 0.05f)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(stringResource(id = R.string.audio_fajr_sunrise_alarm), fontWeight = FontWeight.Bold, color = Color.White)
+                                Text(
+                                    stringResource(id = R.string.audio_fajr_sunrise_alarm_desc),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.White.copy(alpha = 0.6f)
+                                )
+                            }
+                            Switch(
+                                checked = settings?.useFajrAlarmBeforeSunrise ?: false,
+                                onCheckedChange = { audioViewModel.toggleUseFajrAlarmBeforeSunrise(it) },
+                                colors = switchColors
+                            )
+                        }
+                        
+                        if (settings?.useFajrAlarmBeforeSunrise == true) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                Text(stringResource(id = R.string.audio_minutes_before), style = MaterialTheme.typography.bodyMedium, color = Color.White)
+                                Slider(
+                                    value = (settings?.fajrAlarmMinutesBeforeSunrise ?: 45).toFloat(),
+                                    onValueChange = { audioViewModel.updateFajrAlarmMinutesBeforeSunrise(it.toInt()) },
+                                    valueRange = 10f..120f,
+                                    modifier = Modifier.weight(1f),
+                                    colors = SliderDefaults.colors(thumbColor = BrandColor, activeTrackColor = BrandColor)
+                                )
+                                Text(
+                                    text = "${settings?.fajrAlarmMinutesBeforeSunrise ?: 45}",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = BrandColor

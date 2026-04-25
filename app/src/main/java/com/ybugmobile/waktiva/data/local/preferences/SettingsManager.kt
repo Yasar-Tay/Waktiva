@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.waktiva.domain.model.PrayerType
+import com.ybugmobile.waktiva.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -166,9 +167,41 @@ class SettingsManager @Inject constructor(
         }
     }
 
+    override suspend fun updatePrayerSpecificAdhanPaths(paths: Map<PrayerType, String?>) {
+        context.dataStore.edit { preferences ->
+            paths.forEach { (type, path) ->
+                val key = prayerPathKey(type)
+                if (path == null) {
+                    preferences.remove(key)
+                } else {
+                    preferences[key] = path
+                }
+            }
+        }
+    }
+
     override suspend fun updateUseSpecificAdhan(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[USE_SPECIFIC_ADHAN] = enabled
+            if (enabled) {
+                // If enabling, ensure we have default specific adhans set for any that are currently null
+                val packageName = context.packageName
+                
+                val defaultMappings = mapOf(
+                    PrayerType.FAJR to R.raw.muhsinkara_fajr,
+                    PrayerType.DHUHR to R.raw.muhsinkara_muhayyerkurdi_ezan,
+                    PrayerType.ASR to R.raw.muhsinkara_asr,
+                    PrayerType.MAGHRIB to R.raw.muhsinkara_maghrib,
+                    PrayerType.ISHA to R.raw.muhsinkara_isha
+                )
+
+                defaultMappings.forEach { (type, resId) ->
+                    val key = prayerPathKey(type)
+                    if (preferences[key] == null) {
+                        preferences[key] = "android.resource://$packageName/$resId"
+                    }
+                }
+            }
         }
     }
 

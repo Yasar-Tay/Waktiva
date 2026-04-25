@@ -13,6 +13,7 @@ interface SettingsManagerInterface {
     suspend fun updateLanguage(language: String)
     suspend fun updateSelectedAdhanPath(path: String?)
     suspend fun updatePrayerSpecificAdhanPath(type: PrayerType, path: String?)
+    suspend fun updatePrayerSpecificAdhanPaths(paths: Map<PrayerType, String?>)
     suspend fun updateUseSpecificAdhan(enabled: Boolean)
     suspend fun updatePlayAdhanAudio(enabled: Boolean)
     suspend fun updatePreAdhanWarning(enabled: Boolean)
