@@ -31,7 +31,6 @@ import com.ybugmobile.waktiva.MainActivity
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.domain.model.NextPrayer
-import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
@@ -95,17 +94,16 @@ class WaktivaWidget : GlanceAppWidget() {
     ) {
         val size = LocalSize.current
         val contentColor = Color.White
-        val secondaryContentColor = Color.White.copy(alpha = 0.8f)
         
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .appWidgetBackground()
                 .background(backgroundProvider)
-                .cornerRadius(32.dp)
+                .cornerRadius(28.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
-            // Glass Sheen Layer (Highlight and Border) - Provides the edge definition and light play
+            // Glass Sheen Layer (Highlight and Border) for premium feel
             Box(
                 modifier = GlanceModifier
                     .fillMaxSize()
@@ -113,54 +111,49 @@ class WaktivaWidget : GlanceAppWidget() {
             ) {}
 
             if (nextPrayer != null) {
-                Row(
+                // Creative Watermark: Large faint icon in the background
+                Box(
                     modifier = GlanceModifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    Image(
+                        provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
+                        contentDescription = null,
+                        modifier = GlanceModifier
+                            .size(160.dp)
+                            .padding(end = (-40).dp), // Partially bleed off the edge
+                        colorFilter = ColorFilter.tint(ColorProvider(day = Color.White.copy(alpha = 0.05f), night = Color.White.copy(alpha = 0.05f)))
+                    )
+                }
+
+                Row(
+                    modifier = GlanceModifier.fillMaxSize().padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Left Side: Prayer Info (Sidebar)
-                    val sidebarWidth = 92.dp
+                    // Left Side: Prayer Info
+                    val sidebarWidth = 88.dp
                     Column(
                         modifier = GlanceModifier
                             .width(sidebarWidth)
-                            .fillMaxHeight()
-                            .padding(vertical = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                            .fillMaxHeight(),
+                        horizontalAlignment = Alignment.Start,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Circular background for the icon
-                        Box(
-                            modifier = GlanceModifier
-                                .size(36.dp)
-                                .background(Color.White.copy(alpha = 0.15f))
-                                .cornerRadius(18.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
-                                contentDescription = null,
-                                modifier = GlanceModifier.size(20.dp),
-                                colorFilter = ColorFilter.tint(ColorProvider(day = contentColor, night = contentColor))
-                            )
-                        }
-                        
-                        Spacer(modifier = GlanceModifier.height(4.dp))
-
                         Text(
-                            text = nextPrayer.type.getDisplayName(context).uppercase(Locale.getDefault()),
+                            text = nextPrayer.type.getDisplayName(context).uppercase(),
                             style = TextStyle(
-                                color = ColorProvider(day = contentColor, night = contentColor),
+                                color = ColorProvider(day = contentColor.copy(alpha = 0.7f), night = contentColor.copy(alpha = 0.7f)),
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
+                                fontWeight = FontWeight.Bold
                             )
                         )
                         
                         Text(
                             text = nextPrayer.time.format(timeFormatter),
                             style = TextStyle(
-                                color = ColorProvider(day = secondaryContentColor, night = secondaryContentColor),
-                                fontSize = 11.sp,
-                                textAlign = TextAlign.Center
+                                color = ColorProvider(day = contentColor, night = contentColor),
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Medium
                             )
                         )
                     }
@@ -169,20 +162,19 @@ class WaktivaWidget : GlanceAppWidget() {
                     Column(
                         modifier = GlanceModifier
                             .fillMaxHeight()
-                            .defaultWeight()
-                            .padding(end = 16.dp),
+                            .defaultWeight(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalAlignment = Alignment.End
                     ) {
                         val remainingDuration = nextPrayer.remainingDuration
                         val baseTime = SystemClock.elapsedRealtime() + remainingDuration.toMillis()
                         
-                        val availableWidth = size.width.value - sidebarWidth.value - 16
-                        // Adjusted dynamic sizing to make it bigger
-                        val dynamicFontSize = (availableWidth / 5.5f).coerceIn(24f, 72f)
+                        // Bold countdown that "pops" against the watermark
+                        val availableWidth = size.width.value - sidebarWidth.value - 32
+                        val dynamicFontSize = (availableWidth / 3.5f).coerceIn(32f, 72f)
 
                         AndroidRemoteViews(
-                            modifier = GlanceModifier.fillMaxWidth(),
+                            modifier = GlanceModifier.wrapContentWidth(),
                             remoteViews = RemoteViews(context.packageName, R.layout.widget_countdown).apply {
                                 setChronometer(R.id.prayer_chronometer, baseTime, null, true)
                                 setChronometerCountDown(R.id.prayer_chronometer, true)
@@ -193,15 +185,25 @@ class WaktivaWidget : GlanceAppWidget() {
                     }
                 }
             } else {
+                // Branded Empty State
                 Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = "WAKTIVA",
-                        style = TextStyle(
-                            color = ColorProvider(day = contentColor.copy(alpha = 0.2f), night = contentColor.copy(alpha = 0.2f)),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "WAKTIVA",
+                            style = TextStyle(
+                                color = ColorProvider(day = contentColor.copy(alpha = 0.4f), night = contentColor.copy(alpha = 0.4f)),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
                         )
-                    )
+                        Text(
+                            text = "Awaiting Prayer Times",
+                            style = TextStyle(
+                                color = ColorProvider(day = contentColor.copy(alpha = 0.2f), night = contentColor.copy(alpha = 0.2f)),
+                                fontSize = 11.sp
+                            )
+                        )
+                    }
                 }
             }
         }
