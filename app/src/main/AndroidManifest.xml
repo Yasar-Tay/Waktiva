@@ -97,6 +97,13 @@
                 android:resource="@xml/waktiva_widget_info" />
         </receiver>
 
+        <!-- WorkManager's internal service: must declare foregroundServiceType to match
+             the type used in AdhanWorker's ForegroundInfo (FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK) -->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="mediaPlayback"
+            tools:node="merge" />
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
