@@ -312,7 +312,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
             }
 
             // Global floating actions (Debug/Development only in current state)
-            val isDebugEnabled = true
+            val isDebugEnabled = false
             if (isDebugEnabled) {
                 Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                     val density = LocalDensity.current

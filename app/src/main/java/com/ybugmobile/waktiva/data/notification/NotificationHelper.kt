@@ -30,10 +30,11 @@ class NotificationHelper @Inject constructor(
     companion object {
         const val CHANNEL_ID_ADHAN = "adhan_playback_channel"
         const val CHANNEL_ID_WARNING = "pre_adhan_warning_channel_v1"
-        
+
         const val NOTIFICATION_ID_ADHAN = 1001
         const val NOTIFICATION_ID_WARNING = 2001
-        
+        const val NOTIFICATION_ID_MISSED = 3001
+
         const val ACTION_SKIP_ADHAN = "com.ybugmobile.waktiva.ACTION_SKIP_ADHAN"
         const val EXTRA_PRAYER_NAME = "PRAYER_NAME"
         const val EXTRA_PRAYER_DATE = "PRAYER_DATE"
@@ -117,5 +118,28 @@ class NotificationHelper @Inject constructor(
 
     fun cancelAdhanNotification() {
         notificationManager.cancel(NOTIFICATION_ID_ADHAN)
+    }
+
+    fun showMissedAdhanNotification(prayerName: String) {
+        val prayerType = PrayerType.fromString(prayerName)
+        val displayedPrayerName = prayerType?.getDisplayName(context) ?: prayerName
+
+        val contentIntent = PendingIntent.getActivity(
+            context, 0, Intent(context, MainActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID_WARNING)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(context.getString(R.string.notification_adhan_title, displayedPrayerName))
+            .setContentText(context.getString(R.string.notification_adhan_content))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setContentIntent(contentIntent)
+            .setAutoCancel(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .build()
+
+        notificationManager.notify(NOTIFICATION_ID_MISSED, notification)
     }
 }

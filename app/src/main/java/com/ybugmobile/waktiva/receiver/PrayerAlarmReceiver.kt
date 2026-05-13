@@ -20,7 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -47,16 +46,6 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action ?: return
-        
-        if (action == Intent.ACTION_BOOT_COMPLETED) {
-            val pendingResult = goAsync()
-            scope.launch {
-                rescheduleNextPrayer()
-                WaktivaWidget().updateAll(context)
-                pendingResult.finish()
-            }
-            return
-        }
 
         val prayerName = intent.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME) ?: return
         val prayerDate = intent.getStringExtra(NotificationHelper.EXTRA_PRAYER_DATE) ?: LocalDate.now().toString()
@@ -64,10 +53,15 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         Log.d("PrayerAlarmReceiver", "onReceive: action=$action, prayer=$prayerName, date=$prayerDate")
         
         if (action == NotificationHelper.ACTION_SKIP_ADHAN) {
-            runBlocking {
-                settingsManager.muteNextPrayer(prayerName, prayerDate)
-                notificationHelper.cancelWarningNotification()
-                WaktivaWidget().updateAll(context)
+            val pendingResult = goAsync()
+            scope.launch {
+                try {
+                    settingsManager.muteNextPrayer(prayerName, prayerDate)
+                    notificationHelper.cancelWarningNotification()
+                    WaktivaWidget().updateAll(context)
+                } finally {
+                    pendingResult.finish()
+                }
             }
             return
         }
@@ -164,10 +158,18 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 putExtra("AUDIO_PATH", audioPath)
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(serviceIntent)
-            } else {
-                context.startService(serviceIntent)
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(serviceIntent)
+                } else {
+                    context.startService(serviceIntent)
+                }
+            } catch (e: Exception) {
+                // ForegroundServiceStartNotAllowedException (API 31+) veya SecurityException:
+                // uygulama tam background'daysa veya Android kısıtlamalarına takılırsa
+                // ses çalamayız — en azından kullanıcıyı bildirimle uyaralım.
+                Log.e("PrayerAlarmReceiver", "AdhanService başlatılamadı, fallback bildirimi", e)
+                notificationHelper.showMissedAdhanNotification(prayerName)
             }
         } finally {
             if (wakeLock.isHeld) wakeLock.release()
