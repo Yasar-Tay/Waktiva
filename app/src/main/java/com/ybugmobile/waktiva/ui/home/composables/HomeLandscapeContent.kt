@@ -10,12 +10,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
+import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.ui.home.HomeViewState
 import com.ybugmobile.waktiva.ui.theme.GlassTheme
 import java.time.LocalDate
@@ -46,6 +48,10 @@ fun HomeLandscapeContent(
     onMethodClick: () -> Unit,
     onShowToast: (String) -> Unit
 ) {
+    val hasWeatherData = remember(state.temperature, state.weatherCondition) {
+        state.temperature != null || state.weatherCondition != WeatherCondition.UNKNOWN
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -143,7 +149,7 @@ fun HomeLandscapeContent(
                             modifier = Modifier.weight(1f),
                             contentAlignment = Alignment.CenterEnd
                         ) {
-                            if (state.isNetworkAvailable) {
+                            if (hasWeatherData || state.isNetworkAvailable) {
                                 WeatherSection(
                                     temperature = state.temperature,
                                     condition = state.weatherCondition,

@@ -32,6 +32,7 @@ import com.ybugmobile.waktiva.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -86,6 +87,7 @@ class HomeViewModel @Inject constructor(
     // Weather State
     private val _weatherCondition = MutableStateFlow(WeatherCondition.UNKNOWN)
     private val _temperature = MutableStateFlow<Double?>(null)
+    private var weatherRefreshJob: Job? = null
 
     private var mediaController: MediaController? = null
 
@@ -190,7 +192,11 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun refreshWeather() {
-        viewModelScope.launch {
+        if (weatherRefreshJob?.isActive == true) {
+            return
+        }
+
+        weatherRefreshJob = viewModelScope.launch {
             val s = settings.first()
             val lat = s.latitude ?: return@launch
             val lng = s.longitude ?: return@launch
