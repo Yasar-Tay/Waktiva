@@ -51,17 +51,6 @@
             tools:targetApi="27" />
 
         <service
-            android:name=".service.AdhanService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="mediaPlayback"
-            tools:ignore="Instantiatable">
-            <intent-filter>
-                <action android:name="androidx.media3.session.MediaSessionService" />
-            </intent-filter>
-        </service>
-
-        <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false"
             android:exported="false">
@@ -77,6 +66,14 @@
                 <action android:name="com.ybugmobile.waktiva.ACTION_PRAYER_ALARM" />
                 <action android:name="com.ybugmobile.waktiva.ACTION_PRE_ADHAN_NOTIFICATION" />
                 <action android:name="com.ybugmobile.waktiva.ACTION_SKIP_ADHAN" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".receiver.AdhanStopReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.ybugmobile.waktiva.ACTION_STOP_ADHAN" />
             </intent-filter>
         </receiver>
 

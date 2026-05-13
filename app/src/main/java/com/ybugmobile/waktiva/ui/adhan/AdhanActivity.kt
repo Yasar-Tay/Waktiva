@@ -1,9 +1,6 @@
 package com.ybugmobile.waktiva.ui.adhan
 
-import android.app.KeyguardManager
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -29,17 +26,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.media3.common.Player
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
-import com.google.common.util.concurrent.ListenableFuture
-import com.google.common.util.concurrent.MoreExecutors
+import androidx.lifecycle.Observer
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.notification.NotificationHelper
+import com.ybugmobile.waktiva.data.worker.AdhanWorker
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
-import com.ybugmobile.waktiva.service.AdhanService
 import com.ybugmobile.waktiva.ui.theme.WaktivaTheme
 import com.ybugmobile.waktiva.ui.theme.getGradientForTime
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,65 +51,47 @@ class AdhanActivity : ComponentActivity() {
     @Inject
     lateinit var prayerRepository: PrayerRepository
 
-    private var controllerFuture: ListenableFuture<MediaController>? = null
-    private var controller: MediaController? = null
-    
     private var prayerNameState = mutableStateOf("Prayer")
+
+    private val workObserver = Observer<List<WorkInfo>> { workInfoList ->
+        val isActive = workInfoList.any {
+            it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED
+        }
+        if (!isActive && workInfoList.isNotEmpty()) {
+            finish()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         showOnLockScreen()
         super.onCreate(savedInstanceState)
-        
+
         updatePrayerName(intent)
 
         setContent {
             val prayerDays by prayerRepository.getPrayerDays().collectAsState(initial = emptyList())
             val currentDay = prayerDays.find { it.date == LocalDate.now() }
-            
-            var adhanTitle by remember { mutableStateOf<String?>(null) }
-            var adhanArtist by remember { mutableStateOf<String?>(null) }
 
             WaktivaTheme {
                 AdhanScreen(
                     prayerName = prayerNameState.value,
-                    adhanTitle = adhanTitle,
-                    adhanArtist = adhanArtist,
                     currentPrayerDay = currentDay,
-                    onDismiss = { 
-                        controller?.stop()
-                        finish() 
+                    onDismiss = {
+                        WorkManager.getInstance(this).cancelUniqueWork(AdhanWorker.WORK_NAME)
+                        finish()
                     }
                 )
-            }
-            
-            // Listen for metadata changes from the controller
-            LaunchedEffect(controller) {
-                controller?.let { c ->
-                    fun updateMetadata() {
-                        adhanTitle = c.currentMediaItem?.mediaMetadata?.title?.toString()
-                        adhanArtist = c.currentMediaItem?.mediaMetadata?.artist?.toString()
-                    }
-                    updateMetadata()
-                    c.addListener(object : Player.Listener {
-                        override fun onMediaItemTransition(mediaItem: androidx.media3.common.MediaItem?, reason: Int) {
-                            updateMetadata()
-                        }
-                        override fun onMetadata(metadata: androidx.media3.common.Metadata) {
-                            updateMetadata()
-                        }
-                    })
-                }
             }
         }
     }
 
-    override fun onNewIntent(intent: Intent) {
+    override fun onNewIntent(intent: android.content.Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
         updatePrayerName(intent)
     }
 
-    private fun updatePrayerName(intent: Intent?) {
+    private fun updatePrayerName(intent: android.content.Intent?) {
         intent?.getStringExtra(NotificationHelper.EXTRA_PRAYER_NAME)?.let {
             prayerNameState.value = it
         }
@@ -122,34 +99,16 @@ class AdhanActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        val sessionToken = SessionToken(this, ComponentName(this, AdhanService::class.java))
-        controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-        controllerFuture?.addListener({
-            try {
-                controller = controllerFuture?.get()
-                controller?.addListener(object : Player.Listener {
-                    override fun onIsPlayingChanged(isPlaying: Boolean) {
-                        if (!isPlaying) finish()
-                    }
-                    override fun onPlaybackStateChanged(playbackState: Int) {
-                        if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
-                            finish()
-                        }
-                    }
-                })
-                
-                val state = controller?.playbackState
-                if (state == Player.STATE_ENDED || state == Player.STATE_IDLE) {
-                    finish()
-                }
-            } catch (e: Exception) { e.printStackTrace() }
-        }, MoreExecutors.directExecutor())
+        WorkManager.getInstance(this)
+            .getWorkInfosForUniqueWorkLiveData(AdhanWorker.WORK_NAME)
+            .observe(this, workObserver)
     }
 
     override fun onStop() {
         super.onStop()
-        controllerFuture?.let { MediaController.releaseFuture(it) }
-        controller = null
+        WorkManager.getInstance(this)
+            .getWorkInfosForUniqueWorkLiveData(AdhanWorker.WORK_NAME)
+            .removeObserver(workObserver)
     }
 
     private fun showOnLockScreen() {
@@ -157,6 +116,7 @@ class AdhanActivity : ComponentActivity() {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
         } else {
+            @Suppress("DEPRECATION")
             window.addFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
                 WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON or
@@ -164,9 +124,9 @@ class AdhanActivity : ComponentActivity() {
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
             )
         }
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+            val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as android.app.KeyguardManager
             keyguardManager.requestDismissKeyguard(this, null)
         }
     }
@@ -174,9 +134,7 @@ class AdhanActivity : ComponentActivity() {
 
 @Composable
 fun AdhanScreen(
-    prayerName: String, 
-    adhanTitle: String?,
-    adhanArtist: String?,
+    prayerName: String,
     currentPrayerDay: PrayerDay?,
     onDismiss: () -> Unit
 ) {
@@ -216,7 +174,6 @@ fun AdhanScreen(
             .fillMaxSize()
             .background(brush = backgroundGradient)
     ) {
-        // Decorative Background Elements
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -232,7 +189,6 @@ fun AdhanScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // 1. Time & Date Section
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(top = 60.dp)
@@ -256,15 +212,13 @@ fun AdhanScreen(
                 )
             }
 
-            // 2. Prayer Name Section
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
-                // Relevant Icon
                 Icon(
-                    imageVector = when(prayerType) {
+                    imageVector = when (prayerType) {
                         PrayerType.FAJR -> ImageVector.vectorResource(R.drawable.haze_day_rotated)
                         PrayerType.SUNRISE -> ImageVector.vectorResource(R.drawable.sunrise)
                         PrayerType.DHUHR -> ImageVector.vectorResource(R.drawable.clear_day)
@@ -277,7 +231,7 @@ fun AdhanScreen(
                     tint = Color.White.copy(alpha = 0.15f),
                     modifier = Modifier.size(80.dp)
                 )
-                
+
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
@@ -297,39 +251,12 @@ fun AdhanScreen(
                     ),
                     color = Color.White
                 )
-                
-                // Track Metadata (Title & Artist)
-                if (adhanTitle != null || adhanArtist != null) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        if (adhanTitle != null) {
-                            Text(
-                                text = adhanTitle,
-                                style = MaterialTheme.typography.titleLarge,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                        if (adhanArtist != null) {
-                            Text(
-                                text = adhanArtist,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White.copy(alpha = 0.7f),
-                                fontWeight = FontWeight.Medium,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                }
             }
 
-            // 3. Action Section: STOP Button
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(bottom = 60.dp)
             ) {
-                // Outer Pulse Ring
                 Box(contentAlignment = Alignment.Center) {
                     Box(
                         modifier = Modifier
@@ -337,7 +264,7 @@ fun AdhanScreen(
                             .scale(pulseScale)
                             .background(Color.White.copy(alpha = 0.05f), CircleShape)
                     )
-                    
+
                     Surface(
                         onClick = onDismiss,
                         modifier = Modifier.size(84.dp),
@@ -355,9 +282,9 @@ fun AdhanScreen(
                         }
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
                 Text(
                     text = stringResource(R.string.adhan_stop).uppercase(Locale.getDefault()),
                     style = MaterialTheme.typography.labelLarge,
@@ -376,8 +303,6 @@ fun AdhanScreenPreview() {
     WaktivaTheme {
         AdhanScreen(
             prayerName = "MAGHRIB",
-            adhanTitle = "Adhan Makkah",
-            adhanArtist = "Sheikh Ali Mulla",
             currentPrayerDay = PrayerDay(
                 date = LocalDate.now(),
                 hijriDate = null,

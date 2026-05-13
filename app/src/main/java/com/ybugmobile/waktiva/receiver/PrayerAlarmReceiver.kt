@@ -3,16 +3,20 @@ package com.ybugmobile.waktiva.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.PowerManager
 import android.util.Log
 import androidx.glance.appwidget.updateAll
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.alarm.AlarmScheduler
-import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.waktiva.data.notification.NotificationHelper
+import com.ybugmobile.waktiva.data.worker.AdhanWorker
+import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
-import com.ybugmobile.waktiva.service.AdhanService
 import com.ybugmobile.waktiva.ui.widget.WaktivaWidget
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -153,24 +157,23 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 settings.selectedAdhanPath ?: "android.resource://${context.packageName}/${R.raw.muhsinkara_muhayyerkurdi_ezan}"
             }
 
-            val serviceIntent = Intent(context, AdhanService::class.java).apply {
-                putExtra(NotificationHelper.EXTRA_PRAYER_NAME, prayerName)
-                putExtra("AUDIO_PATH", audioPath)
-            }
+            // WorkManager.enqueueUniqueWork() is exempt from BOOT_COMPLETED FGS restrictions.
+            // AdhanWorker calls setForeground() internally — not startForegroundService().
+            val inputData = Data.Builder()
+                .putString(AdhanWorker.KEY_PRAYER_NAME, prayerName)
+                .putString(AdhanWorker.KEY_AUDIO_PATH, audioPath)
+                .build()
 
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(serviceIntent)
-                } else {
-                    context.startService(serviceIntent)
-                }
-            } catch (e: Exception) {
-                // ForegroundServiceStartNotAllowedException (API 31+) veya SecurityException:
-                // uygulama tam background'daysa veya Android kısıtlamalarına takılırsa
-                // ses çalamayız — en azından kullanıcıyı bildirimle uyaralım.
-                Log.e("PrayerAlarmReceiver", "AdhanService başlatılamadı, fallback bildirimi", e)
-                notificationHelper.showMissedAdhanNotification(prayerName)
-            }
+            val workRequest = OneTimeWorkRequestBuilder<AdhanWorker>()
+                .setInputData(inputData)
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .build()
+
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                AdhanWorker.WORK_NAME,
+                ExistingWorkPolicy.REPLACE,
+                workRequest
+            )
         } finally {
             if (wakeLock.isHeld) wakeLock.release()
         }

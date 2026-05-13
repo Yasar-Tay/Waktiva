@@ -11,7 +11,9 @@ import androidx.core.app.NotificationCompat
 import com.ybugmobile.waktiva.MainActivity
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerType
+import com.ybugmobile.waktiva.receiver.AdhanStopReceiver
 import com.ybugmobile.waktiva.receiver.PrayerAlarmReceiver
+import com.ybugmobile.waktiva.ui.adhan.AdhanActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -36,6 +38,7 @@ class NotificationHelper @Inject constructor(
         const val NOTIFICATION_ID_MISSED = 3001
 
         const val ACTION_SKIP_ADHAN = "com.ybugmobile.waktiva.ACTION_SKIP_ADHAN"
+        const val ACTION_STOP_ADHAN = "com.ybugmobile.waktiva.ACTION_STOP_ADHAN"
         const val EXTRA_PRAYER_NAME = "PRAYER_NAME"
         const val EXTRA_PRAYER_DATE = "PRAYER_DATE"
     }
@@ -118,6 +121,44 @@ class NotificationHelper @Inject constructor(
 
     fun cancelAdhanNotification() {
         notificationManager.cancel(NOTIFICATION_ID_ADHAN)
+    }
+
+    /**
+     * Builds the notification used by AdhanWorker's setForeground() call.
+     * The stop action broadcasts to AdhanStopReceiver which cancels the WorkManager job.
+     */
+    fun createAdhanNotification(prayerName: String): Notification {
+        val prayerType = PrayerType.fromString(prayerName)
+        val displayedPrayerName = prayerType?.getDisplayName(context) ?: prayerName
+
+        val fullScreenIntent = Intent(context, AdhanActivity::class.java).apply {
+            putExtra(EXTRA_PRAYER_NAME, prayerName)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+        val fullScreenPendingIntent = PendingIntent.getActivity(
+            context, 0, fullScreenIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val stopIntent = Intent(context, AdhanStopReceiver::class.java).apply {
+            action = ACTION_STOP_ADHAN
+        }
+        val stopPendingIntent = PendingIntent.getBroadcast(
+            context, 1, stopIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        return NotificationCompat.Builder(context, CHANNEL_ID_ADHAN)
+            .setContentTitle(context.getString(R.string.notification_adhan_title, displayedPrayerName))
+            .setContentText(context.getString(R.string.notification_adhan_content))
+            .setSmallIcon(R.drawable.ic_notification)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setFullScreenIntent(fullScreenPendingIntent, true)
+            .setOngoing(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .addAction(android.R.drawable.ic_menu_close_clear_cancel, context.getString(R.string.adhan_stop), stopPendingIntent)
+            .build()
     }
 
     fun showMissedAdhanNotification(prayerName: String) {

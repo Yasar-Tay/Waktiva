@@ -1,19 +1,17 @@
 package com.ybugmobile.waktiva.ui.home
 
-import android.content.ComponentName
 import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.Player
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
-import com.google.common.util.concurrent.MoreExecutors
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.data.notification.NotificationHelper
+import com.ybugmobile.waktiva.data.worker.AdhanWorker
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
@@ -27,7 +25,6 @@ import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.data.sensor.CompassData
 import com.ybugmobile.waktiva.data.sensor.CompassManager
-import com.ybugmobile.waktiva.service.AdhanService
 import com.ybugmobile.waktiva.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -88,8 +85,6 @@ class HomeViewModel @Inject constructor(
     private val _weatherCondition = MutableStateFlow(WeatherCondition.UNKNOWN)
     private val _temperature = MutableStateFlow<Double?>(null)
     private var weatherRefreshJob: Job? = null
-
-    private var mediaController: MediaController? = null
 
     val calculationMethods = CALCULATION_METHODS
     private var lastPermissionStatus = PermissionUtils.isLocationPermissionGranted(context)
@@ -188,7 +183,20 @@ class HomeViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
 
-        setupMediaController()
+        setupAdhanObserver()
+    }
+
+    private fun setupAdhanObserver() {
+        WorkManager.getInstance(context)
+            .getWorkInfosForUniqueWorkFlow(AdhanWorker.WORK_NAME)
+            .onEach { workInfoList ->
+                val activeInfo = workInfoList.find {
+                    it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED
+                }
+                _isAdhanPlaying.value = activeInfo != null
+                _playingPrayerName.value = activeInfo?.inputData?.getString(AdhanWorker.KEY_PRAYER_NAME)
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun refreshWeather() {
@@ -253,38 +261,8 @@ class HomeViewModel @Inject constructor(
         refreshWeather()
     }
 
-    private fun setupMediaController() {
-        val sessionToken = SessionToken(context, ComponentName(context, AdhanService::class.java))
-        val controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
-        controllerFuture.addListener({
-            try {
-                mediaController = controllerFuture.get()
-                mediaController?.addListener(object : Player.Listener {
-                    override fun onIsPlayingChanged(isPlaying: Boolean) {
-                        _isAdhanPlaying.value = isPlaying
-                        updatePlayingPrayerName()
-                    }
-                    override fun onPlaybackStateChanged(playbackState: Int) {
-                        if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
-                            _isAdhanPlaying.value = false
-                            _playingPrayerName.value = null
-                        }
-                    }
-                })
-                _isAdhanPlaying.value = mediaController?.isPlaying == true
-                updatePlayingPrayerName()
-            } catch (e: Exception) { e.printStackTrace() }
-        }, MoreExecutors.directExecutor())
-    }
-
-    private fun updatePlayingPrayerName() {
-        val metadata = mediaController?.currentMediaItem?.mediaMetadata
-        val name = metadata?.extras?.getString(NotificationHelper.EXTRA_PRAYER_NAME)
-        _playingPrayerName.value = name
-    }
-
     fun stopAdhan() {
-        mediaController?.stop()
+        WorkManager.getInstance(context).cancelUniqueWork(AdhanWorker.WORK_NAME)
         _isAdhanPlaying.value = false
         _playingPrayerName.value = null
     }
@@ -449,7 +427,6 @@ class HomeViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        mediaController?.release()
     }
 
     companion object {
