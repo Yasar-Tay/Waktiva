@@ -194,7 +194,7 @@ class HomeViewModel @Inject constructor(
                     it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED
                 }
                 _isAdhanPlaying.value = activeInfo != null
-                _playingPrayerName.value = activeInfo?.inputData?.getString(AdhanWorker.KEY_PRAYER_NAME)
+                _playingPrayerName.value = activeInfo?.progress?.getString(AdhanWorker.KEY_PRAYER_NAME)
             }
             .launchIn(viewModelScope)
     }

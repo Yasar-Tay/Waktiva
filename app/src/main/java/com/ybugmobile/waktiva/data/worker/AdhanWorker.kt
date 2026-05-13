@@ -21,6 +21,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.ybugmobile.waktiva.data.notification.NotificationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -72,6 +73,7 @@ class AdhanWorker @AssistedInject constructor(
         val audioPath = inputData.getString(KEY_AUDIO_PATH) ?: return Result.failure()
 
         Log.d(TAG, "Starting adhan for $prayerName")
+        setProgress(workDataOf(KEY_PRAYER_NAME to prayerName))
 
         // setForeground() via WorkManager is NOT subject to BOOT_COMPLETED FGS restrictions.
         // This is the Android 15-recommended replacement for startForegroundService().
