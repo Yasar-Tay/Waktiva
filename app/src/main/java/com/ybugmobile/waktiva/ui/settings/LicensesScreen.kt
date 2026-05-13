@@ -46,8 +46,7 @@ fun LicensesScreen(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
                     scrolledContainerColor = Color.Transparent
-                ),
-                modifier = Modifier.statusBarsPadding()
+                )
             )
         }
     ) { padding ->

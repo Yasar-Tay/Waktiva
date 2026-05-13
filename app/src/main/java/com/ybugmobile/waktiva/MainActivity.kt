@@ -79,14 +79,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var timeManager: TimeManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        
+
         // Schedule periodic background tasks if this is the first time the activity is created
         if (savedInstanceState == null) {
             scheduleWork()
         }
-        
-        enableEdgeToEdge()
         setContent {
             WaktivaTheme {
                 val homeViewModel: HomeViewModel = hiltViewModel()
