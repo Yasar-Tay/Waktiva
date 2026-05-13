@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
+import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.ui.home.HomeViewState
 import com.ybugmobile.waktiva.ui.theme.GlassTheme
 import java.time.LocalDate
@@ -48,7 +49,10 @@ fun HomePortraitContent(
     // Optimization: Filter and memoize available days to prevent redundant calculations during scrolls
     val isToday = remember(state.selectedDate) { state.selectedDate == LocalDate.now() }
     val availableDays = remember(allDays) { allDays.filter { !it.date.isBefore(LocalDate.now()) } }
-    
+    val hasWeatherData = remember(state.temperature, state.weatherCondition) {
+        state.temperature != null || state.weatherCondition != WeatherCondition.UNKNOWN
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -61,7 +65,7 @@ fun HomePortraitContent(
                     .windowInsetsTopHeight(WindowInsets.statusBars)
                     .displayCutoutPadding()
             )
-            
+
             // Safe margin after system bar
             Spacer(Modifier.height(16.dp))
 
@@ -87,7 +91,7 @@ fun HomePortraitContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Weather information (only shown if network is available)
-                if (state.isNetworkAvailable) {
+                if (hasWeatherData || state.isNetworkAvailable) {
                     WeatherSection(
                         temperature = state.temperature,
                         condition = state.weatherCondition,
@@ -129,7 +133,7 @@ fun HomePortraitContent(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 // Toggle between Adhan Playback Controls and Next Prayer Countdown
                 AnimatedContent(
