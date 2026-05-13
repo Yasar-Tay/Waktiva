@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -123,13 +122,13 @@ fun NextPrayerCountdown(
                     val configuration = LocalConfiguration.current
                     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
                     
-                    val containerColor = remember(glassTheme.isLightMode) { 
-                        if (glassTheme.isLightMode) Color.White.copy(0.22f) else Color.Black.copy(0.25f) 
+                    val containerColor = remember(glassTheme.isLightMode) {
+                        if (glassTheme.isLightMode) Color.White.copy(0.18f) else Color.Black.copy(0.42f)
                     }
-                    val borderColor = remember(glassTheme.isLightMode) { 
-                        if (glassTheme.isLightMode) Color.White.copy(0.45f) else Color.White.copy(0.15f) 
+                    val borderColor = remember(glassTheme.isLightMode) {
+                        if (glassTheme.isLightMode) Color.White.copy(0.45f) else Color.White.copy(0.1f)
                     }
-                    val cardShape = RoundedCornerShape(percent = 50)
+                    val cardShape = RoundedCornerShape(18.dp)
 
                     // Target logic: If next event is Sunrise (no adhan), target Dhuhr instead.
                     val targetPrayerType = if (nextPrayer.type == PrayerType.SUNRISE) PrayerType.DHUHR else nextPrayer.type
@@ -180,7 +179,7 @@ fun NextPrayerCountdown(
                     ) {
                         Box(
                             modifier = Modifier
-                                .height(if (isLandscape) 40.dp else 48.dp)
+                                .height(if (isLandscape) 36.dp else 50.dp)
                                 .wrapContentWidth()
                                 .graphicsLayer {
                                     scaleX = scale
@@ -196,73 +195,77 @@ fun NextPrayerCountdown(
                                 )
                                 .drawWithContent {
                                     drawContent()
-                                    val radius = CornerRadius(size.height / 2f)
-                                    // Layered glass effect drawing
+                                    val cornerRadius = CornerRadius(18.dp.toPx())
+                                    // Soft color wash from left
                                     drawRoundRect(
                                         brush = Brush.horizontalGradient(
-                                            listOf(buttonColor.copy(0.15f), Color.Transparent), 
-                                            endX = size.width * 0.4f
-                                        ), 
-                                        size = size, 
-                                        cornerRadius = radius, 
-                                        blendMode = BlendMode.Screen
+                                            0f to buttonColor.copy(alpha = 0.18f),
+                                            0.45f to Color.Transparent
+                                        ),
+                                        size = size,
+                                        cornerRadius = cornerRadius
                                     )
+                                    // Hair-line border
                                     drawRoundRect(
-                                        color = borderColor, 
-                                        size = size, 
-                                        cornerRadius = radius, 
-                                        style = Stroke(1.dp.toPx())
+                                        color = borderColor,
+                                        size = size,
+                                        cornerRadius = cornerRadius,
+                                        style = Stroke(0.75.dp.toPx())
                                     )
                                 },
                             contentAlignment = Alignment.Center
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                // Left Icon Pill
+                            Row(
+                                modifier = Modifier.fillMaxHeight(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // Thin vertical accent bar
                                 Box(
                                     modifier = Modifier
                                         .fillMaxHeight()
-                                        .aspectRatio(1f)
-                                        .background(buttonColor.copy(0.9f)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
-                                        contentDescription = null,
-                                        tint = if (buttonColor.luminance() > 0.5f) Color.Black else Color.White,
-                                        modifier = Modifier.size(if (isLandscape) 18.dp else 22.dp)
-                                    )
-                                }
+                                        .width(2.5.dp)
+                                        .background(
+                                            brush = Brush.verticalGradient(
+                                                listOf(Color.Transparent, buttonColor.copy(0.85f), Color.Transparent)
+                                            ),
+                                            shape = RoundedCornerShape(topStart = 18.dp, bottomStart = 18.dp)
+                                        )
+                                )
 
-                                // Button Text Content
+                                Spacer(Modifier.width(if (isLandscape) 10.dp else 12.dp))
+
+                                // Icon tinted in prayer color, no background box
+                                Icon(
+                                    imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
+                                    contentDescription = null,
+                                    tint = buttonColor,
+                                    modifier = Modifier.size(if (isLandscape) 13.dp else 15.dp)
+                                )
+
+                                Spacer(Modifier.width(if (isLandscape) 8.dp else 10.dp))
+
+                                // Prayer name label + action text stacked
                                 Column(
-                                    modifier = Modifier.padding(
-                                        start = if (isLandscape) 12.dp else 16.dp, 
-                                        end = if (isLandscape) 16.dp else 20.dp
-                                    ),
-                                    verticalArrangement = Arrangement.spacedBy((-4).dp, Alignment.CenterVertically)
+                                    modifier = Modifier.padding(end = if (isLandscape) 14.dp else 18.dp),
+                                    verticalArrangement = Arrangement.spacedBy((-1).dp, Alignment.CenterVertically)
                                 ) {
                                     Text(
-                                        text = stringResource(
-                                            R.string.adhan_metadata_title_format,
-                                            targetPrayerType.getDisplayName(context)
-                                        ),
+                                        text = targetPrayerType.getDisplayName(context).uppercase(),
                                         style = TextStyle(
-                                            fontSize = if (isLandscape) 10.sp else 12.sp,
-                                            lineHeight = if (isLandscape) 10.sp else 12.sp,
+                                            fontSize = if (isLandscape) 7.sp else 8.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = Color.White.copy(0.6f),
-                                            letterSpacing = 0.4.sp
+                                            color = Color.White.copy(0.42f),
+                                            letterSpacing = 1.5.sp
                                         )
                                     )
                                     Text(
                                         text = (if (isMuted) stringResource(R.string.home_unmute_adhan) else stringResource(R.string.home_skip_adhan)).uppercase(Locale.getDefault()),
                                         style = TextStyle(
-                                            fontSize = if (isLandscape) 13.sp else 16.sp,
-                                            lineHeight = if (isLandscape) 13.sp else 16.sp,
+                                            fontSize = if (isLandscape) 13.sp else 18.sp,
                                             fontFamily = IBMPlexArabic,
-                                            fontWeight = FontWeight.Bold,
+                                            fontWeight = FontWeight.Medium,
                                             color = Color.White,
-                                            letterSpacing = (-0.3).sp
+                                            letterSpacing = (-0.5).sp
                                         )
                                     )
                                 }

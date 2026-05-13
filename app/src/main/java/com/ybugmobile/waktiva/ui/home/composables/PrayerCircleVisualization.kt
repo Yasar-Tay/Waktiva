@@ -371,66 +371,94 @@ fun InfoGlassCard(info: DetailedInfo) {
     val glassTheme = LocalGlassTheme.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val containerColor = remember(glassTheme.isLightMode) { if (glassTheme.isLightMode) Color.White.copy(0.22f) else Color.Black.copy(0.25f) }
-    val borderColor = remember(glassTheme.isLightMode) { if (glassTheme.isLightMode) Color.White.copy(0.45f) else Color.White.copy(0.15f) }
-    val cardShape = RoundedCornerShape(percent = 50)
+
+    val bgColor = if (glassTheme.isLightMode) Color.White.copy(0.18f) else Color.Black.copy(0.42f)
+    val borderColor = if (glassTheme.isLightMode) Color.White.copy(0.45f) else Color.White.copy(0.1f)
+    val cardShape = RoundedCornerShape(18.dp)
+
+    val cardHeight = if (isLandscape) 36.dp else 50.dp
+    val iconSize = if (isLandscape) 12.dp else 15.dp
+    val nameFontSize = if (isLandscape) 7.sp else 8.sp
+    val timeFontSize = if (isLandscape) 13.sp else 18.sp
 
     Surface(
-        color = containerColor,
+        color = bgColor,
         shape = cardShape,
         modifier = Modifier
-            .wrapContentSize()
-            .height(if (isLandscape) 40.dp else 40.dp)
-            .clip(cardShape)
+            .wrapContentWidth()
+            .height(cardHeight)
             .drawWithContent {
                 drawContent()
-                // Card accent gradient
-                drawRoundRect(Brush.horizontalGradient(listOf(info.color.copy(0.15f), Color.Transparent), endX = size.width * 0.4f), size = size, cornerRadius = CornerRadius(size.height / 2), blendMode = BlendMode.Screen)
-                drawRoundRect(borderColor, size = size, cornerRadius = CornerRadius(size.height / 2), style = Stroke(1.dp.toPx()))
+                // Soft color wash bleeding from left
+                drawRoundRect(
+                    brush = Brush.horizontalGradient(
+                        0f to info.color.copy(alpha = 0.18f),
+                        0.45f to Color.Transparent
+                    ),
+                    size = size,
+                    cornerRadius = CornerRadius(18.dp.toPx())
+                )
+                // Hair-line border
+                drawRoundRect(
+                    color = borderColor,
+                    size = size,
+                    cornerRadius = CornerRadius(18.dp.toPx()),
+                    style = Stroke(0.75.dp.toPx())
+                )
             },
         contentColor = Color.White
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            // Icon Pill on the left
+        Row(
+            modifier = Modifier.fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Thin vertical accent bar
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .aspectRatio(1f)
-                    .background(info.color.copy(0.9f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    info.icon,
-                    null,
-                    tint = if (info.color.luminance() > 0.5f) Color.Black else Color.White,
-                    modifier = Modifier.size(if (isLandscape) 20.dp else 17.dp)
-                )
-            }
+                    .width(2.5.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(Color.Transparent, info.color.copy(0.85f), Color.Transparent)
+                        ),
+                        shape = RoundedCornerShape(topStart = 18.dp, bottomStart = 18.dp)
+                    )
+            )
 
-            // Info text on the right
+            Spacer(Modifier.width(if (isLandscape) 10.dp else 12.dp))
+
+            // Icon tinted in prayer color, no background box
+            Icon(
+                imageVector = info.icon,
+                contentDescription = null,
+                tint = info.color,
+                modifier = Modifier.size(iconSize)
+            )
+
+            Spacer(Modifier.width(if (isLandscape) 8.dp else 10.dp))
+
+            // Prayer name + time stacked
             Column(
-                modifier = Modifier.padding(start = if (isLandscape) 12.dp else 11.dp, end = if (isLandscape) 16.dp else 14.dp),
-                verticalArrangement = Arrangement.spacedBy((-4).dp, Alignment.CenterVertically)
+                modifier = Modifier.padding(end = if (isLandscape) 14.dp else 18.dp),
+                verticalArrangement = Arrangement.spacedBy((-1).dp, Alignment.CenterVertically)
             ) {
                 Text(
-                    text = info.title,
+                    text = info.title.uppercase(),
                     style = TextStyle(
-                        fontSize = if (isLandscape) 11.sp else 9.sp,
-                        lineHeight = if (isLandscape) 11.sp else 9.sp,
+                        fontSize = nameFontSize,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White.copy(0.6f),
-                        letterSpacing = 0.4.sp
+                        color = Color.White.copy(0.42f),
+                        letterSpacing = 1.5.sp
                     )
                 )
                 Text(
                     text = info.time,
                     style = TextStyle(
-                        fontSize = if (isLandscape) 15.sp else 12.sp,
-                        lineHeight = if (isLandscape) 15.sp else 12.sp,
+                        fontSize = timeFontSize,
                         fontFamily = IBMPlexArabic,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Medium,
                         color = Color.White,
-                        letterSpacing = (-0.3).sp
+                        letterSpacing = (-0.5).sp
                     )
                 )
             }

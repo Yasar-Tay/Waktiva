@@ -10,7 +10,6 @@ import androidx.work.WorkManager
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
-import com.ybugmobile.waktiva.data.notification.NotificationHelper
 import com.ybugmobile.waktiva.data.worker.AdhanWorker
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
