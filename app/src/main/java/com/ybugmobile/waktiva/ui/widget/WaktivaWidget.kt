@@ -63,6 +63,9 @@ class WaktivaWidget : GlanceAppWidget() {
         provideContent {
             val entryPoint = EntryPointAccessors.fromApplication(context, WidgetEntryPoint::class.java)
             val prayerDays by entryPoint.prayerRepository().getPrayerDays().collectAsState(initial = emptyList())
+            // Throttle to per-minute precision: widget shows HH:MM, not seconds.
+            // Without distinctUntilChanged on the truncated value Glance recomposes — and
+            // calls updateAppWidget() — every second, flooding the AppWidgetManager log.
             val currentTime by entryPoint.timeManager().currentTime.collectAsState()
 
             val now = currentTime

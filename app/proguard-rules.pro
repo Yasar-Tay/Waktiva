@@ -21,3 +21,45 @@
 #-renamesourcefileattribute SourceFile
 
 -dontwarn edu.umd.cs.findbugs.annotations.Nullable
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Gson / Retrofit — keep all DTO data classes used for JSON deserialization.
+# R8 renames Kotlin data class fields even when @SerializedName is present,
+# because Gson reads fields via reflection. Without these rules the JSON parser
+# silently returns null fields, breaking weather data and prayer time parsing.
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Keep Gson annotations so @SerializedName is honoured at runtime
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
+
+# Keep all DTO classes in the remote package (Gson reads them reflectively)
+-keep class com.ybugmobile.waktiva.data.remote.dto.** { *; }
+
+# Keep Retrofit API service interfaces (Retrofit generates implementations at runtime)
+-keep interface com.ybugmobile.waktiva.data.remote.** { *; }
+
+# Keep all domain model classes (used across Flows, StateFlows, and Glance widgets)
+-keep class com.ybugmobile.waktiva.domain.model.** { *; }
+
+# Keep WeatherCondition enum (used in Theme.kt gradient logic; if renamed the
+# `when` branches silently fall through to UNKNOWN, hiding weather backgrounds)
+-keepclassmembers enum com.ybugmobile.waktiva.domain.model.WeatherCondition { *; }
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Kotlin data classes — prevent R8 from removing synthetic copy/component methods
+# ──────────────────────────────────────────────────────────────────────────────
+-keepclassmembers class com.ybugmobile.waktiva.** {
+    # data class generated methods
+    public synthetic ** copy$default(...);
+    public ** component*();
+    public ** copy(...);
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Hilt / Dagger — EntryPoint interfaces (used by WaktivaWidget without injection)
+# ──────────────────────────────────────────────────────────────────────────────
+-keep @dagger.hilt.InstallIn class * { *; }
+-keep interface * extends dagger.hilt.EntryPoint { *; }
