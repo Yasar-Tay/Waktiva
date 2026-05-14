@@ -123,7 +123,7 @@ fun NextPrayerCountdown(
                     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
                     
                     val containerColor = remember(glassTheme.isLightMode) {
-                        if (glassTheme.isLightMode) Color.White.copy(0.18f) else Color.Black.copy(0.42f)
+                        if (glassTheme.isLightMode) Color.White.copy(0.18f) else Color.Black.copy(0.15f)
                     }
                     val borderColor = remember(glassTheme.isLightMode) {
                         if (glassTheme.isLightMode) Color.White.copy(0.45f) else Color.White.copy(0.1f)

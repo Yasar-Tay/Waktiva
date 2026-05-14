@@ -372,7 +372,7 @@ fun InfoGlassCard(info: DetailedInfo) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    val bgColor = if (glassTheme.isLightMode) Color.White.copy(0.18f) else Color.Black.copy(0.42f)
+    val bgColor = if (glassTheme.isLightMode) Color.White.copy(0.18f) else Color.Black.copy(0.15f)
     val borderColor = if (glassTheme.isLightMode) Color.White.copy(0.45f) else Color.White.copy(0.1f)
     val cardShape = RoundedCornerShape(18.dp)
 
