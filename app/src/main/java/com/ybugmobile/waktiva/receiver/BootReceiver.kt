@@ -3,6 +3,7 @@ package com.ybugmobile.waktiva.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.ybugmobile.waktiva.data.worker.PrayerUpdateWorker
@@ -22,9 +23,15 @@ import dagger.hilt.android.AndroidEntryPoint
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            // Trigger a prayer update work to reschedule all alarms safely in the background
+            // Use enqueueUniqueWork so a boot-triggered run never overlaps with the
+            // already-scheduled periodic PrayerUpdateWorker. KEEP means if one is
+            // already queued/running, this boot trigger is silently dropped.
             val workRequest = OneTimeWorkRequestBuilder<PrayerUpdateWorker>().build()
-            WorkManager.getInstance(context).enqueue(workRequest)
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                "PrayerUpdateWork",
+                ExistingWorkPolicy.KEEP,
+                workRequest
+            )
         }
     }
 }

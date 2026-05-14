@@ -91,7 +91,7 @@ fun HomePortraitContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Weather information (only shown if network is available)
-                if (hasWeatherData || state.isNetworkAvailable) {
+                if (hasWeatherData || state.isNetworkAvailable || state.isLocationPermissionGranted) {
                     WeatherSection(
                         temperature = state.temperature,
                         condition = state.weatherCondition,

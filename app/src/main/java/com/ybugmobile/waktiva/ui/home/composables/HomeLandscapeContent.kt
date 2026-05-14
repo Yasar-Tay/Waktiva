@@ -149,7 +149,7 @@ fun HomeLandscapeContent(
                             modifier = Modifier.weight(1f),
                             contentAlignment = Alignment.CenterEnd
                         ) {
-                            if (hasWeatherData || state.isNetworkAvailable) {
+                            if (hasWeatherData || state.isNetworkAvailable || state.isLocationPermissionGranted) {
                                 WeatherSection(
                                     temperature = state.temperature,
                                     condition = state.weatherCondition,

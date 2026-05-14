@@ -23,4 +23,7 @@ interface PrayerDao {
 
     @Query("SELECT COUNT(*) FROM prayer_days WHERE date >= :currentDate")
     suspend fun getFutureDaysCount(currentDate: String): Int
+
+    @Query("SELECT COUNT(*) FROM prayer_days WHERE date LIKE :yearMonth || '%'")
+    suspend fun getCountForYearMonth(yearMonth: String): Int
 }

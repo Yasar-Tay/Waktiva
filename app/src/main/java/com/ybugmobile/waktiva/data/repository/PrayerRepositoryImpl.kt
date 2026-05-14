@@ -23,6 +23,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.chrono.HijrahChronology
 import java.time.temporal.ChronoField
+import java.util.Collections
 import javax.inject.Inject
 
 class PrayerRepositoryImpl @Inject constructor(
@@ -32,6 +33,11 @@ class PrayerRepositoryImpl @Inject constructor(
     private val dao: PrayerDao,
     private val statusDao: PrayerStatusDao
 ) : PrayerRepository {
+
+    // Tracks in-flight fetch keys ("year/month") to prevent duplicate concurrent requests
+    // from HomeViewModel, PrayerUpdateWorker, and LocationUpdateWorker all hitting the
+    // same endpoint simultaneously.
+    private val inFlightRequests: MutableSet<String> = Collections.synchronizedSet(mutableSetOf())
 
     override fun getPrayerDays(): Flow<List<PrayerDay>> {
         return dao.getAllPrayerDays().map { entities -> 
@@ -128,6 +134,16 @@ class PrayerRepositoryImpl @Inject constructor(
             return Result.failure(Exception("Location is required for fetching prayer times"))
         }
 
+        // Skip entirely if we already have data for this month in the DB.
+        val yearMonth = "$year-${month.toString().padStart(2, '0')}"
+        if (dao.getCountForYearMonth(yearMonth) > 0) return Result.success(Unit)
+
+        // Deduplicate: if another coroutine is already fetching this month, skip.
+        // The in-flight coroutine will write to the DB; the caller's data will be
+        // up-to-date once it reads from the Room Flow.
+        val key = "$year/$month"
+        if (!inFlightRequests.add(key)) return Result.success(Unit)
+
         return try {
             val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method)
             if (response.code == 200) {
@@ -145,6 +161,8 @@ class PrayerRepositoryImpl @Inject constructor(
             } catch (localEx: Exception) {
                 Result.failure(localEx)
             }
+        } finally {
+            inFlightRequests.remove(key)
         }
     }
 

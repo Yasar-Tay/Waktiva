@@ -84,6 +84,8 @@ class HomeViewModel @Inject constructor(
     private val _weatherCondition = MutableStateFlow(WeatherCondition.UNKNOWN)
     private val _temperature = MutableStateFlow<Double?>(null)
     private var weatherRefreshJob: Job? = null
+    private var lastWeatherFetchTime = 0L
+    private val weatherFetchCooldownMs = 5 * 60 * 1000L // 5 minutes
 
     val calculationMethods = CALCULATION_METHODS
     private var lastPermissionStatus = PermissionUtils.isLocationPermissionGranted(context)
@@ -199,15 +201,14 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun refreshWeather() {
-        if (weatherRefreshJob?.isActive == true) {
-            return
-        }
+        if (weatherRefreshJob?.isActive == true) return
+        if (System.currentTimeMillis() - lastWeatherFetchTime < weatherFetchCooldownMs) return
 
         weatherRefreshJob = viewModelScope.launch {
             val s = settings.first()
             val lat = s.latitude ?: return@launch
             val lng = s.longitude ?: return@launch
-            
+            lastWeatherFetchTime = System.currentTimeMillis()
             prayerRepository.getWeatherData(lat, lng).onSuccess { info ->
                 _weatherCondition.value = info.condition
                 _temperature.value = info.temperature
@@ -405,11 +406,13 @@ class HomeViewModel @Inject constructor(
 
         if (loc != null) {
             val address = locationWrapper.getAddressFromLocation(lat, lng)
-            if (address != null) {
-                settingsManager.saveLocation(lat, lng, address)
-            } else {
-                settingsManager.saveLocation(lat, lng, s.locationName)
-            }
+            settingsManager.saveLocation(lat, lng, address ?: s.locationName)
+        } else if (s.locationName.isBlank() || s.locationName == "Unknown") {
+            // Fresh GPS fix isn't available but we have cached coordinates and the
+            // stored name is still the placeholder — re-attempt reverse geocoding so
+            // the location name is populated from saved coordinates.
+            val address = locationWrapper.getAddressFromLocation(lat, lng)
+            if (address != null) settingsManager.saveLocation(lat, lng, address)
         }
         
         if (forceFullRefresh) {

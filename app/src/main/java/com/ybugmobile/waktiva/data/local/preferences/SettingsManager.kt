@@ -95,7 +95,7 @@ class SettingsManager @Inject constructor(
             latitude = preferences[LAST_KNOWN_LAT],
             longitude = preferences[LAST_KNOWN_LNG],
             altitude = preferences[LAST_KNOWN_ALT],
-            locationName = preferences[LAST_LOCATION_NAME] ?: "Unknown",
+            locationName = preferences[LAST_LOCATION_NAME] ?: "",
             language = preferences[LANGUAGE] ?: "system",
             selectedAdhanPath = preferences[SELECTED_ADHAN_PATH],
             prayerSpecificAdhanPaths = prayerSpecificPaths,
