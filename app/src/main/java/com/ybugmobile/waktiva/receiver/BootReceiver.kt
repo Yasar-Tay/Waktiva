@@ -27,9 +27,13 @@ class BootReceiver : BroadcastReceiver() {
             // already-scheduled periodic PrayerUpdateWorker. KEEP means if one is
             // already queued/running, this boot trigger is silently dropped.
             val workRequest = OneTimeWorkRequestBuilder<PrayerUpdateWorker>().build()
+            // Use a separate unique name so this one-time boot run never collides
+            // with the periodic "PrayerUpdateWork" that WorkManager restores on reboot.
+            // If KEEP were used with the same name, WorkManager would silently drop
+            // this request because the periodic work already occupies that slot.
             WorkManager.getInstance(context).enqueueUniqueWork(
-                "PrayerUpdateWork",
-                ExistingWorkPolicy.KEEP,
+                "PrayerUpdateWork_Boot",
+                ExistingWorkPolicy.REPLACE,
                 workRequest
             )
         }

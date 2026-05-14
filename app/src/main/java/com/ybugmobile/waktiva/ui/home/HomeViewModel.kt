@@ -178,8 +178,10 @@ class HomeViewModel @Inject constructor(
         refreshWeather()
         onPermissionsGranted()
         
-        combine(allPrayerDays, settings) { days, s -> 
-            if (days.isNotEmpty()) {
+        combine(allPrayerDays, settings) { days, s ->
+            // Skip rescheduling real alarms while a test alarm is active;
+            // stopTestAlarm() / testAlarmEndTime expiry will re-enable scheduling.
+            if (days.isNotEmpty() && s.testAlarmEndTime == null) {
                 alarmScheduler.scheduleNextAlarm(days, s.enablePreAdhanWarning, s.preAdhanWarningMinutes)
             }
         }.launchIn(viewModelScope)
@@ -240,11 +242,13 @@ class HomeViewModel @Inject constructor(
     }
 
     fun triggerTestAlarm(seconds: Int) {
-        val endTimeMillis = System.currentTimeMillis() + (seconds * 1000)
+        val endTimeMillis = System.currentTimeMillis() + (seconds * 1000L)
         viewModelScope.launch {
-            alarmScheduler.cancelAllAlarms()
-            settingsManager.clearMutedPrayer()
+            // Set end time FIRST so the settings observer skips real-alarm rescheduling
+            // for any subsequent settings writes (e.g. clearMutedPrayer below).
             settingsManager.setTestAlarmEndTime(endTimeMillis)
+            settingsManager.clearMutedPrayer()
+            alarmScheduler.cancelAllAlarms()
             alarmScheduler.scheduleTestAlarm(seconds)
         }
     }

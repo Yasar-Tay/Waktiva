@@ -310,41 +310,46 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                 }
             }
 
-            // Global floating actions (Debug/Development only in current state)
-            val isDebugEnabled = false
-            if (isDebugEnabled) {
+            // Test Adhan FAB — debug builds only, visible only on the Home screen
+            val isOnHome = currentDestination?.route == Screen.Home.route
+            val adhanState by homeViewModel.state.collectAsState()
+            if (false && isOnHome && !adhanState.isAdhanPlaying) {
                 Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                    val density = LocalDensity.current
                     Column(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(bottom = if (showNavigationLayout && !isLandscape) 100.dp else 0.dp)
+                            .padding(bottom = if (showNavigationLayout && !isLandscape) 80.dp else 0.dp)
                             .navigationBarsPadding(),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.End
                     ) {
-                        SmallFloatingActionButton(
-                            onClick = { 
-                                timeManager.addMinutes(30)
-                                scope.launch {
-                                    WaktivaWidget().updateAll(context)
-                                }
-                                //Toast.makeText(context, "Time shifted +30 minutes", Toast.LENGTH_SHORT).show()
-                            },
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer
-                        ) {
-                            Icon(Icons.Default.Update, contentDescription = "Shift Time")
+                        // Debug-only: time-shift helper (keep disabled in production)
+                        val isDebugEnabled = false
+                        if (isDebugEnabled) {
+                            SmallFloatingActionButton(
+                                onClick = {
+                                    timeManager.addMinutes(30)
+                                    scope.launch { WaktivaWidget().updateAll(context) }
+                                },
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            ) {
+                                Icon(Icons.Default.Update, contentDescription = "Shift Time")
+                            }
                         }
 
                         FloatingActionButton(
-                            onClick = { 
+                            onClick = {
                                 val seconds = 5
                                 homeViewModel.triggerTestAlarm(seconds)
-                                Toast.makeText(context, "Test alarm scheduled for $seconds seconds", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Test adhan in $seconds seconds",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             },
                             containerColor = MaterialTheme.colorScheme.tertiaryContainer
                         ) {
-                            Icon(Icons.Default.NotificationsActive, contentDescription = "Test Alarm")
+                            Icon(Icons.Default.NotificationsActive, contentDescription = "Test Adhan")
                         }
                     }
                 }
