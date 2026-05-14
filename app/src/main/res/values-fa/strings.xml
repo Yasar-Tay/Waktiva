@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -390,4 +390,5 @@
     <string name="license_no_ads_4">داده‌های شخصی را نمی‌فروشد</string>
     <string name="license_source_code">۶. کد منبع و مخزن</string>
     <string name="license_github_link">Waktiva یک پروژه متن‌باز است. می‌توانید کد منبع را بیابید، مشکلات را گزارش کنید یا در اینجا مشارکت کنید:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
+    <string name="about_version_label">نسخه</string>
 </resources>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -396,4 +396,5 @@
     <string name="license_no_ads_4">Ne prodaje lične podatke</string>
     <string name="license_source_code">6. Izvorni kod i repozitorij</string>
     <string name="license_github_link">Waktiva je open-source projekat. Izvorni kod možete pronaći, prijaviti probleme ili doprinijeti na:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
+    <string name="about_version_label">Verzija</string>
 </resources>

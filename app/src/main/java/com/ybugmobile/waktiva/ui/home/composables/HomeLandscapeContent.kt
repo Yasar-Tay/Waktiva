@@ -138,8 +138,8 @@ fun HomeLandscapeContent(
                                 contentColor = contentColor,
                                 modifier = Modifier
                                     .graphicsLayer {
-                                        scaleX = 0.6f
-                                        scaleY = 0.6f
+                                        scaleX = 0.7f
+                                        scaleY = 0.7f
                                     }
                             )
                         }
@@ -165,7 +165,7 @@ fun HomeLandscapeContent(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     // Adhan Controls or Next Prayer Countdown
                     AnimatedContent(

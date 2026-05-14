@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -391,4 +391,5 @@
     <string name="license_no_ads_4">لا يبيع البيانات الشخصية</string>
     <string name="license_source_code">6. رمز المصدر والمستودع</string>
     <string name="license_github_link">Waktiva هو مشروع مفتوح المصدر. يمكنك العثور على رمز المصدر أو الإبلاغ عن المشكلات أو المساهمة في:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
+    <string name="about_version_label">الإصدار</string>
 </resources>

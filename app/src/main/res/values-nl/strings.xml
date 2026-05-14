@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -396,4 +396,5 @@
     <string name="license_no_ads_4">Verkoopt geen persoonlijke gegevens</string>
     <string name="license_source_code">6. Broncode en repository</string>
     <string name="license_github_link">Waktiva is een open-source project. Je kunt de broncode vinden, problemen melden of bijdragen op:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
+    <string name="about_version_label">Versie</string>
 </resources>

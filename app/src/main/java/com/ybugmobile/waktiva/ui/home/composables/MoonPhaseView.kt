@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -176,16 +177,6 @@ fun MoonPhaseView(
     }
 
     if (isLandscape) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        ) {
-            labelContent()
-            Spacer(modifier = Modifier.width(4.dp))
-            moonContent()
-        }
-    } else {
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally

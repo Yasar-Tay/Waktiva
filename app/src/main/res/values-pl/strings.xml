@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -394,4 +394,5 @@
     <string name="license_no_ads_4">Brak sprzedaży danych osobowych</string>
     <string name="license_source_code">6. Kod źródłowy i repozytorium</string>
     <string name="license_github_link">Waktiva to projekt open-source. Kod źródłowy, zgłaszanie błędów i możliwość współtworzenia znajdziesz pod adresem:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
+    <string name="about_version_label">Wersja</string>
 </resources>

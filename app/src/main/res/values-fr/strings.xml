@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -290,4 +290,5 @@
     <string name="donate_item_medium_desc">Soutenez la pérennité de ce projet open-source et sans publicité.</string>
     <string name="donate_item_large_title">Union des Cœurs</string>
     <string name="donate_item_large_desc">Apportez le soutien le plus fort pour faire progresser Waktiva.</string>
+    <string name="about_version_label">Version</string>
 </resources>

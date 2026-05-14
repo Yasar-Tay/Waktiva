@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -390,4 +390,5 @@
     <string name="license_no_ads_4">ব্যক্তিগত ডেটা বিক্রি করে না</string>
     <string name="license_source_code">৬. সোর্স কোড এবং রিপোজিটরি</string>
     <string name="license_github_link">Waktiva একটি ওপেন-সোর্স প্রকল্প। আপনি সোর্স কোড খুঁজে পেতে পারেন, সমস্যা রিপোর্ট করতে পারেন বা অবদান রাখতে পারেন এখানে:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
+    <string name="about_version_label">সংস্করণ</string>
 </resources>
