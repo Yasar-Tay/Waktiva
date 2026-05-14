@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="end|center_vertical"
     android:orientation="vertical"
-    android:paddingEnd="4dp">
+    android:paddingEnd="0dp">
 
     <Chronometer
         android:id="@+id/prayer_chronometer"
@@ -12,11 +12,10 @@
         android:layout_height="wrap_content"
         android:countDown="true"
         android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:typeface="monospace"
+        android:textStyle="normal"
         android:fontFamily="monospace"
         android:fontFeatureSettings="tnum"
-        android:letterSpacing="-0.02"
+        android:letterSpacing="-0.03"
         android:gravity="end"
         android:maxLines="1"
         android:includeFontPadding="false" />

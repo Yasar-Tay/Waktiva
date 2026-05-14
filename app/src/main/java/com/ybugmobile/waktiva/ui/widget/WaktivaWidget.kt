@@ -33,7 +33,6 @@ import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
-import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
 import com.ybugmobile.waktiva.ui.theme.getGradientColorsForTime
@@ -41,7 +40,6 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -63,15 +61,11 @@ class WaktivaWidget : GlanceAppWidget() {
         provideContent {
             val entryPoint = EntryPointAccessors.fromApplication(context, WidgetEntryPoint::class.java)
             val prayerDays by entryPoint.prayerRepository().getPrayerDays().collectAsState(initial = emptyList())
-            // Throttle to per-minute precision: widget shows HH:MM, not seconds.
-            // Without distinctUntilChanged on the truncated value Glance recomposes — and
-            // calls updateAppWidget() — every second, flooding the AppWidgetManager log.
             val currentTime by entryPoint.timeManager().currentTime.collectAsState()
 
             val now = currentTime
             val today = prayerDays.find { it.date == now.toLocalDate() }
 
-            // Get colors from Gradient.kt and use the first two for the widget background as requested
             val colors = getGradientColorsForTime(now.toLocalTime(), today)
             val widgetColors = colors.take(2)
 
@@ -97,8 +91,12 @@ class WaktivaWidget : GlanceAppWidget() {
         backgroundProvider: ImageProvider
     ) {
         val size = LocalSize.current
-        val contentColor = Color.White
-        val secondaryContentColor = Color.White.copy(alpha = 0.8f)
+
+        // Colour palette
+        val white       = Color.White
+        val white80     = Color.White.copy(alpha = 0.80f)
+        val white30     = Color.White.copy(alpha = 0.30f)
+        val white12     = Color.White.copy(alpha = 0.12f)
 
         Box(
             modifier = GlanceModifier
@@ -108,7 +106,7 @@ class WaktivaWidget : GlanceAppWidget() {
                 .cornerRadius(32.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
-            // Glass Sheen Layer (Highlight and Border) - Provides the edge definition and light play
+            // ── Glass sheen (border + highlight) ─────────────────────────────
             Box(
                 modifier = GlanceModifier
                     .fillMaxSize()
@@ -120,91 +118,172 @@ class WaktivaWidget : GlanceAppWidget() {
                     modifier = GlanceModifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Left Side: Prayer Info (Sidebar)
-                    val sidebarWidth = 92.dp
-                    Column(
+                    // ── LEFT PANEL: Prayer identity ───────────────────────────
+                    // panelWidth is also used as the ghost-icon container width,
+                    // which is exactly N/2 (half of the 2× oversized icon).
+                    // Result: icon center lands on the panel's bottom-left corner —
+                    // only the top-right quadrant of the icon is visible inside the panel.
+                    val panelWidth = 104.dp
+                    val ghostIconSize = 208.dp  // 2× panelWidth — center lands on corner
+                    Box(
                         modifier = GlanceModifier
-                            .width(sidebarWidth)
+                            .width(panelWidth)
                             .fillMaxHeight()
-                            .padding(vertical = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Circular background for the icon
+                        // Ghost icon layer
+                        // Container = panelWidth wide, BottomEnd alignment →
+                        // icon's bottom-right corner lands at container's bottom-right,
+                        // left half of icon extends beyond the left panel edge and is clipped.
+                        // Only the right half × top half (top-right quadrant) is visible.
                         Box(
                             modifier = GlanceModifier
-                                .size(36.dp)
-                                .background(Color.White.copy(alpha = 0.15f))
-                                .cornerRadius(18.dp),
-                            contentAlignment = Alignment.Center
+                                .width(panelWidth)
+                                .fillMaxHeight(),
+                            contentAlignment = Alignment.BottomEnd
                         ) {
-                            Image(
-                                provider = ImageProvider(getPrayerIconRes(nextPrayer.type)),
-                                contentDescription = null,
-                                modifier = GlanceModifier.size(20.dp),
-                                colorFilter = ColorFilter.tint(ColorProvider(day = contentColor, night = contentColor))
+                            // Use AndroidRemoteViews so we can call setColorFilter(WHITE)
+                            // + setImageAlpha(38) directly on the ImageView — the only
+                            // approach that reliably overrides coloured vector drawables
+                            // and applies true transparency in Glance's RemoteViews layer.
+                            AndroidRemoteViews(
+                                modifier = GlanceModifier.size(ghostIconSize),
+                                remoteViews = RemoteViews(
+                                    context.packageName,
+                                    R.layout.widget_ghost_icon
+                                ).apply {
+                                    setImageViewResource(
+                                        R.id.ghost_icon,
+                                        getPrayerIconRes(nextPrayer.type)
+                                    )
+                                    // Force pure white regardless of the drawable's colours
+                                    setInt(
+                                        R.id.ghost_icon,
+                                        "setColorFilter",
+                                        android.graphics.Color.WHITE
+                                    )
+                                    // 15 % opacity: 0.15 × 255 ≈ 38
+                                    setInt(R.id.ghost_icon, "setImageAlpha", 38)
+                                }
                             )
                         }
 
-                        Spacer(modifier = GlanceModifier.height(4.dp))
-
-                        Text(
-                            text = nextPrayer.type.getDisplayName(context).uppercase(Locale.getDefault()),
-                            style = TextStyle(
-                                color = ColorProvider(day = contentColor, night = contentColor),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
+                        // Prayer name + time — prominent, left-aligned, vertically centered
+                        Column(
+                            modifier = GlanceModifier
+                                .fillMaxSize()
+                                .padding(start = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = nextPrayer.type.getDisplayName(context)
+                                    .uppercase(Locale.getDefault()),
+                                style = TextStyle(
+                                    color = ColorProvider(day = white, night = white),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Start
+                                ),
+                                maxLines = 1
                             )
-                        )
-
-                        Text(
-                            text = nextPrayer.time.format(timeFormatter),
-                            style = TextStyle(
-                                color = ColorProvider(day = secondaryContentColor, night = secondaryContentColor),
-                                fontSize = 11.sp,
-                                textAlign = TextAlign.Center
+                            Spacer(modifier = GlanceModifier.height(2.dp))
+                            Text(
+                                text = nextPrayer.time.format(timeFormatter),
+                                style = TextStyle(
+                                    color = ColorProvider(day = white80, night = white80),
+                                    fontSize = 13.sp,
+                                    textAlign = TextAlign.Start
+                                )
                             )
-                        )
+                        }
                     }
 
-                    // Right Side: Countdown Hero
+                    // ── DIVIDER ───────────────────────────────────────────────
+                    // Wrapped in a Column with vertical padding to create an inset line
                     Column(
                         modifier = GlanceModifier
+                            .width(1.dp)
                             .fillMaxHeight()
+                            .padding(vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = GlanceModifier
+                                .width(1.dp)
+                                .defaultWeight()
+                                .background(white12)
+                        ) {}
+                    }
+
+                    // ── RIGHT PANEL: Countdown hero ───────────────────────────
+                    Column(
+                        modifier = GlanceModifier
                             .defaultWeight()
-                            .padding(end = 16.dp),
+                            .fillMaxHeight()
+                            .padding(start = 10.dp, end = 14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalAlignment = Alignment.End
                     ) {
-                        val remainingDuration = nextPrayer.remainingDuration
-                        val baseTime = SystemClock.elapsedRealtime() + remainingDuration.toMillis()
+                        // Countdown chronometer via RemoteViews
+                        val baseTime = SystemClock.elapsedRealtime() +
+                                nextPrayer.remainingDuration.toMillis()
 
-                        val availableWidth = size.width.value - sidebarWidth.value - 16
-                        // Adjusted dynamic sizing to make it bigger
-                        val dynamicFontSize = (availableWidth / 5.5f).coerceIn(24f, 72f)
+                        // Available width: total − panel − divider − end padding
+                        val availableWidth = size.width.value - 104f - 1f - 24f
+                        val dynamicFontSize = (availableWidth / 4.8f).coerceIn(22f, 64f)
 
                         AndroidRemoteViews(
                             modifier = GlanceModifier.fillMaxWidth(),
-                            remoteViews = RemoteViews(context.packageName, R.layout.widget_countdown).apply {
-                                setChronometer(R.id.prayer_chronometer, baseTime, null, true)
+                            remoteViews = RemoteViews(
+                                context.packageName,
+                                R.layout.widget_countdown
+                            ).apply {
+                                setChronometer(
+                                    R.id.prayer_chronometer,
+                                    baseTime,
+                                    null,
+                                    true
+                                )
                                 setChronometerCountDown(R.id.prayer_chronometer, true)
-                                setTextViewTextSize(R.id.prayer_chronometer, TypedValue.COMPLEX_UNIT_SP, dynamicFontSize)
-                                setTextColor(R.id.prayer_chronometer, contentColor.toArgb())
+                                setTextViewTextSize(
+                                    R.id.prayer_chronometer,
+                                    TypedValue.COMPLEX_UNIT_SP,
+                                    dynamicFontSize
+                                )
+                                setTextColor(R.id.prayer_chronometer, white.toArgb())
                             }
                         )
                     }
                 }
             } else {
-                Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = "WAKTIVA",
-                        style = TextStyle(
-                            color = ColorProvider(day = contentColor.copy(alpha = 0.2f), night = contentColor.copy(alpha = 0.2f)),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                // ── IDLE STATE ────────────────────────────────────────────────
+                Box(
+                    modifier = GlanceModifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            provider = ImageProvider(R.drawable.ic_launcher_foreground),
+                            contentDescription = null,
+                            modifier = GlanceModifier
+                                .size(40.dp),
+                            colorFilter = ColorFilter.tint(
+                                ColorProvider(day = white30, night = white30)
+                            )
                         )
-                    )
+                        Spacer(modifier = GlanceModifier.height(4.dp))
+                        Text(
+                            text = "WAKTIVA",
+                            style = TextStyle(
+                                color = ColorProvider(day = white30, night = white30),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -224,16 +303,11 @@ class WaktivaWidget : GlanceAppWidget() {
                 null,
                 Shader.TileMode.CLAMP
             )
-        } else {
-            null
-        }
+        } else null
 
         val paint = Paint().apply {
-            if (shader != null) {
-                this.shader = shader
-            } else {
-                this.color = intColors.firstOrNull() ?: android.graphics.Color.BLACK
-            }
+            if (shader != null) this.shader = shader
+            else this.color = intColors.firstOrNull() ?: android.graphics.Color.BLACK
         }
 
         canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
@@ -242,12 +316,12 @@ class WaktivaWidget : GlanceAppWidget() {
 
     private fun getPrayerIconRes(type: PrayerType): Int {
         return when (type) {
-            PrayerType.FAJR -> R.drawable.haze_day_rotated
+            PrayerType.FAJR    -> R.drawable.haze_day_rotated
             PrayerType.SUNRISE -> R.drawable.sunrise
-            PrayerType.DHUHR -> R.drawable.clear_day
-            PrayerType.ASR -> R.drawable.clear_day
+            PrayerType.DHUHR   -> R.drawable.clear_day
+            PrayerType.ASR     -> R.drawable.clear_day
             PrayerType.MAGHRIB -> R.drawable.sunset
-            PrayerType.ISHA -> R.drawable.clear_night
+            PrayerType.ISHA    -> R.drawable.clear_night
         }
     }
 }
