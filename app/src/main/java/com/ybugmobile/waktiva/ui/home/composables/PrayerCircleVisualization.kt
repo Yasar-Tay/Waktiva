@@ -376,10 +376,10 @@ fun InfoGlassCard(info: DetailedInfo) {
     val borderColor = if (glassTheme.isLightMode) Color.White.copy(0.45f) else Color.White.copy(0.1f)
     val cardShape = RoundedCornerShape(18.dp)
 
-    val cardHeight = if (isLandscape) 36.dp else 50.dp
-    val iconSize = if (isLandscape) 12.dp else 15.dp
-    val nameFontSize = if (isLandscape) 7.sp else 8.sp
-    val timeFontSize = if (isLandscape) 13.sp else 18.sp
+    val cardHeight = if (isLandscape) 36.dp else 40.dp       // portrait: 50 → 40 (−20 %)
+    val iconSize = if (isLandscape) 12.dp else 12.dp         // portrait: 15 → 12 (−20 %)
+    val nameFontSize = if (isLandscape) 7.sp else 6.5.sp     // portrait:  8 → 6.5 (−20 %)
+    val timeFontSize = if (isLandscape) 13.sp else 14.sp     // portrait: 18 → 14 (−20 %)
 
     Surface(
         color = bgColor,
@@ -425,10 +425,10 @@ fun InfoGlassCard(info: DetailedInfo) {
                     )
             )
 
-            Spacer(Modifier.width(if (isLandscape) 10.dp else 12.dp))
+            Spacer(Modifier.width(10.dp))
 
             // Solid circle in the prayer's marker color, icon tinted like the marker
-            val iconContainerSize = if (isLandscape) 22.dp else 28.dp
+            val iconContainerSize = 22.dp
             val iconTint = if (info.color.luminance() > 0.5f) Color.Black.copy(0.7f) else Color.White
             Box(
                 modifier = Modifier
@@ -444,11 +444,11 @@ fun InfoGlassCard(info: DetailedInfo) {
                 )
             }
 
-            Spacer(Modifier.width(if (isLandscape) 8.dp else 10.dp))
+            Spacer(Modifier.width(8.dp))
 
             // Prayer name + time stacked
             Column(
-                modifier = Modifier.padding(end = if (isLandscape) 14.dp else 18.dp),
+                modifier = Modifier.padding(end = 14.dp),
                 verticalArrangement = Arrangement.spacedBy((-1).dp, Alignment.CenterVertically)
             ) {
                 Text(
