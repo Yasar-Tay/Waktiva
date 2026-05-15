@@ -105,7 +105,9 @@ class LocalPrayerCalculator @Inject constructor() {
             if (methodId == 13 && abs(latitude) > 43.0) {
                 val fractions = nearestDiyanetFractions(latitude, longitude)
                 val corrected = applyDiyanetFractionRule(
-                    fajrStr, ishaStr, sunriseStr, maghribStr, fractions
+                    fajrStr, ishaStr, sunriseStr, maghribStr, fractions,
+                    sunriseAdjMin = params.adjustments.sunrise,   // −7 → reversed inside
+                    maghribAdjMin = params.adjustments.maghrib    //  +7 → reversed inside
                 )
                 fajrStr = corrected.first
                 ishaStr = corrected.second
@@ -132,37 +134,51 @@ class LocalPrayerCalculator @Inject constructor() {
     /**
      * Applies Diyanet's high-latitude algorithm:
      *
-     *   Fajr = max(standard_fajr,  sunrise  − night × k_fajr)
-     *   Isha = min(standard_isha,  maghrib  + night × k_isha)
+     *   Fajr = max(standard_fajr,  sunrise_astro − night_astro × k_fajr)
+     *   Isha = min(standard_isha,  maghrib_astro + night_astro × k_isha)
      *
      * In winter the standard MWL angle is later than the fraction → angle wins.
      * In summer the standard angle breaks down; fraction gives a later result → fraction wins.
+     *
+     * IMPORTANT — astronomical base times:
+     * The fraction constants (k_fajr, k_isha) were reverse-engineered using Al-Adhan's
+     * unadjusted astronomical Sunrise and Maghrib (method=2, no minute offsets).
+     * We must therefore reverse Diyanet's own minute adjustments before computing
+     * the night length; otherwise the night is systematically short by
+     * |sunrise_adj| + |maghrib_adj| = 14 minutes, causing ~4 min error in Fajr/Isha.
+     *
+     * [sunriseAdjMin] and [maghribAdjMin] are the values that were added to the
+     * astronomical times to produce the [sunriseStr] and [maghribStr] strings
+     * (e.g. sunrise_adj = −7, maghrib_adj = +7 for the Diyanet base params).
      */
     private fun applyDiyanetFractionRule(
         fajrStr: String,
         ishaStr: String,
         sunriseStr: String,
         maghribStr: String,
-        fractions: DiyanetFractions
+        fractions: DiyanetFractions,
+        sunriseAdjMin: Int = 0,
+        maghribAdjMin: Int = 0
     ): Pair<String, String> {
-        val sunriseMin = toMinutes(sunriseStr)
-        val maghribMin = toMinutes(maghribStr)
+        // Reverse the minute adjustments to recover astronomical Sunrise / Maghrib.
+        val sunriseAstro = toMinutes(sunriseStr) - sunriseAdjMin
+        val maghribAstro = toMinutes(maghribStr) - maghribAdjMin
 
-        // Night length: Maghrib today → Sunrise tomorrow
-        val nightMin = (sunriseMin + 1440) - maghribMin
+        // Night length: astronomical Maghrib today → astronomical Sunrise tomorrow
+        val nightMin = (sunriseAstro + 1440) - maghribAstro
 
-        // Fraction-based times (always in valid range)
-        val fractionFajr = sunriseMin - (nightMin * fractions.fajr)
-        val fractionIsha = maghribMin + (nightMin * fractions.isha)
+        // Fraction-based times computed against astronomical anchors
+        val fractionFajr = sunriseAstro - (nightMin * fractions.fajr)
+        val fractionIsha = maghribAstro + (nightMin * fractions.isha)
 
         // Standard angle times — normalise across midnight.
-        // Fajr is before sunrise: if adhan gives a value > sunrise it crossed midnight
-        // Isha is after maghrib: if adhan gives a value < maghrib it crossed midnight
+        // Fajr is before sunrise: guard against unlikely midnight crossing.
+        // Isha is after maghrib: "00:27" must become 1467 for correct min() comparison.
         var stdFajr = toMinutes(fajrStr).toDouble()
-        if (stdFajr > sunriseMin) stdFajr -= 1440   // shouldn't happen, guard anyway
+        if (stdFajr > sunriseAstro) stdFajr -= 1440
 
         var stdIsha = toMinutes(ishaStr).toDouble()
-        if (stdIsha < maghribMin) stdIsha += 1440   // e.g. "00:27" → 27 + 1440 = 1467
+        if (stdIsha < maghribAstro) stdIsha += 1440
 
         // max for Fajr (later = safer, standard angle wins in winter when it is valid)
         val finalFajr = maxOf(stdFajr, fractionFajr)
