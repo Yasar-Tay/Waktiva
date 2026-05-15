@@ -9,6 +9,7 @@ import com.ybugmobile.waktiva.domain.manager.TimeManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -30,6 +31,10 @@ class SettingsViewModel @Inject constructor(
     fun setMadhab(madhab: Int) {
         viewModelScope.launch {
             settingsManager.updateMadhab(madhab)
+            val s = settingsManager.settingsFlow.first()
+            val lat = s.latitude ?: return@launch
+            val lng = s.longitude ?: return@launch
+            prayerRepository.recalculatePrayerTimesLocally(s.calculationMethod, madhab, lat, lng)
         }
     }
 

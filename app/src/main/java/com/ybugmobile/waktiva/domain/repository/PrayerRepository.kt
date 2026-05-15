@@ -70,4 +70,22 @@ interface PrayerRepository {
      * @param currentDate ISO formatted date string representing the boundary for deletion.
      */
     suspend fun deletePastData(currentDate: String)
+
+    /**
+     * Re-computes Fajr/Sunrise/Dhuhr/Asr/Maghrib/Isha for every cached day using the
+     * local adhan library — without touching the network or erasing Hijri dates.
+     * Called when the user switches the calculation method or madhab so that the UI
+     * updates instantly and offline.
+     *
+     * @param method  Calculation method ID (e.g. 13 = Diyanet).
+     * @param madhab  Madhab ID: 0 = Shafi, 1 = Hanafi.
+     * @param latitude  User's latitude.
+     * @param longitude User's longitude.
+     */
+    suspend fun recalculatePrayerTimesLocally(
+        method: Int,
+        madhab: Int,
+        latitude: Double,
+        longitude: Double
+    ): Result<Unit>
 }

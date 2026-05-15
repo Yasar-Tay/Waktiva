@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.math.abs
 
 class LocalPrayerCalculator @Inject constructor() {
 
@@ -28,14 +29,34 @@ class LocalPrayerCalculator @Inject constructor() {
         params.madhab = madhab
         
         if (methodId == 13) {
-            // Turkey (Diyanet) adjustments
-            // Base is MWL (18°/17°) which matches Diyanet angles
+            // Turkey (Diyanet) base adjustments (MWL 18°/17° + minute offsets)
             params.adjustments.fajr = 0
             params.adjustments.sunrise = -7
             params.adjustments.dhuhr = 5
             params.adjustments.asr = 4
             params.adjustments.maghrib = 7
-            params.adjustments.isha = 2
+
+            val absLat = abs(latitude)
+            if (absLat in 45.0..55.0) {
+                // Mid-high-latitude correction (45–55°N): Diyanet progressively reduces
+                // the Fajr and Isha angles above 45°N instead of using standard 18°/17°.
+                // Formulas reverse-engineered from Diyanet's published times for Basel,
+                // Zurich, London and Berlin vs. pure angle-based calculation:
+                //   Fajr : max(11°, 18° − 0.67 × (|lat| − 45°))
+                //   Isha : max(11°, 17° − 0.80 × (|lat| − 45°))
+                params.fajrAngle = maxOf(11.0, 18.0 - 0.67 * (absLat - 45.0))
+                params.ishaAngle = maxOf(11.0, 17.0 - 0.80 * (absLat - 45.0))
+                // No flat minute adjustments — the angles already encode the correction.
+            } else if (absLat > 55.0) {
+                // Above 55°N the Aladhan API is called with latitudeAdjustmentMethod=2
+                // (1/7 of night), so the local calculator is not used for post-processing.
+                // Keep standard MWL angles; this path is only reached in the offline
+                // fallback where we do our best with what we have.
+                params.fajrAngle = maxOf(11.0, 18.0 - 0.67 * (absLat - 45.0))
+                params.ishaAngle = maxOf(11.0, 17.0 - 0.80 * (absLat - 45.0))
+            } else {
+                params.adjustments.isha = 2
+            }
         }
 
         val prayerDays = mutableListOf<PrayerDayEntity>()

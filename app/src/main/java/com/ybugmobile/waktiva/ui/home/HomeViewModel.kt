@@ -378,7 +378,15 @@ class HomeViewModel @Inject constructor(
         try { fetchPrayerData(forceFullRefresh = true); refreshWeather() } finally { _isRefreshing.value = false; _hasSettled.value = true }
     }
 
-    fun updateCalculationMethod(methodId: Int) = viewModelScope.launch { settingsManager.updateCalculationMethod(methodId); refresh() }
+    fun updateCalculationMethod(methodId: Int) = viewModelScope.launch {
+        settingsManager.updateCalculationMethod(methodId)
+        val s = settings.first()
+        val lat = s.latitude ?: return@launch
+        val lng = s.longitude ?: return@launch
+        // Recalculate stored times with the new method + current madhab using the
+        // local adhan library. Hijri dates are preserved; no network call needed.
+        prayerRepository.recalculatePrayerTimesLocally(methodId, s.madhab, lat, lng)
+    }
 
     fun toggleSkipNextPrayerAudio(prayerName: String, prayerDate: LocalDate) = viewModelScope.launch {
         val s = settings.first()

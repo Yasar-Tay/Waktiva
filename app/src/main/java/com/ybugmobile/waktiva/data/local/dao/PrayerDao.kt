@@ -26,4 +26,23 @@ interface PrayerDao {
 
     @Query("SELECT COUNT(*) FROM prayer_days WHERE date LIKE :yearMonth || '%'")
     suspend fun getCountForYearMonth(yearMonth: String): Int
+
+    /** One-shot (non-Flow) snapshot of all stored prayer days. */
+    @Query("SELECT * FROM prayer_days ORDER BY date ASC")
+    suspend fun getAllPrayerDaysOnce(): List<PrayerDayEntity>
+
+    /** Updates only the six time columns; leaves date, hijriDate and all other fields untouched. */
+    @Query(
+        "UPDATE prayer_days SET fajr=:fajr, sunrise=:sunrise, dhuhr=:dhuhr, " +
+        "asr=:asr, maghrib=:maghrib, isha=:isha WHERE date=:date"
+    )
+    suspend fun updateTimings(
+        date: String,
+        fajr: String,
+        sunrise: String,
+        dhuhr: String,
+        asr: String,
+        maghrib: String,
+        isha: String
+    )
 }

@@ -25,6 +25,7 @@ import java.time.chrono.HijrahChronology
 import java.time.temporal.ChronoField
 import java.util.Collections
 import javax.inject.Inject
+import kotlin.math.abs
 
 class PrayerRepositoryImpl @Inject constructor(
     private val aladhanApi: AladhanApiService,
@@ -145,16 +146,23 @@ class PrayerRepositoryImpl @Inject constructor(
         if (!inFlightRequests.add(key)) return Result.success(Unit)
 
         return try {
-            val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method)
+            // For Diyanet (method 13) above 55°N, ask Aladhan to use "1/7 of night"
+            // latitude adjustment which better approximates Diyanet's published times
+            // than the standard angle-based calculation.
+            val latAdjustment = if (method == 13 && abs(latitude) > 55.0) 2 else null
+            val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method,
+                latitudeAdjustmentMethod = latAdjustment)
             if (response.code == 200) {
                 val entities = response.data.map { it.toEntity() }
-                dao.insertPrayerDays(entities)
+                val finalEntities = applyHighLatIshaCorrection(entities, year, month, latitude, longitude, method)
+                dao.insertPrayerDays(finalEntities)
                 Result.success(Unit)
             } else {
                 Result.failure(Exception("Aladhan API Error"))
             }
         } catch (e: Exception) {
             try {
+                // Local fallback already applies the effective angle internally.
                 val localEntities = localCalculator.calculateMonthlyPrayerTimes(year, month, latitude, longitude, method)
                 dao.insertPrayerDays(localEntities)
                 Result.success(Unit)
@@ -173,6 +181,82 @@ class PrayerRepositoryImpl @Inject constructor(
     override suspend fun deletePastData(currentDate: String) {
         dao.deletePastDays(currentDate)
         statusDao.deletePastStatuses(currentDate)
+    }
+
+    override suspend fun recalculatePrayerTimesLocally(
+        method: Int,
+        madhab: Int,
+        latitude: Double,
+        longitude: Double
+    ): Result<Unit> {
+        return try {
+            val existing = dao.getAllPrayerDaysOnce()
+            if (existing.isEmpty()) return Result.success(Unit)
+
+            // Group stored days by year+month so we call the calculator once per month.
+            val byYearMonth = existing.groupBy { it.date.substring(0, 7) } // "YYYY-MM"
+
+            for ((yearMonth, days) in byYearMonth) {
+                val (year, month) = yearMonth.split("-").map { it.toInt() }
+                val recalculated = localCalculator
+                    .calculateMonthlyPrayerTimes(year, month, latitude, longitude, method, madhab)
+                    .associateBy { it.date }
+
+                for (day in days) {
+                    val updated = recalculated[day.date] ?: continue
+                    dao.updateTimings(
+                        date     = day.date,
+                        fajr     = updated.fajr,
+                        sunrise  = updated.sunrise,
+                        dhuhr    = updated.dhuhr,
+                        asr      = updated.asr,
+                        maghrib  = updated.maghrib,
+                        isha     = updated.isha
+                    )
+                }
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * For Diyanet (method 13) at latitudes above 45°N/S, the Aladhan API's Fajr and Isha
+     * times drift significantly from Diyanet's published times because Diyanet silently
+     * reduces both angles as latitude increases (formulas reverse-engineered from
+     * Diyanet's published times for Basel, Zurich, London, Berlin):
+     *
+     *   Fajr : max(11°, 18° − 0.67 × (|lat| − 45°))
+     *   Isha : max(11°, 17° − 0.80 × (|lat| − 45°))
+     *
+     * Replaces only Fajr and Isha; all other times (including Hijri date) are kept
+     * from the more accurate Aladhan API response.
+     */
+    private fun applyHighLatIshaCorrection(
+        entities: List<com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity>,
+        year: Int,
+        month: Int,
+        latitude: Double,
+        longitude: Double,
+        method: Int
+    ): List<com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity> {
+        // Only apply angle-based correction for the 45–55°N band.
+        // Below 45°: standard angles are accurate. Above 55°: Aladhan's
+        // latitudeAdjustmentMethod=2 is passed directly to the API instead.
+        if (method != 13 || abs(latitude) <= 45.0 || abs(latitude) > 55.0) return entities
+
+        return try {
+            val corrected = localCalculator.calculateMonthlyPrayerTimes(year, month, latitude, longitude, method)
+            val correctedByDate = corrected.associateBy { it.date }
+            entities.map { entity ->
+                val fix = correctedByDate[entity.date]
+                if (fix != null) entity.copy(fajr = fix.fajr, isha = fix.isha) else entity
+            }
+        } catch (e: Exception) {
+            // If local recalculation fails for any reason, fall back to raw API values.
+            entities
+        }
     }
 
     private fun PrayerDayDto.toEntity(): PrayerDayEntity {
