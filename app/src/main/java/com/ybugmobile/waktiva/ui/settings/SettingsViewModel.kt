@@ -41,6 +41,10 @@ class SettingsViewModel @Inject constructor(
     fun setCalculationMethod(method: Int) {
         viewModelScope.launch {
             settingsManager.updateCalculationMethod(method)
+            val s = settingsManager.settingsFlow.first()
+            val lat = s.latitude ?: return@launch
+            val lng = s.longitude ?: return@launch
+            prayerRepository.recalculatePrayerTimesLocally(method, s.madhab, lat, lng)
         }
     }
 

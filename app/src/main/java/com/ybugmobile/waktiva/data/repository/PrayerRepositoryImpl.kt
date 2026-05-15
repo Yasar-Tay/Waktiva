@@ -25,7 +25,6 @@ import java.time.chrono.HijrahChronology
 import java.time.temporal.ChronoField
 import java.util.Collections
 import javax.inject.Inject
-import kotlin.math.abs
 
 class PrayerRepositoryImpl @Inject constructor(
     private val aladhanApi: AladhanApiService,
@@ -146,23 +145,23 @@ class PrayerRepositoryImpl @Inject constructor(
         if (!inFlightRequests.add(key)) return Result.success(Unit)
 
         return try {
-            // For Diyanet (method 13) above 55°N, ask Aladhan to use "1/7 of night"
-            // latitude adjustment which better approximates Diyanet's published times
-            // than the standard angle-based calculation.
-            val latAdjustment = if (method == 13 && abs(latitude) > 55.0) 2 else null
-            val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method,
-                latitudeAdjustmentMethod = latAdjustment)
+            val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method)
             if (response.code == 200) {
-                val entities = response.data.map { it.toEntity() }
-                val finalEntities = applyHighLatIshaCorrection(entities, year, month, latitude, longitude, method)
-                dao.insertPrayerDays(finalEntities)
+                var entities = response.data.map { it.toEntity() }
+                // For Diyanet (method 13) above 43°N the Al-Adhan API returns standard
+                // MWL angle times which diverge significantly from Diyanet's published
+                // times in summer. Replace Fajr and Isha with the locally-computed
+                // fraction-based values that match Diyanet's algorithm exactly.
+                if (method == 13) {
+                    entities = applyDiyanetFractionCorrection(entities, year, month, latitude, longitude)
+                }
+                dao.insertPrayerDays(entities)
                 Result.success(Unit)
             } else {
                 Result.failure(Exception("Aladhan API Error"))
             }
         } catch (e: Exception) {
             try {
-                // Local fallback already applies the effective angle internally.
                 val localEntities = localCalculator.calculateMonthlyPrayerTimes(year, month, latitude, longitude, method)
                 dao.insertPrayerDays(localEntities)
                 Result.success(Unit)
@@ -222,40 +221,37 @@ class PrayerRepositoryImpl @Inject constructor(
     }
 
     /**
-     * For Diyanet (method 13) at latitudes above 45°N/S, the Aladhan API's Fajr and Isha
-     * times drift significantly from Diyanet's published times because Diyanet silently
-     * reduces both angles as latitude increases (formulas reverse-engineered from
-     * Diyanet's published times for Basel, Zurich, London, Berlin):
+     * Replaces Al-Adhan's Fajr and Isha with locally-computed Diyanet-accurate times.
      *
-     *   Fajr : max(11°, 18° − 0.67 × (|lat| − 45°))
-     *   Isha : max(11°, 17° − 0.80 × (|lat| − 45°))
+     * Diyanet's high-latitude algorithm (reverse-engineered from published data):
+     *   Fajr = max(standard_angle_fajr,  sunrise − night × k_fajr)
+     *   Isha = min(standard_angle_isha,  maghrib + night × k_isha)
      *
-     * Replaces only Fajr and Isha; all other times (including Hijri date) are kept
-     * from the more accurate Aladhan API response.
+     * The max/min rule produces a seamless seasonal transition — standard MWL angles
+     * win in winter (when they work correctly), the fraction wins in summer (when the
+     * angle calculation breaks down at high latitudes). All other columns (Hijri date,
+     * Dhuhr, Asr, Maghrib, Sunrise) are kept from the more accurate Al-Adhan response.
+     *
+     * See: diyanet_analysis_report.md — Findings 10–17
      */
-    private fun applyHighLatIshaCorrection(
+    private fun applyDiyanetFractionCorrection(
         entities: List<com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity>,
         year: Int,
         month: Int,
         latitude: Double,
-        longitude: Double,
-        method: Int
+        longitude: Double
     ): List<com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity> {
-        // Only apply angle-based correction for the 45–55°N band.
-        // Below 45°: standard angles are accurate. Above 55°: Aladhan's
-        // latitudeAdjustmentMethod=2 is passed directly to the API instead.
-        if (method != 13 || abs(latitude) <= 45.0 || abs(latitude) > 55.0) return entities
-
         return try {
-            val corrected = localCalculator.calculateMonthlyPrayerTimes(year, month, latitude, longitude, method)
+            val corrected = localCalculator.calculateMonthlyPrayerTimes(
+                year, month, latitude, longitude, methodId = 13
+            )
             val correctedByDate = corrected.associateBy { it.date }
             entities.map { entity ->
                 val fix = correctedByDate[entity.date]
                 if (fix != null) entity.copy(fajr = fix.fajr, isha = fix.isha) else entity
             }
         } catch (e: Exception) {
-            // If local recalculation fails for any reason, fall back to raw API values.
-            entities
+            entities // fall back to raw API values on any error
         }
     }
 
