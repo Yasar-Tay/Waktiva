@@ -73,15 +73,15 @@ private fun WeatherCondition.getCloudColor(isDay: Boolean): Color {
 
 private fun WeatherCondition.getCloudAlpha(isDay: Boolean): Float {
     return when {
-        isDay && this == WeatherCondition.FOGGY                       -> 0.38f
+        isDay && this == WeatherCondition.FOGGY                       -> 0.12f
         isDay && (this == WeatherCondition.THUNDERSTORM ||
-                  this == WeatherCondition.THUNDERSTORM_HAIL)        -> 0.55f
-        isDay && isSevere                                             -> 0.45f
-        isDay && this == WeatherCondition.OVERCAST                   -> 0.40f
-        isDay && this == WeatherCondition.PARTLY_CLOUDY              -> 0.30f
+                  this == WeatherCondition.THUNDERSTORM_HAIL)        -> 0.20f
+        isDay && isSevere                                             -> 0.20f
+        isDay && this == WeatherCondition.OVERCAST                   -> 0.20f
+        isDay && this == WeatherCondition.PARTLY_CLOUDY              -> 0.10f
         isDay                                                         -> 0.20f
-        !isDay && this == WeatherCondition.FOGGY                     -> 0.28f
-        !isDay && isSevere                                            -> 0.38f
+        !isDay && this == WeatherCondition.FOGGY                     -> 0.08f
+        !isDay && isSevere                                            -> 0.06f
         else                                                          -> 0.22f
     }
 }
