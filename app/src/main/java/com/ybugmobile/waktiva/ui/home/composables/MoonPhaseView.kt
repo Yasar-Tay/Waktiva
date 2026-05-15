@@ -184,5 +184,14 @@ fun MoonPhaseView(
             moonContent()
             labelContent()
         }
+    } else {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            moonContent()
+            labelContent()
+        }
     }
 }
