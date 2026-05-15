@@ -2,6 +2,7 @@ package com.ybugmobile.waktiva.data.repository
 
 import com.ybugmobile.waktiva.data.local.LocalPrayerCalculator
 import com.ybugmobile.waktiva.data.local.dao.PrayerDao
+import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.waktiva.data.local.dao.PrayerStatusDao
 import com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.waktiva.data.mapper.toDomain
@@ -31,7 +32,8 @@ class PrayerRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApiService,
     private val localCalculator: LocalPrayerCalculator,
     private val dao: PrayerDao,
-    private val statusDao: PrayerStatusDao
+    private val statusDao: PrayerStatusDao,
+    private val settingsManager: SettingsManager
 ) : PrayerRepository {
 
     // Tracks in-flight fetch keys ("year/month") to prevent duplicate concurrent requests
@@ -134,9 +136,22 @@ class PrayerRepositoryImpl @Inject constructor(
             return Result.failure(Exception("Location is required for fetching prayer times"))
         }
 
-        // Skip entirely if we already have data for this month in the DB.
         val yearMonth = "$year-${month.toString().padStart(2, '0')}"
-        if (dao.getCountForYearMonth(yearMonth) > 0) return Result.success(Unit)
+
+        // Smart cache: skip if we already fetched data for this exact
+        // location (±0.1°, ~10 km) and method. This correctly handles:
+        //   • Same session re-entry (app re-open)     → cache hit, skip
+        //   • Method change before location change    → params differ, re-fetch
+        //   • Location change (>50 km threshold)      → params differ, re-fetch
+        val currentParams = buildFetchParams(latitude, longitude, method)
+        if (settingsManager.getFetchParams(yearMonth) == currentParams) {
+            return Result.success(Unit)
+        }
+
+        // Params changed — delete any stale data for this month so the
+        // new fetch starts with a clean slate (no leftover rows from the
+        // old location/method).
+        dao.deletePrayerDaysForYearMonth(yearMonth)
 
         // Deduplicate: if another coroutine is already fetching this month, skip.
         // The in-flight coroutine will write to the DB; the caller's data will be
@@ -156,6 +171,7 @@ class PrayerRepositoryImpl @Inject constructor(
                     entities = applyDiyanetFractionCorrection(entities, year, month, latitude, longitude)
                 }
                 dao.insertPrayerDays(entities)
+                settingsManager.saveFetchParams(yearMonth, currentParams)
                 Result.success(Unit)
             } else {
                 Result.failure(Exception("Aladhan API Error"))
@@ -164,6 +180,7 @@ class PrayerRepositoryImpl @Inject constructor(
             try {
                 val localEntities = localCalculator.calculateMonthlyPrayerTimes(year, month, latitude, longitude, method)
                 dao.insertPrayerDays(localEntities)
+                settingsManager.saveFetchParams(yearMonth, currentParams)
                 Result.success(Unit)
             } catch (localEx: Exception) {
                 Result.failure(localEx)
@@ -213,6 +230,10 @@ class PrayerRepositoryImpl @Inject constructor(
                         isha     = updated.isha
                     )
                 }
+
+                // Mark this month as up-to-date for the current location+method
+                // so refreshPrayerTimes doesn't unnecessarily re-fetch from the network.
+                settingsManager.saveFetchParams(yearMonth, buildFetchParams(latitude, longitude, method))
             }
             Result.success(Unit)
         } catch (e: Exception) {
@@ -272,5 +293,21 @@ class PrayerRepositoryImpl @Inject constructor(
 
     private fun String.cleanTime(): String {
         return this.split(" ")[0]
+    }
+
+    /**
+     * Builds the fetch-params cache key for a given location and method.
+     *
+     * Latitude and longitude are rounded to one decimal place (~10 km granularity)
+     * so that minor GPS drift (a few hundred metres) does not invalidate the cache,
+     * while a true location change of 50+ km (which LocationUpdateWorker detects)
+     * always produces a different key and triggers a fresh fetch.
+     *
+     * Format: "$latRounded|$lngRounded|$method"
+     */
+    private fun buildFetchParams(lat: Double, lng: Double, method: Int): String {
+        val latR = Math.round(lat * 10) / 10.0
+        val lngR = Math.round(lng * 10) / 10.0
+        return "$latR|$lngR|$method"
     }
 }

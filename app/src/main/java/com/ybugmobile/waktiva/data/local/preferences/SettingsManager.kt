@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.first
 import androidx.datastore.preferences.preferencesDataStore
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.waktiva.domain.model.PrayerType
@@ -280,5 +281,37 @@ class SettingsManager @Inject constructor(
         context.dataStore.edit { preferences ->
             preferences[USE_FAJR_ALARM_BEFORE_SUNRISE] = enabled
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // Fetch-params cache — tracks what (location + method) was last fetched
+    // for each year-month, so PrayerRepositoryImpl can skip duplicate network
+    // requests and detect when a location/method change requires re-fetching.
+    //
+    // Key format : "fp_YYYY_MM"   (DataStore doesn't allow '-' in key names)
+    // Value format: "$latRounded|$lngRounded|$method"
+    // -------------------------------------------------------------------------
+
+    private fun fetchParamKey(yearMonth: String) =
+        stringPreferencesKey("fp_${yearMonth.replace("-", "_")}")
+
+    /**
+     * Returns the stored fetch-params string for [yearMonth], or null if no
+     * fetch has been recorded for that month yet.
+     */
+    suspend fun getFetchParams(yearMonth: String): String? =
+        context.dataStore.data.map { it[fetchParamKey(yearMonth)] }.first()
+
+    /**
+     * Persists [params] as the last-known fetch state for [yearMonth].
+     * [params] is expected to be "$latRounded|$lngRounded|$method".
+     */
+    suspend fun saveFetchParams(yearMonth: String, params: String) {
+        context.dataStore.edit { it[fetchParamKey(yearMonth)] = params }
+    }
+
+    /** Removes the stored fetch state for [yearMonth] (forces re-fetch next time). */
+    suspend fun clearFetchParams(yearMonth: String) {
+        context.dataStore.edit { it.remove(fetchParamKey(yearMonth)) }
     }
 }

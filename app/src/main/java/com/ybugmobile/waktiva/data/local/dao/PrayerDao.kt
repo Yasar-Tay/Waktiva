@@ -27,6 +27,10 @@ interface PrayerDao {
     @Query("SELECT COUNT(*) FROM prayer_days WHERE date LIKE :yearMonth || '%'")
     suspend fun getCountForYearMonth(yearMonth: String): Int
 
+    /** Deletes all prayer days for a given year-month (e.g. "2026-05"). */
+    @Query("DELETE FROM prayer_days WHERE date LIKE :yearMonth || '%'")
+    suspend fun deletePrayerDaysForYearMonth(yearMonth: String)
+
     /** One-shot (non-Flow) snapshot of all stored prayer days. */
     @Query("SELECT * FROM prayer_days ORDER BY date ASC")
     suspend fun getAllPrayerDaysOnce(): List<PrayerDayEntity>
