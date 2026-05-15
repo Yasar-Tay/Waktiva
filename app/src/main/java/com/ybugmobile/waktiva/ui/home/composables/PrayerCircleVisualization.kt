@@ -427,13 +427,22 @@ fun InfoGlassCard(info: DetailedInfo) {
 
             Spacer(Modifier.width(if (isLandscape) 10.dp else 12.dp))
 
-            // Icon tinted in prayer color, no background box
-            Icon(
-                imageVector = info.icon,
-                contentDescription = null,
-                tint = info.color,
-                modifier = Modifier.size(iconSize)
-            )
+            // Solid circle in the prayer's marker color, icon tinted like the marker
+            val iconContainerSize = if (isLandscape) 22.dp else 28.dp
+            val iconTint = if (info.color.luminance() > 0.5f) Color.Black.copy(0.7f) else Color.White
+            Box(
+                modifier = Modifier
+                    .size(iconContainerSize)
+                    .background(info.color, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = info.icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(iconSize)
+                )
+            }
 
             Spacer(Modifier.width(if (isLandscape) 8.dp else 10.dp))
 

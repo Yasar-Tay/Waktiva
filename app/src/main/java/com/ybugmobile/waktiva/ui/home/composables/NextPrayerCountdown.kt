@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
@@ -234,13 +235,23 @@ fun NextPrayerCountdown(
 
                                 Spacer(Modifier.width(if (isLandscape) 10.dp else 12.dp))
 
-                                // Icon tinted in prayer color, no background box
-                                Icon(
-                                    imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
-                                    contentDescription = null,
-                                    tint = buttonColor,
-                                    modifier = Modifier.size(if (isLandscape) 13.dp else 15.dp)
-                                )
+                                // Solid circle in the prayer's marker color, icon tinted like the marker
+                                val muteIconSize = if (isLandscape) 13.dp else 15.dp
+                                val muteContainerSize = if (isLandscape) 22.dp else 28.dp
+                                val muteIconTint = if (buttonColor.luminance() > 0.5f) Color.Black.copy(0.7f) else Color.White
+                                Box(
+                                    modifier = Modifier
+                                        .size(muteContainerSize)
+                                        .background(buttonColor, CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = if (isMuted) Icons.Rounded.NotificationsOff else Icons.Rounded.Notifications,
+                                        contentDescription = null,
+                                        tint = muteIconTint,
+                                        modifier = Modifier.size(muteIconSize)
+                                    )
+                                }
 
                                 Spacer(Modifier.width(if (isLandscape) 8.dp else 10.dp))
 
