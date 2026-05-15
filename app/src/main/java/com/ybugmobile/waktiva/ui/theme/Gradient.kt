@@ -33,34 +33,56 @@ private val WeatherCondition.isCloudy: Boolean
     get() = this != WeatherCondition.CLEAR && this != WeatherCondition.UNKNOWN
 
 private val WeatherCondition.isSevere: Boolean
-    get() = this == WeatherCondition.RAINY || 
-            this == WeatherCondition.THUNDERSTORM || 
-            this == WeatherCondition.SNOWY
+    get() = this == WeatherCondition.RAINY ||
+            this == WeatherCondition.HEAVY_RAIN ||
+            this == WeatherCondition.RAIN_SHOWERS ||
+            this == WeatherCondition.FREEZING_RAIN ||
+            this == WeatherCondition.THUNDERSTORM ||
+            this == WeatherCondition.THUNDERSTORM_HAIL ||
+            this == WeatherCondition.SNOWY ||
+            this == WeatherCondition.HEAVY_SNOW
 
 private val WeatherCondition.cloudCount: Int
     get() = when (this) {
-        WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM, WeatherCondition.SNOWY -> 20
-        WeatherCondition.OVERCAST, WeatherCondition.FOGGY -> 12
-        WeatherCondition.PARTLY_CLOUDY -> 5
+        WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL -> 22
+        WeatherCondition.RAINY, WeatherCondition.HEAVY_RAIN,
+        WeatherCondition.RAIN_SHOWERS, WeatherCondition.SNOWY,
+        WeatherCondition.HEAVY_SNOW                                       -> 18
+        WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE,
+        WeatherCondition.FREEZING_RAIN, WeatherCondition.SNOW_GRAINS,
+        WeatherCondition.SNOW_SHOWERS                                     -> 14
+        WeatherCondition.OVERCAST, WeatherCondition.FOGGY                 -> 12
+        WeatherCondition.PARTLY_CLOUDY                                    ->  6
+        WeatherCondition.MAINLY_CLEAR                                     ->  2
         else -> 0
     }
 
 private fun WeatherCondition.getCloudColor(isDay: Boolean): Color {
-    if (!isDay) return Color(0xFF020617)
+    if (!isDay) return Color(0xFF0A0E1A)
     return when (this) {
-        WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM, WeatherCondition.SNOWY -> Color(0xFF4B5563)
+        WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL -> Color(0xFF374151)
+        WeatherCondition.RAINY, WeatherCondition.HEAVY_RAIN,
+        WeatherCondition.RAIN_SHOWERS, WeatherCondition.FREEZING_RAIN    -> Color(0xFF4B5563)
+        WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE      -> Color(0xFF6B7280)
+        WeatherCondition.SNOWY, WeatherCondition.HEAVY_SNOW,
+        WeatherCondition.SNOW_GRAINS, WeatherCondition.SNOW_SHOWERS      -> Color(0xFFD1D5DB)
+        WeatherCondition.OVERCAST                                         -> Color(0xFF9CA3AF)
         else -> Color.White
     }
 }
 
 private fun WeatherCondition.getCloudAlpha(isDay: Boolean): Float {
     return when {
-        isDay && this == WeatherCondition.FOGGY -> 0.12f
-        isDay && isSevere -> 0.15f
-        isDay -> 0.04f
-        !isDay && this == WeatherCondition.FOGGY -> 0.08f
-        !isDay && isSevere -> 0.06f
-        else -> 0.02f
+        isDay && this == WeatherCondition.FOGGY                       -> 0.38f
+        isDay && (this == WeatherCondition.THUNDERSTORM ||
+                  this == WeatherCondition.THUNDERSTORM_HAIL)        -> 0.55f
+        isDay && isSevere                                             -> 0.45f
+        isDay && this == WeatherCondition.OVERCAST                   -> 0.40f
+        isDay && this == WeatherCondition.PARTLY_CLOUDY              -> 0.30f
+        isDay                                                         -> 0.20f
+        !isDay && this == WeatherCondition.FOGGY                     -> 0.28f
+        !isDay && isSevere                                            -> 0.38f
+        else                                                          -> 0.22f
     }
 }
 
@@ -193,21 +215,31 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
     
     val precipElements = remember(condition) {
         val count = when (condition) {
-            WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM -> 120 
-            WeatherCondition.SNOWY -> 50 
+            WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL,
+            WeatherCondition.HEAVY_RAIN                                       -> 160
+            WeatherCondition.RAINY, WeatherCondition.RAIN_SHOWERS,
+            WeatherCondition.FREEZING_RAIN                                    -> 120
+            WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE      ->  70
+            WeatherCondition.HEAVY_SNOW, WeatherCondition.SNOW_SHOWERS       ->  70
+            WeatherCondition.SNOWY, WeatherCondition.SNOW_GRAINS             ->  50
             else -> 0
         }
         if (count == 0) emptyList()
         else List(count) { Offset(Random.nextFloat(), Random.nextFloat()) }
     }
 
-    val snowflakePainter = if (condition == WeatherCondition.SNOWY) {
+    val isSnowCondition = condition == WeatherCondition.SNOWY ||
+                          condition == WeatherCondition.HEAVY_SNOW ||
+                          condition == WeatherCondition.SNOW_GRAINS ||
+                          condition == WeatherCondition.SNOW_SHOWERS
+    val snowflakePainter = if (isSnowCondition) {
         rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_snowflake))
     } else null
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (condition == WeatherCondition.THUNDERSTORM) ThunderLayer()
-        
+        if (condition == WeatherCondition.THUNDERSTORM ||
+            condition == WeatherCondition.THUNDERSTORM_HAIL) ThunderLayer()
+
         Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width; val h = size.height
             val cloudColor = condition.getCloudColor(isDay)
@@ -227,40 +259,63 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
                 )
             }
 
+            val isHeavyRain = condition == WeatherCondition.HEAVY_RAIN ||
+                              condition == WeatherCondition.THUNDERSTORM ||
+                              condition == WeatherCondition.THUNDERSTORM_HAIL
+            val isDrizzle   = condition == WeatherCondition.DRIZZLE ||
+                              condition == WeatherCondition.FREEZING_DRIZZLE
+
             when (condition) {
-                WeatherCondition.RAINY, WeatherCondition.THUNDERSTORM -> {
+                WeatherCondition.RAINY, WeatherCondition.HEAVY_RAIN,
+                WeatherCondition.RAIN_SHOWERS, WeatherCondition.FREEZING_RAIN,
+                WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE,
+                WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL -> {
                     precipElements.forEachIndexed { index, pos ->
                         val x = pos.x * w + (driftProgress * w)
                         val y = ((pos.y + fallProgress) % 1f) * h
-                        
-                        val isSmall = index % 2 == 0
-                        val alpha = if (isSmall) 0.07f else 0.15f
-                        val length = (if (isSmall) 4.dp else 8.dp).toPx()
-                        val thickness = (if (isSmall) 0.5.dp else 0.8.dp).toPx()
-                        val slant = (if (isSmall) 1.dp else 2.dp).toPx()
-                        
+
+                        val isSmall = index % 3 == 0
+                        val isMed   = index % 3 == 1
+                        val alpha = when {
+                            isSmall  -> if (isDrizzle) 0.22f else 0.30f
+                            isMed    -> if (isDrizzle) 0.34f else 0.46f
+                            else     -> if (isHeavyRain) 0.62f else if (isDrizzle) 0.42f else 0.56f
+                        }
+                        val length = when {
+                            isSmall -> (if (isDrizzle) 5.dp  else  9.dp).toPx()
+                            isMed   -> (if (isDrizzle) 8.dp  else 15.dp).toPx()
+                            else    -> (if (isHeavyRain) 24.dp else if (isDrizzle) 10.dp else 20.dp).toPx()
+                        }
+                        val thickness = when {
+                            isSmall -> 0.65.dp.toPx()
+                            isMed   -> 0.90.dp.toPx()
+                            else    -> (if (isHeavyRain) 1.3.dp else 1.05.dp).toPx()
+                        }
+                        val slant = (if (isHeavyRain) 3.dp else 1.5.dp).toPx()
+
                         drawLine(
-                            Color.White.copy(alpha = alpha), 
-                            Offset(x, y), 
-                            Offset(x - slant, y + length), 
-                            thickness, 
+                            Color.White.copy(alpha = alpha),
+                            Offset(x, y),
+                            Offset(x - slant, y + length),
+                            thickness,
                             StrokeCap.Round
                         )
                     }
                 }
-                WeatherCondition.SNOWY -> {
+                WeatherCondition.SNOWY, WeatherCondition.HEAVY_SNOW,
+                WeatherCondition.SNOW_GRAINS, WeatherCondition.SNOW_SHOWERS -> {
                     precipElements.forEachIndexed { index, pos ->
                         val x = pos.x * w + (kotlin.math.sin(fallProgress.toDouble() * Math.PI * 2 + pos.x * 10).toFloat() * 15.dp.toPx())
                         val y = ((pos.y + fallProgress) % 1f) * h
-                        
+
                         val isSmall = index % 2 == 0
-                        val baseScale = if (isSmall) 0.245f else 0.525f 
-                        val scale = baseScale + (pos.x * 0.14f) 
-                        val alpha = if (isSmall) 0.4f else 0.7f
-                        
+                        val baseScale = if (isSmall) 0.30f else 0.60f
+                        val scale = baseScale + (pos.x * 0.14f)
+                        val alpha = if (isSmall) 0.60f else 0.80f
+
                         drawCircle(
-                            Color.White.copy(alpha = 0.08f),
-                            radius = (if (isSmall) 2.8.dp else 4.9.dp).toPx(), 
+                            Color.White.copy(alpha = 0.12f),
+                            radius = (if (isSmall) 2.8.dp else 4.9.dp).toPx(),
                             center = Offset(x, y)
                         )
 
