@@ -9,6 +9,7 @@ import android.graphics.Shader
 import android.os.SystemClock
 import android.util.TypedValue
 import android.widget.RemoteViews
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -124,7 +125,7 @@ class WaktivaWidget : GlanceAppWidget() {
                     // Result: icon center lands on the panel's bottom-left corner —
                     // only the top-right quadrant of the icon is visible inside the panel.
                     val panelWidth = 104.dp
-                    val ghostIconSize = 208.dp  // 2× panelWidth — center lands on corner
+                    val ghostIconSize = 130.dp  // 2× panelWidth — center lands on corner
                     Box(
                         modifier = GlanceModifier
                             .width(panelWidth)
@@ -172,7 +173,8 @@ class WaktivaWidget : GlanceAppWidget() {
                             modifier = GlanceModifier
                                 .fillMaxSize()
                                 .padding(start = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
                                 text = nextPrayer.type.getDisplayName(context)
