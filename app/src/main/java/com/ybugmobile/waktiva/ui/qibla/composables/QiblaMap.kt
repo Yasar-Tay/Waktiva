@@ -80,29 +80,6 @@ fun QiblaMap(
     LaunchedEffect(isAligned) {
         if (isAligned) {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            mapInstance?.let { map ->
-                if (map.cameraPosition.tilt < 40.0) {
-                    map.animateCamera(
-                        CameraUpdateFactory.newCameraPosition(
-                            CameraPosition.Builder(map.cameraPosition)
-                                .tilt(50.0)
-                                .build()
-                        ), 1000
-                    )
-                }
-            }
-        } else {
-            mapInstance?.let { map ->
-                if (map.cameraPosition.tilt > 10.0) {
-                    map.animateCamera(
-                        CameraUpdateFactory.newCameraPosition(
-                            CameraPosition.Builder(map.cameraPosition)
-                                .tilt(0.0)
-                                .build()
-                        ), 1000
-                    )
-                }
-            }
         }
     }
 
