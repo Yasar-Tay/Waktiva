@@ -1,6 +1,7 @@
 package com.ybugmobile.waktiva.di
 
 import com.ybugmobile.waktiva.data.remote.AladhanApiService
+import com.ybugmobile.waktiva.data.remote.OverpassApiService
 import com.ybugmobile.waktiva.data.remote.WeatherApiService
 import dagger.Module
 import dagger.Provides
@@ -52,5 +53,16 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(WeatherApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOverpassApiService(okHttpClient: OkHttpClient): OverpassApiService {
+        return Retrofit.Builder()
+            .baseUrl(OverpassApiService.BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(OverpassApiService::class.java)
     }
 }

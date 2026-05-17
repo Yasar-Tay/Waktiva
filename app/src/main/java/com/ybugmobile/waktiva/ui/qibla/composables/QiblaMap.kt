@@ -5,31 +5,56 @@ import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.RectF
 import android.graphics.Color as AndroidColor
+import android.location.Location
+import com.google.gson.JsonObject
+import org.maplibre.android.style.layers.PropertyFactory
+import org.maplibre.android.style.layers.SymbolLayer as MapSymbolLayer
+import org.maplibre.android.style.sources.GeoJsonSource
+import org.maplibre.geojson.Feature
+import org.maplibre.geojson.FeatureCollection
+import org.maplibre.geojson.Point as GeoPoint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Satellite
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.batoulapps.adhan.Coordinates
 import com.batoulapps.adhan.Qibla
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.data.sensor.CompassData
+import com.ybugmobile.waktiva.domain.model.MosqueLocation
 import com.ybugmobile.waktiva.ui.qibla.MapConstants
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.camera.CameraUpdateFactory
@@ -37,17 +62,26 @@ import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
-import org.maplibre.android.plugins.annotation.Line
 import org.maplibre.android.plugins.annotation.LineManager
 import org.maplibre.android.plugins.annotation.LineOptions
 import org.maplibre.android.plugins.annotation.Symbol
 import org.maplibre.android.plugins.annotation.SymbolManager
 import org.maplibre.android.plugins.annotation.SymbolOptions
 import org.maplibre.android.utils.ColorUtils
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.graphics.Path as ComposePath
 import kotlin.math.abs
+import kotlin.math.roundToInt
+
+private const val MOSQUE_SOURCE_ID = "mosque-source"
+private const val MOSQUE_LAYER_ID = "mosque-layer"
 
 private data class QiblaAnnotations(
+    val userSymbol: Symbol? = null,
     val userRing: Symbol? = null,
+    val customSymbol: Symbol? = null,
     val customRing: Symbol? = null
 )
 
@@ -58,6 +92,7 @@ fun QiblaMap(
     isSatelliteView: Boolean,
     isAligned: Boolean,
     kaabaLatLng: LatLng,
+    mosques: List<MosqueLocation> = emptyList(),
     onMapReady: (MapLibreMap) -> Unit,
     onMapLongClick: (LatLng) -> Unit,
     onToggleSatellite: () -> Unit,
@@ -73,8 +108,41 @@ fun QiblaMap(
     
     var isMapOriented by remember { mutableStateOf(false) }
     var annotations by remember { mutableStateOf(QiblaAnnotations()) }
+    val selectedMosqueState = remember { mutableStateOf<MosqueLocation?>(null) }
+    var selectedMosque by selectedMosqueState
+    val selectedMosqueScreenPos = remember { mutableStateOf<android.graphics.PointF?>(null) }
+    var lastShownMosque by remember { mutableStateOf<MosqueLocation?>(null) }
+    var lastScreenPos by remember { mutableStateOf(android.graphics.PointF(0f, 0f)) }
     val haptic = LocalHapticFeedback.current
     val ringScale = remember { Animatable(0f) }
+    val density = LocalDensity.current.density
+
+    LaunchedEffect(mapInstance) {
+        val map = mapInstance ?: return@LaunchedEffect
+        map.addOnMapClickListener { tapLatLng ->
+            val pt = map.projection.toScreenLocation(tapLatLng)
+            val r = 28f * density
+            val rect = RectF(pt.x - r, pt.y - r, pt.x + r, pt.y + r)
+            val features = map.queryRenderedFeatures(rect, MOSQUE_LAYER_ID)
+            if (features.isNotEmpty()) {
+                val props = features[0].properties()
+                if (props != null) {
+                    val mosque = MosqueLocation(
+                        id = props.get("mosqueId")?.asLong ?: 0L,
+                        name = props.get("name")?.asString?.takeIf { it.isNotEmpty() },
+                        lat = props.get("lat")?.asDouble ?: 0.0,
+                        lng = props.get("lng")?.asDouble ?: 0.0
+                    )
+                    selectedMosqueState.value = mosque
+                    selectedMosqueScreenPos.value = map.projection.toScreenLocation(LatLng(mosque.lat, mosque.lng))
+                    return@addOnMapClickListener true
+                }
+            }
+            selectedMosqueState.value = null
+            selectedMosqueScreenPos.value = null
+            false
+        }
+    }
 
     LaunchedEffect(isAligned) {
         if (isAligned) {
@@ -99,6 +167,9 @@ fun QiblaMap(
                         map.addOnCameraMoveListener {
                             val cameraPosition = map.cameraPosition
                             isMapOriented = abs(cameraPosition.bearing) > 1.0 || abs(cameraPosition.tilt) > 1.0
+                            selectedMosqueState.value?.let { m ->
+                                selectedMosqueScreenPos.value = map.projection.toScreenLocation(LatLng(m.lat, m.lng))
+                            }
                         }
 
                         val initialStyle = if (isSatelliteView) MapConstants.SATELLITE_STYLE_JSON else MapConstants.STREET_STYLE
@@ -110,6 +181,7 @@ fun QiblaMap(
                             style.addImage("green_arrow", createDirectionMarker("#34C759"))
                             style.addImage("kaaba_marker", createKaabaMarker("#FFD700"))
                             style.addImage("alignment_ring", createAlignmentRing("#34C759"))
+                            style.addImage("mosque_marker", createMosqueMarker())
 
                             lineManager = LineManager(this@apply, map, style)
                             symbolManager = SymbolManager(this@apply, map, style).apply {
@@ -159,6 +231,7 @@ fun QiblaMap(
                             style.addImage("green_arrow", createDirectionMarker("#34C759"))
                             style.addImage("kaaba_marker", createKaabaMarker("#FFD700"))
                             style.addImage("alignment_ring", createAlignmentRing("#34C759"))
+                            style.addImage("mosque_marker", createMosqueMarker())
                             
                             lineManager = LineManager(view, map, style)
                             symbolManager = SymbolManager(view, map, style).apply {
@@ -170,6 +243,30 @@ fun QiblaMap(
                 }
             }
         )
+
+        // Speech bubble anchored to the tapped mosque icon
+        val currentMosque = selectedMosqueState.value
+        val currentPos = selectedMosqueScreenPos.value
+        if (currentMosque != null) lastShownMosque = currentMosque
+        if (currentPos != null) lastScreenPos = currentPos
+
+        AnimatedVisibility(
+            visible = currentMosque != null,
+            enter = scaleIn(initialScale = 0.8f) + fadeIn(tween(180)),
+            exit = scaleOut(targetScale = 0.8f) + fadeOut(tween(130)),
+        ) {
+            val mosque = lastShownMosque ?: return@AnimatedVisibility
+            MosqueSpeechBubble(
+                mosque = mosque,
+                screenX = lastScreenPos.x,
+                screenY = lastScreenPos.y,
+                settings = settings,
+                onDismiss = {
+                    selectedMosqueState.value = null
+                    selectedMosqueScreenPos.value = null
+                }
+            )
+        }
 
         if (showFabs) {
             val fabContent = @Composable {
@@ -265,7 +362,9 @@ fun QiblaMap(
         }
     }
 
-    LaunchedEffect(settings, compassData.azimuth, customPoint, symbolManager, lineManager) {
+    // Geometry effect: runs only when structure changes (location, alignment, custom point)
+    // NOT on every compass update — that would delete/recreate symbols 20x/second, breaking clicks
+    LaunchedEffect(settings, isAligned, customPoint, symbolManager, lineManager) {
         val sm = symbolManager ?: return@LaunchedEffect
         val lm = lineManager ?: return@LaunchedEffect
         sm.deleteAll()
@@ -284,98 +383,232 @@ fun QiblaMap(
             val lng = loc.longitude
             if (lat != null && lng != null) {
                 val userLatLng = LatLng(lat, lng)
-                val qiblaDir = Qibla(Coordinates(lat, lng)).direction
-                val isUserAligned = abs(compassData.azimuth - qiblaDir) < 2.0
-                val activeColor = if (isUserAligned) green else blue
-                val activeIcon  = if (isUserAligned) "green_arrow" else MapConstants.USER_ARROW_ID
+                val activeColor = if (isAligned) green else blue
+                val activeIcon  = if (isAligned) "green_arrow" else MapConstants.USER_ARROW_ID
 
-                // Subtle depth glow — barely perceptible, always present
                 lm.create(
                     LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
                         .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
                         .withLineWidth(8f).withLineOpacity(0.06f).withLineBlur(4f)
                 )
-                // White border stroke
                 lm.create(
                     LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
                         .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE))
-                        .withLineWidth(if (isUserAligned) 6f else 5f)
+                        .withLineWidth(if (isAligned) 6f else 5f)
                         .withLineJoin("round")
                 )
-                // Colored core stroke
                 lm.create(
                     LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
                         .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
-                        .withLineWidth(if (isUserAligned) 3f else 2.5f)
+                        .withLineWidth(if (isAligned) 3f else 2.5f)
                         .withLineJoin("round")
                 )
 
-                val ringSymbol = if (isUserAligned) sm.create(
+                val ringSymbol = if (isAligned) sm.create(
                     SymbolOptions().withLatLng(userLatLng)
                         .withIconImage("alignment_ring")
                         .withIconOpacity(1.0f)
                         .withIconSize(0.01f)
                 ) else null
 
-                sm.create(
+                val userSymbol = sm.create(
                     SymbolOptions().withLatLng(userLatLng)
                         .withIconImage(activeIcon)
                         .withIconRotate(compassData.azimuth)
                         .withIconSize(1.2f)
                 )
 
-                newAnnotations = newAnnotations.copy(userRing = ringSymbol)
+                newAnnotations = newAnnotations.copy(userSymbol = userSymbol, userRing = ringSymbol)
             }
         }
 
         customPoint?.let { cp ->
-            val qiblaDir = Qibla(Coordinates(cp.latitude, cp.longitude)).direction
-            val isCustomAligned = abs(compassData.azimuth - qiblaDir) < 2.0
-            val activeColor = if (isCustomAligned) green else purple
-            val activeIcon  = if (isCustomAligned) "green_arrow" else MapConstants.CUSTOM_ARROW_ID
-
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(purple)))
                     .withLineWidth(8f).withLineOpacity(0.06f).withLineBlur(4f)
             )
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
                     .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE))
-                    .withLineWidth(if (isCustomAligned) 6f else 5f)
-                    .withLineJoin("round")
+                    .withLineWidth(5f).withLineJoin("round")
             )
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
-                    .withLineWidth(if (isCustomAligned) 3f else 2.5f)
-                    .withLineJoin("round")
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(purple)))
+                    .withLineWidth(2.5f).withLineJoin("round")
             )
 
-            val ringSymbol = if (isCustomAligned) sm.create(
+            val customSymbol = sm.create(
                 SymbolOptions().withLatLng(cp)
-                    .withIconImage("alignment_ring")
-                    .withIconOpacity(1.0f)
-                    .withIconSize(1.0f)
-            ) else null
-
-            sm.create(
-                SymbolOptions().withLatLng(cp)
-                    .withIconImage(activeIcon)
+                    .withIconImage(MapConstants.CUSTOM_ARROW_ID)
                     .withIconRotate(compassData.azimuth)
                     .withIconSize(1.2f)
             )
 
-            newAnnotations = newAnnotations.copy(customRing = ringSymbol)
+            newAnnotations = newAnnotations.copy(customSymbol = customSymbol)
         }
 
         annotations = newAnnotations
+    }
+
+    // Rotation-only effect: updates arrow rotation on every compass tick without recreating symbols
+    LaunchedEffect(compassData.azimuth, annotations) {
+        val sm = symbolManager ?: return@LaunchedEffect
+        annotations.userSymbol?.let { it.iconRotate = compassData.azimuth; sm.update(it) }
+        annotations.customSymbol?.let { it.iconRotate = compassData.azimuth; sm.update(it) }
     }
 
     // Ring scale effect: only active during the ~350ms spring animation
     LaunchedEffect(ringScale.value, annotations) {
         val sm = symbolManager ?: return@LaunchedEffect
         annotations.userRing?.let { it.iconSize = ringScale.value; sm.update(it) }
+    }
+
+    LaunchedEffect(symbolManager, mosques) {
+        symbolManager ?: return@LaunchedEffect
+        val map = mapInstance ?: return@LaunchedEffect
+        val style = map.style ?: return@LaunchedEffect
+
+        val featureList = mosques.map { mosque ->
+            Feature.fromGeometry(
+                GeoPoint.fromLngLat(mosque.lng, mosque.lat),
+                JsonObject().apply {
+                    addProperty("mosqueId", mosque.id)
+                    addProperty("name", mosque.name ?: "")
+                    addProperty("lat", mosque.lat)
+                    addProperty("lng", mosque.lng)
+                }
+            )
+        }
+        val collection = FeatureCollection.fromFeatures(featureList)
+
+        val existing = style.getSourceAs<GeoJsonSource>(MOSQUE_SOURCE_ID)
+        if (existing != null) {
+            existing.setGeoJson(collection)
+        } else {
+            style.addSource(GeoJsonSource(MOSQUE_SOURCE_ID, collection))
+            style.addLayer(
+                MapSymbolLayer(MOSQUE_LAYER_ID, MOSQUE_SOURCE_ID).withProperties(
+                    PropertyFactory.iconImage("mosque_marker"),
+                    PropertyFactory.iconSize(1.5f),
+                    PropertyFactory.iconAllowOverlap(true),
+                    PropertyFactory.iconIgnorePlacement(true)
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun MosqueSpeechBubble(
+    mosque: MosqueLocation,
+    screenX: Float,
+    screenY: Float,
+    settings: UserSettings?,
+    onDismiss: () -> Unit
+) {
+    val localDensity = LocalDensity.current
+    val bubbleWidth = 220.dp
+    val tailHeight = 10.dp
+    val aboveIcon = 32.dp  // gap between tail tip and icon center
+
+    val bubbleWidthPx = with(localDensity) { bubbleWidth.toPx() }
+    val tailHeightPx = with(localDensity) { tailHeight.toPx() }
+    val aboveIconPx = with(localDensity) { aboveIcon.toPx() }
+    val marginPx = with(localDensity) { 16.dp.toPx() }
+
+    // Start with a reasonable height estimate so the bubble doesn't flash at y=0
+    var cardHeightPx by remember { mutableStateOf(with(localDensity) { 64.dp.toPx() }) }
+
+    // Center bubble horizontally on the icon; clamp to left margin
+    val xPx = (screenX - bubbleWidthPx / 2f).coerceAtLeast(marginPx)
+    // Place bubble so its tail tip sits aboveIcon px above the icon center
+    val yPx = (screenY - aboveIconPx - tailHeightPx - cardHeightPx).coerceAtLeast(marginPx)
+    // Tail tip x relative to the bubble's left edge; keep it within the bubble
+    val tailTipX = (screenX - xPx).coerceIn(tailHeightPx * 1.5f, bubbleWidthPx - tailHeightPx * 1.5f)
+
+    // Snap instantly so the bubble tracks map panning without lag
+    val xAnim by animateFloatAsState(xPx, animationSpec = snap(), label = "bubbleX")
+    val yAnim by animateFloatAsState(yPx, animationSpec = snap(), label = "bubbleY")
+    val tailXAnim by animateFloatAsState(tailTipX, animationSpec = snap(), label = "tailX")
+
+    val distanceText = remember(mosque.id, settings?.latitude, settings?.longitude) {
+        settings?.latitude?.let { userLat ->
+            settings.longitude?.let { userLng ->
+                val result = FloatArray(1)
+                Location.distanceBetween(userLat, userLng, mosque.lat, mosque.lng, result)
+                val m = result[0].toInt()
+                if (m < 1000) "$m m" else "${"%.1f".format(m / 1000f)} km"
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .offset { IntOffset(xAnim.roundToInt(), yAnim.roundToInt()) }
+            .width(bubbleWidth),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Surface(
+            color = Color.White.copy(alpha = 0.97f),
+            shape = RoundedCornerShape(14.dp),
+            shadowElevation = 6.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .onSizeChanged { cardHeightPx = it.height.toFloat() }
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(Modifier.size(8.dp).background(Color(0xFF34C759), CircleShape))
+                Spacer(Modifier.width(10.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        mosque.name ?: "Mosque",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = Color.Black
+                    )
+                    if (distanceText != null) {
+                        Text(
+                            distanceText,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Black.copy(alpha = 0.45f)
+                        )
+                    }
+                }
+                IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = null,
+                        tint = Color.Black.copy(alpha = 0.3f),
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
+            }
+        }
+
+        // Downward-pointing tail triangle
+        Spacer(
+            Modifier
+                .width(bubbleWidth)
+                .height(tailHeight)
+                .drawBehind {
+                    drawPath(
+                        ComposePath().apply {
+                            moveTo(tailXAnim - tailHeightPx, 0f)
+                            lineTo(tailXAnim + tailHeightPx, 0f)
+                            lineTo(tailXAnim, size.height)
+                            close()
+                        },
+                        color = Color.White.copy(alpha = 0.97f)
+                    )
+                }
+        )
     }
 }
 
@@ -481,6 +714,52 @@ fun createKaabaMarker(colorHex: String): Bitmap {
         center - kaabaSize / 8,
         goldPaint
     )
+
+    return bitmap
+}
+
+private fun createMosqueMarker(): Bitmap {
+    val size = 140
+    val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    val cx = size / 2f
+    val cy = size / 2f
+    val green = AndroidColor.parseColor("#34C759")
+
+    // Shadow
+    canvas.drawCircle(cx + 1f, cy + 4f, 32f, Paint().apply {
+        isAntiAlias = true
+        color = AndroidColor.argb(50, 0, 0, 0)
+        style = Paint.Style.FILL
+        maskFilter = BlurMaskFilter(8f, BlurMaskFilter.Blur.NORMAL)
+    })
+
+    // White border
+    canvas.drawCircle(cx, cy, 34f, Paint().apply {
+        isAntiAlias = true
+        color = AndroidColor.WHITE
+        style = Paint.Style.FILL
+    })
+
+    // Green fill
+    canvas.drawCircle(cx, cy, 29f, Paint().apply {
+        isAntiAlias = true
+        color = green
+        style = Paint.Style.FILL
+    })
+
+    // White crescent
+    val crescentPaint = Paint().apply {
+        isAntiAlias = true
+        color = AndroidColor.WHITE
+        style = Paint.Style.FILL
+    }
+    canvas.drawCircle(cx - 2f, cy, 13f, crescentPaint)
+    canvas.drawCircle(cx + 3f, cy - 1f, 10f, Paint().apply {
+        isAntiAlias = true
+        color = green
+        style = Paint.Style.FILL
+    })
 
     return bitmap
 }

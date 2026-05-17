@@ -3,6 +3,7 @@ package com.ybugmobile.waktiva.di
 import android.content.Context
 import androidx.room.Room
 import com.ybugmobile.waktiva.data.local.WaktivaDatabase
+import com.ybugmobile.waktiva.data.local.dao.MosqueDao
 import com.ybugmobile.waktiva.data.local.dao.PrayerDao
 import com.ybugmobile.waktiva.data.local.dao.PrayerStatusDao
 import dagger.Module
@@ -25,7 +26,9 @@ object DatabaseModule {
             context,
             WaktivaDatabase::class.java,
             WaktivaDatabase.DATABASE_NAME
-        ).build()
+        )
+            .addMigrations(WaktivaDatabase.MIGRATION_3_4)
+            .build()
     }
 
     @Provides
@@ -38,5 +41,11 @@ object DatabaseModule {
     @Singleton
     fun providePrayerStatusDao(database: WaktivaDatabase): PrayerStatusDao {
         return database.prayerStatusDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMosqueDao(database: WaktivaDatabase): MosqueDao {
+        return database.mosqueDao()
     }
 }

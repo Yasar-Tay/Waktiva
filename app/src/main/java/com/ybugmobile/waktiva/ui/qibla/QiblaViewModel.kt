@@ -2,6 +2,7 @@ package com.ybugmobile.waktiva.ui.qibla
 
 import android.content.Context
 import android.hardware.GeomagneticField
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.batoulapps.adhan.Qibla
@@ -9,7 +10,9 @@ import com.batoulapps.adhan.Coordinates
 import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.waktiva.data.sensor.CompassData
 import com.ybugmobile.waktiva.data.sensor.CompassManager
+import com.ybugmobile.waktiva.domain.model.MosqueLocation
 import com.ybugmobile.waktiva.domain.model.PrayerDay
+import com.ybugmobile.waktiva.domain.repository.MosqueRepository
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.utils.PermissionUtils
@@ -26,6 +29,7 @@ class QiblaViewModel @Inject constructor(
     settingsManager: SettingsManager,
     private val compassManager: CompassManager,
     private val prayerRepository: PrayerRepository,
+    private val mosqueRepository: MosqueRepository,
     timeManager: TimeManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -47,6 +51,8 @@ class QiblaViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
+    private val _mosques = MutableStateFlow<List<MosqueLocation>>(emptyList())
+
     private val _isNetworkAvailable = MutableStateFlow(PermissionUtils.isNetworkAvailable(context))
     private val _isLocationEnabled = MutableStateFlow(PermissionUtils.isLocationEnabled(context))
     private val _isLocationPermissionGranted = MutableStateFlow(PermissionUtils.isLocationPermissionGranted(context))
@@ -64,7 +70,7 @@ class QiblaViewModel @Inject constructor(
         StateQuint(settled, network, locEnabled, locPerm, issues)
     }
 
-    val state: StateFlow<QiblaViewState> = combine(
+    private val coreStateFlow = combine(
         settings,
         compassData,
         currentPrayerDay,
@@ -88,6 +94,10 @@ class QiblaViewModel @Inject constructor(
             isLocationPermissionGranted = locPerm,
             hasSystemIssues = issues
         )
+    }
+
+    val state: StateFlow<QiblaViewState> = combine(coreStateFlow, _mosques) { core, mosques ->
+        core.copy(mosques = mosques)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), QiblaViewState(isLoading = true))
 
     init {
@@ -129,6 +139,20 @@ class QiblaViewModel @Inject constructor(
             delay(2000)
             _hasSettled.value = true
         }
+
+        // Fetch nearby mosques whenever location changes
+        viewModelScope.launch {
+            settings.collectLatest { s ->
+                val lat = s.latitude ?: return@collectLatest
+                val lng = s.longitude ?: return@collectLatest
+                runCatching { mosqueRepository.getNearbyMosques(lat, lng) }
+                    .onSuccess {
+                        Log.d("QiblaVM", "Mosques loaded: ${it.size}")
+                        _mosques.value = it
+                    }
+                    .onFailure { Log.e("QiblaVM", "Mosque fetch failed", it) }
+            }
+        }
     }
 
     private fun updateHealthStatus() {
@@ -142,7 +166,7 @@ class QiblaViewModel @Inject constructor(
         viewModelScope.launch {
             _isRefreshing.value = true
             updateHealthStatus()
-            
+
             val s = settings.first()
             val now = LocalDate.now()
             if (s.latitude != null && s.longitude != null) {
@@ -153,6 +177,12 @@ class QiblaViewModel @Inject constructor(
                     longitude = s.longitude,
                     method = s.calculationMethod
                 )
+                runCatching { mosqueRepository.getNearbyMosques(s.latitude, s.longitude) }
+                    .onSuccess {
+                        Log.d("QiblaVM", "Mosques refreshed: ${it.size}")
+                        _mosques.value = it
+                    }
+                    .onFailure { Log.e("QiblaVM", "Mosque refresh failed", it) }
             }
 
             delay(500)

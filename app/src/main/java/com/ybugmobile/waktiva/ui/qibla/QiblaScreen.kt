@@ -183,6 +183,7 @@ private fun QiblaContent(
                 isSatelliteView = isSatelliteView,
                 isAligned = isAligned,
                 kaabaLatLng = kaabaLatLng,
+                mosques = state.mosques,
                 onMapReady = { },
                 onMapLongClick = { },
                 onToggleSatellite = { isSatelliteView = !isSatelliteView },

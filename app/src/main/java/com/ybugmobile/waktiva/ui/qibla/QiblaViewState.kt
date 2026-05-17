@@ -2,6 +2,7 @@ package com.ybugmobile.waktiva.ui.qibla
 
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.data.sensor.CompassData
+import com.ybugmobile.waktiva.domain.model.MosqueLocation
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import java.time.LocalDateTime
 
@@ -15,5 +16,6 @@ data class QiblaViewState(
     val isNetworkAvailable: Boolean = true,
     val isLocationEnabled: Boolean = true,
     val isLocationPermissionGranted: Boolean = true,
-    val hasSystemIssues: Boolean = false
+    val hasSystemIssues: Boolean = false,
+    val mosques: List<MosqueLocation> = emptyList()
 )
