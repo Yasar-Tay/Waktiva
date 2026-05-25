@@ -379,26 +379,7 @@ fun QiblaMap(
             val lng = loc.longitude
             if (lat != null && lng != null) {
                 val userLatLng = LatLng(lat, lng)
-                val activeColor = if (isAligned) green else blue
-                val activeIcon  = if (isAligned) "green_arrow" else MapConstants.USER_ARROW_ID
-
-                lm.create(
-                    LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
-                        .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
-                        .withLineWidth(8f).withLineOpacity(0.06f).withLineBlur(4f)
-                )
-                lm.create(
-                    LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
-                        .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE))
-                        .withLineWidth(if (isAligned) 6f else 5f)
-                        .withLineJoin("round")
-                )
-                lm.create(
-                    LineOptions().withLatLngs(listOf(userLatLng, kaabaLatLng))
-                        .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(activeColor)))
-                        .withLineWidth(if (isAligned) 3f else 2.5f)
-                        .withLineJoin("round")
-                )
+                lm.createQiblaLines(userLatLng, kaabaLatLng, if (isAligned) green else blue, isAligned)
 
                 val ringSymbol = if (isAligned) sm.create(
                     SymbolOptions().withLatLng(userLatLng)
@@ -407,42 +388,14 @@ fun QiblaMap(
                         .withIconSize(0.01f)
                 ) else null
 
-                val userSymbol = sm.create(
-                    SymbolOptions().withLatLng(userLatLng)
-                        .withIconImage(activeIcon)
-                        .withIconRotate(compassData.azimuth)
-                        .withIconSize(1.2f)
-                )
-
+                val userSymbol = sm.createDirectionMarker(userLatLng, MapConstants.USER_ARROW_ID, compassData.azimuth, isAligned)
                 newAnnotations = newAnnotations.copy(userSymbol = userSymbol, userRing = ringSymbol)
             }
         }
 
         customPoint?.let { cp ->
-            val customActiveColor = if (isAligned) green else purple
-            lm.create(
-                LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(customActiveColor)))
-                    .withLineWidth(8f).withLineOpacity(0.06f).withLineBlur(4f)
-            )
-            lm.create(
-                LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE))
-                    .withLineWidth(if (isAligned) 6f else 5f).withLineJoin("round")
-            )
-            lm.create(
-                LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(customActiveColor)))
-                    .withLineWidth(if (isAligned) 3f else 2.5f).withLineJoin("round")
-            )
-
-            val customSymbol = sm.create(
-                SymbolOptions().withLatLng(cp)
-                    .withIconImage(if (isAligned) "green_arrow" else MapConstants.CUSTOM_ARROW_ID)
-                    .withIconRotate(compassData.azimuth)
-                    .withIconSize(1.2f)
-            )
-
+            lm.createQiblaLines(cp, kaabaLatLng, if (isAligned) green else purple, isAligned)
+            val customSymbol = sm.createDirectionMarker(cp, MapConstants.CUSTOM_ARROW_ID, compassData.azimuth, isAligned)
             newAnnotations = newAnnotations.copy(customSymbol = customSymbol)
         }
 
@@ -608,6 +561,16 @@ private fun MosqueSpeechBubble(
         )
     }
 }
+
+private fun LineManager.createQiblaLines(from: LatLng, to: LatLng, color: String, isAligned: Boolean) {
+    val rgba = ColorUtils.colorToRgbaString(AndroidColor.parseColor(color))
+    create(LineOptions().withLatLngs(listOf(from, to)).withLineColor(rgba).withLineWidth(8f).withLineOpacity(0.06f).withLineBlur(4f))
+    create(LineOptions().withLatLngs(listOf(from, to)).withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE)).withLineWidth(if (isAligned) 6f else 5f).withLineJoin("round"))
+    create(LineOptions().withLatLngs(listOf(from, to)).withLineColor(rgba).withLineWidth(if (isAligned) 3f else 2.5f).withLineJoin("round"))
+}
+
+private fun SymbolManager.createDirectionMarker(latLng: LatLng, defaultIcon: String, azimuth: Float, isAligned: Boolean): Symbol =
+    create(SymbolOptions().withLatLng(latLng).withIconImage(if (isAligned) "green_arrow" else defaultIcon).withIconRotate(azimuth).withIconSize(1.2f))
 
 private fun createDirectionMarker(colorHex: String): Bitmap {
     val size = 180
