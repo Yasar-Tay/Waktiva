@@ -42,18 +42,21 @@ class CompassManager @Inject constructor(
 
     private val rawCompassFlow: Flow<CompassData> = callbackFlow {
         var lastAzimuth = -1f
-        val alpha = 0.22f 
+        val alpha = 0.22f
         var lastEventTime = System.currentTimeMillis()
 
         val listener = object : SensorEventListener {
             private val rotationMatrix = FloatArray(9)
             private val adjustedRotationMatrix = FloatArray(9)
             private val orientation = FloatArray(3)
-            
+
             private val lastAccel = FloatArray(3)
             private val lastMag = FloatArray(3)
             private var hasAccel = false
             private var hasMag = false
+            // True once we have received at least one rotation vector event; prevents
+            // the accel+mag fallback from overwriting the more accurate rotVec result.
+            private var hasRotationVector = false
 
             override fun onSensorChanged(event: SensorEvent?) {
                 if (event == null) return
@@ -67,6 +70,7 @@ class CompassManager @Inject constructor(
                         if (event.values.size >= 4) {
                             SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
                             azimuthFound = true
+                            hasRotationVector = true
                             if (event.values.size > 4) {
                                 val accuracyDegrees = Math.toDegrees(event.values[4].toDouble())
                                 currentAccuracy = when {
@@ -87,7 +91,9 @@ class CompassManager @Inject constructor(
                     }
                 }
 
-                if (!azimuthFound && hasAccel && hasMag) {
+                // Only use accel+mag fallback when rotation vector sensor is unavailable.
+                // Without this guard, every accel/mag event overwrites the rotVec matrix.
+                if (!azimuthFound && !hasRotationVector && hasAccel && hasMag) {
                     azimuthFound = SensorManager.getRotationMatrix(rotationMatrix, null, lastAccel, lastMag)
                 }
 
