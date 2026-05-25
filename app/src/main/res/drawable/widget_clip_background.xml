@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Transparent rounded rectangle used only to define the clip outline on the
+  widget root FrameLayout.  android:clipToOutline="true" on the root makes
+  Android clip every child (gradient bitmap, glass sheen, text) to this
+  shape, so the background corners align exactly with the 32 dp sheen border.
+  The fill is fully transparent so it doesn't show any colour of its own.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="32dp" />
+    <solid android:color="@android:color/transparent" />
+</shape>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Root FrameLayout is the clickable tap-target.
+  Layer order (back → front):
+    1. widget_background  – gradient bitmap, fills entire widget
+    2. glass sheen        – highlight/border overlay drawable
+    3. widget_content     – prayer name + divider + countdown (visible when data is ready)
+    4. widget_idle        – logo + label (visible when no prayer data)
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_clip_background"
+    android:clipToOutline="true">
+
+    <!-- 1. Dynamic gradient background (bitmap set programmatically) -->
+    <ImageView
+        android:id="@+id/widget_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY" />
+
+    <!-- 2. Glass sheen (border + highlight) -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/widget_glass_sheen"
+        android:scaleType="fitXY" />
+
+    <!-- 3. Prayer content row -->
+    <LinearLayout
+        android:id="@+id/widget_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:visibility="visible">
+
+        <!--
+          LEFT PANEL (104 dp wide)
+          Ghost icon is 130 dp × 130 dp anchored to the bottom-end corner.
+          Because clipChildren defaults to true, only the portion inside the
+          104 dp panel is visible — i.e. the top-right quadrant of the icon.
+        -->
+        <FrameLayout
+            android:layout_width="104dp"
+            android:layout_height="match_parent"
+            android:clipChildren="true">
+
+            <ImageView
+                android:id="@+id/widget_ghost_icon"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_gravity="bottom|end"
+                android:scaleType="fitXY" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingStart="16dp">
+
+                <TextView
+                    android:id="@+id/widget_prayer_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:maxLines="1" />
+
+                <TextView
+                    android:id="@+id/widget_prayer_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- Vertical divider — inset 16 dp from top and bottom -->
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="#1EFFFFFF" />
+
+        <!-- RIGHT PANEL: countdown chronometer.
+             textSize is NOT set here — it is computed from the actual widget
+             width and applied programmatically via setTextViewTextSize(). -->
+        <Chronometer
+            android:id="@+id/widget_chronometer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:countDown="true"
+            android:textColor="#FFFFFFFF"
+            android:fontFamily="monospace"
+            android:fontFeatureSettings="tnum"
+            android:letterSpacing="-0.03"
+            android:gravity="end|center_vertical"
+            android:paddingStart="10dp"
+            android:paddingEnd="14dp"
+            android:maxLines="1"
+            android:includeFontPadding="false" />
+
+    </LinearLayout>
+
+    <!-- 4. Idle state (no prayer data loaded yet) -->
+    <LinearLayout
+        android:id="@+id/widget_idle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_launcher_foreground" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="WAKTIVA"
+            android:textColor="#4DFFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
 import android.util.Log
-import androidx.glance.appwidget.updateAll
+// Glance import removed — WaktivaWidget is now a plain AppWidgetProvider
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -62,7 +62,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 try {
                     settingsManager.muteNextPrayer(prayerName, prayerDate)
                     notificationHelper.cancelWarningNotification()
-                    WaktivaWidget().updateAll(context)
+                    WaktivaWidget.updateAll(context)
                 } finally {
                     pendingResult.finish()
                 }
@@ -90,7 +90,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         )
                     }
                     AlarmScheduler.ACTION_PRAYER_ALARM -> {
-                        WaktivaWidget().updateAll(context)
+                        WaktivaWidget.updateAll(context)
                         handleAdhanTrigger(context, prayerName, prayerDate)
                         rescheduleNextPrayer()
                     }
@@ -98,7 +98,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         // This action wakes the app to ensure transitions like Sunrise -> Dhuhr
                         // happen exactly on time in the widget without a negative countdown.
                         Log.d("PrayerAlarmReceiver", "Executing WIDGET REFRESH milestone transition")
-                        WaktivaWidget().updateAll(context)
+                        WaktivaWidget.updateAll(context)
                         rescheduleNextPrayer()
                     }
                 }

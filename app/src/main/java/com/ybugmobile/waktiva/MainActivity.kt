@@ -41,7 +41,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import androidx.work.*
-import androidx.glance.appwidget.updateAll
+// Glance updateAll import removed — WaktivaWidget is now a plain AppWidgetProvider
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.worker.LocationUpdateWorker
 import com.ybugmobile.waktiva.data.worker.PrayerUpdateWorker
@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                     val observer = LifecycleEventObserver { _, event ->
                         if (event == Lifecycle.Event.ON_START) {
                             scope.launch {
-                                WaktivaWidget().updateAll(this@MainActivity)
+                                WaktivaWidget.updateAll(this@MainActivity)
                             }
                         }
                     }
@@ -329,7 +329,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                             SmallFloatingActionButton(
                                 onClick = {
                                     timeManager.addMinutes(30)
-                                    scope.launch { WaktivaWidget().updateAll(context) }
+                                    scope.launch { WaktivaWidget.updateAll(context) }
                                 },
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer
                             ) {

@@ -85,9 +85,9 @@
             </intent-filter>
         </receiver>
 
-        <!-- Glance Widget Receiver -->
+        <!-- Widget receiver (plain AppWidgetProvider — no Glance) -->
         <receiver
-            android:name=".ui.widget.WaktivaWidgetReceiver"
+            android:name=".ui.widget.WaktivaWidget"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
