@@ -21,8 +21,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -50,8 +48,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.batoulapps.adhan.Coordinates
-import com.batoulapps.adhan.Qibla
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.data.sensor.CompassData
 import com.ybugmobile.waktiva.domain.model.MosqueLocation
@@ -441,7 +437,7 @@ fun QiblaMap(
 
             val customSymbol = sm.create(
                 SymbolOptions().withLatLng(cp)
-                    .withIconImage(MapConstants.CUSTOM_ARROW_ID)
+                    .withIconImage(if (isAligned) "green_arrow" else MapConstants.CUSTOM_ARROW_ID)
                     .withIconRotate(compassData.azimuth)
                     .withIconSize(1.2f)
             )
