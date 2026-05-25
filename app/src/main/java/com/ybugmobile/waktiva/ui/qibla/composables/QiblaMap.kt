@@ -139,7 +139,9 @@ fun QiblaMap(
         val map = mapInstance ?: return@LaunchedEffect
         map.addOnMapClickListener { tapLatLng ->
             val pt = map.projection.toScreenLocation(tapLatLng)
-            val r = 28f * density
+            // 4 dp fat-finger tolerance only — the bitmap's tight bounding box
+            // provides the actual hit area; a large r here creates invisible tap zones.
+            val r = 4f * density
             val rect = RectF(pt.x - r, pt.y - r, pt.x + r, pt.y + r)
             val features = map.queryRenderedFeatures(rect, MOSQUE_LAYER_ID)
             if (features.isNotEmpty()) {
@@ -221,7 +223,7 @@ fun QiblaMap(
                             style.addLayer(
                                 MapSymbolLayer(MOSQUE_LAYER_ID, MOSQUE_SOURCE_ID).withProperties(
                                     PropertyFactory.iconImage("mosque_marker"),
-                                    PropertyFactory.iconSize(1.5f),
+                                    PropertyFactory.iconSize(1.2f),
                                     PropertyFactory.iconAllowOverlap(true),
                                     PropertyFactory.iconIgnorePlacement(true)
                                 )
@@ -268,7 +270,7 @@ fun QiblaMap(
                             style.addLayer(
                                 MapSymbolLayer(MOSQUE_LAYER_ID, MOSQUE_SOURCE_ID).withProperties(
                                     PropertyFactory.iconImage("mosque_marker"),
-                                    PropertyFactory.iconSize(1.5f),
+                                    PropertyFactory.iconSize(1.2f),
                                     PropertyFactory.iconAllowOverlap(true),
                                     PropertyFactory.iconIgnorePlacement(true)
                                 )
@@ -792,7 +794,9 @@ fun createKaabaMarker(colorHex: String): Bitmap {
 }
 
 private fun createMosqueMarker(): Bitmap {
-    val size = 140
+    // 80×80: white border (r=34) leaves 6 px transparent margin on each side,
+    // tight enough that queryRenderedFeatures hit-testing matches the visual circle.
+    val size = 80
     val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
     val cx = size / 2f
