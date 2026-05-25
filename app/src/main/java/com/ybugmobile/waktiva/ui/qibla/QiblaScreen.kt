@@ -17,7 +17,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -53,8 +56,12 @@ fun QiblaScreen(
         MapLibre.getInstance(context)
     }
 
-    LaunchedEffect(state.isNetworkAvailable, state.hasSystemIssues, state.currentPrayerDay) {
-        if (state.currentPrayerDay == null && state.isNetworkAvailable && !state.hasSystemIssues) {
+    // Guard against the double-fetch race: when the screen first opens, isLoading is true and
+    // currentPrayerDay is null while Room is still returning cached data.  Without the isLoading
+    // guard this effect would fire immediately and call refresh() in parallel with the ViewModel
+    // init fetch, resulting in two simultaneous mosque network calls.
+    LaunchedEffect(state.isNetworkAvailable, state.hasSystemIssues, state.currentPrayerDay, state.isLoading) {
+        if (state.currentPrayerDay == null && !state.isLoading && state.isNetworkAvailable && !state.hasSystemIssues) {
             viewModel.refresh()
         }
     }
@@ -175,8 +182,25 @@ private fun QiblaContent(
     val currentTheme = if (isMapView) lightGlassTheme else glassTheme
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // LAYER 1: Fullscreen Map
-        if (isMapView) {
+        // LAYER 1: Fullscreen Map — always kept in the composition tree so the MapLibre
+        // GLSurfaceView (and its EGL/GPU context) is never destroyed on compass↔map toggles.
+        // Visibility is controlled via Modifier.alpha; a pointerInput consumer on PointerEventPass
+        // .Initial blocks all touches reaching the hidden AndroidView when not in map view.
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .alpha(if (isMapView) 1f else 0f)
+                .pointerInput(isMapView) {
+                    if (!isMapView) {
+                        awaitPointerEventScope {
+                            while (true) {
+                                awaitPointerEvent(PointerEventPass.Initial)
+                                    .changes.forEach { it.consume() }
+                            }
+                        }
+                    }
+                }
+        ) {
             QiblaMap(
                 settings = state.settings,
                 compassData = state.compassData,
@@ -192,7 +216,7 @@ private fun QiblaContent(
                 fabPadding = if (isLandscape) PaddingValues(start = 80.dp, end = 320.dp, bottom = 32.dp) else PaddingValues(16.dp),
                 isHorizontalFabs = isLandscape
             )
-            
+
             if (!state.isNetworkAvailable) {
                 Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.4f)), contentAlignment = Alignment.Center) {
                     Surface(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f), shape = RoundedCornerShape(24.dp), modifier = Modifier.padding(32.dp), tonalElevation = 8.dp) {
