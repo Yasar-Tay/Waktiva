@@ -57,7 +57,8 @@ class MosqueRepositoryImpl @Inject constructor(
                 lng = elLng,
                 anchorLat = anchorLat,
                 anchorLng = anchorLng,
-                fetchedAt = now
+                fetchedAt = now,
+                address = buildAddress(el.tags)
             )
         }
 
@@ -68,5 +69,23 @@ class MosqueRepositoryImpl @Inject constructor(
         return entities.map { it.toDomain() }
     }
 
-    private fun MosqueEntity.toDomain() = MosqueLocation(id, name, lat, lng)
+    private fun MosqueEntity.toDomain() = MosqueLocation(id, name, lat, lng, address)
+}
+
+/**
+ * Builds a human-readable address string from Overpass OSM tags.
+ * Prefers `addr:full` when present; otherwise assembles from individual parts.
+ */
+private fun buildAddress(tags: Map<String, String>?): String? {
+    if (tags == null) return null
+    tags["addr:full"]?.takeIf { it.isNotBlank() }?.let { return it }
+    val parts = mutableListOf<String>()
+    val housenumber = tags["addr:housenumber"]
+    val street = tags["addr:street"]
+    if (housenumber != null || street != null) {
+        parts += listOfNotNull(housenumber, street).joinToString(" ")
+    }
+    tags["addr:city"]?.let { parts += it }
+        ?: tags["addr:postcode"]?.let { parts += it }
+    return parts.joinToString(", ").ifEmpty { null }
 }

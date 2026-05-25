@@ -11,5 +11,6 @@ data class MosqueEntity(
     val lng: Double,
     val anchorLat: Double,
     val anchorLng: Double,
-    val fetchedAt: Long
+    val fetchedAt: Long,
+    val address: String? = null
 )

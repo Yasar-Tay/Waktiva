@@ -1,5 +1,7 @@
 package com.ybugmobile.waktiva.ui.qibla.composables
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
@@ -8,6 +10,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Color as AndroidColor
 import android.location.Location
+import android.net.Uri
 import com.google.gson.JsonObject
 import org.maplibre.android.style.layers.PropertyFactory
 import org.maplibre.android.style.layers.SymbolLayer as MapSymbolLayer
@@ -27,6 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Directions
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.MyLocation
@@ -42,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -141,7 +146,8 @@ fun QiblaMap(
                         id = props.get("mosqueId")?.asLong ?: 0L,
                         name = props.get("name")?.asString?.takeIf { it.isNotEmpty() },
                         lat = props.get("lat")?.asDouble ?: 0.0,
-                        lng = props.get("lng")?.asDouble ?: 0.0
+                        lng = props.get("lng")?.asDouble ?: 0.0,
+                        address = props.get("address")?.asString?.takeIf { it.isNotEmpty() }
                     )
                     selectedMosqueState.value = mosque
                     selectedMosqueScreenPos.value = map.projection.toScreenLocation(LatLng(mosque.lat, mosque.lng))
@@ -442,6 +448,7 @@ fun QiblaMap(
                     addProperty("name", mosque.name ?: "")
                     addProperty("lat", mosque.lat)
                     addProperty("lng", mosque.lng)
+                    addProperty("address", mosque.address ?: "")
                 }
             )
         }
@@ -473,26 +480,22 @@ private fun MosqueSpeechBubble(
     onDismiss: () -> Unit
 ) {
     val localDensity = LocalDensity.current
-    val bubbleWidth = 220.dp
+    val context = LocalContext.current
+    val bubbleWidth = 260.dp
     val tailHeight = 10.dp
-    val aboveIcon = 32.dp  // gap between tail tip and icon center
+    val aboveIcon = 32.dp
 
     val bubbleWidthPx = with(localDensity) { bubbleWidth.toPx() }
     val tailHeightPx = with(localDensity) { tailHeight.toPx() }
     val aboveIconPx = with(localDensity) { aboveIcon.toPx() }
     val marginPx = with(localDensity) { 16.dp.toPx() }
 
-    // Start with a reasonable height estimate so the bubble doesn't flash at y=0
-    var cardHeightPx by remember { mutableStateOf(with(localDensity) { 64.dp.toPx() }) }
+    var cardHeightPx by remember { mutableStateOf(with(localDensity) { 96.dp.toPx() }) }
 
-    // Center bubble horizontally on the icon; clamp to left margin
     val xPx = (screenX - bubbleWidthPx / 2f).coerceAtLeast(marginPx)
-    // Place bubble so its tail tip sits aboveIcon px above the icon center
     val yPx = (screenY - aboveIconPx - tailHeightPx - cardHeightPx).coerceAtLeast(marginPx)
-    // Tail tip x relative to the bubble's left edge; keep it within the bubble
     val tailTipX = (screenX - xPx).coerceIn(tailHeightPx * 1.5f, bubbleWidthPx - tailHeightPx * 1.5f)
 
-    // Snap instantly so the bubble tracks map panning without lag
     val xAnim by animateFloatAsState(xPx, animationSpec = snap(), label = "bubbleX")
     val yAnim by animateFloatAsState(yPx, animationSpec = snap(), label = "bubbleY")
     val tailXAnim by animateFloatAsState(tailTipX, animationSpec = snap(), label = "tailX")
@@ -516,42 +519,99 @@ private fun MosqueSpeechBubble(
     ) {
         Surface(
             color = Color.White.copy(alpha = 0.97f),
-            shape = RoundedCornerShape(14.dp),
-            shadowElevation = 6.dp,
+            shape = RoundedCornerShape(16.dp),
+            shadowElevation = 8.dp,
             modifier = Modifier
                 .fillMaxWidth()
                 .onSizeChanged { cardHeightPx = it.height.toFloat() }
         ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(Modifier.size(8.dp).background(Color(0xFF34C759), CircleShape))
-                Spacer(Modifier.width(10.dp))
-                Column(Modifier.weight(1f)) {
+            Column(modifier = Modifier.padding(14.dp)) {
+                // Header: green dot + name + close button
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.size(8.dp).background(Color(0xFF34C759), CircleShape))
+                    Spacer(Modifier.width(8.dp))
                     Text(
-                        mosque.name ?: "Mosque",
+                        text = mosque.name ?: "Mosque",
                         style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        color = Color.Black
+                        color = Color.Black,
+                        modifier = Modifier.weight(1f)
                     )
-                    if (distanceText != null) {
-                        Text(
-                            distanceText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Black.copy(alpha = 0.45f)
+                    IconButton(onClick = onDismiss, modifier = Modifier.size(24.dp)) {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = null,
+                            tint = Color.Black.copy(alpha = 0.3f),
+                            modifier = Modifier.size(14.dp)
                         )
                     }
                 }
-                IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = null,
-                        tint = Color.Black.copy(alpha = 0.3f),
-                        modifier = Modifier.size(14.dp)
+
+                // Address row (only if available)
+                if (!mosque.address.isNullOrBlank()) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = mosque.address,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Black.copy(alpha = 0.55f),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
+                }
+
+                Spacer(Modifier.height(10.dp))
+
+                // Bottom row: distance + Open in Maps button
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    if (distanceText != null) {
+                        Text(
+                            text = distanceText,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Black.copy(alpha = 0.45f)
+                        )
+                    } else {
+                        Spacer(Modifier.weight(1f))
+                    }
+
+                    Surface(
+                        onClick = {
+                            val label = Uri.encode(mosque.name ?: "Mosque")
+                            val geoUri = Uri.parse("geo:${mosque.lat},${mosque.lng}?q=${mosque.lat},${mosque.lng}($label)")
+                            try {
+                                context.startActivity(Intent(Intent.ACTION_VIEW, geoUri))
+                            } catch (_: ActivityNotFoundException) {
+                                val webUri = Uri.parse("https://maps.google.com/?q=${mosque.lat},${mosque.lng}")
+                                context.startActivity(Intent(Intent.ACTION_VIEW, webUri))
+                            }
+                        },
+                        color = Color(0xFF34C759),
+                        shape = RoundedCornerShape(20.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Directions,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Text(
+                                text = "Open in Maps",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White
+                            )
+                        }
+                    }
                 }
             }
         }

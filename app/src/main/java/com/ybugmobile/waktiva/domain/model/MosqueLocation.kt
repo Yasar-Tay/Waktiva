@@ -4,5 +4,6 @@ data class MosqueLocation(
     val id: Long,
     val name: String?,
     val lat: Double,
-    val lng: Double
+    val lng: Double,
+    val address: String? = null
 )

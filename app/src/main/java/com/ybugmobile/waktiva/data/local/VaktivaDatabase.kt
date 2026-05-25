@@ -19,7 +19,7 @@ import com.ybugmobile.waktiva.data.local.entity.PrayerStatusEntity
         PrayerStatusEntity::class,
         MosqueEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(PrayerTypeConverter::class)
@@ -44,6 +44,12 @@ abstract class WaktivaDatabase : RoomDatabase() {
                         fetchedAt INTEGER NOT NULL
                     )"""
                 )
+            }
+        }
+
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE mosques ADD COLUMN address TEXT")
             }
         }
     }
