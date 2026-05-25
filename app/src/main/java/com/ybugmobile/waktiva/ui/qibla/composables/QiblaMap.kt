@@ -113,6 +113,20 @@ fun QiblaMap(
     val ringScale = remember { Animatable(0f) }
     val density = LocalDensity.current.density
 
+    // Fallback: if settings were null when the factory ran (lat/lng not yet loaded),
+    // move the camera as soon as both the map instance and the coordinates are available.
+    // Skips the move if the map is already zoomed in (user manually navigated).
+    LaunchedEffect(mapInstance, settings?.latitude, settings?.longitude) {
+        val map = mapInstance ?: return@LaunchedEffect
+        val lat = settings?.latitude ?: return@LaunchedEffect
+        val lng = settings?.longitude ?: return@LaunchedEffect
+        if (map.cameraPosition.zoom < 3.0) {
+            map.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), MapConstants.DEFAULT_ZOOM)
+            )
+        }
+    }
+
     LaunchedEffect(mapInstance) {
         val map = mapInstance ?: return@LaunchedEffect
         map.addOnMapClickListener { tapLatLng ->
@@ -159,7 +173,20 @@ fun QiblaMap(
                         mapInstance = map
                         onMapReady(map)
                         map.uiSettings.isCompassEnabled = false
-                        
+
+                        // Move camera immediately — before setStyle — so the map never
+                        // renders at the default world-view zoom while the style loads.
+                        settings?.latitude?.let { lat ->
+                            settings.longitude?.let { lng ->
+                                map.moveCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        LatLng(lat, lng),
+                                        MapConstants.DEFAULT_ZOOM
+                                    )
+                                )
+                            }
+                        }
+
                         map.addOnCameraMoveListener {
                             val cameraPosition = map.cameraPosition
                             isMapOriented = abs(cameraPosition.bearing) > 1.0 || abs(cameraPosition.tilt) > 1.0
@@ -183,19 +210,6 @@ fun QiblaMap(
                             symbolManager = SymbolManager(this@apply, map, style).apply {
                                 iconAllowOverlap = true
                                 iconIgnorePlacement = true
-                            }
-                            
-                            settings?.let {
-                                val lat = it.latitude
-                                val lng = it.longitude
-                                if (lat != null && lng != null) {
-                                    map.moveCamera(
-                                        CameraUpdateFactory.newLatLngZoom(
-                                            LatLng(lat, lng),
-                                            MapConstants.DEFAULT_ZOOM
-                                        )
-                                    )
-                                }
                             }
                         }
                         map.addOnMapLongClickListener { point ->
