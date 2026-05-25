@@ -419,20 +419,21 @@ fun QiblaMap(
         }
 
         customPoint?.let { cp ->
+            val customActiveColor = if (isAligned) green else purple
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(purple)))
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(customActiveColor)))
                     .withLineWidth(8f).withLineOpacity(0.06f).withLineBlur(4f)
             )
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
                     .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.WHITE))
-                    .withLineWidth(5f).withLineJoin("round")
+                    .withLineWidth(if (isAligned) 6f else 5f).withLineJoin("round")
             )
             lm.create(
                 LineOptions().withLatLngs(listOf(cp, kaabaLatLng))
-                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(purple)))
-                    .withLineWidth(2.5f).withLineJoin("round")
+                    .withLineColor(ColorUtils.colorToRgbaString(AndroidColor.parseColor(customActiveColor)))
+                    .withLineWidth(if (isAligned) 3f else 2.5f).withLineJoin("round")
             )
 
             val customSymbol = sm.create(
