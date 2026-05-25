@@ -1,5 +1,6 @@
 package com.ybugmobile.waktiva.di
 
+import com.ybugmobile.waktiva.BuildConfig
 import com.ybugmobile.waktiva.data.remote.AladhanApiService
 import com.ybugmobile.waktiva.data.remote.OverpassApiService
 import com.ybugmobile.waktiva.data.remote.WeatherApiService
@@ -11,6 +12,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -21,7 +23,9 @@ object NetworkModule {
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            // Never log bodies in release builds — user coordinates and API payloads are sensitive
+            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                    else HttpLoggingInterceptor.Level.NONE
         }
     }
 
@@ -30,6 +34,10 @@ object NetworkModule {
     fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            // Overpass queries declare [timeout:25]; read timeout must exceed that
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
             .build()
     }
 

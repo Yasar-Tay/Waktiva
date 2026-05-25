@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -73,6 +74,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.graphics.Path as ComposePath
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -94,6 +96,7 @@ fun QiblaMap(
     isAligned: Boolean,
     kaabaLatLng: LatLng,
     mosques: List<MosqueLocation> = emptyList(),
+    mosqueFetchFailed: Boolean = false,
     onMapReady: (MapLibreMap) -> Unit,
     onMapLongClick: (LatLng) -> Unit,
     onToggleSatellite: () -> Unit,
@@ -212,6 +215,18 @@ fun QiblaMap(
                             style.addImage("alignment_ring", createAlignmentRing("#34C759"))
                             style.addImage("mosque_marker", createMosqueMarker())
 
+                            // Mosque source/layer are created here (in the style-ready callback)
+                            // so they always exist by the time LaunchedEffect tries to populate them.
+                            style.addSource(GeoJsonSource(MOSQUE_SOURCE_ID, FeatureCollection.fromFeatures(emptyList())))
+                            style.addLayer(
+                                MapSymbolLayer(MOSQUE_LAYER_ID, MOSQUE_SOURCE_ID).withProperties(
+                                    PropertyFactory.iconImage("mosque_marker"),
+                                    PropertyFactory.iconSize(1.5f),
+                                    PropertyFactory.iconAllowOverlap(true),
+                                    PropertyFactory.iconIgnorePlacement(true)
+                                )
+                            )
+
                             lineManager = LineManager(this@apply, map, style)
                             symbolManager = SymbolManager(this@apply, map, style).apply {
                                 iconAllowOverlap = true
@@ -248,7 +263,17 @@ fun QiblaMap(
                             style.addImage("kaaba_marker", createKaabaMarker("#FFD700"))
                             style.addImage("alignment_ring", createAlignmentRing("#34C759"))
                             style.addImage("mosque_marker", createMosqueMarker())
-                            
+
+                            style.addSource(GeoJsonSource(MOSQUE_SOURCE_ID, FeatureCollection.fromFeatures(emptyList())))
+                            style.addLayer(
+                                MapSymbolLayer(MOSQUE_LAYER_ID, MOSQUE_SOURCE_ID).withProperties(
+                                    PropertyFactory.iconImage("mosque_marker"),
+                                    PropertyFactory.iconSize(1.5f),
+                                    PropertyFactory.iconAllowOverlap(true),
+                                    PropertyFactory.iconIgnorePlacement(true)
+                                )
+                            )
+
                             lineManager = LineManager(view, map, style)
                             symbolManager = SymbolManager(view, map, style).apply {
                                 iconAllowOverlap = true
@@ -282,6 +307,28 @@ fun QiblaMap(
                     selectedMosqueScreenPos.value = null
                 }
             )
+        }
+
+        // Mosque fetch failure chip — only shown when fetch failed AND cache is empty
+        if (mosqueFetchFailed && mosques.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 72.dp)
+            ) {
+                Surface(
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    shape = RoundedCornerShape(20.dp),
+                    tonalElevation = 4.dp
+                ) {
+                    Text(
+                        text = "⚠ Could not load nearby mosques",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                    )
+                }
+            }
         }
 
         if (showFabs) {
@@ -435,12 +482,14 @@ fun QiblaMap(
         annotations.userRing?.let { it.iconSize = ringScale.value; sm.update(it) }
     }
 
+    // Source and layer are created in the setStyle callback, so they always exist
+    // by the time this effect runs. We only need to push updated feature data.
     LaunchedEffect(symbolManager, mosques) {
         symbolManager ?: return@LaunchedEffect
         val map = mapInstance ?: return@LaunchedEffect
         val style = map.style ?: return@LaunchedEffect
 
-        val featureList = mosques.map { mosque ->
+        val collection = FeatureCollection.fromFeatures(mosques.map { mosque ->
             Feature.fromGeometry(
                 GeoPoint.fromLngLat(mosque.lng, mosque.lat),
                 JsonObject().apply {
@@ -451,23 +500,9 @@ fun QiblaMap(
                     addProperty("address", mosque.address ?: "")
                 }
             )
-        }
-        val collection = FeatureCollection.fromFeatures(featureList)
+        })
 
-        val existing = style.getSourceAs<GeoJsonSource>(MOSQUE_SOURCE_ID)
-        if (existing != null) {
-            existing.setGeoJson(collection)
-        } else {
-            style.addSource(GeoJsonSource(MOSQUE_SOURCE_ID, collection))
-            style.addLayer(
-                MapSymbolLayer(MOSQUE_LAYER_ID, MOSQUE_SOURCE_ID).withProperties(
-                    PropertyFactory.iconImage("mosque_marker"),
-                    PropertyFactory.iconSize(1.5f),
-                    PropertyFactory.iconAllowOverlap(true),
-                    PropertyFactory.iconIgnorePlacement(true)
-                )
-            )
-        }
+        style.getSourceAs<GeoJsonSource>(MOSQUE_SOURCE_ID)?.setGeoJson(collection)
     }
 }
 
@@ -481,6 +516,7 @@ private fun MosqueSpeechBubble(
 ) {
     val localDensity = LocalDensity.current
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     val bubbleWidth = 260.dp
     val tailHeight = 10.dp
     val aboveIcon = 32.dp
@@ -489,10 +525,13 @@ private fun MosqueSpeechBubble(
     val tailHeightPx = with(localDensity) { tailHeight.toPx() }
     val aboveIconPx = with(localDensity) { aboveIcon.toPx() }
     val marginPx = with(localDensity) { 16.dp.toPx() }
+    val screenWidthPx = with(localDensity) { configuration.screenWidthDp.dp.toPx() }
 
     var cardHeightPx by remember { mutableStateOf(with(localDensity) { 96.dp.toPx() }) }
 
-    val xPx = (screenX - bubbleWidthPx / 2f).coerceAtLeast(marginPx)
+    // Clamp to both left AND right margins so the bubble never overflows the screen edge
+    val xPx = (screenX - bubbleWidthPx / 2f)
+        .coerceIn(marginPx, screenWidthPx - bubbleWidthPx - marginPx)
     val yPx = (screenY - aboveIconPx - tailHeightPx - cardHeightPx).coerceAtLeast(marginPx)
     val tailTipX = (screenX - xPx).coerceIn(tailHeightPx * 1.5f, bubbleWidthPx - tailHeightPx * 1.5f)
 
@@ -506,7 +545,7 @@ private fun MosqueSpeechBubble(
                 val result = FloatArray(1)
                 Location.distanceBetween(userLat, userLng, mosque.lat, mosque.lng, result)
                 val m = result[0].toInt()
-                if (m < 1000) "$m m" else "${"%.1f".format(m / 1000f)} km"
+                if (m < 1000) "$m m" else "${String.format(Locale.US, "%.1f", m / 1000f)} km"
             }
         }
     }

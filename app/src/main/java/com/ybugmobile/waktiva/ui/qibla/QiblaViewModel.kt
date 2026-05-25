@@ -52,6 +52,7 @@ class QiblaViewModel @Inject constructor(
     val isRefreshing = _isRefreshing.asStateFlow()
 
     private val _mosques = MutableStateFlow<List<MosqueLocation>>(emptyList())
+    private val _mosqueFetchFailed = MutableStateFlow(false)
 
     private val _isNetworkAvailable = MutableStateFlow(PermissionUtils.isNetworkAvailable(context))
     private val _isLocationEnabled = MutableStateFlow(PermissionUtils.isLocationEnabled(context))
@@ -96,8 +97,10 @@ class QiblaViewModel @Inject constructor(
         )
     }
 
-    val state: StateFlow<QiblaViewState> = combine(coreStateFlow, _mosques) { core, mosques ->
-        core.copy(mosques = mosques)
+    val state: StateFlow<QiblaViewState> = combine(
+        coreStateFlow, _mosques, _mosqueFetchFailed
+    ) { core, mosques, fetchFailed ->
+        core.copy(mosques = mosques, mosqueFetchFailed = fetchFailed)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), QiblaViewState(isLoading = true))
 
     init {
@@ -140,18 +143,29 @@ class QiblaViewModel @Inject constructor(
             _hasSettled.value = true
         }
 
-        // Fetch nearby mosques whenever location changes
+        // Fetch nearby mosques only when lat/lng actually change — not on every
+        // settings emission (prayer method, language, etc. changes are irrelevant here).
         viewModelScope.launch {
-            settings.collectLatest { s ->
-                val lat = s.latitude ?: return@collectLatest
-                val lng = s.longitude ?: return@collectLatest
-                runCatching { mosqueRepository.getNearbyMosques(lat, lng) }
-                    .onSuccess {
-                        Log.d("QiblaVM", "Mosques loaded: ${it.size}")
-                        _mosques.value = it
-                    }
-                    .onFailure { Log.e("QiblaVM", "Mosque fetch failed", it) }
-            }
+            settings
+                .distinctUntilChanged { old, new ->
+                    old.latitude == new.latitude && old.longitude == new.longitude
+                }
+                .collectLatest { s ->
+                    val lat = s.latitude ?: return@collectLatest
+                    val lng = s.longitude ?: return@collectLatest
+                    _mosqueFetchFailed.value = false
+                    runCatching { mosqueRepository.getNearbyMosques(lat, lng) }
+                        .onSuccess {
+                            Log.d("QiblaVM", "Mosques loaded: ${it.size}")
+                            _mosques.value = it
+                            _mosqueFetchFailed.value = false
+                        }
+                        .onFailure {
+                            Log.e("QiblaVM", "Mosque fetch failed", it)
+                            // Only surface the error when there is nothing cached to show
+                            if (_mosques.value.isEmpty()) _mosqueFetchFailed.value = true
+                        }
+                }
         }
     }
 
@@ -177,12 +191,17 @@ class QiblaViewModel @Inject constructor(
                     longitude = s.longitude,
                     method = s.calculationMethod
                 )
+                _mosqueFetchFailed.value = false
                 runCatching { mosqueRepository.getNearbyMosques(s.latitude, s.longitude) }
                     .onSuccess {
                         Log.d("QiblaVM", "Mosques refreshed: ${it.size}")
                         _mosques.value = it
+                        _mosqueFetchFailed.value = false
                     }
-                    .onFailure { Log.e("QiblaVM", "Mosque refresh failed", it) }
+                    .onFailure {
+                        Log.e("QiblaVM", "Mosque refresh failed", it)
+                        if (_mosques.value.isEmpty()) _mosqueFetchFailed.value = true
+                    }
             }
 
             delay(500)
