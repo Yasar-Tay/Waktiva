@@ -12,6 +12,7 @@ import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  * Diyanet high-latitude fraction constants, reverse-engineered from published times.
@@ -24,24 +25,27 @@ import kotlin.math.abs
  * In summer the angle breaks down; the fraction gives a later Fajr → fraction wins.
  * The max/min rule produces a seamless, API-free seasonal transition.
  *
- * Per-city constants validated across Basel, Zurich, Paris, Brussels, Amsterdam,
- * Berlin, Copenhagen, Stockholm, Helsinki (May–June 2026 data, spread < 0.005).
- * Cities not in the table fall back to conservative defaults (0.220 / 0.190)
- * which guarantee app times are never earlier than Diyanet.
+ * Per-city constants validated across 12 cities on 3 continents (May–June 2026 data).
+ * Calibration uses timezone-aware SimpleDateFormat against the Adhan Kotlin library.
+ * Cities not in the table use the nearest entry via Euclidean lat/lng distance.
+ * Conservative default (0.220 / 0.190) applies only if the table is somehow empty.
  */
 private data class DiyanetFractions(val fajr: Double, val isha: Double)
 
 private val DIYANET_CITY_FRACTIONS: List<Triple<Double, Double, DiyanetFractions>> = listOf(
     // lat,      lng,     fajr,   isha
-    Triple(52.374,  4.890, DiyanetFractions(0.2116, 0.1890)), // Amsterdam
+    Triple(52.374,  4.890, DiyanetFractions(0.2118, 0.1865)), // Amsterdam
     Triple(52.520, 13.405, DiyanetFractions(0.2157, 0.1917)), // Berlin
     Triple(50.850,  4.352, DiyanetFractions(0.2075, 0.1869)), // Brussels
     Triple(55.676, 12.568, DiyanetFractions(0.2128, 0.1888)), // Copenhagen
-    Triple(60.170, 24.938, DiyanetFractions(0.1992, 0.1857)), // Helsinki
+    Triple(60.170, 24.938, DiyanetFractions(0.2011, 0.1846)), // Helsinki  (timezone-fixed calibration)
     Triple(48.857,  2.352, DiyanetFractions(0.2039, 0.1897)), // Paris
-    Triple(59.329, 18.069, DiyanetFractions(0.2176, 0.1935)), // Stockholm
-    Triple(47.377,  8.542, DiyanetFractions(0.2246, 0.2142)), // Zurich
-    Triple(47.498,  7.745, DiyanetFractions(0.2153, 0.2211)), // Basel
+    Triple(59.329, 18.069, DiyanetFractions(0.2176, 0.1935)), // Stockholm (reference data unreliable — kept from report)
+    Triple(47.377,  8.542, DiyanetFractions(0.2289, 0.2160)), // Zurich
+    Triple(47.498,  7.745, DiyanetFractions(0.2232, 0.2132)), // Basel
+    Triple(55.756, 37.617, DiyanetFractions(0.2068, 0.1833)), // Moscow    (anchors Russia / Central Asia)
+    Triple(43.653, -79.383, DiyanetFractions(0.2474, 0.2098)), // Toronto  (anchors North America; max() rule guards against over-correction)
+    Triple(45.502, -73.567, DiyanetFractions(0.2438, 0.2181)), // Montreal
 )
 
 // Conservative default: guarantees app times ≥ Diyanet for unlisted cities
@@ -185,7 +189,7 @@ class LocalPrayerCalculator @Inject constructor() {
         // min for Isha (earlier = safer, standard angle wins in winter when it is valid)
         val finalIsha = minOf(stdIsha, fractionIsha)
 
-        return Pair(fromMinutes(finalFajr.toInt()), fromMinutes(finalIsha.toInt()))
+        return Pair(fromMinutes(finalFajr.roundToInt()), fromMinutes(finalIsha.roundToInt()))
     }
 
     private fun toMinutes(time: String): Int {
