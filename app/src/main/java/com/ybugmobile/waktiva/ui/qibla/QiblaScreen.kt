@@ -165,7 +165,7 @@ private fun QiblaContent(
     onStatusClick: () -> Unit
 ) {
     var isMapView by rememberSaveable { mutableStateOf(false) }
-    var isSatelliteView by rememberSaveable { mutableStateOf(false) }
+    var isSatelliteView by rememberSaveable { mutableStateOf(true) }
     val kaabaLatLng = LatLng(21.4225, 39.8262)
 
     val configuration = LocalConfiguration.current
