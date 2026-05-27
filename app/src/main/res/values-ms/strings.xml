@@ -220,6 +220,13 @@
     <string name="settings_delete_history_confirm_title">Padam Sejarah?</string>
     <string name="settings_delete_history_confirm_desc">Ini akan memadamkan secara kekal semua rekod solat sebelum hari ini. Tindakan ini tidak boleh diubah.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">Pemberitahuan Waktu Solat</string>
+    <string name="settings_silent_prayer_notification_desc">Terima pemberitahuan apabila tiba waktu solat</string>
+    <string name="silent_prayer_channel_name">Amaran Waktu Solat</string>
+    <string name="silent_prayer_channel_description">Pemberitahuan senyap untuk waktu solat apabila audio azan dimatikan.</string>
+    <string name="notification_prayer_time_title">Sudah tiba waktu %s</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Amaran Pra-Azan</string>
     <string name="settings_pre_adhan_warning_summary">Dapatkan notifikasi sebelum waktu solat.</string>

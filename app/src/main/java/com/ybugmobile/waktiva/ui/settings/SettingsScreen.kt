@@ -102,6 +102,7 @@ fun SettingsScreen(
                         NotificationSoundSection(
                             settings = settings,
                             onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
+                            onSilentNotificationChange = { viewModel.setSilentPrayerNotification(it) },
                             onNavigateToAudio = onNavigateToAudio
                         )
                         PreferencesSection(
@@ -150,6 +151,7 @@ fun SettingsScreen(
                     NotificationSoundSection(
                         settings = settings,
                         onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
+                        onSilentNotificationChange = { viewModel.setSilentPrayerNotification(it) },
                         onNavigateToAudio = onNavigateToAudio
                     )
 
@@ -213,6 +215,7 @@ fun SettingsScreen(
 private fun NotificationSoundSection(
     settings: UserSettings?,
     onPlayAdhanChange: (Boolean) -> Unit,
+    onSilentNotificationChange: (Boolean) -> Unit,
     onNavigateToAudio: () -> Unit
 ) {
     val context = LocalContext.current
@@ -240,6 +243,16 @@ private fun NotificationSoundSection(
             icon = Icons.Rounded.MusicNote,
             onClick = onNavigateToAudio
         )
+
+        if (settings?.playAdhanAudio == false) {
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_silent_prayer_notification),
+                subtitle = stringResource(R.string.settings_silent_prayer_notification_desc),
+                icon = Icons.Rounded.Notifications,
+                checked = settings.showSilentPrayerNotification,
+                onCheckedChange = onSilentNotificationChange
+            )
+        }
     }
 }
 

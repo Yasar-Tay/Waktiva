@@ -227,6 +227,13 @@
     <string name="settings_delete_history_confirm_title">Poistetaanko historia?</string>
     <string name="settings_delete_history_confirm_desc">Tämä poistaa pysyvästi kaikki rukousmerkinnät ennen tätä päivää. Tätä toimintoa ei voi peruuttaa.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">Rukousajan ilmoitukset</string>
+    <string name="settings_silent_prayer_notification_desc">Saat ilmoituksen rukousajan alkaessa</string>
+    <string name="silent_prayer_channel_name">Rukousajan hälytykset</string>
+    <string name="silent_prayer_channel_description">Äänettömät ilmoitukset rukousajoista, kun adhan-ääni on pois käytöstä.</string>
+    <string name="notification_prayer_time_title">On %s:n aika</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Ennakkoilmoitus ennen Adhania</string>
     <string name="settings_pre_adhan_warning_summary">Saa ilmoitus ennen rukousaikaa.</string>

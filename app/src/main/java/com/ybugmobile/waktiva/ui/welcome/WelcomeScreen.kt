@@ -424,6 +424,29 @@ private fun PreferencesStep(
                     }
                 }
 
+                if (settings?.playAdhanAudio == false) {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        color = Color.White.copy(alpha = 0.05f)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(stringResource(R.string.settings_silent_prayer_notification), fontWeight = FontWeight.Bold, color = Color.White)
+                                Text(stringResource(R.string.settings_silent_prayer_notification_desc), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
+                            }
+                            Switch(
+                                checked = settings?.showSilentPrayerNotification ?: true,
+                                onCheckedChange = { audioViewModel.toggleShowSilentPrayerNotification(it) },
+                                colors = switchColors
+                            )
+                        }
+                    }
+                }
+
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),

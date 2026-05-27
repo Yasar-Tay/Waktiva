@@ -227,6 +227,13 @@
     <string name="settings_delete_history_confirm_title">Radera historik?</string>
     <string name="settings_delete_history_confirm_desc">Detta kommer att permanent radera alla böneposter före idag. Denna åtgärd kan inte ångras.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">Bönestids-aviseringar</string>
+    <string name="settings_silent_prayer_notification_desc">Få en avisering när det är dags att be</string>
+    <string name="silent_prayer_channel_name">Bönestids-varningar</string>
+    <string name="silent_prayer_channel_description">Tysta aviseringar för bönetider när adhan-ljud är inaktiverat.</string>
+    <string name="notification_prayer_time_title">Det är dags för %s</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Förvarning inför Adhan</string>
     <string name="settings_pre_adhan_warning_summary">Få en avisering före bönetiden.</string>

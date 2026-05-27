@@ -32,10 +32,12 @@ class NotificationHelper @Inject constructor(
     companion object {
         const val CHANNEL_ID_ADHAN = "adhan_playback_channel"
         const val CHANNEL_ID_WARNING = "pre_adhan_warning_channel_v1"
+        const val CHANNEL_ID_PRAYER_TIME = "prayer_time_notification_channel"
 
         const val NOTIFICATION_ID_ADHAN = 1001
         const val NOTIFICATION_ID_WARNING = 2001
         const val NOTIFICATION_ID_MISSED = 3001
+        const val NOTIFICATION_ID_PRAYER_TIME = 4001
 
         const val ACTION_SKIP_ADHAN = "com.ybugmobile.waktiva.ACTION_SKIP_ADHAN"
         const val ACTION_STOP_ADHAN = "com.ybugmobile.waktiva.ACTION_STOP_ADHAN"
@@ -70,7 +72,19 @@ class NotificationHelper @Inject constructor(
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
 
-            notificationManager.createNotificationChannels(listOf(adhanChannel, warningChannel))
+            val prayerTimeChannel = NotificationChannel(
+                CHANNEL_ID_PRAYER_TIME,
+                context.getString(R.string.silent_prayer_channel_name),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = context.getString(R.string.silent_prayer_channel_description)
+                setSound(null, null)
+                enableVibration(false)
+                setShowBadge(true)
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            }
+
+            notificationManager.createNotificationChannels(listOf(adhanChannel, warningChannel, prayerTimeChannel))
         }
     }
 
@@ -159,6 +173,29 @@ class NotificationHelper @Inject constructor(
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, context.getString(R.string.adhan_stop), stopPendingIntent)
             .build()
+    }
+
+    fun showSilentPrayerTimeNotification(prayerName: String) {
+        val prayerType = PrayerType.fromString(prayerName)
+        val displayedPrayerName = prayerType?.getDisplayName(context) ?: prayerName
+
+        val contentIntent = PendingIntent.getActivity(
+            context, 0, Intent(context, MainActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID_PRAYER_TIME)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(context.getString(R.string.notification_prayer_time_title, displayedPrayerName))
+            .setContentText(context.getString(R.string.notification_adhan_content))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setContentIntent(contentIntent)
+            .setAutoCancel(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .build()
+
+        notificationManager.notify(NOTIFICATION_ID_PRAYER_TIME, notification)
     }
 
     fun showMissedAdhanNotification(prayerName: String) {

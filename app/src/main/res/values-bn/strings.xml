@@ -220,6 +220,13 @@
     <string name="settings_delete_history_confirm_title">ইতিহাস মুছবেন?</string>
     <string name="settings_delete_history_confirm_desc">এটি আজকের আগের সকল নামাজ রেকর্ড স্থায়ীভাবে মুছে ফেলবে। এটি আর ফিরে পাওয়া যাবে না।</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">নামাজের সময়ের বিজ্ঞপ্তি</string>
+    <string name="settings_silent_prayer_notification_desc">নামাজের সময় হলে বিজ্ঞপ্তি পান</string>
+    <string name="silent_prayer_channel_name">নামাজের সময়ের সতর্কতা</string>
+    <string name="silent_prayer_channel_description">আযানের শব্দ বন্ধ থাকলে নামাজের সময়ের নিরব বিজ্ঞপ্তি।</string>
+    <string name="notification_prayer_time_title">%s-এর সময় হয়েছে</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">আজানের পূর্ব সতর্কবার্তা</string>
     <string name="settings_pre_adhan_warning_summary">নামাজের সময়ের আগে নোটিফিকেশন পান।</string>

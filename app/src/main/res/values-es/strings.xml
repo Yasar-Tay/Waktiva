@@ -220,6 +220,13 @@
     <string name="settings_delete_history_confirm_title">¿Eliminar historial?</string>
     <string name="settings_delete_history_confirm_desc">Esto eliminará permanentemente todos los registros antes de hoy. Acción irreversible.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">Notificaciones de tiempo de oración</string>
+    <string name="settings_silent_prayer_notification_desc">Recibe una notificación cuando sea la hora de orar</string>
+    <string name="silent_prayer_channel_name">Alertas de tiempo de oración</string>
+    <string name="silent_prayer_channel_description">Notificaciones silenciosas para los horarios de oración cuando el audio del adhan está desactivado.</string>
+    <string name="notification_prayer_time_title">Es hora de %s</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Aviso pre-Adhan</string>
     <string name="settings_pre_adhan_warning_summary">Recibir notificación antes de la hora de oración.</string>

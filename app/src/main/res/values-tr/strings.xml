@@ -220,6 +220,13 @@
     <string name="settings_delete_history_confirm_title">Geçmiş Silinsin mi?</string>
     <string name="settings_delete_history_confirm_desc">Bu işlem bugünden önceki tüm namaz kayıtlarını kalıcı olarak silecektir. Bu işlem geri alınamaz.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">Namaz Vakti Bildirimleri</string>
+    <string name="settings_silent_prayer_notification_desc">Namaz vakti geldiğinde bildirim alın</string>
+    <string name="silent_prayer_channel_name">Namaz Vakti Uyarıları</string>
+    <string name="silent_prayer_channel_description">Ezan sesi kapalıyken namaz vakitleri için sessiz bildirimler.</string>
+    <string name="notification_prayer_time_title">%s vakti geldi</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Ezan Öncesi Uyarı</string>
     <string name="settings_pre_adhan_warning_summary">Namaz vaktinden önce bildirim alın.</string>

@@ -220,6 +220,13 @@
     <string name="settings_delete_history_confirm_title">حذف تاریخچه؟</string>
     <string name="settings_delete_history_confirm_desc">این کار تمام رکوردهای نماز پیش از امروز را برای همیشه پاک می‌کند. این عمل قابل بازگشت نیست.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">اعلان‌های وقت نماز</string>
+    <string name="settings_silent_prayer_notification_desc">هنگام فرا رسیدن وقت نماز اعلان دریافت کنید</string>
+    <string name="silent_prayer_channel_name">هشدارهای وقت نماز</string>
+    <string name="silent_prayer_channel_description">اعلان‌های بی‌صدا برای اوقات نماز هنگامی که صدای اذان خاموش است.</string>
+    <string name="notification_prayer_time_title">وقت %s فرا رسیده</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">هشدار پیش از اذان</string>
     <string name="settings_pre_adhan_warning_summary">پیش از رسیدن وقت شرعی، اعلان دریافت کنید.</string>

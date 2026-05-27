@@ -220,6 +220,13 @@
     <string name="settings_delete_history_confirm_title">Historie löschen?</string>
     <string name="settings_delete_history_confirm_desc">Dies löscht alle Gebetsaufzeichnungen vor heute dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">Gebetszeit-Benachrichtigungen</string>
+    <string name="settings_silent_prayer_notification_desc">Erhalte eine Benachrichtigung, wenn die Gebetszeit beginnt</string>
+    <string name="silent_prayer_channel_name">Gebetszeit-Alarme</string>
+    <string name="silent_prayer_channel_description">Lautlose Benachrichtigungen für Gebetszeiten, wenn der Adhan-Ton deaktiviert ist.</string>
+    <string name="notification_prayer_time_title">Es ist Zeit für %s</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Vor-Adhan Warnung</string>
     <string name="settings_pre_adhan_warning_summary">Benachrichtigung vor der Gebetszeit erhalten.</string>

@@ -220,6 +220,13 @@
     <string name="settings_delete_history_confirm_title">حذف السجل؟</string>
     <string name="settings_delete_history_confirm_desc">سيؤدي هذا إلى حذف جميع سجلات الصلاة قبل اليوم نهائياً. لا يمكن التراجع عن هذا الإجراء.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">إشعارات وقت الصلاة</string>
+    <string name="settings_silent_prayer_notification_desc">تلقَّ إشعارًا عندما يحين وقت الصلاة</string>
+    <string name="silent_prayer_channel_name">تنبيهات وقت الصلاة</string>
+    <string name="silent_prayer_channel_description">إشعارات صامتة لأوقات الصلاة عند إيقاف صوت الأذان.</string>
+    <string name="notification_prayer_time_title">حان وقت صلاة %s</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">تنبيه قبل الأذان</string>
     <string name="settings_pre_adhan_warning_summary">احصل على إشعار قبل وقت الصلاة.</string>

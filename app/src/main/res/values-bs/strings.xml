@@ -227,6 +227,13 @@
     <string name="settings_delete_history_confirm_title">Obrisati historiju?</string>
     <string name="settings_delete_history_confirm_desc">Ovo će trajno obrisati sve zapise o namazima prije današnjeg dana. Ova radnja se ne može poništiti.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">Obavijesti o vremenu namaza</string>
+    <string name="settings_silent_prayer_notification_desc">Primajte obavijesti kada dođe vrijeme namaza</string>
+    <string name="silent_prayer_channel_name">Upozorenja o vremenu namaza</string>
+    <string name="silent_prayer_channel_description">Tihe obavijesti o vremenima namaza kada je zvuk ezana isključen.</string>
+    <string name="notification_prayer_time_title">Vrijeme je za %s</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Upozorenje prije Ezana</string>
     <string name="settings_pre_adhan_warning_summary">Dobijte obavijest prije nastupa namaskog vremena.</string>

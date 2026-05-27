@@ -227,6 +227,13 @@
     <string name="settings_delete_history_confirm_title">Usunąć historię?</string>
     <string name="settings_delete_history_confirm_desc">Spowoduje to trwałe usunięcie wszystkich zapisów modlitw przed dniem dzisiejszym. Tej czynności nie można cofnąć.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">Powiadomienia o czasie modlitwy</string>
+    <string name="settings_silent_prayer_notification_desc">Otrzymuj powiadomienie, gdy nadchodzi pora modlitwy</string>
+    <string name="silent_prayer_channel_name">Alerty czasu modlitwy</string>
+    <string name="silent_prayer_channel_description">Ciche powiadomienia o czasach modlitwy, gdy dźwięk adhan jest wyłączony.</string>
+    <string name="notification_prayer_time_title">Czas na %s</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Ostrzeżenie przed Adhan</string>
     <string name="settings_pre_adhan_warning_summary">Otrzymuj powiadomienie przed czasem modlitwy.</string>

@@ -220,6 +220,13 @@
     <string name="settings_delete_history_confirm_title">Удалить историю?</string>
     <string name="settings_delete_history_confirm_desc">Это навсегда удалит все записи о молитвах до сегодняшнего дня. Это действие нельзя отменить.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">Уведомления о времени намаза</string>
+    <string name="settings_silent_prayer_notification_desc">Получайте уведомление, когда наступает время намаза</string>
+    <string name="silent_prayer_channel_name">Оповещения о времени намаза</string>
+    <string name="silent_prayer_channel_description">Тихие уведомления о временах намаза, когда звук азана отключён.</string>
+    <string name="notification_prayer_time_title">Время для %s</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Предупреждение перед Азаном</string>
     <string name="settings_pre_adhan_warning_summary">Получать уведомление перед временем молитвы.</string>

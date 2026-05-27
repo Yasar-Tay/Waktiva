@@ -78,4 +78,10 @@ class SettingsViewModel @Inject constructor(
             settingsManager.updateShowWeatherEffects(enabled)
         }
     }
+
+    fun setSilentPrayerNotification(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updateShowSilentPrayerNotification(enabled)
+        }
+    }
 }

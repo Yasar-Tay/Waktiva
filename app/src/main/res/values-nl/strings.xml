@@ -227,6 +227,13 @@
     <string name="settings_delete_history_confirm_title">Geschiedenis Verwijderen?</string>
     <string name="settings_delete_history_confirm_desc">Dit verwijdert permanent alle gebedsgegevens van vóór vandaag. Dit kan niet ongedaan worden gemaakt.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">Gebedstijd meldingen</string>
+    <string name="settings_silent_prayer_notification_desc">Ontvang een melding wanneer het tijd is om te bidden</string>
+    <string name="silent_prayer_channel_name">Gebedstijd waarschuwingen</string>
+    <string name="silent_prayer_channel_description">Stille meldingen voor gebedstijden wanneer het adhan-geluid is uitgeschakeld.</string>
+    <string name="notification_prayer_time_title">Het is tijd voor %s</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Pre-Adhan Waarschuwing</string>
     <string name="settings_pre_adhan_warning_summary">Ontvang een melding vóór de gebedstijd.</string>

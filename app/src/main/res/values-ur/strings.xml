@@ -220,6 +220,13 @@
     <string name="settings_delete_history_confirm_title">تاریخ حذف کریں؟</string>
     <string name="settings_delete_history_confirm_desc">اس سے آج سے پہلے کے تمام ریکارڈز مستقل طور پر حذف ہو جائیں گے۔ یہ عمل واپس نہیں لیا جا سکتا۔</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">نماز کے وقت کی اطلاعات</string>
+    <string name="settings_silent_prayer_notification_desc">نماز کا وقت ہونے پر اطلاع ملے</string>
+    <string name="silent_prayer_channel_name">نماز کے وقت کے الرٹ</string>
+    <string name="silent_prayer_channel_description">جب اذان آڈیو بند ہو تو نماز کے اوقات کے لیے خاموش اطلاعات۔</string>
+    <string name="notification_prayer_time_title">%s کا وقت آ گیا</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">اذان سے پہلے انتباہ</string>
     <string name="settings_pre_adhan_warning_summary">وقتِ نماز سے پہلے نوٹیفیکیشن حاصل کریں۔</string>

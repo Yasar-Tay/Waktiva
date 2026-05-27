@@ -131,6 +131,9 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         }
 
         if (!settings.playAdhanAudio) {
+            if (settings.showSilentPrayerNotification) {
+                notificationHelper.showSilentPrayerTimeNotification(prayerName)
+            }
             settingsManager.clearMutedPrayer()
             notificationHelper.cancelWarningNotification()
             return

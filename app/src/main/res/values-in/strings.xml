@@ -220,6 +220,13 @@
     <string name="settings_delete_history_confirm_title">Hapus Riwayat?</string>
     <string name="settings_delete_history_confirm_desc">Ini akan menghapus secara permanen semua catatan shalat sebelum hari ini. Tindakan ini tidak dapat dibatalkan.</string>
 
+    <!-- Silent Prayer Notification -->
+    <string name="settings_silent_prayer_notification">Notifikasi Waktu Shalat</string>
+    <string name="settings_silent_prayer_notification_desc">Terima notifikasi saat tiba waktu shalat</string>
+    <string name="silent_prayer_channel_name">Peringatan Waktu Shalat</string>
+    <string name="silent_prayer_channel_description">Notifikasi senyap untuk waktu shalat saat audio adzan dimatikan.</string>
+    <string name="notification_prayer_time_title">Waktunya %s</string>
+
     <!-- Pre-Adhan Warning -->
     <string name="settings_pre_adhan_warning">Peringatan Pra-Adzan</string>
     <string name="settings_pre_adhan_warning_summary">Dapatkan notifikasi sebelum waktu shalat.</string>

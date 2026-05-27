@@ -216,6 +216,12 @@ class AudioSettingsViewModel @Inject constructor(
         }
     }
 
+    fun toggleShowSilentPrayerNotification(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updateShowSilentPrayerNotification(enabled)
+        }
+    }
+
     fun togglePreview(path: String) {
         if (_currentPlayingPath.value == path) {
             audioPlayer.stop()
