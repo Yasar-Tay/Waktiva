@@ -233,6 +233,7 @@ fun QiblaMap(
                             symbolManager = SymbolManager(this@apply, map, style).apply {
                                 iconAllowOverlap = true
                                 iconIgnorePlacement = true
+                                setIconRotationAlignment("map")
                             }
                         }
                         map.addOnMapLongClickListener { point ->
@@ -280,6 +281,7 @@ fun QiblaMap(
                             symbolManager = SymbolManager(view, map, style).apply {
                                 iconAllowOverlap = true
                                 iconIgnorePlacement = true
+                                setIconRotationAlignment("map")
                             }
                         }
                     }
