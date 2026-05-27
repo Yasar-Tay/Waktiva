@@ -224,7 +224,15 @@ class WaktivaWidget : AppWidgetProvider() {
                 //   font sp = availableWidth / 4.8, clamped to [22, 64]
                 val availableWidth  = widthDp - 104 - 1 - 24
                 val dynamicFontSize = (availableWidth / 4.8f).coerceIn(22f, 64f)
-                views.setChronometer(R.id.widget_chronometer, cachedBaseTime, null, true)
+                // If the prayer time has already passed (alarm fired late), freeze at 00:00
+                // rather than letting the Chronometer tick into negative territory.
+                val elapsedNow = SystemClock.elapsedRealtime()
+                val (chronometerBase, chronometerRunning) = if (cachedBaseTime > elapsedNow) {
+                    cachedBaseTime to true
+                } else {
+                    elapsedNow to false
+                }
+                views.setChronometer(R.id.widget_chronometer, chronometerBase, null, chronometerRunning)
                 views.setChronometerCountDown(R.id.widget_chronometer, true)
                 views.setTextViewTextSize(
                     R.id.widget_chronometer,
