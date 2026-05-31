@@ -38,6 +38,7 @@ class AlarmScheduler @Inject constructor(
         const val REQUEST_CODE_ADHAN = 1001
         const val REQUEST_CODE_PRE_ADHAN = 1002
         const val REQUEST_CODE_WIDGET_REFRESH = 1003
+        const val REQUEST_CODE_WIDGET_REFRESH_BACKUP = 1004
         const val REQUEST_CODE_TEST = 9999
         const val REQUEST_CODE_TEST_PRE = 9998
     }
@@ -65,6 +66,9 @@ class AlarmScheduler @Inject constructor(
     fun scheduleNextAlarm(prayerDays: List<PrayerDay>, enablePreAdhan: Boolean, preAdhanMinutes: Int) {
         val now = LocalDateTime.now()
         val settings = runBlocking { settingsManager.settingsFlow.first() }
+
+        // Clear any stale sunrise fallback refresh before we decide whether to schedule a new one.
+        cancelAlarm(REQUEST_CODE_WIDGET_REFRESH_BACKUP)
         
         // 1. Identify all upcoming "milestones" (all prayer times + sunrise)
         val allMilestones = prayerDays
@@ -117,6 +121,19 @@ class AlarmScheduler @Inject constructor(
             // This prevents "Double-waking" but ensures we wake up for Sunrise specifically.
             Log.d("AlarmScheduler", "Scheduling WIDGET REFRESH milestone: ${type.name} at $dateTime")
             scheduleAlarm(epochMillis, type.name, prayerDay.date.toString(), ACTION_WIDGET_REFRESH, REQUEST_CODE_WIDGET_REFRESH)
+
+            if (type == PrayerType.SUNRISE) {
+                val backupTime = dateTime.plusMinutes(1)
+                val backupEpochMillis = backupTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                Log.d("AlarmScheduler", "Scheduling SUNRISE fallback refresh at $backupTime")
+                scheduleAlarm(
+                    backupEpochMillis,
+                    type.name,
+                    prayerDay.date.toString(),
+                    ACTION_WIDGET_REFRESH,
+                    REQUEST_CODE_WIDGET_REFRESH_BACKUP
+                )
+            }
         }
     }
 
@@ -156,6 +173,7 @@ class AlarmScheduler @Inject constructor(
         cancelAlarm(REQUEST_CODE_ADHAN)
         cancelAlarm(REQUEST_CODE_PRE_ADHAN)
         cancelAlarm(REQUEST_CODE_WIDGET_REFRESH)
+        cancelAlarm(REQUEST_CODE_WIDGET_REFRESH_BACKUP)
         cancelAlarm(REQUEST_CODE_TEST)
         cancelAlarm(REQUEST_CODE_TEST_PRE)
     }

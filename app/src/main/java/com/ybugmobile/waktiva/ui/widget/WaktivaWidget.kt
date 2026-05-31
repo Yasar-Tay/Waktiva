@@ -24,7 +24,7 @@ import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
-import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
+import com.ybugmobile.waktiva.domain.usecase.GetWidgetNextPrayerUseCase
 import com.ybugmobile.waktiva.ui.theme.getGradientColorsForTime
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -35,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -61,7 +62,7 @@ class WaktivaWidget : AppWidgetProvider() {
     @InstallIn(SingletonComponent::class)
     interface WidgetEntryPoint {
         fun prayerRepository(): PrayerRepository
-        fun getNextPrayerUseCase(): GetNextPrayerUseCase
+        fun getWidgetNextPrayerUseCase(): GetWidgetNextPrayerUseCase
         fun timeManager(): TimeManager
     }
 
@@ -146,7 +147,7 @@ class WaktivaWidget : AppWidgetProvider() {
             val now        = ep.timeManager().currentTime.value
             val today      = prayerDays.find { it.date == now.toLocalDate() }
             val tomorrow   = prayerDays.find { it.date == now.toLocalDate().plusDays(1) }
-            val nextPrayer = ep.getNextPrayerUseCase()(today, tomorrow, now)
+            val nextPrayer = ep.getWidgetNextPrayerUseCase()(today, tomorrow, now)
 
             // Gradient bitmap — reuse the cached instance when the colour palette is unchanged.
             val colors      = getGradientColorsForTime(now.toLocalTime(), today).take(2)
@@ -162,10 +163,14 @@ class WaktivaWidget : AppWidgetProvider() {
 
             // Chronometer base-time — recomputed only when the prayer identity changes.
             if (nextPrayer != null) {
-                val key = "${nextPrayer.type}@${nextPrayer.date}"
+                val key = "${nextPrayer.type}@${nextPrayer.date}@${nextPrayer.time}"
                 if (key != cachedPrayerKey) {
-                    cachedBaseTime  = SystemClock.elapsedRealtime() +
-                            nextPrayer.remainingDuration.toMillis()
+                    val targetEpochMillis = nextPrayer.date.atTime(nextPrayer.time)
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+                        .toEpochMilli()
+                    val remainingMillis = targetEpochMillis - System.currentTimeMillis()
+                    cachedBaseTime = SystemClock.elapsedRealtime() + remainingMillis
                     cachedPrayerKey = key
                 }
             }
