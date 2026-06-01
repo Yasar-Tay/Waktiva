@@ -22,6 +22,7 @@ import com.ybugmobile.waktiva.domain.model.MoonPhase
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.manager.TimeManager
+import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
 import com.ybugmobile.waktiva.data.sensor.CompassData
 import com.ybugmobile.waktiva.data.sensor.CompassManager
 import com.ybugmobile.waktiva.utils.PermissionUtils
@@ -51,6 +52,7 @@ class HomeViewModel @Inject constructor(
     private val locationWrapper: LocationWrapper,
     private val alarmScheduler: AlarmScheduler,
     private val timeManager: TimeManager,
+    private val getNextPrayerUseCase: GetNextPrayerUseCase,
     private val compassManager: CompassManager,
     @ApplicationContext private val context: Context
 ) : ViewModel(), DefaultLifecycleObserver {
@@ -90,7 +92,17 @@ class HomeViewModel @Inject constructor(
     val calculationMethods = CALCULATION_METHODS
     private var lastPermissionStatus = PermissionUtils.isLocationPermissionGranted(context)
 
-    private val todayPrayerDay: Flow<PrayerDay?> = allPrayerDays.map { days -> days.find { it.date == LocalDate.now() } }
+    private val activePrayerDate: Flow<LocalDate> = currentTime
+        .map { it.toLocalDate() }
+        .distinctUntilChanged()
+
+    private val todayPrayerDay: Flow<PrayerDay?> = combine(allPrayerDays, activePrayerDate) { days, date ->
+        days.find { it.date == date }
+    }
+
+    private val tomorrowPrayerDay: Flow<PrayerDay?> = combine(allPrayerDays, activePrayerDate) { days, date ->
+        days.find { it.date == date.plusDays(1) }
+    }
 
     private val todayPrayerTimes = todayPrayerDay.map { day ->
         if (day == null) return@map null
@@ -116,9 +128,7 @@ class HomeViewModel @Inject constructor(
             .execute()
     }
 
-    val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerTimes, currentTime, settings) { prayers, now, currentSettings ->
-        if (prayers == null) return@combine null
-        
+    val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerDay, tomorrowPrayerDay, currentTime, settings) { today, tomorrow, now, currentSettings ->
         val testEndTimeMillis = currentSettings.testAlarmEndTime
         if (testEndTimeMillis != null) {
             val testEndTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(testEndTimeMillis), ZoneId.systemDefault())
@@ -133,11 +143,7 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-        val nowTime = now.toLocalTime()
-        val nextReal = prayers.firstOrNull { it.second.isAfter(nowTime) } ?: prayers.first()
-        val realDateTime = if (nextReal.second.isAfter(nowTime)) now.toLocalDate().atTime(nextReal.second) else now.toLocalDate().plusDays(1).atTime(nextReal.second)
-
-        NextPrayer(nextReal.first, nextReal.second, realDateTime.toLocalDate(), Duration.between(now, realDateTime))
+        getNextPrayerUseCase(today, tomorrow, now)
     }
 
     val currentPrayerInfo: Flow<CurrentPrayer?> = combine(todayPrayerTimes, currentTime) { prayers, now ->

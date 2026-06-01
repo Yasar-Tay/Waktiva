@@ -24,7 +24,7 @@ import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
-import com.ybugmobile.waktiva.domain.usecase.GetWidgetNextPrayerUseCase
+import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
 import com.ybugmobile.waktiva.ui.theme.getGradientColorsForTime
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -35,7 +35,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -62,7 +61,7 @@ class WaktivaWidget : AppWidgetProvider() {
     @InstallIn(SingletonComponent::class)
     interface WidgetEntryPoint {
         fun prayerRepository(): PrayerRepository
-        fun getWidgetNextPrayerUseCase(): GetWidgetNextPrayerUseCase
+        fun getNextPrayerUseCase(): GetNextPrayerUseCase
         fun timeManager(): TimeManager
     }
 
@@ -147,7 +146,7 @@ class WaktivaWidget : AppWidgetProvider() {
             val now        = ep.timeManager().currentTime.value
             val today      = prayerDays.find { it.date == now.toLocalDate() }
             val tomorrow   = prayerDays.find { it.date == now.toLocalDate().plusDays(1) }
-            val nextPrayer = ep.getWidgetNextPrayerUseCase()(today, tomorrow, now)
+            val nextPrayer = ep.getNextPrayerUseCase()(today, tomorrow, now)
 
             // Gradient bitmap — reuse the cached instance when the colour palette is unchanged.
             val colors      = getGradientColorsForTime(now.toLocalTime(), today).take(2)
@@ -161,25 +160,26 @@ class WaktivaWidget : AppWidgetProvider() {
                 }
             }
 
-            // Chronometer base-time — recomputed only when the prayer identity changes.
-            if (nextPrayer != null) {
-                val key = "${nextPrayer.type}@${nextPrayer.date}@${nextPrayer.time}"
-                if (key != cachedPrayerKey) {
-                    val targetEpochMillis = nextPrayer.date.atTime(nextPrayer.time)
-                        .atZone(ZoneId.systemDefault())
-                        .toInstant()
-                        .toEpochMilli()
-                    val remainingMillis = targetEpochMillis - System.currentTimeMillis()
-                    cachedBaseTime = SystemClock.elapsedRealtime() + remainingMillis
-                    cachedPrayerKey = key
-                }
+            val chronometerState = WidgetChronometerResolver.resolve(
+                nextPrayer = nextPrayer,
+                nowEpochMillis = now.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                elapsedRealtime = SystemClock.elapsedRealtime(),
+                cachedPrayerKey = cachedPrayerKey,
+                cachedBaseTime = cachedBaseTime
+            )
+            if (chronometerState != null) {
+                cachedPrayerKey = chronometerState.cacheKey
+                cachedBaseTime = chronometerState.baseTime
+            } else {
+                cachedPrayerKey = ""
+                cachedBaseTime = 0L
             }
 
             // Read the actual allocated width so we can scale the countdown font to match.
             val options  = manager.getAppWidgetOptions(widgetId)
             val widthDp  = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 250)
 
-            val views = buildViews(context, nextPrayer, bitmap, widthDp)
+            val views = buildViews(context, nextPrayer, chronometerState, bitmap, widthDp)
             manager.updateAppWidget(widgetId, views)
         }
 
@@ -188,6 +188,7 @@ class WaktivaWidget : AppWidgetProvider() {
         private fun buildViews(
             context: Context,
             nextPrayer: NextPrayer?,
+            chronometerState: WidgetChronometerState?,
             gradientBitmap: Bitmap,
             widthDp: Int
         ): RemoteViews {
@@ -229,14 +230,9 @@ class WaktivaWidget : AppWidgetProvider() {
                 //   font sp = availableWidth / 4.8, clamped to [22, 64]
                 val availableWidth  = widthDp - 104 - 1 - 24
                 val dynamicFontSize = (availableWidth / 4.8f).coerceIn(22f, 64f)
-                // If the prayer time has already passed (alarm fired late), freeze at 00:00
-                // rather than letting the Chronometer tick into negative territory.
-                val elapsedNow = SystemClock.elapsedRealtime()
-                val (chronometerBase, chronometerRunning) = if (cachedBaseTime > elapsedNow) {
-                    cachedBaseTime to true
-                } else {
-                    elapsedNow to false
-                }
+                val fallbackElapsedNow = SystemClock.elapsedRealtime()
+                val chronometerBase = chronometerState?.baseTime ?: fallbackElapsedNow
+                val chronometerRunning = chronometerState?.isRunning == true
                 views.setChronometer(R.id.widget_chronometer, chronometerBase, null, chronometerRunning)
                 views.setChronometerCountDown(R.id.widget_chronometer, true)
                 views.setTextViewTextSize(

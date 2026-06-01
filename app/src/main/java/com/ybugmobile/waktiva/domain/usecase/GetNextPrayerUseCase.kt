@@ -5,39 +5,47 @@ import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.LocalTime
 import javax.inject.Inject
 
+/**
+ * Resolves the next countdown target shared by both the home screen and widget.
+ *
+ * Rules:
+ * - Before Fajr: Fajr
+ * - Between Fajr and Sunrise: Sunrise
+ * - At or after Sunrise: Dhuhr
+ * - Then continue through the rest of the day
+ * - After Isha: next day's Fajr
+ */
 class GetNextPrayerUseCase @Inject constructor() {
     operator fun invoke(today: PrayerDay?, tomorrow: PrayerDay?, now: LocalDateTime): NextPrayer? {
         if (today == null) return null
-        
-        val currentTime = now.toLocalTime()
-        
-        // Find the first prayer today that is after now
-        val nextToday = PrayerType.entries
-            .map { it to today.timings[it]!! }
-            .firstOrNull { it.second.isAfter(currentTime) }
 
-        return if (nextToday != null) {
-            NextPrayer(
-                type = nextToday.first,
-                time = nextToday.second,
+        val currentTime = now.toLocalTime()
+        val nextToday = PrayerType.entries
+            .mapNotNull { type -> today.timings[type]?.let { type to it } }
+            .firstOrNull { (_, time) -> time.isAfter(currentTime) }
+
+        if (nextToday != null) {
+            val (type, time) = nextToday
+            return NextPrayer(
+                type = type,
+                time = time,
                 date = today.date,
-                remainingDuration = Duration.between(now, today.date.atTime(nextToday.second))
+                remainingDuration = Duration.between(now, today.date.atTime(time))
             )
-        } else if (tomorrow != null) {
-            // If no more prayers today, it's Fajr tomorrow
-            val firstTomorrow = tomorrow.timings[PrayerType.FAJR]!!
-            
-            NextPrayer(
-                type = PrayerType.FAJR,
-                time = firstTomorrow,
-                date = tomorrow.date,
-                remainingDuration = Duration.between(now, tomorrow.date.atTime(firstTomorrow))
-            )
-        } else {
-            null
         }
+
+        val fallbackTomorrowDate = tomorrow?.date ?: today.date.plusDays(1)
+        val fallbackTomorrowFajr = tomorrow?.timings?.get(PrayerType.FAJR)
+            ?: today.timings[PrayerType.FAJR]
+            ?: return null
+
+        return NextPrayer(
+            type = PrayerType.FAJR,
+            time = fallbackTomorrowFajr,
+            date = fallbackTomorrowDate,
+            remainingDuration = Duration.between(now, fallbackTomorrowDate.atTime(fallbackTomorrowFajr))
+        )
     }
 }
