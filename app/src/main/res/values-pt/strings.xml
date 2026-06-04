@@ -359,7 +359,9 @@
     <string name="license_third_party_services">1. Serviços de Terceiros</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Obtém horários do Al-Adhan API.</string>
-    <string name="license_data_privacy">Waktiva não vende nem distribui dados.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva obtém os dados meteorológicos atuais da WeatherAPI. As informações meteorológicas são fornecidas de acordo com os termos publicados e a disponibilidade do serviço WeatherAPI.</string>
+        <string name="license_data_privacy">Waktiva não vende dados pessoais nem os utiliza para publicidade ou análises. Os pedidos de rede limitam-se às funcionalidades que utiliza, como horários de oração, meteorologia e nomeação de locais.</string>
     <string name="license_open_source_libs">2. Bibliotecas Open-Source</string>
     <string name="license_libs_intro">Inclui os seguintes componentes:</string>
     <string name="license_lib_androidx">AndroidX (Apache 2.0)</string>
@@ -390,7 +392,7 @@
     <string name="license_loc_usage_1">Calcular horários exatos</string>
     <string name="license_loc_usage_2">Direção da Qibla</string>
     <string name="license_loc_usage_3">Fases da lua e Hijri</string>
-    <string name="license_loc_processing">Processado localmente e não partilhado.</string>
+        <string name="license_loc_processing">Os dados de localização são processados principalmente no dispositivo. A Waktiva armazena localmente no seu dispositivo a localização selecionada e os horários de oração transferidos. Quando necessário para funcionalidades remotas, coordenadas ou consultas de locais podem ser enviadas para serviços de terceiros, como Al-Adhan e WeatherAPI, para obter horários de oração, meteorologia atual ou um nome de localização.</string>
     <string name="license_no_ads">5. Sem Anúncios / Sem Rastreio</string>
     <string name="license_no_ads_1">Sem anúncios</string>
     <string name="license_no_ads_2">Sem SDKs de rastreio</string>
@@ -400,3 +402,4 @@
     <string name="license_github_link">Waktiva é um projeto de código aberto. Você pode encontrar o código-fonte, relatar problemas ou contribuir em:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Versão</string>
 </resources>
+

@@ -359,7 +359,9 @@
     <string name="license_third_party_services">1. Tredjepartstjänster</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Waktiva hämtar bönetider från Al-Adhan API-tjänsten.</string>
-    <string name="license_data_privacy">Waktiva lagrar, säljer eller distribuerar inte användardata.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva hämtar aktuella väderdata från WeatherAPI. Väderinformationen tillhandahålls enligt WeatherAPI:s publicerade villkor och tjänstens tillgänglighet.</string>
+        <string name="license_data_privacy">Waktiva säljer inte personuppgifter och använder dem inte för annonsering eller analys. Nätverksförfrågningar är begränsade till de funktioner du använder, till exempel bönetider, väder och platsnamn.</string>
     <string name="license_open_source_libs">2. Tredjepartsbibliotek med öppen källkod</string>
     <string name="license_libs_intro">Waktiva innehåller följande komponenter:</string>
     <string name="license_lib_androidx">AndroidX-bibliotek (Apache License 2.0)</string>
@@ -390,7 +392,7 @@
     <string name="license_loc_usage_1">Beräkna exakta bönetider</string>
     <string name="license_loc_usage_2">Bestämma Qibla-riktningen</string>
     <string name="license_loc_usage_3">Tillhandahålla Hijri-datum och månfaser</string>
-    <string name="license_loc_processing">Platsdata behandlas lokalt och lagras eller delas inte.</string>
+        <string name="license_loc_processing">Platsdata behandlas huvudsakligen på enheten. Waktiva lagrar din valda plats och nedladdade bönetider lokalt på din enhet. När fjärrfunktioner kräver det kan koordinater eller platsförfrågningar skickas till tredjepartstjänster som Al-Adhan och WeatherAPI för att hämta bönetider, aktuellt väder eller en platsetikett.</string>
     <string name="license_no_ads">5. Åtagande om ingen reklam / ingen spårning</string>
     <string name="license_no_ads_1">Visar inga annonser</string>
     <string name="license_no_ads_2">Använder inga spårnings-SDK:er</string>
@@ -400,3 +402,4 @@
     <string name="license_github_link">Waktiva är ett open source-projekt. Du hittar källkoden, kan rapportera problem eller bidra på:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Version</string>
 </resources>
+

@@ -364,7 +364,9 @@
     <string name="license_third_party_services">1. Usługi podmiotów trzecich</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Pobiera czasy modlitw z serwisu Al-Adhan API.</string>
-    <string name="license_data_privacy">Waktiva nie przechowuje ani nie udostępnia danych użytkowników.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva pobiera bieżące dane pogodowe z WeatherAPI. Informacje pogodowe są udostępniane zgodnie z opublikowanymi warunkami i dostępnością usługi WeatherAPI.</string>
+        <string name="license_data_privacy">Waktiva nie sprzedaje danych osobowych ani nie wykorzystuje ich do reklam lub analityki. Żądania sieciowe są ograniczone do używanych funkcji, takich jak czasy modlitw, pogoda i nazewnictwo lokalizacji.</string>
     <string name="license_open_source_libs">2. Biblioteki open-source podmiotów trzecich</string>
     <string name="license_libs_intro">Waktiva zawiera następujące komponenty:</string>
     <string name="license_lib_androidx">AndroidX (Apache 2.0)</string>
@@ -394,6 +396,7 @@
     <string name="license_loc_usage_1">Obliczania dokładnych czasów modlitw</string>
     <string name="license_loc_usage_2">Określania kierunku Kibla</string>
     <string name="license_loc_usage_3">Obliczania faz księżyca i daty Hidżry</string>
+    <string name="license_loc_processing">Dane o lokalizacji są przetwarzane głównie na urządzeniu. Waktiva przechowuje wybraną lokalizację oraz pobrane czasy modlitw lokalnie na urządzeniu. Gdy jest to potrzebne dla funkcji zdalnych, współrzędne lub zapytania o miejsce mogą być wysyłane do usług stron trzecich, takich jak Al-Adhan i WeatherAPI, aby pobrać czasy modlitw, bieżącą pogodę lub etykietę lokalizacji.</string>
     <string name="license_no_ads">5. Brak reklam i śledzenia</string>
     <string name="license_no_ads_1">Brak reklam</string>
     <string name="license_no_ads_2">Brak SDK śledzących</string>
@@ -403,3 +406,4 @@
     <string name="license_github_link">Waktiva to projekt open-source. Kod źródłowy, zgłaszanie błędów i możliwość współtworzenia znajdziesz pod adresem:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Wersja</string>
 </resources>
+

@@ -359,7 +359,9 @@
     <string name="license_third_party_services">1. Üçüncü Taraf Hizmetler</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Waktiva, namaz vakitlerini Al-Adhan API servisinden alır. Namaz vakti hesaplamaları, servisin yayınlanan yöntem ve şartlarına uygun olarak sunulur.</string>
-    <string name="license_data_privacy">Waktiva kullanıcı verilerini saklamaz, satmaz veya dağıtmaz.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva, güncel hava durumu verilerini WeatherAPI üzerinden alır. Hava durumu bilgileri, WeatherAPI\'nin yayınladığı şartlar ve servis erişilebilirliğine bağlı olarak sunulur.</string>
+    <string name="license_data_privacy">Waktiva kişisel verileri satmaz ve reklam veya analitik amaçlı kullanmaz. Ağ istekleri yalnızca kullanılan özelliklerle sınırlıdır; buna namaz vakitleri, hava durumu ve konum adı belirleme dahildir.</string>
     <string name="license_open_source_libs">2. Üçüncü Taraf Açık Kaynak Kütüphaneler</string>
     <string name="license_libs_intro">Waktiva aşağıdaki açık kaynaklı bileşenleri içermektedir:</string>
     <string name="license_lib_androidx">AndroidX Kütüphaneleri (Apache Lisansı 2.0)</string>
@@ -390,7 +392,7 @@
     <string name="license_loc_usage_1">Doğru namaz vakitlerini hesaplamak</string>
     <string name="license_loc_usage_2">Kıble yönünü belirlemek</string>
     <string name="license_loc_usage_3">Hicri tarih ve ay evrelerini hesaplamak</string>
-    <string name="license_loc_processing">Konum verileri yerel olarak işlenir; saklanmaz, takip edilmez veya paylaşılmaz. Çevrimdışı kullanım için üç aya kadar namaz vakti indirilir.</string>
+    <string name="license_loc_processing">Konum verileri ağırlıklı olarak cihaz üzerinde işlenir. Waktiva seçtiğiniz konumu ve indirilen namaz vakitlerini cihazınızda yerel olarak saklar. Uzak servis gereken durumlarda koordinatlar veya yer sorguları; namaz vakitlerini, güncel hava durumunu ya da konum etiketini almak için Al-Adhan ve WeatherAPI gibi üçüncü taraf hizmetlere gönderilebilir.</string>
     <string name="license_no_ads">5. Reklamsız ve Takipsiz Kullanım Sözü</string>
     <string name="license_no_ads_1">Reklam göstermez</string>
     <string name="license_no_ads_2">Takip (tracking) SDK\'ları kullanmaz</string>

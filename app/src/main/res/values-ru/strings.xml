@@ -357,7 +357,9 @@
     <string name="license_third_party_services">1. Сторонние сервисы</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Waktiva получает время молитв из сервиса Al-Adhan API. Расчеты времени молитв предоставляются в соответствии с их опубликованными методологиями и условиями.</string>
-    <string name="license_data_privacy">Waktiva не хранит, не перепродает и не распространяет данные пользователей.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva получает текущие погодные данные через WeatherAPI. Информация о погоде предоставляется в соответствии с опубликованными условиями и доступностью сервиса WeatherAPI.</string>
+        <string name="license_data_privacy">Waktiva не продает персональные данные и не использует их для рекламы или аналитики. Сетевые запросы ограничены функциями, которыми вы пользуетесь, например временем молитв, погодой и названием местоположения.</string>
     <string name="license_open_source_libs">2. Сторонние библиотеки с открытым исходным кодом</string>
     <string name="license_libs_intro">Waktiva включает следующие компоненты с открытым исходным кодом:</string>
     <string name="license_lib_androidx">Библиотеки AndroidX (Лицензия Apache 2.0)</string>
@@ -388,7 +390,7 @@
     <string name="license_loc_usage_1">Вычислять точное время молитв</string>
     <string name="license_loc_usage_2">Определять направление Киблы</string>
     <string name="license_loc_usage_3">Предоставлять дату по Хиджре и расчеты фаз луны</string>
-    <string name="license_loc_processing">Данные о местоположении обрабатываются локально и не хранятся, не отслеживаются и не передаются. Время молитв загружается на срок до трех месяцев для использования в автономном режиме.</string>
+        <string name="license_loc_processing">Данные о местоположении в основном обрабатываются на устройстве. Waktiva хранит выбранное местоположение и загруженное время молитв локально на вашем устройстве. При необходимости для удаленных функций координаты или поисковые запросы места могут отправляться сторонним сервисам, таким как Al-Adhan и WeatherAPI, чтобы получить время молитв, текущую погоду или метку местоположения.</string>
     <string name="license_no_ads">5. Обязательство отсутствия рекламы и слежки</string>
     <string name="license_no_ads_1">Не показывает рекламу</string>
     <string name="license_no_ads_2">Не использует SDK для отслеживания</string>
@@ -398,3 +400,4 @@
     <string name="license_github_link">Waktiva — это проект с открытым исходным кодом. Вы можете найти исходный код, сообщить об ошибках или внести свой вклад по адресу:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Версия</string>
 </resources>
+

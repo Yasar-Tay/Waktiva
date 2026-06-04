@@ -358,7 +358,9 @@
     <string name="license_third_party_services">۱. خدمات شخص ثالث</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Waktiva اوقات شرعی را از سرویس Al-Adhan API دریافت می‌کند. محاسبات طبق روش‌ها و شرایط منتشر شده آن‌ها ارائه می‌شود.</string>
-    <string name="license_data_privacy">Waktiva داده‌های کاربران را ذخیره نمی‌کند، نمی‌فروشد و توزیع نمی‌کند.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva داده‌های آب‌وهوای فعلی را از WeatherAPI دریافت می‌کند. اطلاعات آب‌وهوا مطابق با شرایط منتشرشده و در دسترس بودن سرویس WeatherAPI ارائه می‌شود.</string>
+        <string name="license_data_privacy">Waktiva داده‌های شخصی را نمی‌فروشد و از آن‌ها برای تبلیغات یا تحلیل استفاده نمی‌کند. درخواست‌های شبکه فقط به قابلیت‌هایی که استفاده می‌کنید، مانند اوقات شرعی، آب‌وهوا و نام‌گذاری مکان، محدود می‌شوند.</string>
     <string name="license_open_source_libs">۲. کتابخانه‌های متن‌باز شخص ثالث</string>
     <string name="license_libs_intro">Waktiva شامل مؤلفه‌های متن‌باز زیر است:</string>
     <string name="license_lib_androidx">کتابخانه‌های AndroidX (مجوز Apache 2.0)</string>
@@ -389,7 +391,7 @@
     <string name="license_loc_usage_1">محاسبه دقیق اوقات شرعی</string>
     <string name="license_loc_usage_2">تعیین جهت قبله</string>
     <string name="license_loc_usage_3">ارائه تاریخ هجری و محاسبات فاز ماه</string>
-    <string name="license_loc_processing">داده‌های مکان به صورت محلی پردازش می‌شوند و ذخیره، ردیابی یا به اشتراک گذاشته نمی‌شوند. اوقات شرعی تا سه ماه برای استفاده آفلاین دانلود می‌شوند.</string>
+        <string name="license_loc_processing">داده‌های مکان عمدتاً روی دستگاه پردازش می‌شوند. Waktiva مکان انتخابی شما و اوقات شرعی دانلودشده را به‌صورت محلی روی دستگاهتان ذخیره می‌کند. هرگاه ویژگی‌های راه دور لازم باشد، مختصات یا جست‌وجوی مکان ممکن است برای دریافت اوقات شرعی، آب‌وهوای فعلی یا برچسب مکان به سرویس‌های شخص ثالثی مانند Al-Adhan و WeatherAPI ارسال شوند.</string>
     <string name="license_no_ads">٥. تعهد عدم تبلیغات / عدم ردیابی</string>
     <string name="license_no_ads_1">هیچ تبلیغی نمایش نمی‌دهد</string>
     <string name="license_no_ads_2">از هیچ SDK ردیابی استفاده نمی‌کند</string>
@@ -399,3 +401,4 @@
     <string name="license_github_link">Waktiva یک پروژه متن‌باز است. می‌توانید کد منبع را بیابید، مشکلات را گزارش کنید یا در اینجا مشارکت کنید:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">نسخه</string>
 </resources>
+

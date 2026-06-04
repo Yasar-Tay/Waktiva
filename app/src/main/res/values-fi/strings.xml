@@ -359,7 +359,9 @@
     <string name="license_third_party_services">1. Kolmannen osapuolen palvelut</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Waktiva noutaa rukousajat Al-Adhan API -palvelusta.</string>
-    <string name="license_data_privacy">Waktiva ei tallenna, myy tai jaa käyttäjätietoja.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva hakee ajantasaiset säätiedot WeatherAPI-palvelusta. Säätiedot tarjotaan WeatherAPI:n julkaistujen ehtojen ja palvelun saatavuuden mukaisesti.</string>
+        <string name="license_data_privacy">Waktiva ei myy henkilötietoja eikä käytä niitä mainontaan tai analytiikkaan. Verkkopyynnöt rajoittuvat käyttämiisi ominaisuuksiin, kuten rukousaikoihin, säähän ja sijainnin nimeämiseen.</string>
     <string name="license_open_source_libs">2. Kolmannen osapuolen avoimen lähdekoodin kirjastot</string>
     <string name="license_libs_intro">Waktiva sisältää seuraavat avoimen lähdekoodin komponentit:</string>
     <string name="license_lib_androidx">AndroidX-kirjastot (Apache License 2.0)</string>
@@ -390,7 +392,7 @@
     <string name="license_loc_usage_1">Tarkkojen rukousaikojen laskemiseen</string>
     <string name="license_loc_usage_2">Qibla-suunnan määrittämiseen</string>
     <string name="license_loc_usage_3">Hijri-päivämäärän ja kuunvaiheiden laskemiseen</string>
-    <string name="license_loc_processing">Sijaintitiedot käsitellään paikallisesti, eikä niitä tallenneta, seurata tai jaeta.</string>
+        <string name="license_loc_processing">Sijaintitiedot käsitellään pääosin laitteella. Waktiva tallentaa valitsemasi sijainnin ja ladatut rukousajat paikallisesti laitteellesi. Kun etäominaisuudet sitä vaativat, koordinaatit tai paikkakyselyt voidaan lähettää kolmannen osapuolen palveluille, kuten Al-Adhanille ja WeatherAPI:lle, rukousaikojen, ajantasaisen sään tai sijaintinimen hakemiseksi.</string>
     <string name="license_no_ads">5. Mainokseton / Ei seurantaa -sitoumus</string>
     <string name="license_no_ads_1">Ei näytä mainoksia</string>
     <string name="license_no_ads_2">Ei käytä seurantakirjastoja</string>
@@ -400,3 +402,4 @@
     <string name="license_github_link">Waktiva on avoimen lähdekoodin projekti. Löydät lähdekoodin, voit ilmoittaa ongelmista tai osallistua osoitteessa:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Versio</string>
 </resources>
+

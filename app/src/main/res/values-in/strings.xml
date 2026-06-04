@@ -359,7 +359,9 @@
     <string name="license_third_party_services">1. Layanan Pihak Ketiga</string>
     <string name="license_aladhan_api">API Al-Adhan</string>
     <string name="license_aladhan_desc">Waktiva mengambil waktu shalat dari layanan API Al-Adhan. Perhitungan waktu shalat disediakan sesuai dengan metodologi dan ketentuan yang mereka publikasikan.</string>
-    <string name="license_data_privacy">Waktiva tidak menyimpan, menjual kembali, atau mendistribusikan data pengguna.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva mengambil data cuaca saat ini dari WeatherAPI. Informasi cuaca disediakan sesuai dengan ketentuan yang dipublikasikan dan ketersediaan layanan WeatherAPI.</string>
+        <string name="license_data_privacy">Waktiva tidak menjual data pribadi atau menggunakannya untuk iklan maupun analitik. Permintaan jaringan dibatasi pada fitur yang Anda gunakan, seperti waktu salat, cuaca, dan penamaan lokasi.</string>
     <string name="license_open_source_libs">2. Perpustakaan Sumber Terbuka Pihak Ketiga</string>
     <string name="license_libs_intro">Waktiva menyertakan komponen sumber terbuka berikut:</string>
     <string name="license_lib_androidx">Perpustakaan AndroidX (Lisensi Apache 2.0)</string>
@@ -390,7 +392,7 @@
     <string name="license_loc_usage_1">Menghitung waktu shalat yang akurat</string>
     <string name="license_loc_usage_2">Menentukan arah Kiblat</string>
     <string name="license_loc_usage_3">Menyediakan perhitungan tanggal Hijriah dan fase bulan</string>
-    <string name="license_loc_processing">Data lokasi diproses secara lokal dan tidak disimpan, dilacak, atau dibagikan. Waktu shalat diunduh hingga tiga bulan ke depan untuk memungkinkan penggunaan luring.</string>
+        <string name="license_loc_processing">Data lokasi terutama diproses di perangkat. Waktiva menyimpan lokasi yang Anda pilih dan waktu salat yang diunduh secara lokal di perangkat Anda. Saat fitur jarak jauh membutuhkannya, koordinat atau kueri tempat dapat dikirim ke layanan pihak ketiga seperti Al-Adhan dan WeatherAPI untuk mengambil waktu salat, cuaca saat ini, atau label lokasi.</string>
     <string name="license_no_ads">5. Komitmen Tanpa Iklan / Tanpa Pelacakan</string>
     <string name="license_no_ads_1">Tidak menampilkan iklan</string>
     <string name="license_no_ads_2">Tidak menggunakan SDK pelacakan</string>
@@ -400,3 +402,4 @@
     <string name="license_github_link">Waktiva adalah proyek sumber terbuka. Anda dapat menemukan kode sumber, melaporkan masalah, atau berkontribusi di:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Versi</string>
 </resources>
+

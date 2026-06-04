@@ -96,8 +96,8 @@ The project follows **Professional Clean Architecture** with **Uni-directional D
 ---
 
 ## 🌦️ EPIC 10 – Weather-Reactive Environment
-- [ ] **Weather Data Integration:** Fetch real-time weather conditions via Open-Meteo API.
-- [ ] **Domain Model:** Define `WeatherCondition` (Clear, Rain, Snow, Cloudy, Thunderstorm) and map WMO codes.
+- [ ] **Weather Data Integration:** Fetch real-time weather conditions via WeatherAPI.
+- [ ] **Domain Model:** Define `WeatherCondition` (Clear, Rain, Snow, Cloudy, Thunderstorm) and map WeatherAPI condition codes.
 - [ ] **Reactive Backgrounds:** Create animated background layers that respond to weather:
     - **RainLayer:** Falling animated droplets with intensity control.
     - **SnowLayer:** Drifting snowflakes with varying sizes.

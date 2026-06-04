@@ -353,7 +353,9 @@
     <string name="license_third_party_services">1۔ تھرڈ پارٹی سروسز</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Waktiva اوقاتِ نماز Al-Adhan API سروس سے حاصل کرتا ہے۔ حساب ان کے شائع کردہ طریقوں کے مطابق فراہم کیا جاتا ہے۔</string>
-    <string name="license_data_privacy">Waktiva صارف کا ڈیٹا اسٹور، فروخت یا تقسیم نہیں کرتا۔</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva موجودہ موسم کا ڈیٹا WeatherAPI سے حاصل کرتا ہے۔ موسم کی معلومات WeatherAPI کی شائع کردہ شرائط اور سروس کی دستیابی کے مطابق فراہم کی جاتی ہیں۔</string>
+        <string name="license_data_privacy">Waktiva ذاتی ڈیٹا فروخت نہیں کرتا اور نہ ہی اسے اشتہارات یا تجزیات کے لیے استعمال کرتا ہے۔ نیٹ ورک درخواستیں صرف انہی خصوصیات تک محدود ہوتی ہیں جو آپ استعمال کرتے ہیں، جیسے اوقاتِ نماز، موسم، اور مقام کے نام کی تعیین۔</string>
     <string name="license_open_source_libs">2۔ تھرڈ پارٹی اوپن سورس لائبریریز</string>
     <string name="license_libs_intro">Waktiva میں درج ذیل اوپن سورس اجزاء شامل ہیں:</string>
     <string name="license_lib_androidx">AndroidX لائبریریز (Apache License 2.0)</string>
@@ -384,7 +386,7 @@
     <string name="license_loc_usage_1">درست اوقاتِ نماز کا حساب لگانے کے لیے</string>
     <string name="license_loc_usage_2">قبلہ کی سمت معلوم کرنے کے لیے</string>
     <string name="license_loc_usage_3">ہجری تاریخ اور چاند کے مراحل کا حساب فراہم کرنے کے لیے</string>
-    <string name="license_loc_processing">لوکیشن ڈیٹا صرف آپ کے فون پر پراسیس ہوتا ہے اور اسے شیئر نہیں کیا جاتا۔</string>
+        <string name="license_loc_processing">لوکیشن ڈیٹا زیادہ تر ڈیوائس پر ہی پراسیس ہوتا ہے۔ Waktiva آپ کی منتخب کردہ لوکیشن اور ڈاؤن لوڈ کیے گئے اوقاتِ نماز کو آپ کے ڈیوائس پر مقامی طور پر محفوظ کرتا ہے۔ جب ریموٹ فیچرز کے لیے ضرورت ہو تو اوقاتِ نماز، موجودہ موسم، یا مقام کا لیبل حاصل کرنے کے لیے کوآرڈینیٹس یا مقام کی تلاش Al-Adhan اور WeatherAPI جیسی تھرڈ پارٹی سروسز کو بھیجی جا سکتی ہے۔</string>
     <string name="license_no_ads">5۔ اشتہارات اور ٹریکنگ سے پاک ہونے کا عہد</string>
     <string name="license_no_ads_1">کوئی اشتہار نہیں دکھاتا</string>
     <string name="license_no_ads_2">کوئی ٹریکنگ SDK استعمال نہیں کرتا</string>
@@ -394,3 +396,4 @@
     <string name="license_github_link">Waktiva ایک اوپن سورس پروجیکٹ ہے۔ آپ سورس کوڈ تلاش کر سکتے ہیں، مسائل کی اطلاع دے سکتے ہیں یا یہاں تعاون کر سکتے ہیں:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">ورژن</string>
 </resources>
+

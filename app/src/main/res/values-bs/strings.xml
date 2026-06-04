@@ -364,7 +364,9 @@
     <string name="license_third_party_services">1. Usluge trećih strana</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Waktiva preuzima vaktije putem usluge Al-Adhan API.</string>
-    <string name="license_data_privacy">Waktiva ne pohranjuje, ne preprodaje niti distribuira korisničke podatke.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva preuzima trenutne vremenske podatke putem WeatherAPI servisa. Vremenske informacije se pružaju u skladu s objavljenim uslovima i dostupnošću usluge WeatherAPI.</string>
+        <string name="license_data_privacy">Waktiva ne prodaje lične podatke niti ih koristi za oglašavanje ili analitiku. Mrežni zahtjevi ograničeni su na funkcije koje koristite, kao što su vremena namaza, vremenska prognoza i naziv lokacije.</string>
     <string name="license_open_source_libs">2. Open-source biblioteke trećih strana</string>
     <string name="license_libs_intro">Waktiva uključuje sljedeće open-source komponente:</string>
     <string name="license_lib_androidx">AndroidX Libraries (Apache License 2.0)</string>
@@ -395,7 +397,7 @@
     <string name="license_loc_usage_1">Izračunavanja precizne vaktije</string>
     <string name="license_loc_usage_2">Određivanja smjera Kible</string>
     <string name="license_loc_usage_3">Omogućavanja izračuna hidžretskog datuma i mjesečevih mijena</string>
-    <string name="license_loc_processing">Podaci o lokaciji se obrađuju lokalno i ne pohranjuju se niti dijele.</string>
+        <string name="license_loc_processing">Podaci o lokaciji se prvenstveno obrađuju na uređaju. Waktiva lokalno na vašem uređaju pohranjuje odabranu lokaciju i preuzeta vremena namaza. Kada je to potrebno za udaljene funkcije, koordinate ili upiti mjesta mogu se poslati uslugama trećih strana kao što su Al-Adhan i WeatherAPI radi preuzimanja vremena namaza, trenutnog vremena ili naziva lokacije.</string>
     <string name="license_no_ads">5. Opredjeljenje: Bez reklama i bez praćenja</string>
     <string name="license_no_ads_1">Ne prikazuje reklame</string>
     <string name="license_no_ads_2">Ne koristi SDK-ove za praćenje</string>
@@ -405,3 +407,4 @@
     <string name="license_github_link">Waktiva je open-source projekat. Izvorni kod možete pronaći, prijaviti probleme ili doprinijeti na:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Verzija</string>
 </resources>
+

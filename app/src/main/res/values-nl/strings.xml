@@ -364,7 +364,9 @@
     <string name="license_third_party_services">1. Diensten van Derden</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Waktiva haalt gebedstijden op van de Al-Adhan API-service.</string>
-    <string name="license_data_privacy">Waktiva bewaart, verkoopt of verspreidt geen gebruikersgegevens.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva haalt actuele weergegevens op via WeatherAPI. Weerinformatie wordt verstrekt volgens de gepubliceerde voorwaarden en beschikbaarheid van de WeatherAPI-service.</string>
+        <string name="license_data_privacy">Waktiva verkoopt geen persoonsgegevens en gebruikt deze niet voor advertenties of analyses. Netwerkverzoeken zijn beperkt tot de functies die u gebruikt, zoals gebedstijden, weer en locatienamen.</string>
     <string name="license_open_source_libs">2. Open-Source Bibliotheken van Derden</string>
     <string name="license_libs_intro">Waktiva bevat de volgende open-source componenten:</string>
     <string name="license_lib_androidx">AndroidX Libraries (Apache License 2.0)</string>
@@ -395,7 +397,7 @@
     <string name="license_loc_usage_1">Berekenen van nauwkeurige gebedstijden</string>
     <string name="license_loc_usage_2">Bepalen van de Qibla-richting</string>
     <string name="license_loc_usage_3">Maanfase- en Hijri-berekeningen</string>
-    <string name="license_loc_processing">Locatiegegevens worden lokaal verwerkt en niet gedeeld.</string>
+        <string name="license_loc_processing">Locatiegegevens worden hoofdzakelijk op het apparaat verwerkt. Waktiva slaat uw geselecteerde locatie en gedownloade gebedstijden lokaal op uw apparaat op. Wanneer externe functies dit vereisen, kunnen coördinaten of plaatsopdrachten naar diensten van derden zoals Al-Adhan en WeatherAPI worden gestuurd om gebedstijden, actueel weer of een locatielabel op te halen.</string>
     <string name="license_no_ads">5. Geen Reclame / Geen Tracking Commitment</string>
     <string name="license_no_ads_1">Toont geen advertenties</string>
     <string name="license_no_ads_2">Gebruikt geen tracking-SDK\'s</string>
@@ -405,3 +407,4 @@
     <string name="license_github_link">Waktiva is een open-source project. Je kunt de broncode vinden, problemen melden of bijdragen op:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Versie</string>
 </resources>
+

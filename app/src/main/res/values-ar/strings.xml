@@ -359,7 +359,9 @@
     <string name="license_third_party_services">١. خدمات شخص ثالث</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">يسترجع Waktiva مواقيت الصلاة من خدمة Al-Adhan API. يتم تقديم حسابات وقت الصلاة وفقًا لمنهجياتها وشروطها المنشورة.</string>
-    <string name="license_data_privacy">لا يقوم Waktiva بتخزين بيانات المستخدم أو إعادة بيعها أو توزيعها.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">يسترجع Waktiva بيانات الطقس الحالية من WeatherAPI. تُقدَّم معلومات الطقس وفقًا للشروط المنشورة لـ WeatherAPI وتوفر الخدمة.</string>
+        <string name="license_data_privacy">لا يبيع Waktiva البيانات الشخصية ولا يستخدمها للإعلانات أو التحليلات. تقتصر طلبات الشبكة على الميزات التي تستخدمها، مثل مواقيت الصلاة والطقس وتسمية الموقع.</string>
     <string name="license_open_source_libs">٢. مكتبات خارجية مفتوحة المصدر</string>
     <string name="license_libs_intro">يتضمن Waktiva المكونات مفتوحة المصدر التالية:</string>
     <string name="license_lib_androidx">مكتبات AndroidX (ترخيص Apache 2.0)</string>
@@ -390,7 +392,7 @@
     <string name="license_loc_usage_1">حساب مواقيت الصلاة بدقة</string>
     <string name="license_loc_usage_2">تحديد اتجاه القبلة</string>
     <string name="license_loc_usage_3">توفير حسابات التاريخ الهجري ومراحل القمر</string>
-    <string name="license_loc_processing">تتم معالجة بيانات الموقع محليًا ولا يتم تخزينها أو تتبعها أو مشاركتها. يتم تنزيل مواقيت الصلاة لمدة تصل إلى ثلاثة أشهر لتمكين الاستخدام في وضع عدم الاتصال.</string>
+        <string name="license_loc_processing">تتم معالجة بيانات الموقع في الغالب على الجهاز. يحتفظ Waktiva بالموقع الذي اخترته ومواقيت الصلاة التي تم تنزيلها محليًا على جهازك. وعند الحاجة إلى ميزات بعيدة، قد تُرسَل الإحداثيات أو استعلامات الأماكن إلى خدمات طرف ثالث مثل Al-Adhan وWeatherAPI لجلب مواقيت الصلاة أو الطقس الحالي أو اسم الموقع.</string>
     <string name="license_no_ads">٥. التزام عدم وجود إعلانات / عدم تتبع</string>
     <string name="license_no_ads_1">لا يعرض أي إعلانات</string>
     <string name="license_no_ads_2">لا يستخدم أي حزم أدوات تتبع (SDK)</string>
@@ -400,3 +402,4 @@
     <string name="license_github_link">Waktiva هو مشروع مفتوح المصدر. يمكنك العثور على رمز المصدر أو الإبلاغ عن المشكلات أو المساهمة في:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">الإصدار</string>
 </resources>
+

@@ -297,5 +297,12 @@
     <string name="donate_item_medium_desc">Soutenez la pérennité de ce projet open-source et sans publicité.</string>
     <string name="donate_item_large_title">Union des Cœurs</string>
     <string name="donate_item_large_desc">Apportez le soutien le plus fort pour faire progresser Waktiva.</string>
+    <string name="license_aladhan_api">Al-Adhan API</string>
+    <string name="license_aladhan_desc">Waktiva récupère les horaires de prière via le service Al-Adhan API. Les calculs des horaires de prière sont fournis conformément à ses méthodes et conditions publiées.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva récupère les données météo actuelles via WeatherAPI. Les informations météo sont fournies conformément aux conditions publiées et à la disponibilité du service WeatherAPI.</string>
+    <string name="license_data_privacy">Waktiva ne vend pas de données personnelles et ne les utilise pas à des fins publicitaires ou analytiques. Les requêtes réseau sont limitées aux fonctionnalités que vous utilisez, comme les horaires de prière, la météo et le nom du lieu.</string>
+    <string name="license_loc_processing">Les données de localisation sont principalement traitées sur l’appareil. Waktiva enregistre localement sur votre appareil le lieu sélectionné ainsi que les horaires de prière téléchargés. Lorsque des fonctionnalités distantes l’exigent, des coordonnées ou des requêtes de lieu peuvent être envoyées à des services tiers comme Al-Adhan et WeatherAPI afin d’obtenir les horaires de prière, la météo actuelle ou une étiquette de lieu.</string>
     <string name="about_version_label">Version</string>
 </resources>
+

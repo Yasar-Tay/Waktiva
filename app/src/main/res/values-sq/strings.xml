@@ -364,7 +364,9 @@
     <string name="license_third_party_services">1. Shërbimet e Palëve të Treta</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Waktiva merr kohët e lutjes nga shërbimi Al-Adhan API.</string>
-    <string name="license_data_privacy">Waktiva nuk ruan, rishit ose shpërndan të dhënat e përdoruesit.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva merr të dhënat aktuale të motit nga WeatherAPI. Informacioni i motit ofrohet sipas kushteve të publikuara dhe disponueshmërisë së shërbimit WeatherAPI.</string>
+        <string name="license_data_privacy">Waktiva nuk shet të dhëna personale dhe nuk i përdor ato për reklama ose analitikë. Kërkesat e rrjetit kufizohen te veçoritë që përdorni, si kohët e faljes, moti dhe emërtimi i vendndodhjes.</string>
     <string name="license_open_source_libs">2. Bibliotekat e Palëve të Treta me Burim të Hapur</string>
     <string name="license_libs_intro">Waktiva përfshin komponentët e mëposhtëm me burim të hapur:</string>
     <string name="license_lib_androidx">AndroidX Libraries (Apache License 2.0)</string>
@@ -395,7 +397,7 @@
     <string name="license_loc_usage_1">Llogaritjen e saktë të kohëve të lutjes</string>
     <string name="license_loc_usage_2">Përcaktimin e drejtimit të Kiblës</string>
     <string name="license_loc_usage_3">Sigurimin e llogaritjeve të datës Hixhri dhe fazave të hënës</string>
-    <string name="license_loc_processing">Të dhënat e vendndodhjes përpunohen lokalisht dhe nuk ruhen, gjurmohen ose ndahen.</string>
+        <string name="license_loc_processing">Të dhënat e vendndodhjes përpunohen kryesisht në pajisje. Waktiva ruan lokalisht në pajisjen tuaj vendndodhjen e zgjedhur dhe kohët e shkarkuara të faljes. Kur kërkohet për veçori në distancë, koordinatat ose kërkesat për vende mund të dërgohen te shërbime të palëve të treta si Al-Adhan dhe WeatherAPI për të marrë kohët e faljes, motin aktual ose një etiketë vendndodhjeje.</string>
     <string name="license_no_ads">5. Angazhimi pa Reklama / pa Gjurmim</string>
     <string name="license_no_ads_1">Nuk shfaq asnjë reklamë</string>
     <string name="license_no_ads_2">Nuk përdor asnjë SDK gjurmimi</string>
@@ -405,3 +407,4 @@
     <string name="license_github_link">Waktiva është një projekt me burim të hapur. Mund të gjeni kodin burimor, të raportoni probleme ose të kontribuoni në:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Versioni</string>
 </resources>
+

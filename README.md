@@ -9,7 +9,7 @@ This repository already includes:
 - Per-prayer Adhan selection and pre-Adhan warnings
 - Onboarding flow for permissions and personalization
 - Hijri and religious-day context
-- Dynamic backgrounds, weather-aware UI hooks, and a Glance widget
+- Dynamic backgrounds, WeatherAPI-powered weather hooks, and a Glance widget
 - Clean Architecture inspired layering with Hilt, Room, DataStore, and WorkManager
 
 ## Feature Highlights
@@ -52,7 +52,7 @@ This repository already includes:
 - DataStore for user preferences
 - WorkManager for periodic sync/update flows
 - Media3 for Adhan playback
-- Retrofit + OkHttp for network access
+- Retrofit + OkHttp for network access, including WeatherAPI integration
 - Adhan Java for prayer calculation support
 - MapLibre + osmdroid for Qibla/map features
 - Glance for app widgets

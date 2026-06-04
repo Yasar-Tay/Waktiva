@@ -358,7 +358,9 @@
     <string name="license_third_party_services">১. তৃতীয় পক্ষীয় সেবাসমূহ</string>
     <string name="license_aladhan_api">আল-আজান এপিআই (Al-Adhan API)</string>
     <string name="license_aladhan_desc">Waktiva আল-আজান এপিআই সার্ভিসের মাধ্যমে নামাজের সময় সংগ্রহ করে। তাদের প্রকাশিত পদ্ধতি এবং শর্ত অনুযায়ী সময় গণনা করা হয়।</string>
-    <string name="license_data_privacy">Waktiva ব্যবহারকারীর ডেটা সংরক্ষণ, পুনঃবিক্রয় বা বিতরণ করে না।</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva WeatherAPI থেকে বর্তমান আবহাওয়ার তথ্য সংগ্রহ করে। আবহাওয়ার তথ্য WeatherAPI-এর প্রকাশিত শর্ত ও সেবার প্রাপ্যতার ভিত্তিতে সরবরাহ করা হয়।</string>
+        <string name="license_data_privacy">Waktiva ব্যক্তিগত ডেটা বিক্রি করে না এবং বিজ্ঞাপন বা অ্যানালিটিক্সের জন্য ব্যবহার করে না। নেটওয়ার্ক অনুরোধ শুধুমাত্র আপনি যে ফিচারগুলো ব্যবহার করেন সেগুলোর জন্য সীমাবদ্ধ, যেমন নামাজের সময়, আবহাওয়া এবং অবস্থানের নাম নির্ধারণ।</string>
     <string name="license_open_source_libs">২. তৃতীয় পক্ষীয় ওপেন-সোর্স লাইব্রেরিসমূহ</string>
     <string name="license_libs_intro">Waktiva-তে নিম্নলিখিত ওপেন-সোর্স উপাদানগুলো অন্তর্ভুক্ত রয়েছে:</string>
     <string name="license_lib_androidx">অ্যান্ড্রয়েড এক্স লাইব্রেরিসমূহ (Apache License 2.0)</string>
@@ -389,7 +391,7 @@
     <string name="license_loc_usage_1">সঠিক নামাজের সময় গণনা করতে</string>
     <string name="license_loc_usage_2">কিবলার দিক নির্ধারণ করতে</string>
     <string name="license_loc_usage_3">হিজরি তারিখ এবং চাঁদের পর্যায় গণনা করতে</string>
-    <string name="license_loc_processing">অবস্থানের ডেটা আপনার ডিভাইকেই প্রসেস করা হয় এবং এটি কোথাও সংরক্ষণ বা শেয়ার করা হয় না।</string>
+        <string name="license_loc_processing">অবস্থানের ডেটা মূলত ডিভাইসেই প্রক্রিয়া করা হয়। Waktiva আপনার নির্বাচিত অবস্থান এবং ডাউনলোড করা নামাজের সময় আপনার ডিভাইসে স্থানীয়ভাবে সংরক্ষণ করে। দূরবর্তী ফিচারের প্রয়োজন হলে নামাজের সময়, বর্তমান আবহাওয়া বা অবস্থানের নাম আনতে স্থানাঙ্ক বা স্থান-অনুসন্ধান Al-Adhan এবং WeatherAPI-এর মতো তৃতীয় পক্ষের সেবায় পাঠানো হতে পারে।</string>
     <string name="license_no_ads">৫. কোনো বিজ্ঞাপন বা ট্র্যাকিং নেই</string>
     <string name="license_no_ads_1">কোনো বিজ্ঞাপন দেখায় না</string>
     <string name="license_no_ads_2">কোনো ট্র্যাকিং এসডিকে ব্যবহার করে না</string>
@@ -399,3 +401,4 @@
     <string name="license_github_link">Waktiva একটি ওপেন-সোর্স প্রকল্প। আপনি সোর্স কোড খুঁজে পেতে পারেন, সমস্যা রিপোর্ট করতে পারেন বা অবদান রাখতে পারেন এখানে:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">সংস্করণ</string>
 </resources>
+

@@ -365,7 +365,9 @@
     <string name="license_third_party_services">1. Third-Party Services</string>
     <string name="license_aladhan_api">Al-Adhan API</string>
     <string name="license_aladhan_desc">Waktiva retrieves prayer times from the Al-Adhan API service. Prayer time calculations are provided according to their published methodologies and terms.</string>
-    <string name="license_data_privacy">Waktiva does not store, resell, or distribute user data.</string>
+    <string name="license_weather_api">WeatherAPI</string>
+    <string name="license_weather_desc">Waktiva retrieves current weather data from WeatherAPI. Weather conditions are provided according to WeatherAPI\'s published terms and service availability.</string>
+    <string name="license_data_privacy">Waktiva does not sell personal data or use it for advertising or analytics. Network requests are limited to the features you use, such as prayer times, weather, and location naming.</string>
     <string name="license_open_source_libs">2. Third-Party Open-Source Libraries</string>
     <string name="license_libs_intro">Waktiva includes the following open-source components:</string>
     <string name="license_lib_androidx">AndroidX Libraries (Apache License 2.0)</string>
@@ -396,7 +398,7 @@
     <string name="license_loc_usage_1">Calculate accurate prayer times</string>
     <string name="license_loc_usage_2">Determine Qibla direction</string>
     <string name="license_loc_usage_3">Provide Hijri date and moon phase calculations</string>
-    <string name="license_loc_processing">Location data is processed locally and is not stored, tracked, or shared. Up to three months of prayer times are downloaded to enable offline usage.</string>
+    <string name="license_loc_processing">Location data is primarily processed on-device. Waktiva stores your selected location and downloaded prayer times locally on your device. When needed for remote features, coordinates or place queries may be sent to third-party services such as Al-Adhan and WeatherAPI to fetch prayer times, current weather, or a location label.</string>
     <string name="license_no_ads">5. No Ads / No Tracking Commitment</string>
     <string name="license_no_ads_1">Does not show any advertisements</string>
     <string name="license_no_ads_2">Does not use any tracking SDKs</string>
