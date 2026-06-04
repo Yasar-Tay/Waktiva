@@ -1,5 +1,6 @@
 package com.ybugmobile.waktiva.data.repository
 
+import com.ybugmobile.waktiva.BuildConfig
 import com.ybugmobile.waktiva.data.local.LocalPrayerCalculator
 import com.ybugmobile.waktiva.data.local.dao.PrayerDao
 import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
@@ -25,6 +26,7 @@ import java.time.ZoneId
 import java.time.chrono.HijrahChronology
 import java.time.temporal.ChronoField
 import java.util.Collections
+import java.util.Locale
 import javax.inject.Inject
 
 class PrayerRepositoryImpl @Inject constructor(
@@ -86,10 +88,15 @@ class PrayerRepositoryImpl @Inject constructor(
 
     override suspend fun getWeatherData(latitude: Double, longitude: Double): Result<WeatherInfo> {
         return try {
-            val response = weatherApi.getCurrentWeather(latitude, longitude)
+            if (BuildConfig.WEATHER_API_KEY.isBlank()) {
+                return Result.failure(IllegalStateException("Missing WEATHER_API_KEY"))
+            }
+
+            val query = String.format(Locale.US, "%.6f,%.6f", latitude, longitude)
+            val response = weatherApi.getCurrentWeather(query)
             val info = WeatherInfo(
-                temperature = response.current.temperature,
-                condition = WeatherCondition.fromWmoCode(response.current.weatherCode),
+                temperature = response.current.temperatureCelsius,
+                condition = WeatherCondition.fromWeatherApiCode(response.current.condition.code),
                 isDay = response.current.isDay == 1
             )
             Result.success(info)

@@ -1,6 +1,7 @@
 package com.ybugmobile.waktiva.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
@@ -216,11 +217,15 @@ class HomeViewModel @Inject constructor(
             val s = settings.first()
             val lat = s.latitude ?: return@launch
             val lng = s.longitude ?: return@launch
-            lastWeatherFetchTime = System.currentTimeMillis()
-            prayerRepository.getWeatherData(lat, lng).onSuccess { info ->
-                _weatherCondition.value = info.condition
-                _temperature.value = info.temperature
-            }
+            prayerRepository.getWeatherData(lat, lng)
+                .onSuccess { info ->
+                    lastWeatherFetchTime = System.currentTimeMillis()
+                    _weatherCondition.value = info.condition
+                    _temperature.value = info.temperature
+                }
+                .onFailure { error ->
+                    Log.w("HomeViewModel", "Weather refresh failed", error)
+                }
         }
     }
 

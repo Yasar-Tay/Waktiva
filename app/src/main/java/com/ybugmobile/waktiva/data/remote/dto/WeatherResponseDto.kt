@@ -8,10 +8,15 @@ data class WeatherResponseDto(
 )
 
 data class CurrentWeatherDto(
-    @SerializedName("temperature_2m")
-    val temperature: Double,
-    @SerializedName("weather_code")
-    val weatherCode: Int,
+    @SerializedName("temp_c")
+    val temperatureCelsius: Double,
     @SerializedName("is_day")
-    val isDay: Int
+    val isDay: Int,
+    @SerializedName("condition")
+    val condition: WeatherConditionDto
+)
+
+data class WeatherConditionDto(
+    @SerializedName("code")
+    val code: Int
 )

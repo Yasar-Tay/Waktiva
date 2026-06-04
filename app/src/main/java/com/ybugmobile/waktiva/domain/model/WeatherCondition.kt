@@ -48,25 +48,26 @@ enum class WeatherCondition {
         }
 
     companion object {
-        fun fromWmoCode(code: Int): WeatherCondition {
+        fun fromWeatherApiCode(code: Int): WeatherCondition {
             return when (code) {
-                0 -> CLEAR
-                1 -> MAINLY_CLEAR
-                2 -> PARTLY_CLOUDY
-                3 -> OVERCAST
-                45, 48 -> FOGGY
-                51, 53, 55 -> DRIZZLE
-                56, 57 -> FREEZING_DRIZZLE
-                61, 63 -> RAINY
-                65 -> HEAVY_RAIN
-                66, 67 -> FREEZING_RAIN
-                71, 73 -> SNOWY
-                75 -> HEAVY_SNOW
-                77 -> SNOW_GRAINS
-                80, 81, 82 -> RAIN_SHOWERS
-                85, 86 -> SNOW_SHOWERS
-                95 -> THUNDERSTORM
-                96, 99 -> THUNDERSTORM_HAIL
+                1000 -> CLEAR
+                1003 -> MAINLY_CLEAR
+                1006 -> PARTLY_CLOUDY
+                1009 -> OVERCAST
+                1030, 1135, 1147 -> FOGGY
+                1063, 1180, 1240 -> RAIN_SHOWERS
+                1066, 1210, 1216, 1255, 1258 -> SNOW_SHOWERS
+                1069, 1198, 1201, 1204, 1207, 1249, 1252 -> FREEZING_RAIN
+                1072, 1168, 1171 -> FREEZING_DRIZZLE
+                1087, 1273, 1276 -> THUNDERSTORM
+                1114 -> SNOWY
+                1117, 1222, 1225 -> HEAVY_SNOW
+                1150, 1153 -> DRIZZLE
+                1183, 1186, 1189 -> RAINY
+                1192, 1195, 1246 -> HEAVY_RAIN
+                1213, 1219 -> SNOWY
+                1237, 1261, 1264 -> SNOW_GRAINS
+                1279, 1282 -> THUNDERSTORM_HAIL
                 else -> UNKNOWN
             }
         }

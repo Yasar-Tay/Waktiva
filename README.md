@@ -103,6 +103,14 @@ cd Waktiva
 ./gradlew assembleDebug
 ```
 
+Add a WeatherAPI key before running the app. The simplest local setup is to place it in `local.properties`:
+
+```properties
+WEATHER_API_KEY=your_weatherapi_key
+```
+
+The build also accepts `WEATHER_API_KEY` from a Gradle property or environment variable.
+
 Open the project in Android Studio, let Gradle sync, then run the `app` configuration on an emulator or physical device.
 
 ## Localization

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,20 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
 }
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use(::load)
+    }
+}
+
+val weatherApiKey = (
+    providers.gradleProperty("WEATHER_API_KEY").orNull
+        ?: System.getenv("WEATHER_API_KEY")
+        ?: localProperties.getProperty("WEATHER_API_KEY")
+        ?: ""
+).replace("\\", "\\\\").replace("\"", "\\\"")
 
 android {
     namespace = "com.ybugmobile.waktiva"
@@ -18,6 +34,7 @@ android {
         versionName = "1.0.16"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "WEATHER_API_KEY", "\"$weatherApiKey\"")
     }
 
     buildTypes {
