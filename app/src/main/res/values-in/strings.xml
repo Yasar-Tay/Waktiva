@@ -173,7 +173,7 @@
     <string name="settings_notifications_sound">Notifikasi &amp; Suara</string>
     <string name="settings_play_adhan">Putar Audio Adzan</string>
     <string name="settings_play_adhan_desc">Putar suara adzan saat waktu shalat tiba</string>
-    <string name="settings_adhan_sound_selection">Pemilihan Suara Adzan</string>
+    <string name="settings_adhan_sound_selection">Pengaturan Adzan dan Notifikasi</string>
     <string name="settings_adhan_sound_selection_desc">Pilih suara yang diputar selama waktu shalat</string>
 
     <string name="audio_settings_title">Suara Adzan</string>
@@ -222,7 +222,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notifikasi Waktu Shalat</string>
-    <string name="settings_silent_prayer_notification_desc">Terima notifikasi saat tiba waktu shalat</string>
+    <string name="settings_silent_prayer_notification_desc">Terima notifikasi meskipun adzan tidak diputar</string>
     <string name="silent_prayer_channel_name">Peringatan Waktu Shalat</string>
     <string name="silent_prayer_channel_description">Notifikasi senyap untuk waktu shalat saat audio adzan dimatikan.</string>
     <string name="notification_prayer_time_title">Waktunya %s</string>
@@ -351,7 +351,7 @@
     <string name="settings_licenses_desc">Detail lisensi untuk perangkat lunak sumber terbuka</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">Lisensi</string>
+    <string name="licenses_title">Tentang Waktiva</string>
     <string name="license_legal_info">Waktiva – Lisensi &amp; Informasi Hukum</string>
     <string name="license_app_copyright">Hak Cipta © 2026 YBugMobile\nSeluruh hak dilindungi undang-undang.</string>
     <string name="license_app_mit">Waktiva dirilis sebagai perangkat lunak sumber terbuka di bawah Lisensi MIT.</string>

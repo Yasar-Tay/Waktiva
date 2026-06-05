@@ -180,7 +180,7 @@
     <string name="settings_notifications_sound">Meldingen &amp; Geluid</string>
     <string name="settings_play_adhan">Adhan-geluid Afspelen</string>
     <string name="settings_play_adhan_desc">Het Adhan-geluid laten horen als het tijd is om te bidden</string>
-    <string name="settings_adhan_sound_selection">Adhan-geluid Selectie</string>
+    <string name="settings_adhan_sound_selection">Adhan- en meldingsinstellingen</string>
     <string name="settings_adhan_sound_selection_desc">Selecteer het geluid dat wordt afgespeeld tijdens gebedstijden</string>
 
     <string name="audio_settings_title">Adhan-geluiden</string>
@@ -229,7 +229,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Gebedstijd meldingen</string>
-    <string name="settings_silent_prayer_notification_desc">Ontvang een melding wanneer het tijd is om te bidden</string>
+    <string name="settings_silent_prayer_notification_desc">Ontvang meldingen, ook als de adhan niet wordt afgespeeld</string>
     <string name="silent_prayer_channel_name">Gebedstijd waarschuwingen</string>
     <string name="silent_prayer_channel_description">Stille meldingen voor gebedstijden wanneer het adhan-geluid is uitgeschakeld.</string>
     <string name="notification_prayer_time_title">Het is tijd voor %s</string>
@@ -356,7 +356,7 @@
     <string name="settings_licenses_desc">Licentiedetails voor open source software</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">Licenties</string>
+    <string name="licenses_title">Over Waktiva</string>
     <string name="license_legal_info">Waktiva – Licentie &amp; Juridische Informatie</string>
     <string name="license_app_copyright">Copyright © 2026 YBugMobile\nAlle rechten voorbehouden.</string>
     <string name="license_app_mit">Waktiva is vrijgegeven onder de MIT-licentie.</string>

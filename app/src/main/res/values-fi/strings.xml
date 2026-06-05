@@ -180,7 +180,7 @@
     <string name="settings_notifications_sound">Ilmoitukset ja äänet</string>
     <string name="settings_play_adhan">Toista Adhan-ääni</string>
     <string name="settings_play_adhan_desc">Kuuluta Adhan, kun on rukousaika</string>
-    <string name="settings_adhan_sound_selection">Adhan-äänen valinta</string>
+    <string name="settings_adhan_sound_selection">Adhan- ja ilmoitusasetukset</string>
     <string name="settings_adhan_sound_selection_desc">Valitse rukousaikoina toistettava ääni</string>
 
     <string name="audio_settings_title">Adhan-äänet</string>
@@ -229,7 +229,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Rukousajan ilmoitukset</string>
-    <string name="settings_silent_prayer_notification_desc">Saat ilmoituksen rukousajan alkaessa</string>
+    <string name="settings_silent_prayer_notification_desc">Saat ilmoitukset, vaikka adhania ei toistettaisi</string>
     <string name="silent_prayer_channel_name">Rukousajan hälytykset</string>
     <string name="silent_prayer_channel_description">Äänettömät ilmoitukset rukousajoista, kun adhan-ääni on pois käytöstä.</string>
     <string name="notification_prayer_time_title">On %s:n aika</string>
@@ -351,7 +351,7 @@
     <string name="settings_licenses_desc">Avoimen lähdekoodin ohjelmistojen lisenssitiedot</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">Lisenssit</string>
+    <string name="licenses_title">Tietoja Waktivasta</string>
     <string name="license_legal_info">Waktiva – Lisenssi- ja oikeudelliset tiedot</string>
     <string name="license_app_copyright">Copyright © 2026 YBugMobile\nKaikki oikeudet pidätetään.</string>
     <string name="license_app_mit">Waktiva julkaistaan avoimen lähdekoodin ohjelmistona MIT-lisenssillä.</string>

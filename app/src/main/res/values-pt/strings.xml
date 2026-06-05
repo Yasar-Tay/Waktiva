@@ -180,7 +180,7 @@
     <string name="settings_notifications_sound">Notificações e Som</string>
     <string name="settings_play_adhan">Reproduzir Som do Adhan</string>
     <string name="settings_play_adhan_desc">Tocar o Adhan quando for hora de orar</string>
-    <string name="settings_adhan_sound_selection">Seleção de Som do Adhan</string>
+    <string name="settings_adhan_sound_selection">Configurações de Adhan e notificações</string>
     <string name="settings_adhan_sound_selection_desc">Selecione o som tocado durante os horários</string>
 
     <string name="audio_settings_title">Sons do Adhan</string>
@@ -229,7 +229,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notificações de horário de oração</string>
-    <string name="settings_silent_prayer_notification_desc">Receba uma notificação quando for a hora de orar</string>
+    <string name="settings_silent_prayer_notification_desc">Receba notificações mesmo quando o adhan não for reproduzido</string>
     <string name="silent_prayer_channel_name">Alertas de horário de oração</string>
     <string name="silent_prayer_channel_description">Notificações silenciosas para horários de oração quando o áudio do adhan está desligado.</string>
     <string name="notification_prayer_time_title">É hora de %s</string>
@@ -351,7 +351,7 @@
     <string name="settings_licenses_desc">Detalhes de licença</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">Licenças</string>
+    <string name="licenses_title">Sobre Waktiva</string>
     <string name="license_legal_info">Waktiva – Informação Legal</string>
     <string name="license_app_copyright">Copyright © 2026 YBugMobile\nTodos os direitos reservados.</string>
     <string name="license_app_mit">Open-source sob a Licença MIT.</string>

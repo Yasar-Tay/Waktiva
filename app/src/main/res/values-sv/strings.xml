@@ -180,7 +180,7 @@
     <string name="settings_notifications_sound">Aviseringar och ljud</string>
     <string name="settings_play_adhan">Spela upp Adhan-ljud</string>
     <string name="settings_play_adhan_desc">Låt Adhan ljuda när det är dags för bön</string>
-    <string name="settings_adhan_sound_selection">Val av Adhan-ljud</string>
+    <string name="settings_adhan_sound_selection">Adhan- och aviseringsinställningar</string>
     <string name="settings_adhan_sound_selection_desc">Välj det ljud som spelas under bönetider</string>
 
     <string name="audio_settings_title">Adhan-ljud</string>
@@ -229,7 +229,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Bönestids-aviseringar</string>
-    <string name="settings_silent_prayer_notification_desc">Få en avisering när det är dags att be</string>
+    <string name="settings_silent_prayer_notification_desc">Få aviseringar även när adhan-ljud inte spelas upp</string>
     <string name="silent_prayer_channel_name">Bönestids-varningar</string>
     <string name="silent_prayer_channel_description">Tysta aviseringar för bönetider när adhan-ljud är inaktiverat.</string>
     <string name="notification_prayer_time_title">Det är dags för %s</string>
@@ -351,7 +351,7 @@
     <string name="settings_licenses_desc">Licensdetaljer för programvara med öppen källkod</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">Licenser</string>
+    <string name="licenses_title">Om Waktiva</string>
     <string name="license_legal_info">Waktiva – Licens och juridisk information</string>
     <string name="license_app_copyright">Copyright © 2026 YBugMobile\nMed ensamrätt.</string>
     <string name="license_app_mit">Waktiva ges ut som programvara med öppen källkod under MIT-licensen.</string>

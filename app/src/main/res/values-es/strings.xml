@@ -173,7 +173,7 @@
     <string name="settings_notifications_sound">Notificaciones y sonido</string>
     <string name="settings_play_adhan">Reproducir sonido de Adhan</string>
     <string name="settings_play_adhan_desc">Hacer sonar el Adhan cuando es hora de rezar</string>
-    <string name="settings_adhan_sound_selection">Selección de sonido de Adhan</string>
+    <string name="settings_adhan_sound_selection">Configuración de adhan y notificaciones</string>
     <string name="settings_adhan_sound_selection_desc">Elija el sonido reproducido durante los horarios de oración</string>
 
     <string name="audio_settings_title">Sonidos de Adhan</string>
@@ -222,7 +222,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notificaciones de tiempo de oración</string>
-    <string name="settings_silent_prayer_notification_desc">Recibe una notificación cuando sea la hora de orar</string>
+    <string name="settings_silent_prayer_notification_desc">Recibe notificaciones aunque no se reproduzca el adhan</string>
     <string name="silent_prayer_channel_name">Alertas de tiempo de oración</string>
     <string name="silent_prayer_channel_description">Notificaciones silenciosas para los horarios de oración cuando el audio del adhan está desactivado.</string>
     <string name="notification_prayer_time_title">Es hora de %s</string>
@@ -303,6 +303,7 @@
     <string name="license_weather_desc">Waktiva obtiene los datos meteorológicos actuales de WeatherAPI. La información meteorológica se proporciona de acuerdo con las condiciones publicadas y la disponibilidad del servicio WeatherAPI.</string>
     <string name="license_data_privacy">Waktiva no vende datos personales ni los utiliza para publicidad o analíticas. Las solicitudes de red se limitan a las funciones que utilizas, como los horarios de oración, el clima y el nombre de la ubicación.</string>
     <string name="license_loc_processing">Los datos de ubicación se procesan principalmente en el dispositivo. Waktiva almacena localmente en tu dispositivo la ubicación seleccionada y los horarios de oración descargados. Cuando una función remota lo necesita, las coordenadas o consultas de lugares pueden enviarse a servicios de terceros como Al-Adhan y WeatherAPI para obtener horarios de oración, el clima actual o una etiqueta de ubicación.</string>
+    <string name="licenses_title">Acerca de Waktiva</string>
     <string name="about_version_label">Versión</string>
 </resources>
 

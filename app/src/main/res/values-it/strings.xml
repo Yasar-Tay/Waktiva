@@ -173,7 +173,7 @@
     <string name="settings_notifications_sound">Notifiche e suono</string>
     <string name="settings_play_adhan">Riproduci suono Adhan</string>
     <string name="settings_play_adhan_desc">Fai suonare l\'Adhan quando è ora di pregare</string>
-    <string name="settings_adhan_sound_selection">Selezione suono Adhan</string>
+    <string name="settings_adhan_sound_selection">Impostazioni Adhan e notifiche</string>
     <string name="settings_adhan_sound_selection_desc">Scegli il suono riprodotto durante gli orari di preghiera</string>
 
     <string name="audio_settings_title">Suoni Adhan</string>
@@ -222,7 +222,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notifiche orario di preghiera</string>
-    <string name="settings_silent_prayer_notification_desc">Ricevi una notifica quando è ora di pregare</string>
+    <string name="settings_silent_prayer_notification_desc">Ricevi notifiche anche quando l\'adhan non viene riprodotto</string>
     <string name="silent_prayer_channel_name">Avvisi orario di preghiera</string>
     <string name="silent_prayer_channel_description">Notifiche silenziose per gli orari di preghiera quando l\'audio dell\'adhan è disattivato.</string>
     <string name="notification_prayer_time_title">È l\'ora di %s</string>
@@ -303,6 +303,7 @@
     <string name="license_weather_desc">Waktiva recupera i dati meteo attuali da WeatherAPI. Le informazioni meteo sono fornite in base ai termini pubblicati e alla disponibilità del servizio WeatherAPI.</string>
     <string name="license_data_privacy">Waktiva non vende dati personali né li usa per pubblicità o analisi. Le richieste di rete sono limitate alle funzioni che utilizzi, come gli orari di preghiera, il meteo e il nome della località.</string>
     <string name="license_loc_processing">I dati di posizione vengono elaborati principalmente sul dispositivo. Waktiva memorizza localmente sul tuo dispositivo la posizione selezionata e gli orari di preghiera scaricati. Quando una funzione remota lo richiede, coordinate o richieste di luogo possono essere inviate a servizi di terze parti come Al-Adhan e WeatherAPI per recuperare gli orari di preghiera, il meteo attuale o un’etichetta della località.</string>
+    <string name="licenses_title">Informazioni su Waktiva</string>
     <string name="about_version_label">Versione</string>
 </resources>
 

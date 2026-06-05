@@ -173,7 +173,7 @@
     <string name="settings_notifications_sound">الإشعارات والصوت</string>
     <string name="settings_play_adhan">تشغيل صوت الأذان</string>
     <string name="settings_play_adhan_desc">تشغيل صوت الأذان عندما يحين وقت الصلاة</string>
-    <string name="settings_adhan_sound_selection">اختيار صوت الأذان</string>
+    <string name="settings_adhan_sound_selection">إعدادات الأذان والإشعارات</string>
     <string name="settings_adhan_sound_selection_desc">اختر الصوت الذي يتم تشغيله خلال أوقات الصلاة</string>
 
     <string name="audio_settings_title">أصوات الأذان</string>
@@ -222,7 +222,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">إشعارات وقت الصلاة</string>
-    <string name="settings_silent_prayer_notification_desc">تلقَّ إشعارًا عندما يحين وقت الصلاة</string>
+    <string name="settings_silent_prayer_notification_desc">تلقَّ الإشعارات حتى إذا لم يتم تشغيل الأذان</string>
     <string name="silent_prayer_channel_name">تنبيهات وقت الصلاة</string>
     <string name="silent_prayer_channel_description">إشعارات صامتة لأوقات الصلاة عند إيقاف صوت الأذان.</string>
     <string name="notification_prayer_time_title">حان وقت صلاة %s</string>
@@ -351,7 +351,7 @@
     <string name="settings_licenses_desc">تفاصيل الترخيص للبرمجيات مفتوحة المصدر</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">التراخيص</string>
+    <string name="licenses_title">حول Waktiva</string>
     <string name="license_legal_info">Waktiva – الترخيص والمعلومات القانونية</string>
     <string name="license_app_copyright">حقوق الطبع والنشر © ٢٠٢٦ YBugMobile\nجميع الحقوق محفوظة.</string>
     <string name="license_app_mit">يتم إصدار Waktiva كبرنامج مفتوح المصدر بموجب ترخيص MIT.</string>

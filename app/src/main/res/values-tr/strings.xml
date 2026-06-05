@@ -173,7 +173,7 @@
     <string name="settings_notifications_sound">Bildirimler ve Ses</string>
     <string name="settings_play_adhan">Ezan Sesini Çal</string>
     <string name="settings_play_adhan_desc">Namaz vakti geldiğinde ezan sesi çal</string>
-    <string name="settings_adhan_sound_selection">Ezan Sesi Seçimi</string>
+    <string name="settings_adhan_sound_selection">Ezan ve Bildirim Ayarları</string>
     <string name="settings_adhan_sound_selection_desc">Namaz vakitlerinde çalınacak sesi seçin</string>
 
     <string name="audio_settings_title">Ezan Sesleri</string>
@@ -222,7 +222,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Namaz Vakti Bildirimleri</string>
-    <string name="settings_silent_prayer_notification_desc">Namaz vakti geldiğinde bildirim alın</string>
+    <string name="settings_silent_prayer_notification_desc">Ezan okunmasa da bildirim alın</string>
     <string name="silent_prayer_channel_name">Namaz Vakti Uyarıları</string>
     <string name="silent_prayer_channel_description">Ezan sesi kapalıyken namaz vakitleri için sessiz bildirimler.</string>
     <string name="notification_prayer_time_title">%s vakti geldi</string>
@@ -351,7 +351,7 @@
     <string name="settings_licenses_desc">Açık kaynaklı yazılımlar için lisans ayrıntıları</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">LİSANSLAR</string>
+    <string name="licenses_title">Waktiva Hakkında</string>
     <string name="license_legal_info">Waktiva – Lisans ve Yasal Bilgiler</string>
     <string name="license_app_copyright">Telif Hakkı © 2026 YBugMobile\nTüm hakları saklıdır.</string>
     <string name="license_app_mit">Waktiva, MIT Lisansı altında açık kaynaklı bir yazılım olarak yayınlanmıştır.</string>

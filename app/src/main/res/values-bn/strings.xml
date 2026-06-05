@@ -173,7 +173,7 @@
     <string name="settings_notifications_sound">নোটিফিকেশন এবং শব্দ</string>
     <string name="settings_play_adhan">আজান বাজান</string>
     <string name="settings_play_adhan_desc">নামাজের সময় আজান বাজান</string>
-    <string name="settings_adhan_sound_selection">আজানের শব্দ নির্বাচন</string>
+    <string name="settings_adhan_sound_selection">আজান ও নোটিফিকেশন সেটিংস</string>
     <string name="settings_adhan_sound_selection_desc">নামাজের সময় কোন শব্দ বাজবে তা নির্বাচন করুন</string>
 
     <string name="audio_settings_title">আজানের শব্দ</string>
@@ -222,7 +222,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">নামাজের সময়ের বিজ্ঞপ্তি</string>
-    <string name="settings_silent_prayer_notification_desc">নামাজের সময় হলে বিজ্ঞপ্তি পান</string>
+    <string name="settings_silent_prayer_notification_desc">আজান না বাজলেও বিজ্ঞপ্তি পান</string>
     <string name="silent_prayer_channel_name">নামাজের সময়ের সতর্কতা</string>
     <string name="silent_prayer_channel_description">আযানের শব্দ বন্ধ থাকলে নামাজের সময়ের নিরব বিজ্ঞপ্তি।</string>
     <string name="notification_prayer_time_title">%s-এর সময় হয়েছে</string>
@@ -350,7 +350,7 @@
     <string name="settings_licenses_desc">ওপেন সোর্স সফটওয়্যারের লাইসেন্স বিস্তারিত</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">লাইসেন্সসমূহ</string>
+    <string name="licenses_title">Waktiva সম্পর্কে</string>
     <string name="license_legal_info">Waktiva – লাইসেন্স এবং আইনি তথ্য</string>
     <string name="license_app_copyright">কপিরাইট © 2026 YBugMobile\nসর্বস্বত্ব সংরক্ষিত।</string>
     <string name="license_app_mit">Waktiva এমআইটি (MIT) লাইসেন্সের অধীনে ওপেন-সোর্স সফটওয়্যার হিসেবে প্রকাশ করা হয়েছে।</string>

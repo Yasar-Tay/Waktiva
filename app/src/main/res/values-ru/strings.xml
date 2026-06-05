@@ -173,7 +173,7 @@
     <string name="settings_notifications_sound">Уведомления и звук</string>
     <string name="settings_play_adhan">Проигрывать аудио Азана</string>
     <string name="settings_play_adhan_desc">Проигрывать звук азана, когда наступает время молитвы</string>
-    <string name="settings_adhan_sound_selection">Выбор звука Азана</string>
+    <string name="settings_adhan_sound_selection">Настройки азана и уведомлений</string>
     <string name="settings_adhan_sound_selection_desc">Выберите звук, который будет воспроизводиться во время молитвы</string>
 
     <string name="audio_settings_title">Звуки Азана</string>
@@ -222,7 +222,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Уведомления о времени намаза</string>
-    <string name="settings_silent_prayer_notification_desc">Получайте уведомление, когда наступает время намаза</string>
+    <string name="settings_silent_prayer_notification_desc">Получайте уведомления, даже если азан не воспроизводится</string>
     <string name="silent_prayer_channel_name">Оповещения о времени намаза</string>
     <string name="silent_prayer_channel_description">Тихие уведомления о временах намаза, когда звук азана отключён.</string>
     <string name="notification_prayer_time_title">Время для %s</string>
@@ -349,7 +349,7 @@
     <string name="settings_licenses_desc">Сведения о лицензиях программного обеспечения с открытым исходным кодом</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">ЛИЦЕНЗИИ</string>
+    <string name="licenses_title">О Waktiva</string>
     <string name="license_legal_info">Waktiva – Лицензии и юридическая информация</string>
     <string name="license_app_copyright">Авторское право © 2026 YBugMobile\nВсе права защищены.</string>
     <string name="license_app_mit">Waktiva выпущено как программное обеспечение с открытым исходным кодом под лицензией MIT.</string>

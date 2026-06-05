@@ -173,7 +173,7 @@
     <string name="settings_notifications_sound">اعلان‌ها و صدا</string>
     <string name="settings_play_adhan">پخش صوت اذان</string>
     <string name="settings_play_adhan_desc">هنگام رسیدن وقت شرعی اذان پخش شود</string>
-    <string name="settings_adhan_sound_selection">انتخاب صدای اذان</string>
+    <string name="settings_adhan_sound_selection">تنظیمات اذان و اعلان‌ها</string>
     <string name="settings_adhan_sound_selection_desc">صدایی که در اوقات شرعی پخش می‌شود را انتخاب کنید</string>
 
     <string name="audio_settings_title">صداهای اذان</string>
@@ -222,7 +222,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">اعلان‌های وقت نماز</string>
-    <string name="settings_silent_prayer_notification_desc">هنگام فرا رسیدن وقت نماز اعلان دریافت کنید</string>
+    <string name="settings_silent_prayer_notification_desc">حتی اگر اذان پخش نشود اعلان دریافت کنید</string>
     <string name="silent_prayer_channel_name">هشدارهای وقت نماز</string>
     <string name="silent_prayer_channel_description">اعلان‌های بی‌صدا برای اوقات نماز هنگامی که صدای اذان خاموش است.</string>
     <string name="notification_prayer_time_title">وقت %s فرا رسیده</string>
@@ -350,7 +350,7 @@
     <string name="settings_licenses_desc">جزئیات مجوزهای نرم‌افزارهای متن‌باز</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">مجوزها</string>
+    <string name="licenses_title">درباره Waktiva</string>
     <string name="license_legal_info">Waktiva – مجوزها و اطلاعات حقوقی</string>
     <string name="license_app_copyright">حق تکثیر © ۲۰۲۶ YBugMobile\nتمامی حقوق محفوظ است.</string>
     <string name="license_app_mit">Waktiva به عنوان یک نرم‌افزار متن‌باز تحت مجوز MIT منتشر شده است.</string>

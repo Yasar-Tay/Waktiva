@@ -180,7 +180,7 @@
     <string name="settings_notifications_sound">Obavijesti i zvuk</string>
     <string name="settings_play_adhan">Reproduciraj zvuk Ezana</string>
     <string name="settings_play_adhan_desc">Oglasi Ezan kada nastupi namasko vrijeme</string>
-    <string name="settings_adhan_sound_selection">Izbor zvuka Ezana</string>
+    <string name="settings_adhan_sound_selection">Postavke Ezana i obavijesti</string>
     <string name="settings_adhan_sound_selection_desc">Odaberite zvuk koji će se reproducirati tokom vaktije</string>
 
     <string name="audio_settings_title">Zvukovi Ezana</string>
@@ -229,7 +229,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Obavijesti o vremenu namaza</string>
-    <string name="settings_silent_prayer_notification_desc">Primajte obavijesti kada dođe vrijeme namaza</string>
+    <string name="settings_silent_prayer_notification_desc">Primajte obavijesti čak i kada se Ezan ne oglašava</string>
     <string name="silent_prayer_channel_name">Upozorenja o vremenu namaza</string>
     <string name="silent_prayer_channel_description">Tihe obavijesti o vremenima namaza kada je zvuk ezana isključen.</string>
     <string name="notification_prayer_time_title">Vrijeme je za %s</string>
@@ -356,7 +356,7 @@
     <string name="settings_licenses_desc">Detalji licenci za softver otvorenog koda</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">Licence</string>
+    <string name="licenses_title">O Waktiva</string>
     <string name="license_legal_info">Waktiva – Licence i pravne informacije</string>
     <string name="license_app_copyright">Copyright © 2026 YBugMobile\nSva prava zadržana.</string>
     <string name="license_app_mit">Waktiva je objavljena kao open-source softver pod MIT licencom.</string>

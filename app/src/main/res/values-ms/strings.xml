@@ -173,7 +173,7 @@
     <string name="settings_notifications_sound">Notifikasi &amp; Bunyi</string>
     <string name="settings_play_adhan">Mainkan Audio Azan</string>
     <string name="settings_play_adhan_desc">Mainkan bunyi azan apabila tiba waktu solat</string>
-    <string name="settings_adhan_sound_selection">Pemilihan Bunyi Azan</string>
+    <string name="settings_adhan_sound_selection">Tetapan Azan dan Pemberitahuan</string>
     <string name="settings_adhan_sound_selection_desc">Pilih bunyi yang dimainkan semasa waktu solat</string>
 
     <string name="audio_settings_title">Bunyi Azan</string>
@@ -222,7 +222,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Pemberitahuan Waktu Solat</string>
-    <string name="settings_silent_prayer_notification_desc">Terima pemberitahuan apabila tiba waktu solat</string>
+    <string name="settings_silent_prayer_notification_desc">Terima pemberitahuan walaupun azan tidak dimainkan</string>
     <string name="silent_prayer_channel_name">Amaran Waktu Solat</string>
     <string name="silent_prayer_channel_description">Pemberitahuan senyap untuk waktu solat apabila audio azan dimatikan.</string>
     <string name="notification_prayer_time_title">Sudah tiba waktu %s</string>
@@ -344,7 +344,7 @@
     <string name="settings_licenses_desc">Butiran lesen bagi perisian sumber terbuka</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">Lesen</string>
+    <string name="licenses_title">Mengenai Waktiva</string>
     <string name="license_legal_info">Waktiva – Lesen &amp; Maklumat Undang-undang</string>
     <string name="license_app_copyright">Hak Cipta © 2026 YBugMobile\nHak cipta terpelihara.</string>
     <string name="license_app_mit">Waktiva dikeluarkan sebagai perisian sumber terbuka di bawah Lesen MIT.</string>

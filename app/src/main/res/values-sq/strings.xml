@@ -180,7 +180,7 @@
     <string name="settings_notifications_sound">Njoftimet dhe Tingulli</string>
     <string name="settings_play_adhan">Luaj Tingullin e Ezanit</string>
     <string name="settings_play_adhan_desc">Dëgjoni Ezanin kur është koha e lutjes</string>
-    <string name="settings_adhan_sound_selection">Zgjedhja e Tingullit të Ezanit</string>
+    <string name="settings_adhan_sound_selection">Cilësimet e Ezanit dhe njoftimeve</string>
     <string name="settings_adhan_sound_selection_desc">Zgjidhni tingullin që do të luhet gjatë kohës së lutjes</string>
 
     <string name="audio_settings_title">Tingujt e Ezanit</string>
@@ -229,7 +229,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Njoftimet e kohës së namazit</string>
-    <string name="settings_silent_prayer_notification_desc">Merr njoftim kur është koha e namazit</string>
+    <string name="settings_silent_prayer_notification_desc">Merr njoftime edhe kur ezani nuk luhet</string>
     <string name="silent_prayer_channel_name">Alarmet e kohës së namazit</string>
     <string name="silent_prayer_channel_description">Njoftime të heshtura për kohët e namazit kur audio e ezanit është e fikur.</string>
     <string name="notification_prayer_time_title">Është koha e %s</string>
@@ -356,7 +356,7 @@
     <string name="settings_licenses_desc">Detajet e licencës për softuerin me burim të hapur</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">Licencat</string>
+    <string name="licenses_title">Rreth Waktiva</string>
     <string name="license_legal_info">Waktiva – Licenca dhe Informacioni Ligjor</string>
     <string name="license_app_copyright">Të gjitha të drejtat e rezervuara © 2026 YBugMobile\nAll rights reserved.</string>
     <string name="license_app_mit">Waktiva lëshohet si softuer me burim të hapur nën Licencën MIT.</string>

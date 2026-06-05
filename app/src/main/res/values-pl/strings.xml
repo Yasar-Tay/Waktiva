@@ -180,7 +180,7 @@
     <string name="settings_notifications_sound">Powiadomienia i dźwięk</string>
     <string name="settings_play_adhan">Odtwarzaj dźwięk Adhan</string>
     <string name="settings_play_adhan_desc">Odtwarzaj wezwanie Adhan, gdy nadejdzie czas modlitwy</string>
-    <string name="settings_adhan_sound_selection">Wybór dźwięku Adhan</string>
+    <string name="settings_adhan_sound_selection">Ustawienia adhanu i powiadomień</string>
     <string name="settings_adhan_sound_selection_desc">Wybierz dźwięk odtwarzany podczas modlitw</string>
 
     <string name="audio_settings_title">Dźwięki Adhan</string>
@@ -229,7 +229,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Powiadomienia o czasie modlitwy</string>
-    <string name="settings_silent_prayer_notification_desc">Otrzymuj powiadomienie, gdy nadchodzi pora modlitwy</string>
+    <string name="settings_silent_prayer_notification_desc">Otrzymuj powiadomienia, nawet gdy adhan nie jest odtwarzany</string>
     <string name="silent_prayer_channel_name">Alerty czasu modlitwy</string>
     <string name="silent_prayer_channel_description">Ciche powiadomienia o czasach modlitwy, gdy dźwięk adhan jest wyłączony.</string>
     <string name="notification_prayer_time_title">Czas na %s</string>
@@ -356,7 +356,7 @@
     <string name="settings_licenses_desc">Szczegóły licencji open source</string>
 
     <!-- Licenses Screen -->
-    <string name="licenses_title">Licencje</string>
+    <string name="licenses_title">O Waktiva</string>
     <string name="license_legal_info">Waktiva – Informacje prawne</string>
     <string name="license_app_copyright">Copyright © 2026 YBugMobile\nWszelkie prawa zastrzeżone.</string>
     <string name="license_app_mit">Waktiva jest oprogramowaniem open-source na licencji MIT.</string>

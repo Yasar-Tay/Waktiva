@@ -244,7 +244,9 @@ private fun NotificationSoundSection(
             onClick = onNavigateToAudio
         )
 
-        if (settings?.playAdhanAudio == false) {
+        val showSilentPrayerNotification = settings?.playAdhanAudio == false
+
+        if (showSilentPrayerNotification) {
             SettingsToggleItem(
                 title = stringResource(R.string.settings_silent_prayer_notification),
                 subtitle = stringResource(R.string.settings_silent_prayer_notification_desc),

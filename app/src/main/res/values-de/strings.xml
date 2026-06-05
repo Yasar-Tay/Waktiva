@@ -173,7 +173,7 @@
     <string name="settings_notifications_sound">Benachrichtigungen &amp; Ton</string>
     <string name="settings_play_adhan">Adhan-Ton abspielen</string>
     <string name="settings_play_adhan_desc">Den Adhan abspielen, wenn es Zeit zum Beten ist</string>
-    <string name="settings_adhan_sound_selection">Adhan-Tonauswahl</string>
+    <string name="settings_adhan_sound_selection">Adhan- und Benachrichtigungseinstellungen</string>
     <string name="settings_adhan_sound_selection_desc">Wählen Sie den Ton aus, der während der Gebetszeiten abgespielt wird</string>
 
     <string name="audio_settings_title">Adhan-Töne</string>
@@ -222,7 +222,7 @@
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Gebetszeit-Benachrichtigungen</string>
-    <string name="settings_silent_prayer_notification_desc">Erhalte eine Benachrichtigung, wenn die Gebetszeit beginnt</string>
+    <string name="settings_silent_prayer_notification_desc">Erhalte Benachrichtigungen, auch wenn kein Adhan abgespielt wird</string>
     <string name="silent_prayer_channel_name">Gebetszeit-Alarme</string>
     <string name="silent_prayer_channel_description">Lautlose Benachrichtigungen für Gebetszeiten, wenn der Adhan-Ton deaktiviert ist.</string>
     <string name="notification_prayer_time_title">Es ist Zeit für %s</string>
@@ -303,6 +303,7 @@
     <string name="license_weather_desc">Waktiva ruft aktuelle Wetterdaten über WeatherAPI ab. Wetterinformationen werden gemäß den veröffentlichten Bedingungen und der Verfügbarkeit des WeatherAPI-Dienstes bereitgestellt.</string>
     <string name="license_data_privacy">Waktiva verkauft keine personenbezogenen Daten und nutzt sie nicht für Werbung oder Analysen. Netzwerkanfragen sind auf die von Ihnen genutzten Funktionen beschränkt, etwa Gebetszeiten, Wetter und Ortsbezeichnungen.</string>
     <string name="license_loc_processing">Standortdaten werden überwiegend auf dem Gerät verarbeitet. Waktiva speichert Ihren ausgewählten Standort und heruntergeladene Gebetszeiten lokal auf Ihrem Gerät. Wenn Remote-Funktionen dies erfordern, können Koordinaten oder Ortsanfragen an Drittanbieterdienste wie Al-Adhan und WeatherAPI gesendet werden, um Gebetszeiten, aktuelles Wetter oder eine Ortsbezeichnung abzurufen.</string>
+    <string name="licenses_title">Über Waktiva</string>
     <string name="about_version_label">Version</string>
 </resources>
 
