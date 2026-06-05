@@ -8,6 +8,7 @@ import android.hardware.SensorManager
 import android.hardware.display.DisplayManager
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.view.Display
 import android.view.Surface
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -43,7 +44,8 @@ class CompassManager @Inject constructor(
     private val rawCompassFlow: Flow<CompassData> = callbackFlow {
         var lastAzimuth = -1f
         val alpha = 0.22f
-        var lastEventTime = System.currentTimeMillis()
+        var lastEventElapsedRealtime = SystemClock.elapsedRealtime()
+        var hasReceivedSensorEvent = false
 
         val listener = object : SensorEventListener {
             private val rotationMatrix = FloatArray(9)
@@ -60,7 +62,8 @@ class CompassManager @Inject constructor(
 
             override fun onSensorChanged(event: SensorEvent?) {
                 if (event == null) return
-                lastEventTime = System.currentTimeMillis()
+                lastEventElapsedRealtime = SystemClock.elapsedRealtime()
+                hasReceivedSensorEvent = true
 
                 var azimuthFound = false
                 var currentAccuracy = event.accuracy
@@ -137,26 +140,39 @@ class CompassManager @Inject constructor(
         val registerSensors = {
             if (rotationSensor != null) {
                 sensorManager.registerListener(listener, rotationSensor, SensorManager.SENSOR_DELAY_UI, handler)
-            }
-            sensorManager.registerListener(listener, accelSensor, SensorManager.SENSOR_DELAY_UI, handler)
-            sensorManager.registerListener(listener, magSensor, SensorManager.SENSOR_DELAY_UI, handler)
-        }
-
-        registerSensors()
-
-        // Watchdog to recover from sensor freezes (especially after lock screen)
-        val watchdogJob = launch {
-            while (isActive) {
-                delay(4000)
-                if (System.currentTimeMillis() - lastEventTime > 4000) {
-                    sensorManager.unregisterListener(listener)
-                    registerSensors()
+            } else {
+                accelSensor?.let {
+                    sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_UI, handler)
+                }
+                magSensor?.let {
+                    sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_UI, handler)
                 }
             }
         }
 
+        registerSensors()
+
+        // Rotation vector sensors legitimately go quiet while the device is stationary.
+        // Re-registering them on every quiet period creates sensor churn and log spam.
+        val watchdogJob = if (rotationSensor == null) {
+            launch {
+                while (isActive) {
+                    delay(15000)
+                    if (
+                        hasReceivedSensorEvent &&
+                        SystemClock.elapsedRealtime() - lastEventElapsedRealtime > 15000L
+                    ) {
+                        sensorManager.unregisterListener(listener)
+                        registerSensors()
+                    }
+                }
+            }
+        } else {
+            null
+        }
+
         awaitClose { 
-            watchdogJob.cancel()
+            watchdogJob?.cancel()
             sensorManager.unregisterListener(listener) 
         }
     }.conflate()

@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -56,9 +57,10 @@ fun HomeScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    val state by viewModel.state.collectAsState()
-    val settings by viewModel.settings.collectAsState(initial = null)
-    val allDays by viewModel.allPrayerDays.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val atmosphere by viewModel.atmosphereState.collectAsStateWithLifecycle()
+    val settings by viewModel.settings.collectAsStateWithLifecycle(initialValue = null)
+    val allDays by viewModel.allPrayerDays.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.isNetworkAvailable, state.hasSystemIssues, state.currentPrayerDay) {
         if (state.currentPrayerDay == null && state.isNetworkAvailable && !state.hasSystemIssues) {
@@ -78,6 +80,7 @@ fun HomeScreen(
 
     HomeScreenContent(
         state = state,
+        atmosphere = atmosphere,
         settings = settings,
         allDays = allDays,
         calculationMethods = viewModel.calculationMethods,
@@ -100,6 +103,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     state: HomeViewState,
+    atmosphere: HomeAtmosphereState,
     settings: UserSettings?,
     allDays: List<PrayerDay>,
     calculationMethods: List<Pair<Int, Int>>,
@@ -217,9 +221,9 @@ fun HomeScreenContent(
                     backgroundGradient = backgroundGradient,
                     currentTime = state.currentTime.toLocalTime(),
                     currentPrayerDay = state.currentPrayerDay,
-                    sunAzimuth = { state.sunAzimuth },
-                    sunAltitude = { state.sunAltitude },
-                    compassAzimuth = { state.compassAzimuth },
+                    sunAzimuth = { atmosphere.sunAzimuth },
+                    sunAltitude = { atmosphere.sunAltitude },
+                    compassAzimuth = { atmosphere.compassAzimuth },
                     showWeatherEffects = settings?.showWeatherEffects == true,
                     weatherCondition = effectiveWeather
                 )

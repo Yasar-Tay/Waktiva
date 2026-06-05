@@ -24,7 +24,6 @@ import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
-import com.ybugmobile.waktiva.data.sensor.CompassData
 import com.ybugmobile.waktiva.data.sensor.CompassManager
 import com.ybugmobile.waktiva.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,6 +40,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import kotlin.math.abs
 import javax.inject.Inject
 
 /**
@@ -128,6 +128,18 @@ class HomeViewModel @Inject constructor(
             .timezone(ZoneId.systemDefault())
             .execute()
     }
+
+    private val compassAzimuth = compassManager.compassFlow
+        .map { it.azimuth }
+        .distinctUntilChanged { old, new -> angularDifferenceDegrees(old, new) < 2f }
+
+    val atmosphereState: StateFlow<HomeAtmosphereState> = combine(sunPosition, compassAzimuth) { sun, compass ->
+        HomeAtmosphereState(
+            sunAzimuth = sun.azimuth.toFloat(),
+            sunAltitude = sun.altitude.toFloat(),
+            compassAzimuth = compass
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeAtmosphereState())
 
     val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerDay, tomorrowPrayerDay, currentTime, settings) { today, tomorrow, now, currentSettings ->
         val testEndTimeMillis = currentSettings.testAlarmEndTime
@@ -288,7 +300,7 @@ class HomeViewModel @Inject constructor(
         selectedDate, currentTime, currentPrayerDay, moonPhase,
         nextPrayerInfo, currentPrayerInfo, isRefreshing, 
         _isNetworkAvailable, _isLocationEnabled, _isLocationPermissionGranted, _hasSystemIssues,
-        sunPosition, compassManager.compassFlow, _weatherCondition, _temperature,
+        _weatherCondition, _temperature,
         settings, _isAdhanPlaying, _playingPrayerName, allPrayerDays
     ) { args ->
         val date = args[0] as LocalDate
@@ -302,14 +314,12 @@ class HomeViewModel @Inject constructor(
         val locEnabled = args[8] as Boolean
         val locPerm = args[9] as Boolean
         val issues = args[10] as Boolean
-        val sun = args[11] as SunPosition
-        val compass = args[12] as CompassData
-        val weather = args[13] as WeatherCondition
-        val temp = args[14] as? Double
-        val currentSettings = args[15] as UserSettings
-        val playing = args[16] as Boolean
-        val prayerName = args[17] as? String
-        val allDaysList = args[18] as List<PrayerDay>
+        val weather = args[11] as WeatherCondition
+        val temp = args[12] as? Double
+        val currentSettings = args[13] as UserSettings
+        val playing = args[14] as Boolean
+        val prayerName = args[15] as? String
+        val allDaysList = args[16] as List<PrayerDay>
         
         // If the immediate next event is SUNRISE (which has no adhan),
         // we check the mute state for DHUHR instead, as the button targets it.
@@ -342,9 +352,6 @@ class HomeViewModel @Inject constructor(
             isLocationEnabled = locEnabled,
             isLocationPermissionGranted = locPerm,
             hasSystemIssues = issues,
-            sunAzimuth = sun.azimuth.toFloat(),
-            sunAltitude = sun.altitude.toFloat(),
-            compassAzimuth = compass.azimuth,
             weatherCondition = weather,
             temperature = temp
         )
@@ -448,6 +455,11 @@ class HomeViewModel @Inject constructor(
             val nextMonth = now.plusMonths(1)
             prayerRepository.refreshPrayerTimes(nextMonth.year, nextMonth.monthValue, lat, lng, s.calculationMethod)
         }
+    }
+
+    private fun angularDifferenceDegrees(first: Float, second: Float): Float {
+        val diff = abs(first - second) % 360f
+        return minOf(diff, 360f - diff)
     }
 
     override fun onCleared() {

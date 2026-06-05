@@ -237,13 +237,6 @@ private fun NotificationSoundSection(
             }
         )
 
-        SettingsClickItem(
-            title = stringResource(R.string.settings_adhan_sound_selection),
-            subtitle = stringResource(R.string.settings_adhan_sound_selection_desc),
-            icon = Icons.Rounded.MusicNote,
-            onClick = onNavigateToAudio
-        )
-
         val showSilentPrayerNotification = settings?.playAdhanAudio == false
 
         if (showSilentPrayerNotification) {
@@ -255,6 +248,13 @@ private fun NotificationSoundSection(
                 onCheckedChange = onSilentNotificationChange
             )
         }
+
+        SettingsClickItem(
+            title = stringResource(R.string.settings_adhan_sound_selection),
+            subtitle = stringResource(R.string.settings_adhan_sound_selection_desc),
+            icon = Icons.Rounded.MusicNote,
+            onClick = onNavigateToAudio
+        )
     }
 }
 

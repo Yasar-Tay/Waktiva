@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
@@ -160,8 +161,9 @@ class MainActivity : AppCompatActivity() {
 fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: TimeManager) {
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
-    val settings by homeViewModel.settings.collectAsState(initial = null)
-    val homeState by homeViewModel.state.collectAsState()
+    val settings by homeViewModel.settings.collectAsStateWithLifecycle(initialValue = null)
+    val currentTime by homeViewModel.currentTime.collectAsStateWithLifecycle()
+    val currentPrayerDay by homeViewModel.currentPrayerDay.collectAsStateWithLifecycle(initialValue = null)
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     
@@ -213,8 +215,8 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
     }
 
     WaktivaBackgroundWrapper(
-        currentTime = homeState.currentTime.toLocalTime(),
-        prayerDay = homeState.currentPrayerDay
+        currentTime = currentTime.toLocalTime(),
+        prayerDay = currentPrayerDay
     ) {
         Box(modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection)) {
             NavHost(
@@ -312,8 +314,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
 
             // Test Adhan FAB — debug builds only, visible only on the Home screen
             val isOnHome = currentDestination?.route == Screen.Home.route
-            val adhanState by homeViewModel.state.collectAsState()
-            if (false && isOnHome && !adhanState.isAdhanPlaying) {
+            if (false && isOnHome) {
                 Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                     Column(
                         modifier = Modifier

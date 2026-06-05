@@ -32,10 +32,5 @@ data class HomeViewState(
     
     // Weather state
     val weatherCondition: WeatherCondition = WeatherCondition.UNKNOWN,
-    val temperature: Double? = null,
-    
-    // Solar and Compass data for atmospheric effects
-    val sunAzimuth: Float = 0f,
-    val sunAltitude: Float = 0f,
-    val compassAzimuth: Float = 0f
+    val temperature: Double? = null
 )
