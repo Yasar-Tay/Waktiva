@@ -164,6 +164,7 @@
     <string name="settings_method">Metoda e Llogaritjes</string>
     <string name="madhab_shafi">Shafi / Standard (Maliki, Hanbeli)</string>
     <string name="madhab_hanafi">Hanefi</string>
+    <string name="madhab_hanafi_desc">Namazi i ikindisë do të jetë rreth një orë më vonë se me llogaritjen standarde.</string>
     <string name="method_mwl">Lidhja e Botës Islame (MWL)</string>
     <string name="method_isna">Shoqëria Islame e Amerikës së Veriut (ISNA)</string>
     <string name="method_egypt">Autoriteti i Përgjithshëm Egjiptian i Anketimeve</string>
@@ -226,6 +227,9 @@
     <string name="settings_delete_history_desc">Fshini të gjitha të dhënat e lutjeve nga e kaluara</string>
     <string name="settings_delete_history_confirm_title">Fshini Historikun?</string>
     <string name="settings_delete_history_confirm_desc">Kjo do të fshijë përgjithmonë të gjitha të dhënat para ditës së sotme. Ky veprim nuk mund të kthehet.</string>
+    <string name="settings_delete_history_success">Të dhënat e mëparshme të namazeve u fshinë</string>
+    <string name="settings_delete_history_error">Të dhënat e namazeve nuk mund të fshiheshin</string>
+    <string name="map_custom_location">Vendndodhja e zgjedhur</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Njoftimet e kohës së namazit</string>

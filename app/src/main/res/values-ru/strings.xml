@@ -157,6 +157,7 @@
     <string name="settings_method">Метод расчета</string>
     <string name="madhab_shafi">Шафиитский / Стандартный (Малики, Ханбали)</string>
     <string name="madhab_hanafi">Ханафитский</string>
+    <string name="madhab_hanafi_desc">Время молитвы аср будет примерно на час позже, чем при стандартном расчёте.</string>
     <string name="method_mwl">Всемирная исламская лига</string>
     <string name="method_isna">Исламское общество Северной Америки (ISNA)</string>
     <string name="method_egypt">Египетское генеральное управление геодезии</string>
@@ -219,6 +220,9 @@
     <string name="settings_delete_history_desc">Удалить все прошлые данные о молитвах, чтобы освободить место</string>
     <string name="settings_delete_history_confirm_title">Удалить историю?</string>
     <string name="settings_delete_history_confirm_desc">Это навсегда удалит все записи о молитвах до сегодняшнего дня. Это действие нельзя отменить.</string>
+    <string name="settings_delete_history_success">Прошлые данные о молитвах удалены</string>
+    <string name="settings_delete_history_error">Не удалось удалить данные о молитвах</string>
+    <string name="map_custom_location">Выбранное местоположение</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Уведомления о времени намаза</string>

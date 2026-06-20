@@ -157,6 +157,7 @@
     <string name="settings_method">روش محاسبه</string>
     <string name="madhab_shafi">شافعی / استاندارد (مالکی، حنبلی)</string>
     <string name="madhab_hanafi">حنفی</string>
+    <string name="madhab_hanafi_desc">زمان نماز عصر حدود یک ساعت دیرتر از محاسبه استاندارد خواهد بود.</string>
     <string name="method_mwl">رابطه العالم الاسلامی</string>
     <string name="method_isna">انجمن اسلامی آمریکای شمالی (ISNA)</string>
     <string name="method_egypt">سازمان نقشه‌برداری مصر</string>
@@ -219,6 +220,9 @@
     <string name="settings_delete_history_desc">تمام داده‌های نماز گذشته را برای آزاد کردن فضا پاک کنید</string>
     <string name="settings_delete_history_confirm_title">حذف تاریخچه؟</string>
     <string name="settings_delete_history_confirm_desc">این کار تمام رکوردهای نماز پیش از امروز را برای همیشه پاک می‌کند. این عمل قابل بازگشت نیست.</string>
+    <string name="settings_delete_history_success">داده‌های نمازهای گذشته حذف شد</string>
+    <string name="settings_delete_history_error">داده‌های نماز حذف نشد</string>
+    <string name="map_custom_location">مکان انتخاب‌شده</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">اعلان‌های وقت نماز</string>

@@ -157,6 +157,7 @@
     <string name="settings_method">গণনা পদ্ধতি</string>
     <string name="madhab_shafi">শাফেয়ী / সাধারণ (মালিকি, হাম্বলি)</string>
     <string name="madhab_hanafi">Hanafi</string>
+    <string name="madhab_hanafi_desc">স্ট্যান্ডার্ড হিসাবের তুলনায় আসরের সময় প্রায় এক ঘণ্টা পরে হবে।</string>
     <string name="method_mwl">মুসলিম ওয়ার্ল্ড লীগ</string>
     <string name="method_isna">ইসলামিক সোসাইটি অফ নর্থ আমেরিকা (ISNA)</string>
     <string name="method_egypt">মিশরীয় জেনারেল অথরিটি অফ সার্ভে</string>
@@ -219,6 +220,9 @@
     <string name="settings_delete_history_desc">জায়গা খালি করতে পূর্বের সকল ডেটা মুছে ফেলুন</string>
     <string name="settings_delete_history_confirm_title">ইতিহাস মুছবেন?</string>
     <string name="settings_delete_history_confirm_desc">এটি আজকের আগের সকল নামাজ রেকর্ড স্থায়ীভাবে মুছে ফেলবে। এটি আর ফিরে পাওয়া যাবে না।</string>
+    <string name="settings_delete_history_success">আগের নামাজের তথ্য মুছে ফেলা হয়েছে</string>
+    <string name="settings_delete_history_error">নামাজের তথ্য মুছে ফেলা যায়নি</string>
+    <string name="map_custom_location">নির্বাচিত অবস্থান</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">নামাজের সময়ের বিজ্ঞপ্তি</string>

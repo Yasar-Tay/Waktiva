@@ -157,6 +157,7 @@
     <string name="settings_method">Método de cálculo</string>
     <string name="madhab_shafi">Shafi\'i / Estándar (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanafi</string>
+    <string name="madhab_hanafi_desc">La oración del Asr será aproximadamente una hora más tarde que con el cálculo estándar.</string>
     <string name="method_mwl">Liga Mundial Musulmana</string>
     <string name="method_isna">Sociedad Islámica de América del Norte (ISNA)</string>
     <string name="method_egypt">Autoridad Egipcia General de Encuestas</string>
@@ -219,6 +220,9 @@
     <string name="settings_delete_history_desc">Eliminar todos los datos de oración pasados para liberar espacio</string>
     <string name="settings_delete_history_confirm_title">¿Eliminar historial?</string>
     <string name="settings_delete_history_confirm_desc">Esto eliminará permanentemente todos los registros antes de hoy. Acción irreversible.</string>
+    <string name="settings_delete_history_success">Se eliminaron los datos de oraciones anteriores</string>
+    <string name="settings_delete_history_error">No se pudieron eliminar los datos de oración</string>
+    <string name="map_custom_location">Ubicación seleccionada</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notificaciones de tiempo de oración</string>

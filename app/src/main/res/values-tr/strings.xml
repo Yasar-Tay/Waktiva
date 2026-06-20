@@ -157,6 +157,7 @@
     <string name="settings_method">Hesaplama Yöntemi</string>
     <string name="madhab_shafi">Şafii / Standart (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanefi</string>
+    <string name="madhab_hanafi_desc">İkindi vakti standart hesaplamaya göre yaklaşık bir saat daha geç olur.</string>
     <string name="method_mwl">Müslüman Dünya Birliği</string>
     <string name="method_isna">Kuzey Amerika İslam Cemiyeti (ISNA)</string>
     <string name="method_egypt">Mısır Genel Araştırma Kurumu</string>
@@ -219,6 +220,9 @@
     <string name="settings_delete_history_desc">Yer açmak için geçmişteki tüm namaz verilerini sil</string>
     <string name="settings_delete_history_confirm_title">Geçmiş Silinsin mi?</string>
     <string name="settings_delete_history_confirm_desc">Bu işlem bugünden önceki tüm namaz kayıtlarını kalıcı olarak silecektir. Bu işlem geri alınamaz.</string>
+    <string name="settings_delete_history_success">Geçmiş namaz verileri silindi</string>
+    <string name="settings_delete_history_error">Namaz verileri silinemedi</string>
+    <string name="map_custom_location">Seçilen konum</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Namaz Vakti Bildirimleri</string>

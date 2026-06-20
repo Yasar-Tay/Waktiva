@@ -23,6 +23,9 @@ class TimeManager @Inject constructor() {
     private val _currentTime = MutableStateFlow(LocalDateTime.now())
     val currentTime = _currentTime.asStateFlow()
 
+    /** Returns a fresh value instead of the up-to-one-second-old ticker snapshot. */
+    fun now(): LocalDateTime = LocalDateTime.now().plus(_timeOffset.value)
+
     init {
         flow {
             while (true) {
@@ -30,12 +33,12 @@ class TimeManager @Inject constructor() {
                 delay(1000)
             }
         }.onEach {
-            _currentTime.value = LocalDateTime.now().plus(_timeOffset.value)
+            _currentTime.value = now()
         }.launchIn(scope)
     }
 
     fun addMinutes(minutes: Long) {
         _timeOffset.value = _timeOffset.value.plusMinutes(minutes)
-        _currentTime.value = LocalDateTime.now().plus(_timeOffset.value)
+        _currentTime.value = now()
     }
 }

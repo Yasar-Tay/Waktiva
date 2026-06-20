@@ -11,6 +11,8 @@ internal data class WidgetChronometerState(
 
 internal object WidgetChronometerResolver {
 
+    private const val TRANSITION_TOLERANCE_MILLIS = 1_000L
+
     fun resolve(
         nextPrayer: NextPrayer?,
         nowEpochMillis: Long,
@@ -27,7 +29,9 @@ internal object WidgetChronometerResolver {
             .toEpochMilli()
         val remainingMillis = targetEpochMillis - nowEpochMillis
 
-        return if (remainingMillis <= 0L) {
+        // AlarmManager may deliver just before the exact wall-clock boundary. Stopping during
+        // this final second avoids Android's Chronometer rendering a negative value meanwhile.
+        return if (remainingMillis <= TRANSITION_TOLERANCE_MILLIS) {
             WidgetChronometerState(
                 cacheKey = cacheKey,
                 baseTime = elapsedRealtime,

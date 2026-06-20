@@ -157,6 +157,7 @@
     <string name="settings_method">Metode Perhitungan</string>
     <string name="madhab_shafi">Syafi\'i / Standart (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanafi</string>
+    <string name="madhab_hanafi_desc">Waktu Asar akan sekitar satu jam lebih lambat daripada perhitungan standar.</string>
     <string name="method_mwl">Liga Muslim Dunia</string>
     <string name="method_isna">Masyarakat Islam Amerika Utara (ISNA)</string>
     <string name="method_egypt">Otoritas Umum Survei Mesir</string>
@@ -219,6 +220,9 @@
     <string name="settings_delete_history_desc">Hapus semua data shalat masa lalu untuk mengosongkan ruang</string>
     <string name="settings_delete_history_confirm_title">Hapus Riwayat?</string>
     <string name="settings_delete_history_confirm_desc">Ini akan menghapus secara permanen semua catatan shalat sebelum hari ini. Tindakan ini tidak dapat dibatalkan.</string>
+    <string name="settings_delete_history_success">Data salat sebelumnya telah dihapus</string>
+    <string name="settings_delete_history_error">Data salat tidak dapat dihapus</string>
+    <string name="map_custom_location">Lokasi yang dipilih</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notifikasi Waktu Shalat</string>

@@ -157,6 +157,7 @@
     <string name="settings_method">Berechnungsmethode</string>
     <string name="madhab_shafi">Schafi\'i / Standard (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanafi</string>
+    <string name="madhab_hanafi_desc">Das Asr-Gebet ist etwa eine Stunde später als bei der Standardberechnung.</string>
     <string name="method_mwl">Islamische Weltliga</string>
     <string name="method_isna">Islamic Society of North America (ISNA)</string>
     <string name="method_egypt">Egyptian General Authority of Survey</string>
@@ -219,6 +220,9 @@
     <string name="settings_delete_history_desc">Alle Gebetsdaten aus der Vergangenheit löschen, um Platz freizugeben</string>
     <string name="settings_delete_history_confirm_title">Historie löschen?</string>
     <string name="settings_delete_history_confirm_desc">Dies löscht alle Gebetsaufzeichnungen vor heute dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="settings_delete_history_success">Vergangene Gebetsdaten wurden gelöscht</string>
+    <string name="settings_delete_history_error">Gebetsdaten konnten nicht gelöscht werden</string>
+    <string name="map_custom_location">Ausgewählter Standort</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Gebetszeit-Benachrichtigungen</string>

@@ -164,6 +164,7 @@
     <string name="settings_method">Metoda obračuna</string>
     <string name="madhab_shafi">Šafijski / Standardni (Malikijski, Hanbelijski)</string>
     <string name="madhab_hanafi">Hanefijski</string>
+    <string name="madhab_hanafi_desc">Vrijeme ikindije bit će otprilike sat kasnije nego prema standardnom izračunu.</string>
     <string name="method_mwl">Muslim World League</string>
     <string name="method_isna">Islamic Society of North America (ISNA)</string>
     <string name="method_egypt">Egyptian General Authority of Survey</string>
@@ -226,6 +227,9 @@
     <string name="settings_delete_history_desc">Obrišite sve prošle podatke o namazima</string>
     <string name="settings_delete_history_confirm_title">Obrisati historiju?</string>
     <string name="settings_delete_history_confirm_desc">Ovo će trajno obrisati sve zapise o namazima prije današnjeg dana. Ova radnja se ne može poništiti.</string>
+    <string name="settings_delete_history_success">Prethodni podaci o namazima su izbrisani</string>
+    <string name="settings_delete_history_error">Podaci o namazima nisu mogli biti izbrisani</string>
+    <string name="map_custom_location">Odabrana lokacija</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Obavijesti o vremenu namaza</string>

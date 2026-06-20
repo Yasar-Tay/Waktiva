@@ -1,9 +1,7 @@
 package com.ybugmobile.waktiva.utils
 
-import android.content.res.Resources
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import androidx.core.os.ConfigurationCompat
 import com.ybugmobile.waktiva.R
 import java.util.Locale as JavaLocale
 
@@ -51,12 +49,7 @@ object LanguageUtils {
     @Composable
     fun getNativeLanguageName(languageCode: String): String {
         return when (languageCode) {
-            "system" -> {
-                val systemLocale = ConfigurationCompat.getLocales(Resources.getSystem().configuration).get(0)
-                val displayName = systemLocale?.getDisplayName(systemLocale)?.replaceFirstChar { it.uppercase() } ?: ""
-                val systemLabel = stringResource(R.string.lang_system)
-                if (displayName.isNotEmpty()) "$systemLabel ($displayName)" else systemLabel
-            }
+            "system" -> stringResource(R.string.lang_system)
             else -> {
                 val locale = JavaLocale(languageCode)
                 locale.getDisplayName(locale).replaceFirstChar { it.uppercase() }

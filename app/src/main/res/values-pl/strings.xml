@@ -164,6 +164,7 @@
     <string name="settings_method">Metoda obliczeń</string>
     <string name="madhab_shafi">Szafi / Standardowa (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanafi</string>
+    <string name="madhab_hanafi_desc">Modlitwa Asr będzie około godzinę później niż przy standardowych obliczeniach.</string>
     <string name="method_mwl">Liga Świata Muzułmańskiego (MWL)</string>
     <string name="method_isna">Islamskie Stowarzyszenie Ameryki Północnej (ISNA)</string>
     <string name="method_egypt">Egipski Generalny Urząd Pomiarowy</string>
@@ -226,6 +227,9 @@
     <string name="settings_delete_history_desc">Usuń wszystkie dane modlitw z przeszłości</string>
     <string name="settings_delete_history_confirm_title">Usunąć historię?</string>
     <string name="settings_delete_history_confirm_desc">Spowoduje to trwałe usunięcie wszystkich zapisów modlitw przed dniem dzisiejszym. Tej czynności nie można cofnąć.</string>
+    <string name="settings_delete_history_success">Usunięto wcześniejsze dane modlitw</string>
+    <string name="settings_delete_history_error">Nie udało się usunąć danych modlitw</string>
+    <string name="map_custom_location">Wybrana lokalizacja</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Powiadomienia o czasie modlitwy</string>

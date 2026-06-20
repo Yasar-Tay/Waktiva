@@ -22,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -93,6 +94,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         WaktivaWidget.updateAll(context)
                         handleAdhanTrigger(context, prayerName, prayerDate)
                         rescheduleNextPrayer()
+                        refreshWidgetAfterBoundary(context)
                     }
                     AlarmScheduler.ACTION_WIDGET_REFRESH -> {
                         // This action wakes the app to ensure transitions like Sunrise -> Dhuhr
@@ -100,6 +102,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         Log.d("PrayerAlarmReceiver", "Executing WIDGET REFRESH milestone transition")
                         WaktivaWidget.updateAll(context)
                         rescheduleNextPrayer()
+                        refreshWidgetAfterBoundary(context)
                     }
                 }
             } catch (e: Exception) {
@@ -108,6 +111,13 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 pendingResult.finish()
             }
         }
+    }
+
+    private suspend fun refreshWidgetAfterBoundary(context: Context) {
+        // A second render after the clock boundary replaces the stopped 00:00 frame with the
+        // following prayer even when the first alarm delivery was a fraction of a second early.
+        delay(1_000L)
+        WaktivaWidget.updateAll(context)
     }
 
     private suspend fun rescheduleNextPrayer() {

@@ -330,8 +330,7 @@ private fun PreferencesStep(
     val audioItems by audioViewModel.audioItems.collectAsState()
     val selectedPrayerType by audioViewModel.selectedPrayerType.collectAsState()
     
-    val currentAppLocales = AppCompatDelegate.getApplicationLocales()
-    val currentLanguage = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
+    val currentLanguage = settings?.language ?: "system"
 
     var showMethodDialog by rememberSaveable { mutableStateOf(false) }
     var showMadhabDialog by rememberSaveable { mutableStateOf(false) }
@@ -646,9 +645,10 @@ private fun PreferencesStep(
                 } else {
                     LocaleListCompat.forLanguageTags(lang)
                 }
-                AppCompatDelegate.setApplicationLocales(appLocale)
-                settingsViewModel.updateLanguage(lang)
-                showLanguageDialog = false
+                settingsViewModel.updateLanguage(lang) {
+                    AppCompatDelegate.setApplicationLocales(appLocale)
+                    showLanguageDialog = false
+                }
             },
             onDismiss = { showLanguageDialog = false }
         )
@@ -659,6 +659,9 @@ private fun PreferencesStep(
             title = stringResource(R.string.settings_madhab),
             options = madhabOptions,
             selectedKey = settings?.madhab ?: 0,
+            optionDescription = { value ->
+                if (value == 1) stringResource(R.string.madhab_hanafi_desc) else null
+            },
             onSelected = { settingsViewModel.setMadhab(it); showMadhabDialog = false },
             onDismiss = { showMadhabDialog = false }
         )
@@ -787,6 +790,7 @@ private fun <T> WelcomeSelectionDialog(
     title: String,
     options: List<Pair<String, T>>,
     selectedKey: T,
+    optionDescription: @Composable (T) -> String? = { null },
     onSelected: (T) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -814,6 +818,7 @@ private fun <T> WelcomeSelectionDialog(
                 ) {
                     items(options) { (name, id) ->
                         val isSelected = id == selectedKey
+                        val description = optionDescription(id)
                         Surface(
                             onClick = { onSelected(id) },
                             shape = RoundedCornerShape(16.dp),
@@ -833,12 +838,22 @@ private fun <T> WelcomeSelectionDialog(
                                     )
                                 )
                                 Spacer(Modifier.width(12.dp))
-                                Text(
-                                    name, 
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = Color.White,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                )
+                                Column {
+                                    Text(
+                                        name,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = Color.White,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                    if (description != null) {
+                                        Spacer(Modifier.height(2.dp))
+                                        Text(
+                                            text = description,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = Color.White.copy(alpha = 0.6f)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

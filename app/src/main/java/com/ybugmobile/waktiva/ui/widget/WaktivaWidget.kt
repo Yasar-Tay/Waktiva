@@ -143,7 +143,9 @@ class WaktivaWidget : AppWidgetProvider() {
 
             // One-shot reads — no Flow subscription, no recomposition, no loop.
             val prayerDays = ep.prayerRepository().getPrayerDays().first()
-            val now        = ep.timeManager().currentTime.value
+            // Alarm broadcasts can arrive between the TimeManager ticker's one-second updates.
+            // Reading a fresh value prevents the just-finished prayer from being selected again.
+            val now        = ep.timeManager().now()
             val today      = prayerDays.find { it.date == now.toLocalDate() }
             val tomorrow   = prayerDays.find { it.date == now.toLocalDate().plusDays(1) }
             val nextPrayer = ep.getNextPrayerUseCase()(today, tomorrow, now)

@@ -164,6 +164,7 @@
     <string name="settings_method">Calculation Method</string>
     <string name="madhab_shafi">Shafi / Standard (Maliki, Hanbali)</string>
     <string name="madhab_hanafi">Hanafi</string>
+    <string name="madhab_hanafi_desc">Asr will be approximately one hour later than with the standard calculation.</string>
     <string name="method_mwl">Muslim World League</string>
     <string name="method_isna">Islamic Society of North America (ISNA)</string>
     <string name="method_egypt">Egyptian General Authority of Survey</string>
@@ -226,6 +227,9 @@
     <string name="settings_delete_history_desc">Delete all prayer data from the past to free up space</string>
     <string name="settings_delete_history_confirm_title">Delete History?</string>
     <string name="settings_delete_history_confirm_desc">This will permanently delete all prayer records before today. This action cannot be undone.</string>
+    <string name="settings_delete_history_success">Past prayer data deleted</string>
+    <string name="settings_delete_history_error">Prayer data could not be deleted</string>
+    <string name="map_custom_location">Selected location</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Prayer Time Notifications</string>

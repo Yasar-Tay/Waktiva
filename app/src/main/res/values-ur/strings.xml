@@ -157,6 +157,7 @@
     <string name="settings_method">حساب کا طریقہ</string>
     <string name="madhab_shafi">شافعی / معیاری (مالکی، حنبلی)</string>
     <string name="madhab_hanafi">حنفی</string>
+    <string name="madhab_hanafi_desc">عصر کا وقت معیاری حساب کے مقابلے میں تقریباً ایک گھنٹہ بعد ہوگا۔</string>
     <string name="method_mwl">رابطہ عالمِ اسلامی</string>
     <string name="method_isna">اسلامک سوسائٹی آف نارتھ امریکہ (ISNA)</string>
     <string name="method_egypt">مصری جنرل اتھارٹی آف سروے</string>
@@ -219,6 +220,9 @@
     <string name="settings_delete_history_desc">جگہ خالی کرنے کے لیے ماضی کا تمام ڈیٹا حذف کریں</string>
     <string name="settings_delete_history_confirm_title">تاریخ حذف کریں؟</string>
     <string name="settings_delete_history_confirm_desc">اس سے آج سے پہلے کے تمام ریکارڈز مستقل طور پر حذف ہو جائیں گے۔ یہ عمل واپس نہیں لیا جا سکتا۔</string>
+    <string name="settings_delete_history_success">پچھلا نماز کا ڈیٹا حذف کر دیا گیا</string>
+    <string name="settings_delete_history_error">نماز کا ڈیٹا حذف نہیں ہو سکا</string>
+    <string name="map_custom_location">منتخب مقام</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">نماز کے وقت کی اطلاعات</string>

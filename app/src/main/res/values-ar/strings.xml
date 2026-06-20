@@ -157,6 +157,7 @@
     <string name="settings_method">طريقة الحساب</string>
     <string name="madhab_shafi">شافعي / قياسي (مالكي، حنبلي)</string>
     <string name="madhab_hanafi">حنبلي</string>
+    <string name="madhab_hanafi_desc">سيكون وقت العصر متأخرًا بنحو ساعة عن الحساب القياسي.</string>
     <string name="method_mwl">رابطة العالم الإسلامي</string>
     <string name="method_isna">الجمعية الإسلامية لأمريكا الشمالية (ISNA)</string>
     <string name="method_egypt">الهيئة المصرية العامة للمساحة</string>
@@ -219,6 +220,9 @@
     <string name="settings_delete_history_desc">حذف جميع بيانات الصلاة السابقة لتفريغ مساحة</string>
     <string name="settings_delete_history_confirm_title">حذف السجل؟</string>
     <string name="settings_delete_history_confirm_desc">سيؤدي هذا إلى حذف جميع سجلات الصلاة قبل اليوم نهائياً. لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="settings_delete_history_success">تم حذف بيانات الصلوات السابقة</string>
+    <string name="settings_delete_history_error">تعذر حذف بيانات الصلاة</string>
+    <string name="map_custom_location">الموقع المحدد</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">إشعارات وقت الصلاة</string>

@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -45,12 +46,23 @@ fun SettingsScreen(
 
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
+    val context = LocalContext.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     var showMethodDialog by remember { mutableStateOf(false) }
     var showMadhabDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showDeleteHistoryDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(viewModel) {
+        viewModel.uiEvents.collect { event ->
+            val message = when (event) {
+                SettingsViewModel.UiEvent.PrayerHistoryDeleted -> R.string.settings_delete_history_success
+                SettingsViewModel.UiEvent.PrayerHistoryDeleteFailed -> R.string.settings_delete_history_error
+            }
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -198,9 +210,10 @@ fun SettingsScreen(
             } else {
                 LocaleListCompat.forLanguageTags(lang)
             }
-            AppCompatDelegate.setApplicationLocales(appLocale)
-            viewModel.updateLanguage(lang)
-            showLanguageDialog = false
+            viewModel.updateLanguage(lang) {
+                AppCompatDelegate.setApplicationLocales(appLocale)
+                showLanguageDialog = false
+            }
         },
         onMadhabSelected = { viewModel.setMadhab(it); showMadhabDialog = false },
         onMethodSelected = { viewModel.setCalculationMethod(it); showMethodDialog = false },
@@ -266,9 +279,6 @@ private fun PreferencesSection(
     onMethodClick: () -> Unit,
     onWeatherEffectsChange: (Boolean) -> Unit
 ) {
-    val currentAppLocales = AppCompatDelegate.getApplicationLocales()
-    val currentLanguageCode = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
-
     val madhabOptions = listOf(
         stringResource(R.string.madhab_shafi) to 0,
         stringResource(R.string.madhab_hanafi) to 1
@@ -282,7 +292,7 @@ private fun PreferencesSection(
         settings?.let { s ->
             SettingsClickItem(
                 title = stringResource(R.string.settings_language),
-                subtitle = LanguageUtils.getNativeLanguageName(currentLanguageCode),
+                subtitle = LanguageUtils.getNativeLanguageName(s.language),
                 icon = Icons.Rounded.Language,
                 onClick = onLanguageClick
             )
@@ -432,8 +442,7 @@ private fun SettingsDialogs(
     onMethodSelected: (Int) -> Unit,
     onDeleteHistoryConfirm: () -> Unit
 ) {
-    val currentAppLocales = AppCompatDelegate.getApplicationLocales()
-    val currentLanguageCode = if (!currentAppLocales.isEmpty) currentAppLocales.get(0)?.language ?: "system" else "system"
+    val currentLanguageCode = settings?.language ?: "system"
 
     if (showLanguageDialog) {
         ModernSelectionDialog(
@@ -454,6 +463,9 @@ private fun SettingsDialogs(
             title = stringResource(R.string.settings_madhab),
             options = madhabOptions,
             selectedKey = settings?.madhab ?: 0,
+            optionDescription = { value ->
+                if (value == 1) stringResource(R.string.madhab_hanafi_desc) else null
+            },
             onSelected = onMadhabSelected,
             onDismiss = onDismissMadhab
         )

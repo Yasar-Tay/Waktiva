@@ -20,6 +20,7 @@ fun <T> ModernSelectionDialog(
     title: String,
     options: List<Pair<String, T>>,
     selectedKey: T,
+    optionDescription: @Composable (T) -> String? = { null },
     onSelected: (T) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -48,6 +49,7 @@ fun <T> ModernSelectionDialog(
                 ) {
                     items(options) { (label, value) ->
                         val isSelected = value == selectedKey
+                        val description = optionDescription(value)
                         Surface(
                             onClick = { onSelected(value) },
                             shape = RoundedCornerShape(16.dp),
@@ -64,12 +66,22 @@ fun <T> ModernSelectionDialog(
                                     colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
                                 )
                                 Spacer(Modifier.width(12.dp))
-                                Text(
-                                    label,
-                                    style = MaterialTheme.typography.bodyLarge.copy(
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                Column {
+                                    Text(
+                                        label,
+                                        style = MaterialTheme.typography.bodyLarge.copy(
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                        )
                                     )
-                                )
+                                    if (description != null) {
+                                        Spacer(Modifier.height(2.dp))
+                                        Text(
+                                            text = description,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

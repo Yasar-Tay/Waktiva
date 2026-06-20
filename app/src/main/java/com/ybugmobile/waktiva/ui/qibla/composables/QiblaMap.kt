@@ -50,6 +50,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -74,6 +75,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.graphics.Path as ComposePath
+import com.ybugmobile.waktiva.R
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -109,6 +111,8 @@ fun QiblaMap(
     var symbolManager by remember { mutableStateOf<SymbolManager?>(null) }
     var lineManager by remember { mutableStateOf<LineManager?>(null) }
     var customPoint by remember { mutableStateOf<LatLng?>(null) }
+    var customPointScreenPos by remember { mutableStateOf<android.graphics.PointF?>(null) }
+    var showCustomPointInfo by remember { mutableStateOf(false) }
     
     var isMapOriented by remember { mutableStateOf(false) }
     var annotations by remember { mutableStateOf(QiblaAnnotations()) }
@@ -139,6 +143,17 @@ fun QiblaMap(
         val map = mapInstance ?: return@LaunchedEffect
         map.addOnMapClickListener { tapLatLng ->
             val pt = map.projection.toScreenLocation(tapLatLng)
+            customPoint?.let { point ->
+                val markerPosition = map.projection.toScreenLocation(point)
+                val hitRadius = 32f * density
+                if (abs(pt.x - markerPosition.x) <= hitRadius &&
+                    abs(pt.y - markerPosition.y) <= hitRadius
+                ) {
+                    customPointScreenPos = markerPosition
+                    showCustomPointInfo = true
+                    return@addOnMapClickListener true
+                }
+            }
             // 4 dp fat-finger tolerance only — the bitmap's tight bounding box
             // provides the actual hit area; a large r here creates invisible tap zones.
             val r = 4f * density
@@ -161,6 +176,7 @@ fun QiblaMap(
             }
             selectedMosqueState.value = null
             selectedMosqueScreenPos.value = null
+            showCustomPointInfo = false
             false
         }
     }
@@ -204,6 +220,9 @@ fun QiblaMap(
                             selectedMosqueState.value?.let { m ->
                                 selectedMosqueScreenPos.value = map.projection.toScreenLocation(LatLng(m.lat, m.lng))
                             }
+                            customPoint?.let { point ->
+                                customPointScreenPos = map.projection.toScreenLocation(point)
+                            }
                         }
 
                         val initialStyle = if (isSatelliteView) MapConstants.SATELLITE_STYLE_JSON else MapConstants.STREET_STYLE
@@ -238,6 +257,8 @@ fun QiblaMap(
                         }
                         map.addOnMapLongClickListener { point ->
                             customPoint = point
+                            customPointScreenPos = map.projection.toScreenLocation(point)
+                            showCustomPointInfo = true
                             onMapLongClick(point)
                             true
                         }
@@ -311,6 +332,23 @@ fun QiblaMap(
                     selectedMosqueScreenPos.value = null
                 }
             )
+        }
+
+        val currentCustomPoint = customPoint
+        val currentCustomPosition = customPointScreenPos
+        AnimatedVisibility(
+            visible = showCustomPointInfo && currentCustomPoint != null && currentCustomPosition != null,
+            enter = scaleIn(initialScale = 0.8f) + fadeIn(tween(180)),
+            exit = scaleOut(targetScale = 0.8f) + fadeOut(tween(130))
+        ) {
+            if (currentCustomPoint != null && currentCustomPosition != null) {
+                CustomPointInfoBubble(
+                    point = currentCustomPoint,
+                    screenX = currentCustomPosition.x,
+                    screenY = currentCustomPosition.y,
+                    onDismiss = { showCustomPointInfo = false }
+                )
+            }
         }
 
         // Mosque fetch failure chip — only shown when fetch failed AND cache is empty
@@ -507,6 +545,63 @@ fun QiblaMap(
         })
 
         style.getSourceAs<GeoJsonSource>(MOSQUE_SOURCE_ID)?.setGeoJson(collection)
+    }
+}
+
+@Composable
+private fun CustomPointInfoBubble(
+    point: LatLng,
+    screenX: Float,
+    screenY: Float,
+    onDismiss: () -> Unit
+) {
+    val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+    val bubbleWidth = 220.dp
+    val bubbleWidthPx = with(density) { bubbleWidth.toPx() }
+    val marginPx = with(density) { 16.dp.toPx() }
+    val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
+    val yOffsetPx = with(density) { 112.dp.toPx() }
+    val x = (screenX - bubbleWidthPx / 2f)
+        .coerceIn(marginPx, screenWidthPx - bubbleWidthPx - marginPx)
+    val y = (screenY - yOffsetPx).coerceAtLeast(marginPx)
+
+    Surface(
+        color = Color.White.copy(alpha = 0.97f),
+        shape = RoundedCornerShape(16.dp),
+        shadowElevation = 8.dp,
+        modifier = Modifier
+            .offset { IntOffset(x.roundToInt(), y.roundToInt()) }
+            .width(bubbleWidth)
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 14.dp, top = 10.dp, end = 8.dp, bottom = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(Modifier.size(8.dp).background(Color(0xFF5856D6), CircleShape))
+            Spacer(Modifier.width(8.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.map_custom_location),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                Text(
+                    text = String.format(Locale.US, "%.5f, %.5f", point.latitude, point.longitude),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Black.copy(alpha = 0.55f)
+                )
+            }
+            IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = stringResource(R.string.settings_cancel),
+                    tint = Color.Black.copy(alpha = 0.4f),
+                    modifier = Modifier.size(15.dp)
+                )
+            }
+        }
     }
 }
 

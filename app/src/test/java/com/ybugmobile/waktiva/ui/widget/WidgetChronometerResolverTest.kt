@@ -80,6 +80,28 @@ class WidgetChronometerResolverTest {
         assertTrue(state?.isRunning == true)
     }
 
+    @Test
+    fun stopsDuringFinalSecondToPreventNegativeCountdown() {
+        val nextPrayer = nextPrayer(
+            type = PrayerType.ASR,
+            date = LocalDate.of(2026, 6, 1),
+            time = LocalTime.of(16, 30)
+        )
+        val targetEpochMillis = epochMillis(nextPrayer.date, nextPrayer.time)
+        val elapsedRealtime = 75_000L
+
+        val state = WidgetChronometerResolver.resolve(
+            nextPrayer = nextPrayer,
+            nowEpochMillis = targetEpochMillis - 500L,
+            elapsedRealtime = elapsedRealtime,
+            cachedPrayerKey = "",
+            cachedBaseTime = 0L
+        )
+
+        assertEquals(elapsedRealtime, state?.baseTime)
+        assertFalse(state?.isRunning == true)
+    }
+
     private fun nextPrayer(type: PrayerType, date: LocalDate, time: LocalTime): NextPrayer = NextPrayer(
         type = type,
         time = time,

@@ -8,6 +8,8 @@ import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.manager.TimeManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
@@ -21,6 +23,14 @@ class SettingsViewModel @Inject constructor(
     private val prayerRepository: PrayerRepository,
     private val timeManager: TimeManager
 ) : ViewModel() {
+
+    sealed interface UiEvent {
+        data object PrayerHistoryDeleted : UiEvent
+        data object PrayerHistoryDeleteFailed : UiEvent
+    }
+
+    private val _uiEvents = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
+    val uiEvents = _uiEvents.asSharedFlow()
 
     val settings = settingsManager.settingsFlow
     val currentTime = timeManager.currentTime
@@ -48,9 +58,10 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun updateLanguage(language: String) {
+    fun updateLanguage(language: String, onUpdated: () -> Unit = {}) {
         viewModelScope.launch {
             settingsManager.updateLanguage(language)
+            onUpdated()
         }
     }
 
@@ -68,8 +79,13 @@ class SettingsViewModel @Inject constructor(
 
     fun deletePastData() {
         viewModelScope.launch {
-            val today = LocalDate.now().toString()
-            prayerRepository.deletePastData(today)
+            try {
+                val today = LocalDate.now().toString()
+                prayerRepository.deletePastData(today)
+                _uiEvents.emit(UiEvent.PrayerHistoryDeleted)
+            } catch (_: Exception) {
+                _uiEvents.emit(UiEvent.PrayerHistoryDeleteFailed)
+            }
         }
     }
 
