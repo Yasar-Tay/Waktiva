@@ -120,10 +120,20 @@ class PrayerRepositoryImpl @Inject constructor(
             } else {
                 weatherApi.getCurrentWeather(coordinateQuery)
             }
+            val reportedCondition = WeatherCondition.fromWeatherApiCode(
+                response.current.condition.code
+            )
             val info = WeatherInfo(
                 temperature = response.current.temperatureCelsius,
-                condition = WeatherCondition.fromWeatherApiCode(response.current.condition.code),
-                isDay = response.current.isDay == 1
+                condition = reportedCondition,
+                isDay = response.current.isDay == 1,
+                precipitationMillimeters = response.current.precipitationMillimeters,
+                cloudCoverPercent = response.current.cloudCoverPercent,
+                effectCondition = WeatherCondition.forVisualEffects(
+                    reportedCondition = reportedCondition,
+                    precipitationMillimeters = response.current.precipitationMillimeters,
+                    cloudCoverPercent = response.current.cloudCoverPercent
+                )
             )
             Result.success(info)
         } catch (e: Exception) {

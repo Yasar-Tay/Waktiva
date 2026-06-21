@@ -21,6 +21,10 @@ data class CurrentWeatherDto(
     val temperatureCelsius: Double,
     @SerializedName("is_day")
     val isDay: Int,
+    @SerializedName("precip_mm")
+    val precipitationMillimeters: Double,
+    @SerializedName("cloud")
+    val cloudCoverPercent: Int,
     @SerializedName("condition")
     val condition: WeatherConditionDto
 )

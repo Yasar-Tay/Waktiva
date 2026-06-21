@@ -48,6 +48,8 @@ enum class WeatherCondition {
         }
 
     companion object {
+        private const val MIN_VISIBLE_PRECIPITATION_MM = 0.1
+
         fun fromWeatherApiCode(code: Int): WeatherCondition {
             return when (code) {
                 1000 -> CLEAR
@@ -70,6 +72,41 @@ enum class WeatherCondition {
                 1279, 1282 -> THUNDERSTORM_HAIL
                 else -> UNKNOWN
             }
+        }
+
+        fun forVisualEffects(
+            reportedCondition: WeatherCondition,
+            precipitationMillimeters: Double,
+            cloudCoverPercent: Int
+        ): WeatherCondition {
+            if (!reportedCondition.hasPrecipitationEffect() ||
+                precipitationMillimeters >= MIN_VISIBLE_PRECIPITATION_MM
+            ) {
+                return reportedCondition
+            }
+
+            return when {
+                cloudCoverPercent >= 80 -> OVERCAST
+                cloudCoverPercent >= 30 -> PARTLY_CLOUDY
+                cloudCoverPercent >= 10 -> MAINLY_CLEAR
+                else -> CLEAR
+            }
+        }
+
+        private fun WeatherCondition.hasPrecipitationEffect(): Boolean = when (this) {
+            DRIZZLE,
+            FREEZING_DRIZZLE,
+            RAINY,
+            HEAVY_RAIN,
+            FREEZING_RAIN,
+            SNOWY,
+            HEAVY_SNOW,
+            SNOW_GRAINS,
+            RAIN_SHOWERS,
+            SNOW_SHOWERS,
+            THUNDERSTORM,
+            THUNDERSTORM_HAIL -> true
+            else -> false
         }
     }
 }

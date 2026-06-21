@@ -21,16 +21,42 @@ import com.ybugmobile.waktiva.domain.model.WeatherCondition
 @Composable
 fun DebugWeatherDialog(
     onDismiss: () -> Unit,
-    onConditionSelected: (WeatherCondition) -> Unit
+    onConditionSelected: (WeatherCondition, WeatherCondition) -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Test Weather Conditions") },
         text = {
             LazyColumn {
+                item {
+                    TextButton(
+                        onClick = {
+                            onConditionSelected(
+                                WeatherCondition.RAIN_SHOWERS,
+                                WeatherCondition.CLEAR
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("TRACE RAIN (0.06 mm) → CLEAR EFFECT")
+                    }
+                }
+                item {
+                    TextButton(
+                        onClick = {
+                            onConditionSelected(
+                                WeatherCondition.RAINY,
+                                WeatherCondition.OVERCAST
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("DRY RAIN (90% CLOUD) → OVERCAST EFFECT")
+                    }
+                }
                 items(WeatherCondition.entries.filter { it != WeatherCondition.UNKNOWN }) { condition ->
                     TextButton(
-                        onClick = { onConditionSelected(condition) },
+                        onClick = { onConditionSelected(condition, condition) },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(condition.name)

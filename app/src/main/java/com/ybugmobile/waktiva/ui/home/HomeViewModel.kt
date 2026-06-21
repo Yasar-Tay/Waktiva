@@ -85,6 +85,7 @@ class HomeViewModel @Inject constructor(
 
     // Weather State
     private val _weatherCondition = MutableStateFlow(WeatherCondition.UNKNOWN)
+    private val _weatherEffectCondition = MutableStateFlow(WeatherCondition.UNKNOWN)
     private val _temperature = MutableStateFlow<Double?>(null)
     private var weatherRefreshJob: Job? = null
     private var lastWeatherFetchTime = 0L
@@ -233,6 +234,7 @@ class HomeViewModel @Inject constructor(
                 .onSuccess { info ->
                     lastWeatherFetchTime = System.currentTimeMillis()
                     _weatherCondition.value = info.condition
+                    _weatherEffectCondition.value = info.effectCondition
                     _temperature.value = info.temperature
                 }
                 .onFailure { error ->
@@ -241,8 +243,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun debugSetWeather(condition: WeatherCondition) {
-        _weatherCondition.value = condition
+    fun debugSetWeather(
+        reportedCondition: WeatherCondition,
+        effectCondition: WeatherCondition = reportedCondition
+    ) {
+        _weatherCondition.value = reportedCondition
+        _weatherEffectCondition.value = effectCondition
     }
 
     private fun updateHealthStatus() {
@@ -300,7 +306,7 @@ class HomeViewModel @Inject constructor(
         selectedDate, currentTime, currentPrayerDay, moonPhase,
         nextPrayerInfo, currentPrayerInfo, isRefreshing, 
         _isNetworkAvailable, _isLocationEnabled, _isLocationPermissionGranted, _hasSystemIssues,
-        _weatherCondition, _temperature,
+        _weatherCondition, _weatherEffectCondition, _temperature,
         settings, _isAdhanPlaying, _playingPrayerName, allPrayerDays
     ) { args ->
         val date = args[0] as LocalDate
@@ -315,11 +321,12 @@ class HomeViewModel @Inject constructor(
         val locPerm = args[9] as Boolean
         val issues = args[10] as Boolean
         val weather = args[11] as WeatherCondition
-        val temp = args[12] as? Double
-        val currentSettings = args[13] as UserSettings
-        val playing = args[14] as Boolean
-        val prayerName = args[15] as? String
-        val allDaysList = args[16] as List<PrayerDay>
+        val weatherEffect = args[12] as WeatherCondition
+        val temp = args[13] as? Double
+        val currentSettings = args[14] as UserSettings
+        val playing = args[15] as Boolean
+        val prayerName = args[16] as? String
+        val allDaysList = args[17] as List<PrayerDay>
         
         // If the immediate next event is SUNRISE (which has no adhan),
         // we check the mute state for DHUHR instead, as the button targets it.
@@ -353,6 +360,7 @@ class HomeViewModel @Inject constructor(
             isLocationPermissionGranted = locPerm,
             hasSystemIssues = issues,
             weatherCondition = weather,
+            weatherEffectCondition = weatherEffect,
             temperature = temp
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))

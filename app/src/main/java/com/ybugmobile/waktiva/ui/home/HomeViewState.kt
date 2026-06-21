@@ -32,5 +32,6 @@ data class HomeViewState(
     
     // Weather state
     val weatherCondition: WeatherCondition = WeatherCondition.UNKNOWN,
+    val weatherEffectCondition: WeatherCondition = WeatherCondition.UNKNOWN,
     val temperature: Double? = null
 )

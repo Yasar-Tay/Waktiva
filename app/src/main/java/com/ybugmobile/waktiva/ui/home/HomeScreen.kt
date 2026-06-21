@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.ybugmobile.waktiva.BuildConfig
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.domain.model.PrayerDay
@@ -76,7 +77,12 @@ fun HomeScreen(
     val onStopAdhan = remember(viewModel) { { viewModel.stopAdhan(); Unit } }
     val onStopTest = remember(viewModel) { { viewModel.stopTestAlarm(); Unit } }
     val onResetDate = remember(viewModel) { { viewModel.selectDate(LocalDate.now()); Unit } }
-    val onDebugWeather = remember(viewModel) { { it: WeatherCondition -> viewModel.debugSetWeather(it); Unit } }
+    val onDebugWeather = remember(viewModel) {
+        { reported: WeatherCondition, effect: WeatherCondition ->
+            viewModel.debugSetWeather(reported, effect)
+            Unit
+        }
+    }
 
     HomeScreenContent(
         state = state,
@@ -115,7 +121,7 @@ fun HomeScreenContent(
     onStopAdhan: () -> Unit,
     onStopTest: () -> Unit,
     onResetDate: () -> Unit,
-    onDebugWeather: (WeatherCondition) -> Unit
+    onDebugWeather: (WeatherCondition, WeatherCondition) -> Unit
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
@@ -138,9 +144,9 @@ fun HomeScreenContent(
         }
     }
 
-    val effectiveWeather = remember(settings?.showWeatherEffects, state.weatherCondition) {
+    val effectiveWeather = remember(settings?.showWeatherEffects, state.weatherEffectCondition) {
         if (settings?.showWeatherEffects == true) {
-            state.weatherCondition
+            state.weatherEffectCondition
         } else {
             WeatherCondition.CLEAR
         }
@@ -184,7 +190,7 @@ fun HomeScreenContent(
         }
     }
 
-    val isDebugEnabled = false // Toggle for development
+    val isDebugEnabled = BuildConfig.DEBUG
 
     CompositionLocalProvider(
         LocalGlassTheme provides glassTheme,
@@ -321,25 +327,11 @@ fun HomeScreenContent(
                 }
                 
                 if (showDebugWeather && isDebugEnabled) {
-                    AlertDialog(
-                        onDismissRequest = { showDebugWeather = false },
-                        title = { Text("Debug Weather") },
-                        text = {
-                            Column {
-                                WeatherCondition.entries.forEach { condition ->
-                                    TextButton(onClick = { 
-                                        onDebugWeather(condition)
-                                        showDebugWeather = false
-                                    }) {
-                                        Text(condition.name)
-                                    }
-                                }
-                            }
-                        },
-                        confirmButton = {
-                            TextButton(onClick = { showDebugWeather = false }) {
-                                Text("Close")
-                            }
+                    DebugWeatherDialog(
+                        onDismiss = { showDebugWeather = false },
+                        onConditionSelected = { reported, effect ->
+                            onDebugWeather(reported, effect)
+                            showDebugWeather = false
                         }
                     )
                 }
