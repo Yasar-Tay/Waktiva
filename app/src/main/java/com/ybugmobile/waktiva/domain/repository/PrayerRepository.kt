@@ -35,7 +35,11 @@ interface PrayerRepository {
      * @param longitude The longitude of the location.
      * @return A [WeatherInfo] object containing current weather conditions.
      */
-    suspend fun getWeatherData(latitude: Double, longitude: Double): Result<WeatherInfo>
+    suspend fun getWeatherData(
+        latitude: Double,
+        longitude: Double,
+        locationName: String? = null
+    ): Result<WeatherInfo>
     
     /**
      * Triggers a refresh of prayer times from remote or local sources.

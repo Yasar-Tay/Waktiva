@@ -3,8 +3,17 @@ package com.ybugmobile.waktiva.data.remote.dto
 import com.google.gson.annotations.SerializedName
 
 data class WeatherResponseDto(
+    @SerializedName("location")
+    val location: WeatherLocationDto,
     @SerializedName("current")
     val current: CurrentWeatherDto
+)
+
+data class WeatherLocationDto(
+    @SerializedName("lat")
+    val latitude: Double,
+    @SerializedName("lon")
+    val longitude: Double
 )
 
 data class CurrentWeatherDto(

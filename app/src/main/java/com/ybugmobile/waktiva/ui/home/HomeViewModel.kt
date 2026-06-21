@@ -229,7 +229,7 @@ class HomeViewModel @Inject constructor(
             val s = settings.first()
             val lat = s.latitude ?: return@launch
             val lng = s.longitude ?: return@launch
-            prayerRepository.getWeatherData(lat, lng)
+            prayerRepository.getWeatherData(lat, lng, s.locationName)
                 .onSuccess { info ->
                     lastWeatherFetchTime = System.currentTimeMillis()
                     _weatherCondition.value = info.condition

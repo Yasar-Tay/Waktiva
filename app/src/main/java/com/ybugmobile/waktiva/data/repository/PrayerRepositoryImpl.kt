@@ -28,6 +28,10 @@ import java.time.temporal.ChronoField
 import java.util.Collections
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.math.asin
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class PrayerRepositoryImpl @Inject constructor(
     private val aladhanApi: AladhanApiService,
@@ -86,14 +90,36 @@ class PrayerRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getWeatherData(latitude: Double, longitude: Double): Result<WeatherInfo> {
+    override suspend fun getWeatherData(
+        latitude: Double,
+        longitude: Double,
+        locationName: String?
+    ): Result<WeatherInfo> {
         return try {
             if (BuildConfig.WEATHER_API_KEY.isBlank()) {
                 return Result.failure(IllegalStateException("Missing WEATHER_API_KEY"))
             }
 
-            val query = String.format(Locale.US, "%.6f,%.6f", latitude, longitude)
-            val response = weatherApi.getCurrentWeather(query)
+            val coordinateQuery = String.format(Locale.US, "%.6f,%.6f", latitude, longitude)
+            val namedResponse = locationName
+                ?.takeIf { it.isNotBlank() }
+                ?.let { weatherApi.getCurrentWeather(it) }
+
+            // Names such as "Reinach, Switzerland" can resolve to another municipality with
+            // the same name. Accept a named result only when it is geographically near the GPS
+            // position; otherwise use the unambiguous coordinate query.
+            val response = if (
+                namedResponse != null && locationsAreNear(
+                    latitude,
+                    longitude,
+                    namedResponse.location.latitude,
+                    namedResponse.location.longitude
+                )
+            ) {
+                namedResponse
+            } else {
+                weatherApi.getCurrentWeather(coordinateQuery)
+            }
             val info = WeatherInfo(
                 temperature = response.current.temperatureCelsius,
                 condition = WeatherCondition.fromWeatherApiCode(response.current.condition.code),
@@ -103,6 +129,24 @@ class PrayerRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    private fun locationsAreNear(
+        firstLatitude: Double,
+        firstLongitude: Double,
+        secondLatitude: Double,
+        secondLongitude: Double
+    ): Boolean {
+        val earthRadiusKm = 6_371.0
+        val latitudeDelta = Math.toRadians(secondLatitude - firstLatitude)
+        val longitudeDelta = Math.toRadians(secondLongitude - firstLongitude)
+        val firstLatitudeRadians = Math.toRadians(firstLatitude)
+        val secondLatitudeRadians = Math.toRadians(secondLatitude)
+        val haversine = sin(latitudeDelta / 2) * sin(latitudeDelta / 2) +
+            cos(firstLatitudeRadians) * cos(secondLatitudeRadians) *
+            sin(longitudeDelta / 2) * sin(longitudeDelta / 2)
+        val distanceKm = 2 * earthRadiusKm * asin(sqrt(haversine.coerceIn(0.0, 1.0)))
+        return distanceKm <= 30.0
     }
 
     private fun getPhaseName(phaseProgress: Double): String {
