@@ -30,8 +30,8 @@ android {
         applicationId = "com.ybugmobile.waktiva"
         minSdk = 24
         targetSdk = 35
-        versionCode = 18
-        versionName = "1.0.18"
+        versionCode = 19
+        versionName = "1.0.19"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "WEATHER_API_KEY", "\"$weatherApiKey\"")
