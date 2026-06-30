@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerDay
@@ -192,147 +193,188 @@ fun getGradientForTime(
 fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
     if (condition == WeatherCondition.UNKNOWN || condition == WeatherCondition.CLEAR) return
 
-    val infiniteTransition = rememberInfiniteTransition(label = "weather")
-    
-    val fallProgress by infiniteTransition.animateFloat(
-        initialValue = 0f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(if (condition == WeatherCondition.SNOWY) 6000 else 2500, easing = LinearEasing), 
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "fall"
-    )
-    
-    val driftProgress by infiniteTransition.animateFloat(
-        initialValue = -0.05f, targetValue = 0.05f,
-        animationSpec = infiniteRepeatable(animation = tween(12000, easing = LinearOutSlowInEasing), repeatMode = RepeatMode.Reverse),
-        label = "drift"
-    )
-
-    val cloudElements = remember(condition) {
-        List(condition.cloudCount) { Offset(Random.nextFloat(), Random.nextFloat() * 0.3f) }
-    }
-    
-    val precipElements = remember(condition) {
-        val count = when (condition) {
-            WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL,
-            WeatherCondition.HEAVY_RAIN                                       -> 160
-            WeatherCondition.RAINY, WeatherCondition.RAIN_SHOWERS,
-            WeatherCondition.FREEZING_RAIN                                    -> 120
-            WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE      ->  70
-            WeatherCondition.HEAVY_SNOW, WeatherCondition.SNOW_SHOWERS       ->  70
-            WeatherCondition.SNOWY, WeatherCondition.SNOW_GRAINS             ->  50
-            else -> 0
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val density = LocalDensity.current
+        val viewportHeightPx = remember(maxHeight, density) {
+            with(density) { maxHeight.toPx().coerceAtLeast(1f) }
         }
-        if (count == 0) emptyList()
-        else List(count) { Offset(Random.nextFloat(), Random.nextFloat()) }
-    }
+        val fallDurationMillis = remember(condition, viewportHeightPx) {
+            val pixelsPerSecond = when (condition) {
+                WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL,
+                WeatherCondition.HEAVY_RAIN -> 560f
+                WeatherCondition.RAINY, WeatherCondition.RAIN_SHOWERS,
+                WeatherCondition.FREEZING_RAIN -> 470f
+                WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE -> 340f
+                WeatherCondition.HEAVY_SNOW, WeatherCondition.SNOW_SHOWERS -> 230f
+                WeatherCondition.SNOWY, WeatherCondition.SNOW_GRAINS -> 200f
+                else -> 420f
+            }
+            val rawDuration = ((viewportHeightPx / pixelsPerSecond) * 1000f).toInt()
+            when (condition) {
+                WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL,
+                WeatherCondition.HEAVY_RAIN -> rawDuration.coerceIn(1400, 2800)
+                WeatherCondition.RAINY, WeatherCondition.RAIN_SHOWERS,
+                WeatherCondition.FREEZING_RAIN -> rawDuration.coerceIn(1700, 3400)
+                WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE -> rawDuration.coerceIn(2200, 4200)
+                WeatherCondition.HEAVY_SNOW, WeatherCondition.SNOW_SHOWERS -> rawDuration.coerceIn(3200, 6000)
+                WeatherCondition.SNOWY, WeatherCondition.SNOW_GRAINS -> rawDuration.coerceIn(3800, 7200)
+                else -> rawDuration.coerceIn(1800, 3600)
+            }
+        }
 
-    val isSnowCondition = condition == WeatherCondition.SNOWY ||
-                          condition == WeatherCondition.HEAVY_SNOW ||
-                          condition == WeatherCondition.SNOW_GRAINS ||
-                          condition == WeatherCondition.SNOW_SHOWERS
-    val snowflakePainter = if (isSnowCondition) {
-        rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_snowflake))
-    } else null
+        val infiniteTransition = rememberInfiniteTransition(label = "weather")
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (condition == WeatherCondition.THUNDERSTORM ||
-            condition == WeatherCondition.THUNDERSTORM_HAIL) ThunderLayer()
+        val fallProgress by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(fallDurationMillis, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "fall"
+        )
 
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val w = size.width; val h = size.height
-            val cloudColor = condition.getCloudColor(isDay)
-            val cloudAlpha = condition.getCloudAlpha(isDay)
+        val driftProgress by infiniteTransition.animateFloat(
+            initialValue = -0.05f,
+            targetValue = 0.05f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(12000, easing = LinearOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "drift"
+        )
 
-            cloudElements.forEach { pos ->
-                val x = ((pos.x + driftProgress) % 1f) * w
-                val y = pos.y * h
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(cloudColor.copy(alpha = cloudAlpha), Color.Transparent),
-                        center = Offset(x, y),
-                        radius = w * 0.4f
-                    ),
-                    radius = w * 0.4f,
-                    center = Offset(x, y)
-                )
+        val cloudElements = remember(condition) {
+            List(condition.cloudCount) { Offset(Random.nextFloat(), Random.nextFloat() * 0.3f) }
+        }
+
+        val precipElements = remember(condition) {
+            val count = when (condition) {
+                WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL,
+                WeatherCondition.HEAVY_RAIN -> 128
+                WeatherCondition.RAINY, WeatherCondition.RAIN_SHOWERS,
+                WeatherCondition.FREEZING_RAIN -> 96
+                WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE -> 56
+                WeatherCondition.HEAVY_SNOW, WeatherCondition.SNOW_SHOWERS -> 70
+                WeatherCondition.SNOWY, WeatherCondition.SNOW_GRAINS -> 50
+                else -> 0
+            }
+            if (count == 0) emptyList() else List(count) { Offset(Random.nextFloat(), Random.nextFloat()) }
+        }
+
+        val isSnowCondition = condition == WeatherCondition.SNOWY ||
+            condition == WeatherCondition.HEAVY_SNOW ||
+            condition == WeatherCondition.SNOW_GRAINS ||
+            condition == WeatherCondition.SNOW_SHOWERS
+        val snowflakePainter = if (isSnowCondition) {
+            rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_snowflake))
+        } else null
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (condition == WeatherCondition.THUNDERSTORM ||
+                condition == WeatherCondition.THUNDERSTORM_HAIL
+            ) {
+                ThunderLayer()
             }
 
-            val isHeavyRain = condition == WeatherCondition.HEAVY_RAIN ||
-                              condition == WeatherCondition.THUNDERSTORM ||
-                              condition == WeatherCondition.THUNDERSTORM_HAIL
-            val isDrizzle   = condition == WeatherCondition.DRIZZLE ||
-                              condition == WeatherCondition.FREEZING_DRIZZLE
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val w = size.width
+                val h = size.height
+                val cloudColor = condition.getCloudColor(isDay)
+                val cloudAlpha = condition.getCloudAlpha(isDay)
 
-            when (condition) {
-                WeatherCondition.RAINY, WeatherCondition.HEAVY_RAIN,
-                WeatherCondition.RAIN_SHOWERS, WeatherCondition.FREEZING_RAIN,
-                WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE,
-                WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL -> {
-                    precipElements.forEachIndexed { index, pos ->
-                        val x = pos.x * w + (driftProgress * w)
-                        val y = ((pos.y + fallProgress) % 1f) * h
-
-                        val isSmall = index % 3 == 0
-                        val isMed   = index % 3 == 1
-                        val alpha = when {
-                            isSmall  -> if (isDrizzle) 0.22f else 0.30f
-                            isMed    -> if (isDrizzle) 0.34f else 0.46f
-                            else     -> if (isHeavyRain) 0.62f else if (isDrizzle) 0.42f else 0.56f
-                        }
-                        val length = when {
-                            isSmall -> (if (isDrizzle) 5.dp  else  9.dp).toPx()
-                            isMed   -> (if (isDrizzle) 8.dp  else 15.dp).toPx()
-                            else    -> (if (isHeavyRain) 24.dp else if (isDrizzle) 10.dp else 20.dp).toPx()
-                        }
-                        val thickness = when {
-                            isSmall -> 0.65.dp.toPx()
-                            isMed   -> 0.90.dp.toPx()
-                            else    -> (if (isHeavyRain) 1.3.dp else 1.05.dp).toPx()
-                        }
-                        val slant = (if (isHeavyRain) 3.dp else 1.5.dp).toPx()
-
-                        drawLine(
-                            Color.White.copy(alpha = alpha),
-                            Offset(x, y),
-                            Offset(x - slant, y + length),
-                            thickness,
-                            StrokeCap.Round
-                        )
-                    }
+                cloudElements.forEach { pos ->
+                    val x = ((pos.x + driftProgress) % 1f) * w
+                    val y = pos.y * h
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(cloudColor.copy(alpha = cloudAlpha), Color.Transparent),
+                            center = Offset(x, y),
+                            radius = w * 0.4f
+                        ),
+                        radius = w * 0.4f,
+                        center = Offset(x, y)
+                    )
                 }
-                WeatherCondition.SNOWY, WeatherCondition.HEAVY_SNOW,
-                WeatherCondition.SNOW_GRAINS, WeatherCondition.SNOW_SHOWERS -> {
-                    precipElements.forEachIndexed { index, pos ->
-                        val x = pos.x * w + (kotlin.math.sin(fallProgress.toDouble() * Math.PI * 2 + pos.x * 10).toFloat() * 15.dp.toPx())
-                        val y = ((pos.y + fallProgress) % 1f) * h
 
-                        val isSmall = index % 2 == 0
-                        val baseScale = if (isSmall) 0.30f else 0.60f
-                        val scale = baseScale + (pos.x * 0.14f)
-                        val alpha = if (isSmall) 0.60f else 0.80f
+                val isHeavyRain = condition == WeatherCondition.HEAVY_RAIN ||
+                    condition == WeatherCondition.THUNDERSTORM ||
+                    condition == WeatherCondition.THUNDERSTORM_HAIL
+                val isDrizzle = condition == WeatherCondition.DRIZZLE ||
+                    condition == WeatherCondition.FREEZING_DRIZZLE
 
-                        drawCircle(
-                            Color.White.copy(alpha = 0.12f),
-                            radius = (if (isSmall) 2.8.dp else 4.9.dp).toPx(),
-                            center = Offset(x, y)
-                        )
+                when (condition) {
+                    WeatherCondition.RAINY, WeatherCondition.HEAVY_RAIN,
+                    WeatherCondition.RAIN_SHOWERS, WeatherCondition.FREEZING_RAIN,
+                    WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE,
+                    WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL -> {
+                        precipElements.forEachIndexed { index, pos ->
+                            val x = pos.x * w + (driftProgress * w)
+                            val y = ((pos.y + fallProgress) % 1f) * h
 
-                        snowflakePainter?.let { painter ->
-                            val sizePx = 14.dp.toPx() * scale
-                            withTransform({
-                                translate(x - sizePx / 2, y - sizePx / 2)
-                                rotate(degrees = fallProgress * 360f * (if (index % 3 == 0) 1.5f else -1f), pivot = Offset(sizePx / 2, sizePx / 2))
-                            }) {
-                                with(painter) {
-                                    draw(size = Size(sizePx, sizePx), alpha = alpha)
+                            val isSmall = index % 3 == 0
+                            val isMed = index % 3 == 1
+                            val alpha = when {
+                                isSmall -> if (isDrizzle) 0.18f else 0.24f
+                                isMed -> if (isDrizzle) 0.28f else 0.38f
+                                else -> if (isHeavyRain) 0.52f else if (isDrizzle) 0.34f else 0.46f
+                            }
+                            val length = when {
+                                isSmall -> (if (isDrizzle) 4.dp else 7.dp).toPx()
+                                isMed -> (if (isDrizzle) 7.dp else 12.dp).toPx()
+                                else -> (if (isHeavyRain) 20.dp else if (isDrizzle) 8.dp else 16.dp).toPx()
+                            }
+                            val thickness = when {
+                                isSmall -> 0.55.dp.toPx()
+                                isMed -> 0.78.dp.toPx()
+                                else -> (if (isHeavyRain) 1.10.dp else 0.90.dp).toPx()
+                            }
+                            val slant = (if (isHeavyRain) 2.5.dp else 1.25.dp).toPx()
+
+                            drawLine(
+                                Color.White.copy(alpha = alpha),
+                                Offset(x, y),
+                                Offset(x - slant, y + length),
+                                thickness,
+                                StrokeCap.Round
+                            )
+                        }
+                    }
+                    WeatherCondition.SNOWY, WeatherCondition.HEAVY_SNOW,
+                    WeatherCondition.SNOW_GRAINS, WeatherCondition.SNOW_SHOWERS -> {
+                        precipElements.forEachIndexed { index, pos ->
+                            val x = pos.x * w + (kotlin.math.sin(fallProgress.toDouble() * Math.PI * 2 + pos.x * 10).toFloat() * 15.dp.toPx())
+                            val y = ((pos.y + fallProgress) % 1f) * h
+
+                            val isSmall = index % 2 == 0
+                            val baseScale = if (isSmall) 0.30f else 0.60f
+                            val scale = baseScale + (pos.x * 0.14f)
+                            val alpha = if (isSmall) 0.60f else 0.80f
+
+                            drawCircle(
+                                Color.White.copy(alpha = 0.12f),
+                                radius = (if (isSmall) 2.8.dp else 4.9.dp).toPx(),
+                                center = Offset(x, y)
+                            )
+
+                            snowflakePainter?.let { painter ->
+                                val sizePx = 14.dp.toPx() * scale
+                                withTransform({
+                                    translate(x - sizePx / 2, y - sizePx / 2)
+                                    rotate(
+                                        degrees = fallProgress * 360f * (if (index % 3 == 0) 1.5f else -1f),
+                                        pivot = Offset(sizePx / 2, sizePx / 2)
+                                    )
+                                }) {
+                                    with(painter) {
+                                        draw(size = Size(sizePx, sizePx), alpha = alpha)
+                                    }
                                 }
                             }
                         }
                     }
+                    else -> {}
                 }
-                else -> {}
             }
         }
     }
