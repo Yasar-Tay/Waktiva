@@ -63,8 +63,11 @@ fun HomeScreen(
     val settings by viewModel.settings.collectAsStateWithLifecycle(initialValue = null)
     val allDays by viewModel.allPrayerDays.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state.isNetworkAvailable, state.hasSystemIssues, state.currentPrayerDay) {
-        if (state.currentPrayerDay == null && state.isNetworkAvailable && !state.hasSystemIssues) {
+    // Match the Qibla screen guard: avoid firing a second refresh while the
+    // ViewModel's initial fetch is still settling, otherwise we can race the
+    // repository and issue duplicate month refreshes on cold start.
+    LaunchedEffect(state.isNetworkAvailable, state.hasSystemIssues, state.currentPrayerDay, state.isLoading) {
+        if (state.currentPrayerDay == null && !state.isLoading && state.isNetworkAvailable && !state.hasSystemIssues) {
             viewModel.refresh()
         }
     }

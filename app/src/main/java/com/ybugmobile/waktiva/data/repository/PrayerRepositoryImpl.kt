@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.time.ZoneId
 import java.time.chrono.HijrahChronology
 import java.time.temporal.ChronoField
@@ -198,29 +199,31 @@ class PrayerRepositoryImpl @Inject constructor(
         }
 
         val yearMonth = "$year-${month.toString().padStart(2, '0')}"
-
-        // Smart cache: skip if we already fetched data for this exact
-        // location (±0.1°, ~10 km) and method. This correctly handles:
-        //   • Same session re-entry (app re-open)     → cache hit, skip
-        //   • Method change before location change    → params differ, re-fetch
-        //   • Location change (>50 km threshold)      → params differ, re-fetch
-        val currentParams = buildFetchParams(latitude, longitude, method)
-        if (settingsManager.getFetchParams(yearMonth) == currentParams) {
-            return Result.success(Unit)
-        }
-
-        // Params changed — delete any stale data for this month so the
-        // new fetch starts with a clean slate (no leftover rows from the
-        // old location/method).
-        dao.deletePrayerDaysForYearMonth(yearMonth)
-
-        // Deduplicate: if another coroutine is already fetching this month, skip.
-        // The in-flight coroutine will write to the DB; the caller's data will be
-        // up-to-date once it reads from the Room Flow.
         val key = "$year/$month"
+        val currentParams = buildFetchParams(latitude, longitude, method)
+
+        // Deduplicate first so a second caller can never wipe a month while the
+        // first caller is still fetching or has inserted rows but not yet saved
+        // the fetch-params marker.
         if (!inFlightRequests.add(key)) return Result.success(Unit)
 
         return try {
+            val cachedParams = settingsManager.getFetchParams(yearMonth)
+            val expectedDayCount = YearMonth.of(year, month).lengthOfMonth()
+            val cachedDayCount = dao.getCountForYearMonth(yearMonth)
+            val hasCompleteMonthCache = cachedDayCount >= expectedDayCount
+
+            // Smart cache: skip only when both the fetch parameters match and the
+            // month is fully present in Room. This allows manual refresh to heal
+            // months whose rows were lost or only partially written.
+            if (cachedParams == currentParams && hasCompleteMonthCache) {
+                return Result.success(Unit)
+            }
+
+            // Params changed or the month is incomplete - clear stale rows so the
+            // replacement fetch writes a consistent month for the active settings.
+            dao.deletePrayerDaysForYearMonth(yearMonth)
+
             val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method)
             if (response.code == 200) {
                 var entities = response.data.map { it.toEntity() }
