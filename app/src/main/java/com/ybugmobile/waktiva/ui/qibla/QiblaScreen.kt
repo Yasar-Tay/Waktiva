@@ -166,6 +166,7 @@ private fun QiblaContent(
 ) {
     var isMapView by rememberSaveable { mutableStateOf(false) }
     var isSatelliteView by rememberSaveable { mutableStateOf(true) }
+    var showMapHint by rememberSaveable { mutableStateOf(true) }
     val kaabaLatLng = LatLng(21.4225, 39.8262)
 
     val configuration = LocalConfiguration.current
@@ -210,7 +211,7 @@ private fun QiblaContent(
                 mosques = state.mosques,
                 mosqueFetchFailed = state.mosqueFetchFailed,
                 onMapReady = { },
-                onMapLongClick = { },
+                onMapLongClick = { showMapHint = false },
                 onToggleSatellite = { isSatelliteView = !isSatelliteView },
                 fabAlignment = if (isLandscape) Alignment.BottomCenter else Alignment.CenterEnd,
                 fabPadding = if (isLandscape) PaddingValues(start = 80.dp, end = 320.dp, bottom = 32.dp) else PaddingValues(16.dp),
@@ -362,6 +363,66 @@ private fun QiblaContent(
                 }
             }
         }
+
+
+        AnimatedVisibility(
+            visible = isMapView && showMapHint,
+            enter = fadeIn(tween(220)) + slideInVertically(initialOffsetY = { -it / 2 }),
+            exit = fadeOut(tween(180)) + slideOutVertically(targetOffsetY = { -it / 2 }),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 24.dp)
+                .padding(top = if (isLandscape) 24.dp else 88.dp)
+                .systemBarsPadding()
+                .displayCutoutPadding()
+        ) {
+            MapInteractionHintCard(
+                currentTheme = currentTheme,
+                onDismiss = { showMapHint = false }
+            )
+        }
+    }
+}
+
+@Composable
+private fun MapInteractionHintCard(
+    currentTheme: GlassTheme,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier.widthIn(max = 420.dp),
+        color = currentTheme.containerColor.copy(alpha = 0.96f),
+        shape = RoundedCornerShape(24.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, currentTheme.borderColor),
+        shadowElevation = 10.dp
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
+            Text(
+                text = stringResource(R.string.qibla_map_hint_title),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = currentTheme.contentColor
+            )
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = stringResource(R.string.qibla_map_hint_body),
+                style = MaterialTheme.typography.bodySmall,
+                color = currentTheme.secondaryContentColor
+            )
+            Spacer(Modifier.height(10.dp))
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.align(Alignment.End),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.textButtonColors(contentColor = currentTheme.contentColor)
+            ) {
+                Text(
+                    text = stringResource(R.string.qibla_got_it),
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
     }
 }
 
@@ -459,3 +520,4 @@ private fun CompassContainer(
         QiblaAlignmentEffect(isAligned = isAligned, alignmentColor = alignmentColor)
     }
 }
+

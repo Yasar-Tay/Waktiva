@@ -223,6 +223,8 @@
     <string name="settings_delete_history_success">Geçmiş namaz verileri silindi</string>
     <string name="settings_delete_history_error">Namaz verileri silinemedi</string>
     <string name="map_custom_location">Seçilen konum</string>
+    <string name="qibla_map_hint_title">&#214;zel i&#351;aret ekleyin</string>
+    <string name="qibla_map_hint_body">Haritada herhangi bir yere uzun bas&#305;n. Ba&#351;ka bir noktadan k&#305;bleyi kar&#351;&#305;la&#351;t&#305;rmak i&#231;in ge&#231;ici bir i&#351;aret b&#305;rak&#305;l&#305;r.</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Namaz Vakti Bildirimleri</string>

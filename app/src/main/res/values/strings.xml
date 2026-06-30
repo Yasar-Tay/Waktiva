@@ -230,6 +230,8 @@
     <string name="settings_delete_history_success">Past prayer data deleted</string>
     <string name="settings_delete_history_error">Prayer data could not be deleted</string>
     <string name="map_custom_location">Selected location</string>
+    <string name="qibla_map_hint_title">Drop a custom marker</string>
+    <string name="qibla_map_hint_body">Press and hold anywhere on the map to place a marker and compare the Qibla from another spot.</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Prayer Time Notifications</string>
