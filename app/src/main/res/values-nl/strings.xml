@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -230,6 +230,8 @@
     <string name="settings_delete_history_success">Eerdere gebedsgegevens zijn verwijderd</string>
     <string name="settings_delete_history_error">Gebedsgegevens konden niet worden verwijderd</string>
     <string name="map_custom_location">Geselecteerde locatie</string>
+    <string name="qibla_map_hint_title">Plaats een aangepaste markering</string>
+    <string name="qibla_map_hint_body">Houd ergens op de kaart ingedrukt om een markering te plaatsen en de qibla vanaf een andere locatie te vergelijken.</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Gebedstijd meldingen</string>

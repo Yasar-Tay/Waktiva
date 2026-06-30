@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -223,6 +223,8 @@
     <string name="settings_delete_history_success">Les anciennes données de prière ont été supprimées</string>
     <string name="settings_delete_history_error">Impossible de supprimer les données de prière</string>
     <string name="map_custom_location">Emplacement sélectionné</string>
+    <string name="qibla_map_hint_title">Ajouter un repère personnalisé</string>
+    <string name="qibla_map_hint_body">Appuyez longuement n\'importe où sur la carte pour placer un repère et comparer la Qibla depuis un autre endroit.</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notifications de l\'heure de prière</string>

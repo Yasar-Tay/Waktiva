@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -230,6 +230,8 @@
     <string name="settings_delete_history_success">Të dhënat e mëparshme të namazeve u fshinë</string>
     <string name="settings_delete_history_error">Të dhënat e namazeve nuk mund të fshiheshin</string>
     <string name="map_custom_location">Vendndodhja e zgjedhur</string>
+    <string name="qibla_map_hint_title">Vendos një shenjues të personalizuar</string>
+    <string name="qibla_map_hint_body">Mbaje të shtypur kudo në hartë për të vendosur një shenjues dhe për të krahasuar drejtimin e Kibles nga një vend tjetër.</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Njoftimet e kohës së namazit</string>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -223,6 +223,8 @@
     <string name="settings_delete_history_success">Data salat sebelumnya telah dihapus</string>
     <string name="settings_delete_history_error">Data salat tidak dapat dihapus</string>
     <string name="map_custom_location">Lokasi yang dipilih</string>
+    <string name="qibla_map_hint_title">Tambahkan penanda khusus</string>
+    <string name="qibla_map_hint_body">Tekan dan tahan di mana saja pada peta untuk menempatkan penanda dan membandingkan arah kiblat dari lokasi lain.</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notifikasi Waktu Shalat</string>

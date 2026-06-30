@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -230,6 +230,8 @@
     <string name="settings_delete_history_success">Tidigare bönedata har raderats</string>
     <string name="settings_delete_history_error">Bönedata kunde inte raderas</string>
     <string name="map_custom_location">Vald plats</string>
+    <string name="qibla_map_hint_title">Placera en egen markör</string>
+    <string name="qibla_map_hint_body">Tryck och håll var som helst på kartan för att placera en markör och jämföra qiblariktningen från en annan plats.</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Bönestids-aviseringar</string>

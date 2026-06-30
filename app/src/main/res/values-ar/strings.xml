@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -223,6 +223,8 @@
     <string name="settings_delete_history_success">تم حذف بيانات الصلوات السابقة</string>
     <string name="settings_delete_history_error">تعذر حذف بيانات الصلاة</string>
     <string name="map_custom_location">الموقع المحدد</string>
+    <string name="qibla_map_hint_title">أضف علامة مخصّصة</string>
+    <string name="qibla_map_hint_body">اضغط مطولاً على أي مكان في الخريطة لوضع علامة ومقارنة اتجاه القبلة من موقع آخر.</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">إشعارات وقت الصلاة</string>

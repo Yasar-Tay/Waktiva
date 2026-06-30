@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -230,6 +230,8 @@
     <string name="settings_delete_history_success">Aiemmat rukoustiedot poistettiin</string>
     <string name="settings_delete_history_error">Rukoustietoja ei voitu poistaa</string>
     <string name="map_custom_location">Valittu sijainti</string>
+    <string name="qibla_map_hint_title">Lisää oma merkki</string>
+    <string name="qibla_map_hint_body">Paina pitkään mitä tahansa kohtaa kartalla asettaaksesi merkin ja vertaillaksesi Qiblan suuntaa toisesta sijainnista.</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Rukousajan ilmoitukset</string>

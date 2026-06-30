@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class QiblaViewModel @Inject constructor(
-    settingsManager: SettingsManager,
+    private val settingsManager: SettingsManager,
     private val compassManager: CompassManager,
     private val prayerRepository: PrayerRepository,
     private val mosqueRepository: MosqueRepository,
@@ -102,6 +102,12 @@ class QiblaViewModel @Inject constructor(
     ) { core, mosques, fetchFailed ->
         core.copy(mosques = mosques, mosqueFetchFailed = fetchFailed)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), QiblaViewState(isLoading = true))
+
+    fun dismissMapHint() {
+        viewModelScope.launch {
+            settingsManager.updateShowQiblaMapHint(false)
+        }
+    }
 
     init {
         // Update health status periodically

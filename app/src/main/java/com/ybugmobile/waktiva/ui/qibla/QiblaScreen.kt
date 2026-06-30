@@ -129,7 +129,8 @@ fun QiblaScreen(
                 isRefreshing = isRefreshing,
                 onRefresh = { viewModel.refresh() },
                 onCalibrationClick = { showCalibrationDialog = true },
-                onStatusClick = { showHealthOverlay = true }
+                onStatusClick = { showHealthOverlay = true },
+                onDismissMapHint = { viewModel.dismissMapHint() }
             )
         }
 
@@ -162,11 +163,12 @@ private fun QiblaContent(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     onCalibrationClick: () -> Unit,
-    onStatusClick: () -> Unit
+    onStatusClick: () -> Unit,
+    onDismissMapHint: () -> Unit
 ) {
     var isMapView by rememberSaveable { mutableStateOf(false) }
     var isSatelliteView by rememberSaveable { mutableStateOf(true) }
-    var showMapHint by rememberSaveable { mutableStateOf(true) }
+    var showMapHintSession by rememberSaveable { mutableStateOf(true) }
     val kaabaLatLng = LatLng(21.4225, 39.8262)
 
     val configuration = LocalConfiguration.current
@@ -181,6 +183,7 @@ private fun QiblaContent(
     )
 
     val currentTheme = if (isMapView) lightGlassTheme else glassTheme
+    val shouldShowMapHint = state.settings?.showQiblaMapHint ?: true
 
     Box(modifier = Modifier.fillMaxSize()) {
         // LAYER 1: Fullscreen Map — always kept in the composition tree so the MapLibre
@@ -211,7 +214,7 @@ private fun QiblaContent(
                 mosques = state.mosques,
                 mosqueFetchFailed = state.mosqueFetchFailed,
                 onMapReady = { },
-                onMapLongClick = { showMapHint = false },
+                onMapLongClick = { showMapHintSession = false },
                 onToggleSatellite = { isSatelliteView = !isSatelliteView },
                 fabAlignment = if (isLandscape) Alignment.BottomCenter else Alignment.CenterEnd,
                 fabPadding = if (isLandscape) PaddingValues(start = 80.dp, end = 320.dp, bottom = 32.dp) else PaddingValues(16.dp),
@@ -366,7 +369,7 @@ private fun QiblaContent(
 
 
         AnimatedVisibility(
-            visible = isMapView && showMapHint,
+            visible = isMapView && shouldShowMapHint && showMapHintSession,
             enter = fadeIn(tween(220)) + slideInVertically(initialOffsetY = { -it / 2 }),
             exit = fadeOut(tween(180)) + slideOutVertically(targetOffsetY = { -it / 2 }),
             modifier = Modifier
@@ -378,7 +381,10 @@ private fun QiblaContent(
         ) {
             MapInteractionHintCard(
                 currentTheme = currentTheme,
-                onDismiss = { showMapHint = false }
+                onDismiss = {
+                    showMapHintSession = false
+                    onDismissMapHint()
+                }
             )
         }
     }

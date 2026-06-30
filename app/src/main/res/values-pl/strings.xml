@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -230,6 +230,8 @@
     <string name="settings_delete_history_success">Usunięto wcześniejsze dane modlitw</string>
     <string name="settings_delete_history_error">Nie udało się usunąć danych modlitw</string>
     <string name="map_custom_location">Wybrana lokalizacja</string>
+    <string name="qibla_map_hint_title">Dodaj własny znacznik</string>
+    <string name="qibla_map_hint_body">Naciśnij i przytrzymaj dowolne miejsce na mapie, aby dodać znacznik i porównać kierunek kibli z innej lokalizacji.</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Powiadomienia o czasie modlitwy</string>

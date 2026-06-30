@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -223,6 +223,8 @@
     <string name="settings_delete_history_success">Se eliminaron los datos de oraciones anteriores</string>
     <string name="settings_delete_history_error">No se pudieron eliminar los datos de oración</string>
     <string name="map_custom_location">Ubicación seleccionada</string>
+    <string name="qibla_map_hint_title">Coloca un marcador personalizado</string>
+    <string name="qibla_map_hint_body">Mantén pulsado cualquier punto del mapa para colocar un marcador y comparar la quibla desde otro lugar.</string>
 
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notificaciones de tiempo de oración</string>

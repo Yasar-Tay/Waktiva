@@ -47,6 +47,7 @@ data class UserSettings(
     val useFajrAlarmBeforeSunrise: Boolean,
     val isHijriSelected: Boolean = false,
     val showWeatherEffects: Boolean = true,
+    val showQiblaMapHint: Boolean = true,
     val showSilentPrayerNotification: Boolean = true
 )
 
@@ -79,6 +80,7 @@ class SettingsManager @Inject constructor(
         val USE_FAJR_ALARM_BEFORE_SUNRISE = booleanPreferencesKey("use_fajr_alarm_before_sunrise")
         val IS_HIJRI_SELECTED = booleanPreferencesKey("is_hijri_selected")
         val SHOW_WEATHER_EFFECTS = booleanPreferencesKey("show_weather_effects")
+        val SHOW_QIBLA_MAP_HINT = booleanPreferencesKey("show_qibla_map_hint")
         val SHOW_SILENT_PRAYER_NOTIFICATION = booleanPreferencesKey("show_silent_prayer_notification")
 
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
@@ -114,6 +116,7 @@ class SettingsManager @Inject constructor(
             useFajrAlarmBeforeSunrise = preferences[USE_FAJR_ALARM_BEFORE_SUNRISE] ?: false,
             isHijriSelected = preferences[IS_HIJRI_SELECTED] ?: false,
             showWeatherEffects = preferences[SHOW_WEATHER_EFFECTS] ?: true,
+            showQiblaMapHint = preferences[SHOW_QIBLA_MAP_HINT] ?: true,
             showSilentPrayerNotification = preferences[SHOW_SILENT_PRAYER_NOTIFICATION] ?: true
         )
     }
@@ -271,6 +274,12 @@ class SettingsManager @Inject constructor(
     override suspend fun updateShowWeatherEffects(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[SHOW_WEATHER_EFFECTS] = enabled
+        }
+    }
+
+    override suspend fun updateShowQiblaMapHint(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[SHOW_QIBLA_MAP_HINT] = enabled
         }
     }
 
