@@ -14,9 +14,9 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -53,14 +53,12 @@ fun WaktivaTheme(
     }
 
     val context = LocalContext.current
-    val typography = remember(context) {
-        val locale = Locale.getDefault()
-        val language = locale.language
-        when (language) {
-            "ar", "fa", "ur" -> ArabicComposedTypography
-            "bn" -> BengaliComposedTypography
-            else -> DefaultComposedTypography
-        }
+    val configuration = LocalConfiguration.current
+    val language = configuration.locales[0]?.language ?: Locale.getDefault().language
+    val typography = when (language) {
+        "ar", "fa", "ur" -> ArabicComposedTypography
+        "bn" -> BengaliComposedTypography
+        else -> DefaultComposedTypography
     }
 
     val view = LocalView.current

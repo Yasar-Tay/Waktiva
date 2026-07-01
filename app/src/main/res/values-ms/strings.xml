@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -400,5 +400,19 @@
     <string name="license_source_code">6. Kod Sumber dan Repositori</string>
     <string name="license_github_link">Waktiva ialah projek sumber terbuka. Anda boleh mendapatkan kod sumber, melaporkan isu atau menyumbang di:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Versi</string>
+
+    <string name="lang_sq">Shqip</string>
+    <string name="lang_bs">Bosanski</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_pl">Polski</string>
+    <string name="lang_nl">Nederlands</string>
+    <string name="lang_sv">Svenska</string>
+    <string name="lang_fi">Suomi</string>
+    <string name="donate_item_small_title">Sokongan sepenuh hati</string>
+    <string name="donate_item_small_desc">Berikan sumbangan kecil tetapi bermakna.</string>
+    <string name="donate_item_medium_title">Sukarelawan muhibah</string>
+    <string name="donate_item_medium_desc">Sokong kelangsungan projek bebas iklan ini.</string>
+    <string name="donate_item_large_title">Penyatuan hati</string>
+    <string name="donate_item_large_desc">Berikan sokongan terkuat untuk membawa Waktiva lebih jauh.</string>
 </resources>
 

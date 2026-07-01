@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -303,7 +303,7 @@
     <string name="rate_button">Avaliar 5 Estrelas</string>
     <string name="badge_no_ads">Sem Anúncios</string>
     <string name="badge_no_tracking">Sem Rastreio</string>
-    <string name="badge_open_source">Open Source</string>
+    <string name="badge_open_source">Código aberto</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>
@@ -407,5 +407,12 @@
     <string name="license_source_code">6. Código fonte e repositório</string>
     <string name="license_github_link">Waktiva é um projeto de código aberto. Você pode encontrar o código-fonte, relatar problemas ou contribuir em:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Versão</string>
+
+    <string name="donate_item_small_title">Apoio sincero</string>
+    <string name="donate_item_small_desc">Faça uma contribuição pequena, mas significativa.</string>
+    <string name="donate_item_medium_title">Voluntário de boa vontade</string>
+    <string name="donate_item_medium_desc">Apoie a continuidade deste projeto sem anúncios.</string>
+    <string name="donate_item_large_title">União dos corações</string>
+    <string name="donate_item_large_desc">Ofereça o apoio mais forte para levar o Waktiva ainda mais longe.</string>
 </resources>
 

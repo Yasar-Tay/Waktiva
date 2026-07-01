@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Waktiva</string>
 
@@ -407,5 +407,12 @@
     <string name="license_source_code">6. Lähdekoodi ja repositorio</string>
     <string name="license_github_link">Waktiva on avoimen lähdekoodin projekti. Löydät lähdekoodin, voit ilmoittaa ongelmista tai osallistua osoitteessa:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Versio</string>
+
+    <string name="donate_item_small_title">Sydämellinen tuki</string>
+    <string name="donate_item_small_desc">Tee pieni mutta merkityksellinen lahjoitus.</string>
+    <string name="donate_item_medium_title">Hyvän tahdon tukija</string>
+    <string name="donate_item_medium_desc">Tue tämän mainoksettoman projektin jatkuvuutta.</string>
+    <string name="donate_item_large_title">Sydänten yhteys</string>
+    <string name="donate_item_large_desc">Anna vahvin tukesi viedäksesi Waktivaa eteenpäin.</string>
 </resources>
 

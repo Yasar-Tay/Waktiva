@@ -1,8 +1,5 @@
 package com.ybugmobile.waktiva.ui.donation
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -36,6 +33,7 @@ import com.ybugmobile.waktiva.domain.manager.DonationProduct
 import com.ybugmobile.waktiva.domain.manager.PurchaseResult
 import com.ybugmobile.waktiva.ui.theme.GlassTheme
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.waktiva.utils.findActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -374,13 +372,4 @@ fun PremiumSupportCard(
             }
         }
     }
-}
-
-private fun Context.findActivity(): Activity? {
-    var context = this
-    while (context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
-    }
-    return null
 }

@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -23,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -31,6 +29,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.ui.settings.composables.*
+import com.ybugmobile.waktiva.utils.applyAppLanguage
 import com.ybugmobile.waktiva.utils.LanguageUtils
 import com.ybugmobile.waktiva.utils.PermissionUtils
 
@@ -205,14 +204,9 @@ fun SettingsScreen(
         onDismissMethod = { showMethodDialog = false },
         onDismissDeleteHistory = { showDeleteHistoryDialog = false },
         onLanguageSelected = { lang ->
-            val appLocale: LocaleListCompat = if (lang == "system") {
-                LocaleListCompat.getEmptyLocaleList()
-            } else {
-                LocaleListCompat.forLanguageTags(lang)
-            }
             viewModel.updateLanguage(lang) {
-                AppCompatDelegate.setApplicationLocales(appLocale)
                 showLanguageDialog = false
+                applyAppLanguage(context, lang)
             }
         },
         onMadhabSelected = { viewModel.setMadhab(it); showMadhabDialog = false },

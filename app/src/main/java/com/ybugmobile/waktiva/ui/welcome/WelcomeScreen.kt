@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -40,7 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -49,6 +47,7 @@ import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.ui.settings.AudioSettingsViewModel
 import com.ybugmobile.waktiva.ui.settings.SettingsViewModel
+import com.ybugmobile.waktiva.utils.applyAppLanguage
 import com.ybugmobile.waktiva.utils.LanguageUtils
 import com.ybugmobile.waktiva.utils.PermissionUtils
 
@@ -640,14 +639,9 @@ private fun PreferencesStep(
             options = LanguageUtils.getLanguageOptions(),
             selectedKey = currentLanguage,
             onSelected = { lang ->
-                val appLocale: LocaleListCompat = if (lang == "system") {
-                    LocaleListCompat.getEmptyLocaleList()
-                } else {
-                    LocaleListCompat.forLanguageTags(lang)
-                }
                 settingsViewModel.updateLanguage(lang) {
-                    AppCompatDelegate.setApplicationLocales(appLocale)
                     showLanguageDialog = false
+                    applyAppLanguage(context, lang)
                 }
             },
             onDismiss = { showLanguageDialog = false }
