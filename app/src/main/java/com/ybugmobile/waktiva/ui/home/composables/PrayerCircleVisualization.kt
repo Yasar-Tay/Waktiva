@@ -152,9 +152,6 @@ fun PrayerCircleVisualization(
         label = "rotation"
     )
 
-    val sunrise = remember(day) { day.timings[PrayerType.SUNRISE] ?: LocalTime.of(6, 0) }
-    val sunset = remember(day) { day.timings[PrayerType.MAGHRIB] ?: LocalTime.of(18, 0) }
-
     // Load painters once to avoid re-allocation in the draw loop
     val fajrIcon = ImageVector.vectorResource(R.drawable.haze_day_rotated)
     val sunriseIcon = ImageVector.vectorResource(R.drawable.sunrise)
@@ -233,33 +230,11 @@ fun PrayerCircleVisualization(
                 .drawWithCache {
                     val center = Offset(size.width / 2, size.height / 2)
                     val radius = size.width / 2 - 24.dp.toPx()
-                    val sunriseMinutes = sunrise.hour * 60 + sunrise.minute
-                    val sunsetMinutes = sunset.hour * 60 + sunset.minute
-
-                    val startAngle = if (layoutDirection == LayoutDirection.Rtl) {
-                        -(sunriseMinutes.toFloat() / (24 * 60)) * 360f + 90f
-                    } else {
-                        (sunriseMinutes.toFloat() / (24 * 60)) * 360f + 90f
-                    }
-
-                    val sweepAngle = if (layoutDirection == LayoutDirection.Rtl) {
-                        val end = -(sunsetMinutes.toFloat() / (24 * 60)) * 360f + 90f
-                        var diff = end - startAngle
-                        if (diff > 0) diff -= 360f
-                        diff
-                    } else {
-                        val end = (sunsetMinutes.toFloat() / (24 * 60)) * 360f + 90f
-                        var diff = end - startAngle
-                        if (diff < 0) diff += 360f
-                        diff
-                    }
-
-                    val arcBrush = Brush.sweepGradient(
-                        0.0f to Color(0xFFFFE082).copy(alpha = 0.4f),
-                        0.5f to Color(0xFFFFB74D).copy(alpha = 0.4f),
-                        1.0f to Color(0xFFCE93D8).copy(alpha = 0.4f),
-                        center = center
-                    )
+                    val prayerArcSegments = prayers
+                        .sortedBy { it.time }
+                        .let { sortedPrayers ->
+                            sortedPrayers.zip(sortedPrayers.drop(1) + sortedPrayers.first())
+                        }
 
                     onDrawBehind {
                         val rippleProgress = (gravityFlux) % 1f
@@ -279,7 +254,30 @@ fun PrayerCircleVisualization(
                         }
 
                         drawCircle(contentColor.copy(0.05f), radius, center, style = Stroke(1.dp.toPx()))
-                        drawArc(arcBrush, startAngle, sweepAngle, false, Offset(center.x - radius, center.y - radius), Size(radius * 2, radius * 2), style = Stroke((if (isLandscape) 3.dp else 4.dp).toPx(), cap = StrokeCap.Round))
+                        prayerArcSegments.forEach { (startPrayer, endPrayer) ->
+                            val startAngle = getAngle(startPrayer.time, layoutDirection)
+                            val sweepAngle = getSweepAngle(startPrayer.time, endPrayer.time, layoutDirection)
+                            val startPosition = getPosition(startPrayer.time, radius, center, layoutDirection)
+                            val endPosition = getPosition(endPrayer.time, radius, center, layoutDirection)
+                            val segmentBrush = Brush.linearGradient(
+                                colors = listOf(
+                                    startPrayer.color.copy(alpha = 0.48f),
+                                    endPrayer.color.copy(alpha = 0.48f)
+                                ),
+                                start = startPosition,
+                                end = endPosition
+                            )
+
+                            drawArc(
+                                brush = segmentBrush,
+                                startAngle = startAngle,
+                                sweepAngle = sweepAngle,
+                                useCenter = false,
+                                topLeft = Offset(center.x - radius, center.y - radius),
+                                size = Size(radius * 2, radius * 2),
+                                style = Stroke((if (isLandscape) 3.dp else 4.dp).toPx(), cap = StrokeCap.Round)
+                            )
+                        }
 
                         for (i in 0 until 24) {
                             val angle = i * 15f + 90f
@@ -488,17 +486,36 @@ data class PrayerNodeInfo(
 data class DetailedInfo(val id: String, val title: String, val time: String, val color: Color, val icon: ImageVector)
 
 private fun getPosition(time: LocalTime, radius: Float, center: Offset, layoutDirection: LayoutDirection): Offset {
-    val totalMinutes = time.hour * 60 + time.minute
-    val angle = if (layoutDirection == LayoutDirection.Rtl) {
-        -(totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
-    } else {
-        (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
-    }
+    val angle = getAngle(time, layoutDirection)
     val angleRad = Math.toRadians(angle.toDouble())
     return Offset(
         center.x + radius * cos(angleRad).toFloat(),
         center.y + radius * sin(angleRad).toFloat()
     )
+}
+
+private fun getAngle(time: LocalTime, layoutDirection: LayoutDirection): Float {
+    val totalMinutes = time.hour * 60 + time.minute
+    return if (layoutDirection == LayoutDirection.Rtl) {
+        -(totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
+    } else {
+        (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
+    }
+}
+
+private fun getSweepAngle(startTime: LocalTime, endTime: LocalTime, layoutDirection: LayoutDirection): Float {
+    val startAngle = getAngle(startTime, layoutDirection)
+    val endAngle = getAngle(endTime, layoutDirection)
+
+    return if (layoutDirection == LayoutDirection.Rtl) {
+        var diff = endAngle - startAngle
+        if (diff > 0f) diff -= 360f
+        diff
+    } else {
+        var diff = endAngle - startAngle
+        if (diff < 0f) diff += 360f
+        diff
+    }
 }
 
 @Composable

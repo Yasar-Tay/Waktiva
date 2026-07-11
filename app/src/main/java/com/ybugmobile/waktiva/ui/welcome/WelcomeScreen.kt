@@ -44,6 +44,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.*
 import com.ybugmobile.waktiva.R
+import com.ybugmobile.waktiva.data.local.preferences.DEFAULT_CALCULATION_METHOD
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.ui.settings.AudioSettingsViewModel
 import com.ybugmobile.waktiva.ui.settings.SettingsViewModel
@@ -394,7 +395,9 @@ private fun PreferencesStep(
                 
                 WelcomeSettingsClickItem(
                     title = stringResource(R.string.settings_method),
-                    subtitle = methods.find { it.second == (settings?.calculationMethod ?: 3) }?.first ?: "",
+                    subtitle = methods.find {
+                        it.second == (settings?.calculationMethod ?: DEFAULT_CALCULATION_METHOD)
+                    }?.first ?: "",
                     icon = Icons.Default.Functions,
                     onClick = { showMethodDialog = true }
                 )
@@ -665,7 +668,7 @@ private fun PreferencesStep(
         WelcomeSelectionDialog(
             title = stringResource(R.string.settings_method),
             options = methods,
-            selectedKey = settings?.calculationMethod ?: 3,
+            selectedKey = settings?.calculationMethod ?: DEFAULT_CALCULATION_METHOD,
             onSelected = { settingsViewModel.setCalculationMethod(it); showMethodDialog = false },
             onDismiss = { showMethodDialog = false }
         )

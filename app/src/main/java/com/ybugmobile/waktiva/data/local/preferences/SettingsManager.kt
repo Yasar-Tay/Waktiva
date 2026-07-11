@@ -22,6 +22,9 @@ import javax.inject.Singleton
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
+const val DEFAULT_CALCULATION_METHOD = 3
+private const val LEGACY_DEFAULT_CALCULATION_METHOD = 2
+
 /**
  * Data class representing the complete set of user preferences for the application.
  */
@@ -93,10 +96,12 @@ class SettingsManager @Inject constructor(
         val prayerSpecificPaths = PrayerType.entries.associateWith { type ->
             preferences[prayerPathKey(type)]
         }
+        val isSetupComplete = preferences[IS_SETUP_COMPLETE] ?: false
 
         UserSettings(
             madhab = preferences[MADHAB] ?: 0,
-            calculationMethod = preferences[CALCULATION_METHOD] ?: 2,
+            calculationMethod = preferences[CALCULATION_METHOD]
+                ?: if (isSetupComplete) LEGACY_DEFAULT_CALCULATION_METHOD else DEFAULT_CALCULATION_METHOD,
             latitude = preferences[LAST_KNOWN_LAT],
             longitude = preferences[LAST_KNOWN_LNG],
             altitude = preferences[LAST_KNOWN_ALT],
@@ -106,7 +111,7 @@ class SettingsManager @Inject constructor(
             prayerSpecificAdhanPaths = prayerSpecificPaths,
             useSpecificAdhanForEachPrayer = preferences[USE_SPECIFIC_ADHAN] ?: false,
             playAdhanAudio = preferences[PLAY_ADHAN_AUDIO] ?: false,
-            isSetupComplete = preferences[IS_SETUP_COMPLETE] ?: false,
+            isSetupComplete = isSetupComplete,
             enablePreAdhanWarning = preferences[ENABLE_PRE_ADHAN_WARNING] ?: true,
             preAdhanWarningMinutes = preferences[PRE_ADHAN_WARNING_MINUTES] ?: 5,
             mutedPrayerName = preferences[MUTED_PRAYER_NAME],
@@ -232,6 +237,9 @@ class SettingsManager @Inject constructor(
 
     override suspend fun setSetupComplete(complete: Boolean) {
         context.dataStore.edit { preferences ->
+            if (complete && preferences[CALCULATION_METHOD] == null) {
+                preferences[CALCULATION_METHOD] = DEFAULT_CALCULATION_METHOD
+            }
             preferences[IS_SETUP_COMPLETE] = complete
         }
     }
