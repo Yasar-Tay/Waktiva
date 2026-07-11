@@ -6,59 +6,23 @@ import com.batoulapps.adhan.Coordinates
 import com.batoulapps.adhan.Madhab
 import com.batoulapps.adhan.PrayerTimes
 import com.batoulapps.adhan.data.DateComponents
+import com.ybugmobile.waktiva.data.local.diyanet.AdaptiveDiyanetCalculator
+import com.ybugmobile.waktiva.data.local.diyanet.PrayerLocation
+import com.ybugmobile.waktiva.data.local.diyanet.resolveDiyanetProfile
+import com.ybugmobile.waktiva.data.local.diyanet.roundForDisplay
 import com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
 import javax.inject.Inject
-import kotlin.math.abs
-import kotlin.math.roundToInt
-
-/**
- * Diyanet high-latitude fraction constants, reverse-engineered from published times.
- *
- * Algorithm (Finding 15 — diyanet_analysis_report.md):
- *   Fajr = max(standard_angle_fajr,  sunrise  − night × k_fajr)
- *   Isha = min(standard_angle_isha,  maghrib  + night × k_isha)
- *
- * In winter the standard MWL angle gives a later Fajr than the fraction → angle wins.
- * In summer the angle breaks down; the fraction gives a later Fajr → fraction wins.
- * The max/min rule produces a seamless, API-free seasonal transition.
- *
- * Per-city constants validated across 12 cities on 3 continents (May–June 2026 data).
- * Calibration uses timezone-aware SimpleDateFormat against the Adhan Kotlin library.
- * Cities not in the table use the nearest entry via Euclidean lat/lng distance.
- * Conservative default (0.220 / 0.190) applies only if the table is somehow empty.
- */
-private data class DiyanetFractions(val fajr: Double, val isha: Double)
-
-private val DIYANET_CITY_FRACTIONS: List<Triple<Double, Double, DiyanetFractions>> = listOf(
-    // lat,      lng,     fajr,   isha
-    Triple(52.374,  4.890, DiyanetFractions(0.2118, 0.1865)), // Amsterdam
-    Triple(52.520, 13.405, DiyanetFractions(0.2157, 0.1917)), // Berlin
-    Triple(50.850,  4.352, DiyanetFractions(0.2075, 0.1869)), // Brussels
-    Triple(55.676, 12.568, DiyanetFractions(0.2128, 0.1888)), // Copenhagen
-    Triple(60.170, 24.938, DiyanetFractions(0.2011, 0.1846)), // Helsinki  (timezone-fixed calibration)
-    Triple(48.857,  2.352, DiyanetFractions(0.2039, 0.1897)), // Paris
-    Triple(59.329, 18.069, DiyanetFractions(0.2176, 0.1935)), // Stockholm (reference data unreliable — kept from report)
-    Triple(47.377,  8.542, DiyanetFractions(0.2289, 0.2160)), // Zurich
-    Triple(47.498,  7.745, DiyanetFractions(0.2232, 0.2132)), // Basel
-    Triple(55.756, 37.617, DiyanetFractions(0.2068, 0.1833)), // Moscow    (anchors Russia / Central Asia)
-    Triple(43.653, -79.383, DiyanetFractions(0.2474, 0.2098)), // Toronto  (anchors North America; max() rule guards against over-correction)
-    Triple(45.502, -73.567, DiyanetFractions(0.2438, 0.2181)), // Montreal
-)
-
-// Conservative default: guarantees app times ≥ Diyanet for unlisted cities
-private val DIYANET_DEFAULT_FRACTIONS = DiyanetFractions(fajr = 0.220, isha = 0.190)
-
-private fun nearestDiyanetFractions(lat: Double, lng: Double): DiyanetFractions {
-    return DIYANET_CITY_FRACTIONS.minByOrNull { (clat, clng, _) ->
-        val dlat = clat - lat; val dlng = clng - lng
-        dlat * dlat + dlng * dlng
-    }?.third ?: DIYANET_DEFAULT_FRACTIONS
-}
 
 class LocalPrayerCalculator @Inject constructor() {
+
+    private val adaptiveDiyanetCalculator = AdaptiveDiyanetCalculator()
+    private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
     fun calculateMonthlyPrayerTimes(
         year: Int,
@@ -66,155 +30,78 @@ class LocalPrayerCalculator @Inject constructor() {
         latitude: Double,
         longitude: Double,
         methodId: Int,
-        madhabId: Int = 0 // 0 = Shafi, 1 = Hanafi
+        madhabId: Int = 0,
+        zoneId: ZoneId = ZoneId.systemDefault()
     ): List<PrayerDayEntity> {
         val coordinates = Coordinates(latitude, longitude)
-        val params = getCalculationParameters(methodId)
-        params.madhab = if (madhabId == 1) Madhab.HANAFI else Madhab.SHAFI
+        val params = getCalculationParameters(methodId).apply {
+            madhab = if (madhabId == 1) Madhab.HANAFI else Madhab.SHAFI
+        }
 
         if (methodId == 13) {
-            // Turkey / Diyanet base minute adjustments (Sunrise, Dhuhr, Asr, Maghrib)
-            params.adjustments.fajr    = 0
+            params.adjustments.fajr = 0
             params.adjustments.sunrise = -7
-            params.adjustments.dhuhr   = 5
-            params.adjustments.asr     = 4
+            params.adjustments.dhuhr = 5
+            params.adjustments.asr = 4
             params.adjustments.maghrib = 7
-            // Fajr/Isha angles remain at MWL defaults (18°/17°); the fraction
-            // post-processing below handles high-latitude correction.
         }
 
-        val prayerDays = mutableListOf<PrayerDayEntity>()
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.YEAR, year)
-            set(Calendar.MONTH, month - 1)
-            set(Calendar.DAY_OF_MONTH, 1)
-        }
+        val location = PrayerLocation(
+            latitude = latitude,
+            longitude = longitude,
+            zoneId = zoneId
+        )
+        val diyanetProfile = if (methodId == 13) resolveDiyanetProfile(latitude) else null
 
-        val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return (1..YearMonth.of(year, month).lengthOfMonth()).map { day ->
+            val date = LocalDate.of(year, month, day)
+            val adhanTimes = PrayerTimes(coordinates, DateComponents(year, month, day), params)
 
-        for (day in 1..daysInMonth) {
-            val dateComponents = DateComponents.from(calendar.time)
-            val adhanTimes = PrayerTimes(coordinates, dateComponents, params)
-
-            var fajrStr    = timeFormat.format(adhanTimes.fajr)
-            var ishaStr    = timeFormat.format(adhanTimes.isha)
-            val sunriseStr = timeFormat.format(adhanTimes.sunrise)
-            val maghribStr = timeFormat.format(adhanTimes.maghrib)
-
-            // Diyanet high-latitude correction (>43°N)
-            // Applies the max/min fraction rule that seamlessly handles
-            // both summer (fraction wins) and winter (standard angle wins).
-            if (methodId == 13 && abs(latitude) > 43.0) {
-                val fractions = nearestDiyanetFractions(latitude, longitude)
-                val corrected = applyDiyanetFractionRule(
-                    fajrStr, ishaStr, sunriseStr, maghribStr, fractions,
-                    sunriseAdjMin = params.adjustments.sunrise,   // −7 → reversed inside
-                    maghribAdjMin = params.adjustments.maghrib    //  +7 → reversed inside
-                )
-                fajrStr = corrected.first
-                ishaStr = corrected.second
+            val adaptiveResult = if (diyanetProfile != null) {
+                adaptiveDiyanetCalculator.calculate(date, location, diyanetProfile)
+            } else {
+                null
             }
 
-            prayerDays.add(
-                PrayerDayEntity(
-                    date      = dateFormat.format(calendar.time),
-                    hijriDate = "",
-                    fajr      = fajrStr,
-                    sunrise   = sunriseStr,
-                    dhuhr     = timeFormat.format(adhanTimes.dhuhr),
-                    asr       = timeFormat.format(adhanTimes.asr),
-                    maghrib   = maghribStr,
-                    isha      = ishaStr
-                )
+            val fajr = adaptiveResult?.fajr?.toAdaptiveTimeString()
+                ?: adhanTimes.fajr.toTimeString(zoneId)
+            val isha = adaptiveResult?.isha?.toAdaptiveTimeString()
+                ?: adhanTimes.isha.toTimeString(zoneId)
+
+            PrayerDayEntity(
+                date = date.toString(),
+                hijriDate = "",
+                fajr = fajr,
+                sunrise = adhanTimes.sunrise.toTimeString(zoneId),
+                dhuhr = adhanTimes.dhuhr.toTimeString(zoneId),
+                asr = adhanTimes.asr.toTimeString(zoneId),
+                maghrib = adhanTimes.maghrib.toTimeString(zoneId),
+                isha = isha
             )
-            calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
-
-        return prayerDays
     }
 
-    /**
-     * Applies Diyanet's high-latitude algorithm:
-     *
-     *   Fajr = max(standard_fajr,  sunrise_astro − night_astro × k_fajr)
-     *   Isha = min(standard_isha,  maghrib_astro + night_astro × k_isha)
-     *
-     * In winter the standard MWL angle is later than the fraction → angle wins.
-     * In summer the standard angle breaks down; fraction gives a later result → fraction wins.
-     *
-     * IMPORTANT — astronomical base times:
-     * The fraction constants (k_fajr, k_isha) were reverse-engineered using Al-Adhan's
-     * unadjusted astronomical Sunrise and Maghrib (method=2, no minute offsets).
-     * We must therefore reverse Diyanet's own minute adjustments before computing
-     * the night length; otherwise the night is systematically short by
-     * |sunrise_adj| + |maghrib_adj| = 14 minutes, causing ~4 min error in Fajr/Isha.
-     *
-     * [sunriseAdjMin] and [maghribAdjMin] are the values that were added to the
-     * astronomical times to produce the [sunriseStr] and [maghribStr] strings
-     * (e.g. sunrise_adj = −7, maghrib_adj = +7 for the Diyanet base params).
-     */
-    private fun applyDiyanetFractionRule(
-        fajrStr: String,
-        ishaStr: String,
-        sunriseStr: String,
-        maghribStr: String,
-        fractions: DiyanetFractions,
-        sunriseAdjMin: Int = 0,
-        maghribAdjMin: Int = 0
-    ): Pair<String, String> {
-        // Reverse the minute adjustments to recover astronomical Sunrise / Maghrib.
-        val sunriseAstro = toMinutes(sunriseStr) - sunriseAdjMin
-        val maghribAstro = toMinutes(maghribStr) - maghribAdjMin
-
-        // Night length: astronomical Maghrib today → astronomical Sunrise tomorrow
-        val nightMin = (sunriseAstro + 1440) - maghribAstro
-
-        // Fraction-based times computed against astronomical anchors
-        val fractionFajr = sunriseAstro - (nightMin * fractions.fajr)
-        val fractionIsha = maghribAstro + (nightMin * fractions.isha)
-
-        // Standard angle times — normalise across midnight.
-        // Fajr is before sunrise: guard against unlikely midnight crossing.
-        // Isha is after maghrib: "00:27" must become 1467 for correct min() comparison.
-        var stdFajr = toMinutes(fajrStr).toDouble()
-        if (stdFajr > sunriseAstro) stdFajr -= 1440
-
-        var stdIsha = toMinutes(ishaStr).toDouble()
-        if (stdIsha < maghribAstro) stdIsha += 1440
-
-        // max for Fajr (later = safer, standard angle wins in winter when it is valid)
-        val finalFajr = maxOf(stdFajr, fractionFajr)
-        // min for Isha (earlier = safer, standard angle wins in winter when it is valid)
-        val finalIsha = minOf(stdIsha, fractionIsha)
-
-        return Pair(fromMinutes(finalFajr.roundToInt()), fromMinutes(finalIsha.roundToInt()))
+    private fun Date.toTimeString(zoneId: ZoneId): String {
+        return toInstant().atZone(zoneId).format(timeFormatter)
     }
 
-    private fun toMinutes(time: String): Int {
-        val parts = time.split(":")
-        return parts[0].toInt() * 60 + parts[1].toInt()
-    }
-
-    private fun fromMinutes(minutes: Int): String {
-        val m = ((minutes % 1440) + 1440) % 1440 // normalise across midnight
-        return "%02d:%02d".format(m / 60, m % 60)
+    private fun ZonedDateTime.toAdaptiveTimeString(): String {
+        return roundForDisplay(this).format(timeFormatter)
     }
 
     private fun getCalculationParameters(id: Int): CalculationParameters {
         return when (id) {
-            1  -> CalculationMethod.KARACHI.parameters
-            2  -> CalculationMethod.NORTH_AMERICA.parameters
-            3  -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
-            4  -> CalculationMethod.UMM_AL_QURA.parameters
-            5  -> CalculationMethod.EGYPTIAN.parameters
-            7  -> CalculationParameters(17.7, 14.0) // Tehran
-            8  -> CalculationMethod.DUBAI.parameters
-            9  -> CalculationMethod.KUWAIT.parameters
+            1 -> CalculationMethod.KARACHI.parameters
+            2 -> CalculationMethod.NORTH_AMERICA.parameters
+            3 -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
+            4 -> CalculationMethod.UMM_AL_QURA.parameters
+            5 -> CalculationMethod.EGYPTIAN.parameters
+            7 -> CalculationParameters(17.7, 14.0)
+            8 -> CalculationMethod.DUBAI.parameters
+            9 -> CalculationMethod.KUWAIT.parameters
             10 -> CalculationMethod.QATAR.parameters
             11 -> CalculationMethod.SINGAPORE.parameters
-            13 -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters // Diyanet base
+            13 -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
             else -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
         }
     }

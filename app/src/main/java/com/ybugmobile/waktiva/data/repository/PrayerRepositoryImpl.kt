@@ -1,31 +1,36 @@
 package com.ybugmobile.waktiva.data.repository
 
+import android.util.Log
 import com.ybugmobile.waktiva.BuildConfig
 import com.ybugmobile.waktiva.data.local.LocalPrayerCalculator
 import com.ybugmobile.waktiva.data.local.dao.PrayerDao
-import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.waktiva.data.local.dao.PrayerStatusDao
+import com.ybugmobile.waktiva.data.local.diyanet.ADAPTIVE_DIYANET_CANDIDATE_VERSION
 import com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity
-import com.ybugmobile.waktiva.data.mapper.toDomain
+import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.waktiva.data.remote.AladhanApiService
 import com.ybugmobile.waktiva.data.remote.WeatherApiService
 import com.ybugmobile.waktiva.data.remote.dto.PrayerDayDto
+import com.ybugmobile.waktiva.domain.model.HijriData
 import com.ybugmobile.waktiva.domain.model.MoonPhase
 import com.ybugmobile.waktiva.domain.model.PrayerDay
+import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.model.WeatherInfo
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.shredzone.commons.suncalc.MoonIllumination
 import org.shredzone.commons.suncalc.MoonPosition
 import org.shredzone.commons.suncalc.MoonTimes
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.YearMonth
 import java.time.ZoneId
 import java.time.chrono.HijrahChronology
 import java.time.temporal.ChronoField
+import java.time.format.DateTimeFormatter
 import java.util.Collections
 import java.util.Locale
 import javax.inject.Inject
@@ -43,42 +48,38 @@ class PrayerRepositoryImpl @Inject constructor(
     private val settingsManager: SettingsManager
 ) : PrayerRepository {
 
-    // Tracks in-flight fetch keys ("year/month") to prevent duplicate concurrent requests
-    // from HomeViewModel, PrayerUpdateWorker, and LocationUpdateWorker all hitting the
-    // same endpoint simultaneously.
     private val inFlightRequests: MutableSet<String> = Collections.synchronizedSet(mutableSetOf())
 
     override fun getPrayerDays(): Flow<List<PrayerDay>> {
-        return dao.getAllPrayerDays().map { entities -> 
-            entities.map { it.toDomain() } 
+        return dao.getAllPrayerDays().map { entities ->
+            entities.map { entity -> entity.toPrayerDay() }
         }
     }
 
     override suspend fun getMoonPhase(dateTime: LocalDateTime): MoonPhase {
-        val lat = 47.491143 // Default or from settings
+        val lat = 47.491143
         val lng = 7.5833342
         val zone = ZoneId.systemDefault()
-        
-        // Use SunCalc for high-precision local calculation
+
         val moonIllumination = MoonIllumination.compute()
             .on(dateTime)
             .timezone(zone)
             .execute()
-            
+
         val moonTimes = MoonTimes.compute()
             .on(dateTime)
             .at(lat, lng)
             .timezone(zone)
             .execute()
-            
+
         val moonPosition = MoonPosition.compute()
             .on(dateTime)
             .at(lat, lng)
             .timezone(zone)
             .execute()
 
-        val phaseProgress = (moonIllumination.phase + 180.0) / 360.0 // Normalize to 0.0 - 1.0
-        
+        val phaseProgress = (moonIllumination.phase + 180.0) / 360.0
+
         return MoonPhase(
             illumination = moonIllumination.fraction,
             phaseProgress = phaseProgress,
@@ -106,9 +107,6 @@ class PrayerRepositoryImpl @Inject constructor(
                 ?.takeIf { it.isNotBlank() }
                 ?.let { weatherApi.getCurrentWeather(it) }
 
-            // Names such as "Reinach, Switzerland" can resolve to another municipality with
-            // the same name. Accept a named result only when it is geographically near the GPS
-            // position; otherwise use the unambiguous coordinate query.
             val response = if (
                 namedResponse != null && locationsAreNear(
                     latitude,
@@ -199,58 +197,77 @@ class PrayerRepositoryImpl @Inject constructor(
         }
 
         val yearMonth = "$year-${month.toString().padStart(2, '0')}"
-        val key = "$year/$month"
-        val currentParams = buildFetchParams(latitude, longitude, method)
+        val cachedParams = settingsManager.getFetchParams(yearMonth)
+        val currentParams = if (method == 13) {
+            compatibleMethod13FetchParams(cachedParams, latitude, longitude)
+                ?: buildFetchParams(latitude, longitude, method, ZoneId.systemDefault())
+        } else {
+            buildFetchParams(latitude, longitude, method)
+        }
+        val inFlightKey = "$year/$month/$currentParams"
 
-        // Deduplicate first so a second caller can never wipe a month while the
-        // first caller is still fetching or has inserted rows but not yet saved
-        // the fetch-params marker.
-        if (!inFlightRequests.add(key)) return Result.success(Unit)
+        if (!inFlightRequests.add(inFlightKey)) return Result.success(Unit)
 
         return try {
-            val cachedParams = settingsManager.getFetchParams(yearMonth)
             val expectedDayCount = YearMonth.of(year, month).lengthOfMonth()
             val cachedDayCount = dao.getCountForYearMonth(yearMonth)
             val hasCompleteMonthCache = cachedDayCount >= expectedDayCount
 
-            // Smart cache: skip only when both the fetch parameters match and the
-            // month is fully present in Room. This allows manual refresh to heal
-            // months whose rows were lost or only partially written.
             if (cachedParams == currentParams && hasCompleteMonthCache) {
                 return Result.success(Unit)
             }
 
-            // Params changed or the month is incomplete - clear stale rows so the
-            // replacement fetch writes a consistent month for the active settings.
             dao.deletePrayerDaysForYearMonth(yearMonth)
 
             val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method)
             if (response.code == 200) {
+                val resolvedZoneId = if (method == 13) {
+                    resolveApiZoneId(response.data)
+                } else {
+                    ZoneId.systemDefault()
+                }
                 var entities = response.data.map { it.toEntity() }
-                // For Diyanet (method 13) above 43°N the Al-Adhan API returns standard
-                // MWL angle times which diverge significantly from Diyanet's published
-                // times in summer. Replace Fajr and Isha with the locally-computed
-                // fraction-based values that match Diyanet's algorithm exactly.
                 if (method == 13) {
-                    entities = applyDiyanetFractionCorrection(entities, year, month, latitude, longitude)
+                    entities = applyAdaptiveDiyanetCorrection(
+                        entities = entities,
+                        year = year,
+                        month = month,
+                        latitude = latitude,
+                        longitude = longitude,
+                        zoneId = resolvedZoneId
+                    )
                 }
                 dao.insertPrayerDays(entities)
-                settingsManager.saveFetchParams(yearMonth, currentParams)
+                settingsManager.saveFetchParams(
+                    yearMonth,
+                    buildFetchParams(latitude, longitude, method, resolvedZoneId)
+                )
                 Result.success(Unit)
             } else {
                 Result.failure(Exception("Aladhan API Error"))
             }
         } catch (e: Exception) {
             try {
-                val localEntities = localCalculator.calculateMonthlyPrayerTimes(year, month, latitude, longitude, method)
+                val fallbackZoneId = ZoneId.systemDefault()
+                val localEntities = localCalculator.calculateMonthlyPrayerTimes(
+                    year = year,
+                    month = month,
+                    latitude = latitude,
+                    longitude = longitude,
+                    methodId = method,
+                    zoneId = fallbackZoneId
+                )
                 dao.insertPrayerDays(localEntities)
-                settingsManager.saveFetchParams(yearMonth, currentParams)
+                settingsManager.saveFetchParams(
+                    yearMonth,
+                    buildFetchParams(latitude, longitude, method, fallbackZoneId)
+                )
                 Result.success(Unit)
             } catch (localEx: Exception) {
                 Result.failure(localEx)
             }
         } finally {
-            inFlightRequests.remove(key)
+            inFlightRequests.remove(inFlightKey)
         }
     }
 
@@ -273,31 +290,39 @@ class PrayerRepositoryImpl @Inject constructor(
             val existing = dao.getAllPrayerDaysOnce()
             if (existing.isEmpty()) return Result.success(Unit)
 
-            // Group stored days by year+month so we call the calculator once per month.
-            val byYearMonth = existing.groupBy { it.date.substring(0, 7) } // "YYYY-MM"
+            val byYearMonth = existing.groupBy { it.date.substring(0, 7) }
 
             for ((yearMonth, days) in byYearMonth) {
                 val (year, month) = yearMonth.split("-").map { it.toInt() }
                 val recalculated = localCalculator
-                    .calculateMonthlyPrayerTimes(year, month, latitude, longitude, method, madhab)
+                    .calculateMonthlyPrayerTimes(
+                        year = year,
+                        month = month,
+                        latitude = latitude,
+                        longitude = longitude,
+                        methodId = method,
+                        madhabId = madhab,
+                        zoneId = ZoneId.systemDefault()
+                    )
                     .associateBy { it.date }
 
                 for (day in days) {
                     val updated = recalculated[day.date] ?: continue
                     dao.updateTimings(
-                        date     = day.date,
-                        fajr     = updated.fajr,
-                        sunrise  = updated.sunrise,
-                        dhuhr    = updated.dhuhr,
-                        asr      = updated.asr,
-                        maghrib  = updated.maghrib,
-                        isha     = updated.isha
+                        date = day.date,
+                        fajr = updated.fajr,
+                        sunrise = updated.sunrise,
+                        dhuhr = updated.dhuhr,
+                        asr = updated.asr,
+                        maghrib = updated.maghrib,
+                        isha = updated.isha
                     )
                 }
 
-                // Mark this month as up-to-date for the current location+method
-                // so refreshPrayerTimes doesn't unnecessarily re-fetch from the network.
-                settingsManager.saveFetchParams(yearMonth, buildFetchParams(latitude, longitude, method))
+                settingsManager.saveFetchParams(
+                    yearMonth,
+                    buildFetchParams(latitude, longitude, method, ZoneId.systemDefault())
+                )
             }
             Result.success(Unit)
         } catch (e: Exception) {
@@ -305,30 +330,22 @@ class PrayerRepositoryImpl @Inject constructor(
         }
     }
 
-    /**
-     * Replaces Al-Adhan's Fajr and Isha with locally-computed Diyanet-accurate times.
-     *
-     * Diyanet's high-latitude algorithm (reverse-engineered from published data):
-     *   Fajr = max(standard_angle_fajr,  sunrise − night × k_fajr)
-     *   Isha = min(standard_angle_isha,  maghrib + night × k_isha)
-     *
-     * The max/min rule produces a seamless seasonal transition — standard MWL angles
-     * win in winter (when they work correctly), the fraction wins in summer (when the
-     * angle calculation breaks down at high latitudes). All other columns (Hijri date,
-     * Dhuhr, Asr, Maghrib, Sunrise) are kept from the more accurate Al-Adhan response.
-     *
-     * See: diyanet_analysis_report.md — Findings 10–17
-     */
-    private fun applyDiyanetFractionCorrection(
-        entities: List<com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity>,
+    private fun applyAdaptiveDiyanetCorrection(
+        entities: List<PrayerDayEntity>,
         year: Int,
         month: Int,
         latitude: Double,
-        longitude: Double
-    ): List<com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity> {
+        longitude: Double,
+        zoneId: ZoneId
+    ): List<PrayerDayEntity> {
         return try {
             val corrected = localCalculator.calculateMonthlyPrayerTimes(
-                year, month, latitude, longitude, methodId = 13
+                year = year,
+                month = month,
+                latitude = latitude,
+                longitude = longitude,
+                methodId = 13,
+                zoneId = zoneId
             )
             val correctedByDate = corrected.associateBy { it.date }
             entities.map { entity ->
@@ -336,8 +353,36 @@ class PrayerRepositoryImpl @Inject constructor(
                 if (fix != null) entity.copy(fajr = fix.fajr, isha = fix.isha) else entity
             }
         } catch (e: Exception) {
-            entities // fall back to raw API values on any error
+            Log.w("PrayerRepository", "Adaptive Diyanet correction failed", e)
+            entities
         }
+    }
+
+    private fun resolveApiZoneId(days: List<PrayerDayDto>): ZoneId {
+        val fallback = ZoneId.systemDefault()
+        days.asSequence()
+            .map { it.meta.timezone.trim() }
+            .filter { it.isNotEmpty() }
+            .forEach { timezoneId ->
+                runCatching { ZoneId.of(timezoneId) }
+                    .onSuccess { return it }
+                    .onFailure {
+                        Log.w("PrayerRepository", "Ignoring invalid API timezone: $timezoneId")
+                    }
+            }
+        return fallback
+    }
+
+    private fun compatibleMethod13FetchParams(
+        cachedParams: String?,
+        lat: Double,
+        lng: Double
+    ): String? {
+        val latR = Math.round(lat * 10) / 10.0
+        val lngR = Math.round(lng * 10) / 10.0
+        val prefix = "$latR|$lngR|13|"
+        val suffix = "|$ADAPTIVE_DIYANET_CANDIDATE_VERSION"
+        return cachedParams?.takeIf { it.startsWith(prefix) && it.endsWith(suffix) }
     }
 
     private fun PrayerDayDto.toEntity(): PrayerDayEntity {
@@ -356,22 +401,69 @@ class PrayerRepositoryImpl @Inject constructor(
     }
 
     private fun String.cleanTime(): String {
-        return this.split(" ")[0]
+        return split(" ")[0]
     }
 
-    /**
-     * Builds the fetch-params cache key for a given location and method.
-     *
-     * Latitude and longitude are rounded to one decimal place (~10 km granularity)
-     * so that minor GPS drift (a few hundred metres) does not invalidate the cache,
-     * while a true location change of 50+ km (which LocationUpdateWorker detects)
-     * always produces a different key and triggers a fresh fetch.
-     *
-     * Format: "$latRounded|$lngRounded|$method"
-     */
-    private fun buildFetchParams(lat: Double, lng: Double, method: Int): String {
+    private fun PrayerDayEntity.toPrayerDay(): PrayerDay {
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+
+        fun parseTime(timeStr: String): LocalTime {
+            return LocalTime.parse(timeStr.split(" ")[0], formatter)
+        }
+
+        val hijri = try {
+            val parts = hijriDate.split(" ")
+            when {
+                parts.size >= 4 -> HijriData(
+                    day = parts[0].toInt(),
+                    monthNumber = parts[1].toInt(),
+                    monthEn = parts[2],
+                    year = parts[3].toInt()
+                )
+
+                parts.size == 3 -> HijriData(
+                    day = parts[0].toInt(),
+                    monthNumber = 1,
+                    monthEn = parts[1],
+                    year = parts[2].toInt()
+                )
+
+                else -> null
+            }
+        } catch (_: Exception) {
+            null
+        }
+
+        return PrayerDay(
+            date = LocalDate.parse(date),
+            hijriDate = hijri,
+            timings = mapOf(
+                PrayerType.FAJR to parseTime(fajr),
+                PrayerType.SUNRISE to parseTime(sunrise),
+                PrayerType.DHUHR to parseTime(dhuhr),
+                PrayerType.ASR to parseTime(asr),
+                PrayerType.MAGHRIB to parseTime(maghrib),
+                PrayerType.ISHA to parseTime(isha)
+            ),
+            moonPhase = moonPhase,
+            moonIllumination = moonIllumination,
+            moonrise = moonrise,
+            moonset = moonset
+        )
+    }
+
+    private fun buildFetchParams(
+        lat: Double,
+        lng: Double,
+        method: Int,
+        zoneId: ZoneId = ZoneId.systemDefault()
+    ): String {
         val latR = Math.round(lat * 10) / 10.0
         val lngR = Math.round(lng * 10) / 10.0
-        return "$latR|$lngR|$method"
+        return if (method == 13) {
+            "$latR|$lngR|$method|${zoneId.id}|$ADAPTIVE_DIYANET_CANDIDATE_VERSION"
+        } else {
+            "$latR|$lngR|$method"
+        }
     }
 }
