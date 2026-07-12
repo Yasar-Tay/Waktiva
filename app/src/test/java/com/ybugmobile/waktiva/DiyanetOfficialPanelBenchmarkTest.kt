@@ -34,7 +34,7 @@ class DiyanetOfficialPanelBenchmarkTest {
     }
 
     @Test
-    fun `print v4 official panel baseline`() {
+    fun `print v5 official panel benchmark`() {
         val officialByCity = loadOfficialRows().groupBy { it.city }
         val allErrors = mutableListOf<BenchmarkError>()
         val unavailable = mutableListOf<UnavailableMonth>()
@@ -111,22 +111,17 @@ class DiyanetOfficialPanelBenchmarkTest {
                 )
             }
 
-        assertEquals(
-            14 * 365 * 2,
-            allErrors.count { it.event == PrayerEvent.FAJR || it.event == PrayerEvent.ISHA }
-        )
-        assertV4Guardrails(metricsByKey, unavailable)
+        PrayerEvent.entries.forEach { event ->
+            assertEquals(14 * 365, allErrors.count { it.event == event })
+        }
+        assertV5Guardrails(metricsByKey, unavailable)
     }
 
-    private fun assertV4Guardrails(
+    private fun assertV5Guardrails(
         metricsByKey: Map<Triple<EvaluationGroup, String, PrayerEvent>, BenchmarkMetrics>,
         unavailable: List<UnavailableMonth>
     ) {
-        val expectedUnavailable = setOf(
-            "tromso:1", "tromso:5", "tromso:6", "tromso:7", "tromso:11", "tromso:12",
-            "rovaniemi:6", "rovaniemi:7"
-        )
-        assertEquals(expectedUnavailable, unavailable.map { "${it.city}:${it.month}" }.toSet())
+        assertEquals(emptySet<String>(), unavailable.map { "${it.city}:${it.month}" }.toSet())
 
         PANEL_CITIES.forEach { city ->
             val fajr = requireNotNull(metricsByKey[Triple(city.group, city.key, PrayerEvent.FAJR)])
@@ -144,6 +139,19 @@ class DiyanetOfficialPanelBenchmarkTest {
                 require(isha.maxAbsolute <= 8) {
                     "Isha regression for ${city.key}: ${isha.maxAbsolute} minutes"
                 }
+            }
+
+            val sunrise = requireNotNull(metricsByKey[Triple(city.group, city.key, PrayerEvent.SUNRISE)])
+            val dhuhr = requireNotNull(metricsByKey[Triple(city.group, city.key, PrayerEvent.DHUHR)])
+            val maghrib = requireNotNull(metricsByKey[Triple(city.group, city.key, PrayerEvent.MAGHRIB)])
+            require(sunrise.maxAbsolute <= 15) {
+                "Sunrise regression for ${city.key}: ${sunrise.maxAbsolute} minutes"
+            }
+            require(dhuhr.maxAbsolute <= 1) {
+                "Dhuhr regression for ${city.key}: ${dhuhr.maxAbsolute} minutes"
+            }
+            require(maghrib.maxAbsolute <= 15) {
+                "Maghrib regression for ${city.key}: ${maghrib.maxAbsolute} minutes"
             }
         }
     }

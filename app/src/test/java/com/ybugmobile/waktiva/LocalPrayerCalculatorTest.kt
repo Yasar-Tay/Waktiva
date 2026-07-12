@@ -5,6 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.ZoneId
+import java.time.YearMonth
 
 private fun String.toMinutes(): Int {
     val (hours, minutes) = split(":").map { it.toInt() }
@@ -107,5 +108,35 @@ class LocalPrayerCalculatorTest {
         )
 
         assertTrue(hanafiDays.first().asr != shafiDays.first().asr)
+    }
+
+    @Test
+    fun `Diyanet polar months remain complete and ordered`() {
+        val cities = listOf(
+            Triple(69.6492, 18.9553, "Europe/Oslo"),
+            Triple(66.5039, 25.7294, "Europe/Helsinki")
+        )
+
+        cities.forEach { (latitude, longitude, timezone) ->
+            (1..12).forEach { month ->
+                val days = calculator.calculateMonthlyPrayerTimes(
+                    year = 2026,
+                    month = month,
+                    latitude = latitude,
+                    longitude = longitude,
+                    methodId = 13,
+                    zoneId = ZoneId.of(timezone)
+                )
+
+                assertEquals(YearMonth.of(2026, month).lengthOfMonth(), days.size)
+                days.forEach { day ->
+                    val context = "$latitude,$longitude ${day.date}: " +
+                        "${day.sunrise}/${day.dhuhr}/${day.asr}/${day.maghrib}"
+                    assertTrue(context, day.sunrise.toMinutes() < day.dhuhr.toMinutes())
+                    assertTrue(context, day.dhuhr.toMinutes() < day.asr.toMinutes())
+                    assertTrue(context, day.asr.toMinutes() < day.maghrib.toMinutes())
+                }
+            }
+        }
     }
 }

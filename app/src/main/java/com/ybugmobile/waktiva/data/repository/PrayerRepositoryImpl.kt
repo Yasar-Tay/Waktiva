@@ -350,7 +350,17 @@ class PrayerRepositoryImpl @Inject constructor(
             val correctedByDate = corrected.associateBy { it.date }
             entities.map { entity ->
                 val fix = correctedByDate[entity.date]
-                if (fix != null) entity.copy(fajr = fix.fajr, isha = fix.isha) else entity
+                if (fix != null) {
+                    entity.copy(
+                        fajr = fix.fajr,
+                        sunrise = fix.sunrise,
+                        dhuhr = fix.dhuhr,
+                        maghrib = fix.maghrib,
+                        isha = fix.isha
+                    )
+                } else {
+                    entity
+                }
             }
         } catch (e: Exception) {
             Log.w("PrayerRepository", "Adaptive Diyanet correction failed", e)

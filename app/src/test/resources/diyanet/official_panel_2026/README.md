@@ -9,6 +9,9 @@ This directory contains immutable test fixtures copied from the user-provided
   Diyanet PDF tables. Every city has exactly 365 unique dates.
 - `city_metadata.json`: coordinates, timezone, criteria profile, and grouping
   metadata used by the reference Python benchmark.
+- `BASELINE_2a9ef24.md`: immutable v4 benchmark and confirmed defects.
+- `BENCHMARK_V5_AXIS.md`: full-day axis benchmark after wiring the Diyanet
+  Sunrise, Dhuhr, and Maghrib values into production output.
 
 ## Integrity
 

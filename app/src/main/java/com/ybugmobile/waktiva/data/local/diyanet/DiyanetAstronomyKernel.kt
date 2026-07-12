@@ -69,6 +69,7 @@ class DiyanetAstronomyKernel {
         if (!useFiveHourBounds) {
             return DiyanetPrayerAxis(
                 prayerSunrise = rawEvents.prayerSunrise,
+                prayerNoon = rawEvents.prayerNoon,
                 prayerMaghrib = rawEvents.prayerMaghrib
             )
         }
@@ -77,6 +78,7 @@ class DiyanetAstronomyKernel {
             .getOrElse {
                 return DiyanetPrayerAxis(
                     prayerSunrise = rawEvents.prayerSunrise,
+                    prayerNoon = rawEvents.prayerNoon,
                     prayerMaghrib = rawEvents.prayerMaghrib,
                     phase = "solstice_bounds_unavailable"
                 )
@@ -135,6 +137,7 @@ class DiyanetAstronomyKernel {
 
         return DiyanetPrayerAxis(
             prayerSunrise = prayerSunrise,
+            prayerNoon = rawEvents.prayerNoon,
             prayerMaghrib = prayerMaghrib,
             phase = phases.takeIf { it.isNotEmpty() }?.joinToString("+")
         )

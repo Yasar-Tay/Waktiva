@@ -796,6 +796,20 @@ class AdaptiveDiyanetCalculator(
         }
     }
 
+    fun prayerAxis(
+        date: LocalDate,
+        location: PrayerLocation,
+        profile: DiyanetCriteriaProfile
+    ): DiyanetPrayerAxis {
+        val annualProfile = inspectAnnualProfile(date, location, profile)
+        return astronomyKernel.prayerAxis(
+            date = date,
+            location = location,
+            profile = profile,
+            useFiveHourBounds = annualProfile.usesFiveHourBounds
+        )
+    }
+
     private fun resolveTransitionCandidate(
         directValue: ZonedDateTime?,
         estimatedValue: ZonedDateTime,

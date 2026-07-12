@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 import kotlin.math.roundToLong
 
-const val ADAPTIVE_DIYANET_CANDIDATE_VERSION = "adaptive_full_year_waktiva_v4"
+const val ADAPTIVE_DIYANET_CANDIDATE_VERSION = "adaptive_full_year_waktiva_v5"
 const val DIYANET_ASTRONOMY_KERNEL_VERSION = "waktiva_suncalc_true_altitude_v1"
 const val PRAYER_SUNRISE_OFFSET_MINUTES = 7L
 const val PRAYER_DHUHR_OFFSET_MINUTES = 5L
@@ -67,6 +67,7 @@ data class DiyanetRawEvents(
 
 data class DiyanetPrayerAxis(
     val prayerSunrise: ZonedDateTime?,
+    val prayerNoon: ZonedDateTime?,
     val prayerMaghrib: ZonedDateTime?,
     val phase: String? = null
 )
@@ -176,23 +177,27 @@ data class DiyanetAnnualProfile(
     val anchorEstimatedIsha: ZonedDateTime? = null
 )
 
-fun resolveDiyanetProfile(latitude: Double): DiyanetCriteriaProfile {
-    return if (abs(latitude) <= 43.0) {
-        DiyanetCriteriaProfile(
-            profileId = "waktiva_diyanet_direct_18_17_v1",
-            fajrAngle = 18.0,
-            ishaAngle = 17.0,
-            highLatitude = false
-        )
-    } else {
-        DiyanetCriteriaProfile(
-            profileId = "waktiva_diyanet_adaptive_18_16_v1",
-            fajrAngle = 18.0,
-            ishaAngle = 16.0,
-            highLatitude = true
-        )
+object DiyanetProfiles {
+    fun resolve(latitude: Double): DiyanetCriteriaProfile {
+        return if (abs(latitude) <= 43.0) {
+            DiyanetCriteriaProfile(
+                profileId = "waktiva_diyanet_direct_18_17_v1",
+                fajrAngle = 18.0,
+                ishaAngle = 17.0,
+                highLatitude = false
+            )
+        } else {
+            DiyanetCriteriaProfile(
+                profileId = "waktiva_diyanet_adaptive_18_16_v1",
+                fajrAngle = 18.0,
+                ishaAngle = 16.0,
+                highLatitude = true
+            )
+        }
     }
 }
+
+fun resolveDiyanetProfile(latitude: Double): DiyanetCriteriaProfile = DiyanetProfiles.resolve(latitude)
 
 fun roundForDisplay(dateTime: ZonedDateTime): ZonedDateTime {
     return dateTime.plusSeconds(30).withSecond(0).withNano(0)

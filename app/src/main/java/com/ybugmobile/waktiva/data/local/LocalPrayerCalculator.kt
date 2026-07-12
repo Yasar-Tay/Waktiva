@@ -7,9 +7,8 @@ import com.batoulapps.adhan.Madhab
 import com.batoulapps.adhan.PrayerTimes
 import com.batoulapps.adhan.data.DateComponents
 import com.ybugmobile.waktiva.data.local.diyanet.AdaptiveDiyanetCalculator
+import com.ybugmobile.waktiva.data.local.diyanet.DiyanetProfiles
 import com.ybugmobile.waktiva.data.local.diyanet.PrayerLocation
-import com.ybugmobile.waktiva.data.local.diyanet.resolveDiyanetProfile
-import com.ybugmobile.waktiva.data.local.diyanet.roundForDisplay
 import com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity
 import java.time.LocalDate
 import java.time.YearMonth
@@ -51,7 +50,7 @@ class LocalPrayerCalculator @Inject constructor() {
             longitude = longitude,
             zoneId = zoneId
         )
-        val diyanetProfile = if (methodId == 13) resolveDiyanetProfile(latitude) else null
+        val diyanetProfile = if (methodId == 13) DiyanetProfiles.resolve(latitude) else null
 
         return (1..YearMonth.of(year, month).lengthOfMonth()).map { day ->
             val date = LocalDate.of(year, month, day)
@@ -62,20 +61,49 @@ class LocalPrayerCalculator @Inject constructor() {
             } else {
                 null
             }
+            val diyanetAxis = if (diyanetProfile != null) {
+                adaptiveDiyanetCalculator.prayerAxis(date, location, diyanetProfile)
+            } else {
+                null
+            }
 
             val fajr = adaptiveResult?.fajr?.toAdaptiveTimeString()
                 ?: adhanTimes.fajr.toTimeString(zoneId)
             val isha = adaptiveResult?.isha?.toAdaptiveTimeString()
                 ?: adhanTimes.isha.toTimeString(zoneId)
 
+            val sunrise = diyanetAxis?.prayerSunrise?.toAdaptiveTimeString()
+                ?: adhanTimes.sunrise.toTimeString(zoneId)
+            val dhuhr = diyanetAxis?.prayerNoon?.toAdaptiveTimeString()
+                ?: adhanTimes.dhuhr.toTimeString(zoneId)
+            val maghrib = diyanetAxis?.prayerMaghrib?.toAdaptiveTimeString()
+                ?: adhanTimes.maghrib.toTimeString(zoneId)
+            val asr = if (diyanetAxis != null) {
+                val candidate = validatedAsrTime(
+                    candidate = adhanTimes.asr,
+                    date = date,
+                    zoneId = zoneId
+                ) ?: calculatePolarAsrFallback(
+                    date = date,
+                    latitude = latitude,
+                    longitude = longitude,
+                    params = params,
+                    zoneId = zoneId
+                )
+                candidate?.takeIf { isClockBetween(it, dhuhr, maghrib) }
+                    ?: midpointClock(dhuhr, maghrib)
+            } else {
+                adhanTimes.asr.toTimeString(zoneId)
+            }
+
             PrayerDayEntity(
                 date = date.toString(),
                 hijriDate = "",
                 fajr = fajr,
-                sunrise = adhanTimes.sunrise.toTimeString(zoneId),
-                dhuhr = adhanTimes.dhuhr.toTimeString(zoneId),
-                asr = adhanTimes.asr.toTimeString(zoneId),
-                maghrib = adhanTimes.maghrib.toTimeString(zoneId),
+                sunrise = sunrise,
+                dhuhr = dhuhr,
+                asr = asr,
+                maghrib = maghrib,
                 isha = isha
             )
         }
@@ -86,7 +114,62 @@ class LocalPrayerCalculator @Inject constructor() {
     }
 
     private fun ZonedDateTime.toAdaptiveTimeString(): String {
-        return roundForDisplay(this).format(timeFormatter)
+        return plusSeconds(30).withSecond(0).withNano(0).format(timeFormatter)
+    }
+
+    private fun calculatePolarAsrFallback(
+        date: LocalDate,
+        latitude: Double,
+        longitude: Double,
+        params: CalculationParameters,
+        zoneId: ZoneId
+    ): String? {
+        val boundedLatitude = latitude.coerceIn(-DIYANET_POLAR_REFERENCE_LATITUDE, DIYANET_POLAR_REFERENCE_LATITUDE)
+        if (boundedLatitude == latitude) return null
+
+        val fallbackTimes = PrayerTimes(
+            Coordinates(boundedLatitude, longitude),
+            DateComponents(date.year, date.monthValue, date.dayOfMonth),
+            params
+        )
+        return validatedAsrTime(
+            candidate = fallbackTimes.asr,
+            date = date,
+            zoneId = zoneId
+        )
+    }
+
+    private fun validatedAsrTime(
+        candidate: Date?,
+        date: LocalDate,
+        zoneId: ZoneId
+    ): String? {
+        val asr = candidate?.toInstant()?.atZone(zoneId) ?: return null
+        if (asr.toLocalDate() != date) return null
+        return asr.format(timeFormatter)
+    }
+
+    private fun isClockBetween(candidate: String, start: String, end: String): Boolean {
+        val startMinutes = clockMinutes(start)
+        var endMinutes = clockMinutes(end)
+        var candidateMinutes = clockMinutes(candidate)
+        while (endMinutes <= startMinutes) endMinutes += MINUTES_PER_DAY
+        while (candidateMinutes <= startMinutes) candidateMinutes += MINUTES_PER_DAY
+        return candidateMinutes < endMinutes
+    }
+
+    private fun midpointClock(start: String, end: String): String {
+        val startMinutes = clockMinutes(start)
+        var endMinutes = clockMinutes(end)
+        while (endMinutes <= startMinutes) endMinutes += MINUTES_PER_DAY
+        val midpoint = startMinutes + (endMinutes - startMinutes) / 2
+        val wrappedMidpoint = midpoint % MINUTES_PER_DAY
+        return "%02d:%02d".format(wrappedMidpoint / 60, wrappedMidpoint % 60)
+    }
+
+    private fun clockMinutes(value: String): Int {
+        val (hour, minute) = value.split(':').map(String::toInt)
+        return hour * 60 + minute
     }
 
     private fun getCalculationParameters(id: Int): CalculationParameters {
@@ -104,5 +187,10 @@ class LocalPrayerCalculator @Inject constructor() {
             13 -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
             else -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
         }
+    }
+
+    private companion object {
+        const val DIYANET_POLAR_REFERENCE_LATITUDE = 62.0
+        const val MINUTES_PER_DAY = 24 * 60
     }
 }
