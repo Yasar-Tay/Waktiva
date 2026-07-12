@@ -38,6 +38,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Bu blok, emülatör veya cihaz için gerekli ABI'ları zorlayarak
+            // "none of the 0 split apks" hatasını çözmeye yardımcı olur.
+            ndk {
+                abiFilters.addAll(listOf("x86_64", "arm64-v8a", "armeabi-v7a"))
+            }
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true

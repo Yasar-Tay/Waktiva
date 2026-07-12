@@ -6,6 +6,7 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.LinkedHashMap
 import kotlin.math.max
+import kotlin.math.pow
 import kotlin.math.roundToLong
 
 interface DiyanetCandidateCalculator {
@@ -102,13 +103,15 @@ class AdaptiveDiyanetCalculator(
         profile: DiyanetCriteriaProfile
     ): DiyanetAnnualProfile {
         val usesFiveHourBounds = astronomyKernel.usesFiveHourBounds(boundsYear, location, profile)
-        val dominantMissingRun = findDominantMissingRun(anchor, location, profile)
+        val dominantMissingRun = findDominantMissingRun(anchor, location, profile, fajr = true)
+        val dominantMissingIshaRun = findDominantMissingRun(anchor, location, profile, fajr = false)
         return if (dominantMissingRun != null && dominantMissingRun.lengthDays >= 10) {
             buildMissingFajrAnnualProfile(
                 anchor = anchor,
                 location = location,
                 profile = profile,
                 dominantMissingRun = dominantMissingRun,
+                dominantMissingIshaRun = dominantMissingIshaRun,
                 usesFiveHourBounds = usesFiveHourBounds
             )
         } else {
@@ -210,6 +213,7 @@ class AdaptiveDiyanetCalculator(
         location: PrayerLocation,
         profile: DiyanetCriteriaProfile,
         dominantMissingRun: DiyanetDateRange,
+        dominantMissingIshaRun: DiyanetDateRange?,
         usesFiveHourBounds: Boolean
     ): DiyanetAnnualProfile {
         val springReferenceDay = dominantMissingRun.start.minusDays(1)
@@ -279,8 +283,10 @@ class AdaptiveDiyanetCalculator(
             marginMinutes = margins.springFajr,
             fajr = true
         ) ?: dominantMissingRun.start.minusDays(1)
+        val resolvedIshaMissingRun = dominantMissingIshaRun ?: dominantMissingRun
+        val delayedIshaAutumnTransition = resolvedIshaMissingRun.end.isAfter(dominantMissingRun.end)
         val ishaTransitionStart = findTransitionStartBeforeMissingRun(
-            firstMissing = dominantMissingRun.start,
+            firstMissing = resolvedIshaMissingRun.start,
             location = location,
             profile = profile,
             usesFiveHourBounds = usesFiveHourBounds,
@@ -302,13 +308,17 @@ class AdaptiveDiyanetCalculator(
             fajr = true
         ) ?: firstDirect
         val ishaTransitionEnd = findTransitionEndAfterMissingRun(
-            firstDirect = firstDirect,
+            firstDirect = resolvedIshaMissingRun.end.plusDays(1),
             location = location,
             profile = profile,
             usesFiveHourBounds = usesFiveHourBounds,
             minimumNightMinutes = minimumNightMinutes,
             summerRatio = summerRatio,
-            marginMinutes = margins.autumnIsha,
+            marginMinutes = if (delayedIshaAutumnTransition) {
+                ISHA_AUTUMN_CONVERGENCE_MARGIN_MINUTES
+            } else {
+                margins.autumnIsha
+            },
             fajr = false
         ) ?: firstDirect
 
@@ -318,6 +328,8 @@ class AdaptiveDiyanetCalculator(
             regime = DiyanetRegime.ROBUST_MISSING_FAJR_FULL_YEAR,
             usesFiveHourBounds = usesFiveHourBounds,
             dominantMissingRun = dominantMissingRun,
+            dominantMissingIshaRun = resolvedIshaMissingRun,
+            delayedIshaAutumnTransition = delayedIshaAutumnTransition,
             adaptiveShoulderRegime = shoulderFamily,
             springReferenceDay = springReferenceDay,
             summerRatio = summerRatio,
@@ -453,6 +465,7 @@ class AdaptiveDiyanetCalculator(
     ): DiyanetCalculationResult {
         val estimated = estimateMissingFajrTimes(date, location, profile, annualProfile)
         val missingRun = annualProfile.dominantMissingRun
+        val missingIshaRun = annualProfile.dominantMissingIshaRun ?: missingRun
         val (fajr, fajrPhase) = resolveMissingRunField(
             date = date,
             missingRun = missingRun,
@@ -462,17 +475,23 @@ class AdaptiveDiyanetCalculator(
             autumnEnd = annualProfile.fajrTransitionEnd,
             springMarginMinutes = annualProfile.springFajrMarginMinutes,
             autumnMarginMinutes = annualProfile.autumnFajrMarginMinutes,
+            autumnCurveExponent = 1.0,
             isFajr = true
         )
         val (isha, ishaPhase) = resolveMissingRunField(
             date = date,
-            missingRun = missingRun,
+            missingRun = missingIshaRun,
             directValue = rawEvents.directIsha,
             estimatedValue = estimated.isha,
             transitionStart = annualProfile.ishaTransitionStart,
             autumnEnd = annualProfile.ishaTransitionEnd,
             springMarginMinutes = annualProfile.springIshaMarginMinutes,
             autumnMarginMinutes = annualProfile.autumnIshaMarginMinutes,
+            autumnCurveExponent = if (annualProfile.delayedIshaAutumnTransition) {
+                ISHA_AUTUMN_CURVE_EXPONENT
+            } else {
+                1.0
+            },
             isFajr = false
         )
 
@@ -488,6 +507,9 @@ class AdaptiveDiyanetCalculator(
             usesFiveHourBounds = annualProfile.usesFiveHourBounds,
             firstMissing = missingRun?.start,
             lastMissing = missingRun?.end,
+            ishaFirstMissing = missingIshaRun?.start,
+            ishaLastMissing = missingIshaRun?.end,
+            delayedIshaAutumnTransition = annualProfile.delayedIshaAutumnTransition,
             springReferenceDay = annualProfile.springReferenceDay,
             summerRatio = annualProfile.summerRatio,
             ratioSource = annualProfile.ratioSource,
@@ -505,7 +527,11 @@ class AdaptiveDiyanetCalculator(
             ishaTransitionStart = annualProfile.ishaTransitionStart,
             ishaTransitionEnd = annualProfile.ishaTransitionEnd,
             phase = phase,
-            transitionCurve = "linear",
+            transitionCurve = if (annualProfile.delayedIshaAutumnTransition) {
+                "linear_fajr_quadratic_delayed_isha_autumn"
+            } else {
+                "linear"
+            },
             directFajr = rawEvents.directFajr,
             directIsha = rawEvents.directIsha,
             estimatedFajr = estimated.fajr,
@@ -712,6 +738,7 @@ class AdaptiveDiyanetCalculator(
         autumnEnd: LocalDate?,
         springMarginMinutes: Double?,
         autumnMarginMinutes: Double?,
+        autumnCurveExponent: Double,
         isFajr: Boolean
     ): Pair<ZonedDateTime?, String> {
         if (missingRun != null && date in missingRun) {
@@ -720,9 +747,6 @@ class AdaptiveDiyanetCalculator(
 
         val firstMissing = missingRun?.start
         val lastMissing = missingRun?.end
-        if (directValue == null) {
-            return estimatedValue to "estimate_fallback"
-        }
         if (estimatedValue == null) {
             return directValue to "direct"
         }
@@ -736,7 +760,13 @@ class AdaptiveDiyanetCalculator(
         ) {
             val t = normalizedProgress(transitionStart, firstMissing, date)
             val residual = springMarginMinutes * (1.0 - t)
-            return clampWithDirect(directValue, estimatedValue, residual, isFajr) to "spring_transition"
+            return resolveTransitionCandidate(
+                directValue = directValue,
+                estimatedValue = estimatedValue,
+                residualMinutes = residual,
+                isFajr = isFajr,
+                phase = "spring_transition"
+            )
         }
 
         val firstDirect = lastMissing?.plusDays(1)
@@ -747,25 +777,45 @@ class AdaptiveDiyanetCalculator(
             !date.isAfter(autumnEnd) &&
             autumnMarginMinutes != null
         ) {
-            val t = normalizedProgress(firstDirect, autumnEnd, date)
+            val progress = normalizedProgress(firstDirect, autumnEnd, date)
+            val t = progress.pow(autumnCurveExponent)
             val residual = autumnMarginMinutes * t
-            return clampWithDirect(directValue, estimatedValue, residual, isFajr) to "autumn_transition"
+            return resolveTransitionCandidate(
+                directValue = directValue,
+                estimatedValue = estimatedValue,
+                residualMinutes = residual,
+                isFajr = isFajr,
+                phase = "autumn_transition"
+            )
         }
 
-        return directValue to "direct"
+        return if (directValue == null) {
+            estimatedValue to "estimate_fallback"
+        } else {
+            directValue to "direct"
+        }
+    }
+
+    private fun resolveTransitionCandidate(
+        directValue: ZonedDateTime?,
+        estimatedValue: ZonedDateTime,
+        residualMinutes: Double,
+        isFajr: Boolean,
+        phase: String
+    ): Pair<ZonedDateTime, String> {
+        val candidate = transitionCandidate(estimatedValue, residualMinutes, isFajr)
+        return if (directValue == null) {
+            candidate to "${phase}_estimated_only"
+        } else {
+            clampWithDirect(directValue, candidate, isFajr) to phase
+        }
     }
 
     private fun clampWithDirect(
         directValue: ZonedDateTime,
-        estimatedValue: ZonedDateTime,
-        residualMinutes: Double,
+        candidate: ZonedDateTime,
         isFajr: Boolean
     ): ZonedDateTime {
-        val candidate = if (isFajr) {
-            estimatedValue.minus(minutesAsDuration(residualMinutes))
-        } else {
-            estimatedValue.plus(minutesAsDuration(residualMinutes))
-        }
         return if (isFajr) {
             if (candidate.isBefore(directValue)) directValue else candidate
         } else {
@@ -773,10 +823,23 @@ class AdaptiveDiyanetCalculator(
         }
     }
 
+    private fun transitionCandidate(
+        estimatedValue: ZonedDateTime,
+        residualMinutes: Double,
+        isFajr: Boolean
+    ): ZonedDateTime {
+        return if (isFajr) {
+            estimatedValue.minus(minutesAsDuration(residualMinutes))
+        } else {
+            estimatedValue.plus(minutesAsDuration(residualMinutes))
+        }
+    }
+
     private fun findDominantMissingRun(
         anchor: LocalDate,
         location: PrayerLocation,
-        profile: DiyanetCriteriaProfile
+        profile: DiyanetCriteriaProfile,
+        fajr: Boolean
     ): DiyanetDateRange? {
         var best: DiyanetDateRange? = null
         var currentStart: LocalDate? = null
@@ -784,8 +847,10 @@ class AdaptiveDiyanetCalculator(
         val end = anchor.plusDays(190)
 
         for (date in datesBetween(start, end)) {
-            val fajr = astronomyKernel.rawEvents(date, location, profile).directFajr
-            if (fajr == null) {
+            val directValue = astronomyKernel.rawEvents(date, location, profile).let {
+                if (fajr) it.directFajr else it.directIsha
+            }
+            if (directValue == null) {
                 if (currentStart == null) {
                     currentStart = date
                 }
@@ -1049,5 +1114,7 @@ class AdaptiveDiyanetCalculator(
 
     private companion object {
         const val SOLSTICE_TRANSITION_MARGIN_MINUTES: Double = 20.0
+        const val ISHA_AUTUMN_CONVERGENCE_MARGIN_MINUTES: Double = 5.0
+        const val ISHA_AUTUMN_CURVE_EXPONENT: Double = 2.0
     }
 }

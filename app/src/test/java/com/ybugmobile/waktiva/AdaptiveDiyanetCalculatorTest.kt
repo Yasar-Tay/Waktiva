@@ -199,6 +199,81 @@ class AdaptiveDiyanetCalculatorTest {
     }
 
     @Test
+    fun `paris uses independent missing runs and keeps july isha continuous`() {
+        val location = PrayerLocation(48.8566, 2.3522, ZoneId.of("Europe/Paris"), 35.0)
+        val profile = resolveDiyanetProfile(location.latitude)
+        val annualProfile = adaptiveCalculator.inspectAnnualProfile(
+            date = LocalDate.of(2026, 7, 21),
+            location = location,
+            profile = profile
+        )
+
+        assertEquals(DiyanetRegime.ROBUST_MISSING_FAJR_FULL_YEAR, annualProfile.regime)
+        assertEquals(
+            LocalDate.of(2026, 6, 13),
+            annualProfile.dominantMissingRun?.start
+        )
+        assertEquals(
+            LocalDate.of(2026, 6, 30),
+            annualProfile.dominantMissingRun?.end
+        )
+        assertEquals(
+            LocalDate.of(2026, 5, 26),
+            annualProfile.dominantMissingIshaRun?.start
+        )
+        assertEquals(
+            LocalDate.of(2026, 7, 20),
+            annualProfile.dominantMissingIshaRun?.end
+        )
+        assertTrue(annualProfile.delayedIshaAutumnTransition)
+
+        val july20 = adaptiveCalculator.calculate(LocalDate.of(2026, 7, 20), location, profile)
+        val july21 = adaptiveCalculator.calculate(LocalDate.of(2026, 7, 21), location, profile)
+        val july20Isha = requireNotNull(july20.isha)
+        val july21Isha = requireNotNull(july21.isha)
+
+        assertTimeNear(LocalTime.of(23, 16), july20Isha.toLocalTime(), 2)
+        assertTimeNear(LocalTime.of(23, 16), july21Isha.toLocalTime(), 2)
+        assertTrue(
+            abs(ChronoUnit.MINUTES.between(july20Isha.toLocalTime(), july21Isha.toLocalTime())) <= 2
+        )
+        assertEquals(LocalDate.of(2026, 5, 26), july21.diagnostics.ishaFirstMissing)
+        assertEquals(LocalDate.of(2026, 7, 20), july21.diagnostics.ishaLastMissing)
+        assertEquals(
+            "linear_fajr_quadratic_delayed_isha_autumn",
+            july21.diagnostics.transitionCurve
+        )
+
+        val officialIsha = mapOf(
+            LocalDate.of(2026, 7, 20) to LocalTime.of(23, 17),
+            LocalDate.of(2026, 7, 21) to LocalTime.of(23, 16),
+            LocalDate.of(2026, 7, 23) to LocalTime.of(23, 15),
+            LocalDate.of(2026, 7, 29) to LocalTime.of(23, 12),
+            LocalDate.of(2026, 8, 5) to LocalTime.of(23, 9),
+            LocalDate.of(2026, 8, 13) to LocalTime.of(23, 5),
+            LocalDate.of(2026, 8, 14) to LocalTime.of(23, 2),
+            LocalDate.of(2026, 8, 15) to LocalTime.of(22, 59),
+            LocalDate.of(2026, 8, 16) to LocalTime.of(22, 57)
+        )
+        officialIsha.forEach { (date, expected) ->
+            val result = requireNotNull(adaptiveCalculator.calculate(date, location, profile).isha)
+            assertTimeNear(expected, result.toLocalTime(), 3)
+        }
+
+        val transitionValues = generateSequence(LocalDate.of(2026, 7, 20)) { date ->
+            date.plusDays(1).takeUnless { it.isAfter(LocalDate.of(2026, 8, 16)) }
+        }.map { date ->
+            requireNotNull(adaptiveCalculator.calculate(date, location, profile).isha)
+        }.toList()
+        transitionValues.zipWithNext { previous, current ->
+            assertTrue(
+                "Paris Isha increased from $previous to $current",
+                !current.toLocalTime().isAfter(previous.toLocalTime())
+            )
+        }
+    }
+
+    @Test
     fun `tromso keeps fajr and isha available through bounded polar summer axis`() {
         val location = PrayerLocation(69.6492, 18.9553, ZoneId.of("Europe/Oslo"))
         val profile = resolveDiyanetProfile(location.latitude)

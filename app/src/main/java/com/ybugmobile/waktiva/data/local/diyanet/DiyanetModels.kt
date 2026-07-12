@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 import kotlin.math.roundToLong
 
-const val ADAPTIVE_DIYANET_CANDIDATE_VERSION = "adaptive_full_year_waktiva_v2"
+const val ADAPTIVE_DIYANET_CANDIDATE_VERSION = "adaptive_full_year_waktiva_v4"
 const val DIYANET_ASTRONOMY_KERNEL_VERSION = "waktiva_suncalc_true_altitude_v1"
 const val PRAYER_SUNRISE_OFFSET_MINUTES = 7L
 const val PRAYER_DHUHR_OFFSET_MINUTES = 5L
@@ -113,6 +113,9 @@ data class DiyanetDiagnostics(
     val usesFiveHourBounds: Boolean? = null,
     val firstMissing: LocalDate? = null,
     val lastMissing: LocalDate? = null,
+    val ishaFirstMissing: LocalDate? = null,
+    val ishaLastMissing: LocalDate? = null,
+    val delayedIshaAutumnTransition: Boolean? = null,
     val springReferenceDay: LocalDate? = null,
     val summerRatio: Double? = null,
     val ratioSource: String? = null,
@@ -148,6 +151,8 @@ data class DiyanetAnnualProfile(
     val regime: DiyanetRegime,
     val usesFiveHourBounds: Boolean = false,
     val dominantMissingRun: DiyanetDateRange? = null,
+    val dominantMissingIshaRun: DiyanetDateRange? = null,
+    val delayedIshaAutumnTransition: Boolean = false,
     val adaptiveShoulderRegime: String? = null,
     val springReferenceDay: LocalDate? = null,
     val summerRatio: Double? = null,
