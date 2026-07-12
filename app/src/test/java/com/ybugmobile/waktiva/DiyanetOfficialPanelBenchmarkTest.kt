@@ -34,7 +34,7 @@ class DiyanetOfficialPanelBenchmarkTest {
     }
 
     @Test
-    fun `print v5 official panel benchmark`() {
+    fun `print v6 official panel benchmark`() {
         val officialByCity = loadOfficialRows().groupBy { it.city }
         val allErrors = mutableListOf<BenchmarkError>()
         val unavailable = mutableListOf<UnavailableMonth>()
@@ -114,10 +114,10 @@ class DiyanetOfficialPanelBenchmarkTest {
         PrayerEvent.entries.forEach { event ->
             assertEquals(14 * 365, allErrors.count { it.event == event })
         }
-        assertV5Guardrails(metricsByKey, unavailable)
+        assertV6Guardrails(metricsByKey, unavailable)
     }
 
-    private fun assertV5Guardrails(
+    private fun assertV6Guardrails(
         metricsByKey: Map<Triple<EvaluationGroup, String, PrayerEvent>, BenchmarkMetrics>,
         unavailable: List<UnavailableMonth>
     ) {

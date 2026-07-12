@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 import kotlin.math.roundToLong
 
-const val ADAPTIVE_DIYANET_CANDIDATE_VERSION = "adaptive_full_year_waktiva_v5"
+const val ADAPTIVE_DIYANET_CANDIDATE_VERSION = "adaptive_full_year_waktiva_v6"
 const val DIYANET_ASTRONOMY_KERNEL_VERSION = "waktiva_suncalc_true_altitude_v1"
 const val PRAYER_SUNRISE_OFFSET_MINUTES = 7L
 const val PRAYER_DHUHR_OFFSET_MINUTES = 5L
@@ -24,8 +24,7 @@ data class PrayerLocation(
 data class DiyanetCriteriaProfile(
     val profileId: String,
     val fajrAngle: Double,
-    val ishaAngle: Double,
-    val highLatitude: Boolean
+    val ishaAngle: Double
 )
 
 enum class DiyanetRegime {
@@ -181,20 +180,25 @@ object DiyanetProfiles {
     fun resolve(latitude: Double): DiyanetCriteriaProfile {
         return if (abs(latitude) <= 43.0) {
             DiyanetCriteriaProfile(
-                profileId = "waktiva_diyanet_direct_18_17_v1",
+                profileId = "waktiva_diyanet_traditional_18_17_v2",
                 fajrAngle = 18.0,
-                ishaAngle = 17.0,
-                highLatitude = false
+                ishaAngle = 17.0
             )
         } else {
             DiyanetCriteriaProfile(
-                profileId = "waktiva_diyanet_adaptive_18_16_v1",
+                profileId = "waktiva_diyanet_international_18_16_v2",
                 fajrAngle = 18.0,
-                ishaAngle = 16.0,
-                highLatitude = true
+                ishaAngle = 16.0
             )
         }
     }
+}
+
+object DiyanetRegimePolicy {
+    private const val ADAPTIVE_LATITUDE_DEGREES = 45.0
+
+    fun isAdaptiveEligible(latitude: Double): Boolean =
+        abs(latitude) >= ADAPTIVE_LATITUDE_DEGREES
 }
 
 fun resolveDiyanetProfile(latitude: Double): DiyanetCriteriaProfile = DiyanetProfiles.resolve(latitude)

@@ -29,19 +29,6 @@ class AdaptiveDiyanetCalculator(
         profile: DiyanetCriteriaProfile
     ): DiyanetCalculationResult {
         val rawEvents = astronomyKernel.rawEvents(date, location, profile)
-        if (!profile.highLatitude && (rawEvents.astronomicalSunrise == null || rawEvents.astronomicalSunset == null)) {
-            return unsupportedResult(
-                profile = profile,
-                location = location,
-                rawEvents = rawEvents,
-                fallbackReason = "polar_unsupported"
-            )
-        }
-
-        if (!profile.highLatitude) {
-            return directResult(profile, location, rawEvents)
-        }
-
         val annualProfile = inspectAnnualProfile(date, location, profile)
         if (
             !annualProfile.usesFiveHourBounds &&
@@ -70,16 +57,16 @@ class AdaptiveDiyanetCalculator(
         location: PrayerLocation,
         profile: DiyanetCriteriaProfile
     ): DiyanetAnnualProfile {
-        if (!profile.highLatitude) {
+        val anchor = resolveAnchorDate(date, location.latitude)
+        if (!DiyanetRegimePolicy.isAdaptiveEligible(location.latitude)) {
             return DiyanetAnnualProfile(
                 profileId = profile.profileId,
-                anchor = resolveAnchorDate(date, location.latitude),
+                anchor = anchor,
                 regime = DiyanetRegime.DIRECT_ANGLES,
                 usesFiveHourBounds = false
             )
         }
 
-        val anchor = resolveAnchorDate(date, location.latitude)
         val key = AnnualProfileCacheKey(
             candidateVersion = ADAPTIVE_DIYANET_CANDIDATE_VERSION,
             latitudeKey = normalizeCoordinate(location.latitude),
