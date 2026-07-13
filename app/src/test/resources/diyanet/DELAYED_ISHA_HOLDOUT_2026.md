@@ -5,6 +5,7 @@ summer plateau, the July return, and the August convergence.
 
 - Blind holdouts: Amsterdam and Brussels
 - Controls: Berlin and London
+- Berlin daily shoulder: 24 July through 11 August
 - Retrieved: 2026-07-12
 
 Official sources:
@@ -16,3 +17,6 @@ Official sources:
 
 Values are copied verbatim from the annual tables. The fixture must not be
 rewritten to match Waktiva output.
+
+The v9 fit uses the global data set, not this four-city fixture. Amsterdam and
+Brussels remain blind holdouts; Berlin and London are regression controls.

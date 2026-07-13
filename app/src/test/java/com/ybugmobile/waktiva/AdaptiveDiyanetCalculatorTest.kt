@@ -240,7 +240,7 @@ class AdaptiveDiyanetCalculatorTest {
         assertEquals(LocalDate.of(2026, 5, 26), july21.diagnostics.ishaFirstMissing)
         assertEquals(LocalDate.of(2026, 7, 20), july21.diagnostics.ishaLastMissing)
         assertEquals(
-            "linear_fajr_quadratic_delayed_isha_autumn",
+            "linear_fajr_fitted_delayed_isha_autumn",
             july21.diagnostics.transitionCurve
         )
 
@@ -301,6 +301,22 @@ class AdaptiveDiyanetCalculatorTest {
                 result.diagnostics.nextBoundPhase
             ).any { it != null }
         )
+    }
+
+    @Test
+    fun `short missing Fajr runs still use the adaptive full year regime`() {
+        val location = PrayerLocation(
+            latitude = 48.5665,
+            longitude = 13.43122,
+            zoneId = ZoneId.of("Europe/Berlin")
+        )
+        val profile = resolveDiyanetProfile(location.latitude)
+        val annual = adaptiveCalculator.inspectAnnualProfile(LocalDate.of(2026, 6, 21), location, profile)
+
+        assertTrue(requireNotNull(annual.dominantMissingRun).lengthDays < 10)
+        assertEquals(DiyanetRegime.ROBUST_MISSING_FAJR_FULL_YEAR, annual.regime)
+        assertNotNull(adaptiveCalculator.calculate(LocalDate.of(2026, 6, 20), location, profile).fajr)
+        assertNotNull(adaptiveCalculator.calculate(LocalDate.of(2026, 6, 20), location, profile).isha)
     }
 
     @Test

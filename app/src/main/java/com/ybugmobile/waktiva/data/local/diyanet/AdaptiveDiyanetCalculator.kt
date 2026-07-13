@@ -92,7 +92,7 @@ class AdaptiveDiyanetCalculator(
         val usesFiveHourBounds = astronomyKernel.usesFiveHourBounds(boundsYear, location, profile)
         val dominantMissingRun = findDominantMissingRun(anchor, location, profile, fajr = true)
         val dominantMissingIshaRun = findDominantMissingRun(anchor, location, profile, fajr = false)
-        return if (dominantMissingRun != null && dominantMissingRun.lengthDays >= 10) {
+        return if (dominantMissingRun != null) {
             buildMissingFajrAnnualProfile(
                 anchor = anchor,
                 location = location,
@@ -272,6 +272,17 @@ class AdaptiveDiyanetCalculator(
         ) ?: dominantMissingRun.start.minusDays(1)
         val resolvedIshaMissingRun = dominantMissingIshaRun ?: dominantMissingRun
         val delayedIshaAutumnTransition = resolvedIshaMissingRun.end.isAfter(dominantMissingRun.end)
+        val ishaAutumnMargin = when {
+            usesFiveHourBounds -> margins.autumnIsha
+            delayedIshaAutumnTransition -> DELAYED_ISHA_AUTUMN_MARGIN_MINUTES
+            else -> standardIshaAutumnMargin(resolvedIshaMissingRun.lengthDays)
+        }
+        val ishaAutumnConvergenceMargin = when {
+            usesFiveHourBounds && delayedIshaAutumnTransition -> POLAR_DELAYED_ISHA_CONVERGENCE_MARGIN_MINUTES
+            usesFiveHourBounds -> ishaAutumnMargin
+            delayedIshaAutumnTransition -> ISHA_AUTUMN_CONVERGENCE_MARGIN_MINUTES
+            else -> ishaAutumnMargin
+        }
         val ishaTransitionStart = findTransitionStartBeforeMissingRun(
             firstMissing = resolvedIshaMissingRun.start,
             location = location,
@@ -301,11 +312,7 @@ class AdaptiveDiyanetCalculator(
             usesFiveHourBounds = usesFiveHourBounds,
             minimumNightMinutes = minimumNightMinutes,
             summerRatio = summerRatio,
-            marginMinutes = if (delayedIshaAutumnTransition) {
-                ISHA_AUTUMN_CONVERGENCE_MARGIN_MINUTES
-            } else {
-                margins.autumnIsha
-            },
+            marginMinutes = ishaAutumnConvergenceMargin,
             fajr = false
         ) ?: firstDirect
 
@@ -325,7 +332,7 @@ class AdaptiveDiyanetCalculator(
             springFajrMarginMinutes = margins.springFajr,
             springIshaMarginMinutes = margins.springIsha,
             autumnFajrMarginMinutes = margins.autumnFajr,
-            autumnIshaMarginMinutes = margins.autumnIsha,
+            autumnIshaMarginMinutes = ishaAutumnMargin,
             fajrTransitionStart = fajrTransitionStart,
             fajrTransitionEnd = fajrTransitionEnd,
             ishaTransitionStart = ishaTransitionStart,
@@ -474,10 +481,16 @@ class AdaptiveDiyanetCalculator(
             autumnEnd = annualProfile.ishaTransitionEnd,
             springMarginMinutes = annualProfile.springIshaMarginMinutes,
             autumnMarginMinutes = annualProfile.autumnIshaMarginMinutes,
-            autumnCurveExponent = if (annualProfile.delayedIshaAutumnTransition) {
+            autumnCurveExponent = if (
+                annualProfile.usesFiveHourBounds && annualProfile.delayedIshaAutumnTransition
+            ) {
+                POLAR_DELAYED_ISHA_CURVE_EXPONENT
+            } else if (annualProfile.usesFiveHourBounds) {
+                1.0
+            } else if (annualProfile.delayedIshaAutumnTransition) {
                 ISHA_AUTUMN_CURVE_EXPONENT
             } else {
-                1.0
+                standardIshaAutumnExponent(missingIshaRun?.lengthDays ?: 0)
             },
             isFajr = false
         )
@@ -514,10 +527,16 @@ class AdaptiveDiyanetCalculator(
             ishaTransitionStart = annualProfile.ishaTransitionStart,
             ishaTransitionEnd = annualProfile.ishaTransitionEnd,
             phase = phase,
-            transitionCurve = if (annualProfile.delayedIshaAutumnTransition) {
-                "linear_fajr_quadratic_delayed_isha_autumn"
-            } else {
+            transitionCurve = if (
+                annualProfile.usesFiveHourBounds && annualProfile.delayedIshaAutumnTransition
+            ) {
+                "linear_fajr_quadratic_polar_delayed_isha_autumn"
+            } else if (annualProfile.usesFiveHourBounds) {
                 "linear"
+            } else if (annualProfile.delayedIshaAutumnTransition) {
+                "linear_fajr_fitted_delayed_isha_autumn"
+            } else {
+                "linear_fajr_missing_run_scaled_isha_autumn"
             },
             directFajr = rawEvents.directFajr,
             directIsha = rawEvents.directIsha,
@@ -1063,6 +1082,19 @@ class AdaptiveDiyanetCalculator(
         return (progressed.toDouble() / totalDays.toDouble()).coerceIn(0.0, 1.0)
     }
 
+    private fun standardIshaAutumnMargin(missingDays: Int): Double = when {
+        missingDays < 60 -> 12.0
+        missingDays < 90 -> 14.0
+        else -> 16.0
+    }
+
+    private fun standardIshaAutumnExponent(missingDays: Int): Double = when {
+        missingDays < 30 -> 4.0
+        missingDays < 60 -> 1.5
+        missingDays < 90 -> 1.25
+        else -> 1.0
+    }
+
     private fun datesBetween(start: LocalDate, end: LocalDate): Sequence<LocalDate> {
         return generateSequence(start) { current ->
             if (current.isBefore(end)) current.plusDays(1) else null
@@ -1115,7 +1147,10 @@ class AdaptiveDiyanetCalculator(
 
     private companion object {
         const val SOLSTICE_TRANSITION_MARGIN_MINUTES: Double = 20.0
-        const val ISHA_AUTUMN_CONVERGENCE_MARGIN_MINUTES: Double = 5.0
-        const val ISHA_AUTUMN_CURVE_EXPONENT: Double = 2.0
+        const val DELAYED_ISHA_AUTUMN_MARGIN_MINUTES: Double = 13.0
+        const val ISHA_AUTUMN_CONVERGENCE_MARGIN_MINUTES: Double = 10.0
+        const val ISHA_AUTUMN_CURVE_EXPONENT: Double = 1.5
+        const val POLAR_DELAYED_ISHA_CONVERGENCE_MARGIN_MINUTES: Double = 5.0
+        const val POLAR_DELAYED_ISHA_CURVE_EXPONENT: Double = 2.0
     }
 }

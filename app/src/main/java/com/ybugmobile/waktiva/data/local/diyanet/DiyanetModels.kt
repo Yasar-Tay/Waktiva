@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 import kotlin.math.roundToLong
 
-const val ADAPTIVE_DIYANET_CANDIDATE_VERSION = "adaptive_full_year_waktiva_v6"
+const val ADAPTIVE_DIYANET_CANDIDATE_VERSION = "adaptive_full_year_waktiva_v9"
 const val DIYANET_ASTRONOMY_KERNEL_VERSION = "waktiva_suncalc_true_altitude_v1"
 const val PRAYER_SUNRISE_OFFSET_MINUTES = 7L
 const val PRAYER_DHUHR_OFFSET_MINUTES = 5L

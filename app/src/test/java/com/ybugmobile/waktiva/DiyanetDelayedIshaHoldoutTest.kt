@@ -86,8 +86,16 @@ class DiyanetDelayedIshaHoldoutTest {
                     "signed=${worst.signedMinutes}"
             )
 
-            val maxAllowed = if (city.group == Group.HOLDOUT) 4 else 10
-            val maeAllowed = if (city.group == Group.HOLDOUT) 1.5 else 3.5
+            val maxAllowed = when {
+                city.group == Group.HOLDOUT -> 4
+                city.key == "berlin" -> 3
+                else -> 10
+            }
+            val maeAllowed = when {
+                city.group == Group.HOLDOUT -> 1.5
+                city.key == "berlin" -> 1.25
+                else -> 3.5
+            }
             assertTrue("${city.key} Isha MAE $mae", mae <= maeAllowed)
             assertTrue("${city.key} Isha max error $max", max <= maxAllowed)
         }
