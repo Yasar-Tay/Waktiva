@@ -5,7 +5,6 @@ import com.ybugmobile.waktiva.BuildConfig
 import com.ybugmobile.waktiva.data.local.LocalPrayerCalculator
 import com.ybugmobile.waktiva.data.local.dao.PrayerDao
 import com.ybugmobile.waktiva.data.local.dao.PrayerStatusDao
-import com.ybugmobile.waktiva.data.local.diyanet.ADAPTIVE_DIYANET_CANDIDATE_VERSION
 import com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.waktiva.data.remote.AladhanApiService
@@ -20,6 +19,8 @@ import com.ybugmobile.waktiva.domain.model.WeatherInfo
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.shredzone.commons.suncalc.MoonIllumination
 import org.shredzone.commons.suncalc.MoonPosition
 import org.shredzone.commons.suncalc.MoonTimes
@@ -228,7 +229,7 @@ class PrayerRepositoryImpl @Inject constructor(
                 }
                 var entities = response.data.map { it.toEntity() }
                 if (method == 13) {
-                    entities = applyAdaptiveDiyanetCorrection(
+                    entities = applyDiyanetCorrection(
                         entities = entities,
                         year = year,
                         month = month,
@@ -249,7 +250,7 @@ class PrayerRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             try {
                 val fallbackZoneId = ZoneId.systemDefault()
-                val localEntities = localCalculator.calculateMonthlyPrayerTimes(
+                val localEntities = calculateMonthlyPrayerTimesOffMain(
                     year = year,
                     month = month,
                     latitude = latitude,
@@ -294,16 +295,15 @@ class PrayerRepositoryImpl @Inject constructor(
 
             for ((yearMonth, days) in byYearMonth) {
                 val (year, month) = yearMonth.split("-").map { it.toInt() }
-                val recalculated = localCalculator
-                    .calculateMonthlyPrayerTimes(
-                        year = year,
-                        month = month,
-                        latitude = latitude,
-                        longitude = longitude,
-                        methodId = method,
-                        madhabId = madhab,
-                        zoneId = ZoneId.systemDefault()
-                    )
+                val recalculated = calculateMonthlyPrayerTimesOffMain(
+                    year = year,
+                    month = month,
+                    latitude = latitude,
+                    longitude = longitude,
+                    methodId = method,
+                    madhabId = madhab,
+                    zoneId = ZoneId.systemDefault()
+                )
                     .associateBy { it.date }
 
                 for (day in days) {
@@ -330,7 +330,7 @@ class PrayerRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun applyAdaptiveDiyanetCorrection(
+    private suspend fun applyDiyanetCorrection(
         entities: List<PrayerDayEntity>,
         year: Int,
         month: Int,
@@ -339,7 +339,7 @@ class PrayerRepositoryImpl @Inject constructor(
         zoneId: ZoneId
     ): List<PrayerDayEntity> {
         return try {
-            val corrected = localCalculator.calculateMonthlyPrayerTimes(
+            val corrected = calculateMonthlyPrayerTimesOffMain(
                 year = year,
                 month = month,
                 latitude = latitude,
@@ -363,7 +363,7 @@ class PrayerRepositoryImpl @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            Log.w("PrayerRepository", "Adaptive Diyanet correction failed", e)
+            Log.w("PrayerRepository", "Diyanet correction failed", e)
             entities
         }
     }
@@ -391,7 +391,7 @@ class PrayerRepositoryImpl @Inject constructor(
         val latR = Math.round(lat * 10) / 10.0
         val lngR = Math.round(lng * 10) / 10.0
         val prefix = "$latR|$lngR|13|"
-        val suffix = "|$ADAPTIVE_DIYANET_CANDIDATE_VERSION"
+        val suffix = "|${LocalPrayerCalculator.method13EngineVersion(lat)}"
         return cachedParams?.takeIf { it.startsWith(prefix) && it.endsWith(suffix) }
     }
 
@@ -471,9 +471,36 @@ class PrayerRepositoryImpl @Inject constructor(
         val latR = Math.round(lat * 10) / 10.0
         val lngR = Math.round(lng * 10) / 10.0
         return if (method == 13) {
-            "$latR|$lngR|$method|${zoneId.id}|$ADAPTIVE_DIYANET_CANDIDATE_VERSION"
+            "$latR|$lngR|$method|${zoneId.id}|${LocalPrayerCalculator.method13EngineVersion(lat)}"
         } else {
             "$latR|$lngR|$method"
         }
+    }
+
+    private suspend fun calculateMonthlyPrayerTimesOffMain(
+        year: Int,
+        month: Int,
+        latitude: Double,
+        longitude: Double,
+        methodId: Int,
+        madhabId: Int = 0,
+        zoneId: ZoneId
+    ): List<PrayerDayEntity> = withContext(Dispatchers.Default) {
+        localCalculator.calculateMonthlyPrayerTimes(
+            year = year,
+            month = month,
+            latitude = latitude,
+            longitude = longitude,
+            methodId = methodId,
+            madhabId = madhabId,
+            zoneId = zoneId,
+            diagnosticSink = { diagnostic ->
+                Log.w(
+                    "DiyanetRouting",
+                    "${diagnostic.code}: ${diagnostic.message} " +
+                        "(${diagnostic.latitude},${diagnostic.longitude},${diagnostic.date ?: "annual"})"
+                )
+            }
+        )
     }
 }

@@ -7,7 +7,9 @@ import com.batoulapps.adhan.Madhab
 import com.batoulapps.adhan.PrayerTimes
 import com.batoulapps.adhan.data.DateComponents
 import com.ybugmobile.waktiva.data.local.diyanet.AdaptiveDiyanetCalculator
+import com.ybugmobile.waktiva.data.local.diyanet.DiyanetEngineVersions
 import com.ybugmobile.waktiva.data.local.diyanet.DiyanetProfiles
+import com.ybugmobile.waktiva.data.local.diyanet.DiyanetReconstructionV14
 import com.ybugmobile.waktiva.data.local.diyanet.PrayerLocation
 import com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity
 import java.time.LocalDate
@@ -18,8 +20,54 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import javax.inject.Inject
 
+enum class DiyanetRoutingDiagnosticCode {
+    SOUTHERN_HEMISPHERE_V14_DISABLED,
+    NORMAL_DAY_ASR_FALLBACK
+}
+
+data class DiyanetRoutingDiagnostic(
+    val code: DiyanetRoutingDiagnosticCode,
+    val latitude: Double,
+    val longitude: Double,
+    val date: LocalDate? = null,
+    val message: String
+)
+
+enum class DiyanetEngineRouting {
+    V14,
+    V9,
+    ADHAN
+}
+
+enum class DiyanetAsrSource {
+    DIRECT_ADHAN,
+    REFERENCE_LATITUDE_62,
+    DHUHR_MAGHRIB_MIDPOINT,
+    POLAR_NIGHT_EQUALS_DHUHR,
+    INVALID_OR_OTHER
+}
+
+/** Optional calculation trace for regression/export tooling; it does not affect output selection. */
+data class DiyanetCalculationTrace(
+    val date: LocalDate,
+    val engineVersion: String,
+    val routing: DiyanetEngineRouting,
+    val regime: String,
+    val diagnostic: String?,
+    val asrSource: DiyanetAsrSource,
+    val directFajrAvailable: Boolean?,
+    val directIshaAvailable: Boolean?,
+    val fajrState: String?,
+    val ishaState: String?,
+    val axisMode: String?,
+    val polarNight: Boolean,
+    val polarDay: Boolean,
+    val utcOffsetSeconds: Int
+)
+
 class LocalPrayerCalculator @Inject constructor() {
 
+    private val diyanetV14 = DiyanetReconstructionV14()
     private val adaptiveDiyanetCalculator = AdaptiveDiyanetCalculator()
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
@@ -30,71 +78,194 @@ class LocalPrayerCalculator @Inject constructor() {
         longitude: Double,
         methodId: Int,
         madhabId: Int = 0,
-        zoneId: ZoneId = ZoneId.systemDefault()
+        zoneId: ZoneId = ZoneId.systemDefault(),
+        diagnosticSink: (DiyanetRoutingDiagnostic) -> Unit = {},
+        calculationTraceSink: (DiyanetCalculationTrace) -> Unit = {}
     ): List<PrayerDayEntity> {
         val coordinates = Coordinates(latitude, longitude)
         val params = getCalculationParameters(methodId).apply {
-            madhab = if (madhabId == 1) Madhab.HANAFI else Madhab.SHAFI
+            madhab = if (methodId == DIYANET_METHOD_ID) {
+                Madhab.SHAFI
+            } else if (madhabId == 1) {
+                Madhab.HANAFI
+            } else {
+                Madhab.SHAFI
+            }
         }
 
-        if (methodId == 13) {
+        if (methodId == DIYANET_METHOD_ID) {
+            // V9 remains the fallback outside V14's calibrated northern scope.
+            // V14 overrides every field except İkindi in its northern scope.
             params.adjustments.fajr = 0
             params.adjustments.sunrise = -7
             params.adjustments.dhuhr = 5
             params.adjustments.asr = 4
             params.adjustments.maghrib = 7
+            params.adjustments.isha = 0
         }
 
         val location = PrayerLocation(
             latitude = latitude,
             longitude = longitude,
-            zoneId = zoneId
+            zoneId = zoneId,
+            calculationElevationMeters = 0.0
         )
-        val diyanetProfile = if (methodId == 13) DiyanetProfiles.resolve(latitude) else null
+        val diyanetProfile = if (methodId == DIYANET_METHOD_ID) {
+            DiyanetProfiles.resolve(latitude)
+        } else {
+            null
+        }
+        val useV14 = methodId == DIYANET_METHOD_ID &&
+            latitude >= DiyanetReconstructionV14.MIN_ABS_LATITUDE
+
+        if (
+            methodId == DIYANET_METHOD_ID &&
+            latitude <= -DiyanetReconstructionV14.MIN_ABS_LATITUDE
+        ) {
+            diagnosticSink(
+                DiyanetRoutingDiagnostic(
+                    code = DiyanetRoutingDiagnosticCode.SOUTHERN_HEMISPHERE_V14_DISABLED,
+                    latitude = latitude,
+                    longitude = longitude,
+                    message = "V14 is disabled for southern high latitudes; using the existing V9 engine"
+                )
+            )
+        }
 
         return (1..YearMonth.of(year, month).lengthOfMonth()).map { day ->
             val date = LocalDate.of(year, month, day)
-            val adhanTimes = PrayerTimes(coordinates, DateComponents(year, month, day), params)
+            var dayDiagnostic = if (
+                methodId == DIYANET_METHOD_ID &&
+                latitude <= -DiyanetReconstructionV14.MIN_ABS_LATITUDE
+            ) {
+                DiyanetRoutingDiagnosticCode.SOUTHERN_HEMISPHERE_V14_DISABLED.name
+            } else {
+                null
+            }
+            val adhanTimes = PrayerTimes(
+                coordinates,
+                DateComponents(year, month, day),
+                params
+            )
 
-            val adaptiveResult = if (diyanetProfile != null) {
+            val reconstructed = if (useV14) {
+                diyanetV14.calculate(date, location)
+            } else {
+                null
+            }
+            val adaptiveResult = if (diyanetProfile != null && !useV14) {
                 adaptiveDiyanetCalculator.calculate(date, location, diyanetProfile)
             } else {
                 null
             }
-            val diyanetAxis = if (diyanetProfile != null) {
+            val adaptiveAxis = if (diyanetProfile != null && !useV14) {
                 adaptiveDiyanetCalculator.prayerAxis(date, location, diyanetProfile)
             } else {
                 null
             }
 
-            val fajr = adaptiveResult?.fajr?.toAdaptiveTimeString()
+            val fajr = reconstructed?.fajr?.toRoundedTimeString()
+                ?: adaptiveResult?.fajr?.toRoundedTimeString()
                 ?: adhanTimes.fajr.toTimeString(zoneId)
-            val isha = adaptiveResult?.isha?.toAdaptiveTimeString()
+            val sunrise = reconstructed?.sunrise?.toRoundedTimeString()
+                ?: adaptiveAxis?.prayerSunrise?.toRoundedTimeString()
+                ?: adhanTimes.sunrise.toTimeString(zoneId)
+            val dhuhr = reconstructed?.dhuhr?.toRoundedTimeString()
+                ?: adaptiveAxis?.prayerNoon?.toRoundedTimeString()
+                ?: adhanTimes.dhuhr.toTimeString(zoneId)
+            val maghrib = reconstructed?.maghrib?.toRoundedTimeString()
+                ?: adaptiveAxis?.prayerMaghrib?.toRoundedTimeString()
+                ?: adhanTimes.maghrib.toTimeString(zoneId)
+            val isha = reconstructed?.isha?.toRoundedTimeString()
+                ?: adaptiveResult?.isha?.toRoundedTimeString()
                 ?: adhanTimes.isha.toTimeString(zoneId)
 
-            val sunrise = diyanetAxis?.prayerSunrise?.toAdaptiveTimeString()
-                ?: adhanTimes.sunrise.toTimeString(zoneId)
-            val dhuhr = diyanetAxis?.prayerNoon?.toAdaptiveTimeString()
-                ?: adhanTimes.dhuhr.toTimeString(zoneId)
-            val maghrib = diyanetAxis?.prayerMaghrib?.toAdaptiveTimeString()
-                ?: adhanTimes.maghrib.toTimeString(zoneId)
-            val asr = if (diyanetAxis != null) {
-                val candidate = validatedAsrTime(
-                    candidate = adhanTimes.asr,
-                    date = date,
-                    zoneId = zoneId
-                ) ?: calculatePolarAsrFallback(
-                    date = date,
-                    latitude = latitude,
-                    longitude = longitude,
-                    params = params,
-                    zoneId = zoneId
-                )
-                candidate?.takeIf { isClockBetween(it, dhuhr, maghrib) }
-                    ?: midpointClock(dhuhr, maghrib)
-            } else {
-                adhanTimes.asr.toTimeString(zoneId)
+            val (asr, asrSource) = when {
+                reconstructed?.polarNight == true ->
+                    dhuhr to DiyanetAsrSource.POLAR_NIGHT_EQUALS_DHUHR
+                reconstructed != null || adaptiveAxis != null -> {
+                    val directCandidate = validatedAsrTime(
+                        candidate = adhanTimes.asr,
+                        date = date,
+                        zoneId = zoneId
+                    )
+                    val referenceCandidate = if (directCandidate == null) {
+                        calculatePolarAsrFallback(
+                            date = date,
+                            latitude = latitude,
+                            longitude = longitude,
+                            params = params,
+                            zoneId = zoneId
+                        )
+                    } else {
+                        null
+                    }
+                    val candidate = directCandidate ?: referenceCandidate
+                    val validCandidate = candidate?.takeIf { isClockBetween(it, dhuhr, maghrib) }
+                    if (validCandidate != null) {
+                        validCandidate to if (directCandidate != null) {
+                            DiyanetAsrSource.DIRECT_ADHAN
+                        } else {
+                            DiyanetAsrSource.REFERENCE_LATITUDE_62
+                        }
+                    } else {
+                        val midpoint = midpointClock(dhuhr, maghrib)
+                        dayDiagnostic = appendDiagnostic(
+                            dayDiagnostic,
+                            DiyanetRoutingDiagnosticCode.NORMAL_DAY_ASR_FALLBACK.name
+                        )
+                        diagnosticSink(
+                            DiyanetRoutingDiagnostic(
+                                code = DiyanetRoutingDiagnosticCode.NORMAL_DAY_ASR_FALLBACK,
+                                latitude = latitude,
+                                longitude = longitude,
+                                date = date,
+                                message = "Invalid Asr was replaced with the Dhuhr-Maghrib midpoint"
+                            )
+                        )
+                        midpoint to DiyanetAsrSource.DHUHR_MAGHRIB_MIDPOINT
+                    }
+                }
+                else -> adhanTimes.asr.toTimeString(zoneId) to DiyanetAsrSource.DIRECT_ADHAN
             }
+
+            val v14Diagnostics = reconstructed?.diagnostics
+            val v9Diagnostics = adaptiveResult?.diagnostics
+            val axisMode = v14Diagnostics?.axisMode ?: adaptiveAxis?.phase
+            calculationTraceSink(
+                DiyanetCalculationTrace(
+                    date = date,
+                    engineVersion = if (methodId == DIYANET_METHOD_ID) {
+                        method13EngineVersion(latitude)
+                    } else {
+                        "adhan-java-1.1.0"
+                    },
+                    routing = when {
+                        useV14 -> DiyanetEngineRouting.V14
+                        methodId == DIYANET_METHOD_ID -> DiyanetEngineRouting.V9
+                        else -> DiyanetEngineRouting.ADHAN
+                    },
+                    regime = v14Diagnostics?.let {
+                        "${it.fajrState.name}/${it.ishaState.name}"
+                    } ?: adaptiveResult?.regime?.name ?: "ADHAN",
+                    diagnostic = dayDiagnostic,
+                    asrSource = asrSource,
+                    directFajrAvailable = v14Diagnostics?.let { it.fajrRoot != null }
+                        ?: v9Diagnostics?.let { it.directFajr != null },
+                    directIshaAvailable = v14Diagnostics?.let { it.ishaDirectGapMinutes != null }
+                        ?: v9Diagnostics?.let { it.directIsha != null },
+                    fajrState = v14Diagnostics?.fajrState?.name ?: v9Diagnostics?.phase,
+                    ishaState = v14Diagnostics?.ishaState?.name ?: v9Diagnostics?.phase,
+                    axisMode = axisMode,
+                    polarNight = reconstructed?.polarNight == true ||
+                        axisMode?.startsWith("polar_night") == true,
+                    polarDay = v14Diagnostics?.polarState == "POLAR_DAY" ||
+                        axisMode?.startsWith("polar_day") == true,
+                    utcOffsetSeconds = reconstructed?.dhuhr?.offset?.totalSeconds
+                        ?: adaptiveAxis?.prayerNoon?.offset?.totalSeconds
+                        ?: date.atTime(12, 0).atZone(zoneId).offset.totalSeconds
+                )
+            )
 
             PrayerDayEntity(
                 date = date.toString(),
@@ -109,13 +280,11 @@ class LocalPrayerCalculator @Inject constructor() {
         }
     }
 
-    private fun Date.toTimeString(zoneId: ZoneId): String {
-        return toInstant().atZone(zoneId).format(timeFormatter)
-    }
+    private fun Date.toTimeString(zoneId: ZoneId): String =
+        toInstant().atZone(zoneId).format(timeFormatter)
 
-    private fun ZonedDateTime.toAdaptiveTimeString(): String {
-        return plusSeconds(30).withSecond(0).withNano(0).format(timeFormatter)
-    }
+    private fun ZonedDateTime.toRoundedTimeString(): String =
+        plusSeconds(30).withSecond(0).withNano(0).format(timeFormatter)
 
     private fun calculatePolarAsrFallback(
         date: LocalDate,
@@ -124,7 +293,10 @@ class LocalPrayerCalculator @Inject constructor() {
         params: CalculationParameters,
         zoneId: ZoneId
     ): String? {
-        val boundedLatitude = latitude.coerceIn(-DIYANET_POLAR_REFERENCE_LATITUDE, DIYANET_POLAR_REFERENCE_LATITUDE)
+        val boundedLatitude = latitude.coerceIn(
+            -DIYANET_POLAR_REFERENCE_LATITUDE,
+            DIYANET_POLAR_REFERENCE_LATITUDE
+        )
         if (boundedLatitude == latitude) return null
 
         val fallbackTimes = PrayerTimes(
@@ -172,24 +344,33 @@ class LocalPrayerCalculator @Inject constructor() {
         return hour * 60 + minute
     }
 
-    private fun getCalculationParameters(id: Int): CalculationParameters {
-        return when (id) {
-            1 -> CalculationMethod.KARACHI.parameters
-            2 -> CalculationMethod.NORTH_AMERICA.parameters
-            3 -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
-            4 -> CalculationMethod.UMM_AL_QURA.parameters
-            5 -> CalculationMethod.EGYPTIAN.parameters
-            7 -> CalculationParameters(17.7, 14.0)
-            8 -> CalculationMethod.DUBAI.parameters
-            9 -> CalculationMethod.KUWAIT.parameters
-            10 -> CalculationMethod.QATAR.parameters
-            11 -> CalculationMethod.SINGAPORE.parameters
-            13 -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
-            else -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
-        }
+    private fun appendDiagnostic(existing: String?, next: String): String =
+        listOfNotNull(existing, next).distinct().joinToString("|")
+
+    private fun getCalculationParameters(id: Int): CalculationParameters = when (id) {
+        1 -> CalculationMethod.KARACHI.parameters
+        2 -> CalculationMethod.NORTH_AMERICA.parameters
+        3 -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
+        4 -> CalculationMethod.UMM_AL_QURA.parameters
+        5 -> CalculationMethod.EGYPTIAN.parameters
+        7 -> CalculationParameters(17.7, 14.0)
+        8 -> CalculationMethod.DUBAI.parameters
+        9 -> CalculationMethod.KUWAIT.parameters
+        10 -> CalculationMethod.QATAR.parameters
+        11 -> CalculationMethod.SINGAPORE.parameters
+        DIYANET_METHOD_ID -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
+        else -> CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
     }
 
-    private companion object {
+    companion object {
+        fun method13EngineVersion(latitude: Double): String =
+            if (latitude >= DiyanetReconstructionV14.MIN_ABS_LATITUDE) {
+                DiyanetReconstructionV14.CANDIDATE_VERSION
+            } else {
+                DiyanetEngineVersions.ADAPTIVE_V9
+            }
+
+        const val DIYANET_METHOD_ID = 13
         const val DIYANET_POLAR_REFERENCE_LATITUDE = 62.0
         const val MINUTES_PER_DAY = 24 * 60
     }

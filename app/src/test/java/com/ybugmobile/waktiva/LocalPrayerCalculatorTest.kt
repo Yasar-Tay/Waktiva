@@ -1,10 +1,13 @@
 package com.ybugmobile.waktiva
 
 import com.ybugmobile.waktiva.data.local.LocalPrayerCalculator
+import com.ybugmobile.waktiva.data.local.diyanet.DiyanetReconstructionV14
+import com.ybugmobile.waktiva.data.local.diyanet.PrayerLocation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.ZoneId
+import java.time.LocalDate
 import java.time.YearMonth
 
 private fun String.toMinutes(): Int {
@@ -112,6 +115,7 @@ class LocalPrayerCalculatorTest {
 
     @Test
     fun `Diyanet polar months remain complete and ordered`() {
+        val reconstruction = DiyanetReconstructionV14()
         val cities = listOf(
             Triple(69.6492, 18.9553, "Europe/Oslo"),
             Triple(66.5039, 25.7294, "Europe/Helsinki")
@@ -130,10 +134,19 @@ class LocalPrayerCalculatorTest {
 
                 assertEquals(YearMonth.of(2026, month).lengthOfMonth(), days.size)
                 days.forEach { day ->
+                    val date = LocalDate.parse(day.date)
+                    val polarNight = reconstruction.calculate(
+                        date,
+                        PrayerLocation(latitude, longitude, ZoneId.of(timezone))
+                    ).polarNight
                     val context = "$latitude,$longitude ${day.date}: " +
                         "${day.sunrise}/${day.dhuhr}/${day.asr}/${day.maghrib}"
                     assertTrue(context, day.sunrise.toMinutes() < day.dhuhr.toMinutes())
-                    assertTrue(context, day.dhuhr.toMinutes() < day.asr.toMinutes())
+                    if (polarNight) {
+                        assertEquals(context, day.dhuhr.toMinutes(), day.asr.toMinutes())
+                    } else {
+                        assertTrue(context, day.dhuhr.toMinutes() < day.asr.toMinutes())
+                    }
                     assertTrue(context, day.asr.toMinutes() < day.maghrib.toMinutes())
                 }
             }

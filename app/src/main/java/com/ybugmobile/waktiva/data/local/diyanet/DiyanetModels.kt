@@ -14,6 +14,10 @@ const val PRAYER_SUNRISE_OFFSET_MINUTES = 7L
 const val PRAYER_DHUHR_OFFSET_MINUTES = 5L
 const val PRAYER_MAGHRIB_OFFSET_MINUTES = 7L
 
+object DiyanetEngineVersions {
+    const val ADAPTIVE_V9 = ADAPTIVE_DIYANET_CANDIDATE_VERSION
+}
+
 data class PrayerLocation(
     val latitude: Double,
     val longitude: Double,

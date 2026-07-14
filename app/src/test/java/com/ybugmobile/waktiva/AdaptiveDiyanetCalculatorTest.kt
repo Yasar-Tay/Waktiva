@@ -82,12 +82,6 @@ class AdaptiveDiyanetCalculatorTest {
         assertEquals(16.0, result.diagnostics.ishaAngle)
         assertTimeNear(LocalTime.of(3, 45), result.fajr!!.toLocalTime(), 2)
         assertTimeNear(LocalTime.of(23, 4), result.isha!!.toLocalTime(), 1)
-
-        val displayed = localCalculator.calculateMonthlyPrayerTimes(
-            2026, 7, location.latitude, location.longitude, 13, zoneId = location.zoneId
-        )[10]
-        assertTrue(displayed.fajr.testMinutes() in (3 * 60 + 43)..(3 * 60 + 47))
-        assertTrue(displayed.isha.testMinutes() in (23 * 60 + 3)..(23 * 60 + 5))
     }
 
     @Test
@@ -99,12 +93,6 @@ class AdaptiveDiyanetCalculatorTest {
 
         assertTimeNear(LocalTime.of(3, 47), result.fajr!!.toLocalTime(), 1)
         assertTimeNear(LocalTime.of(23, 4), result.isha!!.toLocalTime(), 1)
-
-        val displayed = localCalculator.calculateMonthlyPrayerTimes(
-            2026, 7, location.latitude, location.longitude, 13, zoneId = location.zoneId
-        )[10]
-        assertTrue(displayed.fajr.testMinutes() in (3 * 60 + 46)..(3 * 60 + 48))
-        assertTrue(displayed.isha.testMinutes() in (23 * 60 + 3)..(23 * 60 + 5))
     }
 
     @Test
