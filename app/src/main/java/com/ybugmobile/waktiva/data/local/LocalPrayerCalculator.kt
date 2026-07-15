@@ -62,7 +62,10 @@ data class DiyanetCalculationTrace(
     val axisMode: String?,
     val polarNight: Boolean,
     val polarDay: Boolean,
-    val utcOffsetSeconds: Int
+    val utcOffsetSeconds: Int,
+    val fajrShoulderMode: String? = null,
+    val fajrCorrectionMinutes: Double? = null,
+    val fajrAsymmetricAdjustmentMinutes: Double? = null
 )
 
 class LocalPrayerCalculator @Inject constructor() {
@@ -263,7 +266,10 @@ class LocalPrayerCalculator @Inject constructor() {
                         axisMode?.startsWith("polar_day") == true,
                     utcOffsetSeconds = reconstructed?.dhuhr?.offset?.totalSeconds
                         ?: adaptiveAxis?.prayerNoon?.offset?.totalSeconds
-                        ?: date.atTime(12, 0).atZone(zoneId).offset.totalSeconds
+                        ?: date.atTime(12, 0).atZone(zoneId).offset.totalSeconds,
+                    fajrShoulderMode = v14Diagnostics?.fajrShoulderMode,
+                    fajrCorrectionMinutes = v14Diagnostics?.fajrCorrectionMinutes,
+                    fajrAsymmetricAdjustmentMinutes = v14Diagnostics?.fajrAsymmetricAdjustmentMinutes
                 )
             )
 

@@ -21,6 +21,7 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
+import kotlin.math.abs
 
 class DiyanetReconstructionV14Test {
 
@@ -38,8 +39,50 @@ class DiyanetReconstructionV14Test {
         val result = calculator.calculate(date, location)
 
         assertEquals(LocalTime.of(3, 50), roundForDisplay(result.fajr).toLocalTime())
-        assertEquals("SIXTEEN_DEGREE_SUMMER_ANCHOR", result.diagnostics.fajrShoulderMode)
+        assertEquals("SIXTEEN_DEGREE_SUMMER_ANCHOR_ASYMMETRIC", result.diagnostics.fajrShoulderMode)
         assertEquals(DiyanetV14Confidence.CALIBRATED_NORTH_2026, result.confidence)
+    }
+
+    @Test
+    fun `Basel and Reinach receding shoulder applies a bounded asymmetric correction`() {
+        val basel = calculator.calculate(
+            LocalDate.of(2026, 7, 15),
+            PrayerLocation(47.55839, 7.57327, ZoneId.of("Europe/Zurich"))
+        )
+        val reinach = calculator.calculate(
+            LocalDate.of(2026, 7, 15),
+            PrayerLocation(47.491143, 7.5833342, ZoneId.of("Europe/Zurich"))
+        )
+
+        assertEquals(LocalTime.of(3, 51), roundForDisplay(basel.fajr).toLocalTime())
+        assertEquals(LocalTime.of(3, 50), roundForDisplay(reinach.fajr).toLocalTime())
+        assertEquals("SIXTEEN_DEGREE_SUMMER_ANCHOR_ASYMMETRIC", basel.diagnostics.fajrShoulderMode)
+        assertEquals("SIXTEEN_DEGREE_SUMMER_ANCHOR_ASYMMETRIC", reinach.diagnostics.fajrShoulderMode)
+        assertEquals(3.0, basel.diagnostics.fajrAsymmetricAdjustmentMinutes, 1e-9)
+        assertEquals(3.0, reinach.diagnostics.fajrAsymmetricAdjustmentMinutes, 1e-9)
+        assertEquals(
+            3.0,
+            basel.diagnostics.fajrOutputGapMinutes - requireNotNull(basel.diagnostics.fajrLegacyV14GapMinutes),
+            1e-6
+        )
+    }
+
+    @Test
+    fun `asymmetric shoulder stays continuous and bounded through summer`() {
+        val location = PrayerLocation(47.55839, 7.57327, ZoneId.of("Europe/Zurich"))
+        val days = generateSequence(LocalDate.of(2026, 4, 20)) { it.plusDays(1) }
+            .takeWhile { !it.isAfter(LocalDate.of(2026, 8, 25)) }
+            .map { calculator.calculate(it, location) }
+            .toList()
+
+        days.forEach { day ->
+            assertTrue(abs(day.diagnostics.fajrAsymmetricAdjustmentMinutes) <= 3.0 + 1e-9)
+        }
+        days.zipWithNext().forEach { (previous, current) ->
+            val previousMinutes = roundForDisplay(previous.fajr).toLocalTime().let { it.hour * 60 + it.minute }
+            val currentMinutes = roundForDisplay(current.fajr).toLocalTime().let { it.hour * 60 + it.minute }
+            assertTrue("Fajr jump on ${current.date}: $previousMinutes -> $currentMinutes", abs(currentMinutes - previousMinutes) <= 3)
+        }
     }
 
     @Test

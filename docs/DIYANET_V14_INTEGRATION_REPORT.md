@@ -1,10 +1,12 @@
 # Diyanet V14 Waktiva Entegrasyon Raporu
 
-Tarih: 2026-07-14
+Tarih: 2026-07-16
 
 ## Sonuç
 
 V14 paketi Waktiva'nın mevcut `LocalPrayerCalculator` ve repository akışına merge edildi. Ayrı bir `LocalPrayerCalculator_v14` sınıfı oluşturulmadı. Method 13 yalnız kuzey yarımkürede `latitude >= 45.0` olduğunda V14'e yönlenir; diğer konumlar mevcut Adaptive Diyanet V9 yolunu korur. V14 katsayıları paket kaynaklarındaki haliyle bırakıldı.
+
+2026-07-16 güncellemesinde yaz omzunun iki tarafına aynı düzeltmeyi uygulayan geçiş seçimi V14.1 olarak asimetrik hale getirildi. Astronomik taban, 16° rejimi ve V14 katsayıları değiştirilmedi; yalnız yıllık profilde zaten hesaplanan gün-uzunluğu eğilimi kullanılarak yaz gündönümüne yaklaşma ve uzaklaşma evreleri ayrıldı.
 
 ## Değiştirilen dosyalar
 
@@ -22,6 +24,8 @@ V14 paketi Waktiva'nın mevcut `LocalPrayerCalculator` ve repository akışına 
   - V14 örnekleri, kuzey/güney routing, tam-yıl invariant, DST, 23:xx/00:xx kökü ve yıl sınırı testleri eklendi.
 - `app/src/test/java/com/ybugmobile/waktiva/DiyanetV14GoldenRegressionTest.kt`
   - `cities.csv` ve `official_2026.csv` kullanan üretim Kotlin motoru golden runner'ı eklendi.
+- `app/src/test/java/com/ybugmobile/waktiva/DiyanetV14ShoulderRegressionTest.kt`
+  - Güvenilir kuzey segmentindeki 968 şehir için eski V14 ile V14.1'i aynı gerçek Kotlin koşumunda karşılaştıran kalıcı omuz guardrail'i eklendi.
 - `app/src/test/java/com/ybugmobile/waktiva/LocalPrayerCalculatorTest.kt`
   - Doğrulanmış polar gecedeki `asr = dhuhr` istisnası açıkça test edildi.
 - `app/src/test/java/com/ybugmobile/waktiva/AdaptiveDiyanetCalculatorTest.kt`
@@ -37,6 +41,17 @@ V14 paketi Waktiva'nın mevcut `LocalPrayerCalculator` ve repository akışına 
 - Repository'nin tüm yerel aylık hesap çağrıları `Dispatchers.Default` üzerinde çalışır. Böylece ilk yıllık profil üretimi UI thread'ini bloke etmez.
 - Diyanet cache anahtarında kuzey V14 ve diğer konumlardaki V9 sürümleri ayrılır; eski V9 verisi V14 kapsamındaki konumlarda yeniden kullanılmaz.
 - Invariant testinde normal günler için `fajr < sunrise < dhuhr < asr < maghrib < isha` zorunludur. İstenen polar-gece kuralı nedeniyle tek açık istisna `dhuhr == asr` değeridir.
+- V14.1 yaz omzu yalnız Fajr seçimini etkiler. Eski V14 sonucu diagnostic'te korunur; yeni sonucun eski sonuçtan sapması en fazla 3 dakikadır. Yıllık profil cache sürümü değiştirildiği için daha önce hesaplanmış V14 profilleri V14.1 kapsamında yeniden üretilir.
+
+## V14.1 yaz omzu tasarımı
+
+Simetrik V14, resmi 2026 verisinde yaz gündönümüne yaklaşırken ortalama erken, uzaklaşırken ortalama geç kalıyordu. Yeni seçim üç sınırlı bileşen kullanır:
+
+- Gün uzunluğunun günlük değişimi, yaklaşma düzeltmesini uzaklaşma tarafında kademeli olarak kapatır.
+- Konumun yıllık minimum güneş yüksekliği, 16° yaz çıpasına küçük bir konum düzeltmesi uygular.
+- Gündönümü çevresinde eğim sıfıra yaklaşırken düzeltme yumuşatılır ve eski V14'e göre toplam fark `±3` dakika ile sınırlandırılır.
+
+Bu değişiklik resmi sonuçlara doğrudan tablo ezberletmez; tarih, enlem, boylam ve yıllık astronomik profilden türetilir. Isha, öğle, ikindi, akşam ve güneş hesapları değişmez.
 
 ## Bağımlılıklar
 
@@ -48,14 +63,22 @@ Derleme stub olmadan repository'deki gerçek bağımlılıklarla yapıldı:
 ## Test sonuçları
 
 - `:app:compileDebugKotlin :app:compileDebugUnitTestKotlin --rerun-tasks`: başarılı.
-- V14 + `LocalPrayerCalculator` hedefli testleri: 13 test, 13 başarılı.
-- `:app:testDebugUnitTest`: 46 test, 0 hata, 3 harici-veri testi ortam değişkeni olmadığı için atlandı.
+- Temiz Kotlin production + unit-test derlemesi: başarılı.
+- `DiyanetReconstructionV14Test`: 10 test, 10 başarılı.
+- `:app:testDebugUnitTest`: 50 test, 0 hata; 5 harici-veri testi ortam değişkeni olmadığı için atlandı.
+- V14.1 güvenilir yaz-omzu regresyonu:
+  - 2026-07-15 örneğinde Basel merkez Fajr `03:51`, Waktiva'nın Reinach varsayılan koordinatında `03:50`; her iki sonuç da eski V14'ten 3 dakika erkendir.
+  - 1.059 uygun aday şehir; 968 şehirde ölçülebilir düzeltme.
+  - 107.869 yaz-omzu satırı; eski V14 düzeltmesinin en az 0,5 dakika olduğu 61.992 maddi satır.
+  - Eski V14 Fajr MAE `2,11018`; V14.1 Fajr MAE `1,36300`.
+  - V14.1 bias `-0,20701`, P99 `6`, `>10` sayısı `0`.
+  - 30 şehirde ortalama hata arttı; en büyük şehir regresyonu `0,5` dakika ve hiçbir günlük sonuç eski V14'ten 3 dakikadan fazla ayrılmadı.
 - Tam Kotlin golden koşumu:
   - 3.040 resmi şehir, 1.109.600 gün, 6.657.600 vakit.
   - 72 güney-yüksek-enlem aylık V9 fallback diagnostic'i.
-  - Fajr: MAE `2.12759`, P99 `47`, `>10` sayısı `26.110`, maksimum `634`.
+  - Fajr: MAE `2.08538`, P99 `47`, `>10` sayısı `26.080`, maksimum `634`.
   - Isha: MAE `2.65982`, P99 `44`, `>10` sayısı `26.593`, maksimum `608`.
-  - Altı vakit: MAE `2.11994`, P99 `46`, `>10` sayısı `158.083`, maksimum `634`.
+  - Altı vakit: MAE `2.11290`, P99 `46`, `>10` sayısı `158.053`, maksimum `634`.
   - Çıktı: `v14_kotlin_golden_summary.csv`.
 
 Golden runner şu şekilde çalıştırılır:

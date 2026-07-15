@@ -817,7 +817,8 @@ class DiyanetV14SegmentAnalysisTest {
         "city_id,country_code,country_name,city_name,date,latitude,longitude,zone_id,event," +
             "official_time,predicted_time,signed_error_minutes,absolute_error_minutes,engine_version," +
             "routing,regime,diagnostic,asr_source,direct_fajr_available,direct_isha_available," +
-            "fajr_state,isha_state,axis_mode,polar_night,polar_day,utc_offset_seconds"
+            "fajr_state,isha_state,axis_mode,polar_night,polar_day,utc_offset_seconds," +
+            "fajr_shoulder_mode,fajr_correction_minutes,fajr_asymmetric_adjustment_minutes"
     )
 
     private fun writeGoldenRow(writer: BufferedWriter, row: AnalysisRow) = writeCsvRow(
@@ -847,7 +848,10 @@ class DiyanetV14SegmentAnalysisTest {
         row.trace.axisMode,
         row.trace.polarNight,
         row.trace.polarDay,
-        row.trace.utcOffsetSeconds
+        row.trace.utcOffsetSeconds,
+        row.trace.fajrShoulderMode,
+        row.trace.fajrCorrectionMinutes,
+        row.trace.fajrAsymmetricAdjustmentMinutes
     )
 
     private fun diagnosticFor(row: AnalysisRow): String? {

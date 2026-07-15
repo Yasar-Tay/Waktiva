@@ -13,14 +13,15 @@ import kotlin.math.roundToLong
 import kotlin.math.tanh
 
 /**
- * Diyanet high-latitude reconstruction candidate V14.
+ * Diyanet high-latitude reconstruction candidate V14.1.
  *
- * V14 keeps V13's prayer-night event ownership and Isha model. Fajr is revised
+ * V14.1 keeps V14's prayer-night event ownership and Isha model. Fajr is revised
  * with three astronomy-defined pieces: a 16-degree summer anchor blended with
  * the direct -18° root, distance-to-missing-range shoulders for long polar
  * seasons, and a one-day pre-reappearance bridge. A UTC-offset transition guard
  * preserves the V13 result when an elapsed-duration interpolation would jump
- * across a daylight-saving discontinuity.
+ * across a daylight-saving discontinuity. The short-missing-range summer anchor
+ * is direction-aware and limits its change from the frozen V14 result.
  *
  * No city names, city IDs, or city-specific constants are used. This remains a
  * reconstruction of the 2026 published tables, not Diyanet's source code.
@@ -98,7 +99,8 @@ class DiyanetReconstructionV14(
             coreGap = coreFajrGap,
             baseGap = baseFajrGap,
             annual = annual,
-            nightMinimumSolarAltitudeDegrees = previousNight.minimumSolarAltitudeDegrees
+            nightMinimumSolarAltitudeDegrees = previousNight.minimumSolarAltitudeDegrees,
+            dayLengthTrendMinutesPerDay = dayLengthTrend
         )
         val exactFajr = exactRecoveryFajr(
             date = date,
@@ -180,6 +182,8 @@ class DiyanetReconstructionV14(
                 fajrBaseGapMinutes = baseFajrGap.toMinutesDouble(),
                 fajrOutputGapMinutes = fajrGap.toMinutesDouble(),
                 fajrCorrectionMinutes = fajrSelection.correctionMinutes,
+                fajrLegacyV14GapMinutes = fajrSelection.legacyV14GapMinutes,
+                fajrAsymmetricAdjustmentMinutes = fajrSelection.asymmetricAdjustmentMinutes,
                 fajrShoulderMode = fajrSelection.mode.name,
                 fajrAnnualSummerMinimumSolarAltitudeDegrees = annual.fajrSummerMinimumSolarAltitudeDegrees,
                 fajrPreRecoveryBridgeDate = annual.fajrPreRecoveryBridgeDate,
@@ -689,7 +693,8 @@ class DiyanetReconstructionV14(
         coreGap: Duration,
         baseGap: Duration,
         annual: AnnualTwilightProfile,
-        nightMinimumSolarAltitudeDegrees: Double
+        nightMinimumSolarAltitudeDegrees: Double,
+        dayLengthTrendMinutesPerDay: Double
     ): FajrSelection {
         if (directGap == null) {
             return FajrSelection(baseGap, 0.0, FajrShoulderMode.V13_BASELINE)
@@ -719,11 +724,39 @@ class DiyanetReconstructionV14(
             val sixteenDegreeCore = scaleDuration(coreGap, SUMMER_ANCHOR_CORE_ANGLE, FAJR_ANGLE)
                 .toMinutesDouble()
             val solsticeTarget = lerp(sixteenDegreeCore, directMinutes, directWeight)
-            val output = lerp(baseMinutes, solsticeTarget, activation)
+            val legacyV14Output = lerp(baseMinutes, solsticeTarget, activation)
+
+            // The published shoulder is asymmetric. Preserve the V14 correction
+            // while days lengthen, damp it as days shorten, fade the change where
+            // the trend direction is ambiguous, and use annual solar depth instead
+            // of city/country identifiers for the latitude-like adjustment.
+            val approachingWeight = 0.5 * (
+                1.0 + tanh(
+                    dayLengthTrendMinutesPerDay /
+                        SUMMER_ASYMMETRY_TREND_SCALE_MINUTES_PER_DAY
+                )
+            )
+            val altitudeOffset = activation * SUMMER_ASYMMETRY_ALTITUDE_SLOPE_MINUTES_PER_DEGREE *
+                (summerMinimum - SUMMER_ASYMMETRY_REFERENCE_ALTITUDE_DEGREES)
+            val asymmetricTarget = baseMinutes +
+                (legacyV14Output - baseMinutes) * approachingWeight +
+                altitudeOffset
+            val trendMagnitude = smoothStep01(
+                abs(dayLengthTrendMinutesPerDay) /
+                    SUMMER_ASYMMETRY_TREND_FADE_MINUTES_PER_DAY
+            )
+            val requestedAdjustment = (asymmetricTarget - legacyV14Output) * trendMagnitude
+            val boundedAdjustment = requestedAdjustment.coerceIn(
+                -SUMMER_ASYMMETRY_MAX_CHANGE_MINUTES,
+                SUMMER_ASYMMETRY_MAX_CHANGE_MINUTES
+            )
+            val output = legacyV14Output + boundedAdjustment
             return FajrSelection(
                 gap = minutesAsDuration(output),
                 correctionMinutes = output - baseMinutes,
-                mode = FajrShoulderMode.SIXTEEN_DEGREE_SUMMER_ANCHOR
+                mode = FajrShoulderMode.SIXTEEN_DEGREE_SUMMER_ANCHOR_ASYMMETRIC,
+                legacyV14GapMinutes = legacyV14Output,
+                asymmetricAdjustmentMinutes = boundedAdjustment
             )
         }
 
@@ -958,7 +991,9 @@ class DiyanetReconstructionV14(
     private data class FajrSelection(
         val gap: Duration,
         val correctionMinutes: Double,
-        val mode: FajrShoulderMode
+        val mode: FajrShoulderMode,
+        val legacyV14GapMinutes: Double? = null,
+        val asymmetricAdjustmentMinutes: Double = 0.0
     )
 
     private data class FajrDistanceShoulderParameters(
@@ -971,7 +1006,7 @@ class DiyanetReconstructionV14(
     private enum class FajrShoulderMode {
         V13_BASELINE,
         DIRECT_NOT_LATER_THAN_CORE,
-        SIXTEEN_DEGREE_SUMMER_ANCHOR,
+        SIXTEEN_DEGREE_SUMMER_ANCHOR_ASYMMETRIC,
         APPROACHING_MISSING_RANGE_BY_DISTANCE,
         RECEDING_MISSING_RANGE_BY_DISTANCE,
         UTC_OFFSET_TRANSITION_GUARD
@@ -1038,7 +1073,8 @@ class DiyanetReconstructionV14(
     }
 
     companion object {
-        const val CANDIDATE_VERSION = "diyanet_reconstruction_v14_fajr_transition_regimes"
+        const val BASELINE_V14_VERSION = "diyanet_reconstruction_v14_fajr_transition_regimes"
+        const val CANDIDATE_VERSION = "diyanet_reconstruction_v14_1_asymmetric_fajr_shoulder"
         const val MIN_ABS_LATITUDE = 45.0
 
         private const val FAJR_ANGLE = 18.0
@@ -1067,6 +1103,14 @@ class DiyanetReconstructionV14(
         private const val SUMMER_ANCHOR_MIN_ALTITUDE = -22.5
         private const val SUMMER_ANCHOR_MAX_ALTITUDE = -17.5
         private const val SUMMER_ANCHOR_MAX_MISSING_DAYS = 15
+
+        // Calibrated on the trusted 45-49° northern 2026 city distribution.
+        // The bounded delta protects continuity and limits extrapolation risk.
+        private const val SUMMER_ASYMMETRY_TREND_SCALE_MINUTES_PER_DAY = 2.5
+        private const val SUMMER_ASYMMETRY_TREND_FADE_MINUTES_PER_DAY = 0.5
+        private const val SUMMER_ASYMMETRY_REFERENCE_ALTITUDE_DEGREES = -19.0646
+        private const val SUMMER_ASYMMETRY_ALTITUDE_SLOPE_MINUTES_PER_DEGREE = -1.8
+        private const val SUMMER_ASYMMETRY_MAX_CHANGE_MINUTES = 3.0
 
         private const val LONG_MISSING_RANGE_MIN_DAYS = 130
         private const val LONG_MISSING_REFERENCE_DAYS = 150.0
@@ -1244,6 +1288,8 @@ data class DiyanetV14Diagnostics(
     val fajrBaseGapMinutes: Double,
     val fajrOutputGapMinutes: Double,
     val fajrCorrectionMinutes: Double,
+    val fajrLegacyV14GapMinutes: Double?,
+    val fajrAsymmetricAdjustmentMinutes: Double,
     val fajrShoulderMode: String,
     val fajrAnnualSummerMinimumSolarAltitudeDegrees: Double,
     val fajrPreRecoveryBridgeDate: LocalDate?,
