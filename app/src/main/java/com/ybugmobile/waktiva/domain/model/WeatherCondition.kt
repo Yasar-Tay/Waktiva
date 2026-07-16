@@ -87,9 +87,6 @@ enum class WeatherCondition {
                 DRIZZLE,
                 FREEZING_DRIZZLE -> precipitationMillimeters > 0.0
 
-                THUNDERSTORM,
-                THUNDERSTORM_HAIL -> true
-
                 else -> precipitationMillimeters >= MIN_VISIBLE_PRECIPITATION_MM
             }
             if (hasVisiblePrecipitation) return reportedCondition

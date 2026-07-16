@@ -188,8 +188,8 @@ class HomeViewModel @Inject constructor(
                 updateHealthStatus()
             }
             
-            // Poll weather every 60 minutes
-            if (now.minute == 0 && now.second == 0) {
+            // Refresh often enough for short showers to disappear promptly.
+            if (now.minute % WEATHER_REFRESH_INTERVAL_MINUTES == 0 && now.second == 0) {
                 refreshWeather()
             }
         }.launchIn(viewModelScope)
@@ -475,6 +475,8 @@ class HomeViewModel @Inject constructor(
     }
 
     companion object {
+        private const val WEATHER_REFRESH_INTERVAL_MINUTES = 30
+
         val CALCULATION_METHODS = listOf(
             R.string.method_mwl to 3,
             R.string.method_isna to 2,

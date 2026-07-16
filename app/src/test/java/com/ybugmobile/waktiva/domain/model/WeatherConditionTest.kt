@@ -61,14 +61,14 @@ class WeatherConditionTest {
     }
 
     @Test
-    fun thunderstormCodeKeepsEffectWhenPrecipitationIsRoundedToZero() {
+    fun dryThunderstormReportFallsBackToCloudCover() {
         val effect = WeatherCondition.forVisualEffects(
             reportedCondition = WeatherCondition.THUNDERSTORM,
             precipitationMillimeters = 0.0,
             cloudCoverPercent = 100
         )
 
-        assertEquals(WeatherCondition.THUNDERSTORM, effect)
+        assertEquals(WeatherCondition.OVERCAST, effect)
     }
 
     @Test
