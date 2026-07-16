@@ -48,7 +48,7 @@ enum class WeatherCondition {
         }
 
     companion object {
-        private const val MIN_VISIBLE_PRECIPITATION_MM = 0.1
+        private const val MIN_VISIBLE_PRECIPITATION_MM = 0.05
 
         fun fromWeatherApiCode(code: Int): WeatherCondition {
             return when (code) {
@@ -79,11 +79,20 @@ enum class WeatherCondition {
             precipitationMillimeters: Double,
             cloudCoverPercent: Int
         ): WeatherCondition {
-            if (!reportedCondition.hasPrecipitationEffect() ||
-                precipitationMillimeters >= MIN_VISIBLE_PRECIPITATION_MM
-            ) {
+            if (!reportedCondition.hasPrecipitationEffect()) {
                 return reportedCondition
             }
+
+            val hasVisiblePrecipitation = when (reportedCondition) {
+                DRIZZLE,
+                FREEZING_DRIZZLE -> precipitationMillimeters > 0.0
+
+                THUNDERSTORM,
+                THUNDERSTORM_HAIL -> true
+
+                else -> precipitationMillimeters >= MIN_VISIBLE_PRECIPITATION_MM
+            }
+            if (hasVisiblePrecipitation) return reportedCondition
 
             return when {
                 cloudCoverPercent >= 80 -> OVERCAST

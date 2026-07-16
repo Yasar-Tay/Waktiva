@@ -6,14 +6,36 @@ import org.junit.Test
 class WeatherConditionTest {
 
     @Test
-    fun tracePrecipitationDoesNotStartRainEffect() {
+    fun traceRainStartsRainEffectAtFiveHundredthsOfAMillimeter() {
         val effect = WeatherCondition.forVisualEffects(
             reportedCondition = WeatherCondition.RAIN_SHOWERS,
             precipitationMillimeters = 0.06,
             cloudCoverPercent = 0
         )
 
-        assertEquals(WeatherCondition.CLEAR, effect)
+        assertEquals(WeatherCondition.RAIN_SHOWERS, effect)
+    }
+
+    @Test
+    fun drizzleStartsAtAnyPositiveMeasuredPrecipitation() {
+        val effect = WeatherCondition.forVisualEffects(
+            reportedCondition = WeatherCondition.DRIZZLE,
+            precipitationMillimeters = 0.01,
+            cloudCoverPercent = 100
+        )
+
+        assertEquals(WeatherCondition.DRIZZLE, effect)
+    }
+
+    @Test
+    fun rainBelowFiveHundredthsFallsBackToCloudCover() {
+        val effect = WeatherCondition.forVisualEffects(
+            reportedCondition = WeatherCondition.RAINY,
+            precipitationMillimeters = 0.04,
+            cloudCoverPercent = 45
+        )
+
+        assertEquals(WeatherCondition.PARTLY_CLOUDY, effect)
     }
 
     @Test
@@ -31,11 +53,22 @@ class WeatherConditionTest {
     fun measurableRainKeepsRainEffect() {
         val effect = WeatherCondition.forVisualEffects(
             reportedCondition = WeatherCondition.RAINY,
-            precipitationMillimeters = 0.2,
+            precipitationMillimeters = 0.05,
             cloudCoverPercent = 100
         )
 
         assertEquals(WeatherCondition.RAINY, effect)
+    }
+
+    @Test
+    fun thunderstormCodeKeepsEffectWhenPrecipitationIsRoundedToZero() {
+        val effect = WeatherCondition.forVisualEffects(
+            reportedCondition = WeatherCondition.THUNDERSTORM,
+            precipitationMillimeters = 0.0,
+            cloudCoverPercent = 100
+        )
+
+        assertEquals(WeatherCondition.THUNDERSTORM, effect)
     }
 
     @Test
