@@ -152,7 +152,7 @@ fun HomeLandscapeContent(
                             if (hasWeatherData || state.isNetworkAvailable || state.isLocationPermissionGranted) {
                                 WeatherSection(
                                     temperature = state.temperature,
-                                    condition = state.weatherCondition,
+                                    condition = state.weatherEffectCondition,
                                     contentColor = contentColor,
                                     currentTime = localTime,
                                     currentPrayerDay = state.currentPrayerDay,

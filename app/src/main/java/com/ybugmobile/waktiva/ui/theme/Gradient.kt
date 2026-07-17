@@ -251,10 +251,10 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
         val precipElements = remember(condition) {
             val count = when (condition) {
                 WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL,
-                WeatherCondition.HEAVY_RAIN -> 128
+                WeatherCondition.HEAVY_RAIN -> 96
                 WeatherCondition.RAINY, WeatherCondition.RAIN_SHOWERS,
-                WeatherCondition.FREEZING_RAIN -> 96
-                WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE -> 56
+                WeatherCondition.FREEZING_RAIN -> 68
+                WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE -> 36
                 WeatherCondition.HEAVY_SNOW, WeatherCondition.SNOW_SHOWERS -> 70
                 WeatherCondition.SNOWY, WeatherCondition.SNOW_GRAINS -> 50
                 else -> 0
@@ -315,21 +315,21 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
                             val isSmall = index % 3 == 0
                             val isMed = index % 3 == 1
                             val alpha = when {
-                                isSmall -> if (isDrizzle) 0.18f else 0.24f
-                                isMed -> if (isDrizzle) 0.28f else 0.38f
-                                else -> if (isHeavyRain) 0.52f else if (isDrizzle) 0.34f else 0.46f
+                                isSmall -> if (isDrizzle) 0.12f else 0.18f
+                                isMed -> if (isDrizzle) 0.20f else 0.30f
+                                else -> if (isHeavyRain) 0.42f else if (isDrizzle) 0.26f else 0.36f
                             }
                             val length = when {
-                                isSmall -> (if (isDrizzle) 4.dp else 7.dp).toPx()
-                                isMed -> (if (isDrizzle) 7.dp else 12.dp).toPx()
-                                else -> (if (isHeavyRain) 20.dp else if (isDrizzle) 8.dp else 16.dp).toPx()
+                                isSmall -> (if (isDrizzle) 3.dp else 6.dp).toPx()
+                                isMed -> (if (isDrizzle) 6.dp else 10.dp).toPx()
+                                else -> (if (isHeavyRain) 16.dp else if (isDrizzle) 7.dp else 13.dp).toPx()
                             }
                             val thickness = when {
-                                isSmall -> 0.55.dp.toPx()
-                                isMed -> 0.78.dp.toPx()
-                                else -> (if (isHeavyRain) 1.10.dp else 0.90.dp).toPx()
+                                isSmall -> 0.45.dp.toPx()
+                                isMed -> 0.65.dp.toPx()
+                                else -> (if (isHeavyRain) 0.95.dp else 0.78.dp).toPx()
                             }
-                            val slant = (if (isHeavyRain) 2.5.dp else 1.25.dp).toPx()
+                            val slant = (if (isHeavyRain) 2.0.dp else 1.0.dp).toPx()
 
                             drawLine(
                                 Color.White.copy(alpha = alpha),
