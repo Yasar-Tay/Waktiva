@@ -29,7 +29,7 @@ android {
     defaultConfig {
         applicationId = "com.ybugmobile.waktiva"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 24
         versionName = "1.0.24"
 

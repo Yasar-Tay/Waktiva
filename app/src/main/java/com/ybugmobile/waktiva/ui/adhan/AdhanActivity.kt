@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -64,6 +65,7 @@ class AdhanActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         showOnLockScreen()
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         updatePrayerName(intent)
@@ -185,6 +187,7 @@ fun AdhanScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .safeDrawingPadding()
                 .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
