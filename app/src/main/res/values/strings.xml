@@ -134,6 +134,15 @@
     <string name="settings_confirm">Confirm</string>
     <string name="settings_weather_effects">Weather Effects</string>
     <string name="settings_weather_effects_desc">Show animated weather conditions (rain, snow, clouds) in the background.</string>
+    <string name="settings_day_circle_style">Day Circle Style</string>
+    <string name="day_circle_style_classic">Classic</string>
+    <string name="day_circle_style_classic_desc">The original prayer circle</string>
+    <string name="day_circle_style_brass">Brass Movement</string>
+    <string name="day_circle_style_brass_desc">A turning brass wheel with meshing prayer gears</string>
+    <string name="day_circle_style_steel">Night Steel</string>
+    <string name="day_circle_style_steel_desc">Prayer gears running inside a steel ring</string>
+    <string name="day_circle_style_skeleton">Skeleton</string>
+    <string name="day_circle_style_skeleton_desc">Fine lines over a faint gear train</string>
 
     <!-- Language Options -->
     <string name="lang_system">System Default</string>

@@ -134,6 +134,15 @@
     <string name="settings_confirm">Vahvista</string>
     <string name="settings_weather_effects">Sääefektit</string>
     <string name="settings_weather_effects_desc">Näytä animoidut sääolosuhteet (sade, lumi, pilvet) taustalla.</string>
+    <string name="settings_day_circle_style">Päiväympyrän tyyli</string>
+    <string name="day_circle_style_classic">Klassinen</string>
+    <string name="day_circle_style_classic_desc">Alkuperäinen rukousympyrä</string>
+    <string name="day_circle_style_brass">Messinkikoneisto</string>
+    <string name="day_circle_style_brass_desc">Pyörivä messinkiratas ja siihen tarttuvat rukoushammaspyörät</string>
+    <string name="day_circle_style_steel">Yöteräs</string>
+    <string name="day_circle_style_steel_desc">Rukoushammaspyörät pyörivät teräsrenkaan sisällä</string>
+    <string name="day_circle_style_skeleton">Luuranko</string>
+    <string name="day_circle_style_skeleton_desc">Ohuet viivat haalean hammaspyörästön päällä</string>
 
     <!-- Language Options -->
     <string name="lang_system">Järjestelmän oletus</string>

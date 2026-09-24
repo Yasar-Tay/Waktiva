@@ -134,6 +134,15 @@
     <string name="settings_confirm">Konfirmasi</string>
     <string name="settings_weather_effects">Efek Cuaca</string>
     <string name="settings_weather_effects_desc">Tampilkan animasi kondisi cuaca (hujan, salju, awan) di latar belakang.</string>
+    <string name="settings_day_circle_style">Gaya Lingkaran Hari</string>
+    <string name="day_circle_style_classic">Klasik</string>
+    <string name="day_circle_style_classic_desc">Lingkaran waktu salat asli</string>
+    <string name="day_circle_style_brass">Mekanisme Kuningan</string>
+    <string name="day_circle_style_brass_desc">Roda kuningan berputar dengan roda gigi waktu salat</string>
+    <string name="day_circle_style_steel">Baja Malam</string>
+    <string name="day_circle_style_steel_desc">Roda gigi waktu salat berputar di dalam cincin baja</string>
+    <string name="day_circle_style_skeleton">Kerangka</string>
+    <string name="day_circle_style_skeleton_desc">Garis halus di atas rangkaian roda gigi samar</string>
 
     <!-- Language Options -->
     <string name="lang_system">Default Sistem</string>

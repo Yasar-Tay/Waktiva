@@ -134,6 +134,15 @@
     <string name="settings_confirm">Bekräfta</string>
     <string name="settings_weather_effects">Vädereffekter</string>
     <string name="settings_weather_effects_desc">Visa animerade väderförhållanden (regn, snö, moln) i bakgrunden.</string>
+    <string name="settings_day_circle_style">Stil för dagcirkeln</string>
+    <string name="day_circle_style_classic">Klassisk</string>
+    <string name="day_circle_style_classic_desc">Den ursprungliga bönecirkeln</string>
+    <string name="day_circle_style_brass">Mässingsverk</string>
+    <string name="day_circle_style_brass_desc">Ett roterande mässingshjul med ingripande bönekugghjul</string>
+    <string name="day_circle_style_steel">Nattstål</string>
+    <string name="day_circle_style_steel_desc">Bönekugghjul som snurrar inuti en stålring</string>
+    <string name="day_circle_style_skeleton">Skelett</string>
+    <string name="day_circle_style_skeleton_desc">Fina linjer över ett blekt kugghjulsverk</string>
 
     <!-- Language Options -->
     <string name="lang_system">Systemstandard</string>

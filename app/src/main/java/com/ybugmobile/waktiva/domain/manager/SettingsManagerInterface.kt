@@ -1,6 +1,7 @@
 package com.ybugmobile.waktiva.domain.manager
 
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
+import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import kotlinx.coroutines.flow.Flow
 
@@ -27,4 +28,5 @@ interface SettingsManagerInterface {
     suspend fun updateCalendarType(isHijri: Boolean)
     suspend fun updateShowWeatherEffects(enabled: Boolean)
     suspend fun updateShowQiblaMapHint(enabled: Boolean)
+    suspend fun updateDayCircleStyle(style: DayCircleStyle)
 }

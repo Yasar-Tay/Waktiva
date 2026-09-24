@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
+import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.ui.home.HomeViewState
 import com.ybugmobile.waktiva.ui.theme.GlassTheme
@@ -120,7 +121,8 @@ fun HomePortraitContent(
                         contentAlignment = Alignment.Center
                     ) {
                         state.currentPrayerDay?.let { prayerDay ->
-                            PrayerCircleVisualization(
+                            DayCircle(
+                                style = settings?.dayCircleStyle ?: DayCircleStyle.CLASSIC,
                                 day = prayerDay,
                                 currentTime = if (isToday) localTime else LocalTime.MIDNIGHT,
                                 nextPrayer = if (isToday) state.nextPrayer else null,

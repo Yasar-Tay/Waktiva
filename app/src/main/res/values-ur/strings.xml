@@ -134,6 +134,15 @@
     <string name="settings_confirm">تصدیق</string>
     <string name="settings_weather_effects">موسمی اثرات</string>
     <string name="settings_weather_effects_desc">بیک گراؤنڈ میں موسم کی متحرک صورتحال (بارش، برف، بادل) دکھائیں۔</string>
+    <string name="settings_day_circle_style">دن کے دائرے کا انداز</string>
+    <string name="day_circle_style_classic">کلاسیکی</string>
+    <string name="day_circle_style_classic_desc">نماز کے اوقات کا اصل دائرہ</string>
+    <string name="day_circle_style_brass">پیتل کا میکانزم</string>
+    <string name="day_circle_style_brass_desc">گھومتا ہوا پیتل کا پہیہ جس میں نماز کے گیئر پھنسے ہیں</string>
+    <string name="day_circle_style_steel">رات کا فولاد</string>
+    <string name="day_circle_style_steel_desc">فولادی حلقے کے اندر گھومتے نماز کے گیئر</string>
+    <string name="day_circle_style_skeleton">ڈھانچہ</string>
+    <string name="day_circle_style_skeleton_desc">مدھم گیئرز پر باریک لکیریں</string>
 
     <!-- Language Options -->
     <string name="lang_system">سسٹم ڈیفالٹ</string>

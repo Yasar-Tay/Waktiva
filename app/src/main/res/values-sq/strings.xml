@@ -134,6 +134,15 @@
     <string name="settings_confirm">Konfirmo</string>
     <string name="settings_weather_effects">Efektet e motit</string>
     <string name="settings_weather_effects_desc">Shfaq kushtet e animuara të motit (shi, borë, vranësira) në prapavijë.</string>
+    <string name="settings_day_circle_style">Stili i rrethit të ditës</string>
+    <string name="day_circle_style_classic">Klasik</string>
+    <string name="day_circle_style_classic_desc">Rrethi origjinal i kohëve të namazit</string>
+    <string name="day_circle_style_brass">Mekanizëm tunxhi</string>
+    <string name="day_circle_style_brass_desc">Një rrotë tunxhi që rrotullohet me ingranazhet e namazeve</string>
+    <string name="day_circle_style_steel">Çeliku i natës</string>
+    <string name="day_circle_style_steel_desc">Ingranazhet e namazeve rrotullohen brenda një unaze çeliku</string>
+    <string name="day_circle_style_skeleton">Skelet</string>
+    <string name="day_circle_style_skeleton_desc">Vija të holla mbi një grup ingranazhesh të zbehta</string>
 
     <!-- Language Options -->
     <string name="lang_system">Parazgjedhur nga sistemi</string>
