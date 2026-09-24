@@ -21,8 +21,10 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import com.ybugmobile.waktiva.domain.model.PrayerType
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sign
+import kotlin.math.sin
 
 /** One prayer as the gear dials draw it. */
 internal class GearPrayer(
@@ -119,13 +121,6 @@ private fun annulus(center: Offset, outer: Float, inner: Float) = Path().apply {
     addOval(Rect(center, outer))
     addOval(Rect(center, inner))
     fillType = PathFillType.EvenOdd
-}
-
-/** Adds a quadratic curve as a cubic, from [from] through control [control] to [to]. */
-private fun Path.quadTo(from: Offset, control: Offset, to: Offset) {
-    val c1 = from + (control - from) * (2f / 3f)
-    val c2 = to + (control - to) * (2f / 3f)
-    cubicTo(c1.x, c1.y, c2.x, c2.y, to.x, to.y)
 }
 
 private fun DrawScope.softShadow(center: Offset, radius: Float) {
@@ -288,21 +283,24 @@ private class BrassGearDial(private val s: Float, private val dp: Float) : GearD
         fillType = PathFillType.EvenOdd
     }
 
+    // Five evenly spaced straight spokes, tapering slightly towards the rim.
     private val spokes = Path().apply {
-        val mid = (hubOut + bandIn) / 2f
-        for (i in 0 until 6) {
-            val a = i * TAU / 6
-            val w0 = 0.075f
-            val w1 = 0.045f
-            val bend = 0.22f
-            val p0 = pointOn(c, hubOut - 2 * dp, a - w0)
-            val p1 = pointOn(c, bandIn + 2 * dp, a - w1 + 0.05f)
-            val p2 = pointOn(c, bandIn + 2 * dp, a + w1 + 0.05f)
-            val p3 = pointOn(c, hubOut - 2 * dp, a + w0)
+        val hubHalfWidth = 0.075f * hubOut
+        val rimHalfWidth = 0.8f * hubHalfWidth
+        for (i in 0 until 5) {
+            val a = i * TAU / 5 - TAU / 4
+            val along = Offset(cos(a), sin(a))
+            val across = Offset(-along.y, along.x)
+            val hubPoint = c + along * (hubOut - 2 * dp)
+            val rimPoint = c + along * (bandIn + 2 * dp)
+            val p0 = hubPoint - across * hubHalfWidth
+            val p1 = rimPoint - across * rimHalfWidth
+            val p2 = rimPoint + across * rimHalfWidth
+            val p3 = hubPoint + across * hubHalfWidth
             moveTo(p0.x, p0.y)
-            quadTo(p0, pointOn(c, mid, a - w0 + bend), p1)
+            lineTo(p1.x, p1.y)
             lineTo(p2.x, p2.y)
-            quadTo(p2, pointOn(c, mid, a + w0 + bend), p3)
+            lineTo(p3.x, p3.y)
             close()
         }
     }
