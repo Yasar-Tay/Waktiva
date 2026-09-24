@@ -552,10 +552,22 @@ private class SkeletonGearDial(private val s: Float, private val dp: Float) : Ge
             drawPath(wheel, brass.copy(alpha = 0.55f), style = hair)
             drawCircle(brass.copy(alpha = 0.25f), r - ded - 3 * dp, c, style = hair)
             drawCircle(brass.copy(alpha = 0.25f), innerRim, c, style = hair)
+            // Five evenly spaced straight spokes, outlined, same proportions as the brass wheel.
+            val hubHalfWidth = 0.075f * hub
+            val rimHalfWidth = 0.8f * hubHalfWidth
             for (i in 0 until 5) {
                 val a = i * TAU / 5 - TAU / 4
-                for (off in floatArrayOf(-0.035f, 0.035f)) {
-                    drawLine(brass.copy(alpha = 0.22f), pointOn(c, hub, a + off * 1.6f), pointOn(c, innerRim, a + off * 0.5f), dp)
+                val along = Offset(cos(a), sin(a))
+                val across = Offset(-along.y, along.x)
+                val hubPoint = c + along * hub
+                val rimPoint = c + along * innerRim
+                for (side in floatArrayOf(-1f, 1f)) {
+                    drawLine(
+                        brass.copy(alpha = 0.22f),
+                        hubPoint + across * (side * hubHalfWidth),
+                        rimPoint + across * (side * rimHalfWidth),
+                        dp
+                    )
                 }
             }
             drawCircle(brass.copy(alpha = 0.22f), hub, c, style = hair)
