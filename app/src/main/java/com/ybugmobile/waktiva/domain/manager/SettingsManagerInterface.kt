@@ -16,6 +16,7 @@ interface SettingsManagerInterface {
     suspend fun updatePrayerSpecificAdhanPaths(paths: Map<PrayerType, String?>)
     suspend fun updateUseSpecificAdhan(enabled: Boolean)
     suspend fun updatePlayAdhanAudio(enabled: Boolean)
+    suspend fun updatePrayerAdhanEnabled(type: PrayerType, enabled: Boolean)
     suspend fun updatePreAdhanWarning(enabled: Boolean)
     suspend fun updatePreAdhanWarningMinutes(minutes: Int)
     suspend fun setSetupComplete(complete: Boolean)

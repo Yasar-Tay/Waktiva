@@ -28,6 +28,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
+import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.ui.settings.composables.*
 import com.ybugmobile.waktiva.utils.applyAppLanguage
 import com.ybugmobile.waktiva.utils.LanguageUtils
@@ -113,6 +114,7 @@ fun SettingsScreen(
                         NotificationSoundSection(
                             settings = settings,
                             onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
+                            onPrayerAdhanToggle = { type, enabled -> viewModel.setPrayerAdhanEnabled(type, enabled) },
                             onSilentNotificationChange = { viewModel.setSilentPrayerNotification(it) },
                             onNavigateToAudio = onNavigateToAudio
                         )
@@ -162,6 +164,7 @@ fun SettingsScreen(
                     NotificationSoundSection(
                         settings = settings,
                         onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
+                        onPrayerAdhanToggle = { type, enabled -> viewModel.setPrayerAdhanEnabled(type, enabled) },
                         onSilentNotificationChange = { viewModel.setSilentPrayerNotification(it) },
                         onNavigateToAudio = onNavigateToAudio
                     )
@@ -222,6 +225,7 @@ fun SettingsScreen(
 private fun NotificationSoundSection(
     settings: UserSettings?,
     onPlayAdhanChange: (Boolean) -> Unit,
+    onPrayerAdhanToggle: (PrayerType, Boolean) -> Unit,
     onSilentNotificationChange: (Boolean) -> Unit,
     onNavigateToAudio: () -> Unit
 ) {
@@ -244,9 +248,17 @@ private fun NotificationSoundSection(
             }
         )
 
-        val showSilentPrayerNotification = settings?.playAdhanAudio == false
+        if (settings?.playAdhanAudio == true) {
+            AdhanPrayerSelectionItem(
+                title = stringResource(R.string.settings_adhan_prayers),
+                subtitle = stringResource(R.string.settings_adhan_prayers_desc),
+                disabledPrayers = settings.adhanDisabledPrayers,
+                onPrayerToggle = onPrayerAdhanToggle
+            )
+        }
 
-        if (showSilentPrayerNotification) {
+        // Silent notifications apply whenever at least one prayer won't play the adhan.
+        if (settings != null && (!settings.playAdhanAudio || settings.adhanDisabledPrayers.isNotEmpty())) {
             SettingsToggleItem(
                 title = stringResource(R.string.settings_silent_prayer_notification),
                 subtitle = stringResource(R.string.settings_silent_prayer_notification_desc),

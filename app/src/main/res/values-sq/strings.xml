@@ -181,6 +181,8 @@
     <string name="settings_notifications_sound">Njoftimet dhe Tingulli</string>
     <string name="settings_play_adhan">Luaj Tingullin e Ezanit</string>
     <string name="settings_play_adhan_desc">Dëgjoni Ezanin kur është koha e lutjes</string>
+    <string name="settings_adhan_prayers">Kohët e ezanit</string>
+    <string name="settings_adhan_prayers_desc">Zgjidhni për cilat namaze të këndohet ezani</string>
     <string name="settings_adhan_sound_selection">Cilësimet e Ezanit dhe njoftimeve</string>
     <string name="settings_adhan_sound_selection_desc">Zgjidhni tingullin që do të luhet gjatë kohës së lutjes</string>
 

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.waktiva.domain.model.PrayerDay
+import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.manager.TimeManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,6 +69,12 @@ class SettingsViewModel @Inject constructor(
     fun setPlayAdhanAudio(enabled: Boolean) {
         viewModelScope.launch {
             settingsManager.updatePlayAdhanAudio(enabled)
+        }
+    }
+
+    fun setPrayerAdhanEnabled(type: PrayerType, enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updatePrayerAdhanEnabled(type, enabled)
         }
     }
 

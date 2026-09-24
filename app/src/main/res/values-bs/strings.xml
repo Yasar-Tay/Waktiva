@@ -181,6 +181,8 @@
     <string name="settings_notifications_sound">Obavijesti i zvuk</string>
     <string name="settings_play_adhan">Reproduciraj zvuk Ezana</string>
     <string name="settings_play_adhan_desc">Oglasi Ezan kada nastupi namasko vrijeme</string>
+    <string name="settings_adhan_prayers">Vremena ezana</string>
+    <string name="settings_adhan_prayers_desc">Odaberite za koje namaze se uči ezan</string>
     <string name="settings_adhan_sound_selection">Postavke Ezana i obavijesti</string>
     <string name="settings_adhan_sound_selection_desc">Odaberite zvuk koji će se reproducirati tokom vaktije</string>
 

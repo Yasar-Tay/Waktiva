@@ -181,6 +181,8 @@
     <string name="settings_notifications_sound">Aviseringar och ljud</string>
     <string name="settings_play_adhan">Spela upp Adhan-ljud</string>
     <string name="settings_play_adhan_desc">Låt Adhan ljuda när det är dags för bön</string>
+    <string name="settings_adhan_prayers">Adhan-tider</string>
+    <string name="settings_adhan_prayers_desc">Välj vid vilka böner adhan ska spelas</string>
     <string name="settings_adhan_sound_selection">Adhan- och aviseringsinställningar</string>
     <string name="settings_adhan_sound_selection_desc">Välj det ljud som spelas under bönetider</string>
 
