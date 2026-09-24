@@ -181,6 +181,8 @@
     <string name="settings_notifications_sound">Ilmoitukset ja äänet</string>
     <string name="settings_play_adhan">Toista Adhan-ääni</string>
     <string name="settings_play_adhan_desc">Kuuluta Adhan, kun on rukousaika</string>
+    <string name="settings_adhan_prayers">Adhan-ajat</string>
+    <string name="settings_adhan_prayers_desc">Valitse, minkä rukousten kohdalla adhan soi</string>
     <string name="settings_adhan_sound_selection">Adhan- ja ilmoitusasetukset</string>
     <string name="settings_adhan_sound_selection_desc">Valitse rukousaikoina toistettava ääni</string>
 

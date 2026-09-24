@@ -174,6 +174,8 @@
     <string name="settings_notifications_sound">Benachrichtigungen &amp; Ton</string>
     <string name="settings_play_adhan">Adhan-Ton abspielen</string>
     <string name="settings_play_adhan_desc">Den Adhan abspielen, wenn es Zeit zum Beten ist</string>
+    <string name="settings_adhan_prayers">Adhan-Zeiten</string>
+    <string name="settings_adhan_prayers_desc">Wählen Sie, bei welchen Gebeten der Adhan ertönt</string>
     <string name="settings_adhan_sound_selection">Adhan- und Benachrichtigungseinstellungen</string>
     <string name="settings_adhan_sound_selection_desc">Wählen Sie den Ton aus, der während der Gebetszeiten abgespielt wird</string>
 

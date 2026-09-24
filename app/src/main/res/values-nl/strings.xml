@@ -181,6 +181,8 @@
     <string name="settings_notifications_sound">Meldingen &amp; Geluid</string>
     <string name="settings_play_adhan">Adhan-geluid Afspelen</string>
     <string name="settings_play_adhan_desc">Het Adhan-geluid laten horen als het tijd is om te bidden</string>
+    <string name="settings_adhan_prayers">Adhan-tijden</string>
+    <string name="settings_adhan_prayers_desc">Kies bij welke gebeden de adhan klinkt</string>
     <string name="settings_adhan_sound_selection">Adhan- en meldingsinstellingen</string>
     <string name="settings_adhan_sound_selection_desc">Selecteer het geluid dat wordt afgespeeld tijdens gebedstijden</string>
 

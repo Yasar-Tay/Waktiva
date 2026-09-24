@@ -334,6 +334,7 @@ class HomeViewModel @Inject constructor(
         
         val isMuted = currentSettings.mutedPrayerName.equals(adhanTargetType?.name, ignoreCase = true) &&
                       currentSettings.mutedPrayerDate == next?.date?.toString()
+        val isNextAdhanEnabled = currentSettings.isAdhanEnabledFor(adhanTargetType)
 
         val effectiveHijri = HijriUtils.getEffectiveHijriDate(
             targetDate = date,
@@ -354,6 +355,7 @@ class HomeViewModel @Inject constructor(
             isAdhanPlaying = playing, 
             playingPrayerName = prayerName,
             isMuted = isMuted,
+            isNextAdhanEnabled = isNextAdhanEnabled,
             isHijriSelected = currentSettings.isHijriSelected,
             isNetworkAvailable = network,
             isLocationEnabled = locEnabled,

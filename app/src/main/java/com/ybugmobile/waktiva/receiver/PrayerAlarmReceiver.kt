@@ -77,7 +77,8 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 when (action) {
                     AlarmScheduler.ACTION_PRE_ADHAN_NOTIFICATION -> {
                         val settings = settingsManager.settingsFlow.first()
-                        if (!settings.playAdhanAudio || !settings.enablePreAdhanWarning) return@launch
+                        val prayerType = com.ybugmobile.waktiva.domain.model.PrayerType.fromString(prayerName)
+                        if (!settings.isAdhanEnabledFor(prayerType) || !settings.enablePreAdhanWarning) return@launch
 
                         val isMuted = settings.mutedPrayerName.equals(prayerName, ignoreCase = true) && 
                                      settings.mutedPrayerDate == prayerDate
@@ -140,7 +141,9 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        if (!settings.playAdhanAudio) {
+        // Covers both the global switch and prayers the user excluded from adhan playback.
+        val prayerType = com.ybugmobile.waktiva.domain.model.PrayerType.fromString(prayerName)
+        if (!settings.isAdhanEnabledFor(prayerType)) {
             if (settings.showSilentPrayerNotification) {
                 notificationHelper.showSilentPrayerTimeNotification(prayerName)
             }
@@ -163,7 +166,6 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
         try {
             notificationHelper.cancelWarningNotification()
-            val prayerType = com.ybugmobile.waktiva.domain.model.PrayerType.fromString(prayerName)
             val audioPath = if (settings.useSpecificAdhanForEachPrayer && prayerType != null) {
                 settings.prayerSpecificAdhanPaths[prayerType] ?: getDefaultAdhanForPrayer(context, prayerType)
             } else {

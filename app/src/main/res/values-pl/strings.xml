@@ -181,6 +181,8 @@
     <string name="settings_notifications_sound">Powiadomienia i dźwięk</string>
     <string name="settings_play_adhan">Odtwarzaj dźwięk Adhan</string>
     <string name="settings_play_adhan_desc">Odtwarzaj wezwanie Adhan, gdy nadejdzie czas modlitwy</string>
+    <string name="settings_adhan_prayers">Pory adhanu</string>
+    <string name="settings_adhan_prayers_desc">Wybierz, przy których modlitwach odtwarzać adhan</string>
     <string name="settings_adhan_sound_selection">Ustawienia adhanu i powiadomień</string>
     <string name="settings_adhan_sound_selection_desc">Wybierz dźwięk odtwarzany podczas modlitw</string>
 

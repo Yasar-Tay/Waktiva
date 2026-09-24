@@ -91,7 +91,7 @@ fun HomeLandscapeContent(
                                 onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
                                 contentColor = contentColor,
                                 isMuted = state.isMuted,
-                                playAdhanAudio = settings?.playAdhanAudio ?: false,
+                                playAdhanAudio = state.isNextAdhanEnabled,
                                 onSkipAudio = { prayerName ->
                                     state.nextPrayer?.let { next ->
                                         onSkipNextAudio(prayerName, next.date)
@@ -190,7 +190,7 @@ fun HomeLandscapeContent(
                                 selectedDate = state.selectedDate,
                                 contentColor = contentColor,
                                 currentPrayer = state.currentPrayer,
-                                playAdhanAudio = settings?.playAdhanAudio ?: false,
+                                playAdhanAudio = state.isNextAdhanEnabled,
                                 isMuted = state.isMuted,
                                 onSkipAudio = { prayerName ->
                                     state.nextPrayer?.let { next ->

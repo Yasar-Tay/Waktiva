@@ -181,6 +181,8 @@
     <string name="settings_notifications_sound">Notifications &amp; Sound</string>
     <string name="settings_play_adhan">Play Adhan Sound</string>
     <string name="settings_play_adhan_desc">Sound the Adhan when it\'s time to pray</string>
+    <string name="settings_adhan_prayers">Adhan Times</string>
+    <string name="settings_adhan_prayers_desc">Choose which prayers play the adhan</string>
     <string name="settings_adhan_sound_selection">Adhan and Notification Settings</string>
     <string name="settings_adhan_sound_selection_desc">Select the sound played during prayer times</string>
 

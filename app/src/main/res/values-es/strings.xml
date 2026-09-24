@@ -174,6 +174,8 @@
     <string name="settings_notifications_sound">Notificaciones y sonido</string>
     <string name="settings_play_adhan">Reproducir sonido de Adhan</string>
     <string name="settings_play_adhan_desc">Hacer sonar el Adhan cuando es hora de rezar</string>
+    <string name="settings_adhan_prayers">Horarios del Adhan</string>
+    <string name="settings_adhan_prayers_desc">Elige en qué oraciones sonará el adhan</string>
     <string name="settings_adhan_sound_selection">Configuración de adhan y notificaciones</string>
     <string name="settings_adhan_sound_selection_desc">Elija el sonido reproducido durante los horarios de oración</string>
 

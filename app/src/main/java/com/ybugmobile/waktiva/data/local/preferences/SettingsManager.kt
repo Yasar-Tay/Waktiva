@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.flow.first
 import androidx.datastore.preferences.preferencesDataStore
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
@@ -51,8 +52,16 @@ data class UserSettings(
     val isHijriSelected: Boolean = false,
     val showWeatherEffects: Boolean = true,
     val showQiblaMapHint: Boolean = true,
-    val showSilentPrayerNotification: Boolean = true
-)
+    val showSilentPrayerNotification: Boolean = true,
+    val adhanDisabledPrayers: Set<PrayerType> = emptySet()
+) {
+    /**
+     * Whether the adhan audio should play for [type], combining the global
+     * [playAdhanAudio] switch with the user's per-prayer selection.
+     */
+    fun isAdhanEnabledFor(type: PrayerType?): Boolean =
+        playAdhanAudio && type != null && type != PrayerType.SUNRISE && type !in adhanDisabledPrayers
+}
 
 /**
  * Implementation of [SettingsManagerInterface] using Jetpack DataStore.
@@ -85,6 +94,7 @@ class SettingsManager @Inject constructor(
         val SHOW_WEATHER_EFFECTS = booleanPreferencesKey("show_weather_effects")
         val SHOW_QIBLA_MAP_HINT = booleanPreferencesKey("show_qibla_map_hint")
         val SHOW_SILENT_PRAYER_NOTIFICATION = booleanPreferencesKey("show_silent_prayer_notification")
+        val ADHAN_DISABLED_PRAYERS = stringSetPreferencesKey("adhan_disabled_prayers")
 
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
@@ -122,7 +132,11 @@ class SettingsManager @Inject constructor(
             isHijriSelected = preferences[IS_HIJRI_SELECTED] ?: false,
             showWeatherEffects = preferences[SHOW_WEATHER_EFFECTS] ?: true,
             showQiblaMapHint = preferences[SHOW_QIBLA_MAP_HINT] ?: true,
-            showSilentPrayerNotification = preferences[SHOW_SILENT_PRAYER_NOTIFICATION] ?: true
+            showSilentPrayerNotification = preferences[SHOW_SILENT_PRAYER_NOTIFICATION] ?: true,
+            adhanDisabledPrayers = preferences[ADHAN_DISABLED_PRAYERS]
+                ?.mapNotNull { PrayerType.fromString(it) }
+                ?.toSet()
+                ?: emptySet()
         )
     }
 
@@ -220,6 +234,13 @@ class SettingsManager @Inject constructor(
     override suspend fun updatePlayAdhanAudio(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PLAY_ADHAN_AUDIO] = enabled
+        }
+    }
+
+    override suspend fun updatePrayerAdhanEnabled(type: PrayerType, enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            val current = preferences[ADHAN_DISABLED_PRAYERS] ?: emptySet()
+            preferences[ADHAN_DISABLED_PRAYERS] = if (enabled) current - type.name else current + type.name
         }
     }
 

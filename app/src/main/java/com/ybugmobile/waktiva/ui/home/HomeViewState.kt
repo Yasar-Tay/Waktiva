@@ -23,6 +23,8 @@ data class HomeViewState(
     val isAdhanPlaying: Boolean = false,
     val playingPrayerName: String? = null,
     val isMuted: Boolean = false,
+    /** Whether the upcoming prayer's adhan will play (global switch + per-prayer selection). */
+    val isNextAdhanEnabled: Boolean = false,
     val isHijriSelected: Boolean = false,
     val error: String? = null,
     val isNetworkAvailable: Boolean = true,
