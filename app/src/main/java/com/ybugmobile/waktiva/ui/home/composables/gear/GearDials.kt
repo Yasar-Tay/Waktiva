@@ -308,6 +308,39 @@ private class BrassGearDial(private val s: Float, private val dp: Float) : GearD
     private val hub = annulus(c, hubOut, hubIn)
     private val planetPath = planetOutline(rPlanet)
 
+    // Blued-steel hand pointing along +x from the centre: a slim shaft, a Breguet ring
+    // near the tip (its window shows the current prayer's colour) and a spade tip.
+    private val handLength = r - s * 0.022f
+    private val handRingCenter = handLength * 0.74f
+    private val handRingRadius = s * 0.021f
+    private val handRingStroke = s * 0.0055f
+    private val handPath = Path().apply {
+        val shaftBase = s * 0.0055f
+        val shaftEnd = s * 0.0035f
+        val ringGap = handRingRadius * 0.9f
+        moveTo(c.x, c.y - shaftBase)
+        lineTo(c.x + handRingCenter - ringGap, c.y - shaftEnd)
+        lineTo(c.x + handRingCenter - ringGap, c.y + shaftEnd)
+        lineTo(c.x, c.y + shaftBase)
+        close()
+        val spadeBase = handRingCenter + ringGap
+        val spadeHalf = s * 0.0065f
+        val shoulder = spadeBase + (handLength - spadeBase) * 0.35f
+        moveTo(c.x + spadeBase, c.y - spadeHalf)
+        lineTo(c.x + shoulder, c.y - spadeHalf * 1.25f)
+        lineTo(c.x + handLength, c.y)
+        lineTo(c.x + shoulder, c.y + spadeHalf * 1.25f)
+        lineTo(c.x + spadeBase, c.y + spadeHalf)
+        close()
+    }
+    private val bluedSteel = Brush.linearGradient(
+        0f to Color(0xFF86A8E0),
+        0.45f to Color(0xFF2F4F8A),
+        1f to Color(0xFF13234A),
+        start = c + Offset(0f, -s * 0.008f),
+        end = c + Offset(0f, s * 0.008f)
+    )
+
     override fun draw(scope: DrawScope, frame: GearFrame) = with(scope) {
         val wheelRot = frame.direction * (frame.dayTurn + frame.phase)
 
@@ -342,19 +375,32 @@ private class BrassGearDial(private val s: Float, private val dp: Float) : GearD
 
         if (frame.showNow) {
             val handAngle = dayAngle(frame.nowMinutes, frame.rtl)
-            val length = bandIn - 4 * dp
-            rotate(handAngle.toDegrees(), c) {
-                val hand = Path().apply {
-                    moveTo(c.x - s * 0.05f, c.y - s * 0.006f)
-                    lineTo(c.x + length * 0.78f, c.y - s * 0.004f)
-                    lineTo(c.x + length, c.y)
-                    lineTo(c.x + length * 0.78f, c.y + s * 0.004f)
-                    lineTo(c.x - s * 0.05f, c.y + s * 0.006f)
-                    close()
-                }
-                drawPath(hand, Brush.linearGradient(*BrassStops, start = c + Offset(0f, -6 * dp), end = c + Offset(length, 6 * dp)))
-                drawCircle(Color(0xFFE8C97E), s * 0.012f, c + Offset(length * 0.72f, 0f), style = Stroke(s * 0.004f))
-                drawCircle(Color(0xFFB8903F), s * 0.012f, c + Offset(-s * 0.05f, 0f))
+            val degrees = handAngle.toDegrees()
+            val ringAt = c + Offset(handRingCenter, 0f)
+            // Shadow offset in screen space, so it falls the same way whatever the hand's angle.
+            withTransform({
+                translate(1.5f * dp, 2f * dp)
+                rotate(degrees, c)
+            }) {
+                drawPath(handPath, Color.Black.copy(alpha = 0.35f))
+                drawCircle(Color.Black.copy(alpha = 0.35f), handRingRadius, ringAt, style = Stroke(handRingStroke))
+            }
+            rotate(degrees, c) {
+                drawPath(handPath, bluedSteel)
+                drawCircle(bluedSteel, handRingRadius, ringAt, style = Stroke(handRingStroke))
+                drawPath(handPath, Color(0xB3050A19), style = Stroke(0.8f * dp))
+                val window = handRingRadius - s * 0.0028f
+                drawCircle(frame.current.color.copy(alpha = 0.9f), window, ringAt)
+                val sheen = window - dp
+                drawArc(
+                    color = Color.White.copy(alpha = 0.5f),
+                    startAngle = 189f,
+                    sweepAngle = 117f,
+                    useCenter = false,
+                    topLeft = Offset(ringAt.x - sheen, ringAt.y - sheen),
+                    size = Size(sheen * 2, sheen * 2),
+                    style = Stroke(0.8f * dp)
+                )
             }
             nowIndicator(c, r, handAngle, frame.current.color, dp)
         }
