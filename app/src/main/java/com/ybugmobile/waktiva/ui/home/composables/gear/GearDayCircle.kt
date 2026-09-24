@@ -15,14 +15,10 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -329,22 +325,32 @@ fun GearDayCircle(
             }
         }
 
-        Column(
-            modifier = Modifier.zIndex(5f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        // Brass and skeleton dials frame the date as a disc filling their hub; steel keeps the card.
+        val hubDiameter = dial.hubRadius?.let { with(density) { (it * 2).toDp() } - 2.dp }
+        val cardSize = hubDiameter ?: 100.dp
+        FlippableCalendarCard(
+            day = day,
+            isHijriVisible = isHijriVisible,
+            onFlip = onToggleHijri,
+            contentColor = contentColor,
+            accentColor = current.color,
+            currentTime = currentTime,
+            isSelectedDayToday = isSelectedDayToday,
+            pulseScale = 1f,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .zIndex(5f),
+            size = cardSize,
+            circular = hubDiameter != null
+        )
+
+        // Placed below the card on its own so it never pushes the card off the hub centre.
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = maxHeight / 2 + cardSize / 2 + if (isLandscape) 8.dp else 12.dp)
+                .zIndex(5f)
         ) {
-            FlippableCalendarCard(
-                day = day,
-                isHijriVisible = isHijriVisible,
-                onFlip = onToggleHijri,
-                contentColor = contentColor,
-                accentColor = current.color,
-                currentTime = currentTime,
-                isSelectedDayToday = isSelectedDayToday,
-                pulseScale = 1f
-            )
-            Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 12.dp))
             ReligiousBadge(day.date, contentColor, hijriDate = day.hijriDate)
         }
 

@@ -61,6 +61,12 @@ internal interface GearDial {
     /** Radius of a prayer marker, used for its tap target. */
     val markerRadius: Float
 
+    /**
+     * Radius of the central circle the date card should fill as a disc,
+     * or null to show the standard card.
+     */
+    val hubRadius: Float?
+
     fun draw(scope: DrawScope, frame: GearFrame)
 }
 
@@ -274,6 +280,7 @@ private class BrassGearDial(private val s: Float, private val dp: Float) : GearD
 
     override val markerDistance = r + rPlanet
     override val markerRadius = rPlanet + gearAddendum(rPlanet, PLANET_TEETH)
+    override val hubRadius = hubIn
 
     private val wheel = Path().apply {
         addGearOutline(this, c, r, MAIN_TEETH)
@@ -326,6 +333,7 @@ private class BrassGearDial(private val s: Float, private val dp: Float) : GearD
             drawPath(spokes, brass)
             drawPath(hub, brass)
             drawCircle(Color(0x993C280A), hubOut, c, style = Stroke(0.8f * dp))
+            drawCircle(Color(0x993C280A), hubIn, c, style = Stroke(0.8f * dp))
             for (i in 0 until 3) {
                 drawCircle(Color(0xFF7A5A26), s * 0.006f, pointOn(c, (hubOut + hubIn) / 2f, i * TAU / 3 + 0.5f))
             }
@@ -380,6 +388,7 @@ private class SteelGearDial(private val s: Float, private val dp: Float) : GearD
 
     override val markerDistance = pitch - rPlanet
     override val markerRadius = rPlanet + addPlanet
+    override val hubRadius: Float? = null
 
     private val bezel = annulus(c, outer, inner)
     private val groove = annulus(c, mid + s * 0.012f, mid - s * 0.012f)
@@ -479,9 +488,11 @@ private class SkeletonGearDial(private val s: Float, private val dp: Float) : Ge
     private val track = r - ded - 0.07f * s / 2f
     private val badge = max(9f * dp, s * 0.03f)
     private val badgeCurrent = badge * 1.18f
+    private val hub = 0.30f * r
 
     override val markerDistance = track
     override val markerRadius = badgeCurrent
+    override val hubRadius = hub * 0.8f
 
     private val wheel = Path().apply { addGearOutline(this, c, r, MAIN_TEETH) }
     private val badgePath = Path().apply { addGearOutline(this, Offset.Zero, badge, 10) }
@@ -538,7 +549,6 @@ private class SkeletonGearDial(private val s: Float, private val dp: Float) : Ge
 
         val wheelRot = dir * frame.phase * 0.25f
         val brass = Color(0xFFDEBE78)
-        val hub = 0.30f * r
         val innerRim = track - 0.05f * s / 2f
         rotate(wheelRot.toDegrees(), c) {
             drawPath(wheel, brass.copy(alpha = 0.55f), style = hair)
