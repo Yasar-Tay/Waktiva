@@ -192,6 +192,12 @@ class AudioSettingsViewModel @Inject constructor(
         }
     }
 
+    fun togglePrayerAdhan(type: PrayerType, enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updatePrayerAdhanEnabled(type, enabled)
+        }
+    }
+
     fun togglePreAdhanWarning(enabled: Boolean) {
         viewModelScope.launch {
             settingsManager.updatePreAdhanWarning(enabled)

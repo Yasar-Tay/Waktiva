@@ -46,6 +46,7 @@ import com.google.accompanist.permissions.*
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.preferences.DEFAULT_CALCULATION_METHOD
 import com.ybugmobile.waktiva.domain.model.PrayerType
+import com.ybugmobile.waktiva.ui.settings.composables.AdhanPrayerPills
 import com.ybugmobile.waktiva.ui.settings.AudioSettingsViewModel
 import com.ybugmobile.waktiva.ui.settings.SettingsViewModel
 import com.ybugmobile.waktiva.utils.applyAppLanguage
@@ -425,7 +426,26 @@ private fun PreferencesStep(
                     }
                 }
 
-                if (settings?.playAdhanAudio == false) {
+                settings?.takeIf { it.playAdhanAudio }?.let { s ->
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        color = Color.White.copy(alpha = 0.05f)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(stringResource(R.string.settings_adhan_prayers), fontWeight = FontWeight.Bold, color = Color.White)
+                            Text(stringResource(R.string.settings_adhan_prayers_desc), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
+                            Spacer(modifier = Modifier.height(12.dp))
+                            AdhanPrayerPills(
+                                disabledPrayers = s.adhanDisabledPrayers,
+                                onPrayerToggle = { type, enabled -> audioViewModel.togglePrayerAdhan(type, enabled) },
+                                accentColor = BrandColor
+                            )
+                        }
+                    }
+                }
+
+                if (settings?.let { !it.playAdhanAudio || it.adhanDisabledPrayers.isNotEmpty() } == true) {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),

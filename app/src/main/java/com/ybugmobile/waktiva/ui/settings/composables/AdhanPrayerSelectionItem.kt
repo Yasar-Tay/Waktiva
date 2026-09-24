@@ -35,7 +35,6 @@ private val ADHAN_PRAYERS = listOf(
  * Lets the user pick which prayers play the adhan audio. Each prayer is a
  * toggleable pill; unselected prayers fall back to the silent notification.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AdhanPrayerSelectionItem(
     title: String,
@@ -87,21 +86,38 @@ fun AdhanPrayerSelectionItem(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        FlowRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 60.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            ADHAN_PRAYERS.forEach { type ->
-                val enabled = type !in disabledPrayers
-                PrayerPill(
-                    label = type.displayName,
-                    selected = enabled,
-                    onToggle = { onPrayerToggle(type, it) }
-                )
-            }
+        AdhanPrayerPills(
+            disabledPrayers = disabledPrayers,
+            onPrayerToggle = onPrayerToggle,
+            modifier = Modifier.padding(start = 60.dp)
+        )
+    }
+}
+
+/**
+ * Wrapping row of toggleable pills, one per adhan prayer. [accentColor] tints
+ * the selected pills so each screen can match its own switch styling.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun AdhanPrayerPills(
+    disabledPrayers: Set<PrayerType>,
+    onPrayerToggle: (PrayerType, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    accentColor: Color = Color(0xFF81C784)
+) {
+    FlowRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        ADHAN_PRAYERS.forEach { type ->
+            PrayerPill(
+                label = type.displayName,
+                selected = type !in disabledPrayers,
+                accentColor = accentColor,
+                onToggle = { onPrayerToggle(type, it) }
+            )
         }
     }
 }
@@ -110,6 +126,7 @@ fun AdhanPrayerSelectionItem(
 private fun PrayerPill(
     label: String,
     selected: Boolean,
+    accentColor: Color,
     onToggle: (Boolean) -> Unit
 ) {
     val glassTheme = LocalGlassTheme.current
@@ -117,10 +134,10 @@ private fun PrayerPill(
 
     Surface(
         shape = shape,
-        color = if (selected) Color(0xFF81C784).copy(alpha = 0.35f) else glassTheme.contentColor.copy(alpha = 0.06f),
+        color = if (selected) accentColor.copy(alpha = 0.35f) else glassTheme.contentColor.copy(alpha = 0.06f),
         border = BorderStroke(
             1.dp,
-            if (selected) Color(0xFF81C784).copy(alpha = 0.6f) else glassTheme.contentColor.copy(alpha = 0.2f)
+            if (selected) accentColor.copy(alpha = 0.6f) else glassTheme.contentColor.copy(alpha = 0.2f)
         ),
         modifier = Modifier
             .clip(shape)
