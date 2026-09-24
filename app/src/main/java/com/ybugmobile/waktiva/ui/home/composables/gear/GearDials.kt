@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.luminance
@@ -518,29 +519,32 @@ private class SkeletonGearDial(private val s: Float, private val dp: Float) : Ge
 
     override fun draw(scope: DrawScope, frame: GearFrame) = with(scope) {
         val dir = frame.direction
+        // The train is laid out left-to-right. In RTL it is drawn flipped, which mirrors both
+        // its position and its spin, so its rotations are always computed for LTR.
         // Integer multiples of the phase keep every gear seamless when the phase loops.
-        val drive = dir * (2 * frame.phase + 2 * frame.dayTurn)
-        val r1 = drive
+        val r1 = 2 * frame.phase + 2 * frame.dayTurn
         val r2 = meshExternal(r1, train[0].teeth, angle12, train[1].teeth)
         val r3 = meshExternal(r2, train[1].teeth, angle23, train[2].teeth)
-        val r4 = -dir * frame.phase
+        val r4 = -frame.phase
         val r5 = meshExternal(r4, train[3].teeth, angle45, train[4].teeth)
         val trainColor = Color(0xFFD6B46E).copy(alpha = 0.13f)
         val hair = Stroke(dp)
 
-        listOf(r1, r2, r3, r4, r5).forEachIndexed { i, rotation ->
-            val g = train[i]
-            withTransform({
-                translate(g.center.x, g.center.y)
-                rotate(rotation.toDegrees(), Offset.Zero)
-            }) {
-                drawPath(g.outline, trainColor, style = hair)
-                drawCircle(trainColor, g.radius * 0.78f, Offset.Zero, style = hair)
-                drawCircle(trainColor, g.radius * 0.16f, Offset.Zero, style = hair)
-                val spokeCount = if (g.teeth > 20) 5 else 4
-                for (k in 0 until spokeCount) {
-                    val a = k * TAU / spokeCount
-                    drawLine(trainColor, pointOn(Offset.Zero, g.radius * 0.16f, a), pointOn(Offset.Zero, g.radius * 0.78f, a), dp)
+        scale(scaleX = dir, scaleY = 1f, pivot = c) {
+            listOf(r1, r2, r3, r4, r5).forEachIndexed { i, rotation ->
+                val g = train[i]
+                withTransform({
+                    translate(g.center.x, g.center.y)
+                    rotate(rotation.toDegrees(), Offset.Zero)
+                }) {
+                    drawPath(g.outline, trainColor, style = hair)
+                    drawCircle(trainColor, g.radius * 0.78f, Offset.Zero, style = hair)
+                    drawCircle(trainColor, g.radius * 0.16f, Offset.Zero, style = hair)
+                    val spokeCount = if (g.teeth > 20) 5 else 4
+                    for (k in 0 until spokeCount) {
+                        val a = k * TAU / spokeCount
+                        drawLine(trainColor, pointOn(Offset.Zero, g.radius * 0.16f, a), pointOn(Offset.Zero, g.radius * 0.78f, a), dp)
+                    }
                 }
             }
         }
@@ -603,7 +607,7 @@ private class SkeletonGearDial(private val s: Float, private val dp: Float) : Ge
             val isCurrent = p.type == frame.current.type
             val radius = if (isCurrent) badgeCurrent else badge
             if (isCurrent) halo(at, radius * 0.6f, radius * 2.2f, p.color, 0.35f)
-            val spin = frame.phase * if (i % 2 == 1) -1f else 1f
+            val spin = dir * frame.phase * if (i % 2 == 1) -1f else 1f
             withTransform({
                 translate(at.x, at.y)
                 rotate(spin.toDegrees(), Offset.Zero)

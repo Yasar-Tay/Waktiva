@@ -42,11 +42,32 @@ class GearGeometryTest {
     }
 
     @Test
+    fun mirroringTheDriverMirrorsTheMesh() {
+        // RTL mirrors angles (a -> π - a) and reverses rotations; the meshed gear must match
+        // the mirror image of its LTR self, up to a whole number of teeth.
+        val toothStep = TAU / PLANET_TEETH
+        for (driver in rotations) for (theta in contacts) {
+            val ltrExternal = meshExternal(driver, MAIN_TEETH, theta, PLANET_TEETH)
+            val rtlExternal = meshExternal(-driver, MAIN_TEETH, TAU / 2 - theta, PLANET_TEETH)
+            val externalOffset = frac((rtlExternal - (TAU / 2 - ltrExternal)) / toothStep)
+            assertEquals(0f, minOf(externalOffset, 1f - externalOffset), 1e-3f)
+
+            val ltrInternal = meshInternal(driver, MAIN_TEETH, theta, PLANET_TEETH)
+            val rtlInternal = meshInternal(-driver, MAIN_TEETH, TAU / 2 - theta, PLANET_TEETH)
+            val internalOffset = frac((rtlInternal - (TAU / 2 - ltrInternal)) / toothStep)
+            assertEquals(0f, minOf(internalOffset, 1f - internalOffset), 1e-3f)
+        }
+    }
+
+    @Test
     fun dayAngleMatchesPrayerCircleLayout() {
         val halfPi = (PI / 2).toFloat()
         assertEquals(halfPi, dayAngle(0f, rtl = false), 1e-5f)            // midnight at the bottom
         assertEquals(3 * halfPi, dayAngle(720f, rtl = false), 1e-5f)      // noon at the top
         assertEquals(2 * halfPi, dayAngle(360f, rtl = false), 1e-5f)      // 06:00 on the left
         assertEquals(0f, dayAngle(360f, rtl = true), 1e-5f)               // mirrored in RTL
+        for (minutes in listOf(0f, 335f, 806f, 1255f)) {                  // RTL is the mirror image
+            assertEquals(TAU / 2 - dayAngle(minutes, rtl = false), dayAngle(minutes, rtl = true), 1e-4f)
+        }
     }
 }
