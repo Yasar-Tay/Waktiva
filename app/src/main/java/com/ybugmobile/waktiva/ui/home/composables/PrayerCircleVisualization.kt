@@ -209,9 +209,10 @@ fun PrayerCircleVisualization(
         prayers.find { it.type == currentPrayerType }?.color ?: Color.White
     }
 
+    // Square that fits the parent's smaller dimension. fillMaxWidth() here would pin the width
+    // and force the square taller than a short parent, overflowing it on wide (tablet) screens.
     Box(
         modifier = Modifier
-            .fillMaxWidth()
             .aspectRatio(1f)
             .padding(4.dp)
             .onSizeChanged { canvasSize = Size(it.width.toFloat(), it.height.toFloat()) }

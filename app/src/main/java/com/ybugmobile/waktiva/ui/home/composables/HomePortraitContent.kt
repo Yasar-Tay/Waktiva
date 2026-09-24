@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
@@ -48,6 +49,7 @@ fun HomePortraitContent(
 ) {
     // Optimization: Filter and memoize available days to prevent redundant calculations during scrolls
     val isToday = remember(state.selectedDate) { state.selectedDate == LocalDate.now() }
+    val screenHeightDp = LocalConfiguration.current.screenHeightDp
     val availableDays = remember(allDays) { allDays.filter { !it.date.isBefore(LocalDate.now()) } }
     val hasWeatherData = remember(state.temperature, state.weatherCondition) {
         state.temperature != null || state.weatherCondition != WeatherCondition.UNKNOWN
@@ -105,31 +107,37 @@ fun HomePortraitContent(
                     Spacer(modifier = Modifier.height(104.dp))
                 }
 
-                // Central Visualization: Circular representation of the day's prayer times
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
+                // Central Visualization: Circular representation of the day's prayer times.
+                // Sized to the available width, capped by screen height so tablets get a larger
+                // circle without it outgrowing its slot and overflowing the top of the screen.
+                BoxWithConstraints(
+                    modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    state.currentPrayerDay?.let { prayerDay ->
-                        PrayerCircleVisualization(
-                            day = prayerDay,
-                            currentTime = if (isToday) localTime else LocalTime.MIDNIGHT,
-                            nextPrayer = if (isToday) state.nextPrayer else null,
-                            currentPrayer = if (isToday) state.currentPrayer else null,
-                            isSelectedDayToday = isToday,
-                            isHijriVisible = state.isHijriSelected,
-                            onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
-                            contentColor = contentColor,
-                            isMuted = state.isMuted,
-                            playAdhanAudio = state.isNextAdhanEnabled,
-                            onSkipAudio = { prayerName ->
-                                state.nextPrayer?.let { next ->
-                                    onSkipNextAudio(prayerName, next.date)
+                    val circleSize = minOf(maxWidth, maxOf(300.dp, (screenHeightDp * 0.4f).dp))
+                    Box(
+                        modifier = Modifier.size(circleSize),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        state.currentPrayerDay?.let { prayerDay ->
+                            PrayerCircleVisualization(
+                                day = prayerDay,
+                                currentTime = if (isToday) localTime else LocalTime.MIDNIGHT,
+                                nextPrayer = if (isToday) state.nextPrayer else null,
+                                currentPrayer = if (isToday) state.currentPrayer else null,
+                                isSelectedDayToday = isToday,
+                                isHijriVisible = state.isHijriSelected,
+                                onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
+                                contentColor = contentColor,
+                                isMuted = state.isMuted,
+                                playAdhanAudio = state.isNextAdhanEnabled,
+                                onSkipAudio = { prayerName ->
+                                    state.nextPrayer?.let { next ->
+                                        onSkipNextAudio(prayerName, next.date)
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
 
