@@ -72,8 +72,9 @@ internal interface GearDial {
     fun draw(scope: DrawScope, frame: GearFrame)
 }
 
-internal fun createGearDial(style: DayCircleStyle, sizePx: Float, pxPerDp: Float): GearDial = when (style) {
-    DayCircleStyle.BRASS -> BrassGearDial(sizePx, pxPerDp)
+/** The dial for [style] at [sizePx]; [labelReach] is how far a time label reaches from its centre, in pixels. */
+internal fun createGearDial(style: DayCircleStyle, sizePx: Float, pxPerDp: Float, labelReach: Float): GearDial = when (style) {
+    DayCircleStyle.BRASS -> BrassGearDial(sizePx, pxPerDp, labelReach)
     DayCircleStyle.STEEL -> SteelGearDial(sizePx, pxPerDp)
     DayCircleStyle.SKELETON -> SkeletonGearDial(sizePx, pxPerDp)
     DayCircleStyle.CLASSIC -> throw IllegalArgumentException("CLASSIC is drawn by PrayerCircleVisualization")

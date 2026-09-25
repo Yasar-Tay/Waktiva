@@ -68,6 +68,7 @@ import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import kotlinx.coroutines.delay
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.hypot
 
 /**
  * The clockwork day circle in [style] (anything but [DayCircleStyle.CLASSIC]).
@@ -115,6 +116,11 @@ internal fun GearDayCircle(
             shadow = Shadow(Color.Black.copy(alpha = 0.8f), blurRadius = 4f)
         )
     }
+    // How far a time label reaches from its centre, so dials can keep labels clear of other parts.
+    val labelReach = remember(labelStyle, textMeasurer) {
+        val size = textMeasurer.measure("00:00", labelStyle).size
+        hypot(size.width / 2f, size.height / 2f)
+    }
 
     val specialDayRes = remember(day.date) { ReligiousDaysProvider.getReligiousDay(day.date)?.nameResId }
     val specialDay = specialDayRes?.let { stringResource(it).uppercase(locale) }
@@ -134,7 +140,9 @@ internal fun GearDayCircle(
         contentAlignment = Alignment.Center
     ) {
         val sizePx = with(density) { minOf(maxWidth, maxHeight).toPx() }
-        val dial = remember(style, sizePx, density.density) { createGearDial(style, sizePx, density.density) }
+        val dial = remember(style, sizePx, density.density, labelReach) {
+            createGearDial(style, sizePx, density.density, labelReach)
+        }
         val bridge = remember(dial, specialDay, palette) {
             specialDay?.let {
                 SpecialDayBridge(
