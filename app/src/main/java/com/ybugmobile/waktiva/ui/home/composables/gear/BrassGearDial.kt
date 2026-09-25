@@ -96,8 +96,9 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
 
         // Still parts are replayed from layers; only the wheel, its screws and the prayer gears turn.
         frame.still.draw(this, 0) {
-            // A halo of light behind the rim, tinted a little by the current prayer.
-            haloRing(c, r, r * 0.3f, lerp(palette.warmHalo, frame.current.color, 0.3f), 0.34f)
+            // A thin halo hugging the rim, tinted a little by the current prayer: just enough to
+            // lift the wheel off the sky.
+            haloRing(c, r, r * 0.12f, lerp(palette.warmHalo, frame.current.color, 0.3f), 0.16f)
             // The hub is round, so its shadow looks the same however the wheel has turned.
             elevation(hub, 2f * dp, light)
         }

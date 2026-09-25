@@ -50,6 +50,10 @@ internal class MoonTexture(val size: Int) {
      * real one does, rather than like a shaded ball, and the terminator is soft and slightly
      * ragged where relief catches the low sun. The night side is faint earthshine and mostly lets
      * the sky show through.
+     *
+     * The day side is exposed brighter through a soft shoulder, so the highlands shine without
+     * clipping and the maria keep their contrast, and a faint sheen rises where the sun is
+     * highest, so the Moon looks luminous rather than a flat grey.
      */
     fun light(phaseProgress: Double): IntArray {
         val elongation = phaseProgress * 2 * PI
@@ -70,11 +74,12 @@ internal class MoonTexture(val size: Int) {
                 lit *= ((incidence + 0.02f) / 0.08f).coerceIn(0f, 1f)
                 val shine = min(1f, lit * 6f)
                 val a = albedo[i]
-                val day = if (shine > 0f) a * lit / shine else 0f
+                val day = if (shine > 0f) expose(a * lit / shine) else 0f
+                val sheen = if (shine > 0f) SheenStrength * max(0f, incidence).pow(4) else 0f
                 val night = (1f - shine) * a
-                val red = channel(245f * day + 150f * night)
-                val green = channel(240f * day + 160f * night)
-                val blue = channel(228f * day + 185f * night)
+                val red = channel(255f * (day + sheen) + 150f * night)
+                val green = channel(251f * (day + sheen) + 160f * night)
+                val blue = channel(240f * (day + sheen) + 185f * night)
                 val edge = ((1f - sqrt(rr)) * r + 0.5f).coerceIn(0f, 1f)
                 val alpha = channel(255f * edge * (0.14f + 0.86f * shine))
                 pixels[i] = (alpha shl 24) or (red shl 16) or (green shl 8) or blue
@@ -84,6 +89,9 @@ internal class MoonTexture(val size: Int) {
     }
 
     private fun channel(value: Float) = value.roundToInt().coerceIn(0, 255)
+
+    /** Brightens a surface brightness (0..1) through a soft shoulder that still maps 1 to 1. */
+    private fun expose(brightness: Float) = (1f - exp(-Exposure * brightness)) / ExposureNorm
 
     private fun albedoAt(x: Float, y: Float): Float {
         var a = 0.8f +
@@ -124,6 +132,13 @@ internal class MoonTexture(val size: Int) {
     private class RayCrater(val x: Float, val y: Float, val r: Float, val gain: Float, val rays: Int)
 
     private companion object {
+        /** How strongly the day side is brightened; higher lifts the mid-tones more. */
+        const val Exposure = 1.6f
+        val ExposureNorm = 1f - exp(-Exposure)
+
+        /** Brightness of the sheen where the sun stands overhead. */
+        const val SheenStrength = 0.1f
+
         val Maria = listOf(
             Mare(-0.30f, -0.40f, 0.30f, 0.24f, 0.32f), // Imbrium
             Mare(0.18f, -0.36f, 0.17f, 0.15f, 0.30f), // Serenitatis
