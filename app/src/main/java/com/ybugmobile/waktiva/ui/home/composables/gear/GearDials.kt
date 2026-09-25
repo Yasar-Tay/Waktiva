@@ -70,6 +70,9 @@ internal interface GearDial {
      */
     val hubRadius: Float?
 
+    /** Radius of the outermost ring around the hub, which the prayer label must clear; null if none. */
+    val hubOuterRadius: Float?
+
     fun draw(scope: DrawScope, frame: GearFrame)
 }
 
@@ -277,6 +280,7 @@ private class BrassGearDial(private val s: Float, private val dp: Float) : GearD
     override val markerDistance = r + rPlanet
     override val markerRadius = rPlanet + gearAddendum(rPlanet, PLANET_TEETH)
     override val hubRadius = hubIn
+    override val hubOuterRadius = hubOut
 
     private val wheel = Path().apply {
         addGearOutline(this, c, r, MAIN_TEETH)
@@ -388,6 +392,7 @@ private class SteelGearDial(private val s: Float, private val dp: Float) : GearD
     override val markerDistance = pitch - rPlanet
     override val markerRadius = rPlanet + addPlanet
     override val hubRadius: Float? = null
+    override val hubOuterRadius: Float? = null
 
     private val bezel = annulus(c, outer, inner)
     private val groove = annulus(c, mid + s * 0.012f, mid - s * 0.012f)
@@ -492,6 +497,7 @@ private class SkeletonGearDial(private val s: Float, private val dp: Float) : Ge
     override val markerDistance = track
     override val markerRadius = badgeCurrent
     override val hubRadius = hub * 0.8f
+    override val hubOuterRadius = hub
 
     private val wheel = Path().apply { addGearOutline(this, c, r, MAIN_TEETH) }
     private val badgePath = Path().apply { addGearOutline(this, Offset.Zero, badge, 10) }
