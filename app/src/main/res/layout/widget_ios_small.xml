@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 2×2 iOS-style widget: the next prayer and its live countdown. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_ios_clip"
+    android:clipToOutline="true">
+
+    <ImageView
+        android:id="@+id/ios_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_ios_sheen" />
+
+    <FrameLayout
+        android:id="@+id/ios_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/widget_ios_padding">
+
+        <include layout="@layout/widget_ios_next_block" />
+    </FrameLayout>
+
+    <include layout="@layout/widget_ios_empty" />
+
+</FrameLayout>

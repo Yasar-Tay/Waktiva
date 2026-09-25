@@ -426,6 +426,10 @@
     <string name="lang_sv">Svenska</string>
     <string name="lang_fi">Suomi</string>
     <string name="badge_open_source">ওপেন সোর্স</string>
+
+    <!-- iOS-style widget -->
+    <string name="widget_ios_label">নামাজের সময়</string>
+    <string name="widget_ios_description">পরবর্তী নামাজ, লাইভ কাউন্টডাউন এবং সারাদিনের সময় এক নজরে</string>
+    <string name="widget_ios_next_up">পরবর্তী</string>
+    <string name="widget_ios_empty">নামাজের সময় লোড করতে Waktiva খুলুন</string>
 </resources>
-
-

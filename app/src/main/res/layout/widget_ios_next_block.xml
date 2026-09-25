@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  "Up next" block shared by the small widget and the left half of the medium widget:
+      NEXT UP              [icon]
+      Dhuhr
+      13:07
+      ⋮ (flexible space)
+      1:23:45
+      ▬ ▬ ▬ ▬ ▬ ▬
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/ios_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.06"
+            android:maxLines="1"
+            android:text="@string/widget_ios_next_up"
+            android:textAllCaps="true"
+            android:textColor="#B3FFFFFF"
+            android:textSize="11sp" />
+
+        <ImageView
+            android:id="@+id/ios_icon"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:scaleType="fitCenter" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/ios_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textColor="#FFFFFFFF"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/ios_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:fontFamily="sans-serif-medium"
+        android:fontFeatureSettings="tnum"
+        android:maxLines="1"
+        android:textColor="#CCFFFFFF"
+        android:textSize="14sp" />
+
+    <!-- Flexible gap (android.widget.Space is not RemoteViews-safe). -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- autoSize keeps "12:34:56" on one line in the narrowest 2×2 cells. -->
+    <Chronometer
+        android:id="@+id/ios_chrono"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:autoSizeMaxTextSize="28sp"
+        android:autoSizeMinTextSize="16sp"
+        android:autoSizeStepGranularity="1sp"
+        android:autoSizeTextType="uniform"
+        android:countDown="true"
+        android:fontFamily="sans-serif-medium"
+        android:fontFeatureSettings="tnum"
+        android:gravity="start|bottom"
+        android:includeFontPadding="false"
+        android:letterSpacing="-0.02"
+        android:maxLines="1"
+        android:textColor="#FFFFFFFF"
+        android:textSize="26sp" />
+
+    <include
+        layout="@layout/widget_ios_timeline"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>

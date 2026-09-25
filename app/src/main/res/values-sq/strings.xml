@@ -425,5 +425,10 @@
     <string name="about_version_label">Versioni</string>
 
     <string name="badge_open_source">Burim i hapur</string>
-</resources>
 
+    <!-- iOS-style widget -->
+    <string name="widget_ios_label">Kohët e namazit</string>
+    <string name="widget_ios_description">Namazi i radhës, numërim mbrapsht i drejtpërdrejtë dhe e gjithë dita me një shikim</string>
+    <string name="widget_ios_next_up">Në vijim</string>
+    <string name="widget_ios_empty">Hapni Waktiva për të ngarkuar kohët e namazit</string>
+</resources>

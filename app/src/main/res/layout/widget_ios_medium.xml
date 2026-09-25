@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 4×2 iOS-style widget: "up next" on the left, the whole day on the right. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_ios_clip"
+    android:clipToOutline="true">
+
+    <ImageView
+        android:id="@+id/ios_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_ios_sheen" />
+
+    <LinearLayout
+        android:id="@+id/ios_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="@dimen/widget_ios_padding">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <include layout="@layout/widget_ios_next_block" />
+        </FrameLayout>
+
+        <!-- Hairline separator, inset like the iOS Calendar widget. -->
+        <TextView
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="10dp"
+            android:background="#2EFFFFFF" />
+
+        <!-- Rows are added at runtime from widget_ios_row / widget_ios_row_next. -->
+        <LinearLayout
+            android:id="@+id/ios_rows"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.1"
+            android:orientation="vertical" />
+    </LinearLayout>
+
+    <include layout="@layout/widget_ios_empty" />
+
+</FrameLayout>
