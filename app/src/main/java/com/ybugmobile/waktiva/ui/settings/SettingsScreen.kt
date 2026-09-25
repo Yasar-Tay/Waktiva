@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.MenuBook
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
@@ -116,6 +117,7 @@ fun SettingsScreen(
                         NotificationSoundSection(
                             settings = settings,
                             onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
+                            onPlayAdhanDuaChange = { viewModel.setPlayAdhanDua(it) },
                             onPrayerAdhanToggle = { type, enabled -> viewModel.setPrayerAdhanEnabled(type, enabled) },
                             onSilentNotificationChange = { viewModel.setSilentPrayerNotification(it) },
                             onNavigateToAudio = onNavigateToAudio
@@ -167,6 +169,7 @@ fun SettingsScreen(
                     NotificationSoundSection(
                         settings = settings,
                         onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
+                        onPlayAdhanDuaChange = { viewModel.setPlayAdhanDua(it) },
                         onPrayerAdhanToggle = { type, enabled -> viewModel.setPrayerAdhanEnabled(type, enabled) },
                         onSilentNotificationChange = { viewModel.setSilentPrayerNotification(it) },
                         onNavigateToAudio = onNavigateToAudio
@@ -232,6 +235,7 @@ fun SettingsScreen(
 private fun NotificationSoundSection(
     settings: UserSettings?,
     onPlayAdhanChange: (Boolean) -> Unit,
+    onPlayAdhanDuaChange: (Boolean) -> Unit,
     onPrayerAdhanToggle: (PrayerType, Boolean) -> Unit,
     onSilentNotificationChange: (Boolean) -> Unit,
     onNavigateToAudio: () -> Unit
@@ -261,6 +265,14 @@ private fun NotificationSoundSection(
                 subtitle = stringResource(R.string.settings_adhan_prayers_desc),
                 disabledPrayers = settings.adhanDisabledPrayers,
                 onPrayerToggle = onPrayerAdhanToggle
+            )
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_play_adhan_dua),
+                subtitle = stringResource(R.string.settings_play_adhan_dua_desc),
+                icon = Icons.AutoMirrored.Rounded.MenuBook,
+                checked = settings.playAdhanDua,
+                onCheckedChange = onPlayAdhanDuaChange
             )
         }
 

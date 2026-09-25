@@ -134,6 +134,7 @@ fun LicensesScreen(
                 title = stringResource(R.string.license_adhan_audio),
                 content = "${stringResource(R.string.license_adhan_reciter)}\n\n" +
                     "${stringResource(R.string.license_adhan_permission)}\n\n" +
+                    "${stringResource(R.string.license_adhan_dua_reciter)}\n\n" +
                     stringResource(R.string.license_adhan_restrictions)
             )
 

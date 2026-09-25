@@ -183,6 +183,8 @@
     <string name="settings_notifications_sound">اعلان‌ها و صدا</string>
     <string name="settings_play_adhan">پخش صوت اذان</string>
     <string name="settings_play_adhan_desc">هنگام رسیدن وقت شرعی اذان پخش شود</string>
+    <string name="settings_play_adhan_dua">پخش دعای اذان</string>
+    <string name="settings_play_adhan_dua_desc">پس از پایان اذان، دعای اذان پخش شود</string>
     <string name="settings_adhan_prayers">اوقات اذان</string>
     <string name="settings_adhan_prayers_desc">نمازهایی را که اذان برایشان پخش شود انتخاب کنید</string>
     <string name="settings_adhan_sound_selection">تنظیمات اذان و اعلان‌ها</string>
@@ -402,6 +404,7 @@
     <string name="license_adhan_audio">۳. مجوز صوت اذان</string>
     <string name="license_adhan_reciter">Waktiva شامل ضبط‌های اذان توسط محسن کارا، قهرمان جهان در مسابقات اذان ۲۰۲۲ است.</string>
     <string name="license_adhan_permission">این ضبط‌ها با اجازه استفاده می‌شوند. تمامی حقوق صوتی نزد مؤذن اصلی محفوظ است.</string>
+    <string name="license_adhan_dua_reciter">دعای پس از اذان با صدای حافظ فاتح دمیرل است. این ضبط با اجازه استفاده می‌شود و تمامی حقوق آن متعلق به قاری است.</string>
     <string name="license_adhan_restrictions">صوت اذان نباید بدون اجازه صریح صاحب حق، از برنامه Waktiva استخراج، بازتوزیع یا خارج از آن استفاده شود.</string>
     <string name="license_location_permissions">۴. مکان و مجوزها</string>
     <string name="license_location_usage">Waktiva اجازه مکان را صرفاً برای موارد زیر درخواست می‌کند:</string>

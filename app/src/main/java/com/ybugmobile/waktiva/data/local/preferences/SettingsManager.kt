@@ -55,7 +55,8 @@ data class UserSettings(
     val showQiblaMapHint: Boolean = true,
     val showSilentPrayerNotification: Boolean = true,
     val adhanDisabledPrayers: Set<PrayerType> = emptySet(),
-    val dayCircleStyle: DayCircleStyle = DayCircleStyle.DEFAULT
+    val dayCircleStyle: DayCircleStyle = DayCircleStyle.DEFAULT,
+    val playAdhanDua: Boolean = false
 ) {
     /**
      * Whether the adhan audio should play for [type], combining the global
@@ -84,6 +85,7 @@ class SettingsManager @Inject constructor(
         val SELECTED_ADHAN_PATH = stringPreferencesKey("selected_adhan_path")
         val USE_SPECIFIC_ADHAN = booleanPreferencesKey("use_specific_adhan")
         val PLAY_ADHAN_AUDIO = booleanPreferencesKey("play_adhan_audio")
+        val PLAY_ADHAN_DUA = booleanPreferencesKey("play_adhan_dua")
         val IS_SETUP_COMPLETE = booleanPreferencesKey("is_setup_complete")
         val ENABLE_PRE_ADHAN_WARNING = booleanPreferencesKey("enable_pre_adhan_warning")
         val PRE_ADHAN_WARNING_MINUTES = intPreferencesKey("pre_adhan_warning_minutes")
@@ -140,7 +142,8 @@ class SettingsManager @Inject constructor(
                 ?.mapNotNull { PrayerType.fromString(it) }
                 ?.toSet()
                 ?: emptySet(),
-            dayCircleStyle = DayCircleStyle.fromName(preferences[DAY_CIRCLE_STYLE])
+            dayCircleStyle = DayCircleStyle.fromName(preferences[DAY_CIRCLE_STYLE]),
+            playAdhanDua = preferences[PLAY_ADHAN_DUA] ?: false
         )
     }
 
@@ -238,6 +241,12 @@ class SettingsManager @Inject constructor(
     override suspend fun updatePlayAdhanAudio(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PLAY_ADHAN_AUDIO] = enabled
+        }
+    }
+
+    override suspend fun updatePlayAdhanDua(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PLAY_ADHAN_DUA] = enabled
         }
     }
 

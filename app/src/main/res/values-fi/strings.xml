@@ -190,6 +190,8 @@
     <string name="settings_notifications_sound">Ilmoitukset ja äänet</string>
     <string name="settings_play_adhan">Toista Adhan-ääni</string>
     <string name="settings_play_adhan_desc">Kuuluta Adhan, kun on rukousaika</string>
+    <string name="settings_play_adhan_dua">Toista Adhan-dua</string>
+    <string name="settings_play_adhan_dua_desc">Toista dua Adhanin päätyttyä</string>
     <string name="settings_adhan_prayers">Adhan-ajat</string>
     <string name="settings_adhan_prayers_desc">Valitse, minkä rukousten kohdalla adhan soi</string>
     <string name="settings_adhan_sound_selection">Adhan- ja ilmoitusasetukset</string>
@@ -403,6 +405,7 @@
     <string name="license_adhan_audio">3. Adhan-äänen lisenssi</string>
     <string name="license_adhan_reciter">Waktiva sisältää Adhan-tallenteita Muhsin Karalta, vuoden 2022 Adhan-lausuntakilpailun maailmanmestarilta.</string>
     <string name="license_adhan_permission">Näitä tallenteita käytetään luvalla. Kaikki oikeudet kuuluvat alkuperäiselle lausujalle.</string>
+    <string name="license_adhan_dua_reciter">Adhanin jälkeen luettavan duan resitoi Hafız Fatih Demirel. Tallennetta käytetään luvalla, ja kaikki oikeudet kuuluvat resitoijalle.</string>
     <string name="license_adhan_restrictions">Adhan-ääntä ei saa purkaa, jakaa edelleen tai käyttää Waktiva-sovelluksen ulkopuolella ilman nimenomaista lupaa.</string>
     <string name="license_location_permissions">4. Sijainti ja käyttöoikeudet</string>
     <string name="license_location_usage">Waktiva pyytää sijaintilupaa yksinomaan:</string>

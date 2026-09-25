@@ -190,6 +190,8 @@
     <string name="settings_notifications_sound">Notificações e Som</string>
     <string name="settings_play_adhan">Reproduzir Som do Adhan</string>
     <string name="settings_play_adhan_desc">Tocar o Adhan quando for hora de orar</string>
+    <string name="settings_play_adhan_dua">Reproduzir a Dua do Adhan</string>
+    <string name="settings_play_adhan_dua_desc">Reproduzir a dua quando o Adhan terminar</string>
     <string name="settings_adhan_prayers">Horários do Adhan</string>
     <string name="settings_adhan_prayers_desc">Escolha em quais orações o adhan será tocado</string>
     <string name="settings_adhan_sound_selection">Configurações de Adhan e notificações</string>
@@ -403,6 +405,7 @@
     <string name="license_adhan_audio">3. Licença de Áudio</string>
     <string name="license_adhan_reciter">Gravações de Muhsin Kara (Campeão Mundial 2022).</string>
     <string name="license_adhan_permission">Usado com permissão.</string>
+    <string name="license_adhan_dua_reciter">A dua recitada após o Adhan é interpretada por Hafız Fatih Demirel. Esta gravação é utilizada com permissão e todos os direitos pertencem ao recitador.</string>
     <string name="license_adhan_restrictions">Não extrair ou redistribuir.</string>
     <string name="license_location_permissions">4. Localização</string>
     <string name="license_location_usage">Usado exclusivamente para horários e Qibla.</string>

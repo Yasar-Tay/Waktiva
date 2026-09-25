@@ -174,9 +174,14 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
             // WorkManager.enqueueUniqueWork() is exempt from BOOT_COMPLETED FGS restrictions.
             // AdhanWorker calls setForeground() internally — not startForegroundService().
+            val duaPath = if (settings.playAdhanDua) {
+                "android.resource://${context.packageName}/${R.raw.ezan_duasi}"
+            } else null
+
             val inputData = Data.Builder()
                 .putString(AdhanWorker.KEY_PRAYER_NAME, prayerName)
                 .putString(AdhanWorker.KEY_AUDIO_PATH, audioPath)
+                .putString(AdhanWorker.KEY_DUA_AUDIO_PATH, duaPath)
                 .build()
 
             val workRequest = OneTimeWorkRequestBuilder<AdhanWorker>()

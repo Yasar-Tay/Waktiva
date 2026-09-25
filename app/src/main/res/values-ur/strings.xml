@@ -183,6 +183,8 @@
     <string name="settings_notifications_sound">نوٹیفیکیشنز اور آواز</string>
     <string name="settings_play_adhan">اذان کی آواز چلائیں</string>
     <string name="settings_play_adhan_desc">نماز کا وقت ہونے پر اذان کی آواز چلائیں</string>
+    <string name="settings_play_adhan_dua">اذان کی دعا چلائیں</string>
+    <string name="settings_play_adhan_dua_desc">اذان ختم ہونے کے بعد دعا چلائی جائے</string>
     <string name="settings_adhan_prayers">اذان کے اوقات</string>
     <string name="settings_adhan_prayers_desc">منتخب کریں کہ کن نمازوں کے لیے اذان بجے</string>
     <string name="settings_adhan_sound_selection">اذان اور نوٹیفکیشن کی ترتیبات</string>
@@ -397,6 +399,7 @@
     <string name="license_adhan_audio">3۔ اذان آڈیو لائسنس</string>
     <string name="license_adhan_reciter">Waktiva میں 2022 کے عالمی چیمپیئن محسن کارا کی آواز میں اذان کی ریکارڈنگز شامل ہیں۔</string>
     <string name="license_adhan_permission">یہ ریکارڈنگز اجازت کے ساتھ استعمال کی گئی ہیں۔ تمام حقوق اصلی مؤذن کے پاس محفوظ ہیں۔</string>
+    <string name="license_adhan_dua_reciter">اذان کے بعد کی دعا حافظ فاتح دمیرل کی آواز میں ہے۔ یہ ریکارڈنگ اجازت کے ساتھ استعمال کی گئی ہے اور اس کے تمام حقوق قاری کے پاس ہیں۔</string>
     <string name="license_adhan_restrictions">اذان آڈیو کو Waktiva ایپ سے باہر نکالنے یا استعمال کرنے کی اجازت نہیں ہے۔</string>
     <string name="license_location_permissions">4۔ لوکیشن اور اجازتیں</string>
     <string name="license_location_usage">Waktiva لوکیشن کی اجازت صرف ان کے لیے مانگتا ہے:</string>

@@ -190,6 +190,8 @@
     <string name="settings_notifications_sound">Meldingen &amp; Geluid</string>
     <string name="settings_play_adhan">Adhan-geluid Afspelen</string>
     <string name="settings_play_adhan_desc">Het Adhan-geluid laten horen als het tijd is om te bidden</string>
+    <string name="settings_play_adhan_dua">Adhan-dua afspelen</string>
+    <string name="settings_play_adhan_dua_desc">Speel de dua af nadat de Adhan is afgelopen</string>
     <string name="settings_adhan_prayers">Adhan-tijden</string>
     <string name="settings_adhan_prayers_desc">Kies bij welke gebeden de adhan klinkt</string>
     <string name="settings_adhan_sound_selection">Adhan- en meldingsinstellingen</string>
@@ -408,6 +410,7 @@
     <string name="license_adhan_audio">3. Adhan Audio Licentie</string>
     <string name="license_adhan_reciter">Waktiva bevat Adhan-opnames door Muhsin Kara, de wereldkampioen van 2022.</string>
     <string name="license_adhan_permission">Deze opnames worden met toestemming gebruikt.</string>
+    <string name="license_adhan_dua_reciter">De dua na de Adhan wordt gereciteerd door Hafız Fatih Demirel. Deze opname wordt met toestemming gebruikt en alle rechten behoren toe aan de reciteur.</string>
     <string name="license_adhan_restrictions">Adhan-audio mag niet buiten de Waktiva-app worden gebruikt.</string>
     <string name="license_location_permissions">4. Locatie en Machtigingen</string>
     <string name="license_location_usage">Waktiva vraagt alleen locatietoegang voor:</string>

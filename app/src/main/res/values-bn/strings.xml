@@ -183,6 +183,8 @@
     <string name="settings_notifications_sound">নোটিফিকেশন এবং শব্দ</string>
     <string name="settings_play_adhan">আজান বাজান</string>
     <string name="settings_play_adhan_desc">নামাজের সময় আজান বাজান</string>
+    <string name="settings_play_adhan_dua">আজানের দোয়া বাজান</string>
+    <string name="settings_play_adhan_dua_desc">আজান শেষ হলে আজানের দোয়া বাজানো হবে</string>
     <string name="settings_adhan_prayers">আজানের ওয়াক্ত</string>
     <string name="settings_adhan_prayers_desc">কোন নামাজে আজান বাজবে তা বেছে নিন</string>
     <string name="settings_adhan_sound_selection">আজান ও নোটিফিকেশন সেটিংস</string>
@@ -402,6 +404,7 @@
     <string name="license_adhan_audio">৩. আজান অডিও লাইসেন্স</string>
     <string name="license_adhan_reciter">Waktiva-তে ২০২২ সালের আজান প্রতিযোগিতার বিশ্ব চ্যাম্পিয়ন মুহসিন কারার আজান রেকর্ডিং অন্তর্ভুক্ত করা হয়েছে।</string>
     <string name="license_adhan_permission">এই রেকর্ডিংগুলো অনুমতি নিয়ে ব্যবহার করা হয়েছে। সমস্ত অডিও অধিকার মূল মুয়াজ্জিনের কাছে সংরক্ষিত।</string>
+    <string name="license_adhan_dua_reciter">আজানের পরে পঠিত দোয়াটি হাফেজ ফাতিহ দেমিরেলের কণ্ঠে। এই রেকর্ডিংটি অনুমতি নিয়ে ব্যবহার করা হয়েছে এবং এর সমস্ত স্বত্ব পাঠকের।</string>
     <string name="license_adhan_restrictions">আজান অডিওটি Waktiva অ্যাপ্লিকেশনের বাইরে ব্যবহার করা যাবে না।</string>
     <string name="license_location_permissions">৪. অবস্থান এবং অনুমতিসমূহ</string>
     <string name="license_location_usage">Waktiva শুধুমাত্র নিম্নলিখিত কারণে অবস্থানের অনুমতি চায়:</string>

@@ -73,6 +73,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setPlayAdhanDua(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updatePlayAdhanDua(enabled)
+        }
+    }
+
     fun setPrayerAdhanEnabled(type: PrayerType, enabled: Boolean) {
         viewModelScope.launch {
             settingsManager.updatePrayerAdhanEnabled(type, enabled)

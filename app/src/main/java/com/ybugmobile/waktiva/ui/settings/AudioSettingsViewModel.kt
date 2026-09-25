@@ -192,6 +192,12 @@ class AudioSettingsViewModel @Inject constructor(
         }
     }
 
+    fun togglePlayAdhanDua(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updatePlayAdhanDua(enabled)
+        }
+    }
+
     fun togglePrayerAdhan(type: PrayerType, enabled: Boolean) {
         viewModelScope.launch {
             settingsManager.updatePrayerAdhanEnabled(type, enabled)

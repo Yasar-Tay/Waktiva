@@ -190,6 +190,8 @@
     <string name="settings_notifications_sound">Powiadomienia i dźwięk</string>
     <string name="settings_play_adhan">Odtwarzaj dźwięk Adhan</string>
     <string name="settings_play_adhan_desc">Odtwarzaj wezwanie Adhan, gdy nadejdzie czas modlitwy</string>
+    <string name="settings_play_adhan_dua">Odtwarzaj duę po Adhanie</string>
+    <string name="settings_play_adhan_dua_desc">Odtwarzaj duę po zakończeniu Adhanu</string>
     <string name="settings_adhan_prayers">Pory adhanu</string>
     <string name="settings_adhan_prayers_desc">Wybierz, przy których modlitwach odtwarzać adhan</string>
     <string name="settings_adhan_sound_selection">Ustawienia adhanu i powiadomień</string>
@@ -408,6 +410,7 @@
     <string name="license_adhan_audio">3. Licencja dźwięku Adhan</string>
     <string name="license_adhan_reciter">Waktiva zawiera nagrania Adhan wykonane przez Muhsina Karę (Mistrza Świata 2022).</string>
     <string name="license_adhan_permission">Nagrania użyte za pozwoleniem. Prawa należą do wykonawcy.</string>
+    <string name="license_adhan_dua_reciter">Duę po Adhanie recytuje Hafız Fatih Demirel. Nagranie jest wykorzystywane za zgodą, a wszelkie prawa należą do recytatora.</string>
     <string name="license_location_permissions">4. Lokalizacja i uprawnienia</string>
     <string name="license_location_usage">Wymaga dostępu do lokalizacji wyłącznie do:</string>
     <string name="license_loc_usage_1">Obliczania dokładnych czasów modlitw</string>

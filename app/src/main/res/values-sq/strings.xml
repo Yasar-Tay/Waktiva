@@ -190,6 +190,8 @@
     <string name="settings_notifications_sound">Njoftimet dhe Tingulli</string>
     <string name="settings_play_adhan">Luaj Tingullin e Ezanit</string>
     <string name="settings_play_adhan_desc">Dëgjoni Ezanin kur është koha e lutjes</string>
+    <string name="settings_play_adhan_dua">Luaj Lutjen pas Ezanit</string>
+    <string name="settings_play_adhan_dua_desc">Luaj lutjen kur Ezani të përfundojë</string>
     <string name="settings_adhan_prayers">Kohët e ezanit</string>
     <string name="settings_adhan_prayers_desc">Zgjidhni për cilat namaze të këndohet ezani</string>
     <string name="settings_adhan_sound_selection">Cilësimet e Ezanit dhe njoftimeve</string>
@@ -408,6 +410,7 @@
     <string name="license_adhan_audio">3. Licenca e Audios së Ezanit</string>
     <string name="license_adhan_reciter">Waktiva përfshin regjistrime të Ezanit nga Muhsin Kara, Kampioni Botëror i vitit 2022 i Konkursit të Recitimit të Ezanit.</string>
     <string name="license_adhan_permission">Këto regjistrime përdoren me leje. Të gjitha të drejtat audio i takojnë recituesit origjinal.</string>
+    <string name="license_adhan_dua_reciter">Lutja pas Ezanit këndohet nga hafiz Fatih Demirel. Ky regjistrim përdoret me leje dhe të gjitha të drejtat i përkasin recituesit.</string>
     <string name="license_adhan_restrictions">Audioja e ezanit nuk mund të nxirret, rishpërndahet ose përdoret jashtë aplikacionit Waktiva pa lejen e qartë.</string>
     <string name="license_location_permissions">4. Vendndodhja dhe Lejet</string>
     <string name="license_location_usage">Waktiva kërkon lejen e vendndodhjes ekskluzivisht për:</string>

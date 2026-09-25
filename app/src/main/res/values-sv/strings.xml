@@ -190,6 +190,8 @@
     <string name="settings_notifications_sound">Aviseringar och ljud</string>
     <string name="settings_play_adhan">Spela upp Adhan-ljud</string>
     <string name="settings_play_adhan_desc">Låt Adhan ljuda när det är dags för bön</string>
+    <string name="settings_play_adhan_dua">Spela upp Adhan-dua</string>
+    <string name="settings_play_adhan_dua_desc">Spela upp dua när Adhan har avslutats</string>
     <string name="settings_adhan_prayers">Adhan-tider</string>
     <string name="settings_adhan_prayers_desc">Välj vid vilka böner adhan ska spelas</string>
     <string name="settings_adhan_sound_selection">Adhan- och aviseringsinställningar</string>
@@ -403,6 +405,7 @@
     <string name="license_adhan_audio">3. Licens för Adhan-ljud</string>
     <string name="license_adhan_reciter">Waktiva innehåller Adhan-inspelningar av Muhsin Kara, 2022 års världsmästare i Adhan-recitation.</string>
     <string name="license_adhan_permission">Dessa inspelningar används med tillstånd. Alla ljudrättigheter tillhör recitatören.</string>
+    <string name="license_adhan_dua_reciter">Duan efter Adhan reciteras av Hafız Fatih Demirel. Inspelningen används med tillstånd och alla rättigheter tillhör reciteraren.</string>
     <string name="license_adhan_restrictions">Adhan-ljud får inte extraheras eller användas utanför Waktiva-appen.</string>
     <string name="license_location_permissions">4. Plats och behörigheter</string>
     <string name="license_location_usage">Waktiva begär platsbehörighet uteslutande för att:</string>

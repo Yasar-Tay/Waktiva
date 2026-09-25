@@ -47,6 +47,8 @@ class AdhanWorker @AssistedInject constructor(
         const val WORK_NAME = "adhan_playback"
         const val KEY_PRAYER_NAME = "prayer_name"
         const val KEY_AUDIO_PATH = "audio_path"
+        /** Optional dua recording played right after the adhan finishes. */
+        const val KEY_DUA_AUDIO_PATH = "dua_audio_path"
         private const val TAG = "AdhanWorker"
     }
 
@@ -71,6 +73,7 @@ class AdhanWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val prayerName = inputData.getString(KEY_PRAYER_NAME) ?: return Result.failure()
         val audioPath = inputData.getString(KEY_AUDIO_PATH) ?: return Result.failure()
+        val duaAudioPath = inputData.getString(KEY_DUA_AUDIO_PATH)
 
         Log.d(TAG, "Starting adhan for $prayerName")
         setProgress(workDataOf(KEY_PRAYER_NAME to prayerName))
@@ -131,7 +134,12 @@ class AdhanWorker @AssistedInject constructor(
 
                     override fun onPlayerError(error: PlaybackException) {
                         Log.e(TAG, "Playback error: ${error.errorCodeName}", error)
-                        if (!isFallbackPlaying) {
+                        // The adhan already played; a failing dua must not trigger the alarm fallback.
+                        if (exoPlayer.currentMediaItemIndex > 0) {
+                            exoPlayer.release()
+                            player = null
+                            if (continuation.isActive) continuation.resume(Result.success())
+                        } else if (!isFallbackPlaying) {
                             isFallbackPlaying = true
                             exoPlayer.setMediaItem(MediaItem.fromUri(Settings.System.DEFAULT_ALARM_ALERT_URI))
                             exoPlayer.prepare()
@@ -146,7 +154,12 @@ class AdhanWorker @AssistedInject constructor(
 
                 val uri = resolveAudioUri(audioPath)
                 Log.d(TAG, "Playing URI: $uri")
-                exoPlayer.setMediaItem(MediaItem.fromUri(uri))
+                // The dua is queued behind the adhan, so STATE_ENDED only fires once both finish.
+                val mediaItems = buildList {
+                    add(MediaItem.fromUri(uri))
+                    duaAudioPath?.let { add(MediaItem.fromUri(resolveAudioUri(it))) }
+                }
+                exoPlayer.setMediaItems(mediaItems)
                 exoPlayer.prepare()
                 exoPlayer.play()
             }
