@@ -6,56 +6,56 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/ios_seg_1"
+        android:id="@+id/widget_seg_1"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_marginEnd="3dp"
         android:scaleType="fitXY"
-        android:src="@drawable/widget_ios_segment" />
+        android:src="@drawable/widget_segment" />
 
     <ImageView
-        android:id="@+id/ios_seg_2"
+        android:id="@+id/widget_seg_2"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_marginEnd="3dp"
         android:scaleType="fitXY"
-        android:src="@drawable/widget_ios_segment" />
+        android:src="@drawable/widget_segment" />
 
     <ImageView
-        android:id="@+id/ios_seg_3"
+        android:id="@+id/widget_seg_3"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_marginEnd="3dp"
         android:scaleType="fitXY"
-        android:src="@drawable/widget_ios_segment" />
+        android:src="@drawable/widget_segment" />
 
     <ImageView
-        android:id="@+id/ios_seg_4"
+        android:id="@+id/widget_seg_4"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_marginEnd="3dp"
         android:scaleType="fitXY"
-        android:src="@drawable/widget_ios_segment" />
+        android:src="@drawable/widget_segment" />
 
     <ImageView
-        android:id="@+id/ios_seg_5"
+        android:id="@+id/widget_seg_5"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_marginEnd="3dp"
         android:scaleType="fitXY"
-        android:src="@drawable/widget_ios_segment" />
+        android:src="@drawable/widget_segment" />
 
     <ImageView
-        android:id="@+id/ios_seg_6"
+        android:id="@+id/widget_seg_6"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:scaleType="fitXY"
-        android:src="@drawable/widget_ios_segment" />
+        android:src="@drawable/widget_segment" />
 
 </LinearLayout>

@@ -418,8 +418,8 @@
     <string name="license_github_link">Waktiva ist ein Open-Source-Projekt. Sie finden den Quellcode, können Probleme melden oder mitwirken unter:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_ios_label">Gebetszeiten</string>
-    <string name="widget_ios_description">Nächstes Gebet, Live-Countdown und der ganze Tag auf einen Blick</string>
-    <string name="widget_ios_next_up">Als Nächstes</string>
-    <string name="widget_ios_empty">Öffne Waktiva, um die Gebetszeiten zu laden</string>
+    <string name="widget_label">Gebetszeiten</string>
+    <string name="widget_description">Nächstes Gebet, Live-Countdown und der ganze Tag auf einen Blick</string>
+    <string name="widget_next_up">Als Nächstes</string>
+    <string name="widget_empty">Öffne Waktiva, um die Gebetszeiten zu laden</string>
 </resources>

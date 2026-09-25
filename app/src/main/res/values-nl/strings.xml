@@ -430,8 +430,8 @@
     <string name="badge_open_source">Open broncode</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_ios_label">Gebedstijden</string>
-    <string name="widget_ios_description">Volgend gebed, live aftellen en de hele dag in één oogopslag</string>
-    <string name="widget_ios_next_up">Hierna</string>
-    <string name="widget_ios_empty">Open Waktiva om de gebedstijden te laden</string>
+    <string name="widget_label">Gebedstijden</string>
+    <string name="widget_description">Volgend gebed, live aftellen en de hele dag in één oogopslag</string>
+    <string name="widget_next_up">Hierna</string>
+    <string name="widget_empty">Open Waktiva om de gebedstijden te laden</string>
 </resources>

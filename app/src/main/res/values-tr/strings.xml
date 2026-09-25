@@ -431,8 +431,8 @@
     <string name="lang_fi">Suomi</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_ios_label">Namaz Vakitleri</string>
-    <string name="widget_ios_description">Sıradaki vakit, canlı geri sayım ve günün tamamı tek bakışta</string>
-    <string name="widget_ios_next_up">Sıradaki</string>
-    <string name="widget_ios_empty">Vakitleri yüklemek için Waktiva\'yı açın</string>
+    <string name="widget_label">Namaz Vakitleri</string>
+    <string name="widget_description">Sıradaki vakit, canlı geri sayım ve günün tamamı tek bakışta</string>
+    <string name="widget_next_up">Sıradaki</string>
+    <string name="widget_empty">Vakitleri yüklemek için Waktiva\'yı açın</string>
 </resources>

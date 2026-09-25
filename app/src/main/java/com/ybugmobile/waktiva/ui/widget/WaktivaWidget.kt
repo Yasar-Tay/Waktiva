@@ -11,16 +11,23 @@ import android.graphics.Canvas
 import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Shader
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.SizeF
 import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
-import androidx.compose.ui.graphics.Color
+import androidx.annotation.DrawableRes
+import androidx.annotation.LayoutRes
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.toArgb
 import com.ybugmobile.waktiva.MainActivity
 import com.ybugmobile.waktiva.R
+import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.waktiva.domain.manager.TimeManager
+import com.ybugmobile.waktiva.domain.model.HijriData
+import com.ybugmobile.waktiva.domain.model.HijriUtils
 import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
@@ -35,57 +42,58 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 /**
- * Home-screen widget that shows the next prayer name, time, and a live countdown.
+ * iOS-style home-screen widget in four families:
+ *   COMPACT (4×1) – single row: icon, next prayer and time, live countdown
+ *   SMALL   (2×2) – next prayer, its time, a live countdown and a six-segment day timeline
+ *   MEDIUM  (4×2) – the small block plus the whole day's list
+ *   LARGE   (4×4) – location and dates header, hero countdown, timeline and the day's list
  *
- * This is a plain [AppWidgetProvider] (no Glance).  The update path is:
- *   external trigger (PrayerAlarmReceiver / onUpdate)
+ * This is a plain [AppWidgetProvider] (no Glance). The update path is:
+ *   external trigger (PrayerAlarmReceiver / MainActivity / onUpdate)
  *       → [updateAll] (suspend, Dispatchers.IO)
  *           → Room one-shot read
- *           → [buildViews] assembles RemoteViews
+ *           → RemoteViews assembly
  *           → AppWidgetManager.updateAppWidget()   ← DEAD END, no feedback loop
  *
- * AppWidgetManager.updateAppWidget() does NOT call onUpdate(). There is no way
- * for an update to schedule another update, so the ~10 Hz loop seen with Glance
- * on Android 15 is structurally impossible here.
+ * AppWidgetManager.updateAppWidget() does NOT call onUpdate(), so the ~10 Hz loop seen
+ * with Glance on Android 15 is structurally impossible here.
+ *
+ * On Android 12+ every family is sent at once and the launcher picks the one that fits;
+ * older versions get the family matching the reported size.
  */
 class WaktivaWidget : AppWidgetProvider() {
 
-    // ── Hilt EntryPoint ────────────────────────────────────────────────────────
-    // AppWidgetProvider is a BroadcastReceiver; we use EntryPointAccessors rather
-    // than @AndroidEntryPoint because we need the deps inside a suspend context.
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface WidgetEntryPoint {
         fun prayerRepository(): PrayerRepository
         fun getNextPrayerUseCase(): GetNextPrayerUseCase
         fun timeManager(): TimeManager
+        fun settingsManager(): SettingsManagerInterface
     }
-
-    // ── AppWidgetProvider callbacks ────────────────────────────────────────────
 
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        // goAsync() extends the BroadcastReceiver deadline while we query Room.
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
             try {
-                appWidgetIds.forEach { id ->
-                    buildAndApply(context, appWidgetManager, id)
-                }
+                render(context, appWidgetManager, appWidgetIds)
             } finally {
                 pending.finish()
             }
         }
     }
 
-    /** Re-render whenever the user resizes the widget so the font scales correctly. */
+    /** Below Android 12 the layout family depends on the size, so re-render on resize. */
     override fun onAppWidgetOptionsChanged(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -95,190 +103,306 @@ class WaktivaWidget : AppWidgetProvider() {
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
             try {
-                buildAndApply(context, appWidgetManager, appWidgetId)
+                render(context, appWidgetManager, intArrayOf(appWidgetId))
             } finally {
                 pending.finish()
             }
         }
     }
 
-    // ── Public update entry-point (called from PrayerAlarmReceiver) ────────────
+    /** Everything a render needs, read once and shared by every widget instance. */
+    private class Snapshot(
+        val nextPrayer: NextPrayer?,
+        val rows: List<WidgetPrayerRow>,
+        val chronometer: WidgetChronometerState?,
+        val background: Bitmap,
+        val locationName: String,
+        val today: LocalDate,
+        val hijri: HijriData?
+    )
 
     companion object {
 
         private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.US)
 
-        // Gradient bitmap cache — a new Bitmap is expensive; reuse when colours are unchanged.
+        private val segmentIds = intArrayOf(
+            R.id.widget_seg_1, R.id.widget_seg_2, R.id.widget_seg_3,
+            R.id.widget_seg_4, R.id.widget_seg_5, R.id.widget_seg_6
+        )
+
+        // Text colours for the day list: iOS primary / secondary / tertiary labels on dark glass.
+        private const val COLOR_PRIMARY = 0xFFFFFFFF.toInt()
+        private const val COLOR_SECONDARY = 0xE6FFFFFF.toInt()
+        private const val COLOR_TERTIARY = 0x73FFFFFF
+
+        private const val ALPHA_OPAQUE = 255
+        private const val ALPHA_PASSED_ICON = 115
+        private const val ALPHA_UPCOMING_SEGMENT = 64
+
+        private const val DENSE_ROW_TEXT_SP = 12.5f
+
         @Volatile private var cachedGradientKey: String? = null
-        @Volatile private var cachedBitmap: Bitmap?      = null
+        @Volatile private var cachedBitmap: Bitmap? = null
 
-        // Chronometer base-time cache — SystemClock.elapsedRealtime() advances every ms;
-        // keep the same Long for the same prayer so consecutive renders are identical.
-        @Volatile private var cachedPrayerKey:  String = ""
-        @Volatile private var cachedBaseTime:   Long   = 0L
+        // Keep the same Chronometer base for the same prayer so re-renders don't jitter.
+        @Volatile private var cachedPrayerKey: String = ""
+        @Volatile private var cachedBaseTime: Long = 0L
 
-        /**
-         * Push a fresh frame to every widget instance.
-         * Suspend — call from a coroutine (PrayerAlarmReceiver already does this).
-         */
+        /** Push a fresh frame to every instance of this widget. */
         suspend fun updateAll(context: Context) {
             val manager = AppWidgetManager.getInstance(context)
-            val ids = manager.getAppWidgetIds(
-                ComponentName(context, WaktivaWidget::class.java)
-            )
-            ids.forEach { id -> buildAndApply(context, manager, id) }
+            val ids = manager.getAppWidgetIds(ComponentName(context, WaktivaWidget::class.java))
+            render(context, manager, ids)
         }
 
-        // ── Core build function ────────────────────────────────────────────────
+        private suspend fun render(context: Context, manager: AppWidgetManager, ids: IntArray) {
+            if (ids.isEmpty()) return
+            val snapshot = loadSnapshot(context)
+            ids.forEach { id -> manager.updateAppWidget(id, buildViews(context, manager, id, snapshot)) }
+        }
 
-        private suspend fun buildAndApply(
-            context: Context,
-            manager: AppWidgetManager,
-            widgetId: Int
-        ) {
+        private suspend fun loadSnapshot(context: Context): Snapshot {
             val ep = EntryPointAccessors.fromApplication(
                 context.applicationContext,
                 WidgetEntryPoint::class.java
             )
 
-            // One-shot reads — no Flow subscription, no recomposition, no loop.
-            val prayerDays = ep.prayerRepository().getPrayerDays().first()
-            // Alarm broadcasts can arrive between the TimeManager ticker's one-second updates.
-            // Reading a fresh value prevents the just-finished prayer from being selected again.
-            val now        = ep.timeManager().now()
-            val today      = prayerDays.find { it.date == now.toLocalDate() }
-            val tomorrow   = prayerDays.find { it.date == now.toLocalDate().plusDays(1) }
+            val days = ep.prayerRepository().getPrayerDays().first()
+            val now = ep.timeManager().now()
+            val today = days.find { it.date == now.toLocalDate() }
+            val tomorrow = days.find { it.date == now.toLocalDate().plusDays(1) }
             val nextPrayer = ep.getNextPrayerUseCase()(today, tomorrow, now)
 
-            // Gradient bitmap — reuse the cached instance when the colour palette is unchanged.
-            val colors      = getGradientColorsForTime(now.toLocalTime(), today).take(2)
-            val gradientKey = colors.joinToString(",") { it.value.toString() }
-            val bitmap = if (gradientKey == cachedGradientKey && cachedBitmap != null) {
-                cachedBitmap!!
-            } else {
-                buildGradientBitmap(colors).also {
-                    cachedBitmap      = it
-                    cachedGradientKey = gradientKey
-                }
-            }
-
-            val chronometerState = WidgetChronometerResolver.resolve(
+            val chronometer = WidgetChronometerResolver.resolve(
                 nextPrayer = nextPrayer,
-                nowEpochMillis = now.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                nowEpochMillis = now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
                 elapsedRealtime = SystemClock.elapsedRealtime(),
                 cachedPrayerKey = cachedPrayerKey,
                 cachedBaseTime = cachedBaseTime
             )
-            if (chronometerState != null) {
-                cachedPrayerKey = chronometerState.cacheKey
-                cachedBaseTime = chronometerState.baseTime
-            } else {
-                cachedPrayerKey = ""
-                cachedBaseTime = 0L
-            }
+            cachedPrayerKey = chronometer?.cacheKey ?: ""
+            cachedBaseTime = chronometer?.baseTime ?: 0L
 
-            // Read the actual allocated width so we can scale the countdown font to match.
-            val options  = manager.getAppWidgetOptions(widgetId)
-            val widthDp  = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 250)
-
-            val views = buildViews(context, nextPrayer, chronometerState, bitmap, widthDp)
-            manager.updateAppWidget(widgetId, views)
+            return Snapshot(
+                nextPrayer = nextPrayer,
+                rows = WidgetDayModel.rows(days, nextPrayer, now),
+                chronometer = chronometer,
+                background = gradientBitmap(getGradientColorsForTime(now.toLocalTime(), today).map { it.toArgb() }),
+                locationName = ep.settingsManager().settingsFlow.first().locationName,
+                today = now.toLocalDate(),
+                hijri = HijriUtils.getEffectiveHijriDate(now.toLocalDate(), days)
+            )
         }
 
         // ── RemoteViews assembly ───────────────────────────────────────────────
 
         private fun buildViews(
             context: Context,
-            nextPrayer: NextPrayer?,
-            chronometerState: WidgetChronometerState?,
-            gradientBitmap: Bitmap,
-            widthDp: Int
+            manager: AppWidgetManager,
+            widgetId: Int,
+            snapshot: Snapshot
         ): RemoteViews {
-            val views = RemoteViews(context.packageName, R.layout.widget_main)
-
-            // Gradient background
-            views.setImageViewBitmap(R.id.widget_background, gradientBitmap)
-
-            // Tap → open app
-            val tapIntent = Intent(context, MainActivity::class.java)
-            val tapPi = PendingIntent.getActivity(
-                context, 0, tapIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                return RemoteViews(
+                    WidgetSize.entries.associate { size ->
+                        size.minSize() to buildFamily(context, size, snapshot)
+                    }
+                )
+            }
+            // Portrait cell size: min width × max height (AppWidgetManager docs).
+            val options = manager.getAppWidgetOptions(widgetId)
+            val size = WidgetSize.from(
+                widthDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0),
+                heightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
             )
-            views.setOnClickPendingIntent(R.id.widget_root, tapPi)
+            return buildFamily(context, size, snapshot)
+        }
 
-            if (nextPrayer != null) {
-                views.setViewVisibility(R.id.widget_content, View.VISIBLE)
-                views.setViewVisibility(R.id.widget_idle,    View.GONE)
+        @RequiresApi(Build.VERSION_CODES.S)
+        private fun WidgetSize.minSize(): SizeF = when (this) {
+            WidgetSize.COMPACT -> SizeF(WidgetSize.MIN_WIDTH_DP, WidgetSize.COMPACT_MIN_HEIGHT_DP)
+            WidgetSize.SMALL -> SizeF(WidgetSize.MIN_WIDTH_DP, WidgetSize.SQUARE_MIN_HEIGHT_DP)
+            WidgetSize.MEDIUM -> SizeF(WidgetSize.WIDE_MIN_WIDTH_DP, WidgetSize.SQUARE_MIN_HEIGHT_DP)
+            WidgetSize.LARGE -> SizeF(WidgetSize.WIDE_MIN_WIDTH_DP, WidgetSize.LARGE_MIN_HEIGHT_DP)
+        }
 
-                // Left panel — prayer identity
-                views.setTextViewText(
-                    R.id.widget_prayer_name,
-                    nextPrayer.type.getDisplayName(context).uppercase(Locale.getDefault())
-                )
-                views.setTextViewText(
-                    R.id.widget_prayer_time,
-                    nextPrayer.time.format(timeFormatter)
-                )
+        private fun buildFamily(context: Context, size: WidgetSize, snapshot: Snapshot): RemoteViews {
+            @LayoutRes val layout = when (size) {
+                WidgetSize.COMPACT -> R.layout.widget_compact
+                WidgetSize.SMALL -> R.layout.widget_small
+                WidgetSize.MEDIUM -> R.layout.widget_medium
+                WidgetSize.LARGE -> R.layout.widget_large
+            }
+            val views = RemoteViews(context.packageName, layout)
 
-                // Ghost icon — white tint at 15 % opacity (38 / 255 ≈ 0.15)
-                views.setImageViewResource(R.id.widget_ghost_icon, getPrayerIconRes(nextPrayer.type))
-                views.setInt(R.id.widget_ghost_icon, "setColorFilter", android.graphics.Color.WHITE)
-                views.setInt(R.id.widget_ghost_icon, "setImageAlpha", 38)
+            views.setImageViewBitmap(R.id.widget_bg, snapshot.background)
+            views.setOnClickPendingIntent(android.R.id.background, openAppIntent(context))
 
-                // Right panel — live countdown
-                // Font size mirrors the original Glance formula:
-                //   available width = total − left panel (104) − divider (1) − h-padding (24)
-                //   font sp = availableWidth / 4.8, clamped to [22, 64]
-                val availableWidth  = widthDp - 104 - 1 - 24
-                val dynamicFontSize = (availableWidth / 4.8f).coerceIn(22f, 64f)
-                val fallbackElapsedNow = SystemClock.elapsedRealtime()
-                val chronometerBase = chronometerState?.baseTime ?: fallbackElapsedNow
-                val chronometerRunning = chronometerState?.isRunning == true
-                views.setChronometer(R.id.widget_chronometer, chronometerBase, null, chronometerRunning)
-                views.setChronometerCountDown(R.id.widget_chronometer, true)
-                views.setTextViewTextSize(
-                    R.id.widget_chronometer,
-                    TypedValue.COMPLEX_UNIT_SP,
-                    dynamicFontSize
-                )
-            } else {
+            val next = snapshot.nextPrayer
+            if (next == null) {
                 views.setViewVisibility(R.id.widget_content, View.GONE)
-                views.setViewVisibility(R.id.widget_idle,    View.VISIBLE)
+                views.setViewVisibility(R.id.widget_empty, View.VISIBLE)
+                return views
+            }
+            views.setViewVisibility(R.id.widget_content, View.VISIBLE)
+            views.setViewVisibility(R.id.widget_empty, View.GONE)
+
+            views.setTextViewText(R.id.widget_name, next.type.getDisplayName(context))
+            views.setTextViewText(R.id.widget_time, next.time.format(timeFormatter))
+            views.setImageViewResource(R.id.widget_icon, iconFor(next.type))
+
+            val chronometer = snapshot.chronometer
+            views.setChronometer(
+                R.id.widget_chrono,
+                chronometer?.baseTime ?: SystemClock.elapsedRealtime(),
+                null,
+                chronometer?.isRunning == true
+            )
+            views.setChronometerCountDown(R.id.widget_chrono, true)
+
+            if (size != WidgetSize.COMPACT) {
+                bindTimeline(views, snapshot.rows)
+            }
+
+            if (size == WidgetSize.MEDIUM || size == WidgetSize.LARGE) {
+                val dense = size == WidgetSize.MEDIUM
+                views.removeAllViews(R.id.widget_rows)
+                snapshot.rows.forEach { row ->
+                    views.addView(R.id.widget_rows, buildRow(context, row, dense))
+                }
+            }
+
+            if (size == WidgetSize.LARGE) {
+                views.setTextViewText(
+                    R.id.widget_location,
+                    snapshot.locationName.ifBlank { context.getString(R.string.app_name) }
+                )
+                views.setTextViewText(R.id.widget_date, dateLine(context, snapshot.today, snapshot.hijri))
             }
 
             return views
         }
 
-        // ── Helpers ───────────────────────────────────────────────────────────
-
-        private fun buildGradientBitmap(colors: List<Color>): Bitmap {
-            val width  = 100
-            val height = 200
-            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(bitmap)
-            val ints   = colors.map { it.toArgb() }.toIntArray()
-            val shader = if (ints.size > 1) {
-                LinearGradient(
-                    0f, 0f, 0f, height.toFloat(),
-                    ints, null, Shader.TileMode.CLAMP
+        private fun bindTimeline(views: RemoteViews, rows: List<WidgetPrayerRow>) {
+            segmentIds.forEachIndexed { index, id ->
+                val row = rows.getOrNull(index)
+                if (row == null) {
+                    views.setViewVisibility(id, View.GONE)
+                    return@forEachIndexed
+                }
+                views.setViewVisibility(id, View.VISIBLE)
+                val isNext = row.status == WidgetRowStatus.NEXT
+                views.setImageViewResource(
+                    id,
+                    if (isNext) R.drawable.widget_segment_active else R.drawable.widget_segment
                 )
-            } else null
-            val paint = Paint().apply {
-                if (shader != null) this.shader = shader
-                else color = ints.firstOrNull() ?: android.graphics.Color.BLACK
+                views.setInt(
+                    id,
+                    "setImageAlpha",
+                    if (row.status == WidgetRowStatus.UPCOMING) ALPHA_UPCOMING_SEGMENT else ALPHA_OPAQUE
+                )
             }
-            canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
-            return bitmap
         }
 
-        private fun getPrayerIconRes(type: PrayerType): Int = when (type) {
-            PrayerType.FAJR    -> R.drawable.haze_day_rotated
+        private fun buildRow(context: Context, row: WidgetPrayerRow, dense: Boolean): RemoteViews {
+            val isNext = row.status == WidgetRowStatus.NEXT
+            val views = RemoteViews(
+                context.packageName,
+                if (isNext) R.layout.widget_row_next else R.layout.widget_row
+            )
+            views.setTextViewText(R.id.widget_row_name, row.type.getDisplayName(context))
+            views.setTextViewText(R.id.widget_row_time, row.time.format(timeFormatter))
+
+            val color = when (row.status) {
+                WidgetRowStatus.PASSED -> COLOR_TERTIARY
+                WidgetRowStatus.NEXT -> COLOR_PRIMARY
+                WidgetRowStatus.UPCOMING -> COLOR_SECONDARY
+            }
+            views.setTextColor(R.id.widget_row_name, color)
+            views.setTextColor(R.id.widget_row_time, color)
+
+            if (dense) {
+                // The 4×2 list has ~20 dp per row: drop the icon and tighten the type.
+                views.setViewVisibility(R.id.widget_row_icon, View.GONE)
+                views.setTextViewTextSize(R.id.widget_row_name, TypedValue.COMPLEX_UNIT_SP, DENSE_ROW_TEXT_SP)
+                views.setTextViewTextSize(R.id.widget_row_time, TypedValue.COMPLEX_UNIT_SP, DENSE_ROW_TEXT_SP)
+            } else {
+                views.setImageViewResource(R.id.widget_row_icon, iconFor(row.type))
+                views.setInt(
+                    R.id.widget_row_icon,
+                    "setImageAlpha",
+                    if (row.status == WidgetRowStatus.PASSED) ALPHA_PASSED_ICON else ALPHA_OPAQUE
+                )
+            }
+            return views
+        }
+
+        // ── Helpers ───────────────────────────────────────────────────────────
+
+        private fun openAppIntent(context: Context): PendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            Intent(context, MainActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        /** "Thursday, 25 September · 3 Rabi‘ al-Awwal 1448" in the app's current language. */
+        private fun dateLine(context: Context, today: LocalDate, hijri: HijriData?): String {
+            val locale = context.resources.configuration.locales[0] ?: Locale.getDefault()
+            val gregorian = today.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", locale))
+            val hijriMonth = hijri?.let { hijriMonthRes(it.monthNumber) } ?: return gregorian
+            return "$gregorian · ${hijri.day} ${context.getString(hijriMonth)} ${hijri.year}"
+        }
+
+        private fun hijriMonthRes(month: Int): Int? = when (month) {
+            1 -> R.string.hijri_month_1
+            2 -> R.string.hijri_month_2
+            3 -> R.string.hijri_month_3
+            4 -> R.string.hijri_month_4
+            5 -> R.string.hijri_month_5
+            6 -> R.string.hijri_month_6
+            7 -> R.string.hijri_month_7
+            8 -> R.string.hijri_month_8
+            9 -> R.string.hijri_month_9
+            10 -> R.string.hijri_month_10
+            11 -> R.string.hijri_month_11
+            12 -> R.string.hijri_month_12
+            else -> null
+        }
+
+        @DrawableRes
+        private fun iconFor(type: PrayerType): Int = when (type) {
+            PrayerType.FAJR -> R.drawable.haze_day_rotated
             PrayerType.SUNRISE -> R.drawable.sunrise
-            PrayerType.DHUHR   -> R.drawable.clear_day
-            PrayerType.ASR     -> R.drawable.clear_day
+            PrayerType.DHUHR -> R.drawable.clear_day
+            PrayerType.ASR -> R.drawable.clear_day
             PrayerType.MAGHRIB -> R.drawable.sunset
-            PrayerType.ISHA    -> R.drawable.clear_night
+            PrayerType.ISHA -> R.drawable.clear_night
+        }
+
+        /** Vertical sky gradient; cached because the palette only changes at day-phase boundaries. */
+        private fun gradientBitmap(colors: List<Int>): Bitmap {
+            val key = colors.joinToString(",")
+            cachedBitmap?.takeIf { key == cachedGradientKey }?.let { return it }
+
+            val width = 96
+            val height = 192
+            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val paint = Paint().apply {
+                if (colors.size > 1) {
+                    shader = LinearGradient(
+                        0f, 0f, 0f, height.toFloat(),
+                        colors.toIntArray(), null, Shader.TileMode.CLAMP
+                    )
+                } else {
+                    color = colors.firstOrNull() ?: android.graphics.Color.BLACK
+                }
+            }
+            Canvas(bitmap).drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+
+            cachedBitmap = bitmap
+            cachedGradientKey = key
+            return bitmap
         }
     }
 }

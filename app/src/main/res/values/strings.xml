@@ -429,8 +429,8 @@
     <string name="about_version_label">Version</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_ios_label">Prayer Times</string>
-    <string name="widget_ios_description">Next prayer, live countdown and the whole day at a glance</string>
-    <string name="widget_ios_next_up">Next</string>
-    <string name="widget_ios_empty">Open Waktiva to load prayer times</string>
+    <string name="widget_label">Prayer Times</string>
+    <string name="widget_description">Next prayer, live countdown and the whole day at a glance</string>
+    <string name="widget_next_up">Next</string>
+    <string name="widget_empty">Open Waktiva to load prayer times</string>
 </resources>

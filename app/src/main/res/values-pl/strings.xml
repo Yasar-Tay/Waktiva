@@ -430,8 +430,8 @@
     <string name="license_adhan_restrictions">Dźwięk adhanu nie może być wyodrębniany, rozpowszechniany ani używany poza aplikacją Waktiva bez wyraźnej zgody właściciela praw.</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_ios_label">Czasy modlitw</string>
-    <string name="widget_ios_description">Następna modlitwa, odliczanie na żywo i cały dzień w jednym miejscu</string>
-    <string name="widget_ios_next_up">Następna</string>
-    <string name="widget_ios_empty">Otwórz Waktiva, aby wczytać czasy modlitw</string>
+    <string name="widget_label">Czasy modlitw</string>
+    <string name="widget_description">Następna modlitwa, odliczanie na żywo i cały dzień w jednym miejscu</string>
+    <string name="widget_next_up">Następna</string>
+    <string name="widget_empty">Otwórz Waktiva, aby wczytać czasy modlitw</string>
 </resources>

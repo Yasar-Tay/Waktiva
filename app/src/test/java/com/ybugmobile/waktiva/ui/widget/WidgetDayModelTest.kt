@@ -11,7 +11,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class IosWidgetModelTest {
+class WidgetDayModelTest {
 
     private val today = LocalDate.of(2026, 9, 25)
     private val tomorrow = today.plusDays(1)
@@ -22,13 +22,13 @@ class IosWidgetModelTest {
         val now = today.atTime(14, 0)
         val next = nextPrayer(PrayerType.ASR, today, LocalTime.of(16, 30), now)
 
-        val rows = IosWidgetModel.rows(days, next, now)
+        val rows = WidgetDayModel.rows(days, next, now)
 
         assertEquals(PrayerType.entries, rows.map { it.type })
         assertEquals(
             listOf(
-                IosRowStatus.PASSED, IosRowStatus.PASSED, IosRowStatus.PASSED,
-                IosRowStatus.NEXT, IosRowStatus.UPCOMING, IosRowStatus.UPCOMING
+                WidgetRowStatus.PASSED, WidgetRowStatus.PASSED, WidgetRowStatus.PASSED,
+                WidgetRowStatus.NEXT, WidgetRowStatus.UPCOMING, WidgetRowStatus.UPCOMING
             ),
             rows.map { it.status }
         )
@@ -39,10 +39,10 @@ class IosWidgetModelTest {
         val now = today.atTime(22, 0)
         val next = nextPrayer(PrayerType.FAJR, tomorrow, LocalTime.of(5, 10), now)
 
-        val rows = IosWidgetModel.rows(days, next, now)
+        val rows = WidgetDayModel.rows(days, next, now)
 
-        assertEquals(IosRowStatus.NEXT, rows.first().status)
-        assertTrue(rows.drop(1).all { it.status == IosRowStatus.UPCOMING })
+        assertEquals(WidgetRowStatus.NEXT, rows.first().status)
+        assertTrue(rows.drop(1).all { it.status == WidgetRowStatus.UPCOMING })
     }
 
     @Test
@@ -50,16 +50,16 @@ class IosWidgetModelTest {
         val now = today.atTime(13, 5)
         val next = nextPrayer(PrayerType.ASR, today, LocalTime.of(16, 30), now)
 
-        val dhuhr = IosWidgetModel.rows(days, next, now).first { it.type == PrayerType.DHUHR }
+        val dhuhr = WidgetDayModel.rows(days, next, now).first { it.type == PrayerType.DHUHR }
 
-        assertEquals(IosRowStatus.PASSED, dhuhr.status)
+        assertEquals(WidgetRowStatus.PASSED, dhuhr.status)
     }
 
     @Test
     fun returnsEmptyWhenDayIsNotCached() {
         val now = today.plusDays(5).atTime(9, 0)
 
-        assertTrue(IosWidgetModel.rows(days, null, now).isEmpty())
+        assertTrue(WidgetDayModel.rows(days, null, now).isEmpty())
     }
 
     @Test
@@ -70,17 +70,25 @@ class IosWidgetModelTest {
             timings = mapOf(PrayerType.FAJR to LocalTime.of(5, 0), PrayerType.ISHA to LocalTime.of(20, 0))
         )
 
-        val rows = IosWidgetModel.rows(listOf(partial), null, today.atTime(12, 0))
+        val rows = WidgetDayModel.rows(listOf(partial), null, today.atTime(12, 0))
 
         assertEquals(listOf(PrayerType.FAJR, PrayerType.ISHA), rows.map { it.type })
     }
 
     @Test
     fun picksFamilyFromCellSize() {
-        assertEquals(IosWidgetSize.SMALL, IosWidgetSize.from(0, 0))
-        assertEquals(IosWidgetSize.SMALL, IosWidgetSize.from(160, 400))
-        assertEquals(IosWidgetSize.MEDIUM, IosWidgetSize.from(320, 160))
-        assertEquals(IosWidgetSize.LARGE, IosWidgetSize.from(320, 320))
+        assertEquals(WidgetSize.SMALL, WidgetSize.from(0, 0))
+        assertEquals(WidgetSize.SMALL, WidgetSize.from(160, 400))
+        assertEquals(WidgetSize.MEDIUM, WidgetSize.from(320, 160))
+        assertEquals(WidgetSize.LARGE, WidgetSize.from(320, 320))
+    }
+
+    @Test
+    fun shortCellsUseCompactBar() {
+        // Widgets placed with the previous 4×1 design keep a readable single-row layout.
+        assertEquals(WidgetSize.COMPACT, WidgetSize.from(320, 70))
+        assertEquals(WidgetSize.COMPACT, WidgetSize.from(160, 60))
+        assertEquals(WidgetSize.SMALL, WidgetSize.from(160, 110))
     }
 
     private fun day(date: LocalDate) = PrayerDay(

@@ -4,11 +4,11 @@
     android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/widget_ios_clip"
+    android:background="@drawable/widget_clip"
     android:clipToOutline="true">
 
     <ImageView
-        android:id="@+id/ios_bg"
+        android:id="@+id/widget_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY" />
@@ -17,17 +17,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:src="@drawable/widget_ios_sheen" />
+        android:src="@drawable/widget_sheen" />
 
     <FrameLayout
-        android:id="@+id/ios_content"
+        android:id="@+id/widget_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/widget_ios_padding">
+        android:padding="@dimen/widget_padding">
 
-        <include layout="@layout/widget_ios_next_block" />
+        <include layout="@layout/widget_next_block" />
     </FrameLayout>
 
-    <include layout="@layout/widget_ios_empty" />
+    <include layout="@layout/widget_empty" />
 
 </FrameLayout>

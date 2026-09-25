@@ -58,7 +58,7 @@ import com.ybugmobile.waktiva.ui.settings.SettingsScreen
 import com.ybugmobile.waktiva.ui.theme.WaktivaBackgroundWrapper
 import com.ybugmobile.waktiva.ui.theme.WaktivaTheme
 import com.ybugmobile.waktiva.ui.welcome.WelcomeScreen
-import com.ybugmobile.waktiva.ui.widget.WaktivaWidgets
+import com.ybugmobile.waktiva.ui.widget.WaktivaWidget
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                     val observer = LifecycleEventObserver { _, event ->
                         if (event == Lifecycle.Event.ON_START) {
                             scope.launch {
-                                WaktivaWidgets.updateAll(this@MainActivity)
+                                WaktivaWidget.updateAll(this@MainActivity)
                             }
                         }
                     }
@@ -330,7 +330,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                             SmallFloatingActionButton(
                                 onClick = {
                                     timeManager.addMinutes(30)
-                                    scope.launch { WaktivaWidgets.updateAll(context) }
+                                    scope.launch { WaktivaWidget.updateAll(context) }
                                 },
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer
                             ) {

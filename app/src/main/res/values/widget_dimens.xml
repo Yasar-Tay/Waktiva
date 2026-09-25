@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- iOS widgets use a continuous ~22 dp corner; Android 12+ overrides this with the launcher radius. -->
-    <dimen name="widget_ios_corner_radius">22dp</dimen>
-    <dimen name="widget_ios_padding">16dp</dimen>
+    <dimen name="widget_corner_radius">22dp</dimen>
+    <dimen name="widget_padding">16dp</dimen>
 </resources>
