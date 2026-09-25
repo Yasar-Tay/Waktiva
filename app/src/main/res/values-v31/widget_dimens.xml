@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Match the launcher's own widget corner so the gradient never peeks outside the system clip. -->
-    <dimen name="widget_ios_corner_radius">@android:dimen/system_app_widget_background_radius</dimen>
+    <dimen name="widget_corner_radius">@android:dimen/system_app_widget_background_radius</dimen>
 </resources>

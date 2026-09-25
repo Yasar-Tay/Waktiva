@@ -6,19 +6,19 @@
     android:layout_weight="1"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:background="@drawable/widget_ios_row_highlight"
+    android:background="@drawable/widget_row_highlight"
     android:paddingStart="8dp"
     android:paddingEnd="8dp">
 
     <ImageView
-        android:id="@+id/ios_row_icon"
+        android:id="@+id/widget_row_icon"
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:layout_marginEnd="8dp"
         android:scaleType="fitCenter" />
 
     <TextView
-        android:id="@+id/ios_row_name"
+        android:id="@+id/widget_row_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -29,7 +29,7 @@
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/ios_row_time"
+        android:id="@+id/widget_row_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"

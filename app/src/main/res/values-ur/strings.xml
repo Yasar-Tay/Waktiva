@@ -431,8 +431,8 @@
     <string name="donate_item_large_desc">Waktiva کو مزید آگے لے جانے کے لیے مضبوط ترین حمایت فراہم کریں۔</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_ios_label">نماز کے اوقات</string>
-    <string name="widget_ios_description">اگلی نماز، براہِ راست الٹی گنتی اور پورے دن کے اوقات ایک نظر میں</string>
-    <string name="widget_ios_next_up">اگلی</string>
-    <string name="widget_ios_empty">نماز کے اوقات لوڈ کرنے کے لیے Waktiva کھولیں</string>
+    <string name="widget_label">نماز کے اوقات</string>
+    <string name="widget_description">اگلی نماز، براہِ راست الٹی گنتی اور پورے دن کے اوقات ایک نظر میں</string>
+    <string name="widget_next_up">اگلی</string>
+    <string name="widget_empty">نماز کے اوقات لوڈ کرنے کے لیے Waktiva کھولیں</string>
 </resources>

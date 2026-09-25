@@ -418,8 +418,8 @@
     <string name="license_github_link">Waktiva es un proyecto de código abierto. Puede encontrar el código fuente, informar de problemas o contribuir en:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_ios_label">Horarios de oración</string>
-    <string name="widget_ios_description">Próxima oración, cuenta atrás en vivo y todo el día de un vistazo</string>
-    <string name="widget_ios_next_up">Siguiente</string>
-    <string name="widget_ios_empty">Abre Waktiva para cargar los horarios de oración</string>
+    <string name="widget_label">Horarios de oración</string>
+    <string name="widget_description">Próxima oración, cuenta atrás en vivo y todo el día de un vistazo</string>
+    <string name="widget_next_up">Siguiente</string>
+    <string name="widget_empty">Abre Waktiva para cargar los horarios de oración</string>
 </resources>

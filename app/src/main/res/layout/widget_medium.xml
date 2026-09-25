@@ -4,11 +4,11 @@
     android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/widget_ios_clip"
+    android:background="@drawable/widget_clip"
     android:clipToOutline="true">
 
     <ImageView
-        android:id="@+id/ios_bg"
+        android:id="@+id/widget_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY" />
@@ -17,21 +17,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:src="@drawable/widget_ios_sheen" />
+        android:src="@drawable/widget_sheen" />
 
     <LinearLayout
-        android:id="@+id/ios_content"
+        android:id="@+id/widget_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:padding="@dimen/widget_ios_padding">
+        android:padding="@dimen/widget_padding">
 
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <include layout="@layout/widget_ios_next_block" />
+            <include layout="@layout/widget_next_block" />
         </FrameLayout>
 
         <!-- Hairline separator, inset like the iOS Calendar widget. -->
@@ -42,15 +42,15 @@
             android:layout_marginEnd="10dp"
             android:background="#2EFFFFFF" />
 
-        <!-- Rows are added at runtime from widget_ios_row / widget_ios_row_next. -->
+        <!-- Rows are added at runtime from widget_row / widget_row_next. -->
         <LinearLayout
-            android:id="@+id/ios_rows"
+            android:id="@+id/widget_rows"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.1"
             android:orientation="vertical" />
     </LinearLayout>
 
-    <include layout="@layout/widget_ios_empty" />
+    <include layout="@layout/widget_empty" />
 
 </FrameLayout>

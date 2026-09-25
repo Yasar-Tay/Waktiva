@@ -430,8 +430,8 @@
     <string name="donate_item_large_desc">Ofereça o apoio mais forte para levar o Waktiva ainda mais longe.</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_ios_label">Horários de oração</string>
-    <string name="widget_ios_description">Próxima oração, contagem regressiva ao vivo e o dia inteiro num relance</string>
-    <string name="widget_ios_next_up">A seguir</string>
-    <string name="widget_ios_empty">Abra o Waktiva para carregar os horários de oração</string>
+    <string name="widget_label">Horários de oração</string>
+    <string name="widget_description">Próxima oração, contagem regressiva ao vivo e o dia inteiro num relance</string>
+    <string name="widget_next_up">A seguir</string>
+    <string name="widget_empty">Abra o Waktiva para carregar os horários de oração</string>
 </resources>

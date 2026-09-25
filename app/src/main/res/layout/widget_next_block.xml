@@ -20,7 +20,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/ios_label"
+            android:id="@+id/widget_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -28,20 +28,20 @@
             android:fontFamily="sans-serif-medium"
             android:letterSpacing="0.06"
             android:maxLines="1"
-            android:text="@string/widget_ios_next_up"
+            android:text="@string/widget_next_up"
             android:textAllCaps="true"
             android:textColor="#B3FFFFFF"
             android:textSize="11sp" />
 
         <ImageView
-            android:id="@+id/ios_icon"
+            android:id="@+id/widget_icon"
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:scaleType="fitCenter" />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/ios_name"
+        android:id="@+id/widget_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
@@ -54,7 +54,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/ios_time"
+        android:id="@+id/widget_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
@@ -72,7 +72,7 @@
 
     <!-- autoSize keeps "12:34:56" on one line in the narrowest 2×2 cells. -->
     <Chronometer
-        android:id="@+id/ios_chrono"
+        android:id="@+id/widget_chrono"
         android:layout_width="match_parent"
         android:layout_height="32dp"
         android:autoSizeMaxTextSize="28sp"
@@ -90,7 +90,7 @@
         android:textSize="26sp" />
 
     <include
-        layout="@layout/widget_ios_timeline"
+        layout="@layout/widget_timeline"
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_marginTop="8dp" />

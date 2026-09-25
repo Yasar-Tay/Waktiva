@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  iOS-style widget. New placements start as a 2×2 square; resizing moves through the
+  4×2 and 4×4 families, and short cells (down to the old 4×1 bar) use the compact row.
+  WaktivaWidget picks the matching layout for every size the launcher reports.
+  updatePeriodMillis stays 0: refreshes are driven by PrayerAlarmReceiver at prayer boundaries.
+-->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:initialLayout="@layout/widget_main"
-    android:minWidth="250dp"
-    android:minHeight="40dp"
-    android:minResizeWidth="180dp"
+    android:description="@string/widget_description"
+    android:initialLayout="@layout/widget_small"
+    android:minWidth="110dp"
+    android:minHeight="110dp"
+    android:minResizeWidth="110dp"
     android:minResizeHeight="40dp"
+    android:previewLayout="@layout/widget_preview"
     android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="2"
+    android:targetCellHeight="2"
     android:updatePeriodMillis="0"
     android:widgetCategory="home_screen" />

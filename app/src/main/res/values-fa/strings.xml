@@ -431,8 +431,8 @@
     <string name="badge_open_source">متن‌باز</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_ios_label">اوقات نماز</string>
-    <string name="widget_ios_description">نماز بعدی، شمارش معکوس زنده و کل روز در یک نگاه</string>
-    <string name="widget_ios_next_up">بعدی</string>
-    <string name="widget_ios_empty">برای بارگیری اوقات نماز، Waktiva را باز کنید</string>
+    <string name="widget_label">اوقات نماز</string>
+    <string name="widget_description">نماز بعدی، شمارش معکوس زنده و کل روز در یک نگاه</string>
+    <string name="widget_next_up">بعدی</string>
+    <string name="widget_empty">برای بارگیری اوقات نماز، Waktiva را باز کنید</string>
 </resources>

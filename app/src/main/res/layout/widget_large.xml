@@ -4,11 +4,11 @@
     android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/widget_ios_clip"
+    android:background="@drawable/widget_clip"
     android:clipToOutline="true">
 
     <ImageView
-        android:id="@+id/ios_bg"
+        android:id="@+id/widget_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY" />
@@ -17,14 +17,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:src="@drawable/widget_ios_sheen" />
+        android:src="@drawable/widget_sheen" />
 
     <LinearLayout
-        android:id="@+id/ios_content"
+        android:id="@+id/widget_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="@dimen/widget_ios_padding">
+        android:padding="@dimen/widget_padding">
 
         <!-- Header: location on top, Gregorian · Hijri date below. -->
         <LinearLayout
@@ -40,7 +40,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/ios_location"
+                    android:id="@+id/widget_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -51,7 +51,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/ios_date"
+                    android:id="@+id/widget_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -62,7 +62,7 @@
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/ios_icon"
+                android:id="@+id/widget_icon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="8dp"
@@ -84,19 +84,19 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/ios_label"
+                    android:id="@+id/widget_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
                     android:letterSpacing="0.06"
                     android:maxLines="1"
-                    android:text="@string/widget_ios_next_up"
+                    android:text="@string/widget_next_up"
                     android:textAllCaps="true"
                     android:textColor="#B3FFFFFF"
                     android:textSize="11sp" />
 
                 <TextView
-                    android:id="@+id/ios_name"
+                    android:id="@+id/widget_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -108,7 +108,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/ios_time"
+                    android:id="@+id/widget_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
@@ -120,7 +120,7 @@
             </LinearLayout>
 
             <Chronometer
-                android:id="@+id/ios_chrono"
+                android:id="@+id/widget_chrono"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:countDown="true"
@@ -134,14 +134,14 @@
         </LinearLayout>
 
         <include
-            layout="@layout/widget_ios_timeline"
+            layout="@layout/widget_timeline"
             android:layout_width="match_parent"
             android:layout_height="4dp"
             android:layout_marginTop="10dp" />
 
-        <!-- Rows are added at runtime from widget_ios_row / widget_ios_row_next. -->
+        <!-- Rows are added at runtime from widget_row / widget_row_next. -->
         <LinearLayout
-            android:id="@+id/ios_rows"
+            android:id="@+id/widget_rows"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
@@ -149,6 +149,6 @@
             android:orientation="vertical" />
     </LinearLayout>
 
-    <include layout="@layout/widget_ios_empty" />
+    <include layout="@layout/widget_empty" />
 
 </FrameLayout>

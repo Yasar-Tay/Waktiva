@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Shown until the app has cached at least one day of prayer times. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ios_empty"
+    android:id="@+id/widget_empty"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="@dimen/widget_ios_padding"
+    android:padding="@dimen/widget_padding"
     android:visibility="gone">
 
     <ImageView
@@ -20,7 +20,7 @@
         android:layout_marginTop="4dp"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
-        android:text="@string/widget_ios_empty"
+        android:text="@string/widget_empty"
         android:textColor="#B3FFFFFF"
         android:textSize="12sp" />
 

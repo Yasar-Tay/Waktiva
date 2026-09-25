@@ -430,8 +430,8 @@
     <string name="badge_open_source">Открытый исходный код</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_ios_label">Время намаза</string>
-    <string name="widget_ios_description">Следующий намаз, живой обратный отсчёт и весь день с одного взгляда</string>
-    <string name="widget_ios_next_up">Далее</string>
-    <string name="widget_ios_empty">Откройте Waktiva, чтобы загрузить время намаза</string>
+    <string name="widget_label">Время намаза</string>
+    <string name="widget_description">Следующий намаз, живой обратный отсчёт и весь день с одного взгляда</string>
+    <string name="widget_next_up">Далее</string>
+    <string name="widget_empty">Откройте Waktiva, чтобы загрузить время намаза</string>
 </resources>

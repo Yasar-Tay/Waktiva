@@ -17,7 +17,7 @@ import com.ybugmobile.waktiva.data.notification.NotificationHelper
 import com.ybugmobile.waktiva.data.worker.AdhanWorker
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
-import com.ybugmobile.waktiva.ui.widget.WaktivaWidgets
+import com.ybugmobile.waktiva.ui.widget.WaktivaWidget
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +63,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 try {
                     settingsManager.muteNextPrayer(prayerName, prayerDate)
                     notificationHelper.cancelWarningNotification()
-                    WaktivaWidgets.updateAll(context)
+                    WaktivaWidget.updateAll(context)
                 } finally {
                     pendingResult.finish()
                 }
@@ -92,7 +92,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         )
                     }
                     AlarmScheduler.ACTION_PRAYER_ALARM -> {
-                        WaktivaWidgets.updateAll(context)
+                        WaktivaWidget.updateAll(context)
                         handleAdhanTrigger(context, prayerName, prayerDate)
                         rescheduleNextPrayer()
                         refreshWidgetAfterBoundary(context)
@@ -101,7 +101,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         // This action wakes the app to ensure transitions like Sunrise -> Dhuhr
                         // happen exactly on time in the widget without a negative countdown.
                         Log.d("PrayerAlarmReceiver", "Executing WIDGET REFRESH milestone transition")
-                        WaktivaWidgets.updateAll(context)
+                        WaktivaWidget.updateAll(context)
                         rescheduleNextPrayer()
                         refreshWidgetAfterBoundary(context)
                     }
@@ -118,7 +118,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         // A second render after the clock boundary replaces the stopped 00:00 frame with the
         // following prayer even when the first alarm delivery was a fraction of a second early.
         delay(1_000L)
-        WaktivaWidgets.updateAll(context)
+        WaktivaWidget.updateAll(context)
     }
 
     private suspend fun rescheduleNextPrayer() {
