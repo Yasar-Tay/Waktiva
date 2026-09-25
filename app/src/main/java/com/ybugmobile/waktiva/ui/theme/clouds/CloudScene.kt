@@ -7,6 +7,13 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -42,28 +49,28 @@ internal class LayerRecipe(
 internal class CloudRecipe(val tone: CloudTone, val layers: List<LayerRecipe>)
 
 private val Fair = listOf(
-    LayerRecipe(3, CloudKind.STRATUS, 0.2f..0.55f, 0.3f..0.42f, 5f..6.5f),
-    LayerRecipe(3, CloudKind.STRATUS, 0.45f..0.8f, 0.42f..0.58f, 4.5f..6f),
-    LayerRecipe(2, CloudKind.STRATUS, 0.7f..0.95f, 0.55f..0.7f, 4f..5.5f)
+    LayerRecipe(4, CloudKind.STRATUS, 0.2f..0.55f, 0.3f..0.42f, 5f..6.5f),
+    LayerRecipe(5, CloudKind.STRATUS, 0.45f..0.8f, 0.42f..0.58f, 4.5f..6f),
+    LayerRecipe(3, CloudKind.STRATUS, 0.7f..0.95f, 0.55f..0.7f, 4f..5.5f)
 )
 private val FewFair = listOf(
-    LayerRecipe(2, CloudKind.STRATUS, 0.25f..0.6f, 0.28f..0.4f, 5f..6.5f),
-    LayerRecipe(1, CloudKind.STRATUS, 0.55f..0.9f, 0.4f..0.55f, 4.5f..6f)
+    LayerRecipe(3, CloudKind.STRATUS, 0.25f..0.6f, 0.28f..0.4f, 5f..6.5f),
+    LayerRecipe(2, CloudKind.STRATUS, 0.55f..0.9f, 0.4f..0.55f, 4.5f..6f)
 )
 private val Overcast = listOf(
-    LayerRecipe(4, CloudKind.STRATUS, 0.2f..0.5f, 0.6f..0.85f, 6.5f..9f),
-    LayerRecipe(4, CloudKind.STRATUS, 0.45f..0.8f, 0.5f..0.75f, 5f..7f),
-    LayerRecipe(3, CloudKind.STRATUS, 0.7f..0.95f, 0.4f..0.55f, 4.5f..6f)
+    LayerRecipe(6, CloudKind.STRATUS, 0.2f..0.5f, 0.6f..0.85f, 6.5f..9f),
+    LayerRecipe(6, CloudKind.STRATUS, 0.45f..0.8f, 0.5f..0.75f, 5f..7f),
+    LayerRecipe(5, CloudKind.STRATUS, 0.7f..0.95f, 0.4f..0.55f, 4.5f..6f)
 )
 private val Rain = listOf(
-    LayerRecipe(4, CloudKind.NIMBUS, 0.3f..0.55f, 0.75f..1.0f, 5f..7f),
-    LayerRecipe(4, CloudKind.NIMBUS, 0.55f..0.85f, 0.55f..0.8f, 4.5f..6f),
-    LayerRecipe(3, CloudKind.STRATUS, 0.75f..0.95f, 0.4f..0.55f, 4.5f..6f)
+    LayerRecipe(6, CloudKind.NIMBUS, 0.3f..0.55f, 0.75f..1.0f, 5f..7f),
+    LayerRecipe(6, CloudKind.NIMBUS, 0.55f..0.85f, 0.55f..0.8f, 4.5f..6f),
+    LayerRecipe(5, CloudKind.STRATUS, 0.75f..0.95f, 0.4f..0.55f, 4.5f..6f)
 )
 private val Storm = listOf(
-    LayerRecipe(4, CloudKind.NIMBUS, 0.3f..0.55f, 0.85f..1.1f, 6f..8f),
-    LayerRecipe(4, CloudKind.NIMBUS, 0.55f..0.85f, 0.6f..0.85f, 4.5f..6f),
-    LayerRecipe(3, CloudKind.NIMBUS, 0.75f..0.95f, 0.4f..0.55f, 4f..5.5f)
+    LayerRecipe(6, CloudKind.NIMBUS, 0.3f..0.55f, 0.85f..1.1f, 6f..8f),
+    LayerRecipe(6, CloudKind.NIMBUS, 0.55f..0.85f, 0.6f..0.85f, 4.5f..6f),
+    LayerRecipe(5, CloudKind.NIMBUS, 0.75f..0.95f, 0.4f..0.55f, 4f..5.5f)
 )
 private val Fog = listOf(
     LayerRecipe(3, CloudKind.FOG, 0.5f..0.66f, 1.0f..1.3f, 9f..12f, lowLying = true),
@@ -101,8 +108,9 @@ internal fun cloudPalette(tone: CloudTone, isDay: Boolean): CloudPalette = when 
 // ---------------------------------------------------------------------------
 
 /**
- * The part of the screen clouds live in. Clouds stay above the day circle's centre: the top
- * quarter of a portrait screen, a bit more of a landscape one where the circle sits lower.
+ * The part of the screen clouds live in: the top 37.5% of a portrait screen, a bit more of a
+ * landscape one where the day circle sits lower. Clouds fade out towards the band's bottom
+ * (see [SkyFade]) so the sky blends softly into the day circle.
  * Sizes and speeds scale with the screen's short side, so clouds keep their portrait size in
  * landscape and more of them fill the extra width, instead of each one growing huge.
  */
@@ -113,8 +121,18 @@ internal class Sky(val width: Float, val height: Float) {
     val spread = width / unit
 }
 
-internal const val PortraitSky = 0.25f
-internal const val LandscapeSky = 0.35f
+internal const val PortraitSky = 0.375f
+internal const val LandscapeSky = 0.525f
+
+/**
+ * Cloud opacity down the sky band (0 = top of the screen, 1 = the band's bottom): solid in
+ * the upper part, then thinning out to nothing so the lower clouds melt into the day circle.
+ */
+internal val SkyFade = arrayOf(0f to 1f, 0.4f to 1f, 0.7f to 0.4f, 1f to 0f)
+
+/** Bottom of the band the clouds fade out towards, or null when the recipe is low-lying fog. */
+internal fun skyFadeBottom(recipe: CloudRecipe, viewportWidth: Float, viewportHeight: Float): Float? =
+    if (recipe.layers.all { it.lowLying }) null else Sky(viewportWidth, viewportHeight).bottom
 
 /** Drift speed per layer (far, mid, near), in [Sky.unit]s per second. */
 private val LayerSpeed = floatArrayOf(2f / 230f, 4f / 230f, 7f / 230f)
@@ -188,7 +206,8 @@ internal fun CloudPlacement.leftAt(seconds: Float, viewportWidth: Float): Float 
 
 internal class SceneCloud(val placement: CloudPlacement, val sprite: CloudSprite, val litSprite: CloudSprite?)
 
-internal class CloudScene(val clouds: List<SceneCloud>, val viewportWidth: Float)
+/** [fadeBottom]: where the clouds have faded out completely, or null for fog, which never fades. */
+internal class CloudScene(val clouds: List<SceneCloud>, val viewportWidth: Float, val fadeBottom: Float?)
 
 /** Sprites are rendered at half resolution; the clouds are soft, so nothing is lost. */
 private const val SpriteResolution = 0.5f
@@ -209,7 +228,7 @@ internal fun buildCloudScene(condition: WeatherCondition, isDay: Boolean, width:
             } else null
         )
     }
-    return CloudScene(clouds, width)
+    return CloudScene(clouds, width, skyFadeBottom(recipe, width, height))
 }
 
 /** The scene for this weather and viewport, rendered off the main thread; null until ready. */
@@ -236,10 +255,32 @@ internal fun rememberSceneClock(): State<Float> {
 }
 
 /**
- * Draws the drifting clouds. [flash] (0..1) lights storm clouds from within;
- * [fade] (0..1) fades the whole sky in when a new scene is ready.
+ * Draws the drifting clouds, fading out down the sky band. [flash] (0..1) lights storm clouds
+ * from within; [fade] (0..1) fades the whole sky in when a new scene is ready.
  */
 internal fun DrawScope.drawClouds(scene: CloudScene, seconds: Float, flash: Float, fade: Float) {
+    val bottom = scene.fadeBottom
+    if (bottom == null) {
+        drawSprites(scene, seconds, flash, fade)
+        return
+    }
+    // Draw the clouds into a layer, then fade that layer out towards the band's bottom.
+    val band = Size(size.width, bottom)
+    drawContext.canvas.saveLayer(Rect(Offset.Zero, band), Paint())
+    drawSprites(scene, seconds, flash, fade)
+    drawRect(
+        brush = Brush.verticalGradient(
+            *SkyFade.map { (at, alpha) -> at to Color.Black.copy(alpha = alpha) }.toTypedArray(),
+            startY = 0f,
+            endY = bottom
+        ),
+        size = band,
+        blendMode = BlendMode.DstIn
+    )
+    drawContext.canvas.restore()
+}
+
+private fun DrawScope.drawSprites(scene: CloudScene, seconds: Float, flash: Float, fade: Float) {
     for (cloud in scene.clouds) {
         val p = cloud.placement
         val left = p.leftAt(seconds, scene.viewportWidth)

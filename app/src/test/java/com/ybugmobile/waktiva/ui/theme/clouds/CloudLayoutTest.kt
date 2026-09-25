@@ -27,7 +27,7 @@ class CloudLayoutTest {
     private val cloudyConditions = WeatherCondition.entries.filter { cloudRecipe(it) != null }
 
     @Test
-    fun portraitCloudsStayInTheTopQuarter() {
+    fun portraitCloudsStayInTheSkyBand() {
         cloudyConditions.filter { it != WeatherCondition.FOGGY }.forEach { condition ->
             layoutClouds(cloudRecipe(condition)!!, width, height).forEach { c ->
                 assertTrue(condition.name, c.top + c.height <= height * PortraitSky + 0.5f)
@@ -41,6 +41,20 @@ class CloudLayoutTest {
             layoutClouds(cloudRecipe(condition)!!, height, width).forEach { c ->
                 assertTrue(condition.name, c.top + c.height <= width * LandscapeSky + 0.5f)
             }
+        }
+    }
+
+    @Test
+    fun cloudsFadeOutTowardsTheBandBottomButFogDoesNot() {
+        val overcast = cloudRecipe(WeatherCondition.OVERCAST)!!
+        assertEquals(height * PortraitSky, skyFadeBottom(overcast, width, height)!!, 0.5f)
+        assertEquals(width * LandscapeSky, skyFadeBottom(overcast, height, width)!!, 0.5f)
+        assertNull(skyFadeBottom(cloudRecipe(WeatherCondition.FOGGY)!!, width, height))
+
+        assertEquals(1f, SkyFade.first().second, 0f)
+        assertEquals(0f, SkyFade.last().second, 0f)
+        SkyFade.toList().zipWithNext().forEach { (upper, lower) ->
+            assertTrue(upper.first < lower.first && upper.second >= lower.second)
         }
     }
 
