@@ -42,7 +42,7 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
 
     override val markerDistance = track
     override val markerRadius = badgeCurrent
-    override val hubRadius = hub * 0.8f
+    override val dateRadius = hub * 0.8f
     override val hubOuterRadius = hub
     override val bridge = BridgeSpec(innerRadius = hub + 8 * dp, freeRadius = innerRim - 2 * dp, maxSpan = 2.3f)
 

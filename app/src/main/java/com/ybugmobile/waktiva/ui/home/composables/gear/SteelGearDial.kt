@@ -28,8 +28,9 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
 
     override val markerDistance = pitch - rPlanet
     override val markerRadius = rPlanet + addPlanet
-    override val hubRadius: Float? = null
-    override val hubOuterRadius: Float? = null
+    // The date sub-dial stays inside the special-day bridge's inner radius (0.13 s).
+    override val dateRadius = s * 0.12f
+    override val hubOuterRadius = dateRadius
     override val bridge = BridgeSpec(
         innerRadius = s * 0.13f,
         freeRadius = pitch - 2 * rPlanet - addPlanet - 4 * dp,
