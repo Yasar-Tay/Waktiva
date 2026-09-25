@@ -24,16 +24,57 @@ class CloudLayoutTest {
             .forEach { assertTrue(it.name, cloudRecipe(it) != null) }
     }
 
+    private val cloudyConditions = WeatherCondition.entries.filter { cloudRecipe(it) != null }
+
     @Test
-    fun placesTheRecipesCloudsInTheirBands() {
+    fun portraitCloudsStayInTheTopQuarter() {
+        cloudyConditions.filter { it != WeatherCondition.FOGGY }.forEach { condition ->
+            layoutClouds(cloudRecipe(condition)!!, width, height).forEach { c ->
+                assertTrue(condition.name, c.top + c.height <= height * PortraitSky + 0.5f)
+            }
+        }
+    }
+
+    @Test
+    fun landscapeCloudsStayInTheTopBand() {
+        cloudyConditions.filter { it != WeatherCondition.FOGGY }.forEach { condition ->
+            layoutClouds(cloudRecipe(condition)!!, height, width).forEach { c ->
+                assertTrue(condition.name, c.top + c.height <= width * LandscapeSky + 0.5f)
+            }
+        }
+    }
+
+    @Test
+    fun fogStaysLowOnTheScreen() {
+        layoutClouds(cloudRecipe(WeatherCondition.FOGGY)!!, width, height).forEach { c ->
+            assertTrue(c.top + c.height >= height * 0.5f - 0.5f)
+        }
+    }
+
+    @Test
+    fun placesTheRecipesCloudsWithTheirShapes() {
         val recipe = cloudRecipe(WeatherCondition.PARTLY_CLOUDY)!!
         val clouds = layoutClouds(recipe, width, height)
         assertEquals(recipe.layers.sumOf { it.count }, clouds.size)
         clouds.forEach { c ->
-            val band = recipe.layers[c.layer].top
-            assertTrue(c.top >= band.start * height - 0.5f && c.top <= band.endInclusive * height + 0.5f)
-            assertTrue(c.width / c.height in recipe.layers[c.layer].aspect.start..recipe.layers[c.layer].aspect.endInclusive + 0.01f)
+            val spec = recipe.layers[c.layer]
+            assertEquals(spec.kind, c.kind)
+            assertTrue(c.width / c.height in spec.aspect.start - 0.01f..spec.aspect.endInclusive + 0.01f)
+            assertTrue(c.width in spec.width.start * width - 0.5f..spec.width.endInclusive * width + 0.5f)
         }
+    }
+
+    @Test
+    fun landscapeKeepsPortraitSizesAndAddsCloudsAcross() {
+        val recipe = cloudRecipe(WeatherCondition.OVERCAST)!!
+        val portrait = layoutClouds(recipe, width, height)
+        val landscape = layoutClouds(recipe, height, width)
+        // same short side, so the same cloud sizes rather than clouds twice as wide
+        landscape.forEach { c ->
+            val spec = recipe.layers[c.layer]
+            assertTrue(c.width <= spec.width.endInclusive * width + 0.5f)
+        }
+        assertTrue(landscape.size >= portrait.size * 2)
     }
 
     @Test

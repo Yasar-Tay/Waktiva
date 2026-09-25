@@ -13,6 +13,8 @@ import androidx.compose.ui.unit.IntSize
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -22,45 +24,51 @@ import kotlin.random.Random
 
 internal enum class CloudTone { FAIR, OVERCAST, SNOW, RAIN, STORM, FOG }
 
-/** One depth layer: how many clouds of which kind, their vertical band, width and aspect ratio. */
+/**
+ * One depth layer: how many clouds of which kind, where their bases sit, their width and
+ * aspect ratio. [base] is a fraction of the sky band's height (see [Sky]); for [lowLying]
+ * layers (fog) it is a fraction of the whole screen height instead. [width] is a fraction
+ * of [Sky.unit]. [count] is for a portrait screen and grows with wider screens.
+ */
 internal class LayerRecipe(
     val count: Int,
     val kind: CloudKind,
-    val top: ClosedFloatingPointRange<Float>,
+    val base: ClosedFloatingPointRange<Float>,
     val width: ClosedFloatingPointRange<Float>,
-    val aspect: ClosedFloatingPointRange<Float>
+    val aspect: ClosedFloatingPointRange<Float>,
+    val lowLying: Boolean = false
 )
 
 internal class CloudRecipe(val tone: CloudTone, val layers: List<LayerRecipe>)
 
 private val Fair = listOf(
-    LayerRecipe(3, CloudKind.CUMULUS, 0.03f..0.2f, 0.18f..0.26f, 2.6f..3.2f),
-    LayerRecipe(3, CloudKind.CUMULUS, 0.12f..0.38f, 0.26f..0.36f, 2.3f..2.9f),
-    LayerRecipe(2, CloudKind.CUMULUS, 0.28f..0.52f, 0.36f..0.46f, 2.1f..2.6f)
+    LayerRecipe(3, CloudKind.STRATUS, 0.2f..0.55f, 0.3f..0.42f, 5f..6.5f),
+    LayerRecipe(3, CloudKind.STRATUS, 0.45f..0.8f, 0.42f..0.58f, 4.5f..6f),
+    LayerRecipe(2, CloudKind.STRATUS, 0.7f..0.95f, 0.55f..0.7f, 4f..5.5f)
 )
 private val FewFair = listOf(
-    LayerRecipe(2, CloudKind.CUMULUS, 0.03f..0.2f, 0.16f..0.22f, 2.6f..3.2f),
-    LayerRecipe(1, CloudKind.CUMULUS, 0.16f..0.36f, 0.24f..0.32f, 2.3f..2.9f)
+    LayerRecipe(2, CloudKind.STRATUS, 0.25f..0.6f, 0.28f..0.4f, 5f..6.5f),
+    LayerRecipe(1, CloudKind.STRATUS, 0.55f..0.9f, 0.4f..0.55f, 4.5f..6f)
 )
 private val Overcast = listOf(
-    LayerRecipe(4, CloudKind.STRATUS, -0.02f..0.2f, 0.6f..0.85f, 6.5f..9f),
-    LayerRecipe(4, CloudKind.STRATUS, 0.1f..0.36f, 0.5f..0.75f, 5f..7f),
-    LayerRecipe(3, CloudKind.CUMULUS, 0.28f..0.55f, 0.3f..0.42f, 2.2f..2.8f)
+    LayerRecipe(4, CloudKind.STRATUS, 0.2f..0.5f, 0.6f..0.85f, 6.5f..9f),
+    LayerRecipe(4, CloudKind.STRATUS, 0.45f..0.8f, 0.5f..0.75f, 5f..7f),
+    LayerRecipe(3, CloudKind.STRATUS, 0.7f..0.95f, 0.4f..0.55f, 4.5f..6f)
 )
 private val Rain = listOf(
-    LayerRecipe(4, CloudKind.NIMBUS, -0.04f..0.12f, 0.75f..1.0f, 5f..7f),
-    LayerRecipe(4, CloudKind.NIMBUS, 0.06f..0.3f, 0.55f..0.8f, 4.5f..6f),
-    LayerRecipe(3, CloudKind.CUMULUS, 0.24f..0.5f, 0.28f..0.38f, 2.3f..2.9f)
+    LayerRecipe(4, CloudKind.NIMBUS, 0.3f..0.55f, 0.75f..1.0f, 5f..7f),
+    LayerRecipe(4, CloudKind.NIMBUS, 0.55f..0.85f, 0.55f..0.8f, 4.5f..6f),
+    LayerRecipe(3, CloudKind.STRATUS, 0.75f..0.95f, 0.4f..0.55f, 4.5f..6f)
 )
 private val Storm = listOf(
-    LayerRecipe(4, CloudKind.NIMBUS, -0.05f..0.1f, 0.85f..1.1f, 6f..8f),
-    LayerRecipe(1, CloudKind.TOWER, 0.02f..0.04f, 0.9f..0.95f, 2.7f..2.9f),
-    LayerRecipe(3, CloudKind.CUMULUS, 0.3f..0.52f, 0.28f..0.4f, 2.2f..2.8f)
+    LayerRecipe(4, CloudKind.NIMBUS, 0.3f..0.55f, 0.85f..1.1f, 6f..8f),
+    LayerRecipe(4, CloudKind.NIMBUS, 0.55f..0.85f, 0.6f..0.85f, 4.5f..6f),
+    LayerRecipe(3, CloudKind.NIMBUS, 0.75f..0.95f, 0.4f..0.55f, 4f..5.5f)
 )
 private val Fog = listOf(
-    LayerRecipe(3, CloudKind.FOG, 0.44f..0.6f, 1.0f..1.3f, 9f..12f),
-    LayerRecipe(3, CloudKind.FOG, 0.56f..0.76f, 1.1f..1.4f, 9f..12f),
-    LayerRecipe(3, CloudKind.FOG, 0.7f..0.92f, 1.2f..1.5f, 8f..11f)
+    LayerRecipe(3, CloudKind.FOG, 0.5f..0.66f, 1.0f..1.3f, 9f..12f, lowLying = true),
+    LayerRecipe(3, CloudKind.FOG, 0.62f..0.82f, 1.1f..1.4f, 9f..12f, lowLying = true),
+    LayerRecipe(3, CloudKind.FOG, 0.76f..0.97f, 1.2f..1.5f, 8f..11f, lowLying = true)
 )
 
 internal fun cloudRecipe(condition: WeatherCondition): CloudRecipe? = when (condition) {
@@ -92,7 +100,23 @@ internal fun cloudPalette(tone: CloudTone, isDay: Boolean): CloudPalette = when 
 // Layout: where each cloud starts and how fast it drifts
 // ---------------------------------------------------------------------------
 
-/** Drift speed per layer (far, mid, near), in viewport widths per second. */
+/**
+ * The part of the screen clouds live in. Clouds stay above the day circle's centre: the top
+ * quarter of a portrait screen, a bit more of a landscape one where the circle sits lower.
+ * Sizes and speeds scale with the screen's short side, so clouds keep their portrait size in
+ * landscape and more of them fill the extra width, instead of each one growing huge.
+ */
+internal class Sky(val width: Float, val height: Float) {
+    val unit = min(width, height)
+    val bottom = height * if (width < height) PortraitSky else LandscapeSky
+    /** How many portrait-screen widths fit across. */
+    val spread = width / unit
+}
+
+internal const val PortraitSky = 0.25f
+internal const val LandscapeSky = 0.35f
+
+/** Drift speed per layer (far, mid, near), in [Sky.unit]s per second. */
 private val LayerSpeed = floatArrayOf(2f / 230f, 4f / 230f, 7f / 230f)
 private val LayerAlpha = floatArrayOf(0.55f, 0.8f, 0.95f)
 private val FogAlpha = floatArrayOf(0.28f, 0.32f, 0.38f)
@@ -115,28 +139,31 @@ internal class CloudPlacement(
 private fun ClosedFloatingPointRange<Float>.at(t: Float) = start + (endInclusive - start) * t
 
 /**
- * Lays each layer's clouds out across the viewport: stratified heights, spread start positions
+ * Lays each layer's clouds out across the sky: stratified heights, spread start positions
  * and an individual speed, so they drift apart instead of moving as a block. Deterministic.
  */
 internal fun layoutClouds(recipe: CloudRecipe, viewportWidth: Float, viewportHeight: Float, seed: Int = 7919): List<CloudPlacement> {
+    val sky = Sky(viewportWidth, viewportHeight)
     val rnd = Random(seed)
     val placements = mutableListOf<CloudPlacement>()
     recipe.layers.forEachIndexed { layer, spec ->
-        val bands = List(spec.count) { k -> (k + 0.2f + 0.6f * rnd.nextFloat()) / spec.count }.shuffled(rnd)
-        repeat(spec.count) { k ->
-            val width = spec.width.at(rnd.nextFloat()) * viewportWidth
+        val count = max(1, (spec.count * sky.spread).roundToInt())
+        val bands = List(count) { k -> (k + 0.2f + 0.6f * rnd.nextFloat()) / count }.shuffled(rnd)
+        val floor = if (spec.lowLying) viewportHeight else sky.bottom
+        repeat(count) { k ->
+            val width = spec.width.at(rnd.nextFloat()) * sky.unit
             val height = width / spec.aspect.at(rnd.nextFloat())
-            val base = if (spec.kind == CloudKind.FOG) FogAlpha[layer] else LayerAlpha[layer]
+            val alpha = if (spec.kind == CloudKind.FOG) FogAlpha[layer] else LayerAlpha[layer]
             placements += CloudPlacement(
                 kind = spec.kind,
                 layer = layer,
                 seed = 1000 + layer * 131 + k * 97,
                 width = width,
                 height = height,
-                startX = (k + 0.15f + 0.7f * rnd.nextFloat()) / spec.count * (viewportWidth + width) - width,
-                top = spec.top.at(bands[k]) * viewportHeight,
-                speed = LayerSpeed[layer] * viewportWidth * (0.7f + 0.6f * rnd.nextFloat()),
-                alpha = base * (0.7f + 0.3f * rnd.nextFloat())
+                startX = (k + 0.15f + 0.7f * rnd.nextFloat()) / count * (viewportWidth + width) - width,
+                top = spec.base.at(bands[k]) * floor - height,
+                speed = LayerSpeed[layer] * sky.unit * (0.7f + 0.6f * rnd.nextFloat()),
+                alpha = alpha * (0.7f + 0.3f * rnd.nextFloat())
             )
         }
     }
@@ -166,6 +193,9 @@ internal class CloudScene(val clouds: List<SceneCloud>, val viewportWidth: Float
 /** Sprites are rendered at half resolution; the clouds are soft, so nothing is lost. */
 private const val SpriteResolution = 0.5f
 
+/** Lightning-lit copies only show for a moment, so they can be coarser. */
+private const val LitSpriteResolution = 0.35f
+
 internal fun buildCloudScene(condition: WeatherCondition, isDay: Boolean, width: Float, height: Float): CloudScene? {
     val recipe = cloudRecipe(condition) ?: return null
     val palette = cloudPalette(recipe.tone, isDay)
@@ -174,8 +204,8 @@ internal fun buildCloudScene(condition: WeatherCondition, isDay: Boolean, width:
         SceneCloud(
             placement = p,
             sprite = buildCloudSprite(p.kind, p.seed, p.width, p.height, palette, lit = false, SpriteResolution),
-            litSprite = if (storm && p.kind != CloudKind.CUMULUS) {
-                buildCloudSprite(p.kind, p.seed, p.width, p.height, palette, lit = true, SpriteResolution)
+            litSprite = if (storm) {
+                buildCloudSprite(p.kind, p.seed, p.width, p.height, palette, lit = true, LitSpriteResolution)
             } else null
         )
     }
