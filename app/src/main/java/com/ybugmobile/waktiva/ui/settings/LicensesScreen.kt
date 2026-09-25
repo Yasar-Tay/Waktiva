@@ -33,15 +33,14 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
-import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -176,33 +175,22 @@ private fun AppVersionCard() {
         }
     }
 
-    val glassTheme = LocalGlassTheme.current
     val accentColor = Color.White.copy(alpha = 0.7f)
-    val bgColor = glassTheme.containerColor
-    val borderColor = glassTheme.borderColor
     val cardShape = RoundedCornerShape(18.dp)
 
-    Surface(
-        color = bgColor,
+    GlassSurface(
         shape = cardShape,
         modifier = Modifier
             .fillMaxWidth()
             .drawWithContent {
                 drawContent()
-                val cornerRadius = CornerRadius(18.dp.toPx())
                 drawRoundRect(
                     brush = Brush.horizontalGradient(
                         0f to accentColor.copy(alpha = 0.08f),
                         0.5f to Color.Transparent
                     ),
                     size = size,
-                    cornerRadius = cornerRadius
-                )
-                drawRoundRect(
-                    color = borderColor,
-                    size = size,
-                    cornerRadius = cornerRadius,
-                    style = Stroke(0.75.dp.toPx())
+                    cornerRadius = CornerRadius(18.dp.toPx())
                 )
             }
     ) {
@@ -277,7 +265,6 @@ private fun AppVersionCard() {
 
 @Composable
 private fun LicenseSection(title: String, content: String) {
-    val glassTheme = LocalGlassTheme.current
     Column(modifier = Modifier.padding(vertical = 12.dp)) {
         Text(
             text = title,
@@ -287,11 +274,7 @@ private fun LicenseSection(title: String, content: String) {
             )
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Surface(
-            color = glassTheme.containerColor,
-            shape = MaterialTheme.shapes.medium,
-            border = androidx.compose.foundation.BorderStroke(0.75.dp, glassTheme.borderColor)
-        ) {
+        GlassSurface(shape = MaterialTheme.shapes.medium) {
             Text(
                 text = content,
                 style = MaterialTheme.typography.bodyMedium,

@@ -34,6 +34,7 @@ import com.ybugmobile.waktiva.ui.home.composables.LocationSection
 import com.ybugmobile.waktiva.ui.qibla.composables.*
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthOverlay
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
 import com.ybugmobile.waktiva.ui.theme.GlassTheme
 import com.ybugmobile.waktiva.ui.theme.getGlassTheme
 import com.ybugmobile.waktiva.ui.theme.getGradientForTime
@@ -295,7 +296,7 @@ private fun QiblaContent(
                             isAccuracyLow = isAccuracyLow,
                             isAccuracyUnreliable = isAccuracyUnreliable,
                             onCalibrationClick = onCalibrationClick,
-                            containerColor = currentTheme.containerColor,
+                            glass = currentTheme,
                             contentColor = currentTheme.contentColor
                         )
 
@@ -303,8 +304,7 @@ private fun QiblaContent(
                             isMapView = isMapView,
                             onViewChange = { isMapView = it },
                             contentColor = currentTheme.contentColor,
-                            containerColor = currentTheme.containerColor,
-                            borderColor = currentTheme.borderColor
+                            glass = currentTheme
                         )
                     }
                 }
@@ -360,7 +360,7 @@ private fun QiblaContent(
                         isAccuracyLow = isAccuracyLow,
                         isAccuracyUnreliable = isAccuracyUnreliable,
                         onCalibrationClick = onCalibrationClick,
-                        containerColor = currentTheme.containerColor,
+                        glass = currentTheme,
                         contentColor = currentTheme.contentColor
                     )
                 }
@@ -396,12 +396,11 @@ private fun MapInteractionHintCard(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
+    GlassSurface(
         modifier = modifier.widthIn(max = 420.dp),
-        color = currentTheme.containerColor.copy(alpha = 0.96f),
         shape = RoundedCornerShape(24.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, currentTheme.borderColor),
-        shadowElevation = 10.dp
+        glass = currentTheme,
+        emphasis = 1f
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
             Text(
@@ -441,11 +440,10 @@ private fun LocationHeader(
     modifier: Modifier = Modifier
 ) {
     if (isMapView) {
-        Surface(
-            color = currentTheme.containerColor,
+        GlassSurface(
             shape = RoundedCornerShape(22.dp),
             modifier = modifier.fillMaxWidth().height(44.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, currentTheme.borderColor)
+            glass = currentTheme
         ) {
             Box(modifier = Modifier.padding(horizontal = 12.dp), contentAlignment = Alignment.CenterStart) {
                 LocationSection(
@@ -495,8 +493,7 @@ private fun TopHeaderRow(
             isMapView = isMapView,
             onViewChange = onViewChange,
             contentColor = currentTheme.contentColor,
-            containerColor = currentTheme.containerColor,
-            borderColor = currentTheme.borderColor
+            glass = currentTheme
         )
     }
 }

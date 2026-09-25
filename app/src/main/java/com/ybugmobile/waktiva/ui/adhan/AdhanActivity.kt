@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +35,7 @@ import com.ybugmobile.waktiva.data.worker.AdhanWorker
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
 import com.ybugmobile.waktiva.ui.theme.WaktivaTheme
 import com.ybugmobile.waktiva.ui.theme.getGradientForTime
 import dagger.hilt.android.AndroidEntryPoint
@@ -268,12 +268,11 @@ fun AdhanScreen(
                             .background(Color.White.copy(alpha = 0.05f), CircleShape)
                     )
 
-                    Surface(
+                    GlassSurface(
                         onClick = onDismiss,
                         modifier = Modifier.size(84.dp),
                         shape = CircleShape,
-                        color = Color.White.copy(alpha = 0.1f),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
+                        emphasis = 1f
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(

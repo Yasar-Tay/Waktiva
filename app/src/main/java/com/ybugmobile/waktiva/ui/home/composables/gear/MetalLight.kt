@@ -159,12 +159,6 @@ private fun chamferLight(center: Offset, radius: Float, light: GearLight, streng
     return if (reversed) edgeLight(center, radius, light, dark, lit) else edgeLight(center, radius, light, lit, dark)
 }
 
-/** Chamfer on the inner edge of a ring of [radius]: lit on the side facing away from the light. */
-internal fun DrawScope.holeBevel(center: Offset, radius: Float, light: GearLight, width: Float, strength: Float = 1f) {
-    val hole = Path().apply { addOval(Rect(center, radius)) }
-    bevel(hole, center, radius, light, width, strength, reversed = true)
-}
-
 /**
  * Fine circular graining for a ring from [inner] to [outer]: concentric hairlines of random
  * strength, grouped into a few paths so the whole grain draws in four calls. Rotationally

@@ -4,8 +4,6 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -27,7 +26,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.notification.NotificationHelper
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.waktiva.ui.theme.liquidGlass
 import com.ybugmobile.waktiva.utils.PermissionUtils
 
 @Composable
@@ -152,15 +153,10 @@ fun SystemHealthCard(
                 .padding(bottom = 20.dp)
                 .then(
                     if (showBackground) {
-                        val cardBackgroundColor = if (isLightMode) Color.White.copy(alpha = 0.12f) else Color.Black.copy(alpha = 0.2f)
-                        val cardBorderColor = if (isLightMode) Color.White.copy(alpha = 0.15f) else Color.White.copy(alpha = 0.1f)
-                        
+                        val cardShape = RoundedCornerShape(24.dp)
                         Modifier
-                            .background(
-                                color = cardBackgroundColor,
-                                shape = RoundedCornerShape(24.dp)
-                            )
-                            .border(1.dp, cardBorderColor, RoundedCornerShape(24.dp))
+                            .liquidGlass(cardShape, glassTheme)
+                            .clip(cardShape)
                             .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
                             .padding(20.dp)
                     } else {
@@ -200,12 +196,13 @@ fun SystemHealthCard(
 private fun HealthIssueItem(issue: HealthIssue, textColor: Color) {
     val context = LocalContext.current
 
-    Surface(
+    GlassSurface(
         onClick = { context.startActivity(issue.intent) },
-        color = issue.accentColor.copy(alpha = 0.1f),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.padding(bottom = 8.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, issue.accentColor.copy(alpha = 0.2f))
+        // Glass tinted with the issue's colour, so each warning keeps its hue
+        tint = issue.accentColor,
+        accent = issue.accentColor.copy(alpha = 0.35f)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),

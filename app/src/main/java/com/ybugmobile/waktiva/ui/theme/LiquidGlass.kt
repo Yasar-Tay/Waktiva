@@ -1,5 +1,8 @@
 package com.ybugmobile.waktiva.ui.theme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
@@ -20,6 +23,8 @@ import kotlin.math.min
  * - a body of glass that follows the [glass] theme: clear and brighter at the top on the dark
  *   night sky ([GlassTheme.isLightMode]), smoky and darker towards the bottom on the bright day
  *   sky so white text stays readable, toned for the weather like [GlassTheme.containerColor];
+ *   frosted and nearly opaque when the theme's container is (as over the Qibla map), so dark
+ *   text stays readable over busy content;
  * - a soft sheen across the top and a faint shade along the bottom, as a thick lens shows;
  * - a thin refraction band just inside the edge;
  * - a bright specular rim, strongest on the upper-left edge that faces the light and again
@@ -39,12 +44,19 @@ fun Modifier.liquidGlass(
 ): Modifier = drawWithCache {
     val path = Path().apply { addOutline(shape.createOutline(size, layoutDirection, this@drawWithCache)) }
     val e = emphasis.coerceIn(0f, 1f)
-    val smoky = tint == null && !glass.isLightMode
+    val frosted = tint == null && glass.containerColor.alpha >= 0.5f
+    val smoky = tint == null && !frosted && !glass.isLightMode
     val base = tint ?: glass.containerColor.copy(alpha = 1f)
     val rimWidth = (1f + 0.5f * e).dp.toPx()
     val shadowOffset = 3.dp.toPx()
 
-    val body = if (smoky) {
+    val body = if (frosted) {
+        val density = glass.containerColor.alpha
+        Brush.verticalGradient(
+            0f to base.copy(alpha = min(1f, density + 0.04f)),
+            1f to base.copy(alpha = density * 0.9f)
+        )
+    } else if (smoky) {
         Brush.verticalGradient(
             0f to base.copy(alpha = 0.10f + 0.06f * e),
             0.45f to base.copy(alpha = 0.16f + 0.06f * e),
@@ -94,5 +106,48 @@ fun Modifier.liquidGlass(
         drawContent()
         accent?.let { drawPath(path, it, style = Stroke(2.dp.toPx())) }
         drawPath(path, rim, style = Stroke(rimWidth))
+    }
+}
+
+/**
+ * A card of liquid glass: the reusable way to put content on glass anywhere in the app.
+ *
+ * A transparent [Surface] clipped to [shape], with [liquidGlass] drawn around it for [glass]
+ * (the app's glass theme unless a screen has its own), and clickable when [onClick] is given.
+ * [tint], [emphasis] and [accent] are as for [liquidGlass]: colour the glass, make it denser for
+ * a selected or primary item, or ring it in a colour.
+ */
+@Composable
+fun GlassSurface(
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(24.dp),
+    onClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
+    glass: GlassTheme = LocalGlassTheme.current,
+    tint: Color? = null,
+    emphasis: Float = 0f,
+    accent: Color? = null,
+    contentColor: Color = glass.contentColor,
+    content: @Composable () -> Unit
+) {
+    val glassModifier = modifier.liquidGlass(shape, glass, tint, emphasis, accent)
+    if (onClick != null) {
+        Surface(
+            onClick = onClick,
+            modifier = glassModifier,
+            enabled = enabled,
+            shape = shape,
+            color = Color.Transparent,
+            contentColor = contentColor,
+            content = content
+        )
+    } else {
+        Surface(
+            modifier = glassModifier,
+            shape = shape,
+            color = Color.Transparent,
+            contentColor = contentColor,
+            content = content
+        )
     }
 }

@@ -1,6 +1,5 @@
 package com.ybugmobile.waktiva.ui.settings.composables
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -9,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 
 @Composable
@@ -28,10 +28,8 @@ fun SettingsSection(
             color = glassTheme.contentColor.copy(alpha = 0.4f),
             modifier = Modifier.padding(start = 8.dp, bottom = 12.dp)
         )
-        Surface(
+        GlassSurface(
             shape = RoundedCornerShape(28.dp),
-            color = glassTheme.containerColor,
-            border = BorderStroke(1.dp, glassTheme.borderColor),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
