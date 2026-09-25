@@ -9,8 +9,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 /**
- * The countdown widget: a small tile, 2×1 to start with, showing the time left to the next
- * prayer as large as it fits, beside the main [WaktivaWidget] rather than in place of it.
+ * The countdown widget: a full-width 4×1 bar showing the time left to the next prayer at the
+ * bar's full height, beside the main [WaktivaWidget] rather than in place of it.
  *
  * It shares the main widget's data and refresh path: [WaktivaWidget.updateAll] renders both at
  * every prayer boundary, and this provider only answers the launcher's own update requests.

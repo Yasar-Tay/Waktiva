@@ -305,12 +305,12 @@ class WaktivaWidget : AppWidgetProvider() {
         }
 
         /**
-         * The countdown widget: the next prayer's name and time in a small top line, the countdown
-         * as large as the cell allows, and a stroke of the prayer's colour, on the sky of the hour
+         * The countdown widget, a 4×1 bar: the next prayer's name, time and a stroke of its colour
+         * on the left, the countdown at the bar's full height on the right, on the sky of the hour
          * lit by that colour (see [countdownBackground]).
          */
         private fun buildCountdown(context: Context, snapshot: Snapshot): RemoteViews {
-            val views = RemoteViews(context.packageName, R.layout.widget_countdown_small)
+            val views = RemoteViews(context.packageName, R.layout.widget_countdown_bar)
             views.setOnClickPendingIntent(android.R.id.background, openAppIntent(context))
 
             val next = snapshot.nextPrayer
@@ -449,29 +449,30 @@ class WaktivaWidget : AppWidgetProvider() {
         }
 
         /**
-         * The countdown widget's background: the sky of the hour, shaded towards the left where the
-         * countdown sits so white figures read on a bright day, and a glow of the next prayer's
-         * [accent] rising from the top right corner. Cached per sky and prayer.
+         * The countdown widget's background: the sky of the hour, shaded towards the right where the
+         * countdown sits so its white figures read on a bright day, and a glow of the next prayer's
+         * [accent] spreading from the left edge behind the prayer's name. Laid out for a 4×1 bar.
+         * Cached per sky and prayer.
          */
         private fun countdownBackground(sky: List<Int>, accent: Int): Bitmap {
             val key = sky.joinToString(",") + "|" + accent
             cachedCountdownBitmap?.takeIf { key == cachedCountdownKey }?.let { return it }
 
-            val width = 240f
-            val height = 120f
+            val width = 400f
+            val height = 100f
             val bitmap = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             canvas.drawBitmap(gradientBitmap(sky).let { Bitmap.createScaledBitmap(it, width.toInt(), height.toInt(), true) }, 0f, 0f, null)
             canvas.drawRect(0f, 0f, width, height, Paint().apply {
                 shader = LinearGradient(
                     0f, 0f, width, 0f,
-                    intArrayOf(0x47000000, 0x14000000, 0x00000000), floatArrayOf(0f, 0.55f, 1f),
+                    intArrayOf(0x00000000, 0x14000000, 0x47000000), floatArrayOf(0f, 0.45f, 1f),
                     Shader.TileMode.CLAMP
                 )
             })
             canvas.drawRect(0f, 0f, width, height, Paint().apply {
                 shader = RadialGradient(
-                    width * 0.92f, height * 0.05f, width * 0.75f,
+                    width * 0.08f, height * 0.5f, width * 0.5f,
                     intArrayOf(withAlpha(accent, 0x8C), withAlpha(accent, 0x26), withAlpha(accent, 0)),
                     floatArrayOf(0f, 0.45f, 1f),
                     Shader.TileMode.CLAMP
