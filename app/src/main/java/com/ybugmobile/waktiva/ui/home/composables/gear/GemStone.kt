@@ -139,22 +139,29 @@ internal fun DrawScope.gemStone(
         )
     }
 
-    if (sparkle > 0f) {
-        val reach = r * 0.75f * sparkle
-        for (arm in listOf(Offset(reach, 0f), Offset(0f, reach))) {
-            drawLine(
-                Brush.linearGradient(
-                    0f to Color.White.copy(alpha = 0f),
-                    0.5f to Color.White.copy(alpha = 0.95f),
-                    1f to Color.White.copy(alpha = 0f),
-                    start = glint - arm,
-                    end = glint + arm
-                ),
-                glint - arm,
-                glint + arm,
-                1.2f * pxPerDp
-            )
-        }
+    if (sparkle > 0f) gemSparkle(at, cut, light, sparkle, pxPerDp)
+}
+
+/**
+ * The twinkle of a [gemStone] at [at]: a cross of light over its highlight, [sparkle] (0..1) long.
+ * Drawable on its own, so a dial can keep the stone still and animate only this.
+ */
+internal fun DrawScope.gemSparkle(at: Offset, cut: GemCut, light: GearLight, sparkle: Float, pxPerDp: Float) {
+    val glint = at + light.towards * (cut.stone * 0.57f)
+    val reach = cut.radius * 0.75f * sparkle
+    for (arm in listOf(Offset(reach, 0f), Offset(0f, reach))) {
+        drawLine(
+            Brush.linearGradient(
+                0f to Color.White.copy(alpha = 0f),
+                0.5f to Color.White.copy(alpha = 0.95f),
+                1f to Color.White.copy(alpha = 0f),
+                start = glint - arm,
+                end = glint + arm
+            ),
+            glint - arm,
+            glint + arm,
+            1.2f * pxPerDp
+        )
     }
 }
 

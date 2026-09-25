@@ -41,6 +41,7 @@ import com.ybugmobile.waktiva.ui.theme.getGlassTheme
 import com.ybugmobile.waktiva.ui.theme.getGradientForTime
 import org.maplibre.android.MapLibre
 import org.maplibre.android.geometry.LatLng
+import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,20 +75,17 @@ fun QiblaScreen(
     var showCalibrationDialog by remember { mutableStateOf(false) }
     var showHealthOverlay by remember { mutableStateOf(false) }
 
-    val localTime = state.currentTime.toLocalTime()
-    val backgroundGradient = getGradientForTime(localTime, state.currentPrayerDay)
-    val glassTheme = getGlassTheme(localTime, state.currentPrayerDay)
-
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val pulseAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.1f,
-        targetValue = 0.3f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1500, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulseAlpha"
-    )
+    // The sky only changes by the minute, so the gradient and glass aren't rebuilt on every
+    // compass reading.
+    val minuteTime = remember(state.currentTime.hour, state.currentTime.minute) {
+        state.currentTime.toLocalTime().truncatedTo(ChronoUnit.MINUTES)
+    }
+    val backgroundGradient = remember(minuteTime, state.currentPrayerDay) {
+        getGradientForTime(minuteTime, state.currentPrayerDay)
+    }
+    val glassTheme = remember(minuteTime, state.currentPrayerDay) {
+        getGlassTheme(minuteTime, state.currentPrayerDay)
+    }
 
     val isAligned by remember {
         derivedStateOf {
@@ -123,7 +121,6 @@ fun QiblaScreen(
                 state = state,
                 isAccuracyLow = isAccuracyLow,
                 isAccuracyUnreliable = isAccuracyUnreliable,
-                pulseAlpha = pulseAlpha,
                 currentAzimuth = state.compassData.azimuth,
                 isAligned = isAligned,
                 alignmentColor = alignmentColor,
@@ -157,7 +154,6 @@ private fun QiblaContent(
     state: QiblaViewState,
     isAccuracyLow: Boolean,
     isAccuracyUnreliable: Boolean,
-    pulseAlpha: Float,
     currentAzimuth: Float,
     isAligned: Boolean,
     alignmentColor: Color,
@@ -335,7 +331,6 @@ private fun QiblaContent(
                                 CompassContainer(
                                     isAccuracyLow = isAccuracyLow,
                                     isAligned = isAligned,
-                                    pulseAlpha = pulseAlpha,
                                     currentAzimuth = currentAzimuth,
                                     state = state,
                                     alignmentColor = alignmentColor,
@@ -504,7 +499,6 @@ private fun TopHeaderRow(
 private fun CompassContainer(
     isAccuracyLow: Boolean,
     isAligned: Boolean,
-    pulseAlpha: Float,
     currentAzimuth: Float,
     state: QiblaViewState,
     alignmentColor: Color,

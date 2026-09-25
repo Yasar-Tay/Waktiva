@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
@@ -69,9 +70,12 @@ fun QiblaAlignmentEffect(
         while (true) withFrameNanos { now.longValue = it }
     }
 
+    // Its own layer, so redrawing the light every frame doesn't redraw the compass beneath it.
+    // The layer isn't offscreen, so the light still adds onto the compass.
     Spacer(
         modifier
             .fillMaxSize()
+            .graphicsLayer()
             .drawWithCache {
                 val light = NurLight(size.center, nurRadius(size.minDimension, density), density, alignmentColor)
                 onDrawBehind {

@@ -20,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlin.math.abs
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -36,7 +37,12 @@ class QiblaViewModel @Inject constructor(
 
     val settings = settingsManager.settingsFlow
 
+    // The filtered heading still wobbles by fractions of a degree while the phone lies still.
+    // Dropping those wobbles lets the screen and the compass animation go idle.
     val compassData: Flow<CompassData> = compassManager.compassFlow
+        .distinctUntilChanged { old, new ->
+            old.accuracy == new.accuracy && headingDifference(old.azimuth, new.azimuth) < HEADING_DEADBAND_DEGREES
+        }
 
     val currentTime = timeManager.currentTime
 
@@ -216,6 +222,11 @@ class QiblaViewModel @Inject constructor(
         }
     }
 
+    private fun headingDifference(first: Float, second: Float): Float {
+        val diff = abs(first - second) % 360f
+        return minOf(diff, 360f - diff)
+    }
+
     private fun checkSystemIssues(): Boolean {
         return !PermissionUtils.isLocationEnabled(context) || 
                PermissionUtils.isDoNotDisturbActive(context) || 
@@ -224,5 +235,8 @@ class QiblaViewModel @Inject constructor(
                !PermissionUtils.isNotificationPermissionGranted(context)
     }
 }
+
+/** Heading changes smaller than this are sensor noise, well inside the 3° Qibla alignment band. */
+private const val HEADING_DEADBAND_DEGREES = 0.5f
 
 data class StateQuint<A, B, C, D, E>(val first: A, val second: B, val third: C, val fourth: D, val fifth: E)

@@ -25,6 +25,7 @@ import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
 import com.ybugmobile.waktiva.data.sensor.CompassManager
+import com.ybugmobile.waktiva.ui.home.composables.gear.SunLitDials
 import com.ybugmobile.waktiva.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -134,12 +135,18 @@ class HomeViewModel @Inject constructor(
         .map { it.azimuth }
         .distinctUntilChanged { old, new -> angularDifferenceDegrees(old, new) < 2f }
 
-    val atmosphereState: StateFlow<HomeAtmosphereState> = combine(sunPosition, compassAzimuth) { sun, compass ->
-        HomeAtmosphereState(
-            sunAzimuth = sun.azimuth.toFloat(),
-            sunAltitude = sun.altitude.toFloat(),
-            compassAzimuth = compass
-        )
+    // Only the sun-lit dials use the sun and the compass. While they are off, neither is computed
+    // and the compass sensor stays off, instead of re-rendering the screen whenever the phone turns.
+    val atmosphereState: StateFlow<HomeAtmosphereState> = if (SunLitDials) {
+        combine(sunPosition, compassAzimuth) { sun, compass ->
+            HomeAtmosphereState(
+                sunAzimuth = sun.azimuth.toFloat(),
+                sunAltitude = sun.altitude.toFloat(),
+                compassAzimuth = compass
+            )
+        }
+    } else {
+        flowOf(HomeAtmosphereState())
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeAtmosphereState())
 
     val nextPrayerInfo: Flow<NextPrayer?> = combine(todayPrayerDay, tomorrowPrayerDay, currentTime, settings) { today, tomorrow, now, currentSettings ->

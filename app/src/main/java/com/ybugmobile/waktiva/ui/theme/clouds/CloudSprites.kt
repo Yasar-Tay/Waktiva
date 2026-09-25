@@ -11,6 +11,7 @@ import android.graphics.RadialGradient
 import android.graphics.RectF
 import android.graphics.Shader
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import kotlin.math.PI
 import kotlin.math.ceil
@@ -176,4 +177,30 @@ internal fun buildCloudSprite(
     }
 
     return CloudSprite(soft.asImageBitmap(), pad, cw, ch)
+}
+
+/**
+ * Fades this sprite, drawn with its top edge at [top] in the scene, out down the sky band that
+ * ends at [bottom] (see [SkyFade]). Clouds only drift sideways, so the fade is baked in once here
+ * instead of fading the whole sky through an offscreen layer every frame.
+ */
+internal fun CloudSprite.fadeDownSky(top: Float, bottom: Float) {
+    val bitmap = image.asAndroidBitmap()
+    val resolution = bitmap.width / width
+    val mask = Paint().apply {
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
+        shader = LinearGradient(
+            0f, 0f, 0f, bottom,
+            SkyFade.map { (_, alpha) -> withAlpha(Color.BLACK, alpha) }.toIntArray(),
+            SkyFade.map { (at, _) -> at }.toFloatArray(),
+            Shader.TileMode.CLAMP
+        )
+    }
+    val spriteWidth = width
+    val spriteHeight = height
+    Canvas(bitmap).apply {
+        scale(resolution, resolution)
+        translate(0f, -top)
+        drawRect(0f, top, spriteWidth, top + spriteHeight, mask)
+    }
 }

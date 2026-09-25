@@ -7,13 +7,6 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameNanos
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -206,8 +199,8 @@ internal fun CloudPlacement.leftAt(seconds: Float, viewportWidth: Float): Float 
 
 internal class SceneCloud(val placement: CloudPlacement, val sprite: CloudSprite, val litSprite: CloudSprite?)
 
-/** [fadeBottom]: where the clouds have faded out completely, or null for fog, which never fades. */
-internal class CloudScene(val clouds: List<SceneCloud>, val viewportWidth: Float, val fadeBottom: Float?)
+/** The clouds come already faded out down the sky band (see [fadeDownSky]); fog never fades. */
+internal class CloudScene(val clouds: List<SceneCloud>, val viewportWidth: Float)
 
 /** Sprites are rendered at half resolution; the clouds are soft, so nothing is lost. */
 private const val SpriteResolution = 0.5f
@@ -219,16 +212,19 @@ internal fun buildCloudScene(condition: WeatherCondition, isDay: Boolean, width:
     val recipe = cloudRecipe(condition) ?: return null
     val palette = cloudPalette(recipe.tone, isDay)
     val storm = recipe.tone == CloudTone.STORM
+    val fadeBottom = skyFadeBottom(recipe, width, height)
     val clouds = layoutClouds(recipe, width, height).map { p ->
-        SceneCloud(
-            placement = p,
-            sprite = buildCloudSprite(p.kind, p.seed, p.width, p.height, palette, lit = false, SpriteResolution),
-            litSprite = if (storm) {
-                buildCloudSprite(p.kind, p.seed, p.width, p.height, palette, lit = true, LitSpriteResolution)
-            } else null
-        )
+        val sprite = buildCloudSprite(p.kind, p.seed, p.width, p.height, palette, lit = false, SpriteResolution)
+        val litSprite = if (storm) {
+            buildCloudSprite(p.kind, p.seed, p.width, p.height, palette, lit = true, LitSpriteResolution)
+        } else null
+        if (fadeBottom != null) {
+            sprite.fadeDownSky(p.top - sprite.pad, fadeBottom)
+            litSprite?.fadeDownSky(p.top - litSprite.pad, fadeBottom)
+        }
+        SceneCloud(p, sprite, litSprite)
     }
-    return CloudScene(clouds, width, skyFadeBottom(recipe, width, height))
+    return CloudScene(clouds, width)
 }
 
 /** The scene for this weather and viewport, rendered off the main thread; null until ready. */
@@ -255,32 +251,10 @@ internal fun rememberSceneClock(): State<Float> {
 }
 
 /**
- * Draws the drifting clouds, fading out down the sky band. [flash] (0..1) lights storm clouds
- * from within; [fade] (0..1) fades the whole sky in when a new scene is ready.
+ * Draws the drifting clouds. [flash] (0..1) lights storm clouds from within; [fade] (0..1)
+ * fades the whole sky in when a new scene is ready.
  */
 internal fun DrawScope.drawClouds(scene: CloudScene, seconds: Float, flash: Float, fade: Float) {
-    val bottom = scene.fadeBottom
-    if (bottom == null) {
-        drawSprites(scene, seconds, flash, fade)
-        return
-    }
-    // Draw the clouds into a layer, then fade that layer out towards the band's bottom.
-    val band = Size(size.width, bottom)
-    drawContext.canvas.saveLayer(Rect(Offset.Zero, band), Paint())
-    drawSprites(scene, seconds, flash, fade)
-    drawRect(
-        brush = Brush.verticalGradient(
-            *SkyFade.map { (at, alpha) -> at to Color.Black.copy(alpha = alpha) }.toTypedArray(),
-            startY = 0f,
-            endY = bottom
-        ),
-        size = band,
-        blendMode = BlendMode.DstIn
-    )
-    drawContext.canvas.restore()
-}
-
-private fun DrawScope.drawSprites(scene: CloudScene, seconds: Float, flash: Float, fade: Float) {
     for (cloud in scene.clouds) {
         val p = cloud.placement
         val left = p.leftAt(seconds, scene.viewportWidth)

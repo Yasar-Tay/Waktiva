@@ -57,30 +57,33 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
         val ringRot = frame.direction * (frame.dayTurn + frame.phase)
         val accent = frame.current.color
 
-        drawCircle(Brush.radialGradient(listOf(accent.copy(alpha = 0.10f), accent.copy(alpha = 0f)), c, outer), outer, c)
-        haloRing(c, mid, outer * 0.24f, lerp(palette.coolHalo, accent, 0.3f), 0.3f)
-        elevation(bezel, 3f * dp, light)
+        // Still parts are replayed from layers; only the ring gear, its marks and the prayer gears turn.
+        frame.still.draw(this, 0) {
+            drawCircle(Brush.radialGradient(listOf(accent.copy(alpha = 0.10f), accent.copy(alpha = 0f)), c, outer), outer, c)
+            haloRing(c, mid, outer * 0.24f, lerp(palette.coolHalo, accent, 0.3f), 0.3f)
+            elevation(bezel, 3f * dp, light)
 
-        drawPath(bezel, palette.steelSheen.brush(c, light))
-        ringFinish(c, outer, inner, light, bezelGrain, dp)
-        bevel(bezelEdge, c, outer, light, 1.3f * dp)
-        holeBevel(c, inner, light, 1.2f * dp)
-        drawCircle(Color(0xB30A0E16), inner, c, style = Stroke(dp))
-        drawCircle(Color(0xB30A0E16), outer, c, style = Stroke(dp))
-        // The enamel track sits in a groove cut into the bezel.
-        drawPath(groove, Color(0x8C0C101A))
-        holeBevel(c, mid - s * 0.012f, light, 0.8f * dp, 0.8f)
-        bevel(grooveEdge, c, mid, light, 0.8f * dp, 0.8f, reversed = true)
-        prayerTrack(frame, c, mid, max(3f * dp, s * 0.011f), 0.95f)
-        for (i in 0 until 24) {
-            val a = TAU / 4 + i * TAU / 24
-            val major = i % 6 == 0
-            drawLine(
-                Color(0xFF141A28).copy(alpha = if (major) 0.85f else 0.45f),
-                pointOn(c, outer - 1.5f * dp, a),
-                pointOn(c, outer - if (major) s * 0.024f else s * 0.012f, a),
-                (if (major) 1.6f else 0.9f) * dp
-            )
+            drawPath(bezel, palette.steelSheen.brush(c, light))
+            ringFinish(c, outer, inner, light, bezelGrain, dp)
+            bevel(bezelEdge, c, outer, light, 1.3f * dp)
+            holeBevel(c, inner, light, 1.2f * dp)
+            drawCircle(Color(0xB30A0E16), inner, c, style = Stroke(dp))
+            drawCircle(Color(0xB30A0E16), outer, c, style = Stroke(dp))
+            // The enamel track sits in a groove cut into the bezel.
+            drawPath(groove, Color(0x8C0C101A))
+            holeBevel(c, mid - s * 0.012f, light, 0.8f * dp, 0.8f)
+            bevel(grooveEdge, c, mid, light, 0.8f * dp, 0.8f, reversed = true)
+            prayerTrack(frame, c, mid, max(3f * dp, s * 0.011f), 0.95f)
+            for (i in 0 until 24) {
+                val a = TAU / 4 + i * TAU / 24
+                val major = i % 6 == 0
+                drawLine(
+                    Color(0xFF141A28).copy(alpha = if (major) 0.85f else 0.45f),
+                    pointOn(c, outer - 1.5f * dp, a),
+                    pointOn(c, outer - if (major) s * 0.024f else s * 0.012f, a),
+                    (if (major) 1.6f else 0.9f) * dp
+                )
+            }
         }
 
         elevation(ring, 2f * dp, light, ringRot, c)
@@ -92,7 +95,9 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
             bevel(internalTeeth, c, pitch, ringLight, dp, reversed = true)
             drawPath(ring, Color(0x8C0A0E16), style = Stroke(0.7f * dp))
         }
-        ringFinish(c, inner, pitch, light, ringGrain, dp, round = true, glint = false)
+        frame.still.draw(this, 1) {
+            ringFinish(c, inner, pitch, light, ringGrain, dp, round = true, glint = false)
+        }
         // Turning marks on the ring face, over its finish.
         rotate(ringRot.toDegrees(), c) {
             for (i in 0 until 12) {
@@ -100,40 +105,52 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
             }
         }
 
-        frame.bridge?.draw(this)
-
-        if (frame.showNow) {
-            val handAngle = dayAngle(frame.nowMinutes, frame.rtl)
-            rotate(handAngle.toDegrees(), c) {
-                val needle = Path().apply {
-                    moveTo(c.x, c.y - s * 0.004f)
-                    lineTo(c.x + mid - s * 0.02f, c.y - s * 0.002f)
-                    lineTo(c.x + mid, c.y)
-                    lineTo(c.x + mid - s * 0.02f, c.y + s * 0.002f)
-                    lineTo(c.x, c.y + s * 0.004f)
-                    close()
-                }
-                drawPath(
-                    needle,
-                    Brush.linearGradient(
-                        0f to palette.tone(Color(0x40D2DCEC)),
-                        0.8f to palette.tone(Color(0xE6E6ECF6)),
-                        1f to accent,
-                        start = c,
-                        end = c + Offset(mid, 0f)
-                    )
-                )
-            }
-            nowIndicator(c, mid, handAngle, accent, dp)
+        frame.still.draw(this, 2) {
+            frame.bridge?.draw(this)
+            if (frame.showNow) drawNeedle(frame)
+            planetHalo(frame.current, pointOn(c, pitch - rPlanet, dayAngle(frame.current.minutes, frame.rtl)), rPlanet)
         }
 
         frame.prayers.forEach { p ->
             val theta = dayAngle(p.minutes, frame.rtl)
-            val at = pointOn(c, pitch - rPlanet, theta)
             val rotation = meshInternal(ringRot, MAIN_TEETH, theta, PLANET_TEETH)
-            planet(p, at, rPlanet, rotation, planetPath, palette.steelSheen, light, dp, isCurrent = p.type == frame.current.type)
-            timeLabel(frame, p.label, pointOn(c, pitch - 2 * rPlanet - addPlanet - s * 0.035f, theta))
+            planetGear(pointOn(c, pitch - rPlanet, theta), rPlanet, rotation, planetPath, palette.steelSheen, light, dp)
         }
+
+        frame.still.draw(this, 3) {
+            frame.prayers.forEach { p ->
+                val theta = dayAngle(p.minutes, frame.rtl)
+                planetFace(p, pointOn(c, pitch - rPlanet, theta), rPlanet, light, dp, isCurrent = p.type == frame.current.type)
+                timeLabel(frame, p.label, pointOn(c, pitch - 2 * rPlanet - addPlanet - s * 0.035f, theta))
+            }
+        }
+    }
+
+    /** The needle pointing at the time of day, and the marker on the track where it points. */
+    private fun DrawScope.drawNeedle(frame: GearFrame) {
+        val accent = frame.current.color
+        val handAngle = dayAngle(frame.nowMinutes, frame.rtl)
+        rotate(handAngle.toDegrees(), c) {
+            val needle = Path().apply {
+                moveTo(c.x, c.y - s * 0.004f)
+                lineTo(c.x + mid - s * 0.02f, c.y - s * 0.002f)
+                lineTo(c.x + mid, c.y)
+                lineTo(c.x + mid - s * 0.02f, c.y + s * 0.002f)
+                lineTo(c.x, c.y + s * 0.004f)
+                close()
+            }
+            drawPath(
+                needle,
+                Brush.linearGradient(
+                    0f to frame.palette.tone(Color(0x40D2DCEC)),
+                    0.8f to frame.palette.tone(Color(0xE6E6ECF6)),
+                    1f to accent,
+                    start = c,
+                    end = c + Offset(mid, 0f)
+                )
+            )
+        }
+        nowIndicator(c, mid, handAngle, accent, dp)
     }
 
     private companion object {

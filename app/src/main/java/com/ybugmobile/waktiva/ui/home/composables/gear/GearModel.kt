@@ -2,6 +2,8 @@ package com.ybugmobile.waktiva.ui.home.composables.gear
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.layer.GraphicsLayer
+import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.text.TextMeasurer
@@ -36,10 +38,36 @@ internal class GearFrame(
     /** Material colours, toned for the current weather. */
     val palette: GearPalette,
     /** Where the light on the metal comes from: the sun when it gives a direction. */
-    val light: GearLight
+    val light: GearLight,
+    /** Layers for the parts that stay still from frame to frame. */
+    val still: StillParts
 ) {
     val direction get() = if (rtl) -1f else 1f
     val dayTurn get() = nowMinutes / 1440f * TAU
+}
+
+/**
+ * The parts of a dial that stay still from frame to frame, recorded once into layers and
+ * replayed every frame, so only the turning parts are drawn afresh. What the still parts show
+ * (time to the minute, current prayer, palette, light) must be fixed for this instance's
+ * lifetime; build a new one whenever any of it changes, with [MAX_PARTS] fresh [layers].
+ */
+internal class StillParts(private val layers: List<GraphicsLayer>) {
+    private val recorded = BooleanArray(layers.size)
+
+    /** Draws still part [index] (below the number of [layers]), recording it with [block] the first time. */
+    fun draw(scope: DrawScope, index: Int, block: DrawScope.() -> Unit) = with(scope) {
+        val layer = layers[index]
+        if (!recorded[index]) {
+            layer.record { block() }
+            recorded[index] = true
+        }
+        drawLayer(layer)
+    }
+
+    companion object {
+        const val MAX_PARTS = 4
+    }
 }
 
 /** Where a dial has room for the special-day bridge below its centre. */

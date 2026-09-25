@@ -106,30 +106,36 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
             drawCircle(frame.palette.gold.copy(alpha = 0.22f), hub * 0.8f, c, style = hair)
         }
 
-        drawRing(frame)
+        // Everything over the movement stays still, so it is replayed from a layer; only the
+        // current stone's twinkle is drawn afresh.
+        frame.still.draw(this, 0) {
+            drawRing(frame)
 
-        frame.bridge?.draw(this)
+            frame.bridge?.draw(this)
 
-        if (frame.showNow) {
-            val handAngle = dayAngle(frame.nowMinutes, frame.rtl)
-            val tip = pointOn(c, track - s * 0.03f, handAngle)
-            drawLine(
-                Brush.linearGradient(listOf(Color.White.copy(alpha = 0f), Color.White.copy(alpha = 0.75f)), start = c, end = tip),
-                c, tip, 1.5f * dp, StrokeCap.Round
-            )
-            nowIndicator(c, track, handAngle, frame.current.color, dp)
+            if (frame.showNow) {
+                val handAngle = dayAngle(frame.nowMinutes, frame.rtl)
+                val tip = pointOn(c, track - s * 0.03f, handAngle)
+                drawLine(
+                    Brush.linearGradient(listOf(Color.White.copy(alpha = 0f), Color.White.copy(alpha = 0.75f)), start = c, end = tip),
+                    c, tip, 1.5f * dp, StrokeCap.Round
+                )
+                nowIndicator(c, track, handAngle, frame.current.color, dp)
+            }
+
+            frame.prayers.forEach { p ->
+                val theta = dayAngle(p.minutes, frame.rtl)
+                val at = pointOn(c, track, theta)
+                val isCurrent = p.type == frame.current.type
+                val radius = if (isCurrent) badgeCurrent else badge
+                if (isCurrent) halo(at, radius * 0.6f, radius * 2.2f, p.color, 0.35f)
+                gemStone(p, at, if (isCurrent) stoneCurrent else stone, frame.palette.brassSheen, frame.light, frame.palette.gold, dp)
+                timeLabel(frame, p.label, pointOn(c, track - radius - s * 0.05f, theta))
+            }
         }
 
-        frame.prayers.forEach { p ->
-            val theta = dayAngle(p.minutes, frame.rtl)
-            val at = pointOn(c, track, theta)
-            val isCurrent = p.type == frame.current.type
-            val radius = if (isCurrent) badgeCurrent else badge
-            if (isCurrent) halo(at, radius * 0.6f, radius * 2.2f, p.color, 0.35f)
-            val sparkle = if (isCurrent) 0.55f + 0.45f * abs(sin(frame.phase * 9)) else 0f
-            gemStone(p, at, if (isCurrent) stoneCurrent else stone, frame.palette.brassSheen, frame.light, frame.palette.gold, dp, sparkle)
-            timeLabel(frame, p.label, pointOn(c, track - radius - s * 0.05f, theta))
-        }
+        val sparkle = 0.55f + 0.45f * abs(sin(frame.phase * 9))
+        gemSparkle(pointOn(c, track, dayAngle(frame.current.minutes, frame.rtl)), stoneCurrent, frame.light, sparkle, dp)
     }
 
     /**

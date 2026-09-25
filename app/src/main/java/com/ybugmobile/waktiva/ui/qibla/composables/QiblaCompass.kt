@@ -130,10 +130,12 @@ internal fun GearCompass(
     }
 
     Box(modifier.size(CompassSize)) {
-        // Bezel and halo
+        // Bezel and halo. Each part has its own layer, so the parts redrawn as the compass
+        // turns don't make the others redraw with them.
         Spacer(
             Modifier
                 .fillMaxSize()
+                .graphicsLayer()
                 .drawWithCache {
                     val g = CompassGeometry(size, density)
                     val light = GearLight.Default
@@ -169,6 +171,7 @@ internal fun GearCompass(
         Spacer(
             Modifier
                 .fillMaxSize()
+                .graphicsLayer()
                 .drawWithCache {
                     val g = CompassGeometry(size, density)
                     val letters = look.letters.map { (text, bearing) ->
@@ -201,6 +204,7 @@ internal fun GearCompass(
         Spacer(
             Modifier
                 .fillMaxSize()
+                .graphicsLayer()
                 .drawWithCache {
                     val g = CompassGeometry(size, density)
                     val needle = CompassNeedle(g, look)

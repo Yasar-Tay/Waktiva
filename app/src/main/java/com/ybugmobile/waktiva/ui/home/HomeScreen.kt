@@ -29,6 +29,7 @@ import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.ui.home.composables.*
+import com.ybugmobile.waktiva.ui.home.composables.gear.SunLitDials
 import com.ybugmobile.waktiva.ui.home.composables.gear.sunLightAngle
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthOverlay
@@ -358,6 +359,3 @@ fun HomeScreenContent(
         }
     }
 }
-
-/** Whether the gear dials' metal follows the real sun (see sunLightAngle); off, it is lit from the upper left. */
-private const val SunLitDials = false

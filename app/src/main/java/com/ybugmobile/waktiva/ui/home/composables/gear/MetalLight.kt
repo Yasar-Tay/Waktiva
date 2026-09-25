@@ -61,6 +61,13 @@ internal fun sunLightAngle(sunAzimuth: Float, sunAltitude: Float, heading: Float
     return blendAngle(GearLight.DEFAULT_ANGLE, sunAngle, clarity)
 }
 
+/**
+ * Whether the gear dials' metal follows the real sun (see [sunLightAngle]); off, it is lit from
+ * the upper left. While it is off, the home screen neither computes the sun's position nor
+ * listens to the compass, since nothing else there uses them.
+ */
+internal const val SunLitDials = false
+
 /** Angle [t] of the way from [from] to [to], turning the short way round. */
 internal fun blendAngle(from: Float, to: Float, t: Float): Float {
     var delta = (to - from) % TAU

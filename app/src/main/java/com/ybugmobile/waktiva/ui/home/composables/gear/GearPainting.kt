@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
@@ -51,9 +50,11 @@ internal fun annulus(center: Offset, outer: Float, inner: Float) = Path().apply 
 
 /**
  * Lifts a metal part off the dial: a soft, light shadow of [path], cast [depth] away from the
- * [light]. A faint silhouette under several widening, fainter strokes keeps it soft without blur
- * filters, which older Android versions don't render. Pass the part's [rotation]
- * (radians, around [pivot]) so the shadow turns with the part but still falls away from the light.
+ * [light]. Two faint silhouettes, the second cast further, soften its far edge without blur
+ * filters, which older Android versions don't render. (Widening strokes looked a little softer
+ * but cost several times more, and the turning gears redraw their shadows every frame.) Pass the
+ * part's [rotation] (radians, around [pivot]) so the shadow turns with the part but still falls
+ * away from the light.
  */
 internal fun DrawScope.elevation(
     path: Path,
@@ -62,15 +63,15 @@ internal fun DrawScope.elevation(
     rotation: Float = 0f,
     pivot: Offset = center
 ) {
-    translate(-light.towards.x * depth, -light.towards.y * depth) {
-        rotate(rotation.toDegrees(), pivot) {
-            for (i in 4 downTo 1) {
-                drawPath(path, Color.Black.copy(alpha = 0.035f), style = Stroke(depth * i * 1.3f, join = StrokeJoin.Round))
-            }
-            drawPath(path, Color.Black.copy(alpha = 0.12f))
+    for ((reach, shade) in ShadowSteps) {
+        translate(-light.towards.x * depth * reach, -light.towards.y * depth * reach) {
+            rotate(rotation.toDegrees(), pivot) { drawPath(path, shade) }
         }
     }
 }
+
+/** How far each silhouette of a shadow is cast, as a multiple of its depth, and its shade. */
+private val ShadowSteps = listOf(1.8f to Color.Black.copy(alpha = 0.05f), 1f to Color.Black.copy(alpha = 0.12f))
 
 /** Coloured prayer-to-prayer arcs, as in PrayerCircleVisualization. */
 internal fun DrawScope.prayerTrack(f: GearFrame, center: Offset, radius: Float, width: Float, alpha: Float) {
@@ -147,7 +148,6 @@ internal fun planetOutline(radius: Float) = Path().apply {
     fillType = PathFillType.EvenOdd
 }
 
-/** Cog badge outline centred on the origin, as used by the skeleton dial. */
 /**
  * A metal prayer gear with an upright enamel face showing the prayer icon. Its reflections and
  * chamfers follow the [light] while the gear turns by [rotation].
@@ -163,8 +163,25 @@ internal fun DrawScope.planet(
     pxPerDp: Float,
     isCurrent: Boolean
 ) {
-    if (isCurrent) halo(at, radius * 0.5f, radius * 2.3f, p.color, 0.42f)
+    if (isCurrent) planetHalo(p, at, radius)
+    planetGear(at, radius, rotation, outline, sheen, light, pxPerDp)
+    planetFace(p, at, radius, light, pxPerDp, isCurrent)
+}
 
+/** The glow under the current prayer's gear. */
+internal fun DrawScope.planetHalo(p: GearPrayer, at: Offset, radius: Float) =
+    halo(at, radius * 0.5f, radius * 2.3f, p.color, 0.42f)
+
+/** The turning metal of a [planet], without its face: the part that changes as the gear turns. */
+internal fun DrawScope.planetGear(
+    at: Offset,
+    radius: Float,
+    rotation: Float,
+    outline: Path,
+    sheen: MetalSheen,
+    light: GearLight,
+    pxPerDp: Float
+) {
     translate(at.x, at.y) { elevation(outline, 2f * pxPerDp, light, rotation, Offset.Zero) }
     // Drawn in the gear's turning frame, so the light is turned back to stay fixed on screen.
     val localLight = GearLight(light.angle - rotation)
@@ -185,7 +202,10 @@ internal fun DrawScope.planet(
             )
         }
     }
+}
 
+/** The upright enamel face of a [planet], which stays still while its gear turns. */
+internal fun DrawScope.planetFace(p: GearPrayer, at: Offset, radius: Float, light: GearLight, pxPerDp: Float, isCurrent: Boolean) {
     val face = radius * if (isCurrent) 0.66f else 0.6f
     drawCircle(p.color, face, at)
     enamelGloss(at, face, light)

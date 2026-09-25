@@ -94,11 +94,16 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
         // The wheel is drawn in its turning frame; turning the light back keeps it fixed on screen.
         val wheelLight = GearLight(light.angle - wheelRot)
 
-        // A halo of light behind the rim, tinted a little by the current prayer.
-        haloRing(c, r, r * 0.3f, lerp(palette.warmHalo, frame.current.color, 0.3f), 0.34f)
+        // Still parts are replayed from layers; only the wheel, its screws and the prayer gears turn.
+        frame.still.draw(this, 0) {
+            // A halo of light behind the rim, tinted a little by the current prayer.
+            haloRing(c, r, r * 0.3f, lerp(palette.warmHalo, frame.current.color, 0.3f), 0.34f)
+            // The hub is round, so its shadow looks the same however the wheel has turned.
+            elevation(hub, 2f * dp, light)
+        }
+
         elevation(wheel, 3f * dp, light, wheelRot, c)
         elevation(spokes, 2f * dp, light, wheelRot, c)
-        elevation(hub, 2f * dp, light, wheelRot, c)
         rotate(wheelRot.toDegrees(), c) {
             val brass = palette.brassSheen.brush(c, wheelLight)
             drawPath(wheel, brass)
@@ -121,18 +126,21 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
                 drawPath(spoke.outline, spoke.occlusion)
                 bevel(spoke.outline, (spoke.hubEnd + spoke.rimEnd) / 2f, (bandIn - hubOut) / 2f, wheelLight, 0.9f * dp)
             }
-            drawPath(hub, brass)
         }
 
         // Rotationally symmetric finishes, drawn in screen space.
-        ringFinish(c, r - ded, bandIn, light, rimGrain, dp, round = true)
-        holeBevel(c, bandIn, light, 1.2f * dp)
-        drawCircle(palette.tone(Color(0x59FFF0C8)), bandIn + 0.8f * dp, c, style = Stroke(0.8f * dp))
-        ringFinish(c, hubOut, hubIn, light, hubGrain, dp, round = true)
-        bevel(hubEdge, c, hubOut, light, dp)
-        holeBevel(c, hubIn, light, dp)
-        drawCircle(Color(0x993C280A), hubOut, c, style = Stroke(0.8f * dp))
-        drawCircle(Color(0x993C280A), hubIn, c, style = Stroke(0.8f * dp))
+        frame.still.draw(this, 1) {
+            // The round hub looks the same however it has turned, so it is drawn still.
+            drawPath(hub, palette.brassSheen.brush(c, light))
+            ringFinish(c, r - ded, bandIn, light, rimGrain, dp, round = true)
+            holeBevel(c, bandIn, light, 1.2f * dp)
+            drawCircle(palette.tone(Color(0x59FFF0C8)), bandIn + 0.8f * dp, c, style = Stroke(0.8f * dp))
+            ringFinish(c, hubOut, hubIn, light, hubGrain, dp, round = true)
+            bevel(hubEdge, c, hubOut, light, dp)
+            holeBevel(c, hubIn, light, dp)
+            drawCircle(Color(0x993C280A), hubOut, c, style = Stroke(0.8f * dp))
+            drawCircle(Color(0x993C280A), hubIn, c, style = Stroke(0.8f * dp))
+        }
         for (i in 0 until 3) {
             val a = wheelRot + i * TAU / 3 + 0.5f
             screw(
@@ -142,58 +150,70 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
             )
         }
 
-        // Stationary enamel track laid over the turning rim.
-        prayerTrack(frame, c, (bandIn + r - ded) / 2f + dp, max(2.5f * dp, s * 0.008f), 0.9f)
-
-        frame.bridge?.draw(this)
-
-        if (frame.showNow) {
-            val handAngle = dayAngle(frame.nowMinutes, frame.rtl)
-            val length = bandIn - 4 * dp
-            rotate(handAngle.toDegrees(), c) {
-                val tail = c.x - s * 0.05f
-                val hand = Path().apply {
-                    moveTo(tail, c.y - s * 0.006f)
-                    lineTo(c.x + length * 0.78f, c.y - s * 0.004f)
-                    lineTo(c.x + length, c.y)
-                    lineTo(c.x + length * 0.78f, c.y + s * 0.004f)
-                    lineTo(tail, c.y + s * 0.006f)
-                    close()
-                }
-                drawPath(hand, Brush.linearGradient(*palette.brass, start = c + Offset(0f, -6 * dp), end = c + Offset(length, 6 * dp)))
-                // A polished ridge down the middle: one flank catches the light, the other falls into shade.
-                val facing = cos(handAngle - TAU / 4 - light.angle)
-                val lit = Color(0xFFFFF6D6).copy(alpha = 0.55f * abs(facing))
-                val shade = Color(0xFF281905).copy(alpha = 0.35f * abs(facing))
-                val upper = Path().apply {
-                    moveTo(tail, c.y)
-                    lineTo(c.x + length, c.y)
-                    lineTo(c.x + length * 0.78f, c.y - s * 0.004f)
-                    lineTo(tail, c.y - s * 0.006f)
-                    close()
-                }
-                val lower = Path().apply {
-                    moveTo(tail, c.y)
-                    lineTo(c.x + length, c.y)
-                    lineTo(c.x + length * 0.78f, c.y + s * 0.004f)
-                    lineTo(tail, c.y + s * 0.006f)
-                    close()
-                }
-                drawPath(upper, if (facing > 0f) lit else shade)
-                drawPath(lower, if (facing > 0f) shade else lit)
-                drawCircle(palette.tone(Color(0xFFE8C97E)), s * 0.012f, c + Offset(length * 0.72f, 0f), style = Stroke(s * 0.004f))
-                drawCircle(palette.tone(Color(0xFFB8903F)), s * 0.012f, c + Offset(-s * 0.05f, 0f))
-            }
-            nowIndicator(c, r, handAngle, frame.current.color, dp)
+        frame.still.draw(this, 2) {
+            // Stationary enamel track laid over the turning rim.
+            prayerTrack(frame, c, (bandIn + r - ded) / 2f + dp, max(2.5f * dp, s * 0.008f), 0.9f)
+            frame.bridge?.draw(this)
+            if (frame.showNow) drawHand(frame)
+            planetHalo(frame.current, pointOn(c, r + rPlanet, dayAngle(frame.current.minutes, frame.rtl)), rPlanet)
         }
 
         frame.prayers.forEach { p ->
             val theta = dayAngle(p.minutes, frame.rtl)
-            val at = pointOn(c, r + rPlanet, theta)
             val rotation = meshExternal(wheelRot, MAIN_TEETH, theta, PLANET_TEETH)
-            planet(p, at, rPlanet, rotation, planetPath, palette.brassSheen, light, dp, isCurrent = p.type == frame.current.type)
-            timeLabel(frame, p.label, pointOn(c, labelRing, theta))
+            planetGear(pointOn(c, r + rPlanet, theta), rPlanet, rotation, planetPath, palette.brassSheen, light, dp)
         }
+
+        frame.still.draw(this, 3) {
+            frame.prayers.forEach { p ->
+                val theta = dayAngle(p.minutes, frame.rtl)
+                planetFace(p, pointOn(c, r + rPlanet, theta), rPlanet, light, dp, isCurrent = p.type == frame.current.type)
+                timeLabel(frame, p.label, pointOn(c, labelRing, theta))
+            }
+        }
+    }
+
+    /** The hour hand, pointing at the time of day, and the marker on the rim where it points. */
+    private fun DrawScope.drawHand(frame: GearFrame) {
+        val palette = frame.palette
+        val light = frame.light
+        val handAngle = dayAngle(frame.nowMinutes, frame.rtl)
+        val length = bandIn - 4 * dp
+        rotate(handAngle.toDegrees(), c) {
+            val tail = c.x - s * 0.05f
+            val hand = Path().apply {
+                moveTo(tail, c.y - s * 0.006f)
+                lineTo(c.x + length * 0.78f, c.y - s * 0.004f)
+                lineTo(c.x + length, c.y)
+                lineTo(c.x + length * 0.78f, c.y + s * 0.004f)
+                lineTo(tail, c.y + s * 0.006f)
+                close()
+            }
+            drawPath(hand, Brush.linearGradient(*palette.brass, start = c + Offset(0f, -6 * dp), end = c + Offset(length, 6 * dp)))
+            // A polished ridge down the middle: one flank catches the light, the other falls into shade.
+            val facing = cos(handAngle - TAU / 4 - light.angle)
+            val lit = Color(0xFFFFF6D6).copy(alpha = 0.55f * abs(facing))
+            val shade = Color(0xFF281905).copy(alpha = 0.35f * abs(facing))
+            val upper = Path().apply {
+                moveTo(tail, c.y)
+                lineTo(c.x + length, c.y)
+                lineTo(c.x + length * 0.78f, c.y - s * 0.004f)
+                lineTo(tail, c.y - s * 0.006f)
+                close()
+            }
+            val lower = Path().apply {
+                moveTo(tail, c.y)
+                lineTo(c.x + length, c.y)
+                lineTo(c.x + length * 0.78f, c.y + s * 0.004f)
+                lineTo(tail, c.y + s * 0.006f)
+                close()
+            }
+            drawPath(upper, if (facing > 0f) lit else shade)
+            drawPath(lower, if (facing > 0f) shade else lit)
+            drawCircle(palette.tone(Color(0xFFE8C97E)), s * 0.012f, c + Offset(length * 0.72f, 0f), style = Stroke(s * 0.004f))
+            drawCircle(palette.tone(Color(0xFFB8903F)), s * 0.012f, c + Offset(-s * 0.05f, 0f))
+        }
+        nowIndicator(c, r, handAngle, frame.current.color, dp)
     }
 
     private companion object {
