@@ -18,10 +18,10 @@ import kotlin.math.max
  */
 internal class SteelGearDial(private val s: Float, private val dp: Float) : GearDial {
     private val c = Offset(s / 2f, s / 2f)
-    private val outer = 0.94f * s / 2f
-    private val inner = 0.834f * s / 2f
+    private val outer = 0.97f * s / 2f
+    private val inner = 0.861f * s / 2f
     private val mid = (outer + inner) / 2f
-    private val band = 0.053f * s / 2f
+    private val band = 0.055f * s / 2f
     private val pitch = (inner - band) - gearDedendum(inner - band, MAIN_TEETH)
     private val rPlanet = pitch * PLANET_TEETH / MAIN_TEETH
     private val addPlanet = gearAddendum(rPlanet, PLANET_TEETH)

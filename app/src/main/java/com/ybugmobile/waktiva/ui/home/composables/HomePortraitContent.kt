@@ -51,6 +51,7 @@ fun HomePortraitContent(
     // Optimization: Filter and memoize available days to prevent redundant calculations during scrolls
     val isToday = remember(state.selectedDate) { state.selectedDate == LocalDate.now() }
     val screenHeightDp = LocalConfiguration.current.screenHeightDp
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp
     val availableDays = remember(allDays) { allDays.filter { !it.date.isBefore(LocalDate.now()) } }
     val hasWeatherData = remember(state.temperature, state.weatherCondition) {
         state.temperature != null || state.weatherCondition != WeatherCondition.UNKNOWN
@@ -109,13 +110,14 @@ fun HomePortraitContent(
                 }
 
                 // Central Visualization: Circular representation of the day's prayer times.
-                // Sized to the available width, capped by screen height so tablets get a larger
-                // circle without it outgrowing its slot and overflowing the top of the screen.
+                // It reaches past the column's side padding to a slim margin from the screen edge,
+                // capped by screen height so tablets get a larger circle without it outgrowing its
+                // slot and overflowing the top of the screen.
                 BoxWithConstraints(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.requiredWidth((screenWidthDp - 2 * CircleEdgeMarginDp).dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    val circleSize = minOf(maxWidth, maxOf(300.dp, (screenHeightDp * 0.4f).dp))
+                    val circleSize = minOf(maxWidth, maxOf(300.dp, (screenHeightDp * 0.45f).dp))
                     Box(
                         modifier = Modifier.size(circleSize),
                         contentAlignment = Alignment.Center
@@ -250,3 +252,6 @@ fun HomePortraitContent(
         )
     }
 }
+
+/** Space left between the day circle and the screen's side edges in portrait. */
+private const val CircleEdgeMarginDp = 8

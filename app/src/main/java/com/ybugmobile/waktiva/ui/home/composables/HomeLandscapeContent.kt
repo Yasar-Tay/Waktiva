@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.domain.model.DayCircleStyle
@@ -49,6 +50,7 @@ fun HomeLandscapeContent(
     onMethodClick: () -> Unit,
     onShowToast: (String) -> Unit
 ) {
+    val screenHeightDp = LocalConfiguration.current.screenHeightDp
     val hasWeatherData = remember(state.temperature, state.weatherCondition) {
         state.temperature != null || state.weatherCondition != WeatherCondition.UNKNOWN
     }
@@ -72,13 +74,14 @@ fun HomeLandscapeContent(
                     .padding(horizontal = 24.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // LEFT HALF: Circular Visualization
-                Box(
+                // LEFT HALF: Circular Visualization, as large as the half and the screen height allow
+                BoxWithConstraints(
                     modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
+                    val circleSize = minOf(maxWidth, (screenHeightDp * 0.85f).dp)
                     Box(
-                        modifier = Modifier.size(320.dp), // Increased size for tablet visibility
+                        modifier = Modifier.size(circleSize),
                         contentAlignment = Alignment.Center
                     ) {
                         state.currentPrayerDay?.let { prayerDay ->
