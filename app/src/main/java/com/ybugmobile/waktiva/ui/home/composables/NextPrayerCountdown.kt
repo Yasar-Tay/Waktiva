@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -123,12 +122,6 @@ fun NextPrayerCountdown(
                     val configuration = LocalConfiguration.current
                     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
                     
-                    val containerColor = remember(glassTheme.isLightMode) {
-                        if (glassTheme.isLightMode) Color.White.copy(0.18f) else Color.Black.copy(0.15f)
-                    }
-                    val borderColor = remember(glassTheme.isLightMode) {
-                        if (glassTheme.isLightMode) Color.White.copy(0.45f) else Color.White.copy(0.1f)
-                    }
                     val cardShape = RoundedCornerShape(18.dp)
 
                     // Target logic: If next event is Sunrise (no adhan), target Dhuhr instead.
@@ -187,8 +180,9 @@ fun NextPrayerCountdown(
                                     scaleY = scale
                                     this.alpha = alpha
                                 }
+                                // Liquid glass, clear at night and smoky by day, as the day cards.
+                                .liquidGlass(cardShape, glassTheme, emphasis = 0.5f)
                                 .clip(cardShape)
-                                .background(containerColor)
                                 .clickable(
                                     interactionSource = interactionSource,
                                     indication = null,
@@ -196,22 +190,14 @@ fun NextPrayerCountdown(
                                 )
                                 .drawWithContent {
                                     drawContent()
-                                    val cornerRadius = CornerRadius(18.dp.toPx())
-                                    // Soft color wash from left
+                                    // Soft wash of the prayer's colour from the left
                                     drawRoundRect(
                                         brush = Brush.horizontalGradient(
-                                            0f to buttonColor.copy(alpha = 0.18f),
+                                            0f to buttonColor.copy(alpha = 0.22f),
                                             0.45f to Color.Transparent
                                         ),
                                         size = size,
-                                        cornerRadius = cornerRadius
-                                    )
-                                    // Hair-line border
-                                    drawRoundRect(
-                                        color = borderColor,
-                                        size = size,
-                                        cornerRadius = cornerRadius,
-                                        style = Stroke(0.75.dp.toPx())
+                                        cornerRadius = CornerRadius(18.dp.toPx())
                                     )
                                 },
                             contentAlignment = Alignment.Center
@@ -287,14 +273,16 @@ fun NextPrayerCountdown(
             }
         } else if (selectedDate.isAfter(LocalDate.now())) {
             // Future Date View: Show a prompt to return to the current day
+            val returnShape = RoundedCornerShape(20.dp)
             Surface(
                 onClick = onResetDate,
-                color = contentColor.copy(alpha = 0.08f),
-                shape = RoundedCornerShape(16.dp),
+                color = Color.Transparent,
+                shape = returnShape,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
                     .padding(horizontal = 8.dp)
+                    .liquidGlass(returnShape, LocalGlassTheme.current)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.ui.theme.GlassTheme
+import com.ybugmobile.waktiva.ui.theme.liquidGlass
 
 /**
  * An interactive card that displays the currently active prayer calculation method.
@@ -36,13 +37,14 @@ fun CalculationMethodCard(
     glassTheme: GlassTheme
 ) {
     settings?.let { s ->
+        val cardShape = RoundedCornerShape(16.dp)
         Card(
             onClick = onClick,
-            colors = CardDefaults.cardColors(
-                containerColor = glassTheme.secondaryContentColor.copy(alpha = 0.1f)
-            ),
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth()
+            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+            shape = cardShape,
+            modifier = Modifier
+                .fillMaxWidth()
+                .liquidGlass(cardShape, glassTheme)
         ) {
             Row(
                 Modifier

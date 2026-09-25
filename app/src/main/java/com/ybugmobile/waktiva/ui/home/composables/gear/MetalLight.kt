@@ -4,13 +4,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.lerp
 import kotlin.math.PI
@@ -18,6 +16,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sin
 import kotlin.random.Random
 
@@ -73,27 +72,35 @@ internal fun blendAngle(from: Float, to: Float, t: Float): Float {
 /**
  * A metal's reflections around a round part, as sweep-gradient stops laid out for light from
  * [GearLight.DEFAULT_ANGLE] (its brightest stop sits at 0.625 of the turn), and turned to any
- * other light. Turned stops are cached per whole degree.
+ * other light.
+ *
+ * Turning parts ask for the light turned back by their rotation every frame, so both the stops
+ * and the brushes are cached per whole degree (and per centre): after the first turn nothing
+ * is allocated, and each brush keeps its shader.
  */
 internal class MetalSheen(private val base: List<Pair<Float, Color>>) {
-    private var cachedDegree = Int.MIN_VALUE
-    private var cached: Array<Pair<Float, Color>> = emptyArray()
+    private val stopsByDegree = arrayOfNulls<Array<Pair<Float, Color>>>(360)
+    private val brushes = HashMap<Long, Brush>()
 
     fun stops(light: GearLight): Array<Pair<Float, Color>> {
-        val degree = Math.floorMod(Math.round(Math.toDegrees(light.angle.toDouble())).toInt(), 360)
-        if (degree != cachedDegree) {
+        val degree = degreeOf(light)
+        return stopsByDegree[degree] ?: run {
             val shift = (degree - 225) / 360f
-            cached = Array(SAMPLES + 1) { i ->
+            Array(SAMPLES + 1) { i ->
                 val at = i / SAMPLES.toFloat()
                 at to colourAt(((at - shift) % 1f + 1f) % 1f)
-            }
-            cachedDegree = degree
+            }.also { stopsByDegree[degree] = it }
         }
-        return cached
     }
 
     /** Sweep brush around [center] for this light. */
-    fun brush(center: Offset, light: GearLight): Brush = Brush.sweepGradient(*stops(light), center = center)
+    fun brush(center: Offset, light: GearLight): Brush {
+        val degree = degreeOf(light)
+        val key = (center.x.toRawBits().toLong() shl 32) xor (center.y.toRawBits().toLong() shl 9) xor degree.toLong()
+        return brushes.getOrPut(key) { Brush.sweepGradient(*stops(light), center = center) }
+    }
+
+    private fun degreeOf(light: GearLight) = Math.floorMod(Math.round(Math.toDegrees(light.angle.toDouble())).toInt(), 360)
 
     private fun colourAt(t: Float): Color {
         for (k in 1 until base.size) {
@@ -124,9 +131,10 @@ private fun edgeLight(center: Offset, radius: Float, light: GearLight, lit: Colo
 }
 
 /**
- * Chamfers along [outline], drawn just inside it: bright where the edge faces the light, shaded
- * where it faces away. [reversed] is for the edges of holes and internal teeth, whose chamfers
- * face the other way. The outline is assumed to lie around [center] within [radius].
+ * Chamfers along [outline]: bright where the edge faces the light, shaded where it faces away.
+ * [reversed] is for the edges of holes and internal teeth, whose chamfers face the other way.
+ * The outline is assumed to lie around [center] within [radius]. Drawn as a plain stroke on the
+ * edge, without clipping, which is expensive every frame.
  */
 internal fun DrawScope.bevel(
     outline: Path,
@@ -137,12 +145,18 @@ internal fun DrawScope.bevel(
     strength: Float = 1f,
     reversed: Boolean = false
 ) {
-    val lit = Color(0xFFFFFAE6).copy(alpha = 0.85f * strength)
-    val dark = Color(0xFF1E1405).copy(alpha = 0.55f * strength)
-    val brush = if (reversed) edgeLight(center, radius, light, dark, lit) else edgeLight(center, radius, light, lit, dark)
-    clipPath(outline, if (reversed) ClipOp.Difference else ClipOp.Intersect) {
-        drawPath(outline, brush, style = Stroke(width * 2, join = StrokeJoin.Round))
-    }
+    drawPath(outline, chamferLight(center, radius, light, strength, reversed), style = Stroke(width, join = StrokeJoin.Round))
+}
+
+/** Chamfer on the inner edge of a ring of [radius]: lit on the side facing away from the light. */
+internal fun DrawScope.holeBevel(center: Offset, radius: Float, light: GearLight, width: Float, strength: Float = 1f) {
+    drawCircle(chamferLight(center, radius, light, strength, reversed = true), radius, center, style = Stroke(width))
+}
+
+private fun chamferLight(center: Offset, radius: Float, light: GearLight, strength: Float, reversed: Boolean): Brush {
+    val lit = Color(0xFFFFFCEE).copy(alpha = min(1f, 0.95f * strength))
+    val dark = Color(0xFF1E1405).copy(alpha = 0.4f * strength)
+    return if (reversed) edgeLight(center, radius, light, dark, lit) else edgeLight(center, radius, light, lit, dark)
 }
 
 /** Chamfer on the inner edge of a ring of [radius]: lit on the side facing away from the light. */
@@ -191,43 +205,60 @@ internal fun DrawScope.ringFinish(
     round: Boolean = false,
     glint: Boolean = true
 ) {
-    val ring = annulus(center, outer, inner)
-    clipPath(ring) {
-        grain?.draw(this, 0.5f * pxPerDp)
-        if (round) {
-            val from = inner / outer
-            val span = 1f - from
+    // Everything here stays within the ring by construction, so nothing needs clipping.
+    grain?.draw(this, 0.5f * pxPerDp)
+    if (round) {
+        val from = inner / outer
+        val span = 1f - from
+        drawCircle(
+            Brush.radialGradient(
+                from to Color(0x38140C00),
+                from + span * 0.3f to Color.White.copy(alpha = 0.16f),
+                from + span * 0.55f to Color.Transparent,
+                from + span * 0.85f to Color.Black.copy(alpha = 0.05f),
+                1f to Color(0x42140C00),
+                center = center,
+                radius = outer
+            ),
+            (outer + inner) / 2f, center,
+            style = Stroke(outer - inner)
+        )
+    }
+    if (glint) {
+        val mid = (outer + inner) / 2f
+        val at = center + light.towards * mid
+        val length = max(6f * pxPerDp, mid * 0.36f)
+        val thickness = max(1.5f * pxPerDp, (outer - inner) * 0.35f)
+        withTransform({
+            translate(at.x, at.y)
+            rotate(Math.toDegrees(light.angle.toDouble()).toFloat() + 90f, Offset.Zero)
+            scale(1f, thickness / length, Offset.Zero)
+        }) {
             drawCircle(
-                Brush.radialGradient(
-                    from to Color(0x59140C00),
-                    from + span * 0.3f to Color.White.copy(alpha = 0.12f),
-                    from + span * 0.55f to Color.Transparent,
-                    from + span * 0.85f to Color.Black.copy(alpha = 0.08f),
-                    1f to Color(0x66140C00),
-                    center = center,
-                    radius = outer
-                ),
-                outer, center
+                Brush.radialGradient(listOf(Color(0xB3FFFAEB), Color(0x00FFFAEB)), center = Offset.Zero, radius = length),
+                length, Offset.Zero,
+                blendMode = BlendMode.Plus
             )
         }
-        if (glint) {
-            val mid = (outer + inner) / 2f
-            val at = center + light.towards * mid
-            val length = max(6f * pxPerDp, mid * 0.36f)
-            val thickness = max(1.5f * pxPerDp, (outer - inner) * 0.35f)
-            withTransform({
-                translate(at.x, at.y)
-                rotate(Math.toDegrees(light.angle.toDouble()).toFloat() + 90f, Offset.Zero)
-                scale(1f, thickness / length, Offset.Zero)
-            }) {
-                drawCircle(
-                    Brush.radialGradient(listOf(Color(0x8CFFFAEB), Color(0x00FFFAEB)), center = Offset.Zero, radius = length),
-                    length, Offset.Zero,
-                    blendMode = BlendMode.Plus
-                )
-            }
-        }
     }
+}
+
+/**
+ * A soft ring of light around a dial's main ring at [radius], fading out [width] either side:
+ * the halo that lifts the metal off the sky and keeps the dial bright.
+ */
+internal fun DrawScope.haloRing(center: Offset, radius: Float, width: Float, color: Color, strength: Float) {
+    val outer = radius + width
+    drawCircle(
+        Brush.radialGradient(
+            max(0f, radius - width) / outer to color.copy(alpha = 0f),
+            radius / outer to color.copy(alpha = strength),
+            1f to color.copy(alpha = 0f),
+            center = center,
+            radius = outer
+        ),
+        outer, center
+    )
 }
 
 /** Radial fill for a domed part, brightest on the side facing the light. */

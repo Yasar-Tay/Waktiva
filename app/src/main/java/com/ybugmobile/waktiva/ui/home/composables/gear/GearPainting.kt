@@ -50,8 +50,8 @@ internal fun annulus(center: Offset, outer: Float, inner: Float) = Path().apply 
 }
 
 /**
- * Lifts a metal part off the dial: a soft shadow of [path], cast [depth] away from the [light].
- * A filled silhouette under a few widening, faint strokes keeps it soft without blur
+ * Lifts a metal part off the dial: a soft, light shadow of [path], cast [depth] away from the
+ * [light]. A faint silhouette under several widening, fainter strokes keeps it soft without blur
  * filters, which older Android versions don't render. Pass the part's [rotation]
  * (radians, around [pivot]) so the shadow turns with the part but still falls away from the light.
  */
@@ -64,10 +64,10 @@ internal fun DrawScope.elevation(
 ) {
     translate(-light.towards.x * depth, -light.towards.y * depth) {
         rotate(rotation.toDegrees(), pivot) {
-            for (i in 3 downTo 1) {
-                drawPath(path, Color.Black.copy(alpha = 0.06f), style = Stroke(depth * i, join = StrokeJoin.Round))
+            for (i in 4 downTo 1) {
+                drawPath(path, Color.Black.copy(alpha = 0.035f), style = Stroke(depth * i * 1.3f, join = StrokeJoin.Round))
             }
-            drawPath(path, Color.Black.copy(alpha = 0.22f))
+            drawPath(path, Color.Black.copy(alpha = 0.12f))
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.ybugmobile.waktiva.ui.home.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -21,6 +20,8 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
+import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.waktiva.ui.theme.liquidGlass
 import java.time.format.DateTimeFormatter
 
 /**
@@ -30,15 +31,16 @@ import java.time.format.DateTimeFormatter
  * @param day The prayer data for the selected day.
  * @param currentPrayerType The type of prayer currently active (used for highlighting).
  * @param contentColor Base color for text and unselected icons.
- * @param highlightColor Background color for the current prayer's list item.
+ *
+ * The current prayer's row is a pane of liquid glass, tinted a little with the prayer's colour.
  */
 @Composable
 fun PrayerTimeList(
     day: PrayerDay,
     currentPrayerType: PrayerType?,
-    contentColor: Color = Color.White,
-    highlightColor: Color = Color.Black.copy(alpha = 0.2f)
+    contentColor: Color = Color.White
 ) {
+    val glassTheme = LocalGlassTheme.current
     /** Internal model for prayer list entries. */
     data class PrayerItem(
         val type: PrayerType,
@@ -76,7 +78,6 @@ fun PrayerTimeList(
             val isCurrent = item.type == currentPrayerType
             
             // Visual state determination based on active prayer status
-            val itemContainerColor = if (isCurrent) highlightColor else Color.Transparent
             val itemContentColor = if (isCurrent) contentColor else contentColor.copy(alpha = 0.7f)
             val iconTint = if (isCurrent) item.color else itemContentColor
             val fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium
@@ -85,7 +86,10 @@ fun PrayerTimeList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
-                    .background(itemContainerColor, RoundedCornerShape(12.dp))
+                    .then(
+                        if (isCurrent) Modifier.liquidGlass(CurrentRowShape, glassTheme, emphasis = 0.6f, accent = item.color.copy(alpha = 0.35f))
+                        else Modifier
+                    )
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -124,3 +128,5 @@ fun PrayerTimeList(
         }
     }
 }
+
+private val CurrentRowShape = RoundedCornerShape(14.dp)

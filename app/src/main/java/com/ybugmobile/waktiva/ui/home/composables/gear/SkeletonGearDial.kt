@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
@@ -138,6 +139,7 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
     private fun DrawScope.drawRing(frame: GearFrame) {
         val palette = frame.palette
         val light = frame.light
+        haloRing(c, track, track * 0.22f, lerp(palette.warmHalo, frame.current.color, 0.3f), 0.32f)
         elevation(ring, 3f * dp, light)
         drawPath(ring, palette.brassSheen.brush(c, light))
         ringFinish(c, ringOuter, ringInner, light, ringGrain, dp, round = true)

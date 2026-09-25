@@ -1,7 +1,6 @@
 package com.ybugmobile.waktiva.ui.home.composables
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -16,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.waktiva.ui.theme.liquidGlass
 import kotlinx.coroutines.delay
 
 @Composable
@@ -43,15 +43,16 @@ fun GlassToast(
         ) {
             val glassTheme = LocalGlassTheme.current
             
+            val toastShape = RoundedCornerShape(24.dp)
             Surface(
-                color = glassTheme.containerColor.copy(alpha = 0.35f),
+                color = Color.Transparent,
                 contentColor = glassTheme.contentColor,
-                shape = RoundedCornerShape(24.dp),
-                border = BorderStroke(1.dp, glassTheme.borderColor.copy(alpha = 0.3f)),
-                tonalElevation = 8.dp,
+                shape = toastShape,
                 modifier = Modifier
                     .padding(horizontal = 48.dp)
                     .widthIn(max = 300.dp)
+                    // Dense glass, so the message reads over anything behind it.
+                    .liquidGlass(toastShape, glassTheme, emphasis = 1f)
             ) {
                 Text(
                     text = message,

@@ -129,9 +129,12 @@ fun HomeScreenContent(
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
-    // The sun, as seen from where the phone points, lights the day circle's metal.
-    val sunLight = remember(atmosphere) {
-        sunLightAngle(atmosphere.sunAzimuth, atmosphere.sunAltitude, atmosphere.compassAzimuth)
+    // The sun, as seen from where the phone points, can light the day circle's metal. Off for
+    // now: following the compass redraws the dial too often on some phones.
+    val sunLight = if (SunLitDials) {
+        remember(atmosphere) { sunLightAngle(atmosphere.sunAzimuth, atmosphere.sunAltitude, atmosphere.compassAzimuth) }
+    } else {
+        null
     }
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -355,3 +358,6 @@ fun HomeScreenContent(
         }
     }
 }
+
+/** Whether the gear dials' metal follows the real sun (see sunLightAngle); off, it is lit from the upper left. */
+private const val SunLitDials = false

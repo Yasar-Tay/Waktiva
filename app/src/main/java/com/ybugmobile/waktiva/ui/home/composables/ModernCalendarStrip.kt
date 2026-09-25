@@ -32,6 +32,7 @@ import com.ybugmobile.waktiva.domain.model.HijriUtils
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.ReligiousDay
 import com.ybugmobile.waktiva.domain.provider.ReligiousDaysProvider
+import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.waktiva.ui.theme.liquidGlass
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -63,6 +64,7 @@ fun ModernCalendarStrip(
     val dayNameFormatter = DateTimeFormatter.ofPattern("EEE")
     
     val listState = rememberLazyListState()
+    val glassTheme = LocalGlassTheme.current
     val density = LocalDensity.current
     val context = LocalContext.current
     val currentLocale = Locale.getDefault()
@@ -179,7 +181,8 @@ fun ModernCalendarStrip(
                         .width(62.dp)
                         .liquidGlass(
                             shape = DayCardShape,
-                            tint = if (isToday || isSpecial) accentColor else contentColor,
+                            glass = glassTheme,
+                            tint = if (isToday || isSpecial) accentColor else null,
                             emphasis = glassEmphasis,
                             accent = when {
                                 isToday -> accentColor.copy(alpha = 0.7f)
