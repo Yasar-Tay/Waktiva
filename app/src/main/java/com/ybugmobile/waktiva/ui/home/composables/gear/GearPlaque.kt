@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -43,11 +42,12 @@ internal fun GearPlaque(
     prayer: GearPrayer,
     name: String,
     style: DayCircleStyle,
+    palette: GearPalette,
     phase: State<Float>,
     compact: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val finish = remember(style) { plateFinish(style) }
+    val finish = palette.finish(style)
     val height = if (compact) 36.dp else 42.dp
     val endPadding = height * 0.34f
     // Engraved lettering: a light line just below the ink, only on metal.

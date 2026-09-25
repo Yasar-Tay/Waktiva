@@ -67,9 +67,9 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
 
         val wheelRot = dir * frame.phase * 0.25f
         rotate(wheelRot.toDegrees(), c) {
-            drawPath(wheel, SkeletonGold.copy(alpha = 0.55f), style = hair)
-            drawCircle(SkeletonGold.copy(alpha = 0.25f), r - ded - 3 * dp, c, style = hair)
-            drawCircle(SkeletonGold.copy(alpha = 0.25f), innerRim, c, style = hair)
+            drawPath(wheel, frame.palette.gold.copy(alpha = 0.55f), style = hair)
+            drawCircle(frame.palette.gold.copy(alpha = 0.25f), r - ded - 3 * dp, c, style = hair)
+            drawCircle(frame.palette.gold.copy(alpha = 0.25f), innerRim, c, style = hair)
             // Five evenly spaced straight spokes, outlined, same proportions as the brass wheel.
             val hubHalfWidth = 0.075f * hub
             val rimHalfWidth = 0.8f * hubHalfWidth
@@ -81,15 +81,15 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
                 val rimPoint = c + along * innerRim
                 for (side in floatArrayOf(-1f, 1f)) {
                     drawLine(
-                        SkeletonGold.copy(alpha = 0.22f),
+                        frame.palette.gold.copy(alpha = 0.22f),
                         hubPoint + across * (side * hubHalfWidth),
                         rimPoint + across * (side * rimHalfWidth),
                         dp
                     )
                 }
             }
-            drawCircle(SkeletonGold.copy(alpha = 0.22f), hub, c, style = hair)
-            drawCircle(SkeletonGold.copy(alpha = 0.22f), hub * 0.8f, c, style = hair)
+            drawCircle(frame.palette.gold.copy(alpha = 0.22f), hub, c, style = hair)
+            drawCircle(frame.palette.gold.copy(alpha = 0.22f), hub * 0.8f, c, style = hair)
         }
 
         prayerTrack(frame, c, track, max(3f * dp, s * 0.01f), 0.5f)
@@ -140,7 +140,7 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
         val r3 = meshExternal(r2, train[1].teeth, angle23, train[2].teeth)
         val r4 = -frame.phase
         val r5 = meshExternal(r4, train[3].teeth, angle45, train[4].teeth)
-        val trainColor = SkeletonGold.copy(alpha = 0.13f)
+        val trainColor = frame.palette.gold.copy(alpha = 0.13f)
 
         scale(scaleX = frame.direction, scaleY = 1f, pivot = c) {
             listOf(r1, r2, r3, r4, r5).forEachIndexed { i, rotation ->

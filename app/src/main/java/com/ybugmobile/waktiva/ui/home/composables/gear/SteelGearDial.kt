@@ -46,13 +46,14 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
     private val planetPath = planetOutline(rPlanet)
 
     override fun draw(scope: DrawScope, frame: GearFrame) = with(scope) {
+        val palette = frame.palette
         val ringRot = frame.direction * (frame.dayTurn + frame.phase)
         val accent = frame.current.color
 
         drawCircle(Brush.radialGradient(listOf(accent.copy(alpha = 0.10f), accent.copy(alpha = 0f)), c, outer), outer, c)
         softShadow(c, outer)
 
-        drawPath(bezel, metalBrush(SteelStops, c, outer))
+        drawPath(bezel, metalBrush(palette.steel, c, outer))
         val sheen = outer - 0.8f * dp
         drawArc(
             color = Color.White.copy(alpha = 0.35f),
@@ -79,7 +80,7 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
         }
 
         rotate(ringRot.toDegrees(), c) {
-            drawPath(ring, metalBrush(SteelStops, c, inner, ringRot, flip = true))
+            drawPath(ring, metalBrush(palette.steel, c, inner, ringRot, flip = true))
             drawPath(ring, Color(0x8C0A0E16), style = Stroke(0.7f * dp))
             for (i in 0 until 12) {
                 drawCircle(Color(0x8C0F1420), s * 0.0045f, pointOn(c, inner - band / 2f, i * TAU / 12))
@@ -102,8 +103,8 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
                 drawPath(
                     needle,
                     Brush.linearGradient(
-                        0f to Color(0x40D2DCEC),
-                        0.8f to Color(0xE6E6ECF6),
+                        0f to palette.tone(Color(0x40D2DCEC)),
+                        0.8f to palette.tone(Color(0xE6E6ECF6)),
                         1f to accent,
                         start = c,
                         end = c + Offset(mid, 0f)
@@ -117,7 +118,7 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
             val theta = dayAngle(p.minutes, frame.rtl)
             val at = pointOn(c, pitch - rPlanet, theta)
             val rotation = meshInternal(ringRot, MAIN_TEETH, theta, PLANET_TEETH)
-            planet(p, at, rPlanet, rotation, planetPath, SteelStops, dp, isCurrent = p.type == frame.current.type)
+            planet(p, at, rPlanet, rotation, planetPath, palette.steel, dp, isCurrent = p.type == frame.current.type)
             timeLabel(frame, p.label, pointOn(c, pitch - 2 * rPlanet - addPlanet - s * 0.035f, theta))
         }
     }

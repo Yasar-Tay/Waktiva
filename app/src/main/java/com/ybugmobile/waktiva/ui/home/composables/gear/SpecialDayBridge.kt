@@ -30,6 +30,7 @@ internal class SpecialDayBridge(
     private val text: String,
     spec: BridgeSpec,
     private val center: Offset,
+    private val palette: GearPalette,
     private val finish: PlateFinish,
     private val dp: Float,
     sizePx: Float
@@ -105,8 +106,8 @@ internal class SpecialDayBridge(
             drawPath(body, finish.edge, style = Stroke(dp))
             drawPath(insetLine, finish.inset, style = Stroke(0.7f * dp))
 
-            jewel(pointOn(center, mid, start + jewelInset / mid), jewelRadius, dp)
-            jewel(pointOn(center, mid, end - jewelInset / mid), jewelRadius, dp)
+            jewel(pointOn(center, mid, start + jewelInset / mid), jewelRadius, palette, dp)
+            jewel(pointOn(center, mid, end - jewelInset / mid), jewelRadius, palette, dp)
 
             drawIntoCanvas { canvas ->
                 val native = canvas.nativeCanvas

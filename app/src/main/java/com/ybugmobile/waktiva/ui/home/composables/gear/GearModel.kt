@@ -32,7 +32,9 @@ internal class GearFrame(
     val labelStyle: TextStyle,
     val textMeasurer: TextMeasurer,
     /** Special-day bridge, drawn by the dial under its hand; null on ordinary days. */
-    val bridge: SpecialDayBridge?
+    val bridge: SpecialDayBridge?,
+    /** Material colours, toned for the current weather. */
+    val palette: GearPalette
 ) {
     val direction get() = if (rtl) -1f else 1f
     val dayTurn get() = nowMinutes / 1440f * TAU

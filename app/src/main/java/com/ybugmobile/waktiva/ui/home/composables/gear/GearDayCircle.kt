@@ -65,8 +65,6 @@ import com.ybugmobile.waktiva.ui.home.composables.CurrentPrayerHeader
 import com.ybugmobile.waktiva.ui.home.composables.FlippableCalendarCard
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
-import com.ybugmobile.waktiva.ui.theme.darken
-import com.ybugmobile.waktiva.ui.theme.desaturate
 import kotlinx.coroutines.delay
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -92,7 +90,9 @@ internal fun GearDayCircle(
     val locale = configuration.locales[0]
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
-    val prayers = rememberGearPrayers(day)
+    val weather = LocalGlassTheme.current.weatherCondition
+    val palette = remember(weather) { GearPalette(WeatherTone.forScenery(weather)) }
+    val prayers = rememberGearPrayers(day, weather)
     val currentType = remember(day, currentTime) { currentPrayerType(day, currentTime) }
     val current = prayers.firstOrNull { it.type == currentType } ?: prayers.last()
     val nowMinutes = currentTime.hour * 60 + currentTime.minute + currentTime.second / 60f
@@ -135,9 +135,17 @@ internal fun GearDayCircle(
     ) {
         val sizePx = with(density) { minOf(maxWidth, maxHeight).toPx() }
         val dial = remember(style, sizePx, density.density) { createGearDial(style, sizePx, density.density) }
-        val bridge = remember(dial, specialDay) {
+        val bridge = remember(dial, specialDay, palette) {
             specialDay?.let {
-                SpecialDayBridge(it, dial.bridge, Offset(sizePx / 2f, sizePx / 2f), plateFinish(style), density.density, sizePx)
+                SpecialDayBridge(
+                    text = it,
+                    spec = dial.bridge,
+                    center = Offset(sizePx / 2f, sizePx / 2f),
+                    palette = palette,
+                    finish = palette.finish(style),
+                    dp = density.density,
+                    sizePx = sizePx
+                )
             }
         }
 
@@ -157,7 +165,8 @@ internal fun GearDayCircle(
                     rtl = isRtl,
                     labelStyle = labelStyle,
                     textMeasurer = textMeasurer,
-                    bridge = bridge
+                    bridge = bridge,
+                    palette = palette
                 )
             )
         }
@@ -166,6 +175,7 @@ internal fun GearDayCircle(
             prayers = prayers,
             dial = dial,
             style = style,
+            palette = palette,
             dialSizePx = sizePx,
             selected = selected,
             onSelect = { selected = it },
@@ -207,6 +217,7 @@ private fun BoxScope.PrayerMarkers(
     prayers: List<GearPrayer>,
     dial: GearDial,
     style: DayCircleStyle,
+    palette: GearPalette,
     dialSizePx: Float,
     selected: PrayerType?,
     onSelect: (PrayerType?) -> Unit,
@@ -249,6 +260,7 @@ private fun BoxScope.PrayerMarkers(
                             prayer = prayer,
                             name = prayer.type.getDisplayName(context).uppercase(locale),
                             style = style,
+                            palette = palette,
                             phase = phase,
                             compact = compact,
                             modifier = Modifier.pointerInput(Unit) { detectTapGestures { onSelect(null) } }
@@ -268,8 +280,7 @@ private fun BoxScope.PrayerMarkers(
 
 /** The day's prayers with the same colours and weather toning as PrayerCircleVisualization. */
 @Composable
-private fun rememberGearPrayers(day: PrayerDay): List<GearPrayer> {
-    val weather = LocalGlassTheme.current.weatherCondition
+private fun rememberGearPrayers(day: PrayerDay, weather: WeatherCondition): List<GearPrayer> {
     val formatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
     val art = listOf(
         PrayerType.FAJR to R.drawable.haze_day_rotated,
@@ -284,15 +295,7 @@ private fun rememberGearPrayers(day: PrayerDay): List<GearPrayer> {
     }
 
     return remember(day, weather, art.map { it.third }) {
-        val isCloudy = weather != WeatherCondition.CLEAR && weather != WeatherCondition.UNKNOWN
-        val isSevere = weather == WeatherCondition.RAINY ||
-            weather == WeatherCondition.THUNDERSTORM ||
-            weather == WeatherCondition.SNOWY
-        fun tone(color: Color) = if (isCloudy) {
-            color.desaturate(if (isSevere) 0.35f else 0.2f).darken(if (isSevere) 0.2f else 0.1f)
-        } else {
-            color
-        }
+        val tone = WeatherTone.forPrayers(weather)
         art.map { (type, icon, painter) ->
             val time = day.timings[type] ?: LocalTime.MIN
             GearPrayer(

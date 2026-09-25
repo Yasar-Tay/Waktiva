@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -16,27 +15,10 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.drawText
-import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import kotlin.math.sign
 
-// Shared palette and drawing helpers for the gear dials, the prayer plaque and the special-day bridge.
-
-internal val BrassStops = arrayOf(
-    0f to Color(0xFFF6E1A2),
-    0.35f to Color(0xFFD4AB5A),
-    0.7f to Color(0xFFA77C34),
-    1f to Color(0xFF6F5020)
-)
-
-internal val SteelStops = arrayOf(
-    0f to Color(0xFFE3E9F3),
-    0.4f to Color(0xFFA6B1C4),
-    0.75f to Color(0xFF66728A),
-    1f to Color(0xFF394257)
-)
-
-/** Hairline gold used by the skeleton dial. */
-internal val SkeletonGold = Color(0xFFDEBE78)
+// Shared drawing helpers for the gear dials, the prayer plaque and the special-day bridge.
+// Colours come from GearPalette.
 
 /**
  * Diagonal metal gradient lit from the top-left. When drawn inside a rotation of
@@ -56,62 +38,6 @@ internal fun metalBrush(
         *stops,
         start = rotateAround(from, pivot, -rotation),
         end = rotateAround(to, pivot, -rotation)
-    )
-}
-
-/**
- * Surface finish shared by the prayer plaque and the special-day bridge, so both match
- * their dial: engraved brass or steel, or a dark plate with gold hairlines for the skeleton.
- */
-internal class PlateFinish(
-    private val metal: Array<Pair<Float, Color>>?,
-    val edge: Color,
-    val inset: Color,
-    /** Light line under the engraved inset; null on the skeleton plate. */
-    val highlight: Color?,
-    val stripe: Color,
-    val ink: Color,
-    val strongInk: Color,
-    /** Screw head colour; null draws no screw. */
-    val screw: Color?
-) {
-    val isMetal get() = metal != null
-    val metalStops get() = metal ?: BrassStops
-
-    fun fill(from: Offset, to: Offset): Brush =
-        metal?.let { Brush.linearGradient(*it, start = from, end = to) } ?: SolidColor(Color(0xE60C0F18))
-}
-
-internal fun plateFinish(style: DayCircleStyle): PlateFinish = when (style) {
-    DayCircleStyle.STEEL -> PlateFinish(
-        metal = SteelStops,
-        edge = Color(0xB30A0E16),
-        inset = Color.Black.copy(alpha = 0.28f),
-        highlight = Color.White.copy(alpha = 0.25f),
-        stripe = Color.White.copy(alpha = 0.13f),
-        ink = Color(0xFF1A2130),
-        strongInk = Color(0xFF111722),
-        screw = Color(0xFF4A5468)
-    )
-    DayCircleStyle.SKELETON -> PlateFinish(
-        metal = null,
-        edge = SkeletonGold.copy(alpha = 0.65f),
-        inset = SkeletonGold.copy(alpha = 0.28f),
-        highlight = null,
-        stripe = SkeletonGold.copy(alpha = 0.07f),
-        ink = Color(0xFFE9C983),
-        strongInk = Color.White,
-        screw = null
-    )
-    else -> PlateFinish(
-        metal = BrassStops,
-        edge = Color(0xBF3C280A),
-        inset = Color.Black.copy(alpha = 0.28f),
-        highlight = Color.White.copy(alpha = 0.25f),
-        stripe = Color.White.copy(alpha = 0.13f),
-        ink = Color(0xFF3F2A0A),
-        strongInk = Color(0xFF2A1C06),
-        screw = Color(0xFF7A5A26)
     )
 }
 
@@ -273,15 +199,13 @@ internal fun DrawScope.cogBadge(p: GearPrayer, at: Offset, radius: Float, rotati
 }
 
 /** A ruby jewel in a gold setting, as on a watch movement. */
-internal fun DrawScope.jewel(at: Offset, radius: Float, pxPerDp: Float) {
-    drawCircle(Color(0xFFD9B96A), radius, at)
+internal fun DrawScope.jewel(at: Offset, radius: Float, palette: GearPalette, pxPerDp: Float) {
+    drawCircle(palette.jewelSetting, radius, at)
     drawCircle(Color(0xB33C280A), radius, at, style = Stroke(0.7f * pxPerDp))
     val stone = radius * 0.62f
     drawCircle(
         brush = Brush.radialGradient(
-            0f to Color(0xFFFF8A96),
-            0.5f to Color(0xFFC2173A),
-            1f to Color(0xFF5C0718),
+            *palette.ruby,
             center = at + Offset(-radius * 0.2f, -radius * 0.25f),
             radius = stone
         ),

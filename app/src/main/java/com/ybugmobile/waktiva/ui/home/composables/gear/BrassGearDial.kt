@@ -65,11 +65,12 @@ internal class BrassGearDial(private val s: Float, private val dp: Float) : Gear
     private val planetPath = planetOutline(rPlanet)
 
     override fun draw(scope: DrawScope, frame: GearFrame) = with(scope) {
+        val palette = frame.palette
         val wheelRot = frame.direction * (frame.dayTurn + frame.phase)
 
         softShadow(c, r + add)
         rotate(wheelRot.toDegrees(), c) {
-            val brass = metalBrush(BrassStops, c, r, wheelRot)
+            val brass = metalBrush(palette.brass, c, r, wheelRot)
             drawPath(wheel, brass)
             drawPath(wheel, Color(0xB33C280A), style = Stroke(0.8f * dp))
             // Hour engraving on the rim, turning with the wheel.
@@ -77,19 +78,19 @@ internal class BrassGearDial(private val s: Float, private val dp: Float) : Gear
                 val a = i * TAU / 24
                 val major = i % 6 == 0
                 drawLine(
-                    Color(0xFF462D0A).copy(alpha = if (major) 0.6f else 0.32f),
+                    palette.tone(Color(0xFF462D0A)).copy(alpha = if (major) 0.6f else 0.32f),
                     pointOn(c, bandIn + 2 * dp, a),
                     pointOn(c, bandIn + (if (major) 7 else 4) * dp, a),
                     (if (major) 1.4f else 0.8f) * dp
                 )
             }
-            drawCircle(Color(0x59FFF0C8), bandIn + 0.8f * dp, c, style = Stroke(0.8f * dp))
+            drawCircle(palette.tone(Color(0x59FFF0C8)), bandIn + 0.8f * dp, c, style = Stroke(0.8f * dp))
             drawPath(spokes, brass)
             drawPath(hub, brass)
             drawCircle(Color(0x993C280A), hubOut, c, style = Stroke(0.8f * dp))
             drawCircle(Color(0x993C280A), hubIn, c, style = Stroke(0.8f * dp))
             for (i in 0 until 3) {
-                drawCircle(Color(0xFF7A5A26), s * 0.006f, pointOn(c, (hubOut + hubIn) / 2f, i * TAU / 3 + 0.5f))
+                drawCircle(palette.tone(Color(0xFF7A5A26)), s * 0.006f, pointOn(c, (hubOut + hubIn) / 2f, i * TAU / 3 + 0.5f))
             }
         }
 
@@ -110,9 +111,9 @@ internal class BrassGearDial(private val s: Float, private val dp: Float) : Gear
                     lineTo(c.x - s * 0.05f, c.y + s * 0.006f)
                     close()
                 }
-                drawPath(hand, Brush.linearGradient(*BrassStops, start = c + Offset(0f, -6 * dp), end = c + Offset(length, 6 * dp)))
-                drawCircle(Color(0xFFE8C97E), s * 0.012f, c + Offset(length * 0.72f, 0f), style = Stroke(s * 0.004f))
-                drawCircle(Color(0xFFB8903F), s * 0.012f, c + Offset(-s * 0.05f, 0f))
+                drawPath(hand, Brush.linearGradient(*palette.brass, start = c + Offset(0f, -6 * dp), end = c + Offset(length, 6 * dp)))
+                drawCircle(palette.tone(Color(0xFFE8C97E)), s * 0.012f, c + Offset(length * 0.72f, 0f), style = Stroke(s * 0.004f))
+                drawCircle(palette.tone(Color(0xFFB8903F)), s * 0.012f, c + Offset(-s * 0.05f, 0f))
             }
             nowIndicator(c, r, handAngle, frame.current.color, dp)
         }
@@ -121,7 +122,7 @@ internal class BrassGearDial(private val s: Float, private val dp: Float) : Gear
             val theta = dayAngle(p.minutes, frame.rtl)
             val at = pointOn(c, r + rPlanet, theta)
             val rotation = meshExternal(wheelRot, MAIN_TEETH, theta, PLANET_TEETH)
-            planet(p, at, rPlanet, rotation, planetPath, BrassStops, dp, isCurrent = p.type == frame.current.type)
+            planet(p, at, rPlanet, rotation, planetPath, palette.brass, dp, isCurrent = p.type == frame.current.type)
             timeLabel(frame, p.label, pointOn(c, r + 2 * rPlanet + add + s * 0.04f, theta))
         }
     }
