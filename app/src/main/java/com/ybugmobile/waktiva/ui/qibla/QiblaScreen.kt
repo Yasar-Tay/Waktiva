@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ybugmobile.waktiva.R
+import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.ui.home.composables.LocationSection
 import com.ybugmobile.waktiva.ui.qibla.composables.*
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthEmptyState
@@ -255,7 +256,8 @@ private fun QiblaContent(
                 ) {
                     Box(modifier = Modifier.size(360.dp), contentAlignment = Alignment.Center) {
                         if (!isMapView) {
-                            ProfessionalCompass(
+                            QiblaCompass(
+                                style = state.settings?.dayCircleStyle ?: DayCircleStyle.DEFAULT,
                                 azimuth = currentAzimuth,
                                 qiblaAngle = state.qiblaDirection.toFloat(),
                                 alignmentColor = alignmentColor,
@@ -512,7 +514,8 @@ private fun CompassContainer(
         modifier = Modifier.fillMaxWidth().aspectRatio(1f),
         contentAlignment = Alignment.Center
     ) {
-        ProfessionalCompass(
+        QiblaCompass(
+            style = state.settings?.dayCircleStyle ?: DayCircleStyle.DEFAULT,
             azimuth = currentAzimuth,
             qiblaAngle = state.qiblaDirection.toFloat(),
             alignmentColor = alignmentColor,

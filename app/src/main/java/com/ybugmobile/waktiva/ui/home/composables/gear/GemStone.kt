@@ -66,6 +66,24 @@ internal fun DrawScope.gemStone(
     bead: Color,
     pxPerDp: Float,
     sparkle: Float = 0f
+) = gemStone(p.color, at, cut, metal, light, bead, pxPerDp, sparkle) {
+    prayerIcon(p, at, cut.radius, ink = Color.White.copy(alpha = 0.88f))
+}
+
+/**
+ * A brilliant-cut stone of [color] in a bezel of [metal] with milgrain beads of [bead]; [sign],
+ * if given, is engraved on its table under the highlight. [sparkle] (0..1) makes it twinkle.
+ */
+internal fun DrawScope.gemStone(
+    color: Color,
+    at: Offset,
+    cut: GemCut,
+    metal: MetalSheen,
+    light: GearLight,
+    bead: Color,
+    pxPerDp: Float,
+    sparkle: Float = 0f,
+    sign: (DrawScope.() -> Unit)? = null
 ) {
     val r = cut.radius
     val rs = cut.stone
@@ -84,10 +102,10 @@ internal fun DrawScope.gemStone(
         // Stone: light enters on the lit side and glows on the far one; the girdle falls into shade
         drawCircle(
             Brush.radialGradient(
-                0f to lerp(p.color, Color.White, 0.3f),
-                0.45f to p.color,
-                0.8f to lerp(p.color, Color.Black, 0.35f),
-                1f to lerp(p.color, Color.Black, 0.65f),
+                0f to lerp(color, Color.White, 0.3f),
+                0.45f to color,
+                0.8f to lerp(color, Color.Black, 0.35f),
+                1f to lerp(color, Color.Black, 0.65f),
                 center = light.towards * (-rs * 0.33f),
                 radius = rs * 1.25f
             ),
@@ -102,10 +120,10 @@ internal fun DrawScope.gemStone(
         drawPath(cut.litFacets, Color.White.copy(alpha = 0.1f))
         drawPath(cut.shadedFacets, Color.Black.copy(alpha = 0.1f))
         drawPath(cut.edges, Color.White.copy(alpha = 0.28f), style = Stroke(0.6f * pxPerDp))
-        drawCircle(lerp(p.color, Color.Black, 0.6f), rs, Offset.Zero, style = Stroke(0.8f * pxPerDp))
+        drawCircle(lerp(color, Color.Black, 0.6f), rs, Offset.Zero, style = Stroke(0.8f * pxPerDp))
     }
 
-    prayerIcon(p, at, r, ink = Color.White.copy(alpha = 0.88f))
+    sign?.invoke(this)
 
     // Specular highlight on the side facing the light
     val glint = at + light.towards * (rs * 0.57f)
