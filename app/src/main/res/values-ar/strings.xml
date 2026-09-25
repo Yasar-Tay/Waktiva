@@ -429,5 +429,10 @@
     <string name="lang_nl">Nederlands</string>
     <string name="lang_sv">Svenska</string>
     <string name="lang_fi">Suomi</string>
-</resources>
 
+    <!-- iOS-style widget -->
+    <string name="widget_ios_label">مواقيت الصلاة</string>
+    <string name="widget_ios_description">الصلاة القادمة وعدّ تنازلي مباشر ومواقيت اليوم كله بنظرة واحدة</string>
+    <string name="widget_ios_next_up">التالية</string>
+    <string name="widget_ios_empty">افتح Waktiva لتحميل مواقيت الصلاة</string>
+</resources>

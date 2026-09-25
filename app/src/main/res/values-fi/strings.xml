@@ -428,5 +428,10 @@
     <string name="donate_item_medium_desc">Tue tämän mainoksettoman projektin jatkuvuutta.</string>
     <string name="donate_item_large_title">Sydänten yhteys</string>
     <string name="donate_item_large_desc">Anna vahvin tukesi viedäksesi Waktivaa eteenpäin.</string>
-</resources>
 
+    <!-- iOS-style widget -->
+    <string name="widget_ios_label">Rukousajat</string>
+    <string name="widget_ios_description">Seuraava rukous, reaaliaikainen lähtölaskenta ja koko päivä yhdellä silmäyksellä</string>
+    <string name="widget_ios_next_up">Seuraavaksi</string>
+    <string name="widget_ios_empty">Avaa Waktiva ladataksesi rukousajat</string>
+</resources>

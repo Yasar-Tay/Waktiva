@@ -429,5 +429,10 @@
     <string name="lang_nl">Nederlands</string>
     <string name="lang_sv">Svenska</string>
     <string name="lang_fi">Suomi</string>
-</resources>
 
+    <!-- iOS-style widget -->
+    <string name="widget_ios_label">Jadwal Salat</string>
+    <string name="widget_ios_description">Salat berikutnya, hitung mundur langsung, dan jadwal sehari dalam sekejap</string>
+    <string name="widget_ios_next_up">Berikutnya</string>
+    <string name="widget_ios_empty">Buka Waktiva untuk memuat jadwal salat</string>
+</resources>

@@ -428,6 +428,10 @@
     <string name="about_version_label">Verzija</string>
 
     <string name="badge_open_source">Otvoreni kod</string>
+
+    <!-- iOS-style widget -->
+    <string name="widget_ios_label">Vaktija</string>
+    <string name="widget_ios_description">Sljedeći namaz, odbrojavanje uživo i cijeli dan na prvi pogled</string>
+    <string name="widget_ios_next_up">Sljedeći</string>
+    <string name="widget_ios_empty">Otvorite Waktiva da učitate vaktiju</string>
 </resources>
-
-

@@ -97,6 +97,19 @@
                 android:resource="@xml/waktiva_widget_info" />
         </receiver>
 
+        <!-- iOS-style widget (small / medium / large families) -->
+        <receiver
+            android:name=".ui.widget.WaktivaIosWidget"
+            android:exported="true"
+            android:label="@string/widget_ios_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/waktiva_ios_widget_info" />
+        </receiver>
+
         <!-- WorkManager's internal service: must declare foregroundServiceType to match
              the type used in AdhanWorker's ForegroundInfo (FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK) -->
         <service

@@ -428,5 +428,10 @@
     <string name="donate_item_medium_desc">Stöd fortsatt drift av detta reklamfria projekt.</string>
     <string name="donate_item_large_title">Hjärtans enighet</string>
     <string name="donate_item_large_desc">Ge det starkaste stödet för att föra Waktiva vidare.</string>
-</resources>
 
+    <!-- iOS-style widget -->
+    <string name="widget_ios_label">Bönetider</string>
+    <string name="widget_ios_description">Nästa bön, nedräkning i realtid och hela dagen i en överblick</string>
+    <string name="widget_ios_next_up">Nästa</string>
+    <string name="widget_ios_empty">Öppna Waktiva för att ladda bönetiderna</string>
+</resources>

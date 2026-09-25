@@ -428,5 +428,10 @@
     <string name="donate_item_medium_desc">Sokong kelangsungan projek bebas iklan ini.</string>
     <string name="donate_item_large_title">Penyatuan hati</string>
     <string name="donate_item_large_desc">Berikan sokongan terkuat untuk membawa Waktiva lebih jauh.</string>
-</resources>
 
+    <!-- iOS-style widget -->
+    <string name="widget_ios_label">Waktu Solat</string>
+    <string name="widget_ios_description">Solat seterusnya, kiraan detik langsung dan waktu sepanjang hari dengan sekali pandang</string>
+    <string name="widget_ios_next_up">Seterusnya</string>
+    <string name="widget_ios_empty">Buka Waktiva untuk memuatkan waktu solat</string>
+</resources>
