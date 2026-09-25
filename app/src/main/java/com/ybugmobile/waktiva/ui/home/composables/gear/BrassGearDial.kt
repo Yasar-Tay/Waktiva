@@ -22,7 +22,7 @@ import kotlin.math.sin
  */
 internal class BrassGearDial(private val s: Float, private val dp: Float, labelReach: Float) : GearDial {
     private val c = Offset(s / 2f, s / 2f)
-    private val r = 0.74f * s / 2f
+    private val r = 0.77f * s / 2f
     private val rPlanet = r * PLANET_TEETH / MAIN_TEETH
     private val add = gearAddendum(r, MAIN_TEETH)
     private val ded = gearDedendum(r, MAIN_TEETH)

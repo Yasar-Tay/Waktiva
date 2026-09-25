@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -134,9 +133,7 @@ internal fun GearDayCircle(
     }
 
     BoxWithConstraints(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .padding(4.dp),
+        modifier = Modifier.aspectRatio(1f),
         contentAlignment = Alignment.Center
     ) {
         val sizePx = with(density) { minOf(maxWidth, maxHeight).toPx() }
