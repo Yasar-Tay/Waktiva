@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  "Up next" block shared by the small widget and the left half of the medium widget:
-      NEXT UP              [icon]
-      Dhuhr
-      13:07
-      ⋮ (flexible space)
-      1:23:45
+  "Up next" block shared by the small widget and the left part of the medium widget, built
+  around the countdown:
+      [icon] Dhuhr                13:07
+      1:23:45        (as large as the block allows)
       ▬ ▬ ▬ ▬ ▬ ▬
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -19,80 +17,64 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
+        <ImageView
+            android:id="@+id/widget_icon"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="6dp"
+            android:scaleType="fitCenter" />
+
         <TextView
-            android:id="@+id/widget_label"
+            android:id="@+id/widget_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
-            android:letterSpacing="0.06"
+            android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="@string/widget_next_up"
-            android:textAllCaps="true"
-            android:textColor="#B3FFFFFF"
-            android:textSize="11sp" />
+            android:textColor="#FFFFFFFF"
+            android:textSize="14sp" />
 
-        <ImageView
-            android:id="@+id/widget_icon"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:scaleType="fitCenter" />
+        <TextView
+            android:id="@+id/widget_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:fontFamily="sans-serif-medium"
+            android:fontFeatureSettings="tnum"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="#B3FFFFFF"
+            android:textSize="13sp" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/widget_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:ellipsize="end"
-        android:fontFamily="sans-serif"
-        android:includeFontPadding="false"
-        android:maxLines="1"
-        android:textColor="#FFFFFFFF"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/widget_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:fontFamily="sans-serif-medium"
-        android:fontFeatureSettings="tnum"
-        android:maxLines="1"
-        android:textColor="#CCFFFFFF"
-        android:textSize="14sp" />
-
-    <!-- Flexible gap (android.widget.Space is not RemoteViews-safe). -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- autoSize keeps "12:34:56" on one line in the narrowest 2×2 cells. -->
+    <!--
+      The countdown takes all the room left and grows to fill it: thin tabular figures, so it
+      reads from across the room and the digits don't shift as they tick.
+    -->
     <Chronometer
         android:id="@+id/widget_chrono"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:autoSizeMaxTextSize="28sp"
-        android:autoSizeMinTextSize="16sp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:autoSizeMaxTextSize="64sp"
+        android:autoSizeMinTextSize="22sp"
         android:autoSizeStepGranularity="1sp"
         android:autoSizeTextType="uniform"
         android:countDown="true"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="sans-serif-light"
         android:fontFeatureSettings="tnum"
-        android:gravity="start|bottom"
+        android:gravity="start|center_vertical"
         android:includeFontPadding="false"
-        android:letterSpacing="-0.02"
+        android:letterSpacing="-0.03"
         android:maxLines="1"
         android:textColor="#FFFFFFFF"
-        android:textSize="26sp" />
+        android:textSize="48sp" />
 
     <include
         layout="@layout/widget_timeline"
         android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_marginTop="8dp" />
+        android:layout_height="4dp" />
 
 </LinearLayout>
