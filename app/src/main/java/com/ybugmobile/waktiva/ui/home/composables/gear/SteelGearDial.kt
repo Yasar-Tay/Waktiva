@@ -60,7 +60,7 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
         // Still parts are replayed from layers; only the ring gear, its marks and the prayer gears turn.
         frame.still.draw(this, 0) {
             drawCircle(Brush.radialGradient(listOf(accent.copy(alpha = 0.10f), accent.copy(alpha = 0f)), c, outer), outer, c)
-            haloRing(c, mid, outer * 0.24f, lerp(palette.coolHalo, accent, 0.3f), 0.3f)
+            haloRing(c, mid, outer * 0.2f, lerp(palette.coolHalo, accent, 0.3f), 0.16f)
             elevation(bezel, 3f * dp, light)
 
             drawPath(bezel, palette.steelSheen.brush(c, light))

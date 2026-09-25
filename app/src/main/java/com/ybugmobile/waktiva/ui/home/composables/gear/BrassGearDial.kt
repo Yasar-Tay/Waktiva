@@ -98,7 +98,7 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
         frame.still.draw(this, 0) {
             // A thin halo hugging the rim, tinted a little by the current prayer: just enough to
             // lift the wheel off the sky.
-            haloRing(c, r, r * 0.12f, lerp(palette.warmHalo, frame.current.color, 0.3f), 0.16f)
+            haloRing(c, r, r * 0.16f, lerp(palette.warmHalo, frame.current.color, 0.3f), 0.1f)
             // The hub is round, so its shadow looks the same however the wheel has turned.
             elevation(hub, 2f * dp, light)
         }

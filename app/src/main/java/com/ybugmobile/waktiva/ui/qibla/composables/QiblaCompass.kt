@@ -145,7 +145,7 @@ internal fun GearCompass(
                     val notches = if (style == DayCircleStyle.STEEL) SteelNotches(g) else null
                     onDrawBehind {
                         val a = glow.value
-                        haloRing(g.c, (g.r + g.rb) / 2f, g.r * 0.28f, lerp(look.halo, AlignedGold, 0.5f * a), 0.3f + 0.2f * a)
+                        haloRing(g.c, (g.r + g.rb) / 2f, g.r * 0.22f, lerp(look.halo, AlignedGold, 0.5f * a), 0.16f + 0.14f * a)
                         elevation(bezel, 3f * g.dp, light)
                         drawPath(bezel, look.metal.brush(g.c, light))
                         ringFinish(g.c, g.r, g.rb, light, grain, g.dp, round = style != DayCircleStyle.STEEL)

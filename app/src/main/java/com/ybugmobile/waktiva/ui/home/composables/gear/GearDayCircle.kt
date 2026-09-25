@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -103,13 +104,18 @@ internal fun GearDayCircle(
     val current = prayers.firstOrNull { it.type == currentType } ?: prayers.last()
     val nowMinutes = currentTime.hour * 60 + currentTime.minute + currentTime.second / 60f
 
-    // One ambient turn every 90 s. Read only while drawing, so it redraws without recomposing.
-    val phase = rememberInfiniteTransition(label = "gearPhase").animateFloat(
-        initialValue = 0f,
-        targetValue = TAU,
-        animationSpec = infiniteRepeatable(tween(90_000, easing = LinearEasing), RepeatMode.Restart),
-        label = "gearPhase"
-    )
+    // One ambient turn every 90 s, only for today: a day ahead shows its dial standing still.
+    // Read only while drawing, so it redraws without recomposing.
+    val phase: State<Float> = if (isSelectedDayToday) {
+        rememberInfiniteTransition(label = "gearPhase").animateFloat(
+            initialValue = 0f,
+            targetValue = TAU,
+            animationSpec = infiniteRepeatable(tween(90_000, easing = LinearEasing), RepeatMode.Restart),
+            label = "gearPhase"
+        )
+    } else {
+        remember { mutableFloatStateOf(0f) }
+    }
 
     val textMeasurer = rememberTextMeasurer()
     val labelStyle = remember(contentColor, isLandscape) {

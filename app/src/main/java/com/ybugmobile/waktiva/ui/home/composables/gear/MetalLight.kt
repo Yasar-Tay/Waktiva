@@ -246,21 +246,20 @@ internal fun DrawScope.ringFinish(
 
 /**
  * A soft ring of light around a dial's main ring at [radius], fading out [width] either side:
- * the halo that lifts the metal off the sky and keeps the dial bright.
+ * the halo that lifts the metal off the sky. It eases out rather than falling off in a straight
+ * line, so it has no visible edge and reads as a glow rather than a band.
  */
 internal fun DrawScope.haloRing(center: Offset, radius: Float, width: Float, color: Color, strength: Float) {
     val outer = radius + width
-    drawCircle(
-        Brush.radialGradient(
-            max(0f, radius - width) / outer to color.copy(alpha = 0f),
-            radius / outer to color.copy(alpha = strength),
-            1f to color.copy(alpha = 0f),
-            center = center,
-            radius = outer
-        ),
-        outer, center
-    )
+    val stops = HaloFalloff.flatMap { (at, share) ->
+        val glow = color.copy(alpha = strength * share)
+        listOf(max(0f, radius - at * width) / outer to glow, (radius + at * width) / outer to glow)
+    }.distinct().sortedBy { it.first }.toTypedArray()
+    drawCircle(Brush.radialGradient(*stops, center = center, radius = outer), outer, center)
 }
+
+/** How the halo fades with distance from its ring (as a share of its width): its share of the strength. */
+private val HaloFalloff = listOf(0f to 1f, 0.25f to 0.68f, 0.5f to 0.34f, 0.75f to 0.1f, 1f to 0f)
 
 /** Radial fill for a domed part, brightest on the side facing the light. */
 internal fun domeBrush(center: Offset, radius: Float, light: GearLight, high: Color, mid: Color, low: Color): Brush =
