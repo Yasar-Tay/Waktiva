@@ -3,7 +3,6 @@ package com.ybugmobile.waktiva.ui.settings
 import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.ui.settings.composables.SettingsToggleItem
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -380,10 +380,8 @@ private fun SettingsCard(
             letterSpacing = 1.5.sp,
             modifier = Modifier.padding(start = 8.dp, bottom = 12.dp)
         )
-        Surface(
+        GlassSurface(
             shape = RoundedCornerShape(28.dp),
-            color = glassTheme.containerColor,
-            border = BorderStroke(1.dp, glassTheme.borderColor),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -501,11 +499,12 @@ fun AudioFileItem(
     onDelete: (() -> Unit)?
 ) {
     val glassTheme = LocalGlassTheme.current
-    Surface(
-        modifier = Modifier.fillMaxWidth().clickable { onSelect() },
+    GlassSurface(
+        onClick = onSelect,
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        color = if (item.isSelected) Color.White.copy(alpha = 0.15f) else Color.White.copy(alpha = 0.05f),
-        border = BorderStroke(1.dp, if (item.isSelected) Color.White.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.1f))
+        // The chosen adhan is the densest, brightest pane
+        emphasis = if (item.isSelected) 1f else 0f
     ) {
         Row(
             modifier = Modifier.padding(12.dp).fillMaxWidth(),

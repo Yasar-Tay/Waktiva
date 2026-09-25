@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 
 @Composable
@@ -73,15 +74,12 @@ fun ModernPermissionItem(
         
         Spacer(modifier = Modifier.width(8.dp))
         
-        Surface(
+        // Status pill: glass tinted green when granted, red when denied
+        val statusColor = if (isGranted) Color(0xFF4CAF50) else Color(0xFFF87171)
+        GlassSurface(
             shape = CircleShape,
-            color = if (isGranted) Color(0xFF4CAF50).copy(alpha = 0.2f) 
-                    else Color(0xFFF87171).copy(alpha = 0.2f),
-            border = androidx.compose.foundation.BorderStroke(
-                1.dp, 
-                if (isGranted) Color(0xFF4CAF50).copy(alpha = 0.3f) 
-                else Color(0xFFF87171).copy(alpha = 0.3f)
-            )
+            tint = statusColor,
+            accent = statusColor.copy(alpha = 0.35f)
         ) {
             Text(
                 text = (if (isGranted) stringResource(R.string.settings_granted) 

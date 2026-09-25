@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import android.hardware.SensorManager
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.sensor.CompassData
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
+import com.ybugmobile.waktiva.ui.theme.GlassTheme
 
 @Composable
 fun QiblaInfoCard(
@@ -35,20 +36,16 @@ fun QiblaInfoCard(
     isAccuracyLow: Boolean,
     isAccuracyUnreliable: Boolean,
     onCalibrationClick: () -> Unit,
-    containerColor: Color,
+    glass: GlassTheme,
     contentColor: Color
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    Surface(
+    GlassSurface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(28.dp),
-        color = containerColor,
-        border = androidx.compose.foundation.BorderStroke(
-            width = 1.dp,
-            color = contentColor.copy(alpha = 0.12f)
-        )
+        glass = glass
     ) {
         Column(
             modifier = Modifier.padding(if (isLandscape) 16.dp else 20.dp),
@@ -160,11 +157,12 @@ private fun CalibrationWarningPill(
     onClick: () -> Unit,
     contentColor: Color
 ) {
-    Surface(
-        modifier = Modifier.clickable { onClick() },
-        color = Color(0xFFF87171).copy(alpha = 0.1f),
+    // Red-tinted glass, so the warning stands out from the card it sits on
+    GlassSurface(
+        onClick = onClick,
         shape = CircleShape,
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF87171).copy(alpha = 0.2f))
+        tint = Color(0xFFF87171),
+        accent = Color(0xFFF87171).copy(alpha = 0.35f)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),

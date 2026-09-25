@@ -1,6 +1,5 @@
 package com.ybugmobile.waktiva.ui.settings.composables
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
@@ -21,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.waktiva.ui.theme.liquidGlass
 
 /** Prayers that have an adhan; Sunrise is excluded. */
 private val ADHAN_PRAYERS = listOf(
@@ -134,12 +134,16 @@ private fun PrayerPill(
 
     Surface(
         shape = shape,
-        color = if (selected) accentColor.copy(alpha = 0.35f) else glassTheme.contentColor.copy(alpha = 0.06f),
-        border = BorderStroke(
-            1.dp,
-            if (selected) accentColor.copy(alpha = 0.6f) else glassTheme.contentColor.copy(alpha = 0.2f)
-        ),
+        color = Color.Transparent,
         modifier = Modifier
+            // A chosen prayer is glass tinted in its colour; the others plain glass
+            .liquidGlass(
+                shape,
+                glassTheme,
+                tint = if (selected) accentColor else null,
+                emphasis = if (selected) 1f else 0f,
+                accent = if (selected) accentColor.copy(alpha = 0.6f) else null
+            )
             .clip(shape)
             .toggleable(
                 value = selected,

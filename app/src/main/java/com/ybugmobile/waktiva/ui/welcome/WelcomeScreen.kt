@@ -10,7 +10,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -49,6 +48,8 @@ import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.ui.settings.composables.AdhanPrayerPills
 import com.ybugmobile.waktiva.ui.settings.AudioSettingsViewModel
 import com.ybugmobile.waktiva.ui.settings.SettingsViewModel
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
+import com.ybugmobile.waktiva.ui.theme.GlassTheme
 import com.ybugmobile.waktiva.utils.applyAppLanguage
 import com.ybugmobile.waktiva.utils.LanguageUtils
 import com.ybugmobile.waktiva.utils.PermissionUtils
@@ -405,10 +406,10 @@ private fun PreferencesStep(
             }
 
             PreferenceSection(title = stringResource(R.string.welcome_adhan_audio_header)) {
-                Surface(
+                GlassSurface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    color = Color.White.copy(alpha = 0.05f)
+                    glass = WelcomeGlass
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),
@@ -427,10 +428,10 @@ private fun PreferencesStep(
                 }
 
                 settings?.takeIf { it.playAdhanAudio }?.let { s ->
-                    Surface(
+                    GlassSurface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
-                        color = Color.White.copy(alpha = 0.05f)
+                        glass = WelcomeGlass
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(stringResource(R.string.settings_adhan_prayers), fontWeight = FontWeight.Bold, color = Color.White)
@@ -446,10 +447,10 @@ private fun PreferencesStep(
                 }
 
                 if (settings?.let { !it.playAdhanAudio || it.adhanDisabledPrayers.isNotEmpty() } == true) {
-                    Surface(
+                    GlassSurface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
-                        color = Color.White.copy(alpha = 0.05f)
+                        glass = WelcomeGlass
                     ) {
                         Row(
                             modifier = Modifier.padding(16.dp),
@@ -468,10 +469,10 @@ private fun PreferencesStep(
                     }
                 }
 
-                Surface(
+                GlassSurface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    color = Color.White.copy(alpha = 0.05f)
+                    glass = WelcomeGlass
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(
@@ -519,10 +520,10 @@ private fun PreferencesStep(
                     }
                 }
 
-                Surface(
+                GlassSurface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    color = Color.White.copy(alpha = 0.05f)
+                    glass = WelcomeGlass
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(
@@ -570,10 +571,10 @@ private fun PreferencesStep(
                     }
                 }
 
-                Surface(
+                GlassSurface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    color = Color.White.copy(alpha = 0.05f)
+                    glass = WelcomeGlass
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),
@@ -602,15 +603,14 @@ private fun PreferencesStep(
                         val selectedAdhanPath = settings?.prayerSpecificAdhanPaths?.get(prayer) ?: settings?.selectedAdhanPath
                         val adhanItem = audioItems.find { it.path == selectedAdhanPath } ?: audioItems.find { it.isDefault }
                         
-                        Surface(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    audioViewModel.selectPrayerType(prayer)
-                                    showAudioSelectionDialog = true
-                                },
+                        GlassSurface(
+                            onClick = {
+                                audioViewModel.selectPrayerType(prayer)
+                                showAudioSelectionDialog = true
+                            },
+                            modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp),
-                            color = Color.White.copy(alpha = 0.05f)
+                            glass = WelcomeGlass
                         ) {
                             Row(
                                 modifier = Modifier.padding(12.dp),
@@ -732,12 +732,11 @@ private fun WelcomeSettingsClickItem(
     icon: ImageVector,
     onClick: () -> Unit
 ) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+    GlassSurface(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = Color.White.copy(alpha = 0.05f)
+        glass = WelcomeGlass
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -756,13 +755,14 @@ private fun WelcomeSettingsClickItem(
 
 @Composable
 private fun PermissionCard(icon: ImageVector, title: String, description: String, isGranted: Boolean, onClick: (() -> Unit)? = null) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(enabled = onClick != null) { onClick?.invoke() }
-            .border(1.dp, if (isGranted) BrandColor.copy(alpha = 0.5f) else Color.White.copy(alpha = 0.1f), RoundedCornerShape(16.dp)),
+    // A granted permission is glass tinted and ringed in the brand colour
+    GlassSurface(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = if (isGranted) BrandColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.05f)
+        glass = WelcomeGlass,
+        tint = if (isGranted) BrandColor else null,
+        accent = if (isGranted) BrandColor.copy(alpha = 0.5f) else null
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(icon, contentDescription = null, tint = if (isGranted) BrandColor else Color.White.copy(alpha = 0.5f))
@@ -778,13 +778,14 @@ private fun PermissionCard(icon: ImageVector, title: String, description: String
 
 @Composable
 private fun AudioSelectionItem(name: String, isSelected: Boolean, isPlaying: Boolean, onSelect: () -> Unit, onTogglePreview: () -> Unit) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onSelect() }
-            .border(1.dp, if (isSelected) BrandColor.copy(alpha = 0.5f) else Color.Transparent, RoundedCornerShape(12.dp)),
+    GlassSurface(
+        onClick = onSelect,
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        color = if (isSelected) BrandColor.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.05f)
+        glass = WelcomeGlass,
+        tint = if (isSelected) BrandColor else null,
+        emphasis = if (isSelected) 1f else 0f,
+        accent = if (isSelected) BrandColor.copy(alpha = 0.5f) else null
     ) {
         Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(
@@ -888,3 +889,12 @@ private fun <T> WelcomeSelectionDialog(
         }
     }
 }
+
+/** The welcome screen's background is always dark, so its cards are always clear night glass. */
+private val WelcomeGlass = GlassTheme(
+    containerColor = Color.White.copy(alpha = 0.1f),
+    contentColor = Color.White,
+    borderColor = Color.White.copy(alpha = 0.15f),
+    secondaryContentColor = Color.White.copy(alpha = 0.6f),
+    isLightMode = true
+)

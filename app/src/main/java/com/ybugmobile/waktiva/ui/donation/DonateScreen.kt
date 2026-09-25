@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.manager.DonationProduct
 import com.ybugmobile.waktiva.domain.manager.PurchaseResult
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
 import com.ybugmobile.waktiva.ui.theme.GlassTheme
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.waktiva.utils.findActivity
@@ -202,11 +203,9 @@ fun DonateScreen(
                         R.string.badge_open_source
                     )
                     badgeResources.forEach { badgeRes ->
-                        Surface(
+                        GlassSurface(
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(12.dp),
-                            color = Color.White.copy(alpha = 0.05f),
-                            border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.1f))
+                            shape = RoundedCornerShape(12.dp)
                         ) {
                             Text(
                                 text = stringResource(badgeRes),
@@ -281,12 +280,13 @@ fun DonateScreen(
 
 @Composable
 fun CommunityRatingCard(onClick: () -> Unit) {
-    Surface(
+    // Gold-tinted glass for the rating call to action
+    GlassSurface(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        color = Color(0xFFFFD700).copy(alpha = 0.1f),
-        border = BorderStroke(1.dp, Color(0xFFFFD700).copy(alpha = 0.2f))
+        tint = Color(0xFFFFD700),
+        accent = Color(0xFFFFD700).copy(alpha = 0.3f)
     ) {
         Row(
             modifier = Modifier.padding(20.dp),
@@ -325,12 +325,11 @@ fun PremiumSupportCard(
     glassTheme: GlassTheme,
     onClick: () -> Unit
 ) {
-    Surface(
+    GlassSurface(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        color = glassTheme.containerColor,
-        border = BorderStroke(1.dp, glassTheme.borderColor)
+        glass = glassTheme
     ) {
         Row(
             modifier = Modifier.padding(20.dp),
