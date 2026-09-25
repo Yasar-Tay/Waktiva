@@ -438,4 +438,6 @@
     <string name="widget_description">اگلی نماز، براہِ راست الٹی گنتی اور پورے دن کے اوقات ایک نظر میں</string>
     <string name="widget_next_up">اگلی</string>
     <string name="widget_empty">نماز کے اوقات لوڈ کرنے کے لیے Waktiva کھولیں</string>
+    <string name="widget_countdown_label">الٹی گنتی</string>
+    <string name="widget_countdown_description">اگلی نماز تک باقی وقت، بڑا اور ایک نظر میں</string>
 </resources>

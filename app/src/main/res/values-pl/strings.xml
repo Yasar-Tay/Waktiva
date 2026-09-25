@@ -437,4 +437,6 @@
     <string name="widget_description">Następna modlitwa, odliczanie na żywo i cały dzień w jednym miejscu</string>
     <string name="widget_next_up">Następna</string>
     <string name="widget_empty">Otwórz Waktiva, aby wczytać czasy modlitw</string>
+    <string name="widget_countdown_label">Odliczanie</string>
+    <string name="widget_countdown_description">Czas do następnej modlitwy, duży i widoczny od razu</string>
 </resources>

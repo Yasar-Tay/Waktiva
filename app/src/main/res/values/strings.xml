@@ -436,4 +436,6 @@
     <string name="widget_description">Next prayer, live countdown and the whole day at a glance</string>
     <string name="widget_next_up">Next</string>
     <string name="widget_empty">Open Waktiva to load prayer times</string>
+    <string name="widget_countdown_label">Countdown</string>
+    <string name="widget_countdown_description">The time left to the next prayer, large and at a glance</string>
 </resources>

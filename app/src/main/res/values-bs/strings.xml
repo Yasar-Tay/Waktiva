@@ -437,4 +437,6 @@
     <string name="widget_description">Sljedeći namaz, odbrojavanje uživo i cijeli dan na prvi pogled</string>
     <string name="widget_next_up">Sljedeći</string>
     <string name="widget_empty">Otvorite Waktiva da učitate vaktiju</string>
+    <string name="widget_countdown_label">Odbrojavanje</string>
+    <string name="widget_countdown_description">Preostalo vrijeme do sljedećeg namaza, krupno i na prvi pogled</string>
 </resources>

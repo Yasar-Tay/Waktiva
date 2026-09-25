@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The picker preview's stand-in for the live widget's prayer-coloured glow and left shade. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="0"
+                android:startColor="#47000000"
+                android:centerColor="#14000000"
+                android:endColor="#00000000"
+                android:type="linear" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.92"
+                android:centerY="0.05"
+                android:gradientRadius="160dp"
+                android:startColor="#8CFFF59D"
+                android:endColor="#00FFF59D"
+                android:type="radial" />
+        </shape>
+    </item>
+</layer-list>

@@ -437,4 +437,6 @@
     <string name="widget_description">Volgend gebed, live aftellen en de hele dag in één oogopslag</string>
     <string name="widget_next_up">Hierna</string>
     <string name="widget_empty">Open Waktiva om de gebedstijden te laden</string>
+    <string name="widget_countdown_label">Aftellen</string>
+    <string name="widget_countdown_description">De tijd tot het volgende gebed, groot en in één oogopslag</string>
 </resources>

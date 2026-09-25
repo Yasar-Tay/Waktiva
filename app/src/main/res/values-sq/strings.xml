@@ -437,4 +437,6 @@
     <string name="widget_description">Namazi i radhës, numërim mbrapsht i drejtpërdrejtë dhe e gjithë dita me një shikim</string>
     <string name="widget_next_up">Në vijim</string>
     <string name="widget_empty">Hapni Waktiva për të ngarkuar kohët e namazit</string>
+    <string name="widget_countdown_label">Numërimi mbrapsht</string>
+    <string name="widget_countdown_description">Koha që mbetet deri te namazi i radhës, e madhe dhe me një shikim</string>
 </resources>

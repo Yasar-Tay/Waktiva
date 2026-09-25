@@ -437,4 +437,6 @@
     <string name="widget_description">Seuraava rukous, reaaliaikainen lähtölaskenta ja koko päivä yhdellä silmäyksellä</string>
     <string name="widget_next_up">Seuraavaksi</string>
     <string name="widget_empty">Avaa Waktiva ladataksesi rukousajat</string>
+    <string name="widget_countdown_label">Lähtölaskenta</string>
+    <string name="widget_countdown_description">Aika seuraavaan rukoukseen, suurena ja yhdellä silmäyksellä</string>
 </resources>

@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.LinearGradient
 import android.graphics.Paint
+import android.graphics.RadialGradient
 import android.graphics.Shader
 import android.os.Build
 import android.os.Bundle
@@ -66,6 +67,9 @@ import java.util.Locale
  *
  * On Android 12+ every family is sent at once and the launcher picks the one that fits;
  * older versions get the family matching the reported size.
+ *
+ * [WaktivaCountdownWidget], the small countdown tile, shares this data and refresh path:
+ * [updateAll] renders both.
  */
 class WaktivaWidget : AppWidgetProvider() {
 
@@ -116,6 +120,8 @@ class WaktivaWidget : AppWidgetProvider() {
         val rows: List<WidgetPrayerRow>,
         val chronometer: WidgetChronometerState?,
         val background: Bitmap,
+        /** The sky of the hour, top to bottom, which the countdown widget lights in its own way. */
+        val skyColors: List<Int>,
         val locationName: String,
         val today: LocalDate,
         val hijri: HijriData?
@@ -143,16 +149,29 @@ class WaktivaWidget : AppWidgetProvider() {
 
         @Volatile private var cachedGradientKey: String? = null
         @Volatile private var cachedBitmap: Bitmap? = null
+        @Volatile private var cachedCountdownKey: String? = null
+        @Volatile private var cachedCountdownBitmap: Bitmap? = null
 
         // Keep the same Chronometer base for the same prayer so re-renders don't jitter.
         @Volatile private var cachedPrayerKey: String = ""
         @Volatile private var cachedBaseTime: Long = 0L
 
-        /** Push a fresh frame to every instance of this widget. */
+        /** Push a fresh frame to every instance of this widget and of the countdown widget. */
         suspend fun updateAll(context: Context) {
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(ComponentName(context, WaktivaWidget::class.java))
-            render(context, manager, ids)
+            val countdownIds = manager.getAppWidgetIds(ComponentName(context, WaktivaCountdownWidget::class.java))
+            if (ids.isEmpty() && countdownIds.isEmpty()) return
+            val snapshot = loadSnapshot(context)
+            ids.forEach { id -> manager.updateAppWidget(id, buildViews(context, manager, id, snapshot)) }
+            countdownIds.forEach { id -> manager.updateAppWidget(id, buildCountdown(context, snapshot)) }
+        }
+
+        /** Renders the countdown widget instances [ids]; used by [WaktivaCountdownWidget]. */
+        internal suspend fun renderCountdown(context: Context, manager: AppWidgetManager, ids: IntArray) {
+            if (ids.isEmpty()) return
+            val snapshot = loadSnapshot(context)
+            ids.forEach { id -> manager.updateAppWidget(id, buildCountdown(context, snapshot)) }
         }
 
         private suspend fun render(context: Context, manager: AppWidgetManager, ids: IntArray) {
@@ -183,11 +202,13 @@ class WaktivaWidget : AppWidgetProvider() {
             cachedPrayerKey = chronometer?.cacheKey ?: ""
             cachedBaseTime = chronometer?.baseTime ?: 0L
 
+            val skyColors = getGradientColorsForTime(now.toLocalTime(), today).map { it.toArgb() }
             return Snapshot(
                 nextPrayer = nextPrayer,
                 rows = WidgetDayModel.rows(days, nextPrayer, now),
                 chronometer = chronometer,
-                background = gradientBitmap(getGradientColorsForTime(now.toLocalTime(), today).map { it.toArgb() }),
+                background = gradientBitmap(skyColors),
+                skyColors = skyColors,
                 locationName = ep.settingsManager().settingsFlow.first().locationName,
                 today = now.toLocalDate(),
                 hijri = HijriUtils.getEffectiveHijriDate(now.toLocalDate(), days)
@@ -280,6 +301,43 @@ class WaktivaWidget : AppWidgetProvider() {
                 views.setTextViewText(R.id.widget_date, dateLine(context, snapshot.today, snapshot.hijri))
             }
 
+            return views
+        }
+
+        /**
+         * The countdown widget: the next prayer's name and time in a small top line, the countdown
+         * as large as the cell allows, and a stroke of the prayer's colour, on the sky of the hour
+         * lit by that colour (see [countdownBackground]).
+         */
+        private fun buildCountdown(context: Context, snapshot: Snapshot): RemoteViews {
+            val views = RemoteViews(context.packageName, R.layout.widget_countdown_small)
+            views.setOnClickPendingIntent(android.R.id.background, openAppIntent(context))
+
+            val next = snapshot.nextPrayer
+            if (next == null) {
+                views.setImageViewBitmap(R.id.widget_bg, snapshot.background)
+                views.setViewVisibility(R.id.widget_content, View.GONE)
+                views.setViewVisibility(R.id.widget_empty, View.VISIBLE)
+                return views
+            }
+            views.setViewVisibility(R.id.widget_content, View.VISIBLE)
+            views.setViewVisibility(R.id.widget_empty, View.GONE)
+
+            val accent = accentFor(next.type)
+            views.setImageViewBitmap(R.id.widget_bg, countdownBackground(snapshot.skyColors, accent))
+            views.setTextViewText(R.id.widget_name, next.type.getDisplayName(context))
+            views.setTextViewText(R.id.widget_time, next.time.format(timeFormatter))
+            views.setImageViewResource(R.id.widget_icon, iconFor(next.type))
+            views.setInt(R.id.widget_accent, "setColorFilter", accent)
+
+            val chronometer = snapshot.chronometer
+            views.setChronometer(
+                R.id.widget_chrono,
+                chronometer?.baseTime ?: SystemClock.elapsedRealtime(),
+                null,
+                chronometer?.isRunning == true
+            )
+            views.setChronometerCountDown(R.id.widget_chrono, true)
             return views
         }
 
@@ -379,6 +437,53 @@ class WaktivaWidget : AppWidgetProvider() {
             PrayerType.MAGHRIB -> R.drawable.sunset
             PrayerType.ISHA -> R.drawable.clear_night
         }
+
+        /** Each prayer's colour, as on the day circle, which lights the countdown widget. */
+        private fun accentFor(type: PrayerType): Int = when (type) {
+            PrayerType.FAJR -> 0xFF81D4FA.toInt()
+            PrayerType.SUNRISE -> 0xFFFFE082.toInt()
+            PrayerType.DHUHR -> 0xFFFFF59D.toInt()
+            PrayerType.ASR -> 0xFFFFCC80.toInt()
+            PrayerType.MAGHRIB -> 0xFFCE93D8.toInt()
+            PrayerType.ISHA -> 0xFF9FA8DA.toInt()
+        }
+
+        /**
+         * The countdown widget's background: the sky of the hour, shaded towards the left where the
+         * countdown sits so white figures read on a bright day, and a glow of the next prayer's
+         * [accent] rising from the top right corner. Cached per sky and prayer.
+         */
+        private fun countdownBackground(sky: List<Int>, accent: Int): Bitmap {
+            val key = sky.joinToString(",") + "|" + accent
+            cachedCountdownBitmap?.takeIf { key == cachedCountdownKey }?.let { return it }
+
+            val width = 240f
+            val height = 120f
+            val bitmap = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            canvas.drawBitmap(gradientBitmap(sky).let { Bitmap.createScaledBitmap(it, width.toInt(), height.toInt(), true) }, 0f, 0f, null)
+            canvas.drawRect(0f, 0f, width, height, Paint().apply {
+                shader = LinearGradient(
+                    0f, 0f, width, 0f,
+                    intArrayOf(0x47000000, 0x14000000, 0x00000000), floatArrayOf(0f, 0.55f, 1f),
+                    Shader.TileMode.CLAMP
+                )
+            })
+            canvas.drawRect(0f, 0f, width, height, Paint().apply {
+                shader = RadialGradient(
+                    width * 0.92f, height * 0.05f, width * 0.75f,
+                    intArrayOf(withAlpha(accent, 0x8C), withAlpha(accent, 0x26), withAlpha(accent, 0)),
+                    floatArrayOf(0f, 0.45f, 1f),
+                    Shader.TileMode.CLAMP
+                )
+            })
+
+            cachedCountdownBitmap = bitmap
+            cachedCountdownKey = key
+            return bitmap
+        }
+
+        private fun withAlpha(color: Int, alpha: Int) = (alpha shl 24) or (color and 0x00FFFFFF)
 
         /** Vertical sky gradient; cached because the palette only changes at day-phase boundaries. */
         private fun gradientBitmap(colors: List<Int>): Bitmap {

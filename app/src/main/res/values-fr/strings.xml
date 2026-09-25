@@ -425,4 +425,6 @@
     <string name="widget_description">Prochaine prière, compte à rebours en direct et toute la journée en un coup d\'œil</string>
     <string name="widget_next_up">Ensuite</string>
     <string name="widget_empty">Ouvrez Waktiva pour charger les heures de prière</string>
+    <string name="widget_countdown_label">Compte à rebours</string>
+    <string name="widget_countdown_description">Le temps restant avant la prochaine prière, en grand et d\'un coup d\'œil</string>
 </resources>

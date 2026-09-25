@@ -438,4 +438,6 @@
     <string name="widget_description">Sıradaki vakit, canlı geri sayım ve günün tamamı tek bakışta</string>
     <string name="widget_next_up">Sıradaki</string>
     <string name="widget_empty">Vakitleri yüklemek için Waktiva\'yı açın</string>
+    <string name="widget_countdown_label">Geri Sayım</string>
+    <string name="widget_countdown_description">Sıradaki vakte kalan süre, büyük ve tek bakışta</string>
 </resources>

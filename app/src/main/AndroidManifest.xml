@@ -98,6 +98,19 @@
                 android:resource="@xml/waktiva_widget_info" />
         </receiver>
 
+        <!-- The small countdown widget, beside the main one; refreshed with it by WaktivaWidget.updateAll -->
+        <receiver
+            android:name=".ui.widget.WaktivaCountdownWidget"
+            android:exported="true"
+            android:label="@string/widget_countdown_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/waktiva_countdown_widget_info" />
+        </receiver>
+
         <!-- WorkManager's internal service: must declare foregroundServiceType to match
              the type used in AdhanWorker's ForegroundInfo (FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK) -->
         <service

@@ -425,4 +425,6 @@
     <string name="widget_description">Nächstes Gebet, Live-Countdown und der ganze Tag auf einen Blick</string>
     <string name="widget_next_up">Als Nächstes</string>
     <string name="widget_empty">Öffne Waktiva, um die Gebetszeiten zu laden</string>
+    <string name="widget_countdown_label">Countdown</string>
+    <string name="widget_countdown_description">Die Zeit bis zum nächsten Gebet, groß und auf einen Blick</string>
 </resources>

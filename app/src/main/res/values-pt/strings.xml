@@ -437,4 +437,6 @@
     <string name="widget_description">Próxima oração, contagem regressiva ao vivo e o dia inteiro num relance</string>
     <string name="widget_next_up">A seguir</string>
     <string name="widget_empty">Abra o Waktiva para carregar os horários de oração</string>
+    <string name="widget_countdown_label">Contagem regressiva</string>
+    <string name="widget_countdown_description">O tempo que falta para a próxima oração, grande e num relance</string>
 </resources>

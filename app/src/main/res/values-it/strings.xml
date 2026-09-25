@@ -425,4 +425,6 @@
     <string name="widget_description">Prossima preghiera, conto alla rovescia in tempo reale e tutta la giornata a colpo d\'occhio</string>
     <string name="widget_next_up">Prossima</string>
     <string name="widget_empty">Apri Waktiva per caricare gli orari di preghiera</string>
+    <string name="widget_countdown_label">Conto alla rovescia</string>
+    <string name="widget_countdown_description">Il tempo che manca alla prossima preghiera, in grande e a colpo d\'occhio</string>
 </resources>

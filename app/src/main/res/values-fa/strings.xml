@@ -438,4 +438,6 @@
     <string name="widget_description">نماز بعدی، شمارش معکوس زنده و کل روز در یک نگاه</string>
     <string name="widget_next_up">بعدی</string>
     <string name="widget_empty">برای بارگیری اوقات نماز، Waktiva را باز کنید</string>
+    <string name="widget_countdown_label">شمارش معکوس</string>
+    <string name="widget_countdown_description">زمان باقی‌مانده تا نماز بعدی، بزرگ و در یک نگاه</string>
 </resources>

@@ -438,4 +438,6 @@
     <string name="widget_description">Salat berikutnya, hitung mundur langsung, dan jadwal sehari dalam sekejap</string>
     <string name="widget_next_up">Berikutnya</string>
     <string name="widget_empty">Buka Waktiva untuk memuat jadwal salat</string>
+    <string name="widget_countdown_label">Hitung Mundur</string>
+    <string name="widget_countdown_description">Sisa waktu menuju salat berikutnya, besar dan sekilas pandang</string>
 </resources>

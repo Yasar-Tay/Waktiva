@@ -438,4 +438,6 @@
     <string name="widget_description">الصلاة القادمة وعدّ تنازلي مباشر ومواقيت اليوم كله بنظرة واحدة</string>
     <string name="widget_next_up">التالية</string>
     <string name="widget_empty">افتح Waktiva لتحميل مواقيت الصلاة</string>
+    <string name="widget_countdown_label">العد التنازلي</string>
+    <string name="widget_countdown_description">الوقت المتبقي حتى الصلاة التالية، كبيرًا وبنظرة واحدة</string>
 </resources>

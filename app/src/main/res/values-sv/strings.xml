@@ -437,4 +437,6 @@
     <string name="widget_description">Nästa bön, nedräkning i realtid och hela dagen i en överblick</string>
     <string name="widget_next_up">Nästa</string>
     <string name="widget_empty">Öppna Waktiva för att ladda bönetiderna</string>
+    <string name="widget_countdown_label">Nedräkning</string>
+    <string name="widget_countdown_description">Tiden kvar till nästa bön, stort och med en blick</string>
 </resources>

@@ -437,4 +437,6 @@
     <string name="widget_description">Solat seterusnya, kiraan detik langsung dan waktu sepanjang hari dengan sekali pandang</string>
     <string name="widget_next_up">Seterusnya</string>
     <string name="widget_empty">Buka Waktiva untuk memuatkan waktu solat</string>
+    <string name="widget_countdown_label">Kiraan Detik</string>
+    <string name="widget_countdown_description">Baki masa ke solat seterusnya, besar dan sekali pandang</string>
 </resources>
