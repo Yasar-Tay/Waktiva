@@ -183,6 +183,8 @@
     <string name="settings_notifications_sound">Уведомления и звук</string>
     <string name="settings_play_adhan">Проигрывать аудио Азана</string>
     <string name="settings_play_adhan_desc">Проигрывать звук азана, когда наступает время молитвы</string>
+    <string name="settings_play_adhan_dua">Проигрывать дуа после Азана</string>
+    <string name="settings_play_adhan_dua_desc">Проигрывать дуа по окончании Азана</string>
     <string name="settings_adhan_prayers">Время азана</string>
     <string name="settings_adhan_prayers_desc">Выберите намазы, для которых будет звучать азан</string>
     <string name="settings_adhan_sound_selection">Настройки азана и уведомлений</string>
@@ -401,6 +403,7 @@
     <string name="license_adhan_audio">3. Лицензия на аудио Азана</string>
     <string name="license_adhan_reciter">Waktiva включает записи Азана Мухсина Кара, чемпиона мира по Азану 2022 года.</string>
     <string name="license_adhan_permission">Эти записи используются с разрешения. Все права на аудио принадлежат оригинальному чтецу.</string>
+    <string name="license_adhan_dua_reciter">Дуа после Азана читает хафиз Фатих Демирель. Запись используется с разрешения, все права принадлежат чтецу.</string>
     <string name="license_adhan_restrictions">Аудио Азана не может быть извлечено, перераспределено или использовано вне приложения Waktiva без явного разрешения правообладателя.</string>
     <string name="license_location_permissions">4. Местоположение и разрешения</string>
     <string name="license_location_usage">Waktiva запрашивает разрешение на доступ к местоположению только для того, чтобы:</string>

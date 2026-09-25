@@ -183,6 +183,8 @@
     <string name="settings_notifications_sound">Bildirimler ve Ses</string>
     <string name="settings_play_adhan">Ezan Sesini Çal</string>
     <string name="settings_play_adhan_desc">Namaz vakti geldiğinde ezan sesi çal</string>
+    <string name="settings_play_adhan_dua">Ezan Duasını Oku</string>
+    <string name="settings_play_adhan_dua_desc">Ezan bittikten sonra ezan duası okunsun</string>
     <string name="settings_adhan_prayers">Ezan Okunacak Vakitler</string>
     <string name="settings_adhan_prayers_desc">Ezanın okunacağı vakitleri seçin</string>
     <string name="settings_adhan_sound_selection">Ezan ve Bildirim Ayarları</string>
@@ -403,6 +405,7 @@
     <string name="license_adhan_audio">3. Ezan Ses Kaydı Lisansı</string>
     <string name="license_adhan_reciter">Waktiva, 2022 Ezanı Güzel Okuma Yarışması Dünya Birincisi Muhsin Kara\'nın ezan kayıtlarını içermektedir.</string>
     <string name="license_adhan_permission">Bu kayıtlar izin alınarak kullanılmaktadır. Tüm ses hakları asıl okuyucuya aittir.</string>
+    <string name="license_adhan_dua_reciter">Ezandan sonra okunan ezan duası Hafız Fatih Demirel tarafından okunmuştur. Bu kayıt izin alınarak kullanılmaktadır ve tüm hakları okuyucuya aittir.</string>
     <string name="license_adhan_restrictions">Ezan sesleri, hak sahibinin açık izni olmadan Waktiva uygulaması dışına çıkarılamaz, yeniden dağıtılamaz veya kullanılamaz.</string>
     <string name="license_location_permissions">4. Konum ve İzinler</string>
     <string name="license_location_usage">Waktiva konum iznini sadece şunlar için talep eder:</string>

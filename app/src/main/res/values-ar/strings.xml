@@ -183,6 +183,8 @@
     <string name="settings_notifications_sound">الإشعارات والصوت</string>
     <string name="settings_play_adhan">تشغيل صوت الأذان</string>
     <string name="settings_play_adhan_desc">تشغيل صوت الأذان عندما يحين وقت الصلاة</string>
+    <string name="settings_play_adhan_dua">تشغيل دعاء الأذان</string>
+    <string name="settings_play_adhan_dua_desc">تشغيل دعاء ما بعد الأذان عند انتهائه</string>
     <string name="settings_adhan_prayers">أوقات الأذان</string>
     <string name="settings_adhan_prayers_desc">اختر الصلوات التي يُرفع لها الأذان</string>
     <string name="settings_adhan_sound_selection">إعدادات الأذان والإشعارات</string>
@@ -403,6 +405,7 @@
     <string name="license_adhan_audio">٣. ترخيص صوت الأذان</string>
     <string name="license_adhan_reciter">يتضمن Waktiva تسجيلات الأذان للمؤذن محسن كارا، بطل العالم لعام ٢٠٢٢ في مسابقة تلاوة الأذان.</string>
     <string name="license_adhan_permission">تستخدم هذه التسجيلات بإذن. جميع حقوق الصوت تعود للمؤذن الأصلي.</string>
+    <string name="license_adhan_dua_reciter">دعاء ما بعد الأذان بصوت الحافظ فاتح دميرال. يُستخدم هذا التسجيل بإذن، وجميع حقوقه محفوظة للقارئ.</string>
     <string name="license_adhan_restrictions">لا يجوز استخراج صوت الأذان أو إعادة توزيعه أو استخدامه خارج تطبيق Waktiva دون إذن صريح من صاحب الحقوق.</string>
     <string name="license_location_permissions">٤. الموقع والأذونات</string>
     <string name="license_location_usage">يطلب Waktiva إذن الموقع حصريًا لـ:</string>

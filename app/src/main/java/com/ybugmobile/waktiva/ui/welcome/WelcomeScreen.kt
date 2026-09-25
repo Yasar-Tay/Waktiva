@@ -444,6 +444,27 @@ private fun PreferencesStep(
                             )
                         }
                     }
+
+                    GlassSurface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        glass = WelcomeGlass
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(stringResource(R.string.settings_play_adhan_dua), fontWeight = FontWeight.Bold, color = Color.White)
+                                Text(stringResource(R.string.settings_play_adhan_dua_desc), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
+                            }
+                            Switch(
+                                checked = s.playAdhanDua,
+                                onCheckedChange = { audioViewModel.togglePlayAdhanDua(it) },
+                                colors = switchColors
+                            )
+                        }
+                    }
                 }
 
                 if (settings?.let { !it.playAdhanAudio || it.adhanDisabledPrayers.isNotEmpty() } == true) {

@@ -183,6 +183,8 @@
     <string name="settings_notifications_sound">Notifikasi &amp; Bunyi</string>
     <string name="settings_play_adhan">Mainkan Audio Azan</string>
     <string name="settings_play_adhan_desc">Mainkan bunyi azan apabila tiba waktu solat</string>
+    <string name="settings_play_adhan_dua">Mainkan Doa Azan</string>
+    <string name="settings_play_adhan_dua_desc">Mainkan doa selepas azan tamat</string>
     <string name="settings_adhan_prayers">Waktu Azan</string>
     <string name="settings_adhan_prayers_desc">Pilih solat yang akan memainkan azan</string>
     <string name="settings_adhan_sound_selection">Tetapan Azan dan Pemberitahuan</string>
@@ -396,6 +398,7 @@
     <string name="license_adhan_audio">3. Lesen Audio Azan</string>
     <string name="license_adhan_reciter">Waktiva menyertakan rakaman Azan oleh Muhsin Kara, Juara Dunia Azan 2022.</string>
     <string name="license_adhan_permission">Rakaman ini digunakan with izin. Semua hak audio kekal with pelantun asal.</string>
+    <string name="license_adhan_dua_reciter">Doa selepas azan dialunkan oleh Hafız Fatih Demirel. Rakaman ini digunakan dengan kebenaran, dan semua hak adalah milik pengalunnya.</string>
     <string name="license_adhan_restrictions">Audio Azan tidak boleh diekstrak, diedarkan semula, atau digunakan semula di luar aplikasi Waktiva tanpa kebenaran nyata daripada pemegang hak.</string>
     <string name="license_location_permissions">4. Lokasi &amp; Kebenaran</string>
     <string name="license_location_usage">Waktiva meminta kebenaran lokasi semata-mata untuk:</string>

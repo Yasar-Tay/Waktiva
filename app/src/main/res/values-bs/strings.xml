@@ -190,6 +190,8 @@
     <string name="settings_notifications_sound">Obavijesti i zvuk</string>
     <string name="settings_play_adhan">Reproduciraj zvuk Ezana</string>
     <string name="settings_play_adhan_desc">Oglasi Ezan kada nastupi namasko vrijeme</string>
+    <string name="settings_play_adhan_dua">Reproduciraj dovu nakon Ezana</string>
+    <string name="settings_play_adhan_dua_desc">Nakon završetka Ezana prouči se dova</string>
     <string name="settings_adhan_prayers">Vremena ezana</string>
     <string name="settings_adhan_prayers_desc">Odaberite za koje namaze se uči ezan</string>
     <string name="settings_adhan_sound_selection">Postavke Ezana i obavijesti</string>
@@ -408,6 +410,7 @@
     <string name="license_adhan_audio">3. Licenca za audio Ezana</string>
     <string name="license_adhan_reciter">Waktiva uključuje snimke Ezana koje izvodi Muhsin Kara, svjetski prvak u učenju Ezana iz 2022. godine.</string>
     <string name="license_adhan_permission">Ovi snimci se koriste uz dozvolu. Sva audio prava pripadaju originalnom izvođaču.</string>
+    <string name="license_adhan_dua_reciter">Dovu nakon Ezana uči hafiz Fatih Demirel. Ovaj snimak se koristi uz dozvolu, a sva prava pripadaju učaču.</string>
     <string name="license_adhan_restrictions">Audio snimak Ezana se ne smije izdvajati, redistribuirati ili koristiti izvan Waktiva aplikacije bez izričite dozvole vlasnika prava.</string>
     <string name="license_location_permissions">4. Lokacija i dozvole</string>
     <string name="license_location_usage">Waktiva zahtijeva dozvolu za lokaciju isključivo radi:</string>

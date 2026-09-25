@@ -183,6 +183,8 @@
     <string name="settings_notifications_sound">Notifikasi &amp; Suara</string>
     <string name="settings_play_adhan">Putar Audio Adzan</string>
     <string name="settings_play_adhan_desc">Putar suara adzan saat waktu shalat tiba</string>
+    <string name="settings_play_adhan_dua">Putar Doa Adzan</string>
+    <string name="settings_play_adhan_dua_desc">Putar doa setelah adzan selesai</string>
     <string name="settings_adhan_prayers">Waktu Azan</string>
     <string name="settings_adhan_prayers_desc">Pilih salat mana saja yang memutar azan</string>
     <string name="settings_adhan_sound_selection">Pengaturan Adzan dan Notifikasi</string>
@@ -403,6 +405,7 @@
     <string name="license_adhan_audio">3. Lisensi Audio Adzan</string>
     <string name="license_adhan_reciter">Waktiva menyertakan rekaman Adzan oleh Muhsin Kara, Juara Dunia Adzan 2022.</string>
     <string name="license_adhan_permission">Rekaman ini digunakan dengan izin. Seluruh hak audio tetap berada pada pelantun asli.</string>
+    <string name="license_adhan_dua_reciter">Doa setelah adzan dilantunkan oleh Hafız Fatih Demirel. Rekaman ini digunakan dengan izin, dan seluruh haknya adalah milik pelantunnya.</string>
     <string name="license_adhan_restrictions">Audio Adzan tidak boleh diekstrak, didistribusikan ulang, atau digunakan kembali di luar aplikasi Waktiva tanpa izin eksplisit dari pemegang hak.</string>
     <string name="license_location_permissions">4. Lokasi &amp; Izin</string>
     <string name="license_location_usage">Waktiva meminta izin lokasi semata-mata untuk:</string>

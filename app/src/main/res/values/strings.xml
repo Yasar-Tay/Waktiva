@@ -190,6 +190,8 @@
     <string name="settings_notifications_sound">Notifications &amp; Sound</string>
     <string name="settings_play_adhan">Play Adhan Sound</string>
     <string name="settings_play_adhan_desc">Sound the Adhan when it\'s time to pray</string>
+    <string name="settings_play_adhan_dua">Play Adhan Dua</string>
+    <string name="settings_play_adhan_dua_desc">Recite the dua after the adhan ends</string>
     <string name="settings_adhan_prayers">Adhan Times</string>
     <string name="settings_adhan_prayers_desc">Choose which prayers play the adhan</string>
     <string name="settings_adhan_sound_selection">Adhan and Notification Settings</string>
@@ -409,6 +411,7 @@
     <string name="license_adhan_audio">3. Adhan Audio License</string>
     <string name="license_adhan_reciter">Waktiva includes Adhan recordings by Muhsin Kara, the 2022 World Champion of the Adhan Recitation Contest.</string>
     <string name="license_adhan_permission">These recordings are used with permission. All audio rights belong to the original reciter.</string>
+    <string name="license_adhan_dua_reciter">The dua recited after the adhan is performed by Hafız Fatih Demirel. This recording is used with permission, and all rights belong to the reciter.</string>
     <string name="license_adhan_restrictions">Adhan audio may not be extracted, redistributed, or used outside the Waktiva application without explicit permission from the rights holder.</string>
     <string name="license_location_permissions">4. Location and Permissions</string>
     <string name="license_location_usage">Waktiva requests location permission exclusively to:</string>
