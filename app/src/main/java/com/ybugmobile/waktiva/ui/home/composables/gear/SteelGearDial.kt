@@ -51,7 +51,7 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
         val accent = frame.current.color
 
         drawCircle(Brush.radialGradient(listOf(accent.copy(alpha = 0.10f), accent.copy(alpha = 0f)), c, outer), outer, c)
-        softShadow(c, outer)
+        elevation(bezel, 3f * dp)
 
         drawPath(bezel, metalBrush(palette.steel, c, outer))
         val sheen = outer - 0.8f * dp
@@ -79,6 +79,7 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
             )
         }
 
+        elevation(ring, 2f * dp, ringRot, c)
         rotate(ringRot.toDegrees(), c) {
             drawPath(ring, metalBrush(palette.steel, c, inner, ringRot, flip = true))
             drawPath(ring, Color(0x8C0A0E16), style = Stroke(0.7f * dp))

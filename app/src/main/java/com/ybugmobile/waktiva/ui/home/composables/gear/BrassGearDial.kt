@@ -24,7 +24,6 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
     private val c = Offset(s / 2f, s / 2f)
     private val r = 0.77f * s / 2f
     private val rPlanet = r * PLANET_TEETH / MAIN_TEETH
-    private val add = gearAddendum(r, MAIN_TEETH)
     private val ded = gearDedendum(r, MAIN_TEETH)
     private val bandIn = r - ded - 0.14f * r
     private val hubOut = 0.34f * r
@@ -73,7 +72,9 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
         val palette = frame.palette
         val wheelRot = frame.direction * (frame.dayTurn + frame.phase)
 
-        softShadow(c, r + add)
+        elevation(wheel, 3f * dp, wheelRot, c)
+        elevation(spokes, 2f * dp, wheelRot, c)
+        elevation(hub, 2f * dp, wheelRot, c)
         rotate(wheelRot.toDegrees(), c) {
             val brass = metalBrush(palette.brass, c, r, wheelRot)
             drawPath(wheel, brass)

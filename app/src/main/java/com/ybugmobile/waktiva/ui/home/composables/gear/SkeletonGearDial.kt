@@ -10,13 +10,15 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
 
 /**
- * Skeleton: a hairline wheel with five straight spokes over a faint background gear train;
- * the prayers are cog badges. The date sits as a disc in the hub.
+ * Skeleton: a hairline wheel with five straight spokes over a faint background gear train.
+ * The prayers are coloured stones set on a solid gold ring, whose enamel inlay carries the
+ * prayer colours. The date sits as a disc in the hub.
  */
 internal class SkeletonGearDial(private val s: Float, private val dp: Float) : GearDial {
     private class TrainGear(val center: Offset, val radius: Float, val teeth: Int, val outline: Path)
@@ -26,8 +28,16 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
     private val ded = gearDedendum(r, MAIN_TEETH)
     private val track = r - ded - 0.077f * s / 2f
     private val innerRim = track - 0.055f * s / 2f
-    private val badge = max(9f * dp, s * 0.03f)
+    private val badge = max(11f * dp, s * 0.04f)
     private val badgeCurrent = badge * 1.18f
+
+    // The gold ring the stones sit on, with a recessed enamel channel down its middle.
+    private val ringHalf = max(5f * dp, s * 0.021f)
+    private val channelHalf = ringHalf * 0.42f
+    private val ringOuter = track + ringHalf
+    private val ringInner = track - ringHalf
+    private val ring = annulus(c, ringOuter, ringInner)
+    private val channel = annulus(c, track + channelHalf + 0.8f * dp, track - channelHalf - 0.8f * dp)
     private val hub = 0.30f * r
 
     override val markerDistance = track
@@ -37,8 +47,8 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
     override val bridge = BridgeSpec(innerRadius = hub + 8 * dp, freeRadius = innerRim - 2 * dp, maxSpan = 2.3f)
 
     private val wheel = Path().apply { addGearOutline(this, c, r, MAIN_TEETH) }
-    private val badgePath = badgeOutline(badge)
-    private val badgeCurrentPath = badgeOutline(badgeCurrent)
+    private val stone = GemCut(badge)
+    private val stoneCurrent = GemCut(badgeCurrent)
 
     // Background train: neighbours share one circular pitch so their teeth mesh.
     private val angle12 = 0.55f
@@ -92,18 +102,7 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
             drawCircle(frame.palette.gold.copy(alpha = 0.22f), hub * 0.8f, c, style = hair)
         }
 
-        prayerTrack(frame, c, track, max(3f * dp, s * 0.01f), 0.5f)
-        for (i in 0 until 24) {
-            val a = TAU / 4 + i * TAU / 24
-            val major = i % 6 == 0
-            val len = if (major) s * 0.024f else s * 0.01f
-            drawLine(
-                Color.White.copy(alpha = if (major) 0.4f else 0.12f),
-                pointOn(c, track - len / 2f, a),
-                pointOn(c, track + len / 2f, a),
-                (if (major) 1.5f else 1f) * dp
-            )
-        }
+        drawRing(frame)
 
         frame.bridge?.draw(this)
 
@@ -117,16 +116,75 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
             nowIndicator(c, track, handAngle, frame.current.color, dp)
         }
 
-        frame.prayers.forEachIndexed { i, p ->
+        frame.prayers.forEach { p ->
             val theta = dayAngle(p.minutes, frame.rtl)
             val at = pointOn(c, track, theta)
             val isCurrent = p.type == frame.current.type
             val radius = if (isCurrent) badgeCurrent else badge
             if (isCurrent) halo(at, radius * 0.6f, radius * 2.2f, p.color, 0.35f)
-            val spin = dir * frame.phase * if (i % 2 == 1) -1f else 1f
-            cogBadge(p, at, radius, spin, if (isCurrent) badgeCurrentPath else badgePath, dp)
+            val sparkle = if (isCurrent) 0.55f + 0.45f * abs(sin(frame.phase * 9)) else 0f
+            gemStone(p, at, if (isCurrent) stoneCurrent else stone, frame.palette.brass, frame.palette.gold, dp, sparkle)
             timeLabel(frame, p.label, pointOn(c, track - radius - s * 0.05f, theta))
         }
+    }
+
+    /**
+     * The solid gold ring: bevelled edges, engraved hour marks either side of the channel and
+     * the prayer colours as an enamel inlay, glazed so it reads as set into the metal.
+     */
+    private fun DrawScope.drawRing(frame: GearFrame) {
+        val palette = frame.palette
+        elevation(ring, 3f * dp)
+        drawPath(ring, metalBrush(palette.brass, c, ringOuter))
+        drawCircle(
+            Brush.linearGradient(
+                listOf(Color(0xD9FFF6D6), Color(0x1AFFF6D6)),
+                start = c - Offset(ringOuter, ringOuter),
+                end = c + Offset(ringOuter, ringOuter)
+            ),
+            ringOuter - 0.6f * dp, c, style = Stroke(dp)
+        )
+        drawCircle(
+            Brush.linearGradient(
+                listOf(Color(0x263C280A), Color(0xBF3C280A)),
+                start = c - Offset(ringInner, ringInner),
+                end = c + Offset(ringInner, ringInner)
+            ),
+            ringInner + 0.6f * dp, c, style = Stroke(dp)
+        )
+        drawCircle(Color(0xB33C280A), ringOuter, c, style = Stroke(0.8f * dp))
+        drawCircle(Color(0xB33C280A), ringInner, c, style = Stroke(0.8f * dp))
+
+        val bevel = 0.6f * dp / track
+        for (i in 0 until 24) {
+            val a = TAU / 4 + i * TAU / 24
+            val major = i % 6 == 0
+            val reach = if (major) ringHalf - dp else channelHalf + (ringHalf - channelHalf) * 0.55f
+            for (side in floatArrayOf(1f, -1f)) {
+                val from = track + side * (channelHalf + dp)
+                val to = track + side * reach
+                drawLine(
+                    Color(0xFF3C2608).copy(alpha = if (major) 0.75f else 0.45f),
+                    pointOn(c, from, a),
+                    pointOn(c, to, a),
+                    (if (major) 1.4f else 0.8f) * dp
+                )
+                drawLine(palette.tone(Color(0x59FFF0C8)), pointOn(c, from, a + bevel), pointOn(c, to, a + bevel), 0.6f * dp)
+            }
+        }
+
+        drawPath(channel, Color(0xCC1E1406))
+        prayerTrack(frame, c, track, channelHalf * 2, 0.95f)
+        drawCircle(
+            Brush.radialGradient(
+                ringInner / ringOuter to Color.White.copy(alpha = 0.28f),
+                (track - channelHalf * 0.1f) / ringOuter to Color.White.copy(alpha = 0.05f),
+                (track + channelHalf) / ringOuter to Color.Black.copy(alpha = 0.25f),
+                center = c,
+                radius = ringOuter
+            ),
+            track, c, style = Stroke(channelHalf * 2)
+        )
     }
 
     /**

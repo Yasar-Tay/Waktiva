@@ -9,8 +9,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.luminance
@@ -47,19 +49,21 @@ internal fun annulus(center: Offset, outer: Float, inner: Float) = Path().apply 
     fillType = PathFillType.EvenOdd
 }
 
-internal fun DrawScope.softShadow(center: Offset, radius: Float) {
-    val c = center + Offset(0f, radius * 0.04f)
-    drawCircle(
-        brush = Brush.radialGradient(
-            0f to Color.Black.copy(alpha = 0.45f),
-            0.88f to Color.Black.copy(alpha = 0.35f),
-            1f to Color.Transparent,
-            center = c,
-            radius = radius * 1.08f
-        ),
-        radius = radius * 1.08f,
-        center = c
-    )
+/**
+ * Lifts a metal part off the dial: a soft shadow of [path], cast [depth] straight down.
+ * A filled silhouette under a few widening, faint strokes keeps it soft without blur
+ * filters, which older Android versions don't render. Pass the part's [rotation]
+ * (radians, around [pivot]) so the shadow turns with the part but still falls downwards.
+ */
+internal fun DrawScope.elevation(path: Path, depth: Float, rotation: Float = 0f, pivot: Offset = center) {
+    translate(0f, depth) {
+        rotate(rotation.toDegrees(), pivot) {
+            for (i in 3 downTo 1) {
+                drawPath(path, Color.Black.copy(alpha = 0.06f), style = Stroke(depth * i, join = StrokeJoin.Round))
+            }
+            drawPath(path, Color.Black.copy(alpha = 0.22f))
+        }
+    }
 }
 
 /** Coloured prayer-to-prayer arcs, as in PrayerCircleVisualization. */
@@ -108,12 +112,13 @@ internal fun DrawScope.timeLabel(f: GearFrame, text: String, at: Offset) {
     drawText(layout, topLeft = Offset(at.x - layout.size.width / 2f, at.y - layout.size.height / 2f))
 }
 
-internal fun DrawScope.prayerIcon(p: GearPrayer, at: Offset, iconSize: Float) {
-    val ink = if (p.color.luminance() > 0.5f) Color.Black.copy(alpha = 0.7f) else Color.White
+internal fun DrawScope.prayerIcon(p: GearPrayer, at: Offset, iconSize: Float, ink: Color = inkOn(p.color)) {
     translate(at.x - iconSize / 2f, at.y - iconSize / 2f) {
         with(p.painter) { draw(Size(iconSize, iconSize), colorFilter = ColorFilter.tint(ink)) }
     }
 }
+
+private fun inkOn(color: Color) = if (color.luminance() > 0.5f) Color.Black.copy(alpha = 0.7f) else Color.White
 
 internal fun DrawScope.halo(at: Offset, inner: Float, outer: Float, color: Color, alpha: Float) {
     drawCircle(
@@ -137,8 +142,6 @@ internal fun planetOutline(radius: Float) = Path().apply {
 }
 
 /** Cog badge outline centred on the origin, as used by the skeleton dial. */
-internal fun badgeOutline(radius: Float) = Path().apply { addGearOutline(this, Offset.Zero, radius, 10) }
-
 /** A metal prayer gear with an upright enamel face showing the prayer icon. */
 internal fun DrawScope.planet(
     p: GearPrayer,
@@ -152,6 +155,7 @@ internal fun DrawScope.planet(
 ) {
     if (isCurrent) halo(at, radius * 0.5f, radius * 2.3f, p.color, 0.42f)
 
+    translate(at.x, at.y) { elevation(outline, 2f * pxPerDp, rotation, Offset.Zero) }
     withTransform({
         translate(at.x, at.y)
         rotate(rotation.toDegrees(), Offset.Zero)
@@ -183,19 +187,6 @@ internal fun DrawScope.planet(
         style = Stroke(0.8f * pxPerDp)
     )
     prayerIcon(p, at, face * 1.2f)
-}
-
-/** A cog badge in the prayer's colour, spinning by [rotation]. */
-internal fun DrawScope.cogBadge(p: GearPrayer, at: Offset, radius: Float, rotation: Float, outline: Path, pxPerDp: Float) {
-    withTransform({
-        translate(at.x, at.y)
-        rotate(rotation.toDegrees(), Offset.Zero)
-    }) {
-        drawPath(outline, p.color)
-        drawPath(outline, Color.Black.copy(alpha = 0.35f), style = Stroke(0.8f * pxPerDp))
-    }
-    drawCircle(Color.Black.copy(alpha = 0.18f), radius * 0.72f, at, style = Stroke(0.8f * pxPerDp))
-    prayerIcon(p, at, radius * 1.15f)
 }
 
 /** A ruby jewel in a gold setting, as on a watch movement. */
