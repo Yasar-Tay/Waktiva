@@ -1,43 +1,42 @@
 package com.ybugmobile.waktiva.ui.home.composables
 
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.MoonPhase
-import java.time.LocalDate
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.Locale
-import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
- * A highly accurate Moon Phase visualization component.
- * Uses custom Canvas drawing to represent the moon's illumination, rotation (parallactic angle),
- * and surface texture. Includes a subtle atmospheric glow animation.
+ * The Moon as it looks tonight: a realistic near side ([MoonTexture]) lit for the current phase,
+ * turned by its parallactic angle so the crescent tilts as it does in the sky, with a soft glow
+ * that breathes slowly and grows with the illumination.
+ *
+ * The surface is rendered off the main thread, once per size; each new phase only reshades it.
  *
  * @param moonPhase Data object containing illumination percentage, phase progress, and angle.
- * @param contentColor The primary color used for the illuminated part and text.
+ * @param contentColor Colour of the glow and the label.
  * @param modifier Layout modifier.
  */
 @Composable
@@ -63,103 +62,45 @@ fun MoonPhaseView(
         label = "glowAlpha"
     )
 
-    val surfacePainter = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_moon_surface))
+    val diameterPx = with(LocalDensity.current) { (MoonBox * DiscShare).roundToPx() }
+    val texture by produceState<MoonTexture?>(null, diameterPx) {
+        value = withContext(Dispatchers.Default) { MoonTexture(diameterPx) }
+    }
+    // Reshade only when the phase has moved visibly (the view updates hourly).
+    val phaseStep = (moonPhase.phaseProgress * 1000).roundToInt()
+    val moonImage by produceState<ImageBitmap?>(null, texture, phaseStep) {
+        val surface = texture ?: return@produceState
+        value = withContext(Dispatchers.Default) {
+            Bitmap.createBitmap(surface.light(moonPhase.phaseProgress), surface.size, surface.size, Bitmap.Config.ARGB_8888)
+                .asImageBitmap()
+        }
+    }
 
     val moonContent = @Composable {
         Box(
-            modifier = Modifier.size(96.dp),
+            modifier = Modifier.size(MoonBox),
             contentAlignment = Alignment.Center
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
-                val center = Offset(size.width / 2, size.height / 2)
-                val radius = size.minDimension / 2.5f
-
-                val rotationAngle = moonPhase.parallacticAngle.toFloat()
-
-                withTransform({
-                    rotate(degrees = rotationAngle, pivot = center)
-                }) {
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(contentColor.copy(alpha = glowAlpha * 0.4f), Color.Transparent),
-                            center = center,
-                            radius = radius * 2f
-                        ),
-                        radius = radius * 2f,
-                        center = center
-                    )
-
-                    val moonClipPath = Path().apply {
-                        addOval(Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius))
-                    }
-
-                    clipPath(moonClipPath) {
-                        drawCircle(
-                            color = Color.Black.copy(alpha = 0.4f), 
-                            radius = radius,
-                            center = center,
-                            style = Fill
-                        )
-
-                        val illumination = moonPhase.illumination.toFloat()
-                        val isWaning = moonPhase.phaseProgress >= 0.5
-
-                        withTransform({
-                            if (isWaning) {
-                                scale(scaleX = -1f, scaleY = 1f, pivot = center)
-                            }
-                        }) {
-                            if (illumination > 0) {
-                                if (illumination >= 0.98f) {
-                                    drawCircle(contentColor.copy(alpha = 0.85f), radius, center)
-                                } else {
-                                    val maskPath = Path()
-                                    maskPath.addArc(
-                                        oval = Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius),
-                                        startAngleDegrees = -90f,
-                                        sweepAngleDegrees = 180f
-                                    )
-                                    
-                                    val terminatorWidth = radius * abs(1f - 2f * illumination) * 2f
-                                    if (terminatorWidth < 0.5f) {
-                                        maskPath.lineTo(center.x, center.y - radius)
-                                    } else {
-                                        maskPath.arcTo(
-                                            rect = Rect(
-                                                center.x - terminatorWidth / 2f,
-                                                center.y - radius,
-                                                center.x + terminatorWidth / 2f,
-                                                center.y + radius
-                                            ),
-                                            startAngleDegrees = 90f,
-                                            sweepAngleDegrees = if (illumination > 0.5f) 180f else -180f,
-                                            forceMoveTo = false
-                                        )
-                                    }
-                                    
-                                    drawPath(maskPath, color = contentColor.copy(alpha = 0.85f), style = Fill)
-                                }
-                            }
-                        }
-
-                        withTransform({
-                            translate(center.x - radius, center.y - radius)
-                        }) {
-                            with(surfacePainter) {
-                                draw(
-                                    size = Size(radius * 2, radius * 2),
-                                    alpha = 0.5f 
-                                )
-                            }
-                        }
-                    }
-
-                    drawCircle(
-                        color = contentColor.copy(alpha = 0.3f),
-                        radius = radius,
+                val radius = size.minDimension * DiscShare / 2f
+                val glow = glowAlpha * (0.25f + 0.35f * moonPhase.illumination.toFloat())
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(contentColor.copy(alpha = glow * 0.5f), Color.Transparent),
                         center = center,
-                        style = Stroke(width = 1.5.dp.toPx())
-                    )
+                        radius = radius * 2f
+                    ),
+                    radius = radius * 2f,
+                    center = center
+                )
+                moonImage?.let { image ->
+                    rotate(moonPhase.parallacticAngle.toFloat(), center) {
+                        drawImage(
+                            image,
+                            dstOffset = IntOffset((center.x - radius).roundToInt(), (center.y - radius).roundToInt()),
+                            dstSize = IntSize((radius * 2).roundToInt(), (radius * 2).roundToInt())
+                        )
+                    }
                 }
             }
         }
@@ -195,3 +136,8 @@ fun MoonPhaseView(
         }
     }
 }
+
+private val MoonBox = 96.dp
+
+/** Share of the box the lunar disc spans; the rest is room for its glow. */
+private const val DiscShare = 0.8f

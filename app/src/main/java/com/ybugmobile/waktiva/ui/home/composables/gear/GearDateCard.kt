@@ -57,7 +57,7 @@ import java.time.format.DateTimeFormatter
 import android.graphics.Paint as NativePaint
 import android.graphics.Path as NativePath
 
-/** One side of the date card: the month's name and the day of the month. */
+/** One side of the date card: the month's short name and the day of the month. */
 internal class DateSide(val month: String, val day: String)
 
 /**
@@ -145,7 +145,8 @@ private fun rememberGregorianSide(day: PrayerDay): DateSide {
     val locale = LocalConfiguration.current.locales[0]
     return remember(day.date, locale) {
         DateSide(
-            month = day.date.format(DateTimeFormatter.ofPattern("MMMM", locale)).uppercase(locale),
+            // Abbreviated, so the lettering stays large; some locales end abbreviations with a dot.
+            month = day.date.format(DateTimeFormatter.ofPattern("MMM", locale)).replace(".", "").uppercase(locale),
             day = day.date.format(DateTimeFormatter.ofPattern("dd", locale))
         )
     }
@@ -161,7 +162,8 @@ private fun rememberHijriSide(day: PrayerDay): DateSide {
             context.resources.getIdentifier("hijri_month_${it.monthNumber}", "string", context.packageName)
         } ?: 0
         val month = if (monthRes != 0) context.getString(monthRes) else hijri?.monthEn.orEmpty()
-        DateSide(month = month.uppercase(locale), day = hijri?.day?.toString().orEmpty())
+        // The first three letters, as the calendar strip abbreviates Hijri months.
+        DateSide(month = month.take(3).uppercase(locale), day = hijri?.day?.toString().orEmpty())
     }
 }
 
@@ -192,7 +194,7 @@ private class BrassDateFace(scope: CacheDrawScope, side: DateSide, measurer: Tex
     private val dp = scope.density
     private val disc = Path().apply { addOval(Rect(c, r)) }
     private val ink = palette.tone(Color(0xFF5A3E12))
-    private val month = ArcLabel(side.month, c, r * 0.64f, d * 0.12f, ink, SerifBold, 0.08f, 2f, dp)
+    private val month = ArcLabel(side.month, c, r * 0.64f, d * 0.14f, ink, SerifBold, 0.12f, 2f, dp)
     private val window = Rect(Offset(c.x - d * 0.21f, c.y + d * 0.04f - d * 0.16f), Size(d * 0.42f, d * 0.32f))
     private val windowFrame = Path().apply { addRoundRect(RoundRect(window.inflate(d * 0.025f), CornerRadius(d * 0.05f))) }
     private val dayText = with(scope) {
@@ -299,7 +301,7 @@ private class SteelDateFace(scope: CacheDrawScope, side: DateSide, measurer: Tex
     private val dp = scope.density
     private val disc = Path().apply { addOval(Rect(c, ri)) }
     private val monthText = with(scope) {
-        fitted(measurer, side.month, TextStyle(fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold, letterSpacing = 0.1.em, color = Color(0xFFAEB9CF)), d * 0.1f, ri * 1.35f)
+        fitted(measurer, side.month, TextStyle(fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold, letterSpacing = 0.15.em, color = Color(0xFFAEB9CF)), d * 0.12f, ri * 1.35f)
     }
     private val dayText = with(scope) {
         measurer.measure(
@@ -372,7 +374,7 @@ private class SkeletonDateFace(scope: CacheDrawScope, side: DateSide, measurer: 
     private val c = scope.size.center
     private val dp = scope.density
     private val disc = Path().apply { addOval(Rect(c, ri)) }
-    private val month = ArcLabel(side.month, c, ri * 0.7f, d * 0.11f, palette.gold.copy(alpha = 0.95f), SerifBold, 0.08f, 2f, dp)
+    private val month = ArcLabel(side.month, c, ri * 0.7f, d * 0.13f, palette.gold.copy(alpha = 0.95f), SerifBold, 0.12f, 2f, dp)
     private val dayText = with(scope) {
         measurer.measure(
             side.day,
