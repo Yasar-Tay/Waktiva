@@ -122,22 +122,14 @@ fun HomePortraitContent(
                     ) {
                         state.currentPrayerDay?.let { prayerDay ->
                             DayCircle(
-                                style = settings?.dayCircleStyle ?: DayCircleStyle.CLASSIC,
+                                style = settings?.dayCircleStyle ?: DayCircleStyle.DEFAULT,
                                 day = prayerDay,
                                 currentTime = if (isToday) localTime else LocalTime.MIDNIGHT,
-                                nextPrayer = if (isToday) state.nextPrayer else null,
                                 currentPrayer = if (isToday) state.currentPrayer else null,
                                 isSelectedDayToday = isToday,
                                 isHijriVisible = state.isHijriSelected,
                                 onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
-                                contentColor = contentColor,
-                                isMuted = state.isMuted,
-                                playAdhanAudio = state.isNextAdhanEnabled,
-                                onSkipAudio = { prayerName ->
-                                    state.nextPrayer?.let { next ->
-                                        onSkipNextAudio(prayerName, next.date)
-                                    }
-                                }
+                                contentColor = contentColor
                             )
                         }
                     }

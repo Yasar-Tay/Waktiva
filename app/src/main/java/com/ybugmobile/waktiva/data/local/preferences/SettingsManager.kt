@@ -55,7 +55,7 @@ data class UserSettings(
     val showQiblaMapHint: Boolean = true,
     val showSilentPrayerNotification: Boolean = true,
     val adhanDisabledPrayers: Set<PrayerType> = emptySet(),
-    val dayCircleStyle: DayCircleStyle = DayCircleStyle.CLASSIC
+    val dayCircleStyle: DayCircleStyle = DayCircleStyle.DEFAULT
 ) {
     /**
      * Whether the adhan audio should play for [type], combining the global

@@ -4,9 +4,9 @@ import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,6 +16,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +24,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,29 +39,30 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.CurrentPrayer
-import com.ybugmobile.waktiva.domain.model.NextPrayer
+import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
+import com.ybugmobile.waktiva.domain.provider.ReligiousDaysProvider
 import com.ybugmobile.waktiva.ui.home.composables.CurrentPrayerHeader
-import com.ybugmobile.waktiva.ui.home.composables.DetailedInfo
 import com.ybugmobile.waktiva.ui.home.composables.FlippableCalendarCard
-import com.ybugmobile.waktiva.ui.home.composables.InfoGlassCard
-import com.ybugmobile.waktiva.ui.home.composables.ReligiousBadge
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.waktiva.ui.theme.darken
@@ -67,179 +71,39 @@ import kotlinx.coroutines.delay
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-/** Visual styles for the clockwork day dial. */
-enum class GearDayCircleStyle {
-    /** A spoked brass wheel; prayer gears mesh on its outside. */
-    BRASS,
-
-    /** A fixed steel bezel with an internal ring gear; prayer gears run inside it. */
-    STEEL,
-
-    /** A hairline skeleton wheel over a faint gear train; prayers are cog badges. */
-    SKELETON
-}
-
 /**
- * Clockwork take on PrayerCircleVisualization: a brass day wheel with prayer gears
- * meshing on its outside. Drop-in replacement with the same parameters.
+ * The clockwork day circle in [style] (anything but [DayCircleStyle.CLASSIC]).
+ * Use it through DayCircle, which picks between this and the classic circle.
  */
 @Composable
-fun BrassGearDayCircle(
+internal fun GearDayCircle(
+    style: DayCircleStyle,
     day: PrayerDay,
     currentTime: LocalTime,
-    nextPrayer: NextPrayer?,
     currentPrayer: CurrentPrayer?,
     isSelectedDayToday: Boolean,
-    isHijriVisible: Boolean = false,
-    onToggleHijri: () -> Unit = {},
-    contentColor: Color = Color.White,
-    isMuted: Boolean = false,
-    playAdhanAudio: Boolean = false,
-    onSkipAudio: (String) -> Unit = {}
-) = GearDayCircle(
-    GearDayCircleStyle.BRASS, day, currentTime, nextPrayer, currentPrayer, isSelectedDayToday,
-    isHijriVisible, onToggleHijri, contentColor, isMuted, playAdhanAudio, onSkipAudio
-)
-
-/**
- * Clockwork take on PrayerCircleVisualization: a steel bezel holding the prayer track,
- * with prayer gears running inside a turning ring gear. Drop-in replacement.
- */
-@Composable
-fun SteelGearDayCircle(
-    day: PrayerDay,
-    currentTime: LocalTime,
-    nextPrayer: NextPrayer?,
-    currentPrayer: CurrentPrayer?,
-    isSelectedDayToday: Boolean,
-    isHijriVisible: Boolean = false,
-    onToggleHijri: () -> Unit = {},
-    contentColor: Color = Color.White,
-    isMuted: Boolean = false,
-    playAdhanAudio: Boolean = false,
-    onSkipAudio: (String) -> Unit = {}
-) = GearDayCircle(
-    GearDayCircleStyle.STEEL, day, currentTime, nextPrayer, currentPrayer, isSelectedDayToday,
-    isHijriVisible, onToggleHijri, contentColor, isMuted, playAdhanAudio, onSkipAudio
-)
-
-/**
- * Clockwork take on PrayerCircleVisualization: a hairline skeleton wheel over a faint
- * gear train, with cog-shaped prayer badges. Closest to the current layout. Drop-in replacement.
- */
-@Composable
-fun SkeletonGearDayCircle(
-    day: PrayerDay,
-    currentTime: LocalTime,
-    nextPrayer: NextPrayer?,
-    currentPrayer: CurrentPrayer?,
-    isSelectedDayToday: Boolean,
-    isHijriVisible: Boolean = false,
-    onToggleHijri: () -> Unit = {},
-    contentColor: Color = Color.White,
-    isMuted: Boolean = false,
-    playAdhanAudio: Boolean = false,
-    onSkipAudio: (String) -> Unit = {}
-) = GearDayCircle(
-    GearDayCircleStyle.SKELETON, day, currentTime, nextPrayer, currentPrayer, isSelectedDayToday,
-    isHijriVisible, onToggleHijri, contentColor, isMuted, playAdhanAudio, onSkipAudio
-)
-
-/**
- * Shared body of the clockwork day dials. [isMuted], [playAdhanAudio] and [onSkipAudio]
- * are accepted only to keep the signature identical to PrayerCircleVisualization.
- */
-@Suppress("UNUSED_PARAMETER")
-@Composable
-fun GearDayCircle(
-    style: GearDayCircleStyle,
-    day: PrayerDay,
-    currentTime: LocalTime,
-    nextPrayer: NextPrayer?,
-    currentPrayer: CurrentPrayer?,
-    isSelectedDayToday: Boolean,
-    isHijriVisible: Boolean = false,
-    onToggleHijri: () -> Unit = {},
-    contentColor: Color = Color.White,
-    isMuted: Boolean = false,
-    playAdhanAudio: Boolean = false,
-    onSkipAudio: (String) -> Unit = {}
+    isHijriVisible: Boolean,
+    onToggleHijri: () -> Unit,
+    contentColor: Color
 ) {
-    val context = LocalContext.current
     val density = LocalDensity.current
-    val formatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val locale = configuration.locales[0]
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val weatherCondition = LocalGlassTheme.current.weatherCondition
 
-    var selectedInfo by remember { mutableStateOf<DetailedInfo?>(null) }
-    LaunchedEffect(selectedInfo) {
-        if (selectedInfo != null) {
-            delay(4000)
-            selectedInfo = null
-        }
-    }
+    val prayers = rememberGearPrayers(day)
+    val currentType = remember(day, currentTime) { currentPrayerType(day, currentTime) }
+    val current = prayers.firstOrNull { it.type == currentType } ?: prayers.last()
+    val nowMinutes = currentTime.hour * 60 + currentTime.minute + currentTime.second / 60f
 
-    // One ambient turn every 90 s. Read only inside the draw lambda so it redraws without recomposing.
+    // One ambient turn every 90 s. Read only while drawing, so it redraws without recomposing.
     val phase = rememberInfiniteTransition(label = "gearPhase").animateFloat(
         initialValue = 0f,
         targetValue = TAU,
         animationSpec = infiniteRepeatable(tween(90_000, easing = LinearEasing), RepeatMode.Restart),
         label = "gearPhase"
     )
-
-    val fajrIcon = ImageVector.vectorResource(R.drawable.haze_day_rotated)
-    val sunriseIcon = ImageVector.vectorResource(R.drawable.sunrise)
-    val dhuhrIcon = ImageVector.vectorResource(R.drawable.clear_day)
-    val asrIcon = ImageVector.vectorResource(R.drawable.clear_day)
-    val maghribIcon = ImageVector.vectorResource(R.drawable.sunset)
-    val ishaIcon = ImageVector.vectorResource(R.drawable.clear_night)
-    val fajrPainter = rememberVectorPainter(fajrIcon)
-    val sunrisePainter = rememberVectorPainter(sunriseIcon)
-    val dhuhrPainter = rememberVectorPainter(dhuhrIcon)
-    val asrPainter = rememberVectorPainter(asrIcon)
-    val maghribPainter = rememberVectorPainter(maghribIcon)
-    val ishaPainter = rememberVectorPainter(ishaIcon)
-
-    // Same colors and weather desaturation as PrayerCircleVisualization.
-    val prayers = remember(day, fajrPainter, sunrisePainter, dhuhrPainter, asrPainter, maghribPainter, ishaPainter, weatherCondition) {
-        val isCloudy = weatherCondition != WeatherCondition.CLEAR && weatherCondition != WeatherCondition.UNKNOWN
-        val isSevere = weatherCondition == WeatherCondition.RAINY ||
-            weatherCondition == WeatherCondition.THUNDERSTORM ||
-            weatherCondition == WeatherCondition.SNOWY
-        fun tone(color: Color) = if (isCloudy) {
-            color.desaturate(if (isSevere) 0.35f else 0.2f).darken(if (isSevere) 0.2f else 0.1f)
-        } else {
-            color
-        }
-        listOf(
-            Triple(PrayerType.FAJR, Color(0xFF81D4FA), fajrPainter to fajrIcon),
-            Triple(PrayerType.SUNRISE, Color(0xFFFFE082), sunrisePainter to sunriseIcon),
-            Triple(PrayerType.DHUHR, Color(0xFFFFF59D), dhuhrPainter to dhuhrIcon),
-            Triple(PrayerType.ASR, Color(0xFFFFCC80), asrPainter to asrIcon),
-            Triple(PrayerType.MAGHRIB, Color(0xFFCE93D8), maghribPainter to maghribIcon),
-            Triple(PrayerType.ISHA, Color(0xFF9FA8DA), ishaPainter to ishaIcon)
-        ).map { (type, color, art) ->
-            val time = day.timings[type] ?: LocalTime.MIN
-            GearPrayer(
-                type = type,
-                minutes = (time.hour * 60 + time.minute).toFloat(),
-                color = tone(color),
-                painter = art.first,
-                icon = art.second,
-                label = time.format(formatter)
-            )
-        }
-    }
-
-    val currentPrayerType = remember(day, currentTime) {
-        var current: PrayerType? = null
-        for ((type, time) in day.timings.toList().sortedBy { it.second }) {
-            if (currentTime.isAfter(time) || currentTime == time) current = type else break
-        }
-        current ?: PrayerType.ISHA
-    }
-    val current = prayers.firstOrNull { it.type == currentPrayerType } ?: prayers.last()
 
     val textMeasurer = rememberTextMeasurer()
     val labelStyle = remember(contentColor, isLandscape) {
@@ -251,7 +115,17 @@ fun GearDayCircle(
             shadow = Shadow(Color.Black.copy(alpha = 0.8f), blurRadius = 4f)
         )
     }
-    val nowMinutes = currentTime.hour * 60 + currentTime.minute + currentTime.second / 60f
+
+    val specialDayRes = remember(day.date) { ReligiousDaysProvider.getReligiousDay(day.date)?.nameResId }
+    val specialDay = specialDayRes?.let { stringResource(it).uppercase(locale) }
+
+    var selected by remember { mutableStateOf<PrayerType?>(null) }
+    LaunchedEffect(selected) {
+        if (selected != null) {
+            delay(4000)
+            selected = null
+        }
+    }
 
     BoxWithConstraints(
         modifier = Modifier
@@ -261,11 +135,16 @@ fun GearDayCircle(
     ) {
         val sizePx = with(density) { minOf(maxWidth, maxHeight).toPx() }
         val dial = remember(style, sizePx, density.density) { createGearDial(style, sizePx, density.density) }
+        val bridge = remember(dial, specialDay) {
+            specialDay?.let {
+                SpecialDayBridge(it, dial.bridge, Offset(sizePx / 2f, sizePx / 2f), plateFinish(style), density.density, sizePx)
+            }
+        }
 
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(Unit) { detectTapGestures { selectedInfo = null } }
+                .pointerInput(Unit) { detectTapGestures { selected = null } }
         ) {
             dial.draw(
                 this,
@@ -277,57 +156,26 @@ fun GearDayCircle(
                     phase = phase.value,
                     rtl = isRtl,
                     labelStyle = labelStyle,
-                    textMeasurer = textMeasurer
+                    textMeasurer = textMeasurer,
+                    bridge = bridge
                 )
             )
         }
 
-        // Tap targets over the drawn markers; a tapped marker turns into the info card.
-        val targetSize = with(density) { (dial.markerRadius * 2).toDp() }.coerceAtLeast(32.dp)
-        prayers.forEach { prayer ->
-            val isSelected = selectedInfo?.id == prayer.type.name
-            val offset = pointOn(Offset.Zero, dial.markerDistance, dayAngle(prayer.minutes, isRtl))
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .zIndex(if (isSelected) 20f else 5f)
-                    .graphicsLayer {
-                        translationX = offset.x
-                        translationY = offset.y
-                    }
-            ) {
-                AnimatedContent(
-                    targetState = isSelected,
-                    transitionSpec = {
-                        (fadeIn() + scaleIn(initialScale = 0.8f)).togetherWith(fadeOut() + scaleOut(targetScale = 0.8f))
-                    },
-                    label = "gearMarker"
-                ) { selected ->
-                    val info = DetailedInfo(
-                        prayer.type.name,
-                        prayer.type.getDisplayName(context),
-                        prayer.label,
-                        prayer.color,
-                        prayer.icon
-                    )
-                    if (selected) {
-                        InfoGlassCard(info)
-                    } else {
-                        Box(
-                            modifier = Modifier
-                                .size(targetSize)
-                                .pointerInput(prayer.type) {
-                                    detectTapGestures { selectedInfo = if (isSelected) null else info }
-                                }
-                        )
-                    }
-                }
-            }
-        }
+        PrayerMarkers(
+            prayers = prayers,
+            dial = dial,
+            style = style,
+            dialSizePx = sizePx,
+            selected = selected,
+            onSelect = { selected = it },
+            phase = phase,
+            isRtl = isRtl,
+            compact = isLandscape
+        )
 
-        // Brass and skeleton dials frame the date as a disc filling their hub; steel keeps the card.
+        // Brass and skeleton frame the date as a disc filling their hub; steel keeps the card.
         val hubDiameter = dial.hubRadius?.let { with(density) { (it * 2).toDp() } - 2.dp }
-        val cardSize = hubDiameter ?: 100.dp
         FlippableCalendarCard(
             day = day,
             isHijriVisible = isHijriVisible,
@@ -340,22 +188,139 @@ fun GearDayCircle(
             modifier = Modifier
                 .align(Alignment.Center)
                 .zIndex(5f),
-            size = cardSize,
+            size = hubDiameter ?: 100.dp,
             circular = hubDiameter != null
         )
 
-        // Placed below the card on its own so it never pushes the card off the hub centre.
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = maxHeight / 2 + cardSize / 2 + if (isLandscape) 8.dp else 12.dp)
-                .zIndex(5f)
-        ) {
-            ReligiousBadge(day.date, contentColor, hijriDate = day.hijriDate)
-        }
-
-        // Sit the prayer name just above the hub ring rather than at the fixed default offset.
+        // The prayer name sits just above the hub ring; steel keeps the default offset.
         val headerOffset = dial.hubOuterRadius?.let { ring -> -(with(density) { ring.toDp() } + 18.dp) }
         CurrentPrayerHeader(currentPrayer, contentColor, current.color, verticalOffset = headerOffset)
     }
+}
+
+/**
+ * Invisible tap targets over the drawn prayer markers. A tapped marker turns into its
+ * [GearPlaque], kept inside the dial so it never runs off the screen edge.
+ */
+@Composable
+private fun BoxScope.PrayerMarkers(
+    prayers: List<GearPrayer>,
+    dial: GearDial,
+    style: DayCircleStyle,
+    dialSizePx: Float,
+    selected: PrayerType?,
+    onSelect: (PrayerType?) -> Unit,
+    phase: State<Float>,
+    isRtl: Boolean,
+    compact: Boolean
+) {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val locale = LocalConfiguration.current.locales[0]
+    val targetSize = with(density) { (dial.markerRadius * 2).toDp() }.coerceAtLeast(32.dp)
+    val edge = with(density) { 4.dp.toPx() }
+
+    prayers.forEach { prayer ->
+        key(prayer.type) {
+            val isSelected = selected == prayer.type
+            val offset = pointOn(Offset.Zero, dial.markerDistance, dayAngle(prayer.minutes, isRtl))
+            var contentSize by remember { mutableStateOf(IntSize.Zero) }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .zIndex(if (isSelected) 20f else 5f)
+                    .onSizeChanged { contentSize = it }
+                    .graphicsLayer {
+                        val maxX = (dialSizePx - contentSize.width) / 2f - edge
+                        val maxY = (dialSizePx - contentSize.height) / 2f - edge
+                        translationX = if (maxX > 0f) offset.x.coerceIn(-maxX, maxX) else offset.x
+                        translationY = if (maxY > 0f) offset.y.coerceIn(-maxY, maxY) else offset.y
+                    }
+            ) {
+                AnimatedContent(
+                    targetState = isSelected,
+                    transitionSpec = {
+                        (fadeIn() + scaleIn(initialScale = 0.86f)).togetherWith(fadeOut() + scaleOut(targetScale = 0.86f))
+                    },
+                    label = "gearMarker"
+                ) { open ->
+                    if (open) {
+                        GearPlaque(
+                            prayer = prayer,
+                            name = prayer.type.getDisplayName(context).uppercase(locale),
+                            style = style,
+                            phase = phase,
+                            compact = compact,
+                            modifier = Modifier.pointerInput(Unit) { detectTapGestures { onSelect(null) } }
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .size(targetSize)
+                                .pointerInput(prayer.type) { detectTapGestures { onSelect(prayer.type) } }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** The day's prayers with the same colours and weather toning as PrayerCircleVisualization. */
+@Composable
+private fun rememberGearPrayers(day: PrayerDay): List<GearPrayer> {
+    val weather = LocalGlassTheme.current.weatherCondition
+    val formatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
+    val art = listOf(
+        PrayerType.FAJR to R.drawable.haze_day_rotated,
+        PrayerType.SUNRISE to R.drawable.sunrise,
+        PrayerType.DHUHR to R.drawable.clear_day,
+        PrayerType.ASR to R.drawable.clear_day,
+        PrayerType.MAGHRIB to R.drawable.sunset,
+        PrayerType.ISHA to R.drawable.clear_night
+    ).map { (type, res) ->
+        val icon = ImageVector.vectorResource(res)
+        Triple(type, icon, rememberVectorPainter(icon))
+    }
+
+    return remember(day, weather, art.map { it.third }) {
+        val isCloudy = weather != WeatherCondition.CLEAR && weather != WeatherCondition.UNKNOWN
+        val isSevere = weather == WeatherCondition.RAINY ||
+            weather == WeatherCondition.THUNDERSTORM ||
+            weather == WeatherCondition.SNOWY
+        fun tone(color: Color) = if (isCloudy) {
+            color.desaturate(if (isSevere) 0.35f else 0.2f).darken(if (isSevere) 0.2f else 0.1f)
+        } else {
+            color
+        }
+        art.map { (type, icon, painter) ->
+            val time = day.timings[type] ?: LocalTime.MIN
+            GearPrayer(
+                type = type,
+                minutes = (time.hour * 60 + time.minute).toFloat(),
+                color = tone(PrayerColors.getValue(type)),
+                painter = painter,
+                icon = icon,
+                label = time.format(formatter)
+            )
+        }
+    }
+}
+
+private val PrayerColors = mapOf(
+    PrayerType.FAJR to Color(0xFF81D4FA),
+    PrayerType.SUNRISE to Color(0xFFFFE082),
+    PrayerType.DHUHR to Color(0xFFFFF59D),
+    PrayerType.ASR to Color(0xFFFFCC80),
+    PrayerType.MAGHRIB to Color(0xFFCE93D8),
+    PrayerType.ISHA to Color(0xFF9FA8DA)
+)
+
+/** The prayer whose time has most recently passed, wrapping to Isha before Fajr. */
+private fun currentPrayerType(day: PrayerDay, now: LocalTime): PrayerType {
+    var current: PrayerType? = null
+    for ((type, time) in day.timings.toList().sortedBy { it.second }) {
+        if (now.isAfter(time) || now == time) current = type else break
+    }
+    return current ?: PrayerType.ISHA
 }

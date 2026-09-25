@@ -16,8 +16,18 @@ class DayCircleStyleTest {
     }
 
     @Test
-    fun fallsBackToClassicForMissingOrUnknownValues() {
-        assertEquals(DayCircleStyle.CLASSIC, DayCircleStyle.fromName(null))
-        assertEquals(DayCircleStyle.CLASSIC, DayCircleStyle.fromName("CHROME"))
+    fun defaultsToBrass() {
+        assertEquals(DayCircleStyle.BRASS, DayCircleStyle.DEFAULT)
+    }
+
+    @Test
+    fun fallsBackToDefaultForMissingOrUnknownValues() {
+        assertEquals(DayCircleStyle.DEFAULT, DayCircleStyle.fromName(null))
+        assertEquals(DayCircleStyle.DEFAULT, DayCircleStyle.fromName("CHROME"))
+    }
+
+    @Test
+    fun keepsAnExplicitClassicChoice() {
+        assertEquals(DayCircleStyle.CLASSIC, DayCircleStyle.fromName("CLASSIC"))
     }
 }

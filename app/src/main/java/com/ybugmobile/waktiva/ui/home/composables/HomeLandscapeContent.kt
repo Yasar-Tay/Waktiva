@@ -83,22 +83,14 @@ fun HomeLandscapeContent(
                     ) {
                         state.currentPrayerDay?.let { prayerDay ->
                             DayCircle(
-                                style = settings?.dayCircleStyle ?: DayCircleStyle.CLASSIC,
+                                style = settings?.dayCircleStyle ?: DayCircleStyle.DEFAULT,
                                 day = prayerDay,
                                 currentTime = if (state.selectedDate == LocalDate.now()) localTime else LocalTime.MIDNIGHT,
-                                nextPrayer = if (state.selectedDate == LocalDate.now()) state.nextPrayer else null,
                                 currentPrayer = if (state.selectedDate == LocalDate.now()) state.currentPrayer else null,
                                 isSelectedDayToday = state.selectedDate == LocalDate.now(),
                                 isHijriVisible = state.isHijriSelected,
                                 onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
-                                contentColor = contentColor,
-                                isMuted = state.isMuted,
-                                playAdhanAudio = state.isNextAdhanEnabled,
-                                onSkipAudio = { prayerName ->
-                                    state.nextPrayer?.let { next ->
-                                        onSkipNextAudio(prayerName, next.date)
-                                    }
-                                }
+                                contentColor = contentColor
                             )
                         }
                     }

@@ -509,7 +509,7 @@ private fun SettingsDialogs(
         ModernSelectionDialog(
             title = stringResource(R.string.settings_day_circle_style),
             options = dayCircleStyleOptions(),
-            selectedKey = settings?.dayCircleStyle ?: DayCircleStyle.CLASSIC,
+            selectedKey = settings?.dayCircleStyle ?: DayCircleStyle.DEFAULT,
             optionDescription = { dayCircleStyleDescription(it) },
             onSelected = onDayCircleSelected,
             onDismiss = onDismissDayCircle

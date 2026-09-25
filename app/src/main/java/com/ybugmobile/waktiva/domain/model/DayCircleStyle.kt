@@ -8,7 +8,10 @@ enum class DayCircleStyle {
     SKELETON;
 
     companion object {
+        /** Shown until the user picks a style. */
+        val DEFAULT = BRASS
+
         fun fromName(name: String?): DayCircleStyle =
-            entries.firstOrNull { it.name.equals(name, ignoreCase = true) } ?: CLASSIC
+            entries.firstOrNull { it.name.equals(name, ignoreCase = true) } ?: DEFAULT
     }
 }
