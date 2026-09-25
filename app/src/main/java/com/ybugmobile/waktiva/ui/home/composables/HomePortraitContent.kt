@@ -21,6 +21,7 @@ import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.ui.home.HomeViewState
 import com.ybugmobile.waktiva.ui.theme.GlassTheme
+import com.ybugmobile.waktiva.ui.theme.liquidGlass
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -184,16 +185,14 @@ fun HomePortraitContent(
             }
 
             // Bottom Glass Surface: Detailed calendar and calculation method info
+            val panelShape = RoundedCornerShape(32.dp)
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp),
-                color = glassTheme.containerColor,
-                shape = RoundedCornerShape(32.dp),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    glassTheme.borderColor
-                )
+                    .padding(10.dp)
+                    .liquidGlass(panelShape, glassTheme),
+                color = Color.Transparent,
+                shape = panelShape
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp)
@@ -215,8 +214,7 @@ fun HomePortraitContent(
                         PrayerTimeList(
                             day = prayerDay,
                             currentPrayerType = if (isToday) state.currentPrayer?.type else null,
-                            contentColor = contentColor,
-                            highlightColor = contentColor.copy(alpha = 0.15f)
+                            contentColor = contentColor
                         )
                     }
 

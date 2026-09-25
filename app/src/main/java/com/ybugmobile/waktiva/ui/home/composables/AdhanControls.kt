@@ -2,7 +2,6 @@ package com.ybugmobile.waktiva.ui.home.composables
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.waktiva.ui.theme.liquidGlass
 import java.util.Locale
 
 /**
@@ -82,13 +82,14 @@ fun AdhanControls(
         exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
         modifier = modifier
     ) {
+        val panelShape = RoundedCornerShape(28.dp)
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            shape = RoundedCornerShape(28.dp),
-            color = glassTheme.containerColor,
-            border = BorderStroke(1.dp, glassTheme.borderColor)
+                .padding(vertical = 8.dp)
+                .liquidGlass(panelShape, glassTheme, emphasis = 0.5f),
+            shape = panelShape,
+            color = Color.Transparent
         ) {
             Row(
                 modifier = Modifier
@@ -141,20 +142,21 @@ fun AdhanControls(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                // Stop Button with high-contrast styling
-                val isLightGlass = glassTheme.containerColor.red > 0.5f
-                val buttonBgColor = if (isLightGlass) Color.Red.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.4f)
-                val buttonContentColor = if (isLightGlass) Color.White else Color.Black.copy(0.7f)
-                val iconContentColor = if (isLightGlass) Color.White else Color.Red.copy(0.4f)
+                // Stop button: red-tinted glass, the one strong colour in the panel
+                val buttonShape = RoundedCornerShape(16.dp)
+                val buttonContentColor = Color.White
+                val iconContentColor = Color.White
 
                 Surface(
                     onClick = {
                         onStopAdhan()
                         if (isTest) onStopTest()
                     },
-                    shape = RoundedCornerShape(16.dp),
-                    color = buttonBgColor,
-                    modifier = Modifier.height(48.dp)
+                    shape = buttonShape,
+                    color = Color.Transparent,
+                    modifier = Modifier
+                        .height(48.dp)
+                        .liquidGlass(buttonShape, glassTheme, tint = StopRed, emphasis = 1f)
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 16.dp),
@@ -181,3 +183,6 @@ fun AdhanControls(
         }
     }
 }
+
+/** Tint of the stop button's glass. */
+private val StopRed = Color(0xFFFF4D4D)
