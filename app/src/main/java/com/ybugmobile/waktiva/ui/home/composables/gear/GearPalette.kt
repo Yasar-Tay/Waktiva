@@ -73,19 +73,25 @@ internal class GearPalette(private val weather: WeatherTone) {
 
     /** Reflections of turned brass around a round part; see [MetalSheen]. */
     val brassSheen = sheen(
-        0f to 0xFFB8904A, 0.06f to 0xFFC9A458, 0.125f to 0xFFF0D38E, 0.19f to 0xFFB18943,
-        0.25f to 0xFF8F6B30, 0.375f to 0xFF6F5020, 0.5f to 0xFFB38B45, 0.58f to 0xFFE8C97F,
-        0.625f to 0xFFFFF3CF, 0.67f to 0xFFE8C97F, 0.75f to 0xFFB58D47, 0.875f to 0xFF7A5A26,
-        1f to 0xFFB8904A
+        0f to 0xFFCBA45A, 0.06f to 0xFFDAB869, 0.125f to 0xFFF8E4AA, 0.19f to 0xFFC49D55,
+        0.25f to 0xFFA88643, 0.375f to 0xFF8E6C34, 0.5f to 0xFFC49E57, 0.58f to 0xFFF1D895,
+        0.625f to 0xFFFFFAEA, 0.67f to 0xFFF1D895, 0.75f to 0xFFC7A05A, 0.875f to 0xFF987540,
+        1f to 0xFFCBA45A
     )
 
     /** Reflections of polished steel around a round part; see [MetalSheen]. */
     val steelSheen = sheen(
-        0f to 0xFF8E97A8, 0.06f to 0xFFA9B2C2, 0.125f to 0xFFE2E8F1, 0.19f to 0xFF9AA3B3,
-        0.25f to 0xFF6C7688, 0.375f to 0xFF454D5C, 0.5f to 0xFF8F99AA, 0.58f to 0xFFD6DDE8,
-        0.625f to 0xFFFFFFFF, 0.67f to 0xFFD6DDE8, 0.75f to 0xFF96A0B1, 0.875f to 0xFF4E5767,
-        1f to 0xFF8E97A8
+        0f to 0xFFA3ACBC, 0.06f to 0xFFBCC4D2, 0.125f to 0xFFEEF2F8, 0.19f to 0xFFAEB6C5,
+        0.25f to 0xFF838D9F, 0.375f to 0xFF626B7C, 0.5f to 0xFFA4ADBD, 0.58f to 0xFFE3E8F0,
+        0.625f to 0xFFFFFFFF, 0.67f to 0xFFE3E8F0, 0.75f to 0xFFABB4C3, 0.875f to 0xFF6A7485,
+        1f to 0xFFA3ACBC
     )
+
+    /** Light of the halo ring behind the brass and skeleton dials. */
+    val warmHalo = tone(Color(0xFFFFE7B0))
+
+    /** Light of the halo ring behind the steel dial. */
+    val coolHalo = tone(Color(0xFFE2EEFF))
 
     /** Hairline gold used by the skeleton dial. */
     val gold = tone(Color(0xFFDEBE78))

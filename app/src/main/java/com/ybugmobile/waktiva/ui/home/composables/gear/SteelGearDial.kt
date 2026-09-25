@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
@@ -57,6 +58,7 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
         val accent = frame.current.color
 
         drawCircle(Brush.radialGradient(listOf(accent.copy(alpha = 0.10f), accent.copy(alpha = 0f)), c, outer), outer, c)
+        haloRing(c, mid, outer * 0.24f, lerp(palette.coolHalo, accent, 0.3f), 0.3f)
         elevation(bezel, 3f * dp, light)
 
         drawPath(bezel, palette.steelSheen.brush(c, light))

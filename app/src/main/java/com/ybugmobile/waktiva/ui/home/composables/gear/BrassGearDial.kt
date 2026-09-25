@@ -2,14 +2,13 @@ package com.ybugmobile.waktiva.ui.home.composables.gear
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
 import kotlin.math.abs
 import kotlin.math.cos
@@ -47,7 +46,16 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
     }
     private val teeth = Path().apply { addGearOutline(this, c, r, MAIN_TEETH) }
 
-    private class Spoke(val outline: Path, val hubEnd: Offset, val rimEnd: Offset)
+    private class Spoke(val outline: Path, val hubEnd: Offset, val rimEnd: Offset) {
+        val occlusion = Brush.linearGradient(
+            0f to SpokeShade,
+            0.12f to Color.Transparent,
+            0.9f to Color.Transparent,
+            1f to SpokeShade,
+            start = hubEnd,
+            end = rimEnd
+        )
+    }
 
     // Five evenly spaced straight spokes, tapering slightly towards the rim.
     private val spokeList = List(5) { i ->
@@ -86,6 +94,8 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
         // The wheel is drawn in its turning frame; turning the light back keeps it fixed on screen.
         val wheelLight = GearLight(light.angle - wheelRot)
 
+        // A halo of light behind the rim, tinted a little by the current prayer.
+        haloRing(c, r, r * 0.3f, lerp(palette.warmHalo, frame.current.color, 0.3f), 0.34f)
         elevation(wheel, 3f * dp, light, wheelRot, c)
         elevation(spokes, 2f * dp, light, wheelRot, c)
         elevation(hub, 2f * dp, light, wheelRot, c)
@@ -108,20 +118,7 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
             for (spoke in spokeList) {
                 drawPath(spoke.outline, brass)
                 // Occlusion where the spoke meets the hub and the rim.
-                clipPath(spoke.outline) {
-                    drawRect(
-                        Brush.linearGradient(
-                            0f to SpokeShade,
-                            0.12f to Color.Transparent,
-                            0.9f to Color.Transparent,
-                            1f to SpokeShade,
-                            start = spoke.hubEnd,
-                            end = spoke.rimEnd
-                        ),
-                        topLeft = Offset(c.x - r, c.y - r),
-                        size = Size(2 * r, 2 * r)
-                    )
-                }
+                drawPath(spoke.outline, spoke.occlusion)
                 bevel(spoke.outline, (spoke.hubEnd + spoke.rimEnd) / 2f, (bandIn - hubOut) / 2f, wheelLight, 0.9f * dp)
             }
             drawPath(hub, brass)
@@ -200,6 +197,6 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
     }
 
     private companion object {
-        val SpokeShade = Color(0x8C1E1202)
+        val SpokeShade = Color(0x661E1202)
     }
 }
