@@ -61,7 +61,6 @@ import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.provider.ReligiousDaysProvider
 import com.ybugmobile.waktiva.ui.home.composables.CurrentPrayerHeader
-import com.ybugmobile.waktiva.ui.home.composables.FlippableCalendarCard
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import kotlinx.coroutines.delay
@@ -189,26 +188,22 @@ internal fun GearDayCircle(
             compact = isLandscape
         )
 
-        // Brass and skeleton frame the date as a disc filling their hub; steel keeps the card.
-        val hubDiameter = dial.hubRadius?.let { with(density) { (it * 2).toDp() } - 2.dp }
-        FlippableCalendarCard(
+        // The date in the dial's own material: brass and skeleton fill their hub, steel has a sub-dial.
+        GearDateCard(
+            style = style,
             day = day,
             isHijriVisible = isHijriVisible,
             onFlip = onToggleHijri,
-            contentColor = contentColor,
-            accentColor = current.color,
-            currentTime = currentTime,
-            isSelectedDayToday = isSelectedDayToday,
-            pulseScale = 1f,
+            accent = current,
+            palette = palette,
+            diameter = with(density) { (dial.dateRadius * 2).toDp() } - 2.dp,
             modifier = Modifier
                 .align(Alignment.Center)
-                .zIndex(5f),
-            size = hubDiameter ?: 100.dp,
-            circular = hubDiameter != null
+                .zIndex(5f)
         )
 
-        // The prayer name sits just above the hub ring; steel keeps the default offset.
-        val headerOffset = dial.hubOuterRadius?.let { ring -> -(with(density) { ring.toDp() } + 18.dp) }
+        // The prayer name sits just above the ring around the date.
+        val headerOffset = -(with(density) { dial.hubOuterRadius.toDp() } + 18.dp)
         CurrentPrayerHeader(currentPrayer, contentColor, current.color, verticalOffset = headerOffset)
     }
 }

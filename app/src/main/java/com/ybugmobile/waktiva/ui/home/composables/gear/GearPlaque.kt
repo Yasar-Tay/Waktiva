@@ -34,7 +34,7 @@ import kotlin.math.max
 
 /**
  * Shown in place of a tapped prayer marker: a plate in the dial's material with the prayer's
- * gear as a turning medallion, the prayer name and a larger time. Replaces the glass pill
+ * gear (or, on the skeleton, its set stone) as a medallion, the prayer name and a larger time. Replaces the glass pill
  * (InfoGlassCard) that the classic circle uses.
  */
 @Composable
@@ -65,13 +65,15 @@ internal fun GearPlaque(
                 .size(height * 0.72f)
                 .drawWithCache {
                     val radius = size.minDimension / 2f
-                    val outline = if (finish.isMetal) planetOutline(radius * 0.92f) else badgeOutline(radius * 0.85f)
+                    // Metal plates show the prayer's gear; the skeleton shows its set stone.
+                    val outline = planetOutline(radius * 0.92f)
+                    val stone = GemCut(radius * 0.92f)
                     onDrawBehind {
                         val dp = density
                         if (finish.isMetal) {
                             planet(prayer, center, radius * 0.92f, phase.value, outline, finish.metalStops, dp, isCurrent = false)
                         } else {
-                            cogBadge(prayer, center, radius * 0.85f, phase.value, outline, dp)
+                            gemStone(prayer, center, stone, palette.brass, palette.gold, dp)
                         }
                     }
                 }

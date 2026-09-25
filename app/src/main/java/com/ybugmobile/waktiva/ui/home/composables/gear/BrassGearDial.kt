@@ -24,7 +24,6 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
     private val c = Offset(s / 2f, s / 2f)
     private val r = 0.77f * s / 2f
     private val rPlanet = r * PLANET_TEETH / MAIN_TEETH
-    private val add = gearAddendum(r, MAIN_TEETH)
     private val ded = gearDedendum(r, MAIN_TEETH)
     private val bandIn = r - ded - 0.14f * r
     private val hubOut = 0.34f * r
@@ -33,7 +32,7 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
 
     override val markerDistance = r + rPlanet
     override val markerRadius = rPlanet + gearAddendum(rPlanet, PLANET_TEETH)
-    override val hubRadius = hubIn
+    override val dateRadius = hubIn
     override val hubOuterRadius = hubOut
     // The bridge hugs the hub so it keeps a readable thickness inside the ring of time labels.
     override val bridge = BridgeSpec(innerRadius = hubOut + 5 * dp, freeRadius = labelRing - labelReach, maxSpan = 2.3f)
@@ -73,7 +72,9 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
         val palette = frame.palette
         val wheelRot = frame.direction * (frame.dayTurn + frame.phase)
 
-        softShadow(c, r + add)
+        elevation(wheel, 3f * dp, wheelRot, c)
+        elevation(spokes, 2f * dp, wheelRot, c)
+        elevation(hub, 2f * dp, wheelRot, c)
         rotate(wheelRot.toDegrees(), c) {
             val brass = metalBrush(palette.brass, c, r, wheelRot)
             drawPath(wheel, brass)

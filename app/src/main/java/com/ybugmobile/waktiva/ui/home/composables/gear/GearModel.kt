@@ -61,11 +61,11 @@ internal interface GearDial {
     /** Radius of a prayer marker, used for its tap target. */
     val markerRadius: Float
 
-    /** Radius of the central circle the date card fills as a disc, or null to show the standard card. */
-    val hubRadius: Float?
+    /** Radius of the round date card at the centre. */
+    val dateRadius: Float
 
-    /** Radius of the outermost ring around the hub, which the prayer name must clear; null if none. */
-    val hubOuterRadius: Float?
+    /** Radius of the outermost ring around the date, which the prayer name must clear. */
+    val hubOuterRadius: Float
 
     val bridge: BridgeSpec
 
