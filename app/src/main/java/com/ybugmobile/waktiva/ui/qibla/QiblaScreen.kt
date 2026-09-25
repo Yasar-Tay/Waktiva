@@ -26,6 +26,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -250,8 +252,8 @@ private fun QiblaContent(
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Box(modifier = Modifier.size(360.dp), contentAlignment = Alignment.Center) {
-                        if (!isMapView) {
+                    BoxWithConstraints(contentAlignment = Alignment.Center) {
+                        if (!isMapView) ScaledCompass(available = minOf(maxWidth, maxHeight) - 24.dp) {
                             QiblaCompass(
                                 style = state.settings?.dayCircleStyle ?: DayCircleStyle.DEFAULT,
                                 azimuth = currentAzimuth,
@@ -504,20 +506,55 @@ private fun CompassContainer(
     alignmentColor: Color,
     currentTheme: GlassTheme
 ) {
-    Box(
-        modifier = Modifier.fillMaxWidth().aspectRatio(1f),
+    // As wide as the screen allows, but leaving room for the header above and the info card below.
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        QiblaCompass(
-            style = state.settings?.dayCircleStyle ?: DayCircleStyle.DEFAULT,
-            azimuth = currentAzimuth,
-            qiblaAngle = state.qiblaDirection.toFloat(),
-            alignmentColor = alignmentColor,
-            isAligned = isAligned,
-            contentColor = currentTheme.contentColor
-        )
-        
-        QiblaAlignmentEffect(isAligned = isAligned, alignmentColor = alignmentColor)
+        ScaledCompass(available = minOf(maxWidth - 32.dp, screenHeight - PortraitReservedHeight)) {
+            QiblaCompass(
+                style = state.settings?.dayCircleStyle ?: DayCircleStyle.DEFAULT,
+                azimuth = currentAzimuth,
+                qiblaAngle = state.qiblaDirection.toFloat(),
+                alignmentColor = alignmentColor,
+                isAligned = isAligned,
+                contentColor = currentTheme.contentColor
+            )
+
+            QiblaAlignmentEffect(isAligned = isAligned, alignmentColor = alignmentColor)
+        }
     }
 }
+
+/**
+ * The compasses and their alignment light are designed at [CompassDesignSize], the size they have
+ * on a phone. Where there is more room ([available]), as on a tablet, they are scaled up as a
+ * whole, so their marks, lettering and Kaaba keep their proportions; they are never made smaller.
+ */
+@Composable
+private fun ScaledCompass(available: Dp, content: @Composable BoxScope.() -> Unit) {
+    val scale = (available / CompassDesignSize).coerceIn(1f, MaxCompassScale)
+    Box(modifier = Modifier.size(CompassDesignSize * scale), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .requiredSize(CompassDesignSize)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                },
+            contentAlignment = Alignment.Center,
+            content = content
+        )
+    }
+}
+
+/** The size the compasses are drawn at on a phone. */
+private val CompassDesignSize = 340.dp
+
+/** How far a compass may grow on a large screen, about 610 dp. */
+private const val MaxCompassScale = 1.8f
+
+/** Height the portrait layout keeps for the header, the info card and the gaps around the compass. */
+private val PortraitReservedHeight = 460.dp
 
