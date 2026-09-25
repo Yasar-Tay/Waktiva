@@ -1,10 +1,9 @@
 package com.ybugmobile.waktiva.ui.home.composables
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.*
@@ -19,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +32,7 @@ import com.ybugmobile.waktiva.domain.model.HijriUtils
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.ReligiousDay
 import com.ybugmobile.waktiva.domain.provider.ReligiousDaysProvider
+import com.ybugmobile.waktiva.ui.theme.liquidGlass
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -158,28 +159,32 @@ fun ModernCalendarStrip(
                 val isRamadan = isRamadan(hijriMonth, religiousDay)
                 val isEid = isEid(religiousDay)
 
-                val cardBgColor by animateColorAsState(
+                val isSpecial = religiousDay != null || isRamadan || isEid
+                // Liquid glass: the selected card is the densest and brightest, today's next.
+                val glassEmphasis by animateFloatAsState(
                     targetValue = when {
-                        isSelected -> contentColor.copy(alpha = 0.15f)
-                        isToday -> accentColor.copy(alpha = 0.15f)
-                        else -> Color.Transparent
+                        isSelected -> 1f
+                        isToday -> 0.6f
+                        isSpecial -> 0.3f
+                        else -> 0f
                     },
-                    label = "cardBg"
+                    label = "glassEmphasis"
                 )
 
                 Surface(
                     onClick = { onDateSelected(date) },
-                    color = cardBgColor,
-                    shape = RoundedCornerShape(12.dp),
+                    color = Color.Transparent,
+                    shape = DayCardShape,
                     modifier = Modifier
                         .width(62.dp)
-                        .then(
-                            // Dynamic border highlighting for focus/selection
-                            when {
-                                isSelected -> Modifier.border(1.5.dp, contentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
-                                isToday -> Modifier.border(2.dp, accentColor.copy(alpha = 0.6f), RoundedCornerShape(12.dp))
-                                religiousDay != null || isRamadan || isEid -> Modifier.border(1.dp, accentColor.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
-                                else -> Modifier
+                        .liquidGlass(
+                            shape = DayCardShape,
+                            tint = if (isToday || isSpecial) accentColor else contentColor,
+                            emphasis = glassEmphasis,
+                            accent = when {
+                                isToday -> accentColor.copy(alpha = 0.7f)
+                                isSpecial -> accentColor.copy(alpha = 0.45f)
+                                else -> null
                             }
                         )
                 ) {
@@ -192,12 +197,15 @@ fun ModernCalendarStrip(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(
-                                    when {
-                                        isToday -> accentColor.copy(alpha = 0.4f)
-                                        religiousDay != null || isRamadan || isEid -> accentColor.copy(alpha = 0.35f)
-                                        isSelected -> contentColor.copy(alpha = 0.2f)
-                                        else -> contentColor.copy(alpha = 0.1f)
-                                    }
+                                    // A tinted band of glass, fading down into the card.
+                                    Brush.verticalGradient(
+                                        when {
+                                            isToday -> listOf(accentColor.copy(alpha = 0.5f), accentColor.copy(alpha = 0f))
+                                            isSpecial -> listOf(accentColor.copy(alpha = 0.45f), accentColor.copy(alpha = 0f))
+                                            isSelected -> listOf(contentColor.copy(alpha = 0.26f), contentColor.copy(alpha = 0f))
+                                            else -> listOf(contentColor.copy(alpha = 0.14f), contentColor.copy(alpha = 0f))
+                                        }
+                                    )
                                 )
                                 .padding(vertical = 4.dp),
                             contentAlignment = Alignment.Center
@@ -216,7 +224,7 @@ fun ModernCalendarStrip(
                             }
                             Text(
                                 text = monthText,
-                                color = if (isToday || religiousDay != null || isRamadan || isEid) contentColor else contentColor.copy(alpha = 0.6f),
+                                color = if (isToday || isSpecial) contentColor else contentColor.copy(alpha = 0.6f),
                                 fontSize = if (isNonLatin) 11.sp else 10.sp,
                                 fontWeight = FontWeight.Black,
                                 letterSpacing = 0.5.sp
@@ -249,6 +257,9 @@ fun ModernCalendarStrip(
         }
     }
 }
+
+/** Day cards use the large, continuous-looking corners of liquid glass. */
+private val DayCardShape = RoundedCornerShape(16.dp)
 
 /** Individual toggle button for switching calendar systems. */
 @Composable
