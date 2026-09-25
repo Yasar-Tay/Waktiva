@@ -354,11 +354,8 @@ fun GearDayCircle(
             ReligiousBadge(day.date, contentColor, hijriDate = day.hijriDate)
         }
 
-        // Keep the prayer name clear of the hub ring; on phones the default offset already is.
-        val defaultHeaderOffset = if (isLandscape) 60.dp else 74.dp
-        val headerOffset = dial.hubOuterRadius?.let { ring ->
-            -maxOf(defaultHeaderOffset, with(density) { ring.toDp() } + 18.dp)
-        }
+        // Sit the prayer name just above the hub ring rather than at the fixed default offset.
+        val headerOffset = dial.hubOuterRadius?.let { ring -> -(with(density) { ring.toDp() } + 18.dp) }
         CurrentPrayerHeader(currentPrayer, contentColor, current.color, verticalOffset = headerOffset)
     }
 }
