@@ -71,9 +71,10 @@ internal fun GearPlaque(
                     onDrawBehind {
                         val dp = density
                         if (finish.isMetal) {
-                            planet(prayer, center, radius * 0.92f, phase.value, outline, finish.metalStops, dp, isCurrent = false)
+                            val sheen = if (style == DayCircleStyle.STEEL) palette.steelSheen else palette.brassSheen
+                            planet(prayer, center, radius * 0.92f, phase.value, outline, sheen, GearLight.Default, dp, isCurrent = false)
                         } else {
-                            gemStone(prayer, center, stone, palette.brass, palette.gold, dp)
+                            gemStone(prayer, center, stone, palette.brassSheen, GearLight.Default, palette.gold, dp)
                         }
                     }
                 }

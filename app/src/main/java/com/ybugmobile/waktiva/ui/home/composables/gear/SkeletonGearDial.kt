@@ -1,6 +1,7 @@
 package com.ybugmobile.waktiva.ui.home.composables.gear
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -38,6 +39,8 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
     private val ringInner = track - ringHalf
     private val ring = annulus(c, ringOuter, ringInner)
     private val channel = annulus(c, track + channelHalf + 0.8f * dp, track - channelHalf - 0.8f * dp)
+    private val ringEdge = Path().apply { addOval(Rect(c, ringOuter)) }
+    private val ringGrain = RingGrain(c, ringOuter, ringInner, 1.2f * dp, seed = 6)
     private val hub = 0.30f * r
 
     override val markerDistance = track
@@ -123,7 +126,7 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
             val radius = if (isCurrent) badgeCurrent else badge
             if (isCurrent) halo(at, radius * 0.6f, radius * 2.2f, p.color, 0.35f)
             val sparkle = if (isCurrent) 0.55f + 0.45f * abs(sin(frame.phase * 9)) else 0f
-            gemStone(p, at, if (isCurrent) stoneCurrent else stone, frame.palette.brass, frame.palette.gold, dp, sparkle)
+            gemStone(p, at, if (isCurrent) stoneCurrent else stone, frame.palette.brassSheen, frame.light, frame.palette.gold, dp, sparkle)
             timeLabel(frame, p.label, pointOn(c, track - radius - s * 0.05f, theta))
         }
     }
@@ -134,28 +137,16 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
      */
     private fun DrawScope.drawRing(frame: GearFrame) {
         val palette = frame.palette
-        elevation(ring, 3f * dp)
-        drawPath(ring, metalBrush(palette.brass, c, ringOuter))
-        drawCircle(
-            Brush.linearGradient(
-                listOf(Color(0xD9FFF6D6), Color(0x1AFFF6D6)),
-                start = c - Offset(ringOuter, ringOuter),
-                end = c + Offset(ringOuter, ringOuter)
-            ),
-            ringOuter - 0.6f * dp, c, style = Stroke(dp)
-        )
-        drawCircle(
-            Brush.linearGradient(
-                listOf(Color(0x263C280A), Color(0xBF3C280A)),
-                start = c - Offset(ringInner, ringInner),
-                end = c + Offset(ringInner, ringInner)
-            ),
-            ringInner + 0.6f * dp, c, style = Stroke(dp)
-        )
+        val light = frame.light
+        elevation(ring, 3f * dp, light)
+        drawPath(ring, palette.brassSheen.brush(c, light))
+        ringFinish(c, ringOuter, ringInner, light, ringGrain, dp, round = true)
+        bevel(ringEdge, c, ringOuter, light, dp)
+        holeBevel(c, ringInner, light, dp)
         drawCircle(Color(0xB33C280A), ringOuter, c, style = Stroke(0.8f * dp))
         drawCircle(Color(0xB33C280A), ringInner, c, style = Stroke(0.8f * dp))
 
-        val bevel = 0.6f * dp / track
+        val engravingEdge = 0.6f * dp / track
         for (i in 0 until 24) {
             val a = TAU / 4 + i * TAU / 24
             val major = i % 6 == 0
@@ -169,7 +160,7 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
                     pointOn(c, to, a),
                     (if (major) 1.4f else 0.8f) * dp
                 )
-                drawLine(palette.tone(Color(0x59FFF0C8)), pointOn(c, from, a + bevel), pointOn(c, to, a + bevel), 0.6f * dp)
+                drawLine(palette.tone(Color(0x59FFF0C8)), pointOn(c, from, a + engravingEdge), pointOn(c, to, a + engravingEdge), 0.6f * dp)
             }
         }
 

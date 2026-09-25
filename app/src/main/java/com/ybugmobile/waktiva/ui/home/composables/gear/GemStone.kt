@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.lerp
+import kotlin.math.max
 
 /**
  * The shapes of a set brilliant-cut stone of [radius], centred on the origin: the gold
@@ -60,7 +61,8 @@ internal fun DrawScope.gemStone(
     p: GearPrayer,
     at: Offset,
     cut: GemCut,
-    metal: Array<Pair<Float, Color>>,
+    metal: MetalSheen,
+    light: GearLight,
     bead: Color,
     pxPerDp: Float,
     sparkle: Float = 0f
@@ -69,23 +71,24 @@ internal fun DrawScope.gemStone(
     val rs = cut.stone
     translate(at.x, at.y) {
         // Setting
-        elevation(cut.setting, 2f * pxPerDp, pivot = Offset.Zero)
-        drawPath(cut.setting, metalBrush(metal, Offset.Zero, r))
+        elevation(cut.setting, 2f * pxPerDp, light, pivot = Offset.Zero)
+        drawPath(cut.setting, metal.brush(Offset.Zero, light))
+        bevel(cut.setting, Offset.Zero, r, light, max(0.8f * pxPerDp, r * 0.08f))
         drawCircle(Color(0xBF3C280A), r, Offset.Zero, style = Stroke(0.8f * pxPerDp))
         for (k in 0 until MILGRAIN) {
             val b = pointOn(Offset.Zero, r * 0.9f, k * TAU / MILGRAIN)
             drawCircle(bead, r * 0.07f, b)
-            drawCircle(Color.White.copy(alpha = 0.6f), r * 0.028f, b + Offset(-r * 0.02f, -r * 0.025f))
+            drawCircle(Color.White.copy(alpha = 0.6f), r * 0.028f, b + light.towards * (r * 0.032f))
         }
 
-        // Stone: light enters from below right, the girdle falls into shade
+        // Stone: light enters on the lit side and glows on the far one; the girdle falls into shade
         drawCircle(
             Brush.radialGradient(
                 0f to lerp(p.color, Color.White, 0.3f),
                 0.45f to p.color,
                 0.8f to lerp(p.color, Color.Black, 0.35f),
                 1f to lerp(p.color, Color.Black, 0.65f),
-                center = Offset(rs * 0.18f, rs * 0.28f),
+                center = light.towards * (-rs * 0.33f),
                 radius = rs * 1.25f
             ),
             rs,
@@ -104,11 +107,11 @@ internal fun DrawScope.gemStone(
 
     prayerIcon(p, at, r, ink = Color.White.copy(alpha = 0.88f))
 
-    // Specular highlight on the upper left
-    val glint = at + Offset(-rs * 0.38f, -rs * 0.42f)
+    // Specular highlight on the side facing the light
+    val glint = at + light.towards * (rs * 0.57f)
     withTransform({
         translate(glint.x, glint.y)
-        rotate(-40f, Offset.Zero)
+        rotate(Math.toDegrees(light.angle.toDouble()).toFloat() + 90f, Offset.Zero)
         scale(1f, 0.55f, Offset.Zero)
     }) {
         drawCircle(

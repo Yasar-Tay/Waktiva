@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Brush
@@ -67,7 +68,8 @@ internal class DateSide(val month: String, val day: String)
  * - skeleton: a smoked crystal in a beaded gold bezel, with gold lettering and a small stone.
  *
  * Tapping flips the face between the Gregorian and Hijri dates; the bezel stays put.
- * [accent] is the current prayer, whose colour marks the face.
+ * [accent] is the current prayer, whose colour marks the face; [light] is read while drawing,
+ * so the metal follows the light without recomposing.
  */
 @Composable
 internal fun GearDateCard(
@@ -77,6 +79,7 @@ internal fun GearDateCard(
     onFlip: () -> Unit,
     accent: GearPrayer,
     palette: GearPalette,
+    light: () -> GearLight,
     diameter: Dp,
     modifier: Modifier = Modifier
 ) {
@@ -100,7 +103,10 @@ internal fun GearDateCard(
                 Modifier
                     .fillMaxSize()
                     .drawWithCache {
-                        onDrawBehind { if (style == DayCircleStyle.STEEL) steelBezel(palette) else skeletonBezel(palette) }
+                        val edge = Path().apply { addOval(Rect(size.center, size.minDimension / 2f)) }
+                        onDrawBehind {
+                            if (style == DayCircleStyle.STEEL) steelBezel(palette, light(), edge) else skeletonBezel(palette, light(), edge)
+                        }
                     }
             )
         }
@@ -117,9 +123,9 @@ internal fun GearDateCard(
                     onDrawBehind {
                         // Past halfway the back is showing; mirror it so it doesn't read reversed.
                         if (rotation <= 90f) {
-                            front.draw(this, accent)
+                            front.draw(this, accent, light())
                         } else {
-                            scale(-1f, 1f) { back.draw(this, accent) }
+                            scale(-1f, 1f) { back.draw(this, accent, light()) }
                         }
                     }
                 }
@@ -172,7 +178,7 @@ private fun CacheDrawScope.faceFor(
 
 /** A face laid out once for its size and text, then drawn every frame. */
 private interface DateFace {
-    fun draw(scope: DrawScope, accent: GearPrayer)
+    fun draw(scope: DrawScope, accent: GearPrayer, light: GearLight)
 }
 
 // ---------------------------------------------------------------------------
@@ -188,6 +194,7 @@ private class BrassDateFace(scope: CacheDrawScope, side: DateSide, measurer: Tex
     private val ink = palette.tone(Color(0xFF5A3E12))
     private val month = ArcLabel(side.month, c, r * 0.64f, d * 0.12f, ink, SerifBold, 0.08f, 2f, dp)
     private val window = Rect(Offset(c.x - d * 0.21f, c.y + d * 0.04f - d * 0.16f), Size(d * 0.42f, d * 0.32f))
+    private val windowFrame = Path().apply { addRoundRect(RoundRect(window.inflate(d * 0.025f), CornerRadius(d * 0.05f))) }
     private val dayText = with(scope) {
         measurer.measure(side.day, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = (d * 0.25f).toSp(), color = Color(0xFF1D1A14)))
     }
@@ -201,7 +208,7 @@ private class BrassDateFace(scope: CacheDrawScope, side: DateSide, measurer: Tex
         close()
     }
 
-    override fun draw(scope: DrawScope, accent: GearPrayer) = with(scope) {
+    override fun draw(scope: DrawScope, accent: GearPrayer, light: GearLight) = with(scope) {
         clipPath(disc) {
             drawCircle(
                 Brush.radialGradient(
@@ -239,6 +246,7 @@ private class BrassDateFace(scope: CacheDrawScope, side: DateSide, measurer: Tex
             drawRoundRect(Color.Black.copy(alpha = 0.25f), frame.topLeft, frame.size, CornerRadius(d * 0.05f))
         }
         drawRoundRect(metalBrush(palette.brass, frame.center, frame.width / 2f), frame.topLeft, frame.size, CornerRadius(d * 0.05f))
+        bevel(windowFrame, frame.center, frame.width / 2f, light, 0.8f * dp)
         drawRoundRect(
             Brush.verticalGradient(
                 0f to Color(0xFFE9E4D6),
@@ -263,25 +271,24 @@ private class BrassDateFace(scope: CacheDrawScope, side: DateSide, measurer: Tex
 // Steel: midnight sub-dial with lume numerals
 // ---------------------------------------------------------------------------
 
-/** The sub-dial's fixed bezel: brushed steel with four screws. */
-private fun DrawScope.steelBezel(palette: GearPalette) {
+/** The sub-dial's fixed bezel: polished steel with four screws. [edge] is its outline. */
+private fun DrawScope.steelBezel(palette: GearPalette, light: GearLight, edge: Path) {
     val d = size.minDimension
     val r = d / 2f
     val ri = r * 0.84f
     val dp = density
-    translate(0f, 2f * dp) { drawCircle(Color.Black.copy(alpha = 0.3f), r + dp, center) }
-    drawCircle(metalBrush(palette.steel, center, r), r, center)
+    translate(-light.towards.x * 2f * dp, -light.towards.y * 2f * dp) { drawCircle(Color.Black.copy(alpha = 0.3f), r + dp, center) }
+    drawCircle(palette.steelSheen.brush(center, light), r, center)
+    ringFinish(center, r, ri, light, null, dp)
+    bevel(edge, center, r, light, dp)
+    holeBevel(center, ri, light, dp)
     drawCircle(Color(0xB30A0E16), r, center, style = Stroke(dp))
-    drawArc(
-        Color.White.copy(alpha = 0.4f), 180f, 144f, false,
-        topLeft = center - Offset(r - 0.8f * dp, r - 0.8f * dp),
-        size = Size((r - 0.8f * dp) * 2, (r - 0.8f * dp) * 2),
-        style = Stroke(0.8f * dp)
-    )
     for (k in 0 until 4) {
-        val at = pointOn(center, (r + ri) / 2f, TAU / 8 + k * TAU / 4)
-        drawCircle(palette.tone(Color(0xFF2A3346)), d * 0.022f, at)
-        drawLine(Color(0xB3DCE4F0), pointOn(at, d * 0.016f, 0.6f), pointOn(at, d * 0.016f, 0.6f + TAU / 2), 0.7f * dp)
+        screw(
+            pointOn(center, (r + ri) / 2f, TAU / 8 + k * TAU / 4), d * 0.022f, light,
+            palette.tone(Color(0xFFF4F7FB)), palette.tone(Color(0xFF8E98AA)), palette.tone(Color(0xFF2E3544)),
+            slot = 0.6f + k * 0.4f
+        )
     }
 }
 
@@ -307,7 +314,7 @@ private class SteelDateFace(scope: CacheDrawScope, side: DateSide, measurer: Tex
         )
     }
 
-    override fun draw(scope: DrawScope, accent: GearPrayer) = with(scope) {
+    override fun draw(scope: DrawScope, accent: GearPrayer, light: GearLight) = with(scope) {
         clipPath(disc) {
             drawCircle(
                 Brush.radialGradient(
@@ -341,19 +348,21 @@ private class SteelDateFace(scope: CacheDrawScope, side: DateSide, measurer: Tex
 // Skeleton: smoked crystal in a beaded gold bezel
 // ---------------------------------------------------------------------------
 
-/** The crystal's fixed bezel: gold with a ring of milgrain beads, like the prayer stones. */
-private fun DrawScope.skeletonBezel(palette: GearPalette) {
+/** The crystal's fixed bezel: gold with a ring of milgrain beads, like the prayer stones. [edge] is its outline. */
+private fun DrawScope.skeletonBezel(palette: GearPalette, light: GearLight, edge: Path) {
     val r = size.minDimension / 2f
     val ri = r * 0.86f
     val dp = density
-    translate(0f, 2f * dp) { drawCircle(Color.Black.copy(alpha = 0.3f), r + dp, center) }
-    drawCircle(metalBrush(palette.brass, center, r), r, center)
+    translate(-light.towards.x * 2f * dp, -light.towards.y * 2f * dp) { drawCircle(Color.Black.copy(alpha = 0.3f), r + dp, center) }
+    drawCircle(palette.brassSheen.brush(center, light), r, center)
+    bevel(edge, center, r, light, dp)
+    holeBevel(center, ri, light, dp)
     drawCircle(Color(0xBF3C280A), r, center, style = Stroke(0.8f * dp))
     val bead = palette.tone(Color(0xFFE9CF8A))
     for (k in 0 until 28) {
         val at = pointOn(center, (r + ri) / 2f, k * TAU / 28)
         drawCircle(bead, (r - ri) * 0.32f, at)
-        drawCircle(Color.White.copy(alpha = 0.6f), (r - ri) * 0.12f, at + Offset(-0.4f * dp, -0.5f * dp))
+        drawCircle(Color.White.copy(alpha = 0.6f), (r - ri) * 0.12f, at + light.towards * (0.6f * dp))
     }
 }
 
@@ -387,7 +396,7 @@ private class SkeletonDateFace(scope: CacheDrawScope, side: DateSide, measurer: 
         close()
     }
 
-    override fun draw(scope: DrawScope, accent: GearPrayer) = with(scope) {
+    override fun draw(scope: DrawScope, accent: GearPrayer, light: GearLight) = with(scope) {
         drawCircle(
             Brush.radialGradient(listOf(Color(0x8C121622), Color(0xCC080A12)), center = c, radius = ri),
             ri, c
@@ -396,7 +405,7 @@ private class SkeletonDateFace(scope: CacheDrawScope, side: DateSide, measurer: 
         drawCircle(palette.gold.copy(alpha = 0.35f), ri * 0.9f, c, style = Stroke(0.6f * dp))
         month.draw(this)
         drawCentred(dayText, c + Offset(0f, d * 0.03f))
-        gemStone(accent, c + Offset(0f, ri * 0.62f), stone, palette.brass, palette.tone(Color(0xFFE9CF8A)), dp)
+        gemStone(accent, c + Offset(0f, ri * 0.62f), stone, palette.brassSheen, light, palette.tone(Color(0xFFE9CF8A)), dp)
         clipPath(disc) {
             drawPath(
                 reflection,

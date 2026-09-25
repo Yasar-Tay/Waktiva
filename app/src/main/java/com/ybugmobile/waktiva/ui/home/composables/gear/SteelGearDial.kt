@@ -2,7 +2,6 @@ package com.ybugmobile.waktiva.ui.home.composables.gear
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -45,29 +44,31 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
         fillType = PathFillType.EvenOdd
     }
     private val planetPath = planetOutline(rPlanet)
+    private val bezelEdge = Path().apply { addOval(Rect(c, outer)) }
+    private val grooveEdge = Path().apply { addOval(Rect(c, mid + s * 0.012f)) }
+    private val internalTeeth = Path().apply { addGearOutline(this, c, pitch, MAIN_TEETH, internal = true) }
+    private val bezelGrain = RingGrain(c, outer, inner, 1.2f * dp, seed = 4)
+    private val ringGrain = RingGrain(c, inner, pitch, 1.2f * dp, seed = 5)
 
     override fun draw(scope: DrawScope, frame: GearFrame) = with(scope) {
         val palette = frame.palette
+        val light = frame.light
         val ringRot = frame.direction * (frame.dayTurn + frame.phase)
         val accent = frame.current.color
 
         drawCircle(Brush.radialGradient(listOf(accent.copy(alpha = 0.10f), accent.copy(alpha = 0f)), c, outer), outer, c)
-        elevation(bezel, 3f * dp)
+        elevation(bezel, 3f * dp, light)
 
-        drawPath(bezel, metalBrush(palette.steel, c, outer))
-        val sheen = outer - 0.8f * dp
-        drawArc(
-            color = Color.White.copy(alpha = 0.35f),
-            startAngle = 180f,
-            sweepAngle = 144f,
-            useCenter = false,
-            topLeft = Offset(c.x - sheen, c.y - sheen),
-            size = Size(sheen * 2, sheen * 2),
-            style = Stroke(0.8f * dp)
-        )
+        drawPath(bezel, palette.steelSheen.brush(c, light))
+        ringFinish(c, outer, inner, light, bezelGrain, dp)
+        bevel(bezelEdge, c, outer, light, 1.3f * dp)
+        holeBevel(c, inner, light, 1.2f * dp)
         drawCircle(Color(0xB30A0E16), inner, c, style = Stroke(dp))
         drawCircle(Color(0xB30A0E16), outer, c, style = Stroke(dp))
+        // The enamel track sits in a groove cut into the bezel.
         drawPath(groove, Color(0x8C0C101A))
+        holeBevel(c, mid - s * 0.012f, light, 0.8f * dp, 0.8f)
+        bevel(grooveEdge, c, mid, light, 0.8f * dp, 0.8f, reversed = true)
         prayerTrack(frame, c, mid, max(3f * dp, s * 0.011f), 0.95f)
         for (i in 0 until 24) {
             val a = TAU / 4 + i * TAU / 24
@@ -80,10 +81,18 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
             )
         }
 
-        elevation(ring, 2f * dp, ringRot, c)
+        elevation(ring, 2f * dp, light, ringRot, c)
+        val ringLight = GearLight(light.angle - ringRot)
         rotate(ringRot.toDegrees(), c) {
-            drawPath(ring, metalBrush(palette.steel, c, inner, ringRot, flip = true))
+            drawPath(ring, palette.steelSheen.brush(c, ringLight))
+            // A darker, blued finish than the bezel, so the turning ring reads as a separate part.
+            drawPath(ring, BluedSteel)
+            bevel(internalTeeth, c, pitch, ringLight, dp, reversed = true)
             drawPath(ring, Color(0x8C0A0E16), style = Stroke(0.7f * dp))
+        }
+        ringFinish(c, inner, pitch, light, ringGrain, dp, round = true, glint = false)
+        // Turning marks on the ring face, over its finish.
+        rotate(ringRot.toDegrees(), c) {
             for (i in 0 until 12) {
                 drawCircle(Color(0x8C0F1420), s * 0.0045f, pointOn(c, inner - band / 2f, i * TAU / 12))
             }
@@ -120,8 +129,12 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
             val theta = dayAngle(p.minutes, frame.rtl)
             val at = pointOn(c, pitch - rPlanet, theta)
             val rotation = meshInternal(ringRot, MAIN_TEETH, theta, PLANET_TEETH)
-            planet(p, at, rPlanet, rotation, planetPath, palette.steel, dp, isCurrent = p.type == frame.current.type)
+            planet(p, at, rPlanet, rotation, planetPath, palette.steelSheen, light, dp, isCurrent = p.type == frame.current.type)
             timeLabel(frame, p.label, pointOn(c, pitch - 2 * rPlanet - addPlanet - s * 0.035f, theta))
         }
+    }
+
+    private companion object {
+        val BluedSteel = Color(0x52122034)
     }
 }

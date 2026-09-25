@@ -48,7 +48,9 @@ fun HomeLandscapeContent(
     onStopTest: () -> Unit,
     onResetDate: () -> Unit,
     onMethodClick: () -> Unit,
-    onShowToast: (String) -> Unit
+    onShowToast: (String) -> Unit,
+    /** Screen angle of the sunlight on the day circle's metal (see DayCircle), or null for the default. */
+    sunLight: Float? = null
 ) {
     val screenHeightDp = LocalConfiguration.current.screenHeightDp
     val hasWeatherData = remember(state.temperature, state.weatherCondition) {
@@ -93,7 +95,8 @@ fun HomeLandscapeContent(
                                 isSelectedDayToday = state.selectedDate == LocalDate.now(),
                                 isHijriVisible = state.isHijriSelected,
                                 onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
-                                contentColor = contentColor
+                                contentColor = contentColor,
+                                sunLight = sunLight
                             )
                         }
                     }

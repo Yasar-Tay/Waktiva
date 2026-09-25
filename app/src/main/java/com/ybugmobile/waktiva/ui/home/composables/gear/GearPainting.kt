@@ -50,13 +50,19 @@ internal fun annulus(center: Offset, outer: Float, inner: Float) = Path().apply 
 }
 
 /**
- * Lifts a metal part off the dial: a soft shadow of [path], cast [depth] straight down.
+ * Lifts a metal part off the dial: a soft shadow of [path], cast [depth] away from the [light].
  * A filled silhouette under a few widening, faint strokes keeps it soft without blur
  * filters, which older Android versions don't render. Pass the part's [rotation]
- * (radians, around [pivot]) so the shadow turns with the part but still falls downwards.
+ * (radians, around [pivot]) so the shadow turns with the part but still falls away from the light.
  */
-internal fun DrawScope.elevation(path: Path, depth: Float, rotation: Float = 0f, pivot: Offset = center) {
-    translate(0f, depth) {
+internal fun DrawScope.elevation(
+    path: Path,
+    depth: Float,
+    light: GearLight,
+    rotation: Float = 0f,
+    pivot: Offset = center
+) {
+    translate(-light.towards.x * depth, -light.towards.y * depth) {
         rotate(rotation.toDegrees(), pivot) {
             for (i in 3 downTo 1) {
                 drawPath(path, Color.Black.copy(alpha = 0.06f), style = Stroke(depth * i, join = StrokeJoin.Round))
@@ -142,25 +148,32 @@ internal fun planetOutline(radius: Float) = Path().apply {
 }
 
 /** Cog badge outline centred on the origin, as used by the skeleton dial. */
-/** A metal prayer gear with an upright enamel face showing the prayer icon. */
+/**
+ * A metal prayer gear with an upright enamel face showing the prayer icon. Its reflections and
+ * chamfers follow the [light] while the gear turns by [rotation].
+ */
 internal fun DrawScope.planet(
     p: GearPrayer,
     at: Offset,
     radius: Float,
     rotation: Float,
     outline: Path,
-    stops: Array<Pair<Float, Color>>,
+    sheen: MetalSheen,
+    light: GearLight,
     pxPerDp: Float,
     isCurrent: Boolean
 ) {
     if (isCurrent) halo(at, radius * 0.5f, radius * 2.3f, p.color, 0.42f)
 
-    translate(at.x, at.y) { elevation(outline, 2f * pxPerDp, rotation, Offset.Zero) }
+    translate(at.x, at.y) { elevation(outline, 2f * pxPerDp, light, rotation, Offset.Zero) }
+    // Drawn in the gear's turning frame, so the light is turned back to stay fixed on screen.
+    val localLight = GearLight(light.angle - rotation)
     withTransform({
         translate(at.x, at.y)
         rotate(rotation.toDegrees(), Offset.Zero)
     }) {
-        drawPath(outline, metalBrush(stops, Offset.Zero, radius, rotation))
+        drawPath(outline, sheen.brush(Offset.Zero, localLight))
+        bevel(outline, Offset.Zero, radius, localLight, 0.8f * pxPerDp)
         drawPath(outline, Color.Black.copy(alpha = 0.45f), style = Stroke(0.8f * pxPerDp))
         for (i in 0 until 4) {
             val a = i * TAU / 4 + TAU / 8
@@ -175,17 +188,8 @@ internal fun DrawScope.planet(
 
     val face = radius * if (isCurrent) 0.66f else 0.6f
     drawCircle(p.color, face, at)
+    enamelGloss(at, face, light)
     drawCircle(Color.Black.copy(alpha = 0.35f), face, at, style = Stroke(pxPerDp))
-    val inset = face - 1.2f * pxPerDp
-    drawArc(
-        color = Color.White.copy(alpha = 0.45f),
-        startAngle = 189f,
-        sweepAngle = 117f,
-        useCenter = false,
-        topLeft = Offset(at.x - inset, at.y - inset),
-        size = Size(inset * 2, inset * 2),
-        style = Stroke(0.8f * pxPerDp)
-    )
     prayerIcon(p, at, face * 1.2f)
 }
 
