@@ -17,10 +17,12 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.domain.model.HijriUtils
@@ -43,6 +45,9 @@ import java.util.Locale
  * @param isSelectedDayToday Flag to apply pulsing effects if focused on today.
  * @param pulseScale Current animated scale value for the container.
  * @param modifier Root layout modifier.
+ * @param size Outer size of the card.
+ * @param circular Draws the card as a disc filling [size], with text scaled to fit,
+ *                 so it can sit inside a round frame such as a gear hub.
  */
 @Composable
 fun FlippableCalendarCard(
@@ -54,7 +59,9 @@ fun FlippableCalendarCard(
     currentTime: LocalTime,
     isSelectedDayToday: Boolean,
     pulseScale: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    size: Dp = 100.dp,
+    circular: Boolean = false
 ) {
     // 3D Flip animation state
     val rotation by animateFloatAsState(
@@ -84,7 +91,7 @@ fun FlippableCalendarCard(
 
     Box(
         modifier = modifier
-            .size(100.dp) 
+            .size(size)
             .graphicsLayer {
                 // Apply external pulsing scale if today
                 scaleX = if (isSelectedDayToday) pulseScale else 1f
@@ -99,7 +106,7 @@ fun FlippableCalendarCard(
         // Rotatable Card Core
         Box(
             modifier = Modifier
-                .fillMaxSize(0.85f)
+                .fillMaxSize(if (circular) 1f else 0.85f)
                 .graphicsLayer {
                     rotationY = rotation
                     cameraDistance = 12f * density // Enhance 3D effect depth
@@ -112,7 +119,9 @@ fun FlippableCalendarCard(
                     bottomText = day.date.format(monthFormatter).uppercase(Locale.getDefault()),
                     isBack = false,
                     accentColor = accentColor,
-                    timeAngle = timeAngle
+                    timeAngle = timeAngle,
+                    circular = circular,
+                    diameter = size
                 )
             } else {
                 // Back Side: Hijri
@@ -130,7 +139,9 @@ fun FlippableCalendarCard(
                     bottomText = displayMonth.uppercase(Locale.getDefault()),
                     isBack = true,
                     accentColor = accentColor,
-                    timeAngle = timeAngle
+                    timeAngle = timeAngle,
+                    circular = circular,
+                    diameter = size
                 )
             }
         }
@@ -146,11 +157,23 @@ private fun CalendarSide(
     bottomText: String,
     isBack: Boolean,
     accentColor: Color,
-    timeAngle: Float
+    timeAngle: Float,
+    circular: Boolean = false,
+    diameter: Dp = 100.dp
 ) {
     // Dynamic contrast adjustment for the header text
     val headerTextColor = remember(accentColor) {
         if (accentColor.luminance() > 0.5f) Color(0xFF1C1C1E) else Color.White
+    }
+
+    // A disc has no fixed 100dp box to fit, so its text scales with the diameter.
+    val density = LocalDensity.current
+    val headerFontSize = if (circular) with(density) { (diameter * 0.15f).toSp() } else 11.sp
+    val dayFontSize = if (circular) with(density) { (diameter * 0.36f).toSp() } else 34.sp
+    val headerPadding = if (circular) {
+        PaddingValues(top = diameter * 0.07f, bottom = diameter * 0.03f)
+    } else {
+        PaddingValues(vertical = 6.dp)
     }
 
     Surface(
@@ -158,7 +181,7 @@ private fun CalendarSide(
             .fillMaxSize()
             .graphicsLayer { if (isBack) rotationY = 180f },
         color = Color.White.copy(alpha = 0.08f), 
-        shape = RoundedCornerShape(28.dp), 
+        shape = if (circular) CircleShape else RoundedCornerShape(28.dp),
         border = BorderStroke(
             width = 0.6.dp, 
             brush = Brush.sweepGradient(
@@ -194,7 +217,7 @@ private fun CalendarSide(
                             listOf(accentColor.copy(alpha = 0.95f), accentColor.copy(alpha = 0.85f))
                         )
                     )
-                    .padding(vertical = 6.dp),
+                    .padding(headerPadding),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -202,7 +225,7 @@ private fun CalendarSide(
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.1.sp,
-                        fontSize = 11.sp 
+                        fontSize = headerFontSize
                     ),
                     color = headerTextColor,
                     maxLines = 1,
@@ -219,11 +242,11 @@ private fun CalendarSide(
                 Text(
                     text = topText,
                     style = MaterialTheme.typography.displayLarge.copy(
-                        fontSize = 34.sp, 
+                        fontSize = dayFontSize,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = IBMPlexArabic,
                         letterSpacing = (-1).sp,
-                        lineHeight = 34.sp 
+                        lineHeight = dayFontSize
                     ),
                     color = Color.White,
                     textAlign = TextAlign.Center,

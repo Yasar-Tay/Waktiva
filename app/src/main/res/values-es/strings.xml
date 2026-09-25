@@ -134,6 +134,15 @@
     <string name="settings_confirm">Confirmar</string>
     <string name="settings_weather_effects">Efectos de clima</string>
     <string name="settings_weather_effects_desc">Mostrar condiciones climáticas animadas (lluvia, nieve, nubes) de fondo.</string>
+    <string name="settings_day_circle_style">Estilo del círculo del día</string>
+    <string name="day_circle_style_classic">Clásico</string>
+    <string name="day_circle_style_classic_desc">El círculo de oración original</string>
+    <string name="day_circle_style_brass">Mecanismo de latón</string>
+    <string name="day_circle_style_brass_desc">Una rueda de latón que gira con engranajes de oración</string>
+    <string name="day_circle_style_steel">Acero nocturno</string>
+    <string name="day_circle_style_steel_desc">Engranajes de oración girando dentro de un anillo de acero</string>
+    <string name="day_circle_style_skeleton">Esqueleto</string>
+    <string name="day_circle_style_skeleton_desc">Líneas finas sobre un tren de engranajes tenue</string>
 
     <!-- Language Options -->
     <string name="lang_system">Predeterminado del sistema</string>

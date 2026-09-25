@@ -3,6 +3,7 @@ package com.ybugmobile.waktiva.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
+import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
@@ -99,6 +100,12 @@ class SettingsViewModel @Inject constructor(
     fun setShowWeatherEffects(enabled: Boolean) {
         viewModelScope.launch {
             settingsManager.updateShowWeatherEffects(enabled)
+        }
+    }
+
+    fun setDayCircleStyle(style: DayCircleStyle) {
+        viewModelScope.launch {
+            settingsManager.updateDayCircleStyle(style)
         }
     }
 

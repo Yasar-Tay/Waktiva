@@ -134,6 +134,15 @@
     <string name="settings_confirm">নিশ্চিত করুন</string>
     <string name="settings_weather_effects">আবহাওয়ার প্রভাব</string>
     <string name="settings_weather_effects_desc">ব্যাকগ্রাউন্ডে অ্যানিমেটেড আবহাওয়ার অবস্থা (বৃষ্টি, তুষারপাত, মেঘ) দেখান।</string>
+    <string name="settings_day_circle_style">দিনের বৃত্তের ধরন</string>
+    <string name="day_circle_style_classic">ক্লাসিক</string>
+    <string name="day_circle_style_classic_desc">মূল নামাজের বৃত্ত</string>
+    <string name="day_circle_style_brass">পিতলের যন্ত্র</string>
+    <string name="day_circle_style_brass_desc">ঘূর্ণায়মান পিতলের চাকা, সাথে জোড়া লাগানো নামাজের গিয়ার</string>
+    <string name="day_circle_style_steel">রাতের ইস্পাত</string>
+    <string name="day_circle_style_steel_desc">ইস্পাতের বলয়ের ভেতরে ঘোরা নামাজের গিয়ার</string>
+    <string name="day_circle_style_skeleton">কঙ্কাল</string>
+    <string name="day_circle_style_skeleton_desc">ম্লান গিয়ারের ওপর সূক্ষ্ম রেখা</string>
 
     <!-- Language Options -->
     <string name="lang_system">সিস্টেম ডিফাল্ট</string>

@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.domain.model.CurrentPrayer
@@ -22,13 +23,16 @@ import com.ybugmobile.waktiva.domain.model.CurrentPrayer
  * @param contentColor Base color for the text.
  * @param iconColor Secondary color for decorative elements (defaults to contentColor).
  * @param modifier Root layout modifier.
+ * @param verticalOffset Offset of the label from the centre, or null for the default
+ *                       (74dp above in portrait, 60dp in landscape).
  */
 @Composable
 fun CurrentPrayerHeader(
     currentPrayer: CurrentPrayer?,
     contentColor: Color,
     iconColor: Color = contentColor,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    verticalOffset: Dp? = null
 ) {
     val context = LocalContext.current
     val locale = context.resources.configuration.locales[0]
@@ -37,7 +41,7 @@ fun CurrentPrayerHeader(
     
     // Adaptive sizing based on device orientation
     val fontSize = if (isLandscape) 11.sp else 14.sp
-    val offsetY = if (isLandscape) (-60.dp) else (-74.dp)
+    val offsetY = verticalOffset ?: if (isLandscape) (-60.dp) else (-74.dp)
 
     Box(
         modifier = modifier.fillMaxSize(),

@@ -134,6 +134,15 @@
     <string name="settings_confirm">Bestätigen</string>
     <string name="settings_weather_effects">Wettereffekte</string>
     <string name="settings_weather_effects_desc">Animierte Wetterbedingungen (Regen, Schnee, Wolken) im Hintergrund anzeigen.</string>
+    <string name="settings_day_circle_style">Stil des Tageskreises</string>
+    <string name="day_circle_style_classic">Klassisch</string>
+    <string name="day_circle_style_classic_desc">Der ursprüngliche Gebetskreis</string>
+    <string name="day_circle_style_brass">Messingwerk</string>
+    <string name="day_circle_style_brass_desc">Ein drehendes Messingrad mit ineinandergreifenden Gebetszahnrädern</string>
+    <string name="day_circle_style_steel">Nachtstahl</string>
+    <string name="day_circle_style_steel_desc">Gebetszahnräder, die in einem Stahlring laufen</string>
+    <string name="day_circle_style_skeleton">Skelett</string>
+    <string name="day_circle_style_skeleton_desc">Feine Linien über einem blassen Räderwerk</string>
 
     <!-- Language Options -->
     <string name="lang_system">Systemstandard</string>

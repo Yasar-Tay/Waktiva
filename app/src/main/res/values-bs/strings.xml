@@ -134,6 +134,15 @@
     <string name="settings_confirm">Potvrdi</string>
     <string name="settings_weather_effects">Vremenski efekti</string>
     <string name="settings_weather_effects_desc">Prikazuj animirane vremenske prilike (kiša, snijeg, oblaci) u pozadini.</string>
+    <string name="settings_day_circle_style">Stil dnevnog kruga</string>
+    <string name="day_circle_style_classic">Klasični</string>
+    <string name="day_circle_style_classic_desc">Izvorni krug namaskih vremena</string>
+    <string name="day_circle_style_brass">Mesingani mehanizam</string>
+    <string name="day_circle_style_brass_desc">Rotirajući mesingani točak sa zupčanicima namaza</string>
+    <string name="day_circle_style_steel">Noćni čelik</string>
+    <string name="day_circle_style_steel_desc">Zupčanici namaza koji se okreću unutar čeličnog prstena</string>
+    <string name="day_circle_style_skeleton">Skelet</string>
+    <string name="day_circle_style_skeleton_desc">Tanke linije preko blijedog niza zupčanika</string>
 
     <!-- Language Options -->
     <string name="lang_system">Sistemski zadano</string>

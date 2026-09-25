@@ -134,6 +134,15 @@
     <string name="settings_confirm">Potwierdź</string>
     <string name="settings_weather_effects">Efekty pogodowe</string>
     <string name="settings_weather_effects_desc">Pokaż animowane warunki pogodowe (deszcz, śnieg, chmury) w tle.</string>
+    <string name="settings_day_circle_style">Styl koła dnia</string>
+    <string name="day_circle_style_classic">Klasyczny</string>
+    <string name="day_circle_style_classic_desc">Oryginalne koło czasów modlitw</string>
+    <string name="day_circle_style_brass">Mosiężny mechanizm</string>
+    <string name="day_circle_style_brass_desc">Obracające się mosiężne koło z zazębionymi kołami modlitw</string>
+    <string name="day_circle_style_steel">Nocna stal</string>
+    <string name="day_circle_style_steel_desc">Koła modlitw obracające się w stalowym pierścieniu</string>
+    <string name="day_circle_style_skeleton">Szkielet</string>
+    <string name="day_circle_style_skeleton_desc">Cienkie linie na tle bladych kół zębatych</string>
 
     <!-- Language Options -->
     <string name="lang_system">Systemowy</string>

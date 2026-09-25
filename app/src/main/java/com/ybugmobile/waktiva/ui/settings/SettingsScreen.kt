@@ -28,6 +28,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
+import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.ui.settings.composables.*
 import com.ybugmobile.waktiva.utils.applyAppLanguage
@@ -50,6 +51,7 @@ fun SettingsScreen(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     var showMethodDialog by remember { mutableStateOf(false) }
+    var showDayCircleDialog by remember { mutableStateOf(false) }
     var showMadhabDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showDeleteHistoryDialog by remember { mutableStateOf(false) }
@@ -123,6 +125,7 @@ fun SettingsScreen(
                             onLanguageClick = { showLanguageDialog = true },
                             onMadhabClick = { showMadhabDialog = true },
                             onMethodClick = { showMethodDialog = true },
+                            onDayCircleClick = { showDayCircleDialog = true },
                             onWeatherEffectsChange = { viewModel.setShowWeatherEffects(it) }
                         )
                         Spacer(modifier = Modifier.height(80.dp))
@@ -174,6 +177,7 @@ fun SettingsScreen(
                         onLanguageClick = { showLanguageDialog = true },
                         onMadhabClick = { showMadhabDialog = true },
                         onMethodClick = { showMethodDialog = true },
+                        onDayCircleClick = { showDayCircleDialog = true },
                         onWeatherEffectsChange = { viewModel.setShowWeatherEffects(it) }
                     )
 
@@ -201,10 +205,12 @@ fun SettingsScreen(
         showLanguageDialog = showLanguageDialog,
         showMadhabDialog = showMadhabDialog,
         showMethodDialog = showMethodDialog,
+        showDayCircleDialog = showDayCircleDialog,
         showDeleteHistoryDialog = showDeleteHistoryDialog,
         onDismissLanguage = { showLanguageDialog = false },
         onDismissMadhab = { showMadhabDialog = false },
         onDismissMethod = { showMethodDialog = false },
+        onDismissDayCircle = { showDayCircleDialog = false },
         onDismissDeleteHistory = { showDeleteHistoryDialog = false },
         onLanguageSelected = { lang ->
             viewModel.updateLanguage(lang) {
@@ -214,6 +220,7 @@ fun SettingsScreen(
         },
         onMadhabSelected = { viewModel.setMadhab(it); showMadhabDialog = false },
         onMethodSelected = { viewModel.setCalculationMethod(it); showMethodDialog = false },
+        onDayCircleSelected = { viewModel.setDayCircleStyle(it); showDayCircleDialog = false },
         onDeleteHistoryConfirm = {
             viewModel.deletePastData()
             showDeleteHistoryDialog = false
@@ -283,6 +290,7 @@ private fun PreferencesSection(
     onLanguageClick: () -> Unit,
     onMadhabClick: () -> Unit,
     onMethodClick: () -> Unit,
+    onDayCircleClick: () -> Unit,
     onWeatherEffectsChange: (Boolean) -> Unit
 ) {
     val madhabOptions = listOf(
@@ -315,6 +323,13 @@ private fun PreferencesSection(
                 subtitle = methods.find { it.second == s.calculationMethod }?.first ?: "",
                 icon = Icons.Rounded.Functions,
                 onClick = onMethodClick
+            )
+
+            SettingsClickItem(
+                title = stringResource(R.string.settings_day_circle_style),
+                subtitle = dayCircleStyleOptions().first { it.second == s.dayCircleStyle }.first,
+                icon = Icons.Rounded.Palette,
+                onClick = onDayCircleClick
             )
 
             SettingsToggleItem(
@@ -438,14 +453,17 @@ private fun SettingsDialogs(
     showLanguageDialog: Boolean,
     showMadhabDialog: Boolean,
     showMethodDialog: Boolean,
+    showDayCircleDialog: Boolean,
     showDeleteHistoryDialog: Boolean,
     onDismissLanguage: () -> Unit,
     onDismissMadhab: () -> Unit,
     onDismissMethod: () -> Unit,
+    onDismissDayCircle: () -> Unit,
     onDismissDeleteHistory: () -> Unit,
     onLanguageSelected: (String) -> Unit,
     onMadhabSelected: (Int) -> Unit,
     onMethodSelected: (Int) -> Unit,
+    onDayCircleSelected: (DayCircleStyle) -> Unit,
     onDeleteHistoryConfirm: () -> Unit
 ) {
     val currentLanguageCode = settings?.language ?: "system"
@@ -487,6 +505,17 @@ private fun SettingsDialogs(
         )
     }
 
+    if (showDayCircleDialog) {
+        ModernSelectionDialog(
+            title = stringResource(R.string.settings_day_circle_style),
+            options = dayCircleStyleOptions(),
+            selectedKey = settings?.dayCircleStyle ?: DayCircleStyle.DEFAULT,
+            optionDescription = { dayCircleStyleDescription(it) },
+            onSelected = onDayCircleSelected,
+            onDismiss = onDismissDayCircle
+        )
+    }
+
     if (showDeleteHistoryDialog) {
         AlertDialog(
             onDismissRequest = onDismissDeleteHistory,
@@ -508,6 +537,24 @@ private fun SettingsDialogs(
         )
     }
 }
+
+@Composable
+private fun dayCircleStyleOptions() = listOf(
+    stringResource(R.string.day_circle_style_classic) to DayCircleStyle.CLASSIC,
+    stringResource(R.string.day_circle_style_brass) to DayCircleStyle.BRASS,
+    stringResource(R.string.day_circle_style_steel) to DayCircleStyle.STEEL,
+    stringResource(R.string.day_circle_style_skeleton) to DayCircleStyle.SKELETON
+)
+
+@Composable
+private fun dayCircleStyleDescription(style: DayCircleStyle) = stringResource(
+    when (style) {
+        DayCircleStyle.CLASSIC -> R.string.day_circle_style_classic_desc
+        DayCircleStyle.BRASS -> R.string.day_circle_style_brass_desc
+        DayCircleStyle.STEEL -> R.string.day_circle_style_steel_desc
+        DayCircleStyle.SKELETON -> R.string.day_circle_style_skeleton_desc
+    }
+)
 
 @Composable
 private fun getCalculationMethods() = listOf(

@@ -134,6 +134,15 @@
     <string name="settings_confirm">Подтвердить</string>
     <string name="settings_weather_effects">Погодные эффекты</string>
     <string name="settings_weather_effects_desc">Показывать анимированные погодные условия (дождь, снег, облака) на фоне.</string>
+    <string name="settings_day_circle_style">Стиль круга дня</string>
+    <string name="day_circle_style_classic">Классический</string>
+    <string name="day_circle_style_classic_desc">Исходный круг времён намаза</string>
+    <string name="day_circle_style_brass">Латунный механизм</string>
+    <string name="day_circle_style_brass_desc">Вращающееся латунное колесо с шестернями намазов</string>
+    <string name="day_circle_style_steel">Ночная сталь</string>
+    <string name="day_circle_style_steel_desc">Шестерни намазов вращаются внутри стального кольца</string>
+    <string name="day_circle_style_skeleton">Скелетон</string>
+    <string name="day_circle_style_skeleton_desc">Тонкие линии поверх бледного зубчатого механизма</string>
 
     <!-- Language Options -->
     <string name="lang_system">Системный по умолчанию</string>

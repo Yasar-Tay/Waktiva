@@ -134,6 +134,15 @@
     <string name="settings_confirm">Bevestigen</string>
     <string name="settings_weather_effects">Weereffecten</string>
     <string name="settings_weather_effects_desc">Toon geanimeerde weersomstandigheden (regen, sneeuw, wolken) in de achtergrond.</string>
+    <string name="settings_day_circle_style">Stijl van de dagcirkel</string>
+    <string name="day_circle_style_classic">Klassiek</string>
+    <string name="day_circle_style_classic_desc">De oorspronkelijke gebedscirkel</string>
+    <string name="day_circle_style_brass">Messing uurwerk</string>
+    <string name="day_circle_style_brass_desc">Een draaiend messing wiel met ingrijpende gebedstandwielen</string>
+    <string name="day_circle_style_steel">Nachtstaal</string>
+    <string name="day_circle_style_steel_desc">Gebedstandwielen die in een stalen ring draaien</string>
+    <string name="day_circle_style_skeleton">Skelet</string>
+    <string name="day_circle_style_skeleton_desc">Fijne lijnen over een vaag raderwerk</string>
 
     <!-- Language Options -->
     <string name="lang_system">Systeemstandaard</string>

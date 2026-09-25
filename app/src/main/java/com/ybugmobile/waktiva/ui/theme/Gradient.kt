@@ -23,6 +23,9 @@ import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
+import com.ybugmobile.waktiva.ui.theme.clouds.drawClouds
+import com.ybugmobile.waktiva.ui.theme.clouds.rememberCloudScene
+import com.ybugmobile.waktiva.ui.theme.clouds.rememberSceneClock
 import java.time.LocalDate
 import java.time.LocalTime
 import kotlin.random.Random
@@ -42,50 +45,6 @@ private val WeatherCondition.isSevere: Boolean
             this == WeatherCondition.THUNDERSTORM_HAIL ||
             this == WeatherCondition.SNOWY ||
             this == WeatherCondition.HEAVY_SNOW
-
-private val WeatherCondition.cloudCount: Int
-    get() = when (this) {
-        WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL -> 22
-        WeatherCondition.RAINY, WeatherCondition.HEAVY_RAIN,
-        WeatherCondition.RAIN_SHOWERS, WeatherCondition.SNOWY,
-        WeatherCondition.HEAVY_SNOW                                       -> 18
-        WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE,
-        WeatherCondition.FREEZING_RAIN, WeatherCondition.SNOW_GRAINS,
-        WeatherCondition.SNOW_SHOWERS                                     -> 14
-        WeatherCondition.OVERCAST, WeatherCondition.FOGGY                 -> 12
-        WeatherCondition.PARTLY_CLOUDY                                    ->  6
-        WeatherCondition.MAINLY_CLEAR                                     ->  2
-        else -> 0
-    }
-
-private fun WeatherCondition.getCloudColor(isDay: Boolean): Color {
-    if (!isDay) return Color(0xFF0A0E1A)
-    return when (this) {
-        WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL -> Color(0xFF374151)
-        WeatherCondition.RAINY, WeatherCondition.HEAVY_RAIN,
-        WeatherCondition.RAIN_SHOWERS, WeatherCondition.FREEZING_RAIN    -> Color(0xFF4B5563)
-        WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE      -> Color(0xFF6B7280)
-        WeatherCondition.SNOWY, WeatherCondition.HEAVY_SNOW,
-        WeatherCondition.SNOW_GRAINS, WeatherCondition.SNOW_SHOWERS      -> Color(0xFFD1D5DB)
-        WeatherCondition.OVERCAST                                         -> Color(0xFF9CA3AF)
-        else -> Color.White
-    }
-}
-
-private fun WeatherCondition.getCloudAlpha(isDay: Boolean): Float {
-    return when {
-        isDay && this == WeatherCondition.FOGGY                       -> 0.12f
-        isDay && (this == WeatherCondition.THUNDERSTORM ||
-                  this == WeatherCondition.THUNDERSTORM_HAIL)        -> 0.20f
-        isDay && isSevere                                             -> 0.20f
-        isDay && this == WeatherCondition.OVERCAST                   -> 0.20f
-        isDay && this == WeatherCondition.PARTLY_CLOUDY              -> 0.10f
-        isDay                                                         -> 0.20f
-        !isDay && this == WeatherCondition.FOGGY                     -> 0.08f
-        !isDay && isSevere                                            -> 0.06f
-        else                                                          -> 0.22f
-    }
-}
 
 /**
  * Provides an enriched, modern gradient based on the current time of day and weather.
@@ -244,9 +203,18 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
             label = "drift"
         )
 
-        val cloudElements = remember(condition) {
-            List(condition.cloudCount) { Offset(Random.nextFloat(), Random.nextFloat() * 0.3f) }
+        val viewportWidthPx = remember(maxWidth, density) {
+            with(density) { maxWidth.toPx().coerceAtLeast(1f) }
         }
+        val cloudScene = rememberCloudScene(condition, isDay, viewportWidthPx, viewportHeightPx)
+        val cloudFade by animateFloatAsState(
+            targetValue = if (cloudScene != null) 1f else 0f,
+            animationSpec = tween(1200),
+            label = "cloudFade"
+        )
+        val sceneClock = rememberSceneClock()
+        val isThunder = condition == WeatherCondition.THUNDERSTORM || condition == WeatherCondition.THUNDERSTORM_HAIL
+        val lightning = if (isThunder) rememberLightningFlash() else null
 
         val precipElements = remember(condition) {
             val count = when (condition) {
@@ -271,31 +239,12 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
         } else null
 
         Box(modifier = Modifier.fillMaxSize()) {
-            if (condition == WeatherCondition.THUNDERSTORM ||
-                condition == WeatherCondition.THUNDERSTORM_HAIL
-            ) {
-                ThunderLayer()
-            }
+            lightning?.let { ThunderLayer(it.value) }
 
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val w = size.width
                 val h = size.height
-                val cloudColor = condition.getCloudColor(isDay)
-                val cloudAlpha = condition.getCloudAlpha(isDay)
-
-                cloudElements.forEach { pos ->
-                    val x = ((pos.x + driftProgress) % 1f) * w
-                    val y = pos.y * h
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(cloudColor.copy(alpha = cloudAlpha), Color.Transparent),
-                            center = Offset(x, y),
-                            radius = w * 0.4f
-                        ),
-                        radius = w * 0.4f,
-                        center = Offset(x, y)
-                    )
-                }
+                cloudScene?.let { drawClouds(it, sceneClock.value, lightning?.value ?: 0f, cloudFade) }
 
                 val isHeavyRain = condition == WeatherCondition.HEAVY_RAIN ||
                     condition == WeatherCondition.THUNDERSTORM ||
@@ -380,20 +329,30 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
     }
 }
 
+/**
+ * Lightning strikes at random intervals, each one or two quick pulses. The value (0..1) drives
+ * both the sky flash and the storm clouds lighting up from within.
+ */
 @Composable
-fun ThunderLayer() {
-    val alphaAnim = remember { Animatable(0f) }
+private fun rememberLightningFlash(): State<Float> {
+    val flash = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
         while (true) {
             delay(Random.nextLong(5000, 20000))
             repeat(Random.nextInt(1, 3)) {
-                alphaAnim.animateTo(Random.nextFloat() * 0.15f + 0.05f, tween(60))
-                alphaAnim.animateTo(0f, tween(Random.nextInt(200, 600)))
+                flash.animateTo(Random.nextFloat() * 0.75f + 0.25f, tween(60))
+                flash.animateTo(0f, tween(Random.nextInt(200, 600)))
                 delay(Random.nextLong(100, 300))
             }
         }
     }
-    Box(Modifier.fillMaxSize().background(Color.White.copy(alpha = alphaAnim.value)))
+    return flash.asState()
+}
+
+/** Whole-screen lightning flash; [flash] 1 is the brightest strike. */
+@Composable
+fun ThunderLayer(flash: Float) {
+    Box(Modifier.fillMaxSize().background(Color.White.copy(alpha = flash * 0.2f)))
 }
 
 @Composable

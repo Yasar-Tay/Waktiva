@@ -134,6 +134,15 @@
     <string name="settings_confirm">Sahkan</string>
     <string name="settings_weather_effects">Kesan Cuaca</string>
     <string name="settings_weather_effects_desc">Tunjukkan animasi keadaan cuaca (hujan, salji, awan) di latar belakang.</string>
+    <string name="settings_day_circle_style">Gaya Bulatan Hari</string>
+    <string name="day_circle_style_classic">Klasik</string>
+    <string name="day_circle_style_classic_desc">Bulatan waktu solat asal</string>
+    <string name="day_circle_style_brass">Mekanisme Loyang</string>
+    <string name="day_circle_style_brass_desc">Roda loyang berputar dengan gear waktu solat</string>
+    <string name="day_circle_style_steel">Keluli Malam</string>
+    <string name="day_circle_style_steel_desc">Gear waktu solat berputar di dalam gelang keluli</string>
+    <string name="day_circle_style_skeleton">Rangka</string>
+    <string name="day_circle_style_skeleton_desc">Garisan halus di atas susunan gear yang pudar</string>
 
     <!-- Language Options -->
     <string name="lang_system">Sistem Lalai</string>

@@ -134,6 +134,15 @@
     <string name="settings_confirm">تأیید</string>
     <string name="settings_weather_effects">جلوه‌های آب و هوا</string>
     <string name="settings_weather_effects_desc">نمایش شرایط آب و هوایی متحرک (باران، برف، ابرها) در پس‌زمینه.</string>
+    <string name="settings_day_circle_style">سبک دایره روز</string>
+    <string name="day_circle_style_classic">کلاسیک</string>
+    <string name="day_circle_style_classic_desc">دایره اصلی اوقات نماز</string>
+    <string name="day_circle_style_brass">سازوکار برنجی</string>
+    <string name="day_circle_style_brass_desc">چرخ برنجی گردان با چرخ‌دنده‌های درگیر نماز</string>
+    <string name="day_circle_style_steel">فولاد شب</string>
+    <string name="day_circle_style_steel_desc">چرخ‌دنده‌های نماز درون حلقه‌ای فولادی</string>
+    <string name="day_circle_style_skeleton">اسکلتی</string>
+    <string name="day_circle_style_skeleton_desc">خطوط ظریف روی چرخ‌دنده‌هایی کم‌رنگ</string>
 
     <!-- Language Options -->
     <string name="lang_system">پیش‌فرض سیستم</string>

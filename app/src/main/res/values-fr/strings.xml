@@ -134,6 +134,15 @@
     <string name="settings_confirm">Confirmer</string>
     <string name="settings_weather_effects">Effets météo</string>
     <string name="settings_weather_effects_desc">Afficher les conditions météo animées (pluie, neige, nuages) en arrière-plan.</string>
+    <string name="settings_day_circle_style">Style du cercle du jour</string>
+    <string name="day_circle_style_classic">Classique</string>
+    <string name="day_circle_style_classic_desc">Le cercle de prière d\'origine</string>
+    <string name="day_circle_style_brass">Mécanisme en laiton</string>
+    <string name="day_circle_style_brass_desc">Une roue en laiton qui tourne avec des engrenages de prière</string>
+    <string name="day_circle_style_steel">Acier de nuit</string>
+    <string name="day_circle_style_steel_desc">Des engrenages de prière tournant dans un anneau d\'acier</string>
+    <string name="day_circle_style_skeleton">Squelette</string>
+    <string name="day_circle_style_skeleton_desc">Des lignes fines sur un rouage estompé</string>
 
     <!-- Language Options -->
     <string name="lang_system">Défaut système</string>

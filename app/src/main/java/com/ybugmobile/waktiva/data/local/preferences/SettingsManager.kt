@@ -13,6 +13,7 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.flow.first
 import androidx.datastore.preferences.preferencesDataStore
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
+import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.R
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -53,7 +54,8 @@ data class UserSettings(
     val showWeatherEffects: Boolean = true,
     val showQiblaMapHint: Boolean = true,
     val showSilentPrayerNotification: Boolean = true,
-    val adhanDisabledPrayers: Set<PrayerType> = emptySet()
+    val adhanDisabledPrayers: Set<PrayerType> = emptySet(),
+    val dayCircleStyle: DayCircleStyle = DayCircleStyle.DEFAULT
 ) {
     /**
      * Whether the adhan audio should play for [type], combining the global
@@ -95,6 +97,7 @@ class SettingsManager @Inject constructor(
         val SHOW_QIBLA_MAP_HINT = booleanPreferencesKey("show_qibla_map_hint")
         val SHOW_SILENT_PRAYER_NOTIFICATION = booleanPreferencesKey("show_silent_prayer_notification")
         val ADHAN_DISABLED_PRAYERS = stringSetPreferencesKey("adhan_disabled_prayers")
+        val DAY_CIRCLE_STYLE = stringPreferencesKey("day_circle_style")
 
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
@@ -136,7 +139,8 @@ class SettingsManager @Inject constructor(
             adhanDisabledPrayers = preferences[ADHAN_DISABLED_PRAYERS]
                 ?.mapNotNull { PrayerType.fromString(it) }
                 ?.toSet()
-                ?: emptySet()
+                ?: emptySet(),
+            dayCircleStyle = DayCircleStyle.fromName(preferences[DAY_CIRCLE_STYLE])
         )
     }
 
@@ -303,6 +307,12 @@ class SettingsManager @Inject constructor(
     override suspend fun updateShowWeatherEffects(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[SHOW_WEATHER_EFFECTS] = enabled
+        }
+    }
+
+    override suspend fun updateDayCircleStyle(style: DayCircleStyle) {
+        context.dataStore.edit { preferences ->
+            preferences[DAY_CIRCLE_STYLE] = style.name
         }
     }
 
