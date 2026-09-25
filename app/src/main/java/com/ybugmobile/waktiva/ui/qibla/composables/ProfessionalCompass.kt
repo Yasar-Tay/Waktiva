@@ -204,20 +204,23 @@ fun ProfessionalCompass(
                             center = Offset(kX, kY)
                         )
                         
-                        drawCircle(color = Color.White, radius = 15.dp.toPx(), center = Offset(kX, kY))
-                        drawCircle(color = Color(0xFFFFD700), radius = 13.dp.toPx(), center = Offset(kX, kY))
-                        
-                        val kaabaSize = 12.dp.toPx()
-                        drawRect(
-                            color = Color.Black,
-                            topLeft = Offset(kX - kaabaSize / 2, kY - kaabaSize / 2),
-                            size = androidx.compose.ui.geometry.Size(kaabaSize, kaabaSize)
+                        // A gold ring round deep emerald enamel, with the Kaaba upright on it.
+                        val kaaba = Offset(kX, kY)
+                        drawCircle(
+                            Brush.linearGradient(
+                                listOf(Color(0xFFFFF1C4), Color(0xFFE0B64A), Color(0xFF9C7322)),
+                                start = kaaba - Offset(16.dp.toPx(), 16.dp.toPx()),
+                                end = kaaba + Offset(16.dp.toPx(), 16.dp.toPx())
+                            ),
+                            radius = 16.dp.toPx(),
+                            center = kaaba
                         )
-                        drawRect(
-                            color = Color(0xFFFFD700),
-                            topLeft = Offset(kX - kaabaSize / 2, kY - kaabaSize / 4),
-                            size = androidx.compose.ui.geometry.Size(kaabaSize, kaabaSize / 8)
+                        drawCircle(
+                            Brush.radialGradient(KaabaEnamel, center = kaaba - Offset(4.dp.toPx(), 4.dp.toPx()), radius = 17.dp.toPx()),
+                            radius = 13.dp.toPx(),
+                            center = kaaba
                         )
+                        kaabaIcon(kaaba, 16.dp.toPx())
                     }
                 }
         )

@@ -179,13 +179,13 @@ internal fun GearCompass(
                         val layout = measurer.measure(text, look.letterStyle(text, cardinal, g.rc, this))
                         Letter(layout, bearing, if (cardinal) g.rc * 0.7f else g.rc * 0.72f, cardinal)
                     }
-                    val medallion = Path().apply { addOval(Rect(Offset.Zero, g.rc * 0.08f)) }
+                    val medallion = Path().apply { addOval(Rect(Offset.Zero, g.rc * MedallionShare)) }
                     val ruby = GemCut(g.rc * 0.045f)
                     onDrawBehind {
                         val h = heading.value
                         letters.forEach { letter ->
-                            // An intercardinal next to the medallion makes way for it.
-                            if (!letter.cardinal && abs(angleBetween(letter.bearing, qiblaAngle)) < 14f) return@forEach
+                            // A letter next to the medallion makes way for it.
+                            if (abs(angleBetween(letter.bearing, qiblaAngle)) < if (letter.cardinal) 9f else 16f) return@forEach
                             val at = pointOn(g.c, letter.radius, screenAngle(letter.bearing, h))
                             drawText(letter.layout, topLeft = at - Offset(letter.layout.size.width / 2f, letter.layout.size.height / 2f))
                         }
@@ -193,7 +193,7 @@ internal fun GearCompass(
                             gemStone(RubyColor, pointOn(g.c, g.rc * 0.88f, screenAngle(0f, h)), ruby, palette.brassSheen, GearLight.Default, palette.gold, g.dp)
                         }
                         kaabaMedallion(
-                            pointOn(g.c, g.rc * 0.88f, screenAngle(qiblaAngle, h)), g.rc * 0.08f, medallion,
+                            pointOn(g.c, g.rc * 0.86f, screenAngle(qiblaAngle, h)), g.rc * MedallionShare, medallion,
                             look.metal, glow.value, pulseTime.floatValue, g.dp
                         )
                     }
@@ -459,30 +459,38 @@ private class CompassCard(private val g: CompassGeometry, private val look: Comp
     }
 }
 
-/** The Kaaba on a small metal medallion of radius [r] at [at], upright, glowing by [glow]. */
+/** Radius of the Kaaba medallion, as a share of the card's radius. */
+private const val MedallionShare = 0.1f
+
+/**
+ * The Kaaba on a medallion of radius [r] at [at], upright: a metal ring round deep emerald
+ * enamel, in a warm glow that always marks the Qibla and swells, pulsing, by [glow] as the
+ * compass comes into line.
+ */
 private fun DrawScope.kaabaMedallion(at: Offset, r: Float, outline: Path, metal: MetalSheen, glow: Float, time: Float, dp: Float) {
     val light = GearLight.Default
     translate(at.x, at.y) {
-        if (glow > 0f) {
-            val reach = r * 3.2f
-            val pulse = (0.55f + 0.15f * sin(time * 3f)) * glow
-            drawCircle(
-                Brush.radialGradient(listOf(KaabaGlow.copy(alpha = pulse), KaabaGlow.copy(alpha = 0f)), center = Offset.Zero, radius = reach),
-                reach, Offset.Zero
-            )
-        }
+        val reach = r * (2.2f + 1.2f * glow)
+        val warmth = 0.28f + (0.3f + 0.12f * sin(time * 3f)) * glow
+        drawCircle(
+            Brush.radialGradient(listOf(KaabaGold.copy(alpha = warmth), KaabaGold.copy(alpha = 0f)), center = Offset.Zero, radius = reach),
+            reach, Offset.Zero
+        )
         elevation(outline, 1.5f * dp, light, pivot = Offset.Zero)
         drawPath(outline, metal.brush(Offset.Zero, light))
         bevel(outline, Offset.Zero, r, light, dp)
         drawCircle(Color(0x993C280A), r, Offset.Zero, style = Stroke(0.6f * dp))
-        val k = r * 0.52f
-        drawRect(Color(0xFF111111), Offset(-k, -k * 0.8f), Size(k * 2, k * 1.7f))
-        drawRect(Color(0xFFE8C16A), Offset(-k, -k * 0.35f), Size(k * 2, k * 0.24f))
-        drawRect(Color.White.copy(alpha = 0.25f), Offset(-k, -k * 0.8f), Size(k * 0.5f, k * 1.7f))
+        val enamel = r * 0.8f
+        drawCircle(
+            Brush.radialGradient(KaabaEnamel, center = light.towards * (enamel * 0.35f), radius = enamel * 1.3f),
+            enamel, Offset.Zero
+        )
+        drawCircle(Color.Black.copy(alpha = 0.45f), enamel, Offset.Zero, style = Stroke(0.8f * dp))
+        kaabaIcon(Offset(0f, -enamel * 0.04f), enamel * 1.2f)
+        // A glint on the enamel, as on glazed glass.
+        drawCircle(Color.White.copy(alpha = 0.18f), enamel * 0.22f, light.towards * (enamel * 0.55f))
     }
 }
-
-private val KaabaGlow = Color(0xFFFFD678)
 
 /** The fixed needle, pointing up to where the phone points. */
 private class CompassNeedle(private val g: CompassGeometry, private val look: CompassLook) {

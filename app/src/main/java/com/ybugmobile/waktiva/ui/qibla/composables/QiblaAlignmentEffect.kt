@@ -135,25 +135,26 @@ private class NurLight(private val c: Offset, private val r: Float, private val 
     private val bottom = c.y + r * 0.25f
     private val beamWidth = r * 0.95f
 
-    // The beam is lit by a radial gradient from its foot, squashed sideways into an ellipse, so it
-    // fades both towards its sides and up into the sky. It is laid out unsquashed, [beamSquash]
-    // times wider, and squashed when drawn.
-    private val beamHeight = bottom - top
-    private val beamSquash = beamWidth / beamHeight
-    private val beam = Path().apply {
-        moveTo(c.x - r * 0.06f / beamSquash, top)
-        lineTo(c.x + r * 0.06f / beamSquash, top)
-        lineTo(c.x + beamWidth / 2f / beamSquash, bottom)
-        lineTo(c.x - beamWidth / 2f / beamSquash, bottom)
-        close()
-    }
+    // The beam is two soft glows squashed sideways: a tall, narrow column falling from the sky and
+    // a wider pool where it lands on the compass. Each fades out to nothing at its edge, so the
+    // beam has no outline, least of all where it reaches the middle of the compass.
+    private class Glow(val centre: Offset, val reach: Float, val squash: Float, val brush: Brush)
+
     private val beamColor = warm(Color(0xFFFFECBE))
-    private val beamBrush = Brush.radialGradient(
-        0f to beamColor.copy(alpha = 0.18f),
-        0.5f to beamColor.copy(alpha = 0.08f),
-        1f to beamColor.copy(alpha = 0f),
-        center = Offset(c.x, bottom),
-        radius = beamHeight
+    private fun glow(centre: Offset, reach: Float, width: Float, alpha: Float) = Glow(
+        centre, reach, width / reach,
+        Brush.radialGradient(
+            0f to beamColor.copy(alpha = alpha),
+            0.35f to beamColor.copy(alpha = alpha * 0.55f),
+            0.7f to beamColor.copy(alpha = alpha * 0.18f),
+            1f to beamColor.copy(alpha = 0f),
+            center = centre,
+            radius = reach
+        )
+    )
+    private val beam = listOf(
+        glow(Offset(c.x, c.y - r * 1.05f), reach = r * 1.5f, width = beamWidth * 0.32f, alpha = 0.13f),
+        glow(Offset(c.x, c.y - r * 0.25f), reach = r * 1.05f, width = beamWidth * 0.55f, alpha = 0.12f)
     )
 
     private val rayColor = warm(Color(0xFFFFF4D6))
@@ -193,8 +194,11 @@ private class NurLight(private val c: Offset, private val r: Float, private val 
         val add = BlendMode.Plus
 
         // The beam, breathing
-        scale(beamSquash * (1f + 0.04f * sin(t * 1.3f)), 1f, pivot = Offset(c.x, bottom)) {
-            drawPath(beam, beamBrush, alpha = amount, blendMode = add)
+        val breath = 1f + 0.04f * sin(t * 1.3f)
+        for (g in beam) {
+            scale(g.squash * breath, 1f, pivot = g.centre) {
+                drawCircle(g.brush, g.reach, g.centre, alpha = amount, blendMode = add)
+            }
         }
 
         // God rays
