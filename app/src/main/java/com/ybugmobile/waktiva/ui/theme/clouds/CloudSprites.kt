@@ -16,11 +16,10 @@ import kotlin.math.PI
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.random.Random
 
-internal enum class CloudKind { CUMULUS, STRATUS, NIMBUS, TOWER, FOG }
+internal enum class CloudKind { STRATUS, NIMBUS, FOG }
 
 /** Lit top, body, shaded base and highlight, as ARGB ints. */
 internal class CloudPalette(val top: Int, val body: Int, val shade: Int, val highlight: Int)
@@ -40,69 +39,29 @@ private class Silhouette(val lobes: List<Lobe>, val base: RectF, val baseRadius:
 
 private fun Random.between(from: Float, to: Float) = from + (to - from) * nextFloat()
 
-/** Lobes and base of a cloud of [w] x [h] placed [pad] in from the sprite's edges. */
+/**
+ * Lobes and base of a cloud of [w] x [h] placed [pad] in from the sprite's edges: a flat,
+ * elongated row of squashed lobes, so every kind reads as a layer rather than a heap.
+ */
 private fun silhouette(kind: CloudKind, rnd: Random, w: Float, h: Float, pad: Float): Silhouette {
     val lobes = mutableListOf<Lobe>()
-    var base = RectF(pad + w * 0.04f, pad + h * 0.55f, pad + w * 0.96f, pad + h)
-    var baseRadius = h * 0.22f
-    when (kind) {
-        CloudKind.CUMULUS -> {
-            val n = 5 + rnd.nextInt(3)
-            for (i in 0 until n) {
-                val t = i / (n - 1f)
-                val bulge = sin(PI * t).toFloat().pow(0.8f)
-                val r = h * (0.26f + 0.42f * bulge) * rnd.between(0.85f, 1.15f)
-                lobes += Lobe(pad + w * (0.1f + 0.8f * t) + (rnd.nextFloat() - 0.5f) * w * 0.05f, pad + h - r * 0.95f - h * 0.1f * bulge * rnd.nextFloat(), r)
-            }
-            // crowning puffs on the two biggest lobes
-            lobes.sortedByDescending { it.r }.take(2).forEach { l ->
-                lobes += Lobe(l.x + (rnd.nextFloat() - 0.5f) * l.r * 0.8f, l.y - l.r * 0.55f, l.r * rnd.between(0.45f, 0.65f), minor = true)
-            }
-            // small irregular puffs along the top edge break up the scalloped outline
-            repeat(12) {
-                val t = rnd.between(0.08f, 0.92f)
-                val top = pad + h * (0.62f - 0.5f * sin(PI * t).toFloat().pow(0.8f))
-                lobes += Lobe(pad + w * t, top + (rnd.nextFloat() - 0.3f) * h * 0.14f, h * rnd.between(0.08f, 0.24f), minor = true)
-            }
-        }
-        CloudKind.STRATUS, CloudKind.NIMBUS, CloudKind.FOG -> {
-            val n = if (kind == CloudKind.NIMBUS) 11 else 13
-            val (thick, spread) = when (kind) {
-                CloudKind.NIMBUS -> 0.34f to 0.26f
-                CloudKind.FOG -> 0.3f to 0.18f
-                else -> 0.24f to 0.2f
-            }
-            val squash = if (kind == CloudKind.NIMBUS) 0.72f else 0.55f
-            for (i in 0 until n) {
-                val t = i / (n - 1f)
-                val r = h * (thick + spread * rnd.nextFloat()) * (0.75f + 0.25f * sin(PI * t).toFloat())
-                lobes += Lobe(pad + w * (0.04f + 0.92f * t), pad + h * (0.52f + (rnd.nextFloat() - 0.5f) * 0.18f), r, squash)
-            }
-            // uneven wisps so the layer doesn't read as a row of equal bumps
-            repeat(10) {
-                lobes += Lobe(pad + w * rnd.between(0.05f, 0.95f), pad + h * rnd.between(0.4f, 0.65f), h * rnd.between(0.12f, 0.32f), 0.5f, minor = true)
-            }
-            base = RectF(pad + w * 0.04f, pad + h * 0.45f, pad + w * 0.96f, pad + h * 0.85f)
-            baseRadius = h * 0.2f
-        }
-        CloudKind.TOWER -> {
-            // cumulonimbus: broad base, rising column, flattened anvil top
-            for (i in 0 until 9) {
-                val r = h * rnd.between(0.18f, 0.32f)
-                lobes += Lobe(pad + w * (0.08f + 0.84f * i / 8f), pad + h * 0.78f - r * 0.6f, r)
-            }
-            for (k in 0 until 7) {
-                val t = k / 6f
-                lobes += Lobe(pad + w * (0.46f + (rnd.nextFloat() - 0.5f) * 0.18f), pad + h * (0.72f - 0.55f * t), h * rnd.between(0.16f, 0.24f) * (1 - t * 0.25f))
-            }
-            for (k in 0 until 7) {
-                lobes += Lobe(pad + w * (0.2f + 0.62f * k / 6f), pad + h * 0.12f + (rnd.nextFloat() - 0.5f) * h * 0.05f, h * rnd.between(0.08f, 0.13f))
-            }
-            base = RectF(pad + w * 0.04f, pad + h * 0.7f, pad + w * 0.96f, pad + h)
-            baseRadius = h * 0.12f
-        }
+    val n = if (kind == CloudKind.NIMBUS) 11 else 13
+    val (thick, spread) = when (kind) {
+        CloudKind.NIMBUS -> 0.34f to 0.26f
+        CloudKind.FOG -> 0.3f to 0.18f
+        CloudKind.STRATUS -> 0.24f to 0.2f
     }
-    return Silhouette(lobes, base, baseRadius)
+    val squash = if (kind == CloudKind.NIMBUS) 0.72f else 0.55f
+    for (i in 0 until n) {
+        val t = i / (n - 1f)
+        val r = h * (thick + spread * rnd.nextFloat()) * (0.75f + 0.25f * sin(PI * t).toFloat())
+        lobes += Lobe(pad + w * (0.04f + 0.92f * t), pad + h * (0.52f + (rnd.nextFloat() - 0.5f) * 0.18f), r, squash)
+    }
+    // uneven wisps so the layer doesn't read as a row of equal bumps
+    repeat(10) {
+        lobes += Lobe(pad + w * rnd.between(0.05f, 0.95f), pad + h * rnd.between(0.4f, 0.65f), h * rnd.between(0.12f, 0.32f), 0.5f, minor = true)
+    }
+    return Silhouette(lobes, RectF(pad + w * 0.04f, pad + h * 0.45f, pad + w * 0.96f, pad + h * 0.85f), h * 0.2f)
 }
 
 private fun withAlpha(color: Int, alpha: Float) = (((alpha.coerceIn(0f, 1f) * 255).toInt()) shl 24) or (color and 0x00FFFFFF)
@@ -127,7 +86,7 @@ internal fun buildCloudSprite(
     resolution: Float
 ): CloudSprite {
     val rnd = Random(seed)
-    val pad = h // room for puffs rising above the body and for the soft edge
+    val pad = h // room for the soft edge and the wisps
     val cw = w + pad * 2
     val ch = h + pad * 2
     val bw = max(1, ceil(cw * resolution).toInt())
@@ -162,11 +121,7 @@ internal fun buildCloudSprite(
         }
     }
 
-    val blurFactor = when (kind) {
-        CloudKind.FOG -> 0.22f
-        CloudKind.CUMULUS -> 0.06f
-        else -> 0.1f
-    }
+    val blurFactor = if (kind == CloudKind.FOG) 0.22f else 0.1f
     val soft = body.blurred(max(1f, h * blurFactor) * resolution)
     val canvas = Canvas(soft)
 
@@ -175,12 +130,7 @@ internal fun buildCloudSprite(
         canvas.drawBitmap(body, 0f, 0f, Paint().apply { alpha = 89 })
 
         // Density map: a dense core with thinner, see-through patches.
-        val floor = when (kind) {
-            CloudKind.CUMULUS -> 0.42f
-            CloudKind.STRATUS -> 0.28f
-            CloudKind.NIMBUS -> 0.5f
-            else -> 0.6f
-        }
+        val floor = if (kind == CloudKind.NIMBUS) 0.5f else 0.28f
         val density = layer {
             drawColor(withAlpha(Color.BLACK, floor))
             val add = Paint(Paint.ANTI_ALIAS_FLAG).apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.ADD) }
@@ -201,15 +151,8 @@ internal fun buildCloudSprite(
         // Wisps: thin, stretched, very soft trails off the sides and base, behind the body.
         val wisps = layer {
             val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-            val count = when (kind) {
-                CloudKind.CUMULUS -> 3
-                CloudKind.STRATUS -> 5
-                CloudKind.NIMBUS -> 4
-                else -> 3
-            }
-            repeat(count) {
-                val stretch = if (kind == CloudKind.CUMULUS) 1f else 1.6f
-                val rx = min(pad * 0.9f, h * rnd.between(0.5f, 1.1f)) * stretch
+            repeat(if (kind == CloudKind.NIMBUS) 4 else 5) {
+                val rx = min(pad * 0.9f, h * rnd.between(0.5f, 1.1f)) * 1.6f
                 val ry = h * rnd.between(0.07f, 0.15f)
                 val onSide = rnd.nextFloat() < 0.6f
                 val x = when {
