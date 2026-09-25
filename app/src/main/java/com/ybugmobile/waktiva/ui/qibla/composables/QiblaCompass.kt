@@ -185,7 +185,7 @@ internal fun GearCompass(
                         val h = heading.value
                         letters.forEach { letter ->
                             // A letter next to the medallion makes way for it.
-                            if (abs(angleBetween(letter.bearing, qiblaAngle)) < if (letter.cardinal) 9f else 16f) return@forEach
+                            if (abs(angleBetween(letter.bearing, qiblaAngle)) < if (letter.cardinal) 12f else 20f) return@forEach
                             val at = pointOn(g.c, letter.radius, screenAngle(letter.bearing, h))
                             drawText(letter.layout, topLeft = at - Offset(letter.layout.size.width / 2f, letter.layout.size.height / 2f))
                         }
@@ -193,7 +193,7 @@ internal fun GearCompass(
                             gemStone(RubyColor, pointOn(g.c, g.rc * 0.88f, screenAngle(0f, h)), ruby, palette.brassSheen, GearLight.Default, palette.gold, g.dp)
                         }
                         kaabaMedallion(
-                            pointOn(g.c, g.rc * 0.86f, screenAngle(qiblaAngle, h)), g.rc * MedallionShare, medallion,
+                            pointOn(g.c, g.rc * 0.83f, screenAngle(qiblaAngle, h)), g.rc * MedallionShare, medallion,
                             look.metal, glow.value, pulseTime.floatValue, g.dp
                         )
                     }
@@ -460,7 +460,7 @@ private class CompassCard(private val g: CompassGeometry, private val look: Comp
 }
 
 /** Radius of the Kaaba medallion, as a share of the card's radius. */
-private const val MedallionShare = 0.1f
+private const val MedallionShare = 0.13f
 
 /**
  * The Kaaba on a medallion of radius [r] at [at], upright: a metal ring round deep emerald
@@ -486,7 +486,7 @@ private fun DrawScope.kaabaMedallion(at: Offset, r: Float, outline: Path, metal:
             enamel, Offset.Zero
         )
         drawCircle(Color.Black.copy(alpha = 0.45f), enamel, Offset.Zero, style = Stroke(0.8f * dp))
-        kaabaIcon(Offset(0f, -enamel * 0.04f), enamel * 1.2f)
+        kaabaIcon(Offset(0f, -enamel * 0.04f), enamel * 1.3f)
         // A glint on the enamel, as on glazed glass.
         drawCircle(Color.White.copy(alpha = 0.18f), enamel * 0.22f, light.towards * (enamel * 0.55f))
     }

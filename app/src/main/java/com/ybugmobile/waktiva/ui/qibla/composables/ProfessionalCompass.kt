@@ -200,7 +200,7 @@ fun ProfessionalCompass(
                         
                         drawCircle(
                             brush = Brush.radialGradient(listOf(indicatorColor.copy(alpha = 0.4f), Color.Transparent)),
-                            radius = 24.dp.toPx() * (if (isAligned) glowScale else 1f),
+                            radius = 30.dp.toPx() * (if (isAligned) glowScale else 1f),
                             center = Offset(kX, kY)
                         )
                         
@@ -209,18 +209,18 @@ fun ProfessionalCompass(
                         drawCircle(
                             Brush.linearGradient(
                                 listOf(Color(0xFFFFF1C4), Color(0xFFE0B64A), Color(0xFF9C7322)),
-                                start = kaaba - Offset(16.dp.toPx(), 16.dp.toPx()),
-                                end = kaaba + Offset(16.dp.toPx(), 16.dp.toPx())
+                                start = kaaba - Offset(20.dp.toPx(), 20.dp.toPx()),
+                                end = kaaba + Offset(20.dp.toPx(), 20.dp.toPx())
                             ),
-                            radius = 16.dp.toPx(),
+                            radius = 20.dp.toPx(),
                             center = kaaba
                         )
                         drawCircle(
-                            Brush.radialGradient(KaabaEnamel, center = kaaba - Offset(4.dp.toPx(), 4.dp.toPx()), radius = 17.dp.toPx()),
-                            radius = 13.dp.toPx(),
+                            Brush.radialGradient(KaabaEnamel, center = kaaba - Offset(5.dp.toPx(), 5.dp.toPx()), radius = 21.dp.toPx()),
+                            radius = 16.5.dp.toPx(),
                             center = kaaba
                         )
-                        kaabaIcon(kaaba, 16.dp.toPx())
+                        kaabaIcon(kaaba, 21.dp.toPx())
                     }
                 }
         )

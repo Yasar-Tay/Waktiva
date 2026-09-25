@@ -55,6 +55,10 @@ import com.ybugmobile.waktiva.ui.qibla.QiblaScreen
 import com.ybugmobile.waktiva.ui.settings.AudioSettingsScreen
 import com.ybugmobile.waktiva.ui.settings.LicensesScreen
 import com.ybugmobile.waktiva.ui.settings.SettingsScreen
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
+import com.ybugmobile.waktiva.ui.theme.GlassTheme
+import com.ybugmobile.waktiva.ui.theme.liquidGlass
 import com.ybugmobile.waktiva.ui.theme.WaktivaBackgroundWrapper
 import com.ybugmobile.waktiva.ui.theme.WaktivaTheme
 import com.ybugmobile.waktiva.ui.welcome.WelcomeScreen
@@ -362,7 +366,55 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
 /** Data class representing a tab in the navigation layout. */
 data class NavigationItem(val route: String, val labelResId: Int, val icon: ImageVector)
 
-/** A custom navigation rail for tablets or landscape phones with smooth selection indicators. */
+/**
+ * The glass the navigation floats on: smoky, like the cards on the day sky, so white icons read
+ * over any screen beneath it.
+ */
+private val NavGlass = GlassTheme(
+    containerColor = Color.Black.copy(alpha = 0.15f),
+    contentColor = Color.White,
+    borderColor = Color.White.copy(alpha = 0.1f),
+    secondaryContentColor = Color.White.copy(alpha = 0.6f),
+    isLightMode = false
+)
+
+private val NavBarShape = RoundedCornerShape(28.dp)
+private val NavLensShape = RoundedCornerShape(18.dp)
+
+/** The frosted lens behind the selected tab, sliding between tabs on a spring. */
+@Composable
+private fun NavLens(modifier: Modifier) {
+    Box(
+        modifier = modifier.liquidGlass(NavLensShape, NavGlass, tint = Color.White, emphasis = 1f)
+    )
+}
+
+/** A tab's icon: bright and a little larger when selected, dimmer otherwise. */
+@Composable
+private fun NavIcon(item: NavigationItem, isSelected: Boolean) {
+    val tint by animateColorAsState(
+        targetValue = if (isSelected) Color.White else Color.White.copy(alpha = 0.62f),
+        label = "navIconTint"
+    )
+    val scale by animateFloatAsState(
+        targetValue = if (isSelected) 1.1f else 1f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
+        label = "navIconScale"
+    )
+    Icon(
+        imageVector = item.icon,
+        contentDescription = stringResource(item.labelResId),
+        tint = tint,
+        modifier = Modifier
+            .size(26.dp)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+    )
+}
+
+/** The navigation rail for landscape: a column of liquid glass with a frosted lens on the selected tab. */
 @Composable
 fun SmoothTouchNavigationRail(
     items: List<NavigationItem>,
@@ -373,80 +425,52 @@ fun SmoothTouchNavigationRail(
     val selectedIndex = items.indexOfFirst { it.route == currentRoute }
     var tabHeight by remember { mutableStateOf(0.dp) }
 
-    Surface(
-        color = Color(0xFFF8F9FA), // Solid light color
-        tonalElevation = 4.dp,
-        shape = RoundedCornerShape(24.dp),
+    Box(
         modifier = Modifier
             .fillMaxHeight()
-            .width(60.dp)
             .padding(vertical = 40.dp)
+            .width(60.dp)
+            .liquidGlass(NavBarShape, NavGlass, emphasis = 0.35f)
+            .onGloballyPositioned {
+                tabHeight = with(density) { (it.size.height / items.size).toDp() }
+            }
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .onGloballyPositioned {
-                    tabHeight = with(density) { (it.size.height / items.size).toDp() }
-                }
-        ) {
-            if (selectedIndex != -1 && tabHeight > 0.dp) {
-                val indicatorOffset by animateDpAsState(
-                    targetValue = tabHeight * selectedIndex,
-                    animationSpec = spring(0.8f, Spring.StiffnessMediumLow),
-                    label = "indicatorOffset"
-                )
+        if (selectedIndex != -1 && tabHeight > 0.dp) {
+            val indicatorOffset by animateDpAsState(
+                targetValue = tabHeight * selectedIndex,
+                animationSpec = spring(0.8f, Spring.StiffnessMediumLow),
+                label = "indicatorOffset"
+            )
+            NavLens(
+                Modifier
+                    .offset(y = indicatorOffset)
+                    .height(tabHeight)
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 10.dp)
+            )
+        }
 
+        Column(modifier = Modifier.fillMaxSize()) {
+            items.forEach { item ->
                 Box(
                     modifier = Modifier
-                        .offset(y = indicatorOffset)
-                        .height(tabHeight)
+                        .weight(1f)
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 12.dp),
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { onItemClick(item.route) }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                color = Color(0xFFE9ECEF), // Light gray indicator
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                    )
-                }
-            }
-
-            Column(modifier = Modifier.fillMaxSize()) {
-                items.forEach { item ->
-                    val isSelected = currentRoute == item.route
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = { onItemClick(item.route) }
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        val contentColor by animateColorAsState(
-                            targetValue = if (isSelected) Color(0xFF212529) else Color(0xFF6C757D),
-                            label = "contentColor"
-                        )
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = null,
-                            tint = contentColor,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
+                    NavIcon(item, isSelected = currentRoute == item.route)
                 }
             }
         }
     }
 }
 
-/** A modern, animated bottom navigation bar with a solid light background and spring selection. */
+/** The bottom navigation bar: a floating strip of liquid glass with a frosted lens on the selected tab. */
 @Composable
 fun SmoothTouchNavigationBar(
     items: List<NavigationItem>,
@@ -457,73 +481,45 @@ fun SmoothTouchNavigationBar(
     val selectedIndex = items.indexOfFirst { it.route == currentRoute }
     var tabWidth by remember { mutableStateOf(0.dp) }
 
-    Surface(
-        color = Color(0xFFF8F9FA), // Solid light color
-        tonalElevation = 4.dp,
-        shape = RoundedCornerShape(24.dp),
+    Box(
         modifier = Modifier
-            .padding(start = 24.dp, end = 24.dp)
+            .padding(start = 24.dp, end = 24.dp, bottom = 4.dp)
             .fillMaxWidth()
             .height(64.dp)
+            .liquidGlass(NavBarShape, NavGlass, emphasis = 0.35f)
+            .onGloballyPositioned {
+                tabWidth = with(density) { (it.size.width / items.size).toDp() }
+            }
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .onGloballyPositioned {
-                    tabWidth = with(density) { (it.size.width / items.size).toDp() }
-                }
-        ) {
-            if (selectedIndex != -1 && tabWidth > 0.dp) {
-                val indicatorOffset by animateDpAsState(
-                    targetValue = tabWidth * selectedIndex,
-                    animationSpec = spring(0.8f, Spring.StiffnessMediumLow),
-                    label = "indicatorOffset"
-                )
+        if (selectedIndex != -1 && tabWidth > 0.dp) {
+            val indicatorOffset by animateDpAsState(
+                targetValue = tabWidth * selectedIndex,
+                animationSpec = spring(0.8f, Spring.StiffnessMediumLow),
+                label = "indicatorOffset"
+            )
+            NavLens(
+                Modifier
+                    .offset(x = indicatorOffset)
+                    .width(tabWidth)
+                    .fillMaxHeight()
+                    .padding(vertical = 8.dp, horizontal = 10.dp)
+            )
+        }
 
+        Row(modifier = Modifier.fillMaxSize()) {
+            items.forEach { item ->
                 Box(
                     modifier = Modifier
-                        .offset(x = indicatorOffset)
-                        .width(tabWidth)
+                        .weight(1f)
                         .fillMaxHeight()
-                        .padding(vertical = 10.dp, horizontal = 12.dp),
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { onItemClick(item.route) }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                color = Color(0xFFE9ECEF), // Light gray indicator
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                    )
-                }
-            }
-
-            Row(modifier = Modifier.fillMaxSize()) {
-                items.forEach { item ->
-                    val isSelected = currentRoute == item.route
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = { onItemClick(item.route) }
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        val contentColor by animateColorAsState(
-                            targetValue = if (isSelected) Color(0xFF212529) else Color(0xFF6C757D),
-                            label = "contentColor"
-                        )
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = null,
-                            tint = contentColor,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
+                    NavIcon(item, isSelected = currentRoute == item.route)
                 }
             }
         }
