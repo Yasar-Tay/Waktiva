@@ -121,6 +121,9 @@
     <!-- General Settings -->
     <string name="settings_title">Postavke</string>
     <string name="settings_preferences">Preference</string>
+    <string name="settings_section_prayer_times">Vakti namaza</string>
+    <string name="settings_section_appearance">Izgled i jezik</string>
+    <string name="settings_section_reminders">Podsjetnici i obavještenja</string>
     <string name="settings_permissions">Dozvole</string>
     <string name="settings_manage_system">Upravljaj u postavkama sistema</string>
     <string name="settings_location_access">Pristup lokaciji</string>

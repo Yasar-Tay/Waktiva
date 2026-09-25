@@ -121,6 +121,9 @@
     <!-- General Settings -->
     <string name="settings_title">Asetukset</string>
     <string name="settings_preferences">Mieltymykset</string>
+    <string name="settings_section_prayer_times">Rukousajat</string>
+    <string name="settings_section_appearance">Ulkoasu ja kieli</string>
+    <string name="settings_section_reminders">Muistutukset ja ilmoitukset</string>
     <string name="settings_permissions">Käyttöoikeudet</string>
     <string name="settings_manage_system">Hallitse järjestelmän asetuksissa</string>
     <string name="settings_location_access">Sijainnin käyttöoikeus</string>

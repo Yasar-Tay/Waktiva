@@ -121,6 +121,9 @@
     <!-- General Settings -->
     <string name="settings_title">Настройки</string>
     <string name="settings_preferences">Предпочтения</string>
+    <string name="settings_section_prayer_times">Время намаза</string>
+    <string name="settings_section_appearance">Оформление и язык</string>
+    <string name="settings_section_reminders">Напоминания и уведомления</string>
     <string name="settings_permissions">Разрешения</string>
     <string name="settings_manage_system">Управление в настройках системы</string>
     <string name="settings_location_access">Доступ к геопозиции</string>

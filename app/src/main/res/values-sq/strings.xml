@@ -121,6 +121,9 @@
     <!-- General Settings -->
     <string name="settings_title">Cilësimet</string>
     <string name="settings_preferences">Preferencat</string>
+    <string name="settings_section_prayer_times">Kohët e namazit</string>
+    <string name="settings_section_appearance">Pamja dhe gjuha</string>
+    <string name="settings_section_reminders">Kujtesat dhe njoftimet</string>
     <string name="settings_permissions">Lejet</string>
     <string name="settings_manage_system">Menaxho në Cilësimet e Sistemit</string>
     <string name="settings_location_access">Qasja në Vendndodhje</string>

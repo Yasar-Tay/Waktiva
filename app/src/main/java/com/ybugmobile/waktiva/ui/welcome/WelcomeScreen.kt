@@ -387,14 +387,9 @@ private fun PreferencesStep(
                     icon = Icons.Default.Language,
                     onClick = { showLanguageDialog = true }
                 )
-                
-                WelcomeSettingsClickItem(
-                    title = stringResource(R.string.settings_madhab),
-                    subtitle = madhabOptions.find { it.second == (settings?.madhab ?: 0) }?.first ?: "",
-                    icon = Icons.Default.School,
-                    onClick = { showMadhabDialog = true }
-                )
-                
+            }
+
+            PreferenceSection(title = stringResource(R.string.settings_section_prayer_times)) {
                 WelcomeSettingsClickItem(
                     title = stringResource(R.string.settings_method),
                     subtitle = methods.find {
@@ -403,8 +398,17 @@ private fun PreferencesStep(
                     icon = Icons.Default.Functions,
                     onClick = { showMethodDialog = true }
                 )
+
+                WelcomeSettingsClickItem(
+                    title = stringResource(R.string.settings_madhab),
+                    subtitle = madhabOptions.find { it.second == (settings?.madhab ?: 0) }?.first ?: "",
+                    icon = Icons.Default.School,
+                    onClick = { showMadhabDialog = true }
+                )
             }
 
+            // The adhan: whether it plays, for which prayers, with which recording, and the dua after it.
+            // Everything past the switch only matters while it is on, so it only shows then.
             PreferenceSection(title = stringResource(R.string.welcome_adhan_audio_header)) {
                 GlassSurface(
                     modifier = Modifier.fillMaxWidth(),
@@ -455,6 +459,73 @@ private fun PreferencesStep(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
+                                Text(stringResource(id = R.string.audio_individual_sounds_title), fontWeight = FontWeight.Bold, color = Color.White)
+                                Text(stringResource(id = R.string.audio_individual_sounds_desc), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
+                            }
+                            Switch(
+                                checked = settings?.useSpecificAdhanForEachPrayer ?: false,
+                                onCheckedChange = { audioViewModel.toggleUseSpecificAdhan(it) },
+                                colors = switchColors
+                            )
+                        }
+                    }
+
+                    if (settings?.useSpecificAdhanForEachPrayer == true) {
+                        Text(
+                            text = stringResource(id = R.string.audio_select_prayer_prompt),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = Color.White,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                        PrayerType.entries.filter { it != PrayerType.SUNRISE }.forEach { prayer ->
+                            val selectedAdhanPath = settings?.prayerSpecificAdhanPaths?.get(prayer) ?: settings?.selectedAdhanPath
+                            val adhanItem = audioItems.find { it.path == selectedAdhanPath } ?: audioItems.find { it.isDefault }
+                        
+                            GlassSurface(
+                                onClick = {
+                                    audioViewModel.selectPrayerType(prayer)
+                                    showAudioSelectionDialog = true
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                glass = WelcomeGlass
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(prayer.getDisplayName(context), fontWeight = FontWeight.Bold, color = Color.White)
+                                        Text(adhanItem?.name ?: "", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
+                                    }
+                                    Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color.White.copy(alpha = 0.3f))
+                                }
+                            }
+                        }
+                    } else {
+                        Text(stringResource(R.string.welcome_select_sound), style = MaterialTheme.typography.titleSmall, color = Color.White, modifier = Modifier.padding(top = 8.dp))
+                    
+                        audioItems.forEach { item ->
+                            AudioSelectionItem(
+                                name = item.name,
+                                isSelected = item.isSelected,
+                                isPlaying = item.isPlaying,
+                                onSelect = { audioViewModel.selectAudio(item.path) },
+                                onTogglePreview = { audioViewModel.togglePreview(item.path) }
+                            )
+                        }
+                    }
+
+                    GlassSurface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        glass = WelcomeGlass
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(stringResource(R.string.settings_play_adhan_dua), fontWeight = FontWeight.Bold, color = Color.White)
                                 Text(stringResource(R.string.settings_play_adhan_dua_desc), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
                             }
@@ -466,76 +537,59 @@ private fun PreferencesStep(
                         }
                     }
                 }
+            }
 
-                if (settings?.let { !it.playAdhanAudio || it.adhanDisabledPrayers.isNotEmpty() } == true) {
+            // What reminds the user around the prayer times, with or without the adhan.
+            PreferenceSection(title = stringResource(R.string.settings_section_reminders)) {
+                // The warning comes before an adhan, so it only applies while the adhan plays.
+                if (settings?.playAdhanAudio == true) {
                     GlassSurface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
                         glass = WelcomeGlass
                     ) {
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(stringResource(R.string.settings_silent_prayer_notification), fontWeight = FontWeight.Bold, color = Color.White)
-                                Text(stringResource(R.string.settings_silent_prayer_notification_desc), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
-                            }
-                            Switch(
-                                checked = settings?.showSilentPrayerNotification ?: true,
-                                onCheckedChange = { audioViewModel.toggleShowSilentPrayerNotification(it) },
-                                colors = switchColors
-                            )
-                        }
-                    }
-                }
-
-                GlassSurface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    glass = WelcomeGlass
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(stringResource(id = R.string.settings_pre_adhan_warning), fontWeight = FontWeight.Bold, color = Color.White)
-                                Text(
-                                    stringResource(id = R.string.settings_pre_adhan_warning_summary),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = Color.White.copy(alpha = 0.6f)
-                                )
-                            }
-                            Switch(
-                                checked = settings?.enablePreAdhanWarning ?: true,
-                                onCheckedChange = { audioViewModel.togglePreAdhanWarning(it) },
-                                colors = switchColors
-                            )
-                        }
-                        
-                        if (settings?.enablePreAdhanWarning == true) {
-                            Spacer(modifier = Modifier.height(16.dp))
+                        Column(modifier = Modifier.padding(16.dp)) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text(stringResource(id = R.string.audio_minutes_before), style = MaterialTheme.typography.bodyMedium, color = Color.White)
-                                Slider(
-                                    value = (settings?.preAdhanWarningMinutes ?: 5).toFloat(),
-                                    onValueChange = { audioViewModel.updatePreAdhanWarningMinutes(it.toInt()) },
-                                    valueRange = 1f..30f,
-                                    modifier = Modifier.weight(1f),
-                                    colors = SliderDefaults.colors(thumbColor = BrandColor, activeTrackColor = BrandColor)
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(stringResource(id = R.string.settings_pre_adhan_warning), fontWeight = FontWeight.Bold, color = Color.White)
+                                    Text(
+                                        stringResource(id = R.string.settings_pre_adhan_warning_summary),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.White.copy(alpha = 0.6f)
+                                    )
+                                }
+                                Switch(
+                                    checked = settings?.enablePreAdhanWarning ?: true,
+                                    onCheckedChange = { audioViewModel.togglePreAdhanWarning(it) },
+                                    colors = switchColors
                                 )
-                                Text(
-                                    text = "${settings?.preAdhanWarningMinutes ?: 5}",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = BrandColor
-                                )
+                            }
+                        
+                            if (settings?.enablePreAdhanWarning == true) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Text(stringResource(id = R.string.audio_minutes_before), style = MaterialTheme.typography.bodyMedium, color = Color.White)
+                                    Slider(
+                                        value = (settings?.preAdhanWarningMinutes ?: 5).toFloat(),
+                                        onValueChange = { audioViewModel.updatePreAdhanWarningMinutes(it.toInt()) },
+                                        valueRange = 1f..30f,
+                                        modifier = Modifier.weight(1f),
+                                        colors = SliderDefaults.colors(thumbColor = BrandColor, activeTrackColor = BrandColor)
+                                    )
+                                    Text(
+                                        text = "${settings?.preAdhanWarningMinutes ?: 5}",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = BrandColor
+                                    )
+                                }
                             }
                         }
                     }
@@ -592,70 +646,26 @@ private fun PreferencesStep(
                     }
                 }
 
-                GlassSurface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    glass = WelcomeGlass
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                if (settings?.let { !it.playAdhanAudio || it.adhanDisabledPrayers.isNotEmpty() } == true) {
+                    GlassSurface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        glass = WelcomeGlass
                     ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(stringResource(id = R.string.audio_individual_sounds_title), fontWeight = FontWeight.Bold, color = Color.White)
-                            Text(stringResource(id = R.string.audio_individual_sounds_desc), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
-                        }
-                        Switch(
-                            checked = settings?.useSpecificAdhanForEachPrayer ?: false,
-                            onCheckedChange = { audioViewModel.toggleUseSpecificAdhan(it) },
-                            colors = switchColors
-                        )
-                    }
-                }
-
-                if (settings?.useSpecificAdhanForEachPrayer == true) {
-                    Text(
-                        text = stringResource(id = R.string.audio_select_prayer_prompt),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = Color.White,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                    PrayerType.entries.filter { it != PrayerType.SUNRISE }.forEach { prayer ->
-                        val selectedAdhanPath = settings?.prayerSpecificAdhanPaths?.get(prayer) ?: settings?.selectedAdhanPath
-                        val adhanItem = audioItems.find { it.path == selectedAdhanPath } ?: audioItems.find { it.isDefault }
-                        
-                        GlassSurface(
-                            onClick = {
-                                audioViewModel.selectPrayerType(prayer)
-                                showAudioSelectionDialog = true
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
-                            glass = WelcomeGlass
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                modifier = Modifier.padding(12.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(prayer.getDisplayName(context), fontWeight = FontWeight.Bold, color = Color.White)
-                                    Text(adhanItem?.name ?: "", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
-                                }
-                                Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color.White.copy(alpha = 0.3f))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(stringResource(R.string.settings_silent_prayer_notification), fontWeight = FontWeight.Bold, color = Color.White)
+                                Text(stringResource(R.string.settings_silent_prayer_notification_desc), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
                             }
+                            Switch(
+                                checked = settings?.showSilentPrayerNotification ?: true,
+                                onCheckedChange = { audioViewModel.toggleShowSilentPrayerNotification(it) },
+                                colors = switchColors
+                            )
                         }
-                    }
-                } else {
-                    Text(stringResource(R.string.welcome_select_sound), style = MaterialTheme.typography.titleSmall, color = Color.White, modifier = Modifier.padding(top = 8.dp))
-                    
-                    audioItems.forEach { item ->
-                        AudioSelectionItem(
-                            name = item.name,
-                            isSelected = item.isSelected,
-                            isPlaying = item.isPlaying,
-                            onSelect = { audioViewModel.selectAudio(item.path) },
-                            onTogglePreview = { audioViewModel.togglePreview(item.path) }
-                        )
                     }
                 }
             }

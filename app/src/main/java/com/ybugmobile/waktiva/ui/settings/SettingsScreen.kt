@@ -1,10 +1,6 @@
 package com.ybugmobile.waktiva.ui.settings
 
-import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -24,9 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.domain.model.DayCircleStyle
@@ -114,6 +107,11 @@ fun SettingsScreen(
                         SystemHealthCard(
                             hasPrayerData = allDays.isNotEmpty()
                         )
+                        PrayerTimesSection(
+                            settings = settings,
+                            onMethodClick = { showMethodDialog = true },
+                            onMadhabClick = { showMadhabDialog = true }
+                        )
                         NotificationSoundSection(
                             settings = settings,
                             onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
@@ -121,14 +119,6 @@ fun SettingsScreen(
                             onPrayerAdhanToggle = { type, enabled -> viewModel.setPrayerAdhanEnabled(type, enabled) },
                             onSilentNotificationChange = { viewModel.setSilentPrayerNotification(it) },
                             onNavigateToAudio = onNavigateToAudio
-                        )
-                        PreferencesSection(
-                            settings = settings,
-                            onLanguageClick = { showLanguageDialog = true },
-                            onMadhabClick = { showMadhabDialog = true },
-                            onMethodClick = { showMethodDialog = true },
-                            onDayCircleClick = { showDayCircleDialog = true },
-                            onWeatherEffectsChange = { viewModel.setShowWeatherEffects(it) }
                         )
                         Spacer(modifier = Modifier.height(80.dp))
                     }
@@ -140,15 +130,17 @@ fun SettingsScreen(
                     ) {
                         Spacer(modifier = Modifier.height(12.dp))
 
+                        PermissionsSection()
+                        AppearanceSection(
+                            settings = settings,
+                            onLanguageClick = { showLanguageDialog = true },
+                            onDayCircleClick = { showDayCircleDialog = true },
+                            onWeatherEffectsChange = { viewModel.setShowWeatherEffects(it) }
+                        )
                         DataManagementSection(
                             onDeleteHistoryClick = { showDeleteHistoryDialog = true }
                         )
                         AboutSection(onShowLicensesClick = onNavigateToLicenses)
-                        SettingsSection(
-                            title = stringResource(R.string.settings_permissions)
-                        ) {
-                            PermissionManager()
-                        }
                         Spacer(modifier = Modifier.height(80.dp))
                     }
                 }
@@ -162,8 +154,16 @@ fun SettingsScreen(
                 ) {
                     Spacer(modifier = Modifier.height(12.dp))
 
+                    // Most used and most consequential first: what sets the prayer times, then how
+                    // they are announced and what that needs, then the look of the app, then the rest.
                     SystemHealthCard(
                         hasPrayerData = allDays.isNotEmpty()
+                    )
+
+                    PrayerTimesSection(
+                        settings = settings,
+                        onMethodClick = { showMethodDialog = true },
+                        onMadhabClick = { showMadhabDialog = true }
                     )
 
                     NotificationSoundSection(
@@ -175,11 +175,11 @@ fun SettingsScreen(
                         onNavigateToAudio = onNavigateToAudio
                     )
 
-                    PreferencesSection(
+                    PermissionsSection()
+
+                    AppearanceSection(
                         settings = settings,
                         onLanguageClick = { showLanguageDialog = true },
-                        onMadhabClick = { showMadhabDialog = true },
-                        onMethodClick = { showMethodDialog = true },
                         onDayCircleClick = { showDayCircleDialog = true },
                         onWeatherEffectsChange = { viewModel.setShowWeatherEffects(it) }
                     )
@@ -189,12 +189,6 @@ fun SettingsScreen(
                     )
 
                     AboutSection(onShowLicensesClick = onNavigateToLicenses)
-
-                    SettingsSection(
-                        title = stringResource(R.string.settings_permissions)
-                    ) {
-                        PermissionManager()
-                    }
 
                     Spacer(modifier = Modifier.height(80.dp))
                 }
@@ -276,6 +270,13 @@ private fun NotificationSoundSection(
             )
         }
 
+        SettingsClickItem(
+            title = stringResource(R.string.settings_adhan_sound_selection),
+            subtitle = stringResource(R.string.settings_adhan_sound_selection_desc),
+            icon = Icons.Rounded.MusicNote,
+            onClick = onNavigateToAudio
+        )
+
         // Silent notifications apply whenever at least one prayer won't play the adhan.
         if (settings != null && (!settings.playAdhanAudio || settings.adhanDisabledPrayers.isNotEmpty())) {
             SettingsToggleItem(
@@ -286,41 +287,31 @@ private fun NotificationSoundSection(
                 onCheckedChange = onSilentNotificationChange
             )
         }
-
-        SettingsClickItem(
-            title = stringResource(R.string.settings_adhan_sound_selection),
-            subtitle = stringResource(R.string.settings_adhan_sound_selection_desc),
-            icon = Icons.Rounded.MusicNote,
-            onClick = onNavigateToAudio
-        )
     }
 }
 
+/** What decides the prayer times themselves: the calculation method and the madhab for Asr. */
 @Composable
-private fun PreferencesSection(
+private fun PrayerTimesSection(
     settings: UserSettings?,
-    onLanguageClick: () -> Unit,
-    onMadhabClick: () -> Unit,
     onMethodClick: () -> Unit,
-    onDayCircleClick: () -> Unit,
-    onWeatherEffectsChange: (Boolean) -> Unit
+    onMadhabClick: () -> Unit
 ) {
     val madhabOptions = listOf(
         stringResource(R.string.madhab_shafi) to 0,
         stringResource(R.string.madhab_hanafi) to 1
     )
-
     val methods = getCalculationMethods()
 
     SettingsSection(
-        title = stringResource(R.string.settings_preferences)
+        title = stringResource(R.string.settings_section_prayer_times)
     ) {
         settings?.let { s ->
             SettingsClickItem(
-                title = stringResource(R.string.settings_language),
-                subtitle = LanguageUtils.getNativeLanguageName(s.language),
-                icon = Icons.Rounded.Language,
-                onClick = onLanguageClick
+                title = stringResource(R.string.settings_method),
+                subtitle = methods.find { it.second == s.calculationMethod }?.first ?: "",
+                icon = Icons.Rounded.Functions,
+                onClick = onMethodClick
             )
 
             SettingsClickItem(
@@ -329,12 +320,27 @@ private fun PreferencesSection(
                 icon = Icons.Rounded.School,
                 onClick = onMadhabClick
             )
+        }
+    }
+}
 
+/** How the app looks and reads: its language, the day circle's style and the weather effects. */
+@Composable
+private fun AppearanceSection(
+    settings: UserSettings?,
+    onLanguageClick: () -> Unit,
+    onDayCircleClick: () -> Unit,
+    onWeatherEffectsChange: (Boolean) -> Unit
+) {
+    SettingsSection(
+        title = stringResource(R.string.settings_section_appearance)
+    ) {
+        settings?.let { s ->
             SettingsClickItem(
-                title = stringResource(R.string.settings_method),
-                subtitle = methods.find { it.second == s.calculationMethod }?.first ?: "",
-                icon = Icons.Rounded.Functions,
-                onClick = onMethodClick
+                title = stringResource(R.string.settings_language),
+                subtitle = LanguageUtils.getNativeLanguageName(s.language),
+                icon = Icons.Rounded.Language,
+                onClick = onLanguageClick
             )
 
             SettingsClickItem(
@@ -355,77 +361,13 @@ private fun PreferencesSection(
     }
 }
 
+/** The permissions the adhan and the prayer times depend on. */
 @Composable
-private fun ReliabilitySection() {
-    val context = LocalContext.current
-    var isIgnoringBatteryOptimizations by remember {
-        mutableStateOf(PermissionUtils.isIgnoringBatteryOptimizations(context))
-    }
-    var canScheduleExactAlarms by remember {
-        mutableStateOf(PermissionUtils.canScheduleExactAlarms(context))
-    }
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                isIgnoringBatteryOptimizations = PermissionUtils.isIgnoringBatteryOptimizations(context)
-                canScheduleExactAlarms = PermissionUtils.canScheduleExactAlarms(context)
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-    }
-
+private fun PermissionsSection() {
     SettingsSection(
-        title = stringResource(R.string.settings_reliability)
+        title = stringResource(R.string.settings_permissions)
     ) {
-        // Battery Optimization
-        SettingsClickItem(
-            title = stringResource(R.string.settings_battery_opt),
-            subtitle = if (isIgnoringBatteryOptimizations)
-                stringResource(R.string.settings_battery_opt_enabled)
-                else stringResource(R.string.settings_battery_opt_disabled),
-            icon = Icons.Rounded.BatteryChargingFull,
-            iconColor = if (isIgnoringBatteryOptimizations) Color(0xFF4CAF50) else Color(0xFFF87171),
-            onClick = {
-                try {
-                    if (!isIgnoringBatteryOptimizations) {
-                        context.startActivity(PermissionUtils.getIgnoreBatteryOptimizationIntent(context))
-                    } else {
-                        context.startActivity(PermissionUtils.getBatteryOptimizationSettingsIntent())
-                    }
-                } catch (e: Exception) {
-                    try {
-                        context.startActivity(PermissionUtils.getBatteryOptimizationSettingsIntent())
-                    } catch (e2: Exception) {
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = Uri.fromParts("package", context.packageName, null)
-                        }
-                        context.startActivity(intent)
-                    }
-                }
-            }
-        )
-
-        // Exact Alarms
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            SettingsClickItem(
-                title = stringResource(R.string.settings_exact_alarm_title),
-                subtitle = if (canScheduleExactAlarms)
-                    stringResource(R.string.settings_granted)
-                    else stringResource(R.string.settings_exact_alarm_desc),
-                icon = Icons.Rounded.Alarm,
-                iconColor = if (canScheduleExactAlarms) Color(0xFF4CAF50) else Color(0xFFF87171),
-                onClick = {
-                    if (!canScheduleExactAlarms) {
-                        PermissionUtils.getExactAlarmSettingIntent(context)?.let {
-                            context.startActivity(it)
-                        }
-                    }
-                }
-            )
-        }
+        PermissionManager()
     }
 }
 

@@ -121,6 +121,9 @@
     <!-- General Settings -->
     <string name="settings_title">ترتیبات</string>
     <string name="settings_preferences">ترجیحات</string>
+    <string name="settings_section_prayer_times">نماز کے اوقات</string>
+    <string name="settings_section_appearance">ظاہری شکل اور زبان</string>
+    <string name="settings_section_reminders">یاددہانیاں اور اطلاعات</string>
     <string name="settings_permissions">اجازتیں</string>
     <string name="settings_manage_system">سسٹم سیٹنگز میں انتظام کریں</string>
     <string name="settings_location_access">لوکیشن تک رسائی</string>

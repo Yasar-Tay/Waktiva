@@ -121,6 +121,9 @@
     <!-- General Settings -->
     <string name="settings_title">সেটিংস</string>
     <string name="settings_preferences">পছন্দসমূহ</string>
+    <string name="settings_section_prayer_times">নামাজের সময়</string>
+    <string name="settings_section_appearance">চেহারা ও ভাষা</string>
+    <string name="settings_section_reminders">রিমাইন্ডার ও বিজ্ঞপ্তি</string>
     <string name="settings_permissions">অনুমতিসমূহ</string>
     <string name="settings_manage_system">সিস্টেম সেটিংসে পরিচালনা করুন</string>
     <string name="settings_location_access">লোকেশন অ্যাক্সেস</string>

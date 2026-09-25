@@ -121,6 +121,9 @@
     <!-- General Settings -->
     <string name="settings_title">الإعدادات</string>
     <string name="settings_preferences">التفضيلات</string>
+    <string name="settings_section_prayer_times">أوقات الصلاة</string>
+    <string name="settings_section_appearance">المظهر واللغة</string>
+    <string name="settings_section_reminders">التذكيرات والإشعارات</string>
     <string name="settings_permissions">الأذونات</string>
     <string name="settings_manage_system">إدارة في إعدادات النظام</string>
     <string name="settings_location_access">الوصول إلى الموقع</string>

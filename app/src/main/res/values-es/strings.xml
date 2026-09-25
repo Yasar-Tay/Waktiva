@@ -121,6 +121,9 @@
     <!-- General Settings -->
     <string name="settings_title">Ajustes</string>
     <string name="settings_preferences">Preferencias</string>
+    <string name="settings_section_prayer_times">Horarios de oración</string>
+    <string name="settings_section_appearance">Apariencia e idioma</string>
+    <string name="settings_section_reminders">Recordatorios y notificaciones</string>
     <string name="settings_permissions">Permisos</string>
     <string name="settings_manage_system">Gestionar en ajustes del sistema</string>
     <string name="settings_location_access">Acceso a la ubicación</string>

@@ -121,6 +121,9 @@
     <!-- General Settings -->
     <string name="settings_title">Instellingen</string>
     <string name="settings_preferences">Voorkeuren</string>
+    <string name="settings_section_prayer_times">Gebedstijden</string>
+    <string name="settings_section_appearance">Weergave &amp; taal</string>
+    <string name="settings_section_reminders">Herinneringen &amp; meldingen</string>
     <string name="settings_permissions">Machtigingen</string>
     <string name="settings_manage_system">Beheren in Systeeminstellingen</string>
     <string name="settings_location_access">Locatietoegang</string>

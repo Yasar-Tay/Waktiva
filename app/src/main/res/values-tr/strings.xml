@@ -121,6 +121,9 @@
     <!-- General Settings -->
     <string name="settings_title">Ayarlar</string>
     <string name="settings_preferences">Tercihler</string>
+    <string name="settings_section_prayer_times">Namaz Vakitleri</string>
+    <string name="settings_section_appearance">Görünüm ve Dil</string>
+    <string name="settings_section_reminders">Hatırlatmalar ve Bildirimler</string>
     <string name="settings_permissions">İzinler</string>
     <string name="settings_manage_system">Sistem Ayarlarından Yönet</string>
     <string name="settings_location_access">Konum Erişimi</string>

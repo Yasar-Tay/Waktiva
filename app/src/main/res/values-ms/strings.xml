@@ -121,6 +121,9 @@
     <!-- General Settings -->
     <string name="settings_title">Tetapan</string>
     <string name="settings_preferences">Pilihan</string>
+    <string name="settings_section_prayer_times">Waktu Solat</string>
+    <string name="settings_section_appearance">Paparan &amp; Bahasa</string>
+    <string name="settings_section_reminders">Peringatan &amp; Pemberitahuan</string>
     <string name="settings_permissions">Kebenaran</string>
     <string name="settings_manage_system">Urus dalam Tetapan Sistem</string>
     <string name="settings_location_access">Akses Lokasi</string>
