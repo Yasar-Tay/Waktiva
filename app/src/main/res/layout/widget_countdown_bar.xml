@@ -92,7 +92,7 @@
                 android:src="@drawable/widget_accent_bar" />
         </LinearLayout>
 
-        <!-- Takes the rest of the bar and its full height, in light tabular figures. -->
+        <!-- Takes the rest of the bar and its full height, in light tabular figures, spaced and centred in its room. -->
         <Chronometer
             android:id="@+id/widget_chrono"
             android:layout_width="0dp"
@@ -106,9 +106,9 @@
             android:countDown="true"
             android:fontFamily="sans-serif-light"
             android:fontFeatureSettings="tnum"
-            android:gravity="end|center_vertical"
+            android:gravity="center"
             android:includeFontPadding="false"
-            android:letterSpacing="-0.03"
+            android:letterSpacing="0.06"
             android:maxLines="1"
             android:textColor="#FFFFFFFF"
             android:textSize="44sp" />
