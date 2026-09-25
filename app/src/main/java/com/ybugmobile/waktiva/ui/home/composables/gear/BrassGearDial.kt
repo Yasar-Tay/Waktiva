@@ -16,22 +16,27 @@ import kotlin.math.sin
 /**
  * Brass movement: a brass wheel with five straight spokes turns with the day, and the
  * prayer gears mesh on its outside. The date sits as a disc in the wheel's hub.
+ *
+ * The prayer times ride just inside the rim, so the wheel and its gears can fill the dial.
+ * [labelReach] is how far a time label extends from its centre, in pixels.
  */
-internal class BrassGearDial(private val s: Float, private val dp: Float) : GearDial {
+internal class BrassGearDial(private val s: Float, private val dp: Float, labelReach: Float) : GearDial {
     private val c = Offset(s / 2f, s / 2f)
-    private val r = 0.62f * s / 2f
+    private val r = 0.74f * s / 2f
     private val rPlanet = r * PLANET_TEETH / MAIN_TEETH
     private val add = gearAddendum(r, MAIN_TEETH)
     private val ded = gearDedendum(r, MAIN_TEETH)
     private val bandIn = r - ded - 0.14f * r
-    private val hubOut = 0.40f * r
-    private val hubIn = 0.30f * r
+    private val hubOut = 0.34f * r
+    private val hubIn = 0.255f * r
+    private val labelRing = bandIn - 4 * dp - labelReach
 
     override val markerDistance = r + rPlanet
     override val markerRadius = rPlanet + gearAddendum(rPlanet, PLANET_TEETH)
     override val hubRadius = hubIn
     override val hubOuterRadius = hubOut
-    override val bridge = BridgeSpec(innerRadius = hubOut + 8 * dp, freeRadius = bandIn, maxSpan = 2.3f)
+    // The bridge hugs the hub so it keeps a readable thickness inside the ring of time labels.
+    override val bridge = BridgeSpec(innerRadius = hubOut + 5 * dp, freeRadius = labelRing - labelReach, maxSpan = 2.3f)
 
     private val wheel = Path().apply {
         addGearOutline(this, c, r, MAIN_TEETH)
@@ -123,7 +128,7 @@ internal class BrassGearDial(private val s: Float, private val dp: Float) : Gear
             val at = pointOn(c, r + rPlanet, theta)
             val rotation = meshExternal(wheelRot, MAIN_TEETH, theta, PLANET_TEETH)
             planet(p, at, rPlanet, rotation, planetPath, palette.brass, dp, isCurrent = p.type == frame.current.type)
-            timeLabel(frame, p.label, pointOn(c, r + 2 * rPlanet + add + s * 0.04f, theta))
+            timeLabel(frame, p.label, pointOn(c, labelRing, theta))
         }
     }
 }

@@ -22,10 +22,10 @@ internal class SkeletonGearDial(private val s: Float, private val dp: Float) : G
     private class TrainGear(val center: Offset, val radius: Float, val teeth: Int, val outline: Path)
 
     private val c = Offset(s / 2f, s / 2f)
-    private val r = 0.86f * s / 2f
+    private val r = 0.93f * s / 2f
     private val ded = gearDedendum(r, MAIN_TEETH)
-    private val track = r - ded - 0.07f * s / 2f
-    private val innerRim = track - 0.05f * s / 2f
+    private val track = r - ded - 0.075f * s / 2f
+    private val innerRim = track - 0.053f * s / 2f
     private val badge = max(9f * dp, s * 0.03f)
     private val badgeCurrent = badge * 1.18f
     private val hub = 0.30f * r
