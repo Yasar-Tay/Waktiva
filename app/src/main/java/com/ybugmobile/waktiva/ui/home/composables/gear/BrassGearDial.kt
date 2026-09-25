@@ -2,13 +2,16 @@ package com.ybugmobile.waktiva.ui.home.composables.gear
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
@@ -42,17 +45,20 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
         addOval(Rect(c, bandIn))
         fillType = PathFillType.EvenOdd
     }
+    private val teeth = Path().apply { addGearOutline(this, c, r, MAIN_TEETH) }
+
+    private class Spoke(val outline: Path, val hubEnd: Offset, val rimEnd: Offset)
 
     // Five evenly spaced straight spokes, tapering slightly towards the rim.
-    private val spokes = Path().apply {
+    private val spokeList = List(5) { i ->
         val hubHalfWidth = 0.075f * hubOut
         val rimHalfWidth = 0.8f * hubHalfWidth
-        for (i in 0 until 5) {
-            val a = i * TAU / 5 - TAU / 4
-            val along = Offset(cos(a), sin(a))
-            val across = Offset(-along.y, along.x)
-            val hubPoint = c + along * (hubOut - 2 * dp)
-            val rimPoint = c + along * (bandIn + 2 * dp)
+        val a = i * TAU / 5 - TAU / 4
+        val along = Offset(cos(a), sin(a))
+        val across = Offset(-along.y, along.x)
+        val hubPoint = c + along * (hubOut - 2 * dp)
+        val rimPoint = c + along * (bandIn + 2 * dp)
+        val outline = Path().apply {
             val p0 = hubPoint - across * hubHalfWidth
             val p1 = rimPoint - across * rimHalfWidth
             val p2 = rimPoint + across * rimHalfWidth
@@ -63,21 +69,30 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
             lineTo(p3.x, p3.y)
             close()
         }
+        Spoke(outline, hubPoint, rimPoint)
     }
+    private val spokes = Path().apply { spokeList.forEach { addPath(it.outline) } }
 
     private val hub = annulus(c, hubOut, hubIn)
+    private val hubEdge = Path().apply { addOval(Rect(c, hubOut)) }
     private val planetPath = planetOutline(rPlanet)
+    private val rimGrain = RingGrain(c, r - ded, bandIn, 1.2f * dp, seed = 1)
+    private val hubGrain = RingGrain(c, hubOut, hubIn, 1.2f * dp, seed = 2)
 
     override fun draw(scope: DrawScope, frame: GearFrame) = with(scope) {
         val palette = frame.palette
+        val light = frame.light
         val wheelRot = frame.direction * (frame.dayTurn + frame.phase)
+        // The wheel is drawn in its turning frame; turning the light back keeps it fixed on screen.
+        val wheelLight = GearLight(light.angle - wheelRot)
 
-        elevation(wheel, 3f * dp, wheelRot, c)
-        elevation(spokes, 2f * dp, wheelRot, c)
-        elevation(hub, 2f * dp, wheelRot, c)
+        elevation(wheel, 3f * dp, light, wheelRot, c)
+        elevation(spokes, 2f * dp, light, wheelRot, c)
+        elevation(hub, 2f * dp, light, wheelRot, c)
         rotate(wheelRot.toDegrees(), c) {
-            val brass = metalBrush(palette.brass, c, r, wheelRot)
+            val brass = palette.brassSheen.brush(c, wheelLight)
             drawPath(wheel, brass)
+            bevel(teeth, c, r, wheelLight, 1.1f * dp)
             drawPath(wheel, Color(0xB33C280A), style = Stroke(0.8f * dp))
             // Hour engraving on the rim, turning with the wheel.
             for (i in 0 until 24) {
@@ -90,14 +105,44 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
                     (if (major) 1.4f else 0.8f) * dp
                 )
             }
-            drawCircle(palette.tone(Color(0x59FFF0C8)), bandIn + 0.8f * dp, c, style = Stroke(0.8f * dp))
-            drawPath(spokes, brass)
-            drawPath(hub, brass)
-            drawCircle(Color(0x993C280A), hubOut, c, style = Stroke(0.8f * dp))
-            drawCircle(Color(0x993C280A), hubIn, c, style = Stroke(0.8f * dp))
-            for (i in 0 until 3) {
-                drawCircle(palette.tone(Color(0xFF7A5A26)), s * 0.006f, pointOn(c, (hubOut + hubIn) / 2f, i * TAU / 3 + 0.5f))
+            for (spoke in spokeList) {
+                drawPath(spoke.outline, brass)
+                // Occlusion where the spoke meets the hub and the rim.
+                clipPath(spoke.outline) {
+                    drawRect(
+                        Brush.linearGradient(
+                            0f to SpokeShade,
+                            0.12f to Color.Transparent,
+                            0.9f to Color.Transparent,
+                            1f to SpokeShade,
+                            start = spoke.hubEnd,
+                            end = spoke.rimEnd
+                        ),
+                        topLeft = Offset(c.x - r, c.y - r),
+                        size = Size(2 * r, 2 * r)
+                    )
+                }
+                bevel(spoke.outline, (spoke.hubEnd + spoke.rimEnd) / 2f, (bandIn - hubOut) / 2f, wheelLight, 0.9f * dp)
             }
+            drawPath(hub, brass)
+        }
+
+        // Rotationally symmetric finishes, drawn in screen space.
+        ringFinish(c, r - ded, bandIn, light, rimGrain, dp, round = true)
+        holeBevel(c, bandIn, light, 1.2f * dp)
+        drawCircle(palette.tone(Color(0x59FFF0C8)), bandIn + 0.8f * dp, c, style = Stroke(0.8f * dp))
+        ringFinish(c, hubOut, hubIn, light, hubGrain, dp, round = true)
+        bevel(hubEdge, c, hubOut, light, dp)
+        holeBevel(c, hubIn, light, dp)
+        drawCircle(Color(0x993C280A), hubOut, c, style = Stroke(0.8f * dp))
+        drawCircle(Color(0x993C280A), hubIn, c, style = Stroke(0.8f * dp))
+        for (i in 0 until 3) {
+            val a = wheelRot + i * TAU / 3 + 0.5f
+            screw(
+                pointOn(c, (hubOut + hubIn) / 2f, a), s * 0.007f, light,
+                palette.tone(Color(0xFFFFF1C4)), palette.tone(Color(0xFFB58D47)), palette.tone(Color(0xFF4D3610)),
+                slot = a + i
+            )
         }
 
         // Stationary enamel track laid over the turning rim.
@@ -109,15 +154,36 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
             val handAngle = dayAngle(frame.nowMinutes, frame.rtl)
             val length = bandIn - 4 * dp
             rotate(handAngle.toDegrees(), c) {
+                val tail = c.x - s * 0.05f
                 val hand = Path().apply {
-                    moveTo(c.x - s * 0.05f, c.y - s * 0.006f)
+                    moveTo(tail, c.y - s * 0.006f)
                     lineTo(c.x + length * 0.78f, c.y - s * 0.004f)
                     lineTo(c.x + length, c.y)
                     lineTo(c.x + length * 0.78f, c.y + s * 0.004f)
-                    lineTo(c.x - s * 0.05f, c.y + s * 0.006f)
+                    lineTo(tail, c.y + s * 0.006f)
                     close()
                 }
                 drawPath(hand, Brush.linearGradient(*palette.brass, start = c + Offset(0f, -6 * dp), end = c + Offset(length, 6 * dp)))
+                // A polished ridge down the middle: one flank catches the light, the other falls into shade.
+                val facing = cos(handAngle - TAU / 4 - light.angle)
+                val lit = Color(0xFFFFF6D6).copy(alpha = 0.55f * abs(facing))
+                val shade = Color(0xFF281905).copy(alpha = 0.35f * abs(facing))
+                val upper = Path().apply {
+                    moveTo(tail, c.y)
+                    lineTo(c.x + length, c.y)
+                    lineTo(c.x + length * 0.78f, c.y - s * 0.004f)
+                    lineTo(tail, c.y - s * 0.006f)
+                    close()
+                }
+                val lower = Path().apply {
+                    moveTo(tail, c.y)
+                    lineTo(c.x + length, c.y)
+                    lineTo(c.x + length * 0.78f, c.y + s * 0.004f)
+                    lineTo(tail, c.y + s * 0.006f)
+                    close()
+                }
+                drawPath(upper, if (facing > 0f) lit else shade)
+                drawPath(lower, if (facing > 0f) shade else lit)
                 drawCircle(palette.tone(Color(0xFFE8C97E)), s * 0.012f, c + Offset(length * 0.72f, 0f), style = Stroke(s * 0.004f))
                 drawCircle(palette.tone(Color(0xFFB8903F)), s * 0.012f, c + Offset(-s * 0.05f, 0f))
             }
@@ -128,8 +194,12 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
             val theta = dayAngle(p.minutes, frame.rtl)
             val at = pointOn(c, r + rPlanet, theta)
             val rotation = meshExternal(wheelRot, MAIN_TEETH, theta, PLANET_TEETH)
-            planet(p, at, rPlanet, rotation, planetPath, palette.brass, dp, isCurrent = p.type == frame.current.type)
+            planet(p, at, rPlanet, rotation, planetPath, palette.brassSheen, light, dp, isCurrent = p.type == frame.current.type)
             timeLabel(frame, p.label, pointOn(c, labelRing, theta))
         }
+    }
+
+    private companion object {
+        val SpokeShade = Color(0x8C1E1202)
     }
 }

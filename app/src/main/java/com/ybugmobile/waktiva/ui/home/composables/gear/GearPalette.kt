@@ -71,6 +71,22 @@ internal class GearPalette(private val weather: WeatherTone) {
         1f to Color(0xFF394257)
     )
 
+    /** Reflections of turned brass around a round part; see [MetalSheen]. */
+    val brassSheen = sheen(
+        0f to 0xFFB8904A, 0.06f to 0xFFC9A458, 0.125f to 0xFFF0D38E, 0.19f to 0xFFB18943,
+        0.25f to 0xFF8F6B30, 0.375f to 0xFF6F5020, 0.5f to 0xFFB38B45, 0.58f to 0xFFE8C97F,
+        0.625f to 0xFFFFF3CF, 0.67f to 0xFFE8C97F, 0.75f to 0xFFB58D47, 0.875f to 0xFF7A5A26,
+        1f to 0xFFB8904A
+    )
+
+    /** Reflections of polished steel around a round part; see [MetalSheen]. */
+    val steelSheen = sheen(
+        0f to 0xFF8E97A8, 0.06f to 0xFFA9B2C2, 0.125f to 0xFFE2E8F1, 0.19f to 0xFF9AA3B3,
+        0.25f to 0xFF6C7688, 0.375f to 0xFF454D5C, 0.5f to 0xFF8F99AA, 0.58f to 0xFFD6DDE8,
+        0.625f to 0xFFFFFFFF, 0.67f to 0xFFD6DDE8, 0.75f to 0xFF96A0B1, 0.875f to 0xFF4E5767,
+        1f to 0xFF8E97A8
+    )
+
     /** Hairline gold used by the skeleton dial. */
     val gold = tone(Color(0xFFDEBE78))
 
@@ -124,6 +140,8 @@ internal class GearPalette(private val weather: WeatherTone) {
     }
 
     private fun toned(vararg stops: Pair<Float, Color>) = stops.map { (at, color) -> at to tone(color) }.toTypedArray()
+
+    private fun sheen(vararg stops: Pair<Float, Long>) = MetalSheen(stops.map { (at, argb) -> at to tone(Color(argb)) })
 }
 
 /**
@@ -143,9 +161,6 @@ internal class PlateFinish(
     val screw: Color?
 ) {
     val isMetal get() = metal != null
-
-    /** Gradient stops of the metal; only meaningful when [isMetal]. */
-    val metalStops get() = metal ?: emptyArray()
 
     fun fill(from: Offset, to: Offset): Brush =
         metal?.let { Brush.linearGradient(*it, start = from, end = to) } ?: SolidColor(Color(0xE60C0F18))

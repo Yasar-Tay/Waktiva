@@ -2,6 +2,8 @@ package com.ybugmobile.waktiva.ui.home.composables.gear
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -71,6 +73,8 @@ import kotlin.math.hypot
 /**
  * The clockwork day circle in [style] (anything but [DayCircleStyle.CLASSIC]).
  * Use it through DayCircle, which picks between this and the classic circle.
+ * [sunLight] is the screen angle the sunlight falls from (see [sunLightAngle]), or null
+ * for the default light.
  */
 @Composable
 internal fun GearDayCircle(
@@ -81,9 +85,11 @@ internal fun GearDayCircle(
     isSelectedDayToday: Boolean,
     isHijriVisible: Boolean,
     onToggleHijri: () -> Unit,
-    contentColor: Color
+    contentColor: Color,
+    sunLight: Float? = null
 ) {
     val density = LocalDensity.current
+    val lightAngle = rememberEasedAngle(sunLight ?: GearLight.DEFAULT_ANGLE)
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val locale = configuration.locales[0]
@@ -170,7 +176,8 @@ internal fun GearDayCircle(
                     labelStyle = labelStyle,
                     textMeasurer = textMeasurer,
                     bridge = bridge,
-                    palette = palette
+                    palette = palette,
+                    light = GearLight(lightAngle.value)
                 )
             )
         }
@@ -196,6 +203,7 @@ internal fun GearDayCircle(
             onFlip = onToggleHijri,
             accent = current,
             palette = palette,
+            light = { GearLight(lightAngle.value) },
             diameter = with(density) { (dial.dateRadius * 2).toDp() } - 2.dp,
             modifier = Modifier
                 .align(Alignment.Center)
@@ -276,6 +284,19 @@ private fun BoxScope.PrayerMarkers(
             }
         }
     }
+}
+
+/**
+ * [target] (radians) eased in over a second, turning the short way round, so the light on the
+ * metal glides as the phone turns instead of jumping with every compass reading.
+ */
+@Composable
+private fun rememberEasedAngle(target: Float): State<Float> {
+    val angle = remember { Animatable(target) }
+    LaunchedEffect(target) {
+        angle.animateTo(blendAngle(angle.value, target, 1f), tween(1200, easing = FastOutSlowInEasing))
+    }
+    return angle.asState()
 }
 
 /** The day's prayers with the same colours and weather toning as PrayerCircleVisualization. */

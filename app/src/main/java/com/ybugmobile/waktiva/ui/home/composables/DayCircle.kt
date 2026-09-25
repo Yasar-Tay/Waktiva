@@ -8,7 +8,11 @@ import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.ui.home.composables.gear.GearDayCircle
 import java.time.LocalTime
 
-/** The home screen's day circle, drawn in the style the user picked in settings. */
+/**
+ * The home screen's day circle, drawn in the style the user picked in settings.
+ * [sunLight] is the screen angle (radians) the sunlight falls from, which the gear styles' metal
+ * reflects, or null for the default light; the classic circle ignores it.
+ */
 @Composable
 fun DayCircle(
     style: DayCircleStyle,
@@ -18,7 +22,8 @@ fun DayCircle(
     isSelectedDayToday: Boolean,
     isHijriVisible: Boolean = false,
     onToggleHijri: () -> Unit = {},
-    contentColor: Color = Color.White
+    contentColor: Color = Color.White,
+    sunLight: Float? = null
 ) {
     if (style == DayCircleStyle.CLASSIC) {
         PrayerCircleVisualization(
@@ -40,7 +45,8 @@ fun DayCircle(
             isSelectedDayToday = isSelectedDayToday,
             isHijriVisible = isHijriVisible,
             onToggleHijri = onToggleHijri,
-            contentColor = contentColor
+            contentColor = contentColor,
+            sunLight = sunLight
         )
     }
 }

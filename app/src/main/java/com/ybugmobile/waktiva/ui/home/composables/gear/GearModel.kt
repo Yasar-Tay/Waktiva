@@ -34,7 +34,9 @@ internal class GearFrame(
     /** Special-day bridge, drawn by the dial under its hand; null on ordinary days. */
     val bridge: SpecialDayBridge?,
     /** Material colours, toned for the current weather. */
-    val palette: GearPalette
+    val palette: GearPalette,
+    /** Where the light on the metal comes from: the sun when it gives a direction. */
+    val light: GearLight
 ) {
     val direction get() = if (rtl) -1f else 1f
     val dayTurn get() = nowMinutes / 1440f * TAU

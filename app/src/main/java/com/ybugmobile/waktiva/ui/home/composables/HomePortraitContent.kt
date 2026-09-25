@@ -46,7 +46,9 @@ fun HomePortraitContent(
     onStopTest: () -> Unit,
     onResetDate: () -> Unit,
     onMethodClick: () -> Unit,
-    onShowToast: (String) -> Unit
+    onShowToast: (String) -> Unit,
+    /** Screen angle of the sunlight on the day circle's metal (see DayCircle), or null for the default. */
+    sunLight: Float? = null
 ) {
     // Optimization: Filter and memoize available days to prevent redundant calculations during scrolls
     val isToday = remember(state.selectedDate) { state.selectedDate == LocalDate.now() }
@@ -131,7 +133,8 @@ fun HomePortraitContent(
                                 isSelectedDayToday = isToday,
                                 isHijriVisible = state.isHijriSelected,
                                 onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
-                                contentColor = contentColor
+                                contentColor = contentColor,
+                                sunLight = sunLight
                             )
                         }
                     }

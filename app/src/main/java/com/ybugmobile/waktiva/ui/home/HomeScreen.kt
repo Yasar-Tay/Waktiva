@@ -29,6 +29,7 @@ import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.ui.home.composables.*
+import com.ybugmobile.waktiva.ui.home.composables.gear.sunLightAngle
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthOverlay
 import com.ybugmobile.waktiva.ui.theme.LocalBackgroundGradient
@@ -128,6 +129,10 @@ fun HomeScreenContent(
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
+    // The sun, as seen from where the phone points, lights the day circle's metal.
+    val sunLight = remember(atmosphere) {
+        sunLightAngle(atmosphere.sunAzimuth, atmosphere.sunAltitude, atmosphere.compassAzimuth)
+    }
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     val permissions = remember {
@@ -277,7 +282,8 @@ fun HomeScreenContent(
                                 onStopTest = onStopTest,
                                 onResetDate = onResetDate,
                                 onMethodClick = { showMethodDialog = true },
-                                onShowToast = handleShowToast
+                                onShowToast = handleShowToast,
+                                sunLight = sunLight
                             )
                         } else {
                             Box(
@@ -302,7 +308,8 @@ fun HomeScreenContent(
                                     onStopTest = onStopTest,
                                     onResetDate = onResetDate,
                                     onMethodClick = { showMethodDialog = true },
-                                    onShowToast = handleShowToast
+                                    onShowToast = handleShowToast,
+                                    sunLight = sunLight
                                 )
                             }
                         }
