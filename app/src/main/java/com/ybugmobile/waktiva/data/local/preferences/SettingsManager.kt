@@ -217,7 +217,8 @@ class SettingsManager @Inject constructor(
         context.dataStore.edit { preferences ->
             preferences[USE_SPECIFIC_ADHAN] = enabled
             if (enabled) {
-                // If enabling, ensure we have default specific adhans set for any that are currently null
+                // Turning prayer-specific sounds on always starts from each prayer's own recording,
+                // rather than from whatever was left over from an earlier choice.
                 val packageName = context.packageName
                 
                 val defaultMappings = mapOf(
@@ -229,10 +230,7 @@ class SettingsManager @Inject constructor(
                 )
 
                 defaultMappings.forEach { (type, resId) ->
-                    val key = prayerPathKey(type)
-                    if (preferences[key] == null) {
-                        preferences[key] = "android.resource://$packageName/$resId"
-                    }
+                    preferences[prayerPathKey(type)] = "android.resource://$packageName/$resId"
                 }
             }
         }
