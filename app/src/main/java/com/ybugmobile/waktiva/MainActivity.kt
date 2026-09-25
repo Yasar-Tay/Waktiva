@@ -366,17 +366,22 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
 /** Data class representing a tab in the navigation layout. */
 data class NavigationItem(val route: String, val labelResId: Int, val icon: ImageVector)
 
+/** Ink of the navigation icons on the light glass. */
+private val NavInk = Color(0xFF1B2230)
+
 /**
- * The glass the navigation floats on: smoky, like the cards on the day sky, so white icons read
- * over any screen beneath it.
+ * The glass the navigation floats on: light and frosted nearly opaque, so the content scrolling
+ * beneath it doesn't show through and the dark icons read the same over a bright day sky and the
+ * night alike. It keeps the glass's sheen, rim and shadow; the shadow sets it off a light screen.
  */
 private val NavGlass = GlassTheme(
-    containerColor = Color.Black.copy(alpha = 0.15f),
-    contentColor = Color.White,
-    borderColor = Color.White.copy(alpha = 0.1f),
-    secondaryContentColor = Color.White.copy(alpha = 0.6f),
-    isLightMode = false
+    containerColor = Color(0xFFF6F8FB).copy(alpha = 0.92f),
+    contentColor = NavInk,
+    borderColor = Color.White.copy(alpha = 0.6f),
+    secondaryContentColor = NavInk.copy(alpha = 0.55f),
+    isLightMode = true
 )
+
 
 private val NavBarShape = RoundedCornerShape(28.dp)
 private val NavLensShape = RoundedCornerShape(18.dp)
@@ -385,7 +390,7 @@ private val NavLensShape = RoundedCornerShape(18.dp)
 @Composable
 private fun NavLens(modifier: Modifier) {
     Box(
-        modifier = modifier.liquidGlass(NavLensShape, NavGlass, tint = Color.White, emphasis = 1f)
+        modifier = modifier.liquidGlass(NavLensShape, NavGlass, tint = NavInk, emphasis = 1f)
     )
 }
 
@@ -393,7 +398,7 @@ private fun NavLens(modifier: Modifier) {
 @Composable
 private fun NavIcon(item: NavigationItem, isSelected: Boolean) {
     val tint by animateColorAsState(
-        targetValue = if (isSelected) Color.White else Color.White.copy(alpha = 0.62f),
+        targetValue = if (isSelected) NavInk else NavInk.copy(alpha = 0.5f),
         label = "navIconTint"
     )
     val scale by animateFloatAsState(
