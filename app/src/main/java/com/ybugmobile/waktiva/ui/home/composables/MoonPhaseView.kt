@@ -30,13 +30,13 @@ import kotlin.math.roundToInt
 
 /**
  * The Moon as it looks tonight: a realistic near side ([MoonTexture]) lit for the current phase,
- * turned by its parallactic angle so the crescent tilts as it does in the sky, with a soft glow
- * that breathes slowly and grows with the illumination.
+ * turned by its parallactic angle so the crescent tilts as it does in the sky, in a soft bloom
+ * of moonlight that breathes slowly and grows with the illumination.
  *
  * The surface is rendered off the main thread, once per size; each new phase only reshades it.
  *
  * @param moonPhase Data object containing illumination percentage, phase progress, and angle.
- * @param contentColor Colour of the glow and the label.
+ * @param contentColor Colour of the label.
  * @param modifier Layout modifier.
  */
 @Composable
@@ -83,14 +83,21 @@ fun MoonPhaseView(
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val radius = size.minDimension * DiscShare / 2f
-                val glow = glowAlpha * (0.25f + 0.35f * moonPhase.illumination.toFloat())
+                // Moonlight bloom: bright at the limb, fading out over a disc's width; stronger the
+                // fuller the moon, and breathing slowly. A fixed moonlight colour, so it glows the
+                // same whatever colour the text is.
+                val bloom = (0.3f + 0.7f * moonPhase.illumination.toFloat()) * (0.75f + 0.5f * glowAlpha)
+                val reach = radius * 2.2f
                 drawCircle(
                     brush = Brush.radialGradient(
-                        colors = listOf(contentColor.copy(alpha = glow * 0.5f), Color.Transparent),
+                        0f to MoonLight.copy(alpha = 0.5f * bloom),
+                        radius / reach to MoonLight.copy(alpha = 0.42f * bloom),
+                        radius * 1.3f / reach to MoonLight.copy(alpha = 0.16f * bloom),
+                        1f to MoonLight.copy(alpha = 0f),
                         center = center,
-                        radius = radius * 2f
+                        radius = reach
                     ),
-                    radius = radius * 2f,
+                    radius = reach,
                     center = center
                 )
                 moonImage?.let { image ->
@@ -141,3 +148,6 @@ private val MoonBox = 96.dp
 
 /** Share of the box the lunar disc spans; the rest is room for its glow. */
 private const val DiscShare = 0.8f
+
+/** Warm white of the moonlight bloom. */
+private val MoonLight = Color(0xFFFFF4DC)
