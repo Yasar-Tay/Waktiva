@@ -496,8 +496,7 @@ private fun SettingsDialogs(
 private fun dayCircleStyleOptions() = listOf(
     stringResource(R.string.day_circle_style_classic) to DayCircleStyle.CLASSIC,
     stringResource(R.string.day_circle_style_brass) to DayCircleStyle.BRASS,
-    stringResource(R.string.day_circle_style_steel) to DayCircleStyle.STEEL,
-    stringResource(R.string.day_circle_style_skeleton) to DayCircleStyle.SKELETON
+    stringResource(R.string.day_circle_style_steel) to DayCircleStyle.STEEL
 )
 
 @Composable

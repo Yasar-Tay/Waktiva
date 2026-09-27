@@ -9,7 +9,7 @@ enum class DayCircleStyle {
 
     companion object {
         /** Shown until the user picks a style. */
-        val DEFAULT = BRASS
+        val DEFAULT = CLASSIC
 
         fun fromName(name: String?): DayCircleStyle =
             entries.firstOrNull { it.name.equals(name, ignoreCase = true) } ?: DEFAULT

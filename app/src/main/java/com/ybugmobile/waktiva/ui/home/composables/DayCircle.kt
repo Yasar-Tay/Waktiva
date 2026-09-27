@@ -33,28 +33,17 @@ fun DayCircle(
     val minuteTime = remember(currentTime.hour, currentTime.minute) { currentTime.truncatedTo(ChronoUnit.MINUTES) }
     val prayer = remember(currentPrayer?.type, currentPrayer?.date) { currentPrayer }
 
-    if (style == DayCircleStyle.CLASSIC) {
-        PrayerCircleVisualization(
-            day = day,
-            currentTime = minuteTime,
-            nextPrayer = null,
-            currentPrayer = prayer,
-            isSelectedDayToday = isSelectedDayToday,
-            isHijriVisible = isHijriVisible,
-            onToggleHijri = onToggleHijri,
-            contentColor = contentColor
-        )
-    } else {
-        GearDayCircle(
-            style = style,
-            day = day,
-            currentTime = minuteTime,
-            currentPrayer = prayer,
-            isSelectedDayToday = isSelectedDayToday,
-            isHijriVisible = isHijriVisible,
-            onToggleHijri = onToggleHijri,
-            contentColor = contentColor,
-            sunLight = sunLight
-        )
-    }
+    val displayStyle = if (style == DayCircleStyle.CLASSIC) DayCircleStyle.SKELETON else style
+
+    GearDayCircle(
+        style = displayStyle,
+        day = day,
+        currentTime = minuteTime,
+        currentPrayer = prayer,
+        isSelectedDayToday = isSelectedDayToday,
+        isHijriVisible = isHijriVisible,
+        onToggleHijri = onToggleHijri,
+        contentColor = contentColor,
+        sunLight = sunLight
+    )
 }
