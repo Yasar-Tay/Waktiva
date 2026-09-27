@@ -65,8 +65,8 @@ internal fun DrawScope.gemStone(
         drawPath(cut.setting, metal.brush(Offset.Zero, light))
         bevel(cut.setting, Offset.Zero, r, light, max(0.6f * pxPerDp, r * 0.06f))
         
-        // Inner dark inset for bezel depth
-        drawCircle(Color(0xB33C280A), r, Offset.Zero, style = Stroke(0.8f * pxPerDp))
+        // Inner dark inset for bezel depth, hugging the stone's edge
+        drawCircle(Color(0xB33C280A), rs, Offset.Zero, style = Stroke(0.8f * pxPerDp))
 
         // Luminous cabochon gemstone body (smooth radial gradient)
         val lightOffset = light.towards * (-rs * 0.35f)
@@ -99,6 +99,7 @@ internal fun DrawScope.gemStone(
         drawCircle(
             color = bead.copy(alpha = 0.85f),
             radius = rs,
+            center = Offset.Zero,
             style = Stroke(0.7f * pxPerDp)
         )
     }
