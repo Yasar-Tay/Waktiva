@@ -1,9 +1,12 @@
 package com.ybugmobile.waktiva.ui.home.composables
 
 import android.content.res.Configuration
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.Canvas
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -19,12 +22,13 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -33,16 +37,28 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.ybugmobile.waktiva.R
+import com.ybugmobile.waktiva.domain.model.CurrentPrayer
+import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
-import com.ybugmobile.waktiva.domain.model.NextPrayer
-import com.ybugmobile.waktiva.domain.model.CurrentPrayer
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
+import com.ybugmobile.waktiva.ui.home.composables.gear.GearLight
+import com.ybugmobile.waktiva.ui.home.composables.gear.GearPalette
+import com.ybugmobile.waktiva.ui.home.composables.gear.WeatherTone
+import com.ybugmobile.waktiva.ui.home.composables.gear.dayAngle
+import com.ybugmobile.waktiva.ui.home.composables.gear.halo
+import com.ybugmobile.waktiva.ui.home.composables.gear.haloRing
+import com.ybugmobile.waktiva.ui.home.composables.gear.nowIndicator
+import com.ybugmobile.waktiva.ui.home.composables.gear.pointOn
+import com.ybugmobile.waktiva.ui.home.composables.gear.rememberEasedAngle
+import com.ybugmobile.waktiva.ui.home.composables.gear.skeletonBezel
+import com.ybugmobile.waktiva.ui.home.composables.gear.toDegrees
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.waktiva.ui.theme.desaturate
@@ -50,12 +66,13 @@ import com.ybugmobile.waktiva.ui.theme.darken
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.delay
-import kotlin.math.*
+import kotlin.math.max
+import kotlin.math.sign
 
 /**
- * A sophisticated circular visualization of the day's prayer times.
- * Features interactive nodes, dynamic weather-based color adjustments,
- * and high-fidelity astronomical animations.
+ * The classic day circle: a slim enamel ring in the prayer colours, framed by gold hairlines and
+ * lifted off the sky by a soft halo. Each prayer is a flat enamel badge on the ring and the date
+ * sits on a round glass card in a gold bezel at the centre.
  *
  * @param day The prayer data for the selected day.
  * @param currentTime Current system time for accurate indicator placement.
@@ -68,8 +85,9 @@ import kotlin.math.*
  * @param isMuted Whether the audio for the next prayer is silenced.
  * @param playAdhanAudio General preference for adhan playback.
  * @param onSkipAudio Callback for muting the next specific prayer audio.
+ * @param sunLight Screen angle (radians) the sunlight falls from, which the ring's sheen follows,
+ * or null for the default light.
  */
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PrayerCircleVisualization(
     day: PrayerDay,
@@ -82,18 +100,18 @@ fun PrayerCircleVisualization(
     contentColor: Color = Color.White,
     isMuted: Boolean = false,
     playAdhanAudio: Boolean = false,
-    onSkipAudio: (String) -> Unit = {}
+    onSkipAudio: (String) -> Unit = {},
+    sunLight: Float? = null
 ) {
     val context = LocalContext.current
-    val formatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
-    val layoutDirection = LocalLayoutDirection.current
     val density = LocalDensity.current
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val glassTheme = LocalGlassTheme.current
-    val weatherCondition = glassTheme.weatherCondition
+    val formatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val weatherCondition = LocalGlassTheme.current.weatherCondition
+    val palette = remember(weatherCondition) { GearPalette(WeatherTone.forScenery(weatherCondition)) }
+    val lightAngle = rememberEasedAngle(sunLight ?: GearLight.DEFAULT_ANGLE)
 
-    var canvasSize by remember { mutableStateOf(Size.Zero) }
     var selectedInfo by remember { mutableStateOf<DetailedInfo?>(null) }
 
     // Auto-dismiss interaction card
@@ -103,52 +121,6 @@ fun PrayerCircleVisualization(
             selectedInfo = null
         }
     }
-
-    val infiniteTransition = rememberInfiniteTransition(label = "celestial")
-
-    // Gravitational Flux: Subtle periodic movement of prayer markers (breathing effect)
-    val gravityFlux by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(4000, easing = EaseInOutSine),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "gravityFlux"
-    )
-
-    // Slow background rotation to simulate stellar movement
-    val stellarRotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(60000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "stellarRotation"
-    )
-
-    // Pulse effect applied to the entire container if viewing "Today"
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = if (isSelectedDayToday) 1.05f else 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2500, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulseScale"
-    )
-
-    // Smooth indicator rotation synchronized with current time
-    val rotationAngle by animateFloatAsState(
-        targetValue = if (isSelectedDayToday) {
-            val totalMinutes = currentTime.hour * 60 + currentTime.minute
-            val progressAngle = (totalMinutes.toFloat() / (24 * 60)) * 360f
-            if (layoutDirection == LayoutDirection.Rtl) -progressAngle + 180f else progressAngle + 180f
-        } else 0f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow),
-        label = "rotation"
-    )
 
     // Load painters once to avoid re-allocation in the draw loop
     val fajrIcon = ImageVector.vectorResource(R.drawable.haze_day_rotated)
@@ -207,141 +179,148 @@ fun PrayerCircleVisualization(
         prayers.find { it.type == currentPrayerType }?.color ?: Color.White
     }
 
+    val textMeasurer = rememberTextMeasurer()
+    val labelStyle = remember(contentColor, isLandscape) {
+        TextStyle(
+            color = contentColor.copy(alpha = 0.62f),
+            fontSize = if (isLandscape) 8.sp else 10.sp,
+            fontFamily = IBMPlexArabic,
+            fontWeight = FontWeight.Bold,
+            shadow = Shadow(Color.Black.copy(alpha = 0.8f), blurRadius = 4f)
+        )
+    }
+
     // Square that fits the parent's smaller dimension. fillMaxWidth() here would pin the width
     // and force the square taller than a short parent, overflowing it on wide (tablet) screens.
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .aspectRatio(1f)
-            .padding(4.dp)
-            .onSizeChanged { canvasSize = Size(it.width.toFloat(), it.height.toFloat()) }
-            .graphicsLayer {
-                scaleX = pulseScale
-                scaleY = pulseScale
-            },
+            .padding(4.dp),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(
+        val sizePx = with(density) { minOf(maxWidth, maxHeight).toPx() }
+        val ring = remember(sizePx, density.density) { HaloRing(sizePx, density.density) }
+        val nowMinutes = (currentTime.hour * 60 + currentTime.minute).toFloat()
+
+        Spacer(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectTapGestures { selectedInfo = null }
-                }
+                .pointerInput(Unit) { detectTapGestures { selectedInfo = null } }
                 .drawWithCache {
-                    val center = Offset(size.width / 2, size.height / 2)
-                    val radius = size.width / 2 - 24.dp.toPx()
-                    val prayerArcSegments = prayers
-                        .sortedBy { it.time }
-                        .let { sortedPrayers ->
-                            sortedPrayers.zip(sortedPrayers.drop(1) + sortedPrayers.first())
-                        }
-
+                    val light = GearLight(lightAngle.value)
+                    val labels = prayers.map { textMeasurer.measure(it.time.format(formatter), labelStyle) }
                     onDrawBehind {
-                        val rippleProgress = (gravityFlux) % 1f
-                        drawCircle(
-                            color = contentColor.copy(alpha = 0.04f * (1f - rippleProgress)),
-                            radius = radius * (0.4f + rippleProgress * 1.4f),
-                            center = center,
-                            style = Stroke(width = 1.dp.toPx())
-                        )
+                        drawRing(ring, prayers, palette, light, currentPrayerColor, isRtl)
 
-                        withTransform({ rotate(stellarRotation, center) }) {
-                            drawCircle(
-                                brush = Brush.sweepGradient(listOf(contentColor.copy(0f), contentColor.copy(0.12f), contentColor.copy(0f))),
-                                radius = radius + (if (isLandscape) 10.dp else 14.dp).toPx(),
-                                style = Stroke(1.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(1f, 12f), 0f))
-                            )
-                        }
-
-                        drawCircle(contentColor.copy(0.05f), radius, center, style = Stroke(1.dp.toPx()))
-                        prayerArcSegments.forEach { (startPrayer, endPrayer) ->
-                            val startAngle = getAngle(startPrayer.time, layoutDirection)
-                            val sweepAngle = getSweepAngle(startPrayer.time, endPrayer.time, layoutDirection)
-                            val startPosition = getPosition(startPrayer.time, radius, center, layoutDirection)
-                            val endPosition = getPosition(endPrayer.time, radius, center, layoutDirection)
-                            val segmentBrush = Brush.linearGradient(
-                                colors = listOf(
-                                    startPrayer.color.copy(alpha = 0.48f),
-                                    endPrayer.color.copy(alpha = 0.48f)
+                        if (isSelectedDayToday) {
+                            // The hand starts at the bezel, so it doesn't show through the glass date card.
+                            val handAngle = dayAngle(nowMinutes, isRtl)
+                            val root = pointOn(ring.center, ring.bezelRadius, handAngle)
+                            val tip = pointOn(ring.center, ring.track - size.minDimension * 0.03f, handAngle)
+                            drawLine(
+                                Brush.linearGradient(
+                                    listOf(Color.White.copy(alpha = 0f), Color.White.copy(alpha = 0.75f)),
+                                    start = root,
+                                    end = tip
                                 ),
-                                start = startPosition,
-                                end = endPosition
+                                root, tip, 1.5.dp.toPx(), StrokeCap.Round
                             )
-
-                            drawArc(
-                                brush = segmentBrush,
-                                startAngle = startAngle,
-                                sweepAngle = sweepAngle,
-                                useCenter = false,
-                                topLeft = Offset(center.x - radius, center.y - radius),
-                                size = Size(radius * 2, radius * 2),
-                                style = Stroke((if (isLandscape) 3.dp else 4.dp).toPx(), cap = StrokeCap.Round)
-                            )
+                            nowIndicator(ring.center, ring.track, handAngle, currentPrayerColor, density.density)
                         }
 
-                        for (i in 0 until 24) {
-                            val angle = i * 15f + 90f
-                            val angleRad = Math.toRadians(angle.toDouble())
-                            val isMajor = i % 6 == 0
-                            val tickLen = if (isMajor) (if (isLandscape) 8.dp else 10.dp).toPx() else 4.dp.toPx()
-                            val inner = radius - tickLen / 2
-                            val outer = radius + tickLen / 2
-                            drawLine(if (isMajor) contentColor.copy(0.4f) else contentColor.copy(0.1f), Offset(center.x + inner * cos(angleRad).toFloat(), center.y + inner * sin(angleRad).toFloat()), Offset(center.x + outer * cos(angleRad).toFloat(), center.y + outer * sin(angleRad).toFloat()), (if (isMajor) 1.5.dp else 1.dp).toPx())
+                        prayers.forEachIndexed { i, prayer ->
+                            val theta = dayAngle(prayer.time.minutes(), isRtl)
+                            val isCurrent = isSelectedDayToday && prayer.type == currentPrayerType
+                            val radius = if (isCurrent) ring.badgeCurrent else ring.badge
+                            prayerBadge(prayer, pointOn(ring.center, ring.track, theta), radius, isCurrent, palette)
+                            val label = labels[i]
+                            val at = pointOn(ring.center, ring.labelDistance(radius), theta)
+                            drawText(label, topLeft = Offset(at.x - label.size.width / 2f, at.y - label.size.height / 2f))
                         }
                     }
                 }
-        ) {
-            val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.width / 2 - 24.dp.toPx()
+        )
 
-            if (isSelectedDayToday) {
-                withTransform({ rotate(rotationAngle, center) }) {
-                    drawLine(Brush.verticalGradient(listOf(currentPrayerColor.copy(0.3f), Color.Transparent), startY = center.y - radius, endY = center.y), Offset(center.x, center.y), Offset(center.x, center.y - radius + 10.dp.toPx()), 5.dp.toPx(), StrokeCap.Round)
-                    drawLine(Brush.verticalGradient(listOf(Color.White.copy(0.7f), Color.Transparent), startY = center.y - radius, endY = center.y - radius * 0.4f), Offset(center.x, center.y - radius * 0.4f), Offset(center.x, center.y - radius + 14.dp.toPx()), 1.5.dp.toPx(), StrokeCap.Round)
-                }
-
-                val currentPos = getPosition(currentTime, radius, center, layoutDirection)
-                drawCircle(Brush.radialGradient(listOf(currentPrayerColor.copy(0.3f), Color.Transparent), currentPos, 12.dp.toPx()), 12.dp.toPx(), currentPos)
-                val spikeLen = 6.dp.toPx()
-                drawLine(Color.White.copy(0.6f), Offset(currentPos.x - spikeLen, currentPos.y), Offset(currentPos.x + spikeLen, currentPos.y), 1.2.dp.toPx(), StrokeCap.Round)
-                drawLine(Color.White.copy(0.6f), Offset(currentPos.x, currentPos.y - spikeLen), Offset(currentPos.x, currentPos.y + spikeLen), 1.2.dp.toPx(), StrokeCap.Round)
-                drawCircle(Color.White, (if (isLandscape) 2.5.dp else 3.5.dp).toPx(), currentPos)
-                drawCircle(currentPrayerColor, (if (isLandscape) 4.5.dp else 5.5.dp).toPx(), currentPos, style = Stroke(1.5.dp.toPx()))
-            }
-        }
-
-        if (canvasSize != Size.Zero) {
-            val center = Offset(canvasSize.width / 2, canvasSize.height / 2)
-            val radius = with(density) { canvasSize.width / 2 - 24.dp.toPx() }
-            prayers.forEach { prayer ->
-                PrayerMarker(
-                    prayer = prayer,
-                    isSelected = selectedInfo?.id == prayer.type.name,
-                    isCurrent = prayer.type == currentPrayerType && isSelectedDayToday,
-                    onTap = {
-                        selectedInfo = if (selectedInfo?.id == prayer.type.name) null else {
-                            DetailedInfo(
-                                prayer.type.name, prayer.type.getDisplayName(context),
-                                prayer.time.format(formatter), prayer.color, prayer.icon
+        // Invisible tap targets over the badges; a tapped badge turns into its glass info card.
+        val targetSize = with(density) { (ring.badgeCurrent * 2).toDp() }.coerceAtLeast(32.dp)
+        val edge = with(density) { 4.dp.toPx() }
+        prayers.forEach { prayer ->
+            key(prayer.type) {
+                val isSelected = selectedInfo?.id == prayer.type.name
+                val offset = pointOn(Offset.Zero, ring.track, dayAngle(prayer.time.minutes(), isRtl))
+                var contentSize by remember { mutableStateOf(IntSize.Zero) }
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .zIndex(if (isSelected) 20f else 5f)
+                        .onSizeChanged { contentSize = it }
+                        .graphicsLayer {
+                            // Keep an open card inside the dial so it never runs off the screen edge.
+                            val maxX = (sizePx - contentSize.width) / 2f - edge
+                            val maxY = (sizePx - contentSize.height) / 2f - edge
+                            translationX = if (maxX > 0f) offset.x.coerceIn(-maxX, maxX) else offset.x
+                            translationY = if (maxY > 0f) offset.y.coerceIn(-maxY, maxY) else offset.y
+                        }
+                ) {
+                    AnimatedContent(
+                        targetState = isSelected,
+                        transitionSpec = {
+                            (fadeIn() + scaleIn(initialScale = 0.86f)).togetherWith(fadeOut() + scaleOut(targetScale = 0.86f))
+                        },
+                        label = "classicMarker"
+                    ) { open ->
+                        if (open) {
+                            Box(Modifier.pointerInput(Unit) { detectTapGestures { selectedInfo = null } }) {
+                                InfoGlassCard(
+                                    DetailedInfo(
+                                        prayer.type.name,
+                                        prayer.type.getDisplayName(context),
+                                        prayer.time.format(formatter),
+                                        prayer.color,
+                                        prayer.icon
+                                    )
+                                )
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .size(targetSize)
+                                    .pointerInput(prayer.type) {
+                                        detectTapGestures {
+                                            selectedInfo = DetailedInfo(
+                                                prayer.type.name,
+                                                prayer.type.getDisplayName(context),
+                                                prayer.time.format(formatter),
+                                                prayer.color,
+                                                prayer.icon
+                                            )
+                                        }
+                                    }
                             )
                         }
-                    },
-                    gravityFlux = gravityFlux,
-                    center = center,
-                    radius = radius,
-                    layoutDirection = layoutDirection,
-                    isLandscape = isLandscape,
-                    contentColor = contentColor,
-                    pulseScale = pulseScale,
-                    formatter = formatter
-                )
+                    }
+                }
             }
         }
 
-        Column(
-            modifier = Modifier.zIndex(5f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        // The date: the round glass card, held in a fixed gold bezel.
+        val cardDiameter = with(density) { (ring.dateRadius * 2).toDp() }
+        val bezelDiameter = with(density) { (ring.bezelRadius * 2).toDp() }
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(bezelDiameter)
+                .zIndex(5f),
+            contentAlignment = Alignment.Center
         ) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .drawWithCache {
+                        val light = GearLight(lightAngle.value)
+                        onDrawBehind { skeletonBezel(palette, light, density.density) }
+                    }
+            )
             FlippableCalendarCard(
                 day = day,
                 isHijriVisible = isHijriVisible,
@@ -350,15 +329,136 @@ fun PrayerCircleVisualization(
                 accentColor = currentPrayerColor,
                 currentTime = currentTime,
                 isSelectedDayToday = isSelectedDayToday,
-                pulseScale = pulseScale
+                pulseScale = 1f,
+                modifier = Modifier.size(cardDiameter)
             )
-            Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 12.dp))
-            ReligiousBadge(day.date, contentColor, hijriDate = day.hijriDate)
         }
 
-        CurrentPrayerHeader(currentPrayer, contentColor, currentPrayerColor)
+        ReligiousBadge(
+            day.date,
+            contentColor,
+            hijriDate = day.hijriDate,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = bezelDiameter / 2 + if (isLandscape) 8.dp else 12.dp)
+                .zIndex(5f)
+        )
+
+        // The prayer name sits just above the bezel.
+        CurrentPrayerHeader(currentPrayer, contentColor, currentPrayerColor, verticalOffset = -(bezelDiameter / 2 + 18.dp))
     }
 }
+
+/** How much of the bezel the glass date card covers: the same share as the bezel's inner edge. */
+private const val BEZEL_FACE_RATIO = 0.86f
+
+/** Proportions of the classic ring for a dial [s] pixels across, in the gear dials' measures. */
+private class HaloRing(s: Float, dp: Float) {
+    val center = Offset(s / 2f, s / 2f)
+
+    /** Radius of the enamel track, the same as the gear dials' prayer track. */
+    val track = 0.43f * s
+
+    /** Width of the enamel channel. */
+    val trackWidth = 2f * 0.63f * max(5f * dp, s * 0.021f)
+
+    val badge = max(11f * dp, s * 0.04f)
+    val badgeCurrent = badge * 1.18f
+
+    /** Radius of the round date card in the hub. */
+    val dateRadius = 0.1152f * s
+
+    /** Outer radius of the gold bezel around the date card. */
+    val bezelRadius = dateRadius / BEZEL_FACE_RATIO
+
+    private val labelGap = 0.05f * s
+
+    /** Where the time label of a badge of [radius] sits, inside the ring. */
+    fun labelDistance(radius: Float) = track - radius - labelGap
+}
+
+/** The ring: a warm halo, a dark channel, the prayer colours as enamel, a metallic sheen and gold hairlines. */
+private fun DrawScope.drawRing(
+    ring: HaloRing,
+    prayers: List<PrayerNodeInfo>,
+    palette: GearPalette,
+    light: GearLight,
+    currentColor: Color,
+    rtl: Boolean
+) {
+    val c = ring.center
+    val track = ring.track
+    val width = ring.trackWidth
+    val half = width / 2f
+
+    haloRing(c, track, track * 0.22f, lerp(palette.warmHalo, currentColor, 0.3f), 0.15f)
+
+    drawCircle(Color(0xCC1A1205), track, c, style = Stroke(width + 1.6.dp.toPx()))
+
+    val sorted = prayers.sortedBy { it.time }
+    sorted.forEachIndexed { i, from ->
+        val to = sorted[(i + 1) % sorted.size]
+        val start = dayAngle(from.time.minutes(), rtl)
+        var sweep = dayAngle(to.time.minutes(), rtl) - start
+        if (rtl) {
+            if (sweep > 0f) sweep -= TWO_PI
+        } else if (sweep < 0f) {
+            sweep += TWO_PI
+        }
+        val gap = 0.01f * sign(sweep)
+        drawArc(
+            brush = Brush.linearGradient(
+                listOf(from.color.copy(alpha = 0.95f), to.color.copy(alpha = 0.95f)),
+                start = pointOn(c, track, start),
+                end = pointOn(c, track, start + sweep)
+            ),
+            startAngle = (start + gap).toDegrees(),
+            sweepAngle = (sweep - 2 * gap).toDegrees(),
+            useCenter = false,
+            topLeft = Offset(c.x - track, c.y - track),
+            size = Size(track * 2, track * 2),
+            style = Stroke(width, cap = StrokeCap.Round)
+        )
+    }
+
+    // Specular reflection from the light, so the enamel reads as glazed metal.
+    drawCircle(
+        brush = Brush.radialGradient(
+            0f to Color.White.copy(alpha = 0.32f),
+            0.45f to Color.White.copy(alpha = 0.08f),
+            1.0f to Color.Black.copy(alpha = 0.22f),
+            center = pointOn(c, track, light.angle),
+            radius = track * 1.1f
+        ),
+        radius = track,
+        center = c,
+        style = Stroke(width)
+    )
+
+    drawCircle(palette.gold.copy(alpha = 0.70f), track + half, c, style = Stroke(0.9.dp.toPx()))
+    drawCircle(palette.gold.copy(alpha = 0.70f), track - half, c, style = Stroke(0.9.dp.toPx()))
+    drawCircle(palette.tone(Color(0x66FFF1C8)), track + half - 0.5.dp.toPx(), c, style = Stroke(0.5.dp.toPx()))
+    drawCircle(palette.tone(Color(0x66FFF1C8)), track - half + 0.5.dp.toPx(), c, style = Stroke(0.5.dp.toPx()))
+}
+
+/** A prayer as a flat enamel badge in a gold hairline, like the ring it sits on. */
+private fun DrawScope.prayerBadge(prayer: PrayerNodeInfo, at: Offset, radius: Float, isCurrent: Boolean, palette: GearPalette) {
+    if (isCurrent) halo(at, radius * 0.6f, radius * 2.2f, prayer.color, 0.35f)
+    drawCircle(Color.Black.copy(alpha = 0.3f), radius + 1.2.dp.toPx(), at)
+    drawCircle(prayer.color, radius, at)
+    drawCircle(palette.gold.copy(alpha = 0.85f), radius, at, style = Stroke(1.dp.toPx()))
+    drawCircle(palette.tone(Color(0x66FFF1C8)), radius - 1.dp.toPx(), at, style = Stroke(0.5.dp.toPx()))
+
+    val iconSize = radius * if (isCurrent) 1.15f else 1.1f
+    val ink = if (prayer.color.luminance() > 0.5f) Color.Black.copy(alpha = 0.7f) else Color.White
+    translate(at.x - iconSize / 2f, at.y - iconSize / 2f) {
+        with(prayer.painter) { draw(Size(iconSize, iconSize), colorFilter = ColorFilter.tint(ink)) }
+    }
+}
+
+private const val TWO_PI = (2 * Math.PI).toFloat()
+
+private fun LocalTime.minutes() = (hour * 60 + minute).toFloat()
 
 /**
  * A floating "glass" card providing details about a selected prayer node.
@@ -477,158 +577,9 @@ data class PrayerNodeInfo(
     val type: PrayerType,
     val time: LocalTime,
     val color: Color,
-    val painter: androidx.compose.ui.graphics.vector.VectorPainter,
+    val painter: VectorPainter,
     val icon: ImageVector
 )
 
 /** State for the interactive information card. */
 data class DetailedInfo(val id: String, val title: String, val time: String, val color: Color, val icon: ImageVector)
-
-private fun getPosition(time: LocalTime, radius: Float, center: Offset, layoutDirection: LayoutDirection): Offset {
-    val angle = getAngle(time, layoutDirection)
-    val angleRad = Math.toRadians(angle.toDouble())
-    return Offset(
-        center.x + radius * cos(angleRad).toFloat(),
-        center.y + radius * sin(angleRad).toFloat()
-    )
-}
-
-private fun getAngle(time: LocalTime, layoutDirection: LayoutDirection): Float {
-    val totalMinutes = time.hour * 60 + time.minute
-    return if (layoutDirection == LayoutDirection.Rtl) {
-        -(totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
-    } else {
-        (totalMinutes.toFloat() / (24 * 60)) * 360f + 90f
-    }
-}
-
-private fun getSweepAngle(startTime: LocalTime, endTime: LocalTime, layoutDirection: LayoutDirection): Float {
-    val startAngle = getAngle(startTime, layoutDirection)
-    val endAngle = getAngle(endTime, layoutDirection)
-
-    return if (layoutDirection == LayoutDirection.Rtl) {
-        var diff = endAngle - startAngle
-        if (diff > 0f) diff -= 360f
-        diff
-    } else {
-        var diff = endAngle - startAngle
-        if (diff < 0f) diff += 360f
-        diff
-    }
-}
-
-@Composable
-private fun PrayerMarker(
-    prayer: PrayerNodeInfo,
-    isSelected: Boolean,
-    isCurrent: Boolean,
-    onTap: () -> Unit,
-    gravityFlux: Float,
-    center: Offset,
-    radius: Float,
-    layoutDirection: LayoutDirection,
-    isLandscape: Boolean,
-    contentColor: Color,
-    pulseScale: Float,
-    formatter: DateTimeFormatter
-) {
-    // Scale animation for tapping
-    val scale by animateFloatAsState(
-        targetValue = if (isSelected) 1.15f else 1f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "pScale"
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .zIndex(if (isSelected) 20f else 5f)
-    ) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .graphicsLayer {
-                    val pullRadius = radius * (1f - (0.02f * gravityFlux))
-                    val pos = getPosition(prayer.time, pullRadius, center, layoutDirection)
-                    translationX = pos.x - center.x
-                    translationY = pos.y - center.y
-                    scaleX = scale
-                    scaleY = scale
-                }
-        ) {
-            AnimatedContent(
-                targetState = isSelected,
-                transitionSpec = {
-                    (fadeIn(tween(300)) + scaleIn(initialScale = 0.8f)).togetherWith(fadeOut(tween(200)) + scaleOut(targetScale = 0.8f))
-                },
-                label = "marker_transform"
-            ) { selected ->
-                if (selected) {
-                    InfoGlassCard(
-                        DetailedInfo(
-                            prayer.type.name,
-                            prayer.type.getDisplayName(LocalContext.current),
-                            prayer.time.format(formatter),
-                            prayer.color,
-                            prayer.icon
-                        )
-                    )
-                } else {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .wrapContentSize(unbounded = true)
-                            .pointerInput(prayer) {
-                                detectTapGestures { onTap() }
-                            }
-                    ) {
-                        val markerSize = if (isCurrent) (if (isLandscape) 22.dp else 28.dp) else (if (isLandscape) 18.dp else 24.dp)
-
-                        if (isCurrent) {
-                            Box(
-                                modifier = Modifier
-                                    .size(markerSize * 1.8f)
-                                    .background(prayer.color.copy(alpha = 0.15f * pulseScale), CircleShape)
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .size(markerSize)
-                                .background(prayer.color, CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            val iconSize = if (isCurrent) (if (isLandscape) 13.dp else 16.dp) else (if (isLandscape) 11.dp else 14.dp)
-                            val iconTint = if (prayer.color.luminance() > 0.5f) Color.Black.copy(0.7f) else Color.White
-                            Icon(
-                                painter = prayer.painter,
-                                contentDescription = null,
-                                modifier = Modifier.size(iconSize),
-                                tint = iconTint
-                            )
-                        }
-
-                        Text(
-                            text = prayer.time.format(formatter),
-                            style = TextStyle(
-                                color = contentColor.copy(alpha = 0.5f),
-                                fontSize = if (isLandscape) 8.sp else 10.sp,
-                                fontFamily = IBMPlexArabic,
-                                fontWeight = FontWeight.Bold
-                            ),
-                            modifier = Modifier
-                                .layout { measurable, constraints ->
-                                    val placeable = measurable.measure(constraints)
-                                    val yOffset = (if (isLandscape) 14.dp else 18.dp).toPx().toInt()
-                                    layout(placeable.width, 0) {
-                                        // Absolute placement to avoid RTL bias
-                                        placeable.place(0, yOffset)
-                                    }
-                                }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}

@@ -12,8 +12,8 @@ import java.time.temporal.ChronoUnit
 
 /**
  * The home screen's day circle, drawn in the style the user picked in settings.
- * [sunLight] is the screen angle (radians) the sunlight falls from, which the gear styles' metal
- * reflects, or null for the default light; the classic circle ignores it.
+ * [sunLight] is the screen angle (radians) the sunlight falls from, which the metal of every style
+ * reflects, or null for the default light.
  */
 @Composable
 fun DayCircle(
@@ -33,17 +33,29 @@ fun DayCircle(
     val minuteTime = remember(currentTime.hour, currentTime.minute) { currentTime.truncatedTo(ChronoUnit.MINUTES) }
     val prayer = remember(currentPrayer?.type, currentPrayer?.date) { currentPrayer }
 
-    val displayStyle = if (style == DayCircleStyle.CLASSIC) DayCircleStyle.SKELETON else style
-
-    GearDayCircle(
-        style = displayStyle,
-        day = day,
-        currentTime = minuteTime,
-        currentPrayer = prayer,
-        isSelectedDayToday = isSelectedDayToday,
-        isHijriVisible = isHijriVisible,
-        onToggleHijri = onToggleHijri,
-        contentColor = contentColor,
-        sunLight = sunLight
-    )
+    if (style == DayCircleStyle.CLASSIC) {
+        PrayerCircleVisualization(
+            day = day,
+            currentTime = minuteTime,
+            nextPrayer = null,
+            currentPrayer = prayer,
+            isSelectedDayToday = isSelectedDayToday,
+            isHijriVisible = isHijriVisible,
+            onToggleHijri = onToggleHijri,
+            contentColor = contentColor,
+            sunLight = sunLight
+        )
+    } else {
+        GearDayCircle(
+            style = style,
+            day = day,
+            currentTime = minuteTime,
+            currentPrayer = prayer,
+            isSelectedDayToday = isSelectedDayToday,
+            isHijriVisible = isHijriVisible,
+            onToggleHijri = onToggleHijri,
+            contentColor = contentColor,
+            sunLight = sunLight
+        )
+    }
 }

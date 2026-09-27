@@ -343,7 +343,7 @@ private fun BoxScope.PrayerMarkers(
  * metal glides as the phone turns instead of jumping with every compass reading.
  */
 @Composable
-private fun rememberEasedAngle(target: Float): State<Float> {
+internal fun rememberEasedAngle(target: Float): State<Float> {
     val angle = remember { Animatable(target) }
     LaunchedEffect(target) {
         angle.animateTo(blendAngle(angle.value, target, 1f), tween(1200, easing = FastOutSlowInEasing))
