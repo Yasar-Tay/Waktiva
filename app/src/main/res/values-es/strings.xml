@@ -144,8 +144,6 @@
     <string name="day_circle_style_brass_desc">Una rueda de latón que gira con engranajes de oración</string>
     <string name="day_circle_style_steel">Acero nocturno</string>
     <string name="day_circle_style_steel_desc">Engranajes de oración girando dentro de un anillo de acero</string>
-    <string name="day_circle_style_skeleton">Esqueleto</string>
-    <string name="day_circle_style_skeleton_desc">Líneas finas sobre un tren de engranajes tenue</string>
 
     <!-- Language Options -->
     <string name="lang_system">Predeterminado del sistema</string>

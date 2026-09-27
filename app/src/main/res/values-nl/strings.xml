@@ -144,8 +144,6 @@
     <string name="day_circle_style_brass_desc">Een draaiend messing wiel met ingrijpende gebedstandwielen</string>
     <string name="day_circle_style_steel">Nachtstaal</string>
     <string name="day_circle_style_steel_desc">Gebedstandwielen die in een stalen ring draaien</string>
-    <string name="day_circle_style_skeleton">Skelet</string>
-    <string name="day_circle_style_skeleton_desc">Fijne lijnen over een vaag raderwerk</string>
 
     <!-- Language Options -->
     <string name="lang_system">Systeemstandaard</string>

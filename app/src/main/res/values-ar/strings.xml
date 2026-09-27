@@ -144,8 +144,6 @@
     <string name="day_circle_style_brass_desc">عجلة نحاسية دوّارة تتعشّق معها تروس الصلوات</string>
     <string name="day_circle_style_steel">فولاذ الليل</string>
     <string name="day_circle_style_steel_desc">تروس الصلوات تدور داخل حلقة فولاذية</string>
-    <string name="day_circle_style_skeleton">هيكلي</string>
-    <string name="day_circle_style_skeleton_desc">خطوط رفيعة فوق مجموعة تروس باهتة</string>
 
     <!-- Language Options -->
     <string name="lang_system">افتراضي النظام</string>

@@ -34,7 +34,7 @@ import kotlin.math.max
 
 /**
  * Shown in place of a tapped prayer marker: a plate in the dial's material with the prayer's
- * gear (or, on the skeleton, its set stone) as a medallion, the prayer name and a larger time. Replaces the glass pill
+ * gear as a medallion, the prayer name and a larger time. Replaces the glass pill
  * (InfoGlassCard) that the classic circle uses.
  */
 @Composable
@@ -50,8 +50,8 @@ internal fun GearPlaque(
     val finish = palette.finish(style)
     val height = if (compact) 36.dp else 42.dp
     val endPadding = height * 0.34f
-    // Engraved lettering: a light line just below the ink, only on metal.
-    val engraving = if (finish.isMetal) Shadow(Color.White.copy(alpha = 0.35f), Offset(0f, 1f), 0f) else null
+    // Engraved lettering: a light line just below the ink.
+    val engraving = Shadow(Color.White.copy(alpha = 0.35f), Offset(0f, 1f), 0f)
 
     Row(
         modifier = modifier
@@ -65,17 +65,10 @@ internal fun GearPlaque(
                 .size(height * 0.72f)
                 .drawWithCache {
                     val radius = size.minDimension / 2f
-                    // Metal plates show the prayer's gear; the skeleton shows its set stone.
                     val outline = planetOutline(radius * 0.92f)
-                    val stone = GemCut(radius * 0.92f)
+                    val sheen = if (style == DayCircleStyle.STEEL) palette.steelSheen else palette.brassSheen
                     onDrawBehind {
-                        val dp = density
-                        if (finish.isMetal) {
-                            val sheen = if (style == DayCircleStyle.STEEL) palette.steelSheen else palette.brassSheen
-                            planet(prayer, center, radius * 0.92f, phase.value, outline, sheen, GearLight.Default, dp, isCurrent = false)
-                        } else {
-                            gemStone(prayer, center, stone, palette.brassSheen, GearLight.Default, palette.gold, dp)
-                        }
+                        planet(prayer, center, radius * 0.92f, phase.value, outline, sheen, GearLight.Default, density, isCurrent = false)
                     }
                 }
         )
@@ -117,16 +110,13 @@ private fun DrawScope.drawPlate(finish: PlateFinish, endPadding: Float) {
     drawRoundRect(brush = finish.fill(Offset.Zero, Offset(size.width, size.height)), cornerRadius = corner)
     drawRoundRect(finish.edge, cornerRadius = corner, style = Stroke(1.dp.toPx()))
     drawRoundRect(finish.inset, Offset(inset, inset), innerSize, innerCorner, Stroke(0.8.dp.toPx()))
-    finish.highlight?.let {
-        val shift = 0.8.dp.toPx()
-        drawRoundRect(it, Offset(inset + shift, inset + shift), innerSize, innerCorner, Stroke(0.6.dp.toPx()))
-    }
-    finish.screw?.let { screw ->
-        // The screw sits at the plate's end, which is on the left in RTL.
-        val x = if (layoutDirection == LayoutDirection.Rtl) endPadding * 0.5f else size.width - endPadding * 0.5f
-        val y = size.height / 2f
-        val r = max(1.8.dp.toPx(), size.height * 0.055f)
-        drawCircle(screw, r, Offset(x, y))
-        drawLine(Color.White.copy(alpha = 0.35f), Offset(x - r * 0.7f, y + r * 0.7f), Offset(x + r * 0.7f, y - r * 0.7f), 0.6.dp.toPx())
-    }
+    val shift = 0.8.dp.toPx()
+    drawRoundRect(finish.highlight, Offset(inset + shift, inset + shift), innerSize, innerCorner, Stroke(0.6.dp.toPx()))
+
+    // The screw sits at the plate's end, which is on the left in RTL.
+    val x = if (layoutDirection == LayoutDirection.Rtl) endPadding * 0.5f else size.width - endPadding * 0.5f
+    val y = size.height / 2f
+    val r = max(1.8.dp.toPx(), size.height * 0.055f)
+    drawCircle(finish.screw, r, Offset(x, y))
+    drawLine(Color.White.copy(alpha = 0.35f), Offset(x - r * 0.7f, y + r * 0.7f), Offset(x + r * 0.7f, y - r * 0.7f), 0.6.dp.toPx())
 }

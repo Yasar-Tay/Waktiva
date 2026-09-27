@@ -144,8 +144,6 @@
     <string name="day_circle_style_brass_desc">Obracające się mosiężne koło z zazębionymi kołami modlitw</string>
     <string name="day_circle_style_steel">Nocna stal</string>
     <string name="day_circle_style_steel_desc">Koła modlitw obracające się w stalowym pierścieniu</string>
-    <string name="day_circle_style_skeleton">Szkielet</string>
-    <string name="day_circle_style_skeleton_desc">Cienkie linie na tle bladych kół zębatych</string>
 
     <!-- Language Options -->
     <string name="lang_system">Systemowy</string>

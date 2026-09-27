@@ -144,8 +144,6 @@
     <string name="day_circle_style_brass_desc">Une roue en laiton qui tourne avec des engrenages de prière</string>
     <string name="day_circle_style_steel">Acier de nuit</string>
     <string name="day_circle_style_steel_desc">Des engrenages de prière tournant dans un anneau d\'acier</string>
-    <string name="day_circle_style_skeleton">Squelette</string>
-    <string name="day_circle_style_skeleton_desc">Des lignes fines sur un rouage estompé</string>
 
     <!-- Language Options -->
     <string name="lang_system">Défaut système</string>

@@ -144,8 +144,6 @@
     <string name="day_circle_style_brass_desc">Ein drehendes Messingrad mit ineinandergreifenden Gebetszahnrädern</string>
     <string name="day_circle_style_steel">Nachtstahl</string>
     <string name="day_circle_style_steel_desc">Gebetszahnräder, die in einem Stahlring laufen</string>
-    <string name="day_circle_style_skeleton">Skelett</string>
-    <string name="day_circle_style_skeleton_desc">Feine Linien über einem blassen Räderwerk</string>
 
     <!-- Language Options -->
     <string name="lang_system">Systemstandard</string>

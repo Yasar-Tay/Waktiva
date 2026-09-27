@@ -505,7 +505,6 @@ private fun dayCircleStyleDescription(style: DayCircleStyle) = stringResource(
         DayCircleStyle.CLASSIC -> R.string.day_circle_style_classic_desc
         DayCircleStyle.BRASS -> R.string.day_circle_style_brass_desc
         DayCircleStyle.STEEL -> R.string.day_circle_style_steel_desc
-        DayCircleStyle.SKELETON -> R.string.day_circle_style_skeleton_desc
     }
 )
 

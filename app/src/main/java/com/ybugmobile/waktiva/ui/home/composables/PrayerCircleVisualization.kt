@@ -57,7 +57,7 @@ import com.ybugmobile.waktiva.ui.home.composables.gear.haloRing
 import com.ybugmobile.waktiva.ui.home.composables.gear.nowIndicator
 import com.ybugmobile.waktiva.ui.home.composables.gear.pointOn
 import com.ybugmobile.waktiva.ui.home.composables.gear.rememberEasedAngle
-import com.ybugmobile.waktiva.ui.home.composables.gear.skeletonBezel
+import com.ybugmobile.waktiva.ui.home.composables.gear.goldBezel
 import com.ybugmobile.waktiva.ui.home.composables.gear.toDegrees
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
@@ -318,7 +318,7 @@ fun PrayerCircleVisualization(
                     .fillMaxSize()
                     .drawWithCache {
                         val light = GearLight(lightAngle.value)
-                        onDrawBehind { skeletonBezel(palette, light, density.density) }
+                        onDrawBehind { goldBezel(palette, light, density.density) }
                     }
             )
             FlippableCalendarCard(

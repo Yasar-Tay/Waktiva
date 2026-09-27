@@ -106,6 +106,5 @@ internal interface GearDial {
 internal fun createGearDial(style: DayCircleStyle, sizePx: Float, pxPerDp: Float, labelReach: Float): GearDial = when (style) {
     DayCircleStyle.BRASS -> BrassGearDial(sizePx, pxPerDp, labelReach)
     DayCircleStyle.STEEL -> SteelGearDial(sizePx, pxPerDp)
-    DayCircleStyle.SKELETON -> SkeletonGearDial(sizePx, pxPerDp)
     DayCircleStyle.CLASSIC -> throw IllegalArgumentException("CLASSIC is drawn by PrayerCircleVisualization")
 }

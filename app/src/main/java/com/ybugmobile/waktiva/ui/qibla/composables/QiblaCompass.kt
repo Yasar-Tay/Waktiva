@@ -43,16 +43,13 @@ import androidx.compose.ui.unit.dp
 import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.ui.home.composables.gear.GearLight
 import com.ybugmobile.waktiva.ui.home.composables.gear.GearPalette
-import com.ybugmobile.waktiva.ui.home.composables.gear.GemCut
 import com.ybugmobile.waktiva.ui.home.composables.gear.MetalSheen
 import com.ybugmobile.waktiva.ui.home.composables.gear.RingGrain
 import com.ybugmobile.waktiva.ui.home.composables.gear.TAU
 import com.ybugmobile.waktiva.ui.home.composables.gear.WeatherTone
-import com.ybugmobile.waktiva.ui.home.composables.gear.addGearOutline
 import com.ybugmobile.waktiva.ui.home.composables.gear.annulus
 import com.ybugmobile.waktiva.ui.home.composables.gear.bevel
 import com.ybugmobile.waktiva.ui.home.composables.gear.elevation
-import com.ybugmobile.waktiva.ui.home.composables.gear.gemStone
 import com.ybugmobile.waktiva.ui.home.composables.gear.haloRing
 import com.ybugmobile.waktiva.ui.home.composables.gear.holeBevel
 import com.ybugmobile.waktiva.ui.home.composables.gear.pointOn
@@ -85,14 +82,14 @@ fun QiblaCompass(
 }
 
 /**
- * A compass made like the gear dials, in brass, night steel or skeleton gold:
+ * A compass made like the gear dials, in brass or night steel:
  * - a fixed metal bezel with a halo of light round it, and a lubber mark at the top where the
  *   phone points;
  * - a card that turns with the heading: ivory enamel with a guilloché for brass, a midnight
- *   face with azurage rings and lume for steel, smoked crystal with the movement showing
- *   through for the skeleton; with degree marks, an eight-point rose and upright letters;
+ *   face with azurage rings and lume for steel; with degree marks, an eight-point rose and
+ *   upright letters;
  * - the Kaaba as a medallion set on the card at the Qibla bearing, glowing when aligned;
- * - a fixed needle: a brass spade, a lumed steel blade, or a gold outline capped with a ruby.
+ * - a fixed needle: a brass spade or a lumed steel blade.
  *
  * Drawn in four layers so that turning is cheap: the bezel and needle don't change with the
  * heading, the card turns as a whole in its graphics layer without being redrawn, and only the
@@ -180,7 +177,6 @@ internal fun GearCompass(
                         Letter(layout, bearing, if (cardinal) g.rc * 0.7f else g.rc * 0.72f, cardinal)
                     }
                     val medallion = Path().apply { addOval(Rect(Offset.Zero, g.rc * MedallionShare)) }
-                    val ruby = GemCut(g.rc * 0.045f)
                     onDrawBehind {
                         val h = heading.value
                         letters.forEach { letter ->
@@ -188,9 +184,6 @@ internal fun GearCompass(
                             if (abs(angleBetween(letter.bearing, qiblaAngle)) < if (letter.cardinal) 12f else 20f) return@forEach
                             val at = pointOn(g.c, letter.radius, screenAngle(letter.bearing, h))
                             drawText(letter.layout, topLeft = at - Offset(letter.layout.size.width / 2f, letter.layout.size.height / 2f))
-                        }
-                        if (style == DayCircleStyle.SKELETON) {
-                            gemStone(RubyColor, pointOn(g.c, g.rc * 0.88f, screenAngle(0f, h)), ruby, palette.brassSheen, GearLight.Default, palette.gold, g.dp)
                         }
                         kaabaMedallion(
                             pointOn(g.c, g.rc * 0.83f, screenAngle(qiblaAngle, h)), g.rc * MedallionShare, medallion,
@@ -249,7 +242,6 @@ private fun screenAngle(bearing: Float, heading: Float): Float = ((bearing - hea
 
 private val CompassSize = 340.dp
 private val AlignedGold = Color(0xFFFFC861)
-private val RubyColor = Color(0xFFE0115F)
 
 /** Radii of the compass, for a canvas of [size]. */
 private class CompassGeometry(size: Size, val dp: Float) {
@@ -268,7 +260,6 @@ private class CompassLook(val style: DayCircleStyle, val palette: GearPalette) {
     /** Ink of the card's marks and letters. */
     val ink = when (style) {
         DayCircleStyle.STEEL -> Color(0xFFE2F6E4)
-        DayCircleStyle.SKELETON -> palette.gold
         else -> palette.tone(Color(0xFF5A3E12))
     }
     val north = if (style == DayCircleStyle.STEEL) Color(0xFFFF7676) else Color(0xFFC0392B)
@@ -279,7 +270,7 @@ private class CompassLook(val style: DayCircleStyle, val palette: GearPalette) {
 
     val letters = listOf("N" to 0f, "E" to 90f, "S" to 180f, "W" to 270f, "NE" to 45f, "SE" to 135f, "SW" to 225f, "NW" to 315f)
 
-    /** Serif capitals engraved on brass and gold, glowing lume sans on steel. */
+    /** Serif capitals engraved on brass, glowing lume sans on steel. */
     fun letterStyle(text: String, cardinal: Boolean, rc: Float, density: Density): TextStyle {
         val steel = style == DayCircleStyle.STEEL
         val px = if (cardinal) rc * 0.14f else rc * 0.07f
@@ -314,7 +305,7 @@ private class SteelNotches(g: CompassGeometry) {
     }
 }
 
-/** Screws on the brass bezel, notches on the steel one, milgrain beads on the skeleton's. */
+/** Screws on the brass bezel, notches on the steel one. */
 private fun DrawScope.drawBezelDetail(g: CompassGeometry, look: CompassLook, light: GearLight, notches: SteelNotches?) {
     val palette = look.palette
     val mid = (g.r + g.rb) / 2f
@@ -322,15 +313,6 @@ private fun DrawScope.drawBezelDetail(g: CompassGeometry, look: CompassLook, lig
         DayCircleStyle.STEEL -> notches?.let {
             drawPath(it.minor, Color(0x66141A28), style = Stroke(0.6f * g.dp))
             drawPath(it.major, Color(0xCC141A28), style = Stroke(1.1f * g.dp))
-        }
-        DayCircleStyle.SKELETON -> {
-            val bead = palette.tone(Color(0xFFE9CF8A))
-            val radius = (g.r - g.rb) * 0.16f
-            for (k in 0 until 44) {
-                val at = pointOn(g.c, mid, k * TAU / 44)
-                drawCircle(bead, radius, at)
-                drawCircle(Color.White.copy(alpha = 0.6f), radius * 0.38f, at + light.towards * (radius * 0.35f))
-            }
         }
         else -> for (k in 0 until 4) {
             screw(
@@ -352,7 +334,7 @@ private class CompassCard(private val g: CompassGeometry, private val look: Comp
     private val c = g.c
     private val outline = Path().apply { addOval(Rect(c, rc)) }
 
-    /** Fine lines across the face: guilloché rays on brass, azurage rings on steel, the movement behind the skeleton's crystal. */
+    /** Fine lines across the face: guilloché rays on brass, azurage rings on steel. */
     private val texture = Path()
     private val face: Brush
 
@@ -375,15 +357,6 @@ private class CompassCard(private val g: CompassGeometry, private val look: Comp
                 while (rr < rc) {
                     texture.addOval(Rect(c, rr))
                     rr += 1.5f * g.dp
-                }
-            }
-            DayCircleStyle.SKELETON -> {
-                face = Brush.radialGradient(listOf(Color(0x73121622), Color(0xC7080A12)), center = c, radius = rc)
-                for ((x, y, teeth, turn) in SkeletonGears) {
-                    val at = c + Offset(x * rc, y * rc)
-                    val pitch = teeth * rc * 0.0163f
-                    addGearOutline(texture, at, pitch, teeth.toInt(), turn)
-                    texture.addOval(Rect(at, pitch * 0.75f))
                 }
             }
             else -> {
@@ -434,12 +407,8 @@ private class CompassCard(private val g: CompassGeometry, private val look: Comp
         val ink = look.ink
         val dp = g.dp
         drawPath(outline, face)
-        val textureInk = when (look.style) {
-            DayCircleStyle.STEEL -> Color.White.copy(alpha = 0.045f)
-            DayCircleStyle.SKELETON -> look.palette.gold.copy(alpha = 0.1f)
-            else -> Color(0x0F785A28)
-        }
-        clipPath(outline) { drawPath(texture, textureInk, style = Stroke(if (look.style == DayCircleStyle.SKELETON) 0.8f * dp else 0.5f * dp)) }
+        val textureInk = if (look.style == DayCircleStyle.STEEL) Color.White.copy(alpha = 0.045f) else Color(0x0F785A28)
+        clipPath(outline) { drawPath(texture, textureInk, style = Stroke(0.5f * dp)) }
 
         drawPath(minorTicks, ink.copy(alpha = 0.3f), style = Stroke(0.6f * dp))
         drawPath(midTicks, ink.copy(alpha = 0.6f), style = Stroke(0.6f * dp))
@@ -447,15 +416,6 @@ private class CompassCard(private val g: CompassGeometry, private val look: Comp
         drawCircle(ink.copy(alpha = 0.35f), rc * 0.84f, c, style = Stroke(0.6f * dp))
         drawPath(roseLit, ink.copy(alpha = 0.28f))
         drawPath(roseShade, ink.copy(alpha = 0.12f))
-    }
-
-    private companion object {
-        /** Wheels of the movement behind the skeleton's crystal: offset from the centre (in card radii), teeth, turn. */
-        val SkeletonGears = listOf(
-            listOf(-0.48f, -0.43f, 30f, 0.2f),
-            listOf(0.43f, 0.34f, 22f, -0.3f),
-            listOf(0.29f, -0.48f, 14f, 0.5f)
-        )
     }
 }
 
@@ -508,13 +468,6 @@ private class CompassNeedle(private val g: CompassGeometry, private val look: Co
                 lineTo(c.x, c.y + tail)
                 lineTo(c.x - rc * 0.03f, c.y)
             }
-            DayCircleStyle.SKELETON -> {
-                moveTo(c.x, c.y - length)
-                lineTo(c.x + rc * 0.04f, c.y - length * 0.7f)
-                lineTo(c.x + rc * 0.012f, c.y + tail)
-                lineTo(c.x - rc * 0.012f, c.y + tail)
-                lineTo(c.x - rc * 0.04f, c.y - length * 0.7f)
-            }
             else -> {
                 moveTo(c.x, c.y - length)
                 lineTo(c.x + rc * 0.045f, c.y - length * 0.72f)
@@ -537,7 +490,6 @@ private class CompassNeedle(private val g: CompassGeometry, private val look: Co
         close()
     }
     private val tailRing = c + Offset(0f, tail)
-    private val cap = GemCut(rc * 0.075f)
 
     fun draw(scope: DrawScope) = with(scope) {
         val palette = look.palette
@@ -555,13 +507,6 @@ private class CompassNeedle(private val g: CompassGeometry, private val look: Co
                     palette.tone(Color(0xFFF4F7FB)), palette.tone(Color(0xFF8E98AA)), palette.tone(Color(0xFF2E3544)),
                     slot = 1.2f
                 )
-            }
-            DayCircleStyle.SKELETON -> {
-                val gold = palette.gold.copy(alpha = 0.95f)
-                drawPath(body, Color.Black.copy(alpha = 0.25f))
-                drawPath(body, gold, style = Stroke(1.4f * dp, join = StrokeJoin.Round))
-                drawLine(gold, Offset(c.x, c.y - length * 0.95f), Offset(c.x, c.y - rc * 0.1f), 1.4f * dp)
-                gemStone(RubyColor, c, cap, palette.brassSheen, light, palette.gold, dp)
             }
             else -> {
                 elevation(body, 2f * dp, light)

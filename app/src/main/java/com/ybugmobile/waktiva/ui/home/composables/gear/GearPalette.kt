@@ -3,7 +3,6 @@ package com.ybugmobile.waktiva.ui.home.composables.gear
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.ui.theme.darken
@@ -87,13 +86,13 @@ internal class GearPalette(private val weather: WeatherTone) {
         1f to 0xFFA3ACBC
     )
 
-    /** Light of the halo ring behind the brass and skeleton dials. */
+    /** Light of the halo ring behind the brass dial and the classic ring. */
     val warmHalo = tone(Color(0xFFFFE7B0))
 
     /** Light of the halo ring behind the steel dial. */
     val coolHalo = tone(Color(0xFFE2EEFF))
 
-    /** Hairline gold used by the skeleton dial. */
+    /** Hairline gold of the classic ring and of the brass dial's background train. */
     val gold = tone(Color(0xFFDEBE78))
 
     val jewelSetting = tone(Color(0xFFD9B96A))
@@ -125,25 +124,8 @@ internal class GearPalette(private val weather: WeatherTone) {
         )
     }
 
-    private val skeletonFinish by lazy {
-        PlateFinish(
-            metal = null,
-            edge = gold.copy(alpha = 0.65f),
-            inset = gold.copy(alpha = 0.28f),
-            highlight = null,
-            stripe = gold.copy(alpha = 0.07f),
-            ink = tone(Color(0xFFE9C983)),
-            strongInk = Color.White,
-            screw = null
-        )
-    }
-
     /** Surface of the plaque and bridge for [style]. */
-    fun finish(style: DayCircleStyle): PlateFinish = when (style) {
-        DayCircleStyle.STEEL -> steelFinish
-        DayCircleStyle.SKELETON -> skeletonFinish
-        else -> brassFinish
-    }
+    fun finish(style: DayCircleStyle): PlateFinish = if (style == DayCircleStyle.STEEL) steelFinish else brassFinish
 
     private fun toned(vararg stops: Pair<Float, Color>) = stops.map { (at, color) -> at to tone(color) }.toTypedArray()
 
@@ -152,22 +134,19 @@ internal class GearPalette(private val weather: WeatherTone) {
 
 /**
  * Surface shared by the prayer plaque and the special-day bridge, so both match their dial:
- * engraved brass or steel, or a dark plate with gold hairlines for the skeleton.
+ * engraved brass or steel.
  */
 internal class PlateFinish(
-    private val metal: Array<Pair<Float, Color>>?,
+    private val metal: Array<Pair<Float, Color>>,
     val edge: Color,
     val inset: Color,
-    /** Light line under the engraved inset; null on the skeleton plate. */
-    val highlight: Color?,
+    /** Light line under the engraved inset. */
+    val highlight: Color,
     val stripe: Color,
     val ink: Color,
     val strongInk: Color,
-    /** Screw head colour; null draws no screw. */
-    val screw: Color?
+    /** Screw head colour. */
+    val screw: Color
 ) {
-    val isMetal get() = metal != null
-
-    fun fill(from: Offset, to: Offset): Brush =
-        metal?.let { Brush.linearGradient(*it, start = from, end = to) } ?: SolidColor(Color(0xE60C0F18))
+    fun fill(from: Offset, to: Offset): Brush = Brush.linearGradient(*metal, start = from, end = to)
 }

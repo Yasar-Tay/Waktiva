@@ -144,8 +144,6 @@
     <string name="day_circle_style_brass_desc">ঘূর্ণায়মান পিতলের চাকা, সাথে জোড়া লাগানো নামাজের গিয়ার</string>
     <string name="day_circle_style_steel">রাতের ইস্পাত</string>
     <string name="day_circle_style_steel_desc">ইস্পাতের বলয়ের ভেতরে ঘোরা নামাজের গিয়ার</string>
-    <string name="day_circle_style_skeleton">কঙ্কাল</string>
-    <string name="day_circle_style_skeleton_desc">ম্লান গিয়ারের ওপর সূক্ষ্ম রেখা</string>
 
     <!-- Language Options -->
     <string name="lang_system">সিস্টেম ডিফাল্ট</string>

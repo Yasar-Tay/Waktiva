@@ -111,10 +111,9 @@ internal class SpecialDayBridge(
 
             drawIntoCanvas { canvas ->
                 val native = canvas.nativeCanvas
-                if (finish.isMetal) {
-                    paint.color = Color.White.copy(alpha = 0.35f).toArgb()
-                    native.drawTextOnPath(text, textPath, 0f, centreOffset + 0.8f * dp, paint)
-                }
+                // Engraved: a light line just below the ink.
+                paint.color = Color.White.copy(alpha = 0.35f).toArgb()
+                native.drawTextOnPath(text, textPath, 0f, centreOffset + 0.8f * dp, paint)
                 paint.color = finish.ink.toArgb()
                 native.drawTextOnPath(text, textPath, 0f, centreOffset, paint)
             }

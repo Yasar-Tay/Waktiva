@@ -144,8 +144,6 @@
     <string name="day_circle_style_brass_desc">Una ruota in ottone che gira con ingranaggi delle preghiere</string>
     <string name="day_circle_style_steel">Acciaio notturno</string>
     <string name="day_circle_style_steel_desc">Ingranaggi delle preghiere che girano in un anello d\'acciaio</string>
-    <string name="day_circle_style_skeleton">Scheletro</string>
-    <string name="day_circle_style_skeleton_desc">Linee sottili su un rotismo sfumato</string>
 
     <!-- Language Options -->
     <string name="lang_system">Predefinito di sistema</string>

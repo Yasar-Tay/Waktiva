@@ -4,19 +4,18 @@ package com.ybugmobile.waktiva.domain.model
 enum class DayCircleStyle {
     CLASSIC,
     BRASS,
-    STEEL,
-    SKELETON;
+    STEEL;
 
     companion object {
         /** Shown until the user picks a style. */
         val DEFAULT = CLASSIC
 
-        /**
-         * The style saved as [name]. Skeleton is no longer offered: its look became the classic
-         * circle's, so a saved skeleton opens as classic (settings would find no option for it).
-         */
+        /** The removed skeleton style, whose look became the classic circle's. */
+        private const val LEGACY_SKELETON = "SKELETON"
+
+        /** The style saved as [name]; a saved skeleton opens as classic. */
         fun fromName(name: String?): DayCircleStyle {
-            if (name.equals(SKELETON.name, ignoreCase = true)) return CLASSIC
+            if (name.equals(LEGACY_SKELETON, ignoreCase = true)) return CLASSIC
             return entries.firstOrNull { it.name.equals(name, ignoreCase = true) } ?: DEFAULT
         }
     }

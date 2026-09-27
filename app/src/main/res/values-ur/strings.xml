@@ -144,8 +144,6 @@
     <string name="day_circle_style_brass_desc">گھومتا ہوا پیتل کا پہیہ جس میں نماز کے گیئر پھنسے ہیں</string>
     <string name="day_circle_style_steel">رات کا فولاد</string>
     <string name="day_circle_style_steel_desc">فولادی حلقے کے اندر گھومتے نماز کے گیئر</string>
-    <string name="day_circle_style_skeleton">ڈھانچہ</string>
-    <string name="day_circle_style_skeleton_desc">مدھم گیئرز پر باریک لکیریں</string>
 
     <!-- Language Options -->
     <string name="lang_system">سسٹم ڈیفالٹ</string>

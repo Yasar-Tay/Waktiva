@@ -144,8 +144,6 @@
     <string name="day_circle_style_brass_desc">Birbirine geçen vakit dişlileriyle dönen pirinç çark</string>
     <string name="day_circle_style_steel">Gece Çeliği</string>
     <string name="day_circle_style_steel_desc">Çelik bir halkanın içinde dönen vakit dişlileri</string>
-    <string name="day_circle_style_skeleton">İskelet</string>
-    <string name="day_circle_style_skeleton_desc">Soluk bir dişli takımı üzerinde ince çizgiler</string>
 
     <!-- Language Options -->
     <string name="lang_system">Sistem Varsayılanı</string>

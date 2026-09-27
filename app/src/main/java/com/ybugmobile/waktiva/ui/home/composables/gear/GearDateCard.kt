@@ -55,8 +55,7 @@ internal class DateSide(val month: String, val day: String)
  * The date on a glass gem set at the dial's centre, cut like the prayer stones (see [GlassGemFace]),
  * in the dial's own setting:
  * - brass: set straight into the wheel's hub;
- * - steel: in a polished steel bezel with four screws;
- * - skeleton: in a gold bezel with milgrain beads.
+ * - steel: in a polished steel bezel with four screws.
  *
  * Tapping flips the gem between the Gregorian and Hijri dates; the bezel stays put.
  * [accent] is the current prayer, whose colour tints the glass; [light] is read while drawing,
@@ -89,15 +88,13 @@ internal fun GearDateCard(
             .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onFlip() },
         contentAlignment = Alignment.Center
     ) {
-        if (style != DayCircleStyle.BRASS) {
+        if (style == DayCircleStyle.STEEL) {
             Spacer(
                 Modifier
                     .fillMaxSize()
                     .drawWithCache {
                         val edge = Path().apply { addOval(Rect(size.center, size.minDimension / 2f)) }
-                        onDrawBehind {
-                            if (style == DayCircleStyle.STEEL) steelBezel(palette, light(), edge) else skeletonBezel(palette, light(), density)
-                        }
+                        onDrawBehind { steelBezel(palette, light(), edge) }
                     }
             )
         }
@@ -127,7 +124,6 @@ internal fun GearDateCard(
 /** How much of the card the flipping face covers; the rest is the fixed bezel. */
 private fun faceRatio(style: DayCircleStyle) = when (style) {
     DayCircleStyle.STEEL -> 0.84f
-    DayCircleStyle.SKELETON -> 0.86f
     else -> 1f
 }
 
@@ -213,7 +209,7 @@ private class GlassGemFace(scope: CacheDrawScope, side: DateSide, measurer: Text
         }
     }
 
-    // The lettering keeps a hint of each style: lume sans on steel, serif on brass and gold.
+    // The lettering keeps a hint of each style: lume sans on steel, serif on brass.
     private val family = if (style == DayCircleStyle.STEEL) IBMPlexArabic else FontFamily.Serif
     private val monthText = with(scope) {
         fitted(
@@ -330,11 +326,11 @@ private fun DrawScope.steelBezel(palette: GearPalette, light: GearLight, edge: P
 }
 
 // ---------------------------------------------------------------------------
-// Skeleton: the gem's gold bezel
+// Classic: the date card's gold bezel
 // ---------------------------------------------------------------------------
 
-/** The crystal's fixed bezel: a hollow gold GemStone ring around the day card. */
-internal fun DrawScope.skeletonBezel(palette: GearPalette, light: GearLight, dp: Float) {
+/** The classic circle's fixed bezel: a hollow gold ring around the round glass date card. */
+internal fun DrawScope.goldBezel(palette: GearPalette, light: GearLight, dp: Float) {
     val r = size.minDimension / 2f
     val ri = r * 0.86f
     val ringPath = annulus(center, r, ri)

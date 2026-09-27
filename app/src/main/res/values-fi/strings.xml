@@ -144,8 +144,6 @@
     <string name="day_circle_style_brass_desc">Pyörivä messinkiratas ja siihen tarttuvat rukoushammaspyörät</string>
     <string name="day_circle_style_steel">Yöteräs</string>
     <string name="day_circle_style_steel_desc">Rukoushammaspyörät pyörivät teräsrenkaan sisällä</string>
-    <string name="day_circle_style_skeleton">Luuranko</string>
-    <string name="day_circle_style_skeleton_desc">Ohuet viivat haalean hammaspyörästön päällä</string>
 
     <!-- Language Options -->
     <string name="lang_system">Järjestelmän oletus</string>
