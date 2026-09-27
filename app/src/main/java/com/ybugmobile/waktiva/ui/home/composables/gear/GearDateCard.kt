@@ -46,6 +46,7 @@ import com.ybugmobile.waktiva.domain.model.HijriUtils
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import java.time.format.DateTimeFormatter
+import kotlin.math.max
 
 /** One side of the date card: the month's short name and the day of the month. */
 internal class DateSide(val month: String, val day: String)
@@ -95,7 +96,7 @@ internal fun GearDateCard(
                     .drawWithCache {
                         val edge = Path().apply { addOval(Rect(size.center, size.minDimension / 2f)) }
                         onDrawBehind {
-                            if (style == DayCircleStyle.STEEL) steelBezel(palette, light(), edge) else skeletonBezel(palette, light(), edge)
+                            if (style == DayCircleStyle.STEEL) steelBezel(palette, light(), edge) else skeletonBezel(palette, light(), density)
                         }
                     }
             )
@@ -332,22 +333,28 @@ private fun DrawScope.steelBezel(palette: GearPalette, light: GearLight, edge: P
 // Skeleton: the gem's gold bezel
 // ---------------------------------------------------------------------------
 
-/** The crystal's fixed bezel: gold with a ring of milgrain beads, like the prayer stones. [edge] is its outline. */
-private fun DrawScope.skeletonBezel(palette: GearPalette, light: GearLight, edge: Path) {
+/** The crystal's fixed bezel: a hollow gold GemStone ring around the day card. */
+internal fun DrawScope.skeletonBezel(palette: GearPalette, light: GearLight, dp: Float) {
     val r = size.minDimension / 2f
     val ri = r * 0.86f
-    val dp = density
-    translate(-light.towards.x * 2f * dp, -light.towards.y * 2f * dp) { drawCircle(Color.Black.copy(alpha = 0.3f), r + dp, center) }
-    drawCircle(palette.brassSheen.brush(center, light), r, center)
-    bevel(edge, center, r, light, dp)
+    val ringPath = annulus(center, r, ri)
+
+    // Elevation drop shadow for the ring frame
+    elevation(ringPath, 1.5f * dp, light, pivot = center)
+
+    // Polished gold ring body (hollow in the middle)
+    drawPath(ringPath, palette.brassSheen.brush(center, light))
+
+    // Bevel outer & inner edges
+    val outerEdge = Path().apply { addOval(Rect(center, r)) }
+    bevel(outerEdge, center, r, light, max(0.8f * dp, r * 0.08f))
     holeBevel(center, ri, light, dp)
+
+    // Sleek dark & gold hairline borders framing the ring
     drawCircle(Color(0xBF3C280A), r, center, style = Stroke(0.8f * dp))
-    val bead = palette.tone(Color(0xFFE9CF8A))
-    for (k in 0 until 28) {
-        val at = pointOn(center, (r + ri) / 2f, k * TAU / 28)
-        drawCircle(bead, (r - ri) * 0.32f, at)
-        drawCircle(Color.White.copy(alpha = 0.6f), (r - ri) * 0.12f, at + light.towards * (0.6f * dp))
-    }
+    drawCircle(Color(0xB33C280A), ri, center, style = Stroke(0.8f * dp))
+    drawCircle(palette.tone(Color(0x66FFF1C8)), r - 0.5f * dp, center, style = Stroke(0.5f * dp))
+    drawCircle(palette.tone(Color(0x66FFF1C8)), ri + 0.5f * dp, center, style = Stroke(0.5f * dp))
 }
 
 // ---------------------------------------------------------------------------

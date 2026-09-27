@@ -1,7 +1,6 @@
 package com.ybugmobile.waktiva.ui.home.composables
 
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,7 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalContext
@@ -25,14 +24,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.domain.model.HijriUtils
 import com.ybugmobile.waktiva.domain.model.PrayerDay
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
+import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 /**
- * An interactive calendar component that flips between Gregorian and Hijri dates.
- * Features 3D-like rotation animations, temporal "sheen" effects, and contextual color matching.
+ * An interactive round liquid glass calendar component that flips between Gregorian and Hijri dates.
+ * Features liquid glass material with bright emphasis glow, 3D-like rotation animations,
+ * temporal "sheen" effects, and contextual active prayer color matching.
  *
  * @param day The prayer day data containing both Gregorian and Hijri information.
  * @param isHijriVisible Current flip state (true for Hijri side).
@@ -40,7 +42,7 @@ import java.util.Locale
  * @param contentColor Base color for text.
  * @param accentColor Primary color used for the card's header (derived from active prayer).
  * @param currentTime Current system time used for subtle temporal animations.
- * @param isSelectedDayToday Flag to apply pulsing effects if focused on today.
+ * @param isSelectedDayToday Flag to apply pulsing effects and brightness glow if focused on today.
  * @param pulseScale Current animated scale value for the container.
  * @param modifier Root layout modifier.
  */
@@ -82,9 +84,10 @@ fun FlippableCalendarCard(
     val dayFormatter = remember { DateTimeFormatter.ofPattern("dd") }
     val monthFormatter = remember { DateTimeFormatter.ofPattern("MMM") }
 
+    val cardModifier = if (modifier == Modifier) Modifier.size(100.dp) else modifier
+
     Box(
-        modifier = modifier
-            .size(100.dp) 
+        modifier = cardModifier
             .graphicsLayer {
                 // Apply external pulsing scale if today
                 scaleX = if (isSelectedDayToday) pulseScale else 1f
@@ -99,7 +102,7 @@ fun FlippableCalendarCard(
         // Rotatable Card Core
         Box(
             modifier = Modifier
-                .fillMaxSize(0.85f)
+                .fillMaxSize()
                 .graphicsLayer {
                     rotationY = rotation
                     cameraDistance = 12f * density // Enhance 3D effect depth
@@ -112,7 +115,8 @@ fun FlippableCalendarCard(
                     bottomText = day.date.format(monthFormatter).uppercase(Locale.getDefault()),
                     isBack = false,
                     accentColor = accentColor,
-                    timeAngle = timeAngle
+                    timeAngle = timeAngle,
+                    isSelectedDayToday = isSelectedDayToday
                 )
             } else {
                 // Back Side: Hijri
@@ -130,7 +134,8 @@ fun FlippableCalendarCard(
                     bottomText = displayMonth.uppercase(Locale.getDefault()),
                     isBack = true,
                     accentColor = accentColor,
-                    timeAngle = timeAngle
+                    timeAngle = timeAngle,
+                    isSelectedDayToday = isSelectedDayToday
                 )
             }
         }
@@ -138,7 +143,8 @@ fun FlippableCalendarCard(
 }
 
 /**
- * Represents a single face of the [FlippableCalendarCard].
+ * Represents a single face of the round [FlippableCalendarCard] with liquid glass theme styling
+ * and ModernCalendar selected day brightness glow.
  */
 @Composable
 private fun CalendarSide(
@@ -146,93 +152,102 @@ private fun CalendarSide(
     bottomText: String,
     isBack: Boolean,
     accentColor: Color,
-    timeAngle: Float
+    timeAngle: Float,
+    isSelectedDayToday: Boolean
 ) {
+    val glassTheme = LocalGlassTheme.current
+    val cardShape = CircleShape
+
+    // Glass emphasis animation matching ModernCalendar's selected day card brightness
+    val glassEmphasis by animateFloatAsState(
+        targetValue = if (isSelectedDayToday) 1.0f else 0.6f,
+        label = "glassEmphasis"
+    )
+
     // Dynamic contrast adjustment for the header text
     val headerTextColor = remember(accentColor) {
         if (accentColor.luminance() > 0.5f) Color(0xFF1C1C1E) else Color.White
     }
 
-    Surface(
+    GlassSurface(
         modifier = Modifier
             .fillMaxSize()
             .graphicsLayer { if (isBack) rotationY = 180f },
-        color = Color.White.copy(alpha = 0.08f), 
-        shape = RoundedCornerShape(28.dp), 
-        border = BorderStroke(
-            width = 0.6.dp, 
-            brush = Brush.sweepGradient(
-                0.0f to Color.White.copy(alpha = 0.1f),
-                0.5f to Color.White.copy(alpha = 0.6f),
-                1.0f to Color.White.copy(alpha = 0.1f),
-            ) 
-        ),
-        shadowElevation = 0.dp
+        shape = cardShape,
+        glass = glassTheme,
+        emphasis = glassEmphasis,
+        accent = accentColor.copy(alpha = if (isSelectedDayToday) 0.65f else 0.35f)
     ) {
-        Column(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .drawBehind {
-                    // "Temporal Sheen": A subtle reflection that passes across the card surface
-                    rotate(timeAngle + 45f) {
-                        drawRect(
-                            brush = Brush.verticalGradient(
-                                listOf(Color.Transparent, Color.White.copy(alpha = 0.04f), Color.Transparent)
-                            ),
-                            size = size * 2.5f
-                        )
+                .drawWithCache {
+                    onDrawBehind {
+                        // "Temporal Sheen": A subtle reflection that passes across the card surface
+                        rotate(timeAngle + 45f) {
+                            drawRect(
+                                brush = Brush.verticalGradient(
+                                    listOf(Color.Transparent, Color.White.copy(alpha = 0.06f), Color.Transparent)
+                                ),
+                                size = size * 2.5f
+                            )
+                        }
                     }
                 },
-            horizontalAlignment = Alignment.CenterHorizontally
+            contentAlignment = Alignment.Center
         ) {
-            // Month Label (Solid header bar with gradient)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            listOf(accentColor.copy(alpha = 0.95f), accentColor.copy(alpha = 0.85f))
-                        )
-                    )
-                    .padding(vertical = 6.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = bottomText,
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.1.sp,
-                        fontSize = 11.sp 
-                    ),
-                    color = headerTextColor,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            val innerInset = minOf(this.maxWidth, this.maxHeight) * 0.15f
 
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerInset),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
+                // Top Month Header (Pill-shaped accent badge fitting in the upper curve)
+                Box(
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            brush = Brush.verticalGradient(
+                                listOf(accentColor.copy(alpha = 0.95f), accentColor.copy(alpha = 0.82f))
+                            )
+                        )
+                        .padding(horizontal = 8.dp, vertical = 3.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = bottomText,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.1.sp,
+                            fontSize = 9.5.sp
+                        ),
+                        color = headerTextColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
                 // Day Number - Central large text
                 Text(
                     text = topText,
                     style = MaterialTheme.typography.displayLarge.copy(
-                        fontSize = 34.sp, 
+                        fontSize = 28.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = IBMPlexArabic,
                         letterSpacing = (-1).sp,
-                        lineHeight = 34.sp 
+                        lineHeight = 28.sp
                     ),
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.offset(y = (-2).dp) 
+                    color = glassTheme.contentColor,
+                    textAlign = TextAlign.Center
                 )
-                
-                // Active status dot with a minimal pulse
+
+                // Active status dot
                 val dotAlpha by animateFloatAsState(
-                    targetValue = if (topText.isNotEmpty()) 0.4f else 0.1f,
+                    targetValue = if (topText.isNotEmpty()) 0.5f else 0.1f,
                     animationSpec = infiniteRepeatable(
                         animation = tween(2000, easing = EaseInOutSine),
                         repeatMode = RepeatMode.Reverse
@@ -242,10 +257,10 @@ private fun CalendarSide(
 
                 Box(
                     modifier = Modifier
-                        .padding(top = 0.dp)
-                        .size(3.5.dp)
+                        .padding(bottom = 2.dp)
+                        .size(3.dp)
                         .clip(CircleShape)
-                        .background(Color.White.copy(alpha = dotAlpha))
+                        .background(glassTheme.contentColor.copy(alpha = dotAlpha))
                 )
             }
         }

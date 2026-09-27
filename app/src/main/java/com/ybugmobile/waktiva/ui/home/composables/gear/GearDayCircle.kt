@@ -65,6 +65,7 @@ import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.provider.ReligiousDaysProvider
 import com.ybugmobile.waktiva.ui.home.composables.CurrentPrayerHeader
+import com.ybugmobile.waktiva.ui.home.composables.FlippableCalendarCard
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import kotlinx.coroutines.delay
@@ -212,20 +213,54 @@ internal fun GearDayCircle(
             compact = isLandscape
         )
 
-        // The date in the dial's own material: brass and skeleton fill their hub, steel has a sub-dial.
-        GearDateCard(
-            style = style,
-            day = day,
-            isHijriVisible = isHijriVisible,
-            onFlip = onToggleHijri,
-            accent = current,
-            palette = palette,
-            light = { GearLight(lightAngle.value) },
-            diameter = with(density) { (dial.dateRadius * 2).toDp() } - 2.dp,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .zIndex(5f)
-        )
+        // The date in the dial's own material: brass and steel have their material sub-dials, skeleton uses round FlippableCalendarCard inside a GemStone gold bezel.
+        val hubDiameter = with(density) { (dial.dateRadius * 2).toDp() }
+        if (style == DayCircleStyle.SKELETON) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(hubDiameter)
+                    .zIndex(5f),
+                contentAlignment = Alignment.Center
+            ) {
+                // Fixed GemStone gold bezel around the central date hub
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .drawWithCache {
+                            onDrawBehind {
+                                skeletonBezel(palette, GearLight(lightAngle.value), density.density)
+                            }
+                        }
+                )
+                // Round FlippableCalendarCard filling the entire GemStone ring
+                FlippableCalendarCard(
+                    day = day,
+                    isHijriVisible = isHijriVisible,
+                    onFlip = onToggleHijri,
+                    contentColor = contentColor,
+                    accentColor = current.color,
+                    currentTime = currentTime,
+                    isSelectedDayToday = isSelectedDayToday,
+                    pulseScale = 1f,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        } else {
+            GearDateCard(
+                style = style,
+                day = day,
+                isHijriVisible = isHijriVisible,
+                onFlip = onToggleHijri,
+                accent = current,
+                palette = palette,
+                light = { GearLight(lightAngle.value) },
+                diameter = hubDiameter - 2.dp,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .zIndex(5f)
+            )
+        }
 
         // The prayer name sits just above the ring around the date.
         val headerOffset = -(with(density) { dial.hubOuterRadius.toDp() } + 18.dp)
