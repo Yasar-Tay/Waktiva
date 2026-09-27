@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.withTransform
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
@@ -81,6 +83,27 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
     }
     private val spokes = Path().apply { spokeList.forEach { addPath(it.outline) } }
 
+    private class TrainGear(val center: Offset, val radius: Float, val teeth: Int, val outline: Path)
+
+    private val angle12 = 0.55f
+    private val angle23 = -0.9f
+    private val angle45 = 3.6f
+    private val train: List<TrainGear> = run {
+        val pitchUnit = TAU * 0.20f / 36 // in units of the canvas size
+        fun radius(teeth: Int) = teeth * pitchUnit / TAU * s
+        fun gear(center: Offset, teeth: Int) =
+            TrainGear(center, radius(teeth), teeth, Path().apply { addGearOutline(this, Offset.Zero, radius(teeth), teeth) })
+        fun next(from: TrainGear, angle: Float, teeth: Int) =
+            gear(pointOn(from.center, from.radius + radius(teeth), angle), teeth)
+
+        val g1 = gear(Offset(0.20f * s, 0.22f * s), 36)
+        val g2 = next(g1, angle12, 20)
+        val g3 = next(g2, angle23, 14)
+        val g4 = gear(Offset(0.84f * s, 0.84f * s), 32)
+        val g5 = next(g4, angle45, 12)
+        listOf(g1, g2, g3, g4, g5)
+    }
+
     private val hub = annulus(c, hubOut, hubIn)
     private val hubEdge = Path().apply { addOval(Rect(c, hubOut)) }
     private val planetPath = planetOutline(rPlanet)
@@ -90,6 +113,9 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
     override fun draw(scope: DrawScope, frame: GearFrame) = with(scope) {
         val palette = frame.palette
         val light = frame.light
+        val hair = Stroke(dp)
+        drawTrain(frame, hair)
+
         val wheelRot = frame.direction * (frame.dayTurn + frame.phase)
         // The wheel is drawn in its turning frame; turning the light back keeps it fixed on screen.
         val wheelLight = GearLight(light.angle - wheelRot)
@@ -170,6 +196,39 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
                 val theta = dayAngle(p.minutes, frame.rtl)
                 planetFace(p, pointOn(c, r + rPlanet, theta), rPlanet, light, dp, isCurrent = p.type == frame.current.type)
                 timeLabel(frame, p.label, pointOn(c, labelRing, theta))
+            }
+        }
+    }
+
+    /**
+     * The faint background train. It is laid out left-to-right; in RTL it is drawn flipped,
+     * which mirrors both its position and its spin, so rotations are always computed for LTR.
+     * Integer multiples of the phase keep every gear seamless when the phase loops.
+     */
+    private fun DrawScope.drawTrain(frame: GearFrame, hair: Stroke) {
+        val r1 = 2 * frame.phase + 2 * frame.dayTurn
+        val r2 = meshExternal(r1, train[0].teeth, angle12, train[1].teeth)
+        val r3 = meshExternal(r2, train[1].teeth, angle23, train[2].teeth)
+        val r4 = -frame.phase
+        val r5 = meshExternal(r4, train[3].teeth, angle45, train[4].teeth)
+        val trainColor = frame.palette.gold.copy(alpha = 0.13f)
+
+        scale(scaleX = frame.direction, scaleY = 1f, pivot = c) {
+            listOf(r1, r2, r3, r4, r5).forEachIndexed { i, rotation ->
+                val g = train[i]
+                withTransform({
+                    translate(g.center.x, g.center.y)
+                    rotate(rotation.toDegrees(), Offset.Zero)
+                }) {
+                    drawPath(g.outline, trainColor, style = hair)
+                    drawCircle(trainColor, g.radius * 0.78f, Offset.Zero, style = hair)
+                    drawCircle(trainColor, g.radius * 0.16f, Offset.Zero, style = hair)
+                    val spokeCount = if (g.teeth > 20) 5 else 4
+                    for (k in 0 until spokeCount) {
+                        val a = k * TAU / spokeCount
+                        drawLine(trainColor, pointOn(Offset.Zero, g.radius * 0.16f, a), pointOn(Offset.Zero, g.radius * 0.78f, a), dp)
+                    }
+                }
             }
         }
     }
