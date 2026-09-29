@@ -17,6 +17,7 @@ import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.model.WeatherInfo
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,7 @@ import kotlinx.coroutines.withContext
 import org.shredzone.commons.suncalc.MoonIllumination
 import org.shredzone.commons.suncalc.MoonPosition
 import org.shredzone.commons.suncalc.MoonTimes
+import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -191,14 +193,18 @@ class PrayerRepositoryImpl @Inject constructor(
         month: Int,
         latitude: Double?,
         longitude: Double?,
-        method: Int
+        method: Int,
+        force: Boolean
     ): Result<Unit> {
         if (latitude == null || longitude == null) {
             return Result.failure(Exception("Location is required for fetching prayer times"))
         }
 
         val yearMonth = "$year-${month.toString().padStart(2, '0')}"
-        val cachedParams = settingsManager.getFetchParams(yearMonth)
+        val storedParams = settingsManager.getFetchParams(yearMonth)
+        // A month filled by the local fallback is marked, so the API is tried again next time.
+        val isLocalFallback = storedParams?.endsWith(LOCAL_FALLBACK_MARKER) == true
+        val cachedParams = storedParams?.removeSuffix(LOCAL_FALLBACK_MARKER)
         val currentParams = if (method == 13) {
             compatibleMethod13FetchParams(cachedParams, latitude, longitude)
                 ?: buildFetchParams(latitude, longitude, method, ZoneId.systemDefault())
@@ -209,45 +215,46 @@ class PrayerRepositoryImpl @Inject constructor(
 
         if (!inFlightRequests.add(inFlightKey)) return Result.success(Unit)
 
+        var hasMatchingCache = false
         return try {
             val expectedDayCount = YearMonth.of(year, month).lengthOfMonth()
             val cachedDayCount = dao.getCountForYearMonth(yearMonth)
-            val hasCompleteMonthCache = cachedDayCount >= expectedDayCount
+            hasMatchingCache = cachedParams == currentParams && cachedDayCount >= expectedDayCount
 
-            if (cachedParams == currentParams && hasCompleteMonthCache) {
+            if (hasMatchingCache && !isLocalFallback && !force) {
                 return Result.success(Unit)
             }
 
-            dao.deletePrayerDaysForYearMonth(yearMonth)
-
             val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method)
-            if (response.code == 200) {
-                val resolvedZoneId = if (method == 13) {
-                    resolveApiZoneId(response.data)
-                } else {
-                    ZoneId.systemDefault()
-                }
-                var entities = response.data.map { it.toEntity() }
-                if (method == 13) {
-                    entities = applyDiyanetCorrection(
-                        entities = entities,
-                        year = year,
-                        month = month,
-                        latitude = latitude,
-                        longitude = longitude,
-                        zoneId = resolvedZoneId
-                    )
-                }
-                dao.insertPrayerDays(entities)
-                settingsManager.saveFetchParams(
-                    yearMonth,
-                    buildFetchParams(latitude, longitude, method, resolvedZoneId)
-                )
-                Result.success(Unit)
+            if (response.code != 200) throw IOException("Aladhan API error ${response.code}")
+
+            val resolvedZoneId = if (method == 13) {
+                resolveApiZoneId(response.data)
             } else {
-                Result.failure(Exception("Aladhan API Error"))
+                ZoneId.systemDefault()
             }
+            var entities = response.data.map { it.toEntity() }
+            if (method == 13) {
+                entities = applyDiyanetCorrection(
+                    entities = entities,
+                    year = year,
+                    month = month,
+                    latitude = latitude,
+                    longitude = longitude,
+                    zoneId = resolvedZoneId
+                )
+            }
+            dao.replacePrayerDaysForYearMonth(yearMonth, entities)
+            settingsManager.saveFetchParams(
+                yearMonth,
+                buildFetchParams(latitude, longitude, method, resolvedZoneId)
+            )
+            Result.success(Unit)
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            // The month is already cached for these parameters: keep it rather than
+            // replacing it with a local calculation.
+            if (hasMatchingCache) return Result.success(Unit)
             try {
                 val fallbackZoneId = ZoneId.systemDefault()
                 val localEntities = calculateMonthlyPrayerTimesOffMain(
@@ -258,10 +265,10 @@ class PrayerRepositoryImpl @Inject constructor(
                     methodId = method,
                     zoneId = fallbackZoneId
                 )
-                dao.insertPrayerDays(localEntities)
+                dao.replacePrayerDaysForYearMonth(yearMonth, localEntities)
                 settingsManager.saveFetchParams(
                     yearMonth,
-                    buildFetchParams(latitude, longitude, method, fallbackZoneId)
+                    buildFetchParams(latitude, longitude, method, fallbackZoneId) + LOCAL_FALLBACK_MARKER
                 )
                 Result.success(Unit)
             } catch (localEx: Exception) {
@@ -502,5 +509,10 @@ class PrayerRepositoryImpl @Inject constructor(
                 )
             }
         )
+    }
+
+    private companion object {
+        /** Appended to a month's fetch params when its times came from the local calculator. */
+        const val LOCAL_FALLBACK_MARKER = "|local"
     }
 }

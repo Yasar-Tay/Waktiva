@@ -49,6 +49,7 @@ interface PrayerRepository {
      * @param latitude User's current latitude.
      * @param longitude User's current longitude.
      * @param method The numerical ID of the calculation method (e.g., Diyanet, MWL).
+     * @param force Fetch from the API even when the month is already cached for these parameters.
      * @return A [Result] indicating success or containing an error.
      */
     suspend fun refreshPrayerTimes(
@@ -56,7 +57,8 @@ interface PrayerRepository {
         month: Int,
         latitude: Double?,
         longitude: Double?,
-        method: Int
+        method: Int,
+        force: Boolean = false
     ): Result<Unit>
     
     /**

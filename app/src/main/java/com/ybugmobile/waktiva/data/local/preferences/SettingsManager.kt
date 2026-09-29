@@ -368,7 +368,8 @@ class SettingsManager @Inject constructor(
 
     /**
      * Persists [params] as the last-known fetch state for [yearMonth].
-     * [params] is expected to be "$latRounded|$lngRounded|$method".
+     * [params] is expected to be "$latRounded|$lngRounded|$method", with "|local" appended
+     * when the month was calculated on the device because the API failed.
      */
     suspend fun saveFetchParams(yearMonth: String, params: String) {
         context.dataStore.edit { it[fetchParamKey(yearMonth)] = params }

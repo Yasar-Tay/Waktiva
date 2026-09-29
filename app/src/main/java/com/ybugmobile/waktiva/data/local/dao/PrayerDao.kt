@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -30,6 +31,13 @@ interface PrayerDao {
     /** Deletes all prayer days for a given year-month (e.g. "2026-05"). */
     @Query("DELETE FROM prayer_days WHERE date LIKE :yearMonth || '%'")
     suspend fun deletePrayerDaysForYearMonth(yearMonth: String)
+
+    /** Replaces a year-month's days in one transaction, so observers never see the month empty. */
+    @Transaction
+    suspend fun replacePrayerDaysForYearMonth(yearMonth: String, prayerDays: List<PrayerDayEntity>) {
+        deletePrayerDaysForYearMonth(yearMonth)
+        insertPrayerDays(prayerDays)
+    }
 
     /** One-shot (non-Flow) snapshot of all stored prayer days. */
     @Query("SELECT * FROM prayer_days ORDER BY date ASC")
