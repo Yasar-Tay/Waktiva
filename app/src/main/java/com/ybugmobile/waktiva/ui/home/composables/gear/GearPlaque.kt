@@ -34,8 +34,9 @@ import kotlin.math.max
 
 /**
  * Shown in place of a tapped prayer marker: a plate in the dial's material with the prayer's
- * gear as a medallion, the prayer name and a larger time. Replaces the glass pill
- * (InfoGlassCard) that the classic circle uses.
+ * gear as a medallion, the prayer name and a larger time, and when known the weather in the
+ * prayer's hour ([weather]: its name and temperature) set off by an engraved line. Replaces the
+ * glass pill (InfoGlassCard) that the classic circle uses.
  */
 @Composable
 internal fun GearPlaque(
@@ -45,7 +46,8 @@ internal fun GearPlaque(
     palette: GearPalette,
     phase: State<Float>,
     compact: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    weather: Pair<String, String?>? = null
 ) {
     val finish = palette.finish(style)
     val height = if (compact) 36.dp else 42.dp
@@ -85,7 +87,7 @@ internal fun GearPlaque(
                 ),
                 maxLines = 1
             )
-            Text(
+                Text(
                 text = prayer.label,
                 style = TextStyle(
                     color = finish.strongInk,
@@ -96,6 +98,44 @@ internal fun GearPlaque(
                 ),
                 maxLines = 1
             )
+        }
+        weather?.let { (name, temperature) ->
+            // An engraved line, then the weather set like the name and the time.
+            Spacer(Modifier.width(height * 0.24f))
+            Spacer(
+                Modifier
+                    .width(1.dp)
+                    .height(height * 0.55f)
+                    .drawBehind {
+                        drawRect(finish.ink.copy(alpha = 0.35f))
+                        drawRect(Color.White.copy(alpha = 0.3f), topLeft = Offset(size.width, 0f), size = size)
+                    }
+            )
+            Spacer(Modifier.width(height * 0.24f))
+            Column(verticalArrangement = Arrangement.spacedBy((-2).dp)) {
+                Text(
+                    text = name,
+                    style = TextStyle(
+                        color = finish.ink,
+                        fontSize = if (compact) 8.sp else 9.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.5.sp,
+                        shadow = engraving
+                    ),
+                    maxLines = 1
+                )
+                Text(
+                    text = temperature.orEmpty(),
+                    style = TextStyle(
+                        color = finish.strongInk,
+                        fontSize = if (compact) 14.sp else 16.sp,
+                        fontFamily = IBMPlexArabic,
+                        fontWeight = FontWeight.SemiBold,
+                        shadow = engraving
+                    ),
+                    maxLines = 1
+                )
+            }
         }
     }
 }

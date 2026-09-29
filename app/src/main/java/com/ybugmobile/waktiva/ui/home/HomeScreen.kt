@@ -358,6 +358,15 @@ fun HomeScreenContent(
                 val logDay = state.currentPrayerDay
                 val logType = loggingPrayer
                 if (logType != null && logDay != null && isPrayerLogEnabled) {
+                    // The weather in the prayer's hour, as the day circle shows it.
+                    val logWeather = prayerWeather(
+                        day = logDay,
+                        weather = DayCircleWeather(state.dayForecast, state.weatherCondition, state.weatherEffectCondition, effectsOn = true),
+                        now = state.currentTime.toLocalTime(),
+                        currentPrayer = state.currentPrayer?.type
+                    )[logType]?.let { w ->
+                        listOfNotNull(context.getString(w.condition.nameRes), w.temperature?.degrees()).joinToString(" · ")
+                    }
                     PrayerLogSheet(
                         type = logType,
                         day = logDay,
@@ -366,7 +375,8 @@ fun HomeScreenContent(
                         isPrayed = prayedToday?.contains(logType) == true,
                         onPrayedChange = { onSetPrayed(logDay.date, logType, it) },
                         onOpenLog = onOpenPrayerLog,
-                        onDismiss = { loggingPrayer = null }
+                        onDismiss = { loggingPrayer = null },
+                        weather = logWeather
                     )
                 }
 

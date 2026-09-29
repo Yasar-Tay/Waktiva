@@ -1,6 +1,7 @@
 package com.ybugmobile.waktiva.ui.home
 
 import com.ybugmobile.waktiva.domain.model.CurrentPrayer
+import com.ybugmobile.waktiva.domain.model.DayForecast
 import com.ybugmobile.waktiva.domain.model.HijriData
 import com.ybugmobile.waktiva.domain.model.MoonPhase
 import com.ybugmobile.waktiva.domain.model.NextPrayer
@@ -35,5 +36,7 @@ data class HomeViewState(
     // Weather state
     val weatherCondition: WeatherCondition = WeatherCondition.UNKNOWN,
     val weatherEffectCondition: WeatherCondition = WeatherCondition.UNKNOWN,
-    val temperature: Double? = null
+    val temperature: Double? = null,
+    /** The selected day's hourly forecast, or null when there is none for it. */
+    val dayForecast: DayForecast? = null
 )

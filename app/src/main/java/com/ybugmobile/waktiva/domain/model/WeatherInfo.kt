@@ -6,5 +6,7 @@ data class WeatherInfo(
     val isDay: Boolean,
     val precipitationMillimeters: Double = 0.0,
     val cloudCoverPercent: Int = 0,
-    val effectCondition: WeatherCondition = condition
+    val effectCondition: WeatherCondition = condition,
+    /** The coming days' forecasts, today first; empty when there is none. */
+    val forecast: List<DayForecast> = emptyList()
 )

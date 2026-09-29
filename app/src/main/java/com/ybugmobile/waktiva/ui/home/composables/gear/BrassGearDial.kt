@@ -38,6 +38,9 @@ internal class BrassGearDial(private val s: Float, private val dp: Float, labelR
     override val markerRadius = rPlanet + gearAddendum(rPlanet, PLANET_TEETH)
     override val dateRadius = hubIn
     override val hubOuterRadius = hubOut
+    override val labelRadius = labelRing
+    // The sky shows between the spokes, up to the rim's inner edge.
+    override val skyRadius = bandIn + dp
     // The bridge hugs the hub so it keeps a readable thickness inside the ring of time labels.
     override val bridge = BridgeSpec(innerRadius = hubOut + 5 * dp, freeRadius = labelRing - labelReach, maxSpan = 2.3f)
 

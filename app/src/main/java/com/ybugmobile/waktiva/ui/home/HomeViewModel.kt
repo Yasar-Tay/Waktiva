@@ -18,6 +18,7 @@ import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.waktiva.data.location.LocationWrapper
 import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.CurrentPrayer
+import com.ybugmobile.waktiva.domain.model.DayForecast
 import com.ybugmobile.waktiva.domain.model.HijriUtils
 import com.ybugmobile.waktiva.domain.model.MoonPhase
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
@@ -91,6 +92,7 @@ class HomeViewModel @Inject constructor(
     private val _weatherCondition = MutableStateFlow(WeatherCondition.UNKNOWN)
     private val _weatherEffectCondition = MutableStateFlow(WeatherCondition.UNKNOWN)
     private val _temperature = MutableStateFlow<Double?>(null)
+    private val _forecast = MutableStateFlow<List<DayForecast>>(emptyList())
     private var weatherRefreshJob: Job? = null
     private var lastWeatherFetchTime = 0L
     private val weatherFetchCooldownMs = 5 * 60 * 1000L // 5 minutes
@@ -252,6 +254,7 @@ class HomeViewModel @Inject constructor(
                     _weatherCondition.value = info.condition
                     _weatherEffectCondition.value = info.effectCondition
                     _temperature.value = info.temperature
+                    _forecast.value = info.forecast
                 }
                 .onFailure { error ->
                     Log.w("HomeViewModel", "Weather refresh failed", error)
@@ -323,7 +326,7 @@ class HomeViewModel @Inject constructor(
         nextPrayerInfo, currentPrayerInfo, isRefreshing, 
         _isNetworkAvailable, _isLocationEnabled, _isLocationPermissionGranted, _hasSystemIssues,
         _weatherCondition, _weatherEffectCondition, _temperature,
-        settings, _isAdhanPlaying, _playingPrayerName, allPrayerDays
+        settings, _isAdhanPlaying, _playingPrayerName, allPrayerDays, _forecast
     ) { args ->
         val date = args[0] as LocalDate
         val time = args[1] as LocalDateTime
@@ -343,6 +346,8 @@ class HomeViewModel @Inject constructor(
         val playing = args[15] as Boolean
         val prayerName = args[16] as? String
         val allDaysList = args[17] as List<PrayerDay>
+        @Suppress("UNCHECKED_CAST")
+        val forecast = args[18] as List<DayForecast>
         
         // If the immediate next event is SUNRISE (which has no adhan),
         // we check the mute state for DHUHR instead, as the button targets it.
@@ -379,7 +384,8 @@ class HomeViewModel @Inject constructor(
             hasSystemIssues = issues,
             weatherCondition = weather,
             weatherEffectCondition = weatherEffect,
-            temperature = temp
+            temperature = temp,
+            dayForecast = forecast.find { it.date == date }
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState(isLoading = true))
 

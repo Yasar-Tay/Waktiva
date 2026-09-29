@@ -57,6 +57,15 @@ fun HomePortraitContent(
 ) {
     // Optimization: Filter and memoize available days to prevent redundant calculations during scrolls
     val isToday = remember(state.selectedDate) { state.selectedDate == LocalDate.now() }
+    // The selected day's weather for the day circle; the sky inside it follows the weather effects setting.
+    val circleWeather = remember(state.dayForecast, state.weatherCondition, state.weatherEffectCondition, settings?.showWeatherEffects) {
+        DayCircleWeather(
+            forecast = state.dayForecast,
+            nowCondition = state.weatherCondition,
+            nowEffect = state.weatherEffectCondition,
+            effectsOn = settings?.showWeatherEffects == true
+        )
+    }
     val screenHeightDp = LocalConfiguration.current.screenHeightDp
     val screenWidthDp = LocalConfiguration.current.screenWidthDp
     val availableDays = remember(allDays) { allDays.filter { !it.date.isBefore(LocalDate.now()) } }
@@ -141,7 +150,8 @@ fun HomePortraitContent(
                                 contentColor = contentColor,
                                 sunLight = sunLight,
                                 prayedPrayers = prayedToday,
-                                onLogPrayer = onLogPrayer
+                                onLogPrayer = onLogPrayer,
+                                weather = circleWeather
                             )
                         }
                     }

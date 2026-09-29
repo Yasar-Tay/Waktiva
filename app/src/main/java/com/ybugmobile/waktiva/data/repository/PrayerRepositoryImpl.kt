@@ -6,6 +6,7 @@ import com.ybugmobile.waktiva.data.local.LocalPrayerCalculator
 import com.ybugmobile.waktiva.data.local.dao.PrayerDao
 import com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
+import com.ybugmobile.waktiva.data.mapper.toDayForecast
 import com.ybugmobile.waktiva.data.remote.AladhanApiService
 import com.ybugmobile.waktiva.data.remote.WeatherApiService
 import com.ybugmobile.waktiva.data.remote.dto.PrayerDayDto
@@ -106,7 +107,7 @@ class PrayerRepositoryImpl @Inject constructor(
             val coordinateQuery = String.format(Locale.US, "%.6f,%.6f", latitude, longitude)
             val namedResponse = locationName
                 ?.takeIf { it.isNotBlank() }
-                ?.let { weatherApi.getCurrentWeather(it) }
+                ?.let { weatherApi.getForecast(it) }
 
             val response = if (
                 namedResponse != null && locationsAreNear(
@@ -118,7 +119,7 @@ class PrayerRepositoryImpl @Inject constructor(
             ) {
                 namedResponse
             } else {
-                weatherApi.getCurrentWeather(coordinateQuery)
+                weatherApi.getForecast(coordinateQuery)
             }
             val reportedCondition = WeatherCondition.fromWeatherApiCode(
                 response.current.condition.code
@@ -133,7 +134,8 @@ class PrayerRepositoryImpl @Inject constructor(
                     reportedCondition = reportedCondition,
                     precipitationMillimeters = response.current.precipitationMillimeters,
                     cloudCoverPercent = response.current.cloudCoverPercent
-                )
+                ),
+                forecast = response.forecast?.days.orEmpty().mapNotNull { it.toDayForecast() }
             )
             Result.success(info)
         } catch (e: Exception) {

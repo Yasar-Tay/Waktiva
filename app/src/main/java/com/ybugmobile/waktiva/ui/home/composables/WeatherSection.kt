@@ -15,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
@@ -49,27 +48,8 @@ fun WeatherSection(
         currentTime.isAfter(sunrise) && currentTime.isBefore(sunset)
     }
 
-    // Icon resource selection logic
-    val weatherIconRes = when (condition) {
-        WeatherCondition.CLEAR -> if (isDay) R.drawable.clear_day else R.drawable.clear_night
-        WeatherCondition.MAINLY_CLEAR -> if (isDay) R.drawable.partly_cloudy_day else R.drawable.partly_cloudy_night
-        WeatherCondition.PARTLY_CLOUDY -> if (isDay) R.drawable.partly_cloudy_day else R.drawable.partly_cloudy_night
-        WeatherCondition.OVERCAST -> R.drawable.cloudy_day_night
-        WeatherCondition.FOGGY -> R.drawable.haze_day_rotated
-        WeatherCondition.DRIZZLE -> R.drawable.drizzle_day_night
-        WeatherCondition.FREEZING_DRIZZLE -> R.drawable.sleet_day_night
-        WeatherCondition.RAINY -> R.drawable.rain_day_night
-        WeatherCondition.HEAVY_RAIN -> R.drawable.rain_day_night
-        WeatherCondition.FREEZING_RAIN -> R.drawable.sleet_day_night
-        WeatherCondition.SNOWY -> R.drawable.snow_day_night
-        WeatherCondition.HEAVY_SNOW -> R.drawable.snow_day_night
-        WeatherCondition.SNOW_GRAINS -> R.drawable.ic_snowflake
-        WeatherCondition.RAIN_SHOWERS -> R.drawable.rain_day_night
-        WeatherCondition.SNOW_SHOWERS -> R.drawable.snow_day_night
-        WeatherCondition.THUNDERSTORM -> R.drawable.thunderstorm_day_night
-        WeatherCondition.THUNDERSTORM_HAIL -> R.drawable.hail_day_night
-        WeatherCondition.UNKNOWN -> R.drawable.cloudy_day_night
-    }
+    // The same icons as the prayers' weather on the day circle.
+    val iconRes = weatherIconRes(condition, isDay)
 
     val weatherLabel = condition.displayName
 
@@ -107,7 +87,7 @@ fun WeatherSection(
                     modifier = Modifier.fillMaxHeight().padding(top = 10.dp, bottom = 6.dp, start = 4.dp)
                 ) {
                     Image(
-                        painter = painterResource(id = weatherIconRes),
+                        painter = painterResource(id = iconRes),
                         contentDescription = weatherLabel,
                         modifier = Modifier.size(30.dp),
                         alpha = 0.9f
@@ -119,7 +99,7 @@ fun WeatherSection(
             Box(Modifier.width(60.dp).fillMaxHeight())
             
             /*Image(
-                painter = painterResource(id = weatherIconRes),
+                painter = painterResource(id = iconRes),
                 contentDescription = condition.name,
                 modifier = Modifier.size(42.dp),
                 alpha = 0.9f

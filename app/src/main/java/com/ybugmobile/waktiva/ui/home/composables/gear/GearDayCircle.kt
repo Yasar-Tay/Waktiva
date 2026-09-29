@@ -65,6 +65,12 @@ import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.provider.ReligiousDaysProvider
 import com.ybugmobile.waktiva.ui.home.composables.CurrentPrayerHeader
+import com.ybugmobile.waktiva.ui.home.composables.DaySky
+import com.ybugmobile.waktiva.ui.home.composables.PrayerWeather
+import com.ybugmobile.waktiva.ui.home.composables.PrayerWeatherIcons
+import com.ybugmobile.waktiva.ui.home.composables.daySky
+import com.ybugmobile.waktiva.ui.home.composables.degrees
+import com.ybugmobile.waktiva.ui.home.composables.weatherIconOffset
 import com.ybugmobile.waktiva.ui.home.composables.PrayedGlow
 import com.ybugmobile.waktiva.ui.home.composables.accentColor
 import com.ybugmobile.waktiva.ui.home.composables.iconRes
@@ -81,6 +87,8 @@ import kotlin.math.hypot
  * [sunLight] is the screen angle the sunlight falls from (see [sunLightAngle]), or null
  * for the default light. [prayedPrayers] glow as marked in the prayer log (null until it has
  * loaded); [onPrayerTap] gets a tapped prayer first and returns true when it handled the tap.
+ * [sky] shows through the dial's open face, [prayerWeather] beside the times and on the plaques,
+ * [badgeWeather] tones each prayer gear and [temperatureRange] goes under the date.
  */
 @Composable
 internal fun GearDayCircle(
@@ -94,7 +102,11 @@ internal fun GearDayCircle(
     contentColor: Color,
     sunLight: Float? = null,
     prayedPrayers: Set<PrayerType>? = null,
-    onPrayerTap: (PrayerType) -> Boolean = { false }
+    onPrayerTap: (PrayerType) -> Boolean = { false },
+    sky: DaySky? = null,
+    prayerWeather: Map<PrayerType, PrayerWeather> = emptyMap(),
+    badgeWeather: Map<PrayerType, WeatherCondition> = emptyMap(),
+    temperatureRange: String? = null
 ) {
     val density = LocalDensity.current
     val lightAngle = rememberEasedAngle(sunLight ?: GearLight.DEFAULT_ANGLE)
@@ -105,7 +117,7 @@ internal fun GearDayCircle(
 
     val weather = LocalGlassTheme.current.weatherCondition
     val palette = remember(weather) { GearPalette(WeatherTone.forScenery(weather)) }
-    val prayers = rememberGearPrayers(day, weather)
+    val prayers = rememberGearPrayers(day, weather, badgeWeather)
     val currentType = remember(day, currentTime) { currentPrayerType(day, currentTime) }
     val current = prayers.firstOrNull { it.type == currentType } ?: prayers.last()
     val nowMinutes = currentTime.hour * 60 + currentTime.minute + currentTime.second / 60f
@@ -172,6 +184,9 @@ internal fun GearDayCircle(
             }
         }
 
+        // The day's sky, under the dial: it shows through the open face between the moving parts.
+        sky?.let { Spacer(Modifier.fillMaxSize().daySky(it, radius = dial.skyRadius, fadeFrom = 0.9f)) }
+
         // The dial redraws every frame as it turns, so it has its own layer: the rest of the screen
         // isn't redrawn with it. Its still parts are recorded once per minute (or whenever what they
         // show changes) and replayed; only the turning parts are drawn every frame.
@@ -205,6 +220,28 @@ internal fun GearDayCircle(
                 }
         )
 
+        // Each prayer's weather beside its time, over the turning parts.
+        if (prayerWeather.isNotEmpty()) {
+            val iconSize = if (isLandscape) 12.dp else 16.dp
+            val label = remember(textMeasurer, labelStyle) { textMeasurer.measure("00:00", labelStyle).size }
+            val offsets = remember(prayers, dial, label, isRtl, iconSize) {
+                val minutes = prayers.map { it.minutes }
+                prayers.mapIndexed { i, p ->
+                    p.type to weatherIconOffset(
+                        minutes = minutes,
+                        index = i,
+                        labelRadius = dial.labelRadius,
+                        labelHalfWidth = label.width / 2f,
+                        labelHalfHeight = label.height / 2f,
+                        iconSize = with(density) { iconSize.toPx() },
+                        gap = with(density) { 3.dp.toPx() },
+                        rtl = isRtl
+                    )
+                }.toMap()
+            }
+            PrayerWeatherIcons(prayerWeather, offsets, iconSize)
+        }
+
         PrayerMarkers(
             prayers = prayers,
             dial = dial,
@@ -215,6 +252,7 @@ internal fun GearDayCircle(
             onSelect = { selected = it },
             prayedPrayers = prayedPrayers,
             onPrayerTap = onPrayerTap,
+            prayerWeather = prayerWeather,
             phase = phase,
             isRtl = isRtl,
             compact = isLandscape
@@ -230,6 +268,7 @@ internal fun GearDayCircle(
             palette = palette,
             light = { GearLight(lightAngle.value) },
             diameter = with(density) { (dial.dateRadius * 2).toDp() } - 2.dp,
+            note = temperatureRange,
             modifier = Modifier
                 .align(Alignment.Center)
                 .zIndex(5f)
@@ -257,6 +296,7 @@ private fun BoxScope.PrayerMarkers(
     onSelect: (PrayerType?) -> Unit,
     prayedPrayers: Set<PrayerType>?,
     onPrayerTap: (PrayerType) -> Boolean,
+    prayerWeather: Map<PrayerType, PrayerWeather>,
     phase: State<Float>,
     isRtl: Boolean,
     compact: Boolean
@@ -308,6 +348,9 @@ private fun BoxScope.PrayerMarkers(
                         GearPlaque(
                             prayer = prayer,
                             name = prayer.type.getDisplayName(context).uppercase(locale),
+                            weather = prayerWeather[prayer.type]?.let { w ->
+                                context.getString(w.condition.nameRes).uppercase(locale) to w.temperature?.degrees()
+                            },
                             style = style,
                             palette = palette,
                             phase = phase,
@@ -344,18 +387,25 @@ internal fun rememberEasedAngle(target: Float): State<Float> {
     return angle.asState()
 }
 
-/** The day's prayers with the same colours and weather toning as PrayerCircleVisualization. */
+/**
+ * The day's prayers with the same colours and weather toning as PrayerCircleVisualization: each
+ * toned for its own hour's weather in [badgeWeather], else the screen's [weather].
+ */
 @Composable
-private fun rememberGearPrayers(day: PrayerDay, weather: WeatherCondition): List<GearPrayer> {
+private fun rememberGearPrayers(
+    day: PrayerDay,
+    weather: WeatherCondition,
+    badgeWeather: Map<PrayerType, WeatherCondition>
+): List<GearPrayer> {
     val formatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
     val art = PrayerType.entries.map { type ->
         val icon = ImageVector.vectorResource(type.iconRes)
         Triple(type, icon, rememberVectorPainter(icon))
     }
 
-    return remember(day, weather, art.map { it.third }) {
-        val tone = WeatherTone.forPrayers(weather)
+    return remember(day, weather, badgeWeather, art.map { it.third }) {
         art.map { (type, icon, painter) ->
+            val tone = WeatherTone.forPrayers(badgeWeather[type] ?: weather)
             val time = day.timings[type] ?: LocalTime.MIN
             GearPrayer(
                 type = type,

@@ -47,6 +47,7 @@ import java.time.format.DateTimeFormatter
  * in view.
  *
  * [day] is the day the prayer belongs to and [nextDay] the one after, for when Isha's time ends.
+ * [weather], when known, is the weather in the prayer's hour, shown under its time.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +59,8 @@ fun PrayerLogSheet(
     isPrayed: Boolean,
     onPrayedChange: (Boolean) -> Unit,
     onOpenLog: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    weather: String? = null
 ) {
     val glass = LocalGlassTheme.current
     val sky = LocalBackgroundGradient.current
@@ -135,6 +137,13 @@ fun PrayerLogSheet(
                             text = window,
                             style = MaterialTheme.typography.titleSmall.copy(fontFeatureSettings = "tnum"),
                             color = contentColor.copy(alpha = 0.65f)
+                        )
+                    }
+                    if (weather != null) {
+                        Text(
+                            text = weather,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = contentColor.copy(alpha = 0.6f)
                         )
                     }
                 }

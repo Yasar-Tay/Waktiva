@@ -57,6 +57,15 @@ fun HomeLandscapeContent(
     prayedToday: Set<PrayerType>? = null,
     onLogPrayer: ((PrayerType) -> Unit)? = null
 ) {
+    // The selected day's weather for the day circle; the sky inside it follows the weather effects setting.
+    val circleWeather = remember(state.dayForecast, state.weatherCondition, state.weatherEffectCondition, settings?.showWeatherEffects) {
+        DayCircleWeather(
+            forecast = state.dayForecast,
+            nowCondition = state.weatherCondition,
+            nowEffect = state.weatherEffectCondition,
+            effectsOn = settings?.showWeatherEffects == true
+        )
+    }
     val screenHeightDp = LocalConfiguration.current.screenHeightDp
     val hasWeatherData = remember(state.temperature, state.weatherCondition) {
         state.temperature != null || state.weatherCondition != WeatherCondition.UNKNOWN
@@ -103,7 +112,8 @@ fun HomeLandscapeContent(
                                 contentColor = contentColor,
                                 sunLight = sunLight,
                                 prayedPrayers = prayedToday,
-                                onLogPrayer = onLogPrayer
+                                onLogPrayer = onLogPrayer,
+                                weather = circleWeather
                             )
                         }
                     }

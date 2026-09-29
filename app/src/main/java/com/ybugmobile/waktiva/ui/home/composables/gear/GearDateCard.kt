@@ -59,7 +59,8 @@ internal class DateSide(val month: String, val day: String)
  *
  * Tapping flips the gem between the Gregorian and Hijri dates; the bezel stays put.
  * [accent] is the current prayer, whose colour tints the glass; [light] is read while drawing,
- * so the metal and the glass follow the light without recomposing.
+ * so the metal and the glass follow the light without recomposing. [note], when given, is a
+ * short line under the day on both sides: the day's range of temperatures.
  */
 @Composable
 internal fun GearDateCard(
@@ -71,7 +72,8 @@ internal fun GearDateCard(
     palette: GearPalette,
     light: () -> GearLight,
     diameter: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    note: String? = null
 ) {
     val gregorian = rememberGregorianSide(day)
     val hijri = rememberHijriSide(day)
@@ -106,8 +108,8 @@ internal fun GearDateCard(
                     cameraDistance = 12f * density
                 }
                 .drawWithCache {
-                    val front = faceFor(style, gregorian, textMeasurer)
-                    val back = faceFor(style, hijri, textMeasurer)
+                    val front = faceFor(style, gregorian, note, textMeasurer)
+                    val back = faceFor(style, hijri, note, textMeasurer)
                     onDrawBehind {
                         // Past halfway the back is showing; mirror it so it doesn't read reversed.
                         if (rotation <= 90f) {
@@ -157,8 +159,9 @@ private fun rememberHijriSide(day: PrayerDay): DateSide {
 private fun CacheDrawScope.faceFor(
     style: DayCircleStyle,
     side: DateSide,
+    note: String?,
     measurer: TextMeasurer
-): DateFace = GlassGemFace(this, side, measurer, style)
+): DateFace = GlassGemFace(this, side, note, measurer, style)
 
 /** A face laid out once for its size and text, then drawn every frame. */
 private interface DateFace {
@@ -176,7 +179,13 @@ private interface DateFace {
  * highlight and a bright rim on the lit side make it read as glass, like the liquid glass cards.
  * The smoke keeps the white lettering readable over any sky showing through.
  */
-private class GlassGemFace(scope: CacheDrawScope, side: DateSide, measurer: TextMeasurer, style: DayCircleStyle) : DateFace {
+private class GlassGemFace(
+    scope: CacheDrawScope,
+    side: DateSide,
+    note: String?,
+    measurer: TextMeasurer,
+    style: DayCircleStyle
+) : DateFace {
     private val r = scope.size.minDimension / 2f
     private val c = scope.size.center
     private val dp = scope.density
@@ -236,9 +245,26 @@ private class GlassGemFace(scope: CacheDrawScope, side: DateSide, measurer: Text
                 color = Color.White,
                 shadow = Shadow(Color.Black.copy(alpha = 0.55f), Offset(0f, r * 0.02f), r * 0.06f)
             ),
-            r * 0.6f,
+            // A little smaller with a note under it, so all three lines fit on the table.
+            if (note != null) r * 0.5f else r * 0.6f,
             table * 1.5f
         )
+    }
+    private val noteText = note?.let {
+        with(scope) {
+            fitted(
+                measurer,
+                it,
+                TextStyle(
+                    fontFamily = family,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White.copy(alpha = 0.85f),
+                    shadow = Shadow(Color.Black.copy(alpha = 0.5f), blurRadius = r * 0.05f)
+                ),
+                r * 0.21f,
+                table * 1.35f
+            )
+        }
     }
 
     override fun draw(scope: DrawScope, accent: GearPrayer, light: GearLight) = with(scope) {
@@ -262,8 +288,14 @@ private class GlassGemFace(scope: CacheDrawScope, side: DateSide, measurer: Text
         drawPath(tablePath, Color.White.copy(alpha = 0.05f))
         drawPath(edges, Color.White.copy(alpha = 0.2f), style = Stroke(0.6f * dp))
 
-        drawCentred(monthText, c + Offset(0f, -table * 0.52f))
-        drawCentred(dayText, c + Offset(0f, table * 0.12f))
+        if (noteText != null) {
+            drawCentred(monthText, c + Offset(0f, -table * 0.6f))
+            drawCentred(dayText, c + Offset(0f, -table * 0.02f))
+            drawCentred(noteText, c + Offset(0f, table * 0.6f))
+        } else {
+            drawCentred(monthText, c + Offset(0f, -table * 0.52f))
+            drawCentred(dayText, c + Offset(0f, table * 0.12f))
+        }
 
         // Highlight on the side facing the light, over the lettering as on real glass.
         val glint = c + light.towards * (r * 0.58f)

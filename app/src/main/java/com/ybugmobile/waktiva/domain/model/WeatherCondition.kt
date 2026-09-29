@@ -1,5 +1,6 @@
 package com.ybugmobile.waktiva.domain.model
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.ybugmobile.waktiva.R
@@ -24,28 +25,33 @@ enum class WeatherCondition {
     THUNDERSTORM_HAIL,
     UNKNOWN;
 
+    /** The weather's name, as a string resource. */
+    @get:StringRes
+    val nameRes: Int
+        get() = when (this) {
+            CLEAR -> R.string.weather_clear
+            MAINLY_CLEAR -> R.string.weather_mainly_clear
+            PARTLY_CLOUDY -> R.string.weather_partly_cloudy
+            OVERCAST -> R.string.weather_overcast
+            FOGGY -> R.string.weather_foggy
+            DRIZZLE -> R.string.weather_drizzle
+            FREEZING_DRIZZLE -> R.string.weather_freezing_drizzle
+            RAINY -> R.string.weather_rainy
+            HEAVY_RAIN -> R.string.weather_heavy_rain
+            FREEZING_RAIN -> R.string.weather_freezing_rain
+            SNOWY -> R.string.weather_snowy
+            HEAVY_SNOW -> R.string.weather_heavy_snow
+            SNOW_GRAINS -> R.string.weather_snow_grains
+            RAIN_SHOWERS -> R.string.weather_rain_showers
+            SNOW_SHOWERS -> R.string.weather_snow_showers
+            THUNDERSTORM -> R.string.weather_thunderstorm
+            THUNDERSTORM_HAIL -> R.string.weather_thunderstorm_hail
+            UNKNOWN -> R.string.weather_unknown
+        }
+
     val displayName: String
         @Composable
-        get() = when (this) {
-            CLEAR -> stringResource(id = R.string.weather_clear)
-            MAINLY_CLEAR -> stringResource(id = R.string.weather_mainly_clear)
-            PARTLY_CLOUDY -> stringResource(id = R.string.weather_partly_cloudy)
-            OVERCAST -> stringResource(id = R.string.weather_overcast)
-            FOGGY -> stringResource(id = R.string.weather_foggy)
-            DRIZZLE -> stringResource(id = R.string.weather_drizzle)
-            FREEZING_DRIZZLE -> stringResource(id = R.string.weather_freezing_drizzle)
-            RAINY -> stringResource(id = R.string.weather_rainy)
-            HEAVY_RAIN -> stringResource(id = R.string.weather_heavy_rain)
-            FREEZING_RAIN -> stringResource(id = R.string.weather_freezing_rain)
-            SNOWY -> stringResource(id = R.string.weather_snowy)
-            HEAVY_SNOW -> stringResource(id = R.string.weather_heavy_snow)
-            SNOW_GRAINS -> stringResource(id = R.string.weather_snow_grains)
-            RAIN_SHOWERS -> stringResource(id = R.string.weather_rain_showers)
-            SNOW_SHOWERS -> stringResource(id = R.string.weather_snow_showers)
-            THUNDERSTORM -> stringResource(id = R.string.weather_thunderstorm)
-            THUNDERSTORM_HAIL -> stringResource(id = R.string.weather_thunderstorm_hail)
-            UNKNOWN -> stringResource(id = R.string.weather_unknown)
-        }
+        get() = stringResource(id = nameRes)
 
     companion object {
         private const val MIN_VISIBLE_PRECIPITATION_MM = 0.05

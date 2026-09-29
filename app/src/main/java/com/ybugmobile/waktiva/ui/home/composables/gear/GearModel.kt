@@ -97,6 +97,12 @@ internal interface GearDial {
     /** Radius of the outermost ring around the date, which the prayer name must clear. */
     val hubOuterRadius: Float
 
+    /** Distance from the centre to the prayers' time labels. */
+    val labelRadius: Float
+
+    /** Radius of the open face inside the dial's moving parts, where the day's sky shows. */
+    val skyRadius: Float
+
     val bridge: BridgeSpec
 
     fun draw(scope: DrawScope, frame: GearFrame)

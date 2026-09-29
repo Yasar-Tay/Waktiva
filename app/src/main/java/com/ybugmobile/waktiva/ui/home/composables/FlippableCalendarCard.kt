@@ -44,6 +44,8 @@ import java.util.Locale
  * @param currentTime Current system time used for subtle temporal animations.
  * @param isSelectedDayToday Flag to apply pulsing effects and brightness glow if focused on today.
  * @param pulseScale Current animated scale value for the container.
+ * @param temperatureRange The day's range of temperatures, shown under the day in place of the
+ * status dot; null to keep the dot.
  * @param modifier Root layout modifier.
  */
 @Composable
@@ -56,6 +58,7 @@ fun FlippableCalendarCard(
     currentTime: LocalTime,
     isSelectedDayToday: Boolean,
     pulseScale: Float,
+    temperatureRange: String? = null,
     modifier: Modifier = Modifier
 ) {
     // 3D Flip animation state
@@ -116,7 +119,8 @@ fun FlippableCalendarCard(
                     isBack = false,
                     accentColor = accentColor,
                     timeAngle = timeAngle,
-                    isSelectedDayToday = isSelectedDayToday
+                    isSelectedDayToday = isSelectedDayToday,
+                    note = temperatureRange
                 )
             } else {
                 // Back Side: Hijri
@@ -135,7 +139,8 @@ fun FlippableCalendarCard(
                     isBack = true,
                     accentColor = accentColor,
                     timeAngle = timeAngle,
-                    isSelectedDayToday = isSelectedDayToday
+                    isSelectedDayToday = isSelectedDayToday,
+                    note = temperatureRange
                 )
             }
         }
@@ -153,7 +158,8 @@ private fun CalendarSide(
     isBack: Boolean,
     accentColor: Color,
     timeAngle: Float,
-    isSelectedDayToday: Boolean
+    isSelectedDayToday: Boolean,
+    note: String? = null
 ) {
     val glassTheme = LocalGlassTheme.current
     val cardShape = CircleShape
@@ -245,23 +251,38 @@ private fun CalendarSide(
                     textAlign = TextAlign.Center
                 )
 
-                // Active status dot
-                val dotAlpha by animateFloatAsState(
-                    targetValue = if (topText.isNotEmpty()) 0.5f else 0.1f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(2000, easing = EaseInOutSine),
-                        repeatMode = RepeatMode.Reverse
-                    ),
-                    label = "dotPulse"
-                )
+                if (note != null) {
+                    // The day's temperatures, where the status dot would be.
+                    Text(
+                        text = note,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontSize = 8.5.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = IBMPlexArabic,
+                            letterSpacing = 0.sp
+                        ),
+                        color = glassTheme.contentColor.copy(alpha = 0.85f),
+                        maxLines = 1
+                    )
+                } else {
+                    // Active status dot
+                    val dotAlpha by animateFloatAsState(
+                        targetValue = if (topText.isNotEmpty()) 0.5f else 0.1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(2000, easing = EaseInOutSine),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "dotPulse"
+                    )
 
-                Box(
-                    modifier = Modifier
-                        .padding(bottom = 2.dp)
-                        .size(3.dp)
-                        .clip(CircleShape)
-                        .background(glassTheme.contentColor.copy(alpha = dotAlpha))
-                )
+                    Box(
+                        modifier = Modifier
+                            .padding(bottom = 2.dp)
+                            .size(3.dp)
+                            .clip(CircleShape)
+                            .background(glassTheme.contentColor.copy(alpha = dotAlpha))
+                    )
+                }
             }
         }
     }

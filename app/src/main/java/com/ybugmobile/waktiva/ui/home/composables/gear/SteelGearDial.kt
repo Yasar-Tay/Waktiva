@@ -31,6 +31,9 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
     // The date sub-dial stays inside the special-day bridge's inner radius (0.13 s).
     override val dateRadius = s * 0.12f
     override val hubOuterRadius = dateRadius
+    override val labelRadius = pitch - 2 * rPlanet - addPlanet - s * 0.035f
+    // The sky is a sunken face under the ring gear, out to its teeth.
+    override val skyRadius = pitch
     override val bridge = BridgeSpec(
         innerRadius = s * 0.13f,
         freeRadius = pitch - 2 * rPlanet - addPlanet - 4 * dp,
@@ -121,7 +124,7 @@ internal class SteelGearDial(private val s: Float, private val dp: Float) : Gear
             frame.prayers.forEach { p ->
                 val theta = dayAngle(p.minutes, frame.rtl)
                 planetFace(p, pointOn(c, pitch - rPlanet, theta), rPlanet, light, dp, isCurrent = p.type == frame.current.type)
-                timeLabel(frame, p.label, pointOn(c, pitch - 2 * rPlanet - addPlanet - s * 0.035f, theta))
+                timeLabel(frame, p.label, pointOn(c, labelRadius, theta))
             }
         }
     }

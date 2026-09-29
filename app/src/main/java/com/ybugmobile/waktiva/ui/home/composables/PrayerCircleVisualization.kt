@@ -61,8 +61,6 @@ import com.ybugmobile.waktiva.ui.home.composables.gear.goldBezel
 import com.ybugmobile.waktiva.ui.home.composables.gear.toDegrees
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
-import com.ybugmobile.waktiva.ui.theme.desaturate
-import com.ybugmobile.waktiva.ui.theme.darken
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.delay
@@ -90,6 +88,10 @@ import kotlin.math.sign
  * @param prayedPrayers Prayers marked in the prayer log, whose badges glow; null until it has loaded.
  * @param onPrayerTap Called with a tapped prayer; returns true when it handled the tap, otherwise
  * the badge shows its info card.
+ * @param sky The day's sky, painted inside the ring; null for none.
+ * @param prayerWeather Each prayer's weather, shown as an icon beside its time and on its card.
+ * @param badgeWeather The weather each badge is toned for, where it differs from the screen's.
+ * @param temperatureRange The day's range of temperatures, shown on the date card.
  */
 @Composable
 fun PrayerCircleVisualization(
@@ -106,7 +108,11 @@ fun PrayerCircleVisualization(
     onSkipAudio: (String) -> Unit = {},
     sunLight: Float? = null,
     prayedPrayers: Set<PrayerType>? = null,
-    onPrayerTap: (PrayerType) -> Boolean = { false }
+    onPrayerTap: (PrayerType) -> Boolean = { false },
+    sky: DaySky? = null,
+    prayerWeather: Map<PrayerType, PrayerWeather> = emptyMap(),
+    badgeWeather: Map<PrayerType, WeatherCondition> = emptyMap(),
+    temperatureRange: String? = null
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -118,6 +124,7 @@ fun PrayerCircleVisualization(
     val lightAngle = rememberEasedAngle(sunLight ?: GearLight.DEFAULT_ANGLE)
 
     var selectedInfo by remember { mutableStateOf<DetailedInfo?>(null) }
+    val weatherLines = prayerWeather.mapValues { (_, w) -> context.getString(w.condition.nameRes) to w.temperature?.degrees() }
     val currentOnPrayerTap by rememberUpdatedState(onPrayerTap)
 
     // Auto-dismiss interaction card
@@ -144,7 +151,7 @@ fun PrayerCircleVisualization(
     val ishaPainter = rememberVectorPainter(ishaIcon)
 
     // Process prayer nodes with adaptive styling based on weather
-    val prayers = remember(day, fajrPainter, sunrisePainter, dhuhrPainter, asrPainter, maghribPainter, ishaPainter, weatherCondition) {
+    val prayers = remember(day, fajrPainter, sunrisePainter, dhuhrPainter, asrPainter, maghribPainter, ishaPainter, weatherCondition, badgeWeather) {
         val basePrayers = listOf(
             PrayerNodeInfo(PrayerType.FAJR, day.timings[PrayerType.FAJR] ?: LocalTime.MIN, Color(0xFF81D4FA), fajrPainter, fajrIcon),
             PrayerNodeInfo(PrayerType.SUNRISE, day.timings[PrayerType.SUNRISE] ?: LocalTime.MIN, Color(0xFFFFE082), sunrisePainter, sunriseIcon),
@@ -154,18 +161,8 @@ fun PrayerCircleVisualization(
             PrayerNodeInfo(PrayerType.ISHA, day.timings[PrayerType.ISHA] ?: LocalTime.MIN, Color(0xFF9FA8DA), ishaPainter, ishaIcon)
         )
 
-        val isCloudy = weatherCondition != WeatherCondition.CLEAR && weatherCondition != WeatherCondition.UNKNOWN
-        val isSevere = weatherCondition == WeatherCondition.RAINY ||
-                weatherCondition == WeatherCondition.THUNDERSTORM ||
-                weatherCondition == WeatherCondition.SNOWY
-
-        if (isCloudy) {
-            val desaturateAmount = if (isSevere) 0.35f else 0.2f
-            val darkenAmount = if (isSevere) 0.2f else 0.1f
-            basePrayers.map { it.copy(color = it.color.desaturate(desaturateAmount).darken(darkenAmount)) }
-        } else {
-            basePrayers
-        }
+        // Toned for the weather in each prayer's own hour where it's known, else the screen's.
+        basePrayers.map { it.copy(color = WeatherTone.forPrayers(badgeWeather[it.type] ?: weatherCondition)(it.color)) }
     }
 
     // Determine currently active prayer period
@@ -208,6 +205,11 @@ fun PrayerCircleVisualization(
         val ring = remember(sizePx, density.density) { HaloRing(sizePx, density.density) }
         val nowMinutes = (currentTime.hour * 60 + currentTime.minute).toFloat()
 
+        // The day's sky fills the ring, under everything else.
+        sky?.let {
+            Spacer(Modifier.fillMaxSize().daySky(it, radius = ring.track - ring.trackWidth / 2f))
+        }
+
         Spacer(
             modifier = Modifier
                 .fillMaxSize()
@@ -246,6 +248,28 @@ fun PrayerCircleVisualization(
                     }
                 }
         )
+
+        // Each prayer's weather beside its time.
+        if (prayerWeather.isNotEmpty()) {
+            val iconSize = if (isLandscape) 13.dp else 17.dp
+            val label = remember(textMeasurer, labelStyle) { textMeasurer.measure("00:00", labelStyle).size }
+            val offsets = remember(prayers, ring, label, isRtl, iconSize) {
+                val minutes = prayers.map { it.time.minutes() }
+                prayers.mapIndexed { i, p ->
+                    p.type to weatherIconOffset(
+                        minutes = minutes,
+                        index = i,
+                        labelRadius = ring.labelDistance(ring.badge),
+                        labelHalfWidth = label.width / 2f,
+                        labelHalfHeight = label.height / 2f,
+                        iconSize = with(density) { iconSize.toPx() },
+                        gap = with(density) { 3.dp.toPx() },
+                        rtl = isRtl
+                    )
+                }.toMap()
+            }
+            PrayerWeatherIcons(prayerWeather, offsets, iconSize)
+        }
 
         // Invisible tap targets over the badges; a tapped badge turns into its glass info card.
         val targetSize = with(density) { (ring.badgeCurrent * 2).toDp() }.coerceAtLeast(32.dp)
@@ -296,7 +320,8 @@ fun PrayerCircleVisualization(
                                         prayer.type.getDisplayName(context),
                                         prayer.time.format(formatter),
                                         prayer.color,
-                                        prayer.icon
+                                        prayer.icon,
+                                        weatherLines[prayer.type]
                                     )
                                 )
                             }
@@ -312,7 +337,8 @@ fun PrayerCircleVisualization(
                                                 prayer.type.getDisplayName(context),
                                                 prayer.time.format(formatter),
                                                 prayer.color,
-                                                prayer.icon
+                                                prayer.icon,
+                                                weatherLines[prayer.type]
                                             )
                                         }
                                     }
@@ -350,6 +376,7 @@ fun PrayerCircleVisualization(
                 currentTime = currentTime,
                 isSelectedDayToday = isSelectedDayToday,
                 pulseScale = 1f,
+                temperatureRange = temperatureRange,
                 modifier = Modifier.size(cardDiameter)
             )
         }
@@ -588,6 +615,42 @@ fun InfoGlassCard(info: DetailedInfo) {
                     )
                 )
             }
+
+            // The weather in the prayer's hour: its name over its temperature, like name over time.
+            info.weather?.let { (name, temperature) ->
+                Box(
+                    Modifier
+                        .padding(end = 12.dp)
+                        .width(0.75.dp)
+                        .fillMaxHeight(0.55f)
+                        .background(Color.White.copy(alpha = 0.18f))
+                )
+                Column(
+                    modifier = Modifier.padding(end = 14.dp),
+                    verticalArrangement = Arrangement.spacedBy((-1).dp, Alignment.CenterVertically)
+                ) {
+                    Text(
+                        text = name.uppercase(),
+                        style = TextStyle(
+                            fontSize = nameFontSize,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White.copy(0.42f),
+                            letterSpacing = 1.5.sp
+                        ),
+                        maxLines = 1
+                    )
+                    Text(
+                        text = temperature.orEmpty(),
+                        style = TextStyle(
+                            fontSize = timeFontSize,
+                            fontFamily = IBMPlexArabic,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White,
+                            letterSpacing = (-0.5).sp
+                        )
+                    )
+                }
+            }
         }
     }
 }
@@ -601,5 +664,12 @@ data class PrayerNodeInfo(
     val icon: ImageVector
 )
 
-/** State for the interactive information card. */
-data class DetailedInfo(val id: String, val title: String, val time: String, val color: Color, val icon: ImageVector)
+/** State for the interactive information card; [weather] is the prayer's weather name and temperature. */
+data class DetailedInfo(
+    val id: String,
+    val title: String,
+    val time: String,
+    val color: Color,
+    val icon: ImageVector,
+    val weather: Pair<String, String?>? = null
+)
