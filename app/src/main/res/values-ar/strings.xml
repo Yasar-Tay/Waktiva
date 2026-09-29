@@ -446,6 +446,15 @@
     <string name="prayer_log_title">سجل الصلوات</string>
     <string name="prayer_log_setting">استخدام سجل الصلوات</string>
     <string name="prayer_log_setting_desc">علّم الصلوات التي أدّيتها وتابعها مع الوقت. عند الإيقاف يظهر «تبرع» في الشريط بدلًا منه.</string>
+    <string name="prayer_log_reminder">تذكير بعد العشاء</string>
+    <string name="prayer_log_reminder_desc">إن بقيت صلاة غير معلّمة بعد العشاء يصلك تذكير</string>
+    <string name="prayer_log_reminder_time">وقت التذكير</string>
+    <string name="prayer_log_reminder_after">بعد العشاء بـ %1$d دقيقة</string>
+    <string name="prayer_log_reminder_channel">تذكير سجل الصلوات</string>
+    <string name="prayer_log_reminder_channel_desc">التذكير بعد العشاء بتعليم صلوات اليوم</string>
+    <string name="prayer_log_reminder_title">هل حدّثت سجل صلواتك؟</string>
+    <string name="prayer_log_reminder_text">لم تُعلَّم بعد: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">صلّيتها كلها</string>
     <string name="prayer_log_mark">صلّيت</string>
     <string name="prayer_log_unmark">إزالة العلامة</string>
     <string name="prayer_log_open">فتح سجل الصلوات</string>

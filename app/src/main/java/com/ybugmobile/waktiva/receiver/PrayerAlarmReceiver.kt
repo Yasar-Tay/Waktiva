@@ -16,6 +16,9 @@ import com.ybugmobile.waktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.waktiva.data.notification.NotificationHelper
 import com.ybugmobile.waktiva.data.worker.AdhanWorker
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
+import com.ybugmobile.waktiva.domain.model.LoggedPrayers
+import com.ybugmobile.waktiva.domain.model.PrayerType
+import com.ybugmobile.waktiva.domain.repository.PrayerLogRepository
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.ui.widget.WaktivaWidget
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,6 +49,9 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var prayerRepository: PrayerRepository
 
+    @Inject
+    lateinit var prayerLogRepository: PrayerLogRepository
+
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
@@ -71,10 +77,35 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
             return
         }
 
+        if (action == NotificationHelper.ACTION_MARK_ALL_PRAYED) {
+            val pendingResult = goAsync()
+            scope.launch {
+                try {
+                    val date = LocalDate.parse(prayerDate)
+                    unmarkedPrayers(date).forEach { prayerLogRepository.setPrayed(date, it, true) }
+                    notificationHelper.cancelPrayerLogReminder()
+                } catch (e: Exception) {
+                    Log.e("PrayerAlarmReceiver", "Could not mark the prayers", e)
+                } finally {
+                    pendingResult.finish()
+                }
+            }
+            return
+        }
+
         val pendingResult = goAsync()
         scope.launch {
             try {
                 when (action) {
+                    AlarmScheduler.ACTION_PRAYER_LOG_REMINDER -> {
+                        val settings = settingsManager.settingsFlow.first()
+                        if (settings.prayerLogEnabled && settings.prayerLogReminderEnabled) {
+                            // Only a day with a prayer left to mark is worth a reminder.
+                            val unmarked = unmarkedPrayers(LocalDate.parse(prayerDate))
+                            if (unmarked.isNotEmpty()) notificationHelper.showPrayerLogReminder(prayerDate, unmarked)
+                        }
+                        rescheduleNextPrayer()
+                    }
                     AlarmScheduler.ACTION_PRE_ADHAN_NOTIFICATION -> {
                         val settings = settingsManager.settingsFlow.first()
                         val prayerType = com.ybugmobile.waktiva.domain.model.PrayerType.fromString(prayerName)
@@ -112,6 +143,12 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                 pendingResult.finish()
             }
         }
+    }
+
+    /** [date]'s prayers not yet marked as prayed in the prayer log. */
+    private suspend fun unmarkedPrayers(date: LocalDate): List<PrayerType> {
+        val prayed = prayerLogRepository.getPrayedPrayers(date).first()
+        return LoggedPrayers.filter { it !in prayed }
     }
 
     private suspend fun refreshWidgetAfterBoundary(context: Context) {

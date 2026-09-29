@@ -446,6 +446,15 @@
     <string name="prayer_log_title">Catatan Salat</string>
     <string name="prayer_log_setting">Gunakan catatan salat</string>
     <string name="prayer_log_setting_desc">Tandai salat yang sudah dikerjakan dan pantau dari waktu ke waktu. Jika nonaktif, bilah menampilkan Donasi sebagai gantinya.</string>
+    <string name="prayer_log_reminder">Pengingat setelah Isya</string>
+    <string name="prayer_log_reminder_desc">Jika setelah Isya masih ada salat yang belum ditandai, kamu akan diingatkan</string>
+    <string name="prayer_log_reminder_time">Waktu pengingat</string>
+    <string name="prayer_log_reminder_after">%1$d menit setelah Isya</string>
+    <string name="prayer_log_reminder_channel">Pengingat catatan salat</string>
+    <string name="prayer_log_reminder_channel_desc">Pengingat setelah Isya untuk menandai salat hari ini</string>
+    <string name="prayer_log_reminder_title">Sudah memperbarui catatan salatmu?</string>
+    <string name="prayer_log_reminder_text">Belum ditandai: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Semua sudah</string>
     <string name="prayer_log_mark">Sudah salat</string>
     <string name="prayer_log_unmark">Hapus tanda</string>
     <string name="prayer_log_open">Buka catatan salat</string>

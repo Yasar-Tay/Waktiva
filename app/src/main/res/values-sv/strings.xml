@@ -445,6 +445,15 @@
     <string name="prayer_log_title">Bönelogg</string>
     <string name="prayer_log_setting">Använd böneloggen</string>
     <string name="prayer_log_setting_desc">Markera de böner du ber och följ dem över tid. Avstängd visar fältet Donera i stället.</string>
+    <string name="prayer_log_reminder">Påminnelse efter Isha</string>
+    <string name="prayer_log_reminder_desc">Om en bön fortfarande är omarkerad efter Isha får du en påminnelse</string>
+    <string name="prayer_log_reminder_time">Tid för påminnelse</string>
+    <string name="prayer_log_reminder_after">%1$d minuter efter Isha</string>
+    <string name="prayer_log_reminder_channel">Påminnelse om böneloggen</string>
+    <string name="prayer_log_reminder_channel_desc">Påminnelsen efter Isha att markera dagens böner</string>
+    <string name="prayer_log_reminder_title">Har du uppdaterat din bönelogg?</string>
+    <string name="prayer_log_reminder_text">Inte markerade än: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Jag har bett alla</string>
     <string name="prayer_log_mark">Jag har bett</string>
     <string name="prayer_log_unmark">Ta bort markering</string>
     <string name="prayer_log_open">Öppna böneloggen</string>

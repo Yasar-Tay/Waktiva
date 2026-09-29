@@ -433,6 +433,15 @@
     <string name="prayer_log_title">Gebetstagebuch</string>
     <string name="prayer_log_setting">Gebetstagebuch verwenden</string>
     <string name="prayer_log_setting_desc">Markiere deine verrichteten Gebete und verfolge sie über die Zeit. Aus: Die Leiste zeigt stattdessen Spenden.</string>
+    <string name="prayer_log_reminder">Erinnerung nach Isha</string>
+    <string name="prayer_log_reminder_desc">Ist nach Isha noch ein Gebet unmarkiert, wirst du erinnert</string>
+    <string name="prayer_log_reminder_time">Erinnerungszeit</string>
+    <string name="prayer_log_reminder_after">%1$d Minuten nach Isha</string>
+    <string name="prayer_log_reminder_channel">Gebetstagebuch-Erinnerung</string>
+    <string name="prayer_log_reminder_channel_desc">Die Erinnerung nach Isha, die Gebete des Tages zu markieren</string>
+    <string name="prayer_log_reminder_title">Hast du dein Gebetstagebuch aktualisiert?</string>
+    <string name="prayer_log_reminder_text">Noch nicht markiert: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Alle gebetet</string>
     <string name="prayer_log_mark">Gebetet</string>
     <string name="prayer_log_unmark">Markierung entfernen</string>
     <string name="prayer_log_open">Gebetstagebuch öffnen</string>

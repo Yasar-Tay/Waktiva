@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ybugmobile.waktiva.R
+import com.ybugmobile.waktiva.data.local.preferences.DEFAULT_PRAYER_LOG_REMINDER_MINUTES
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.PrayerType
@@ -123,7 +124,9 @@ fun SettingsScreen(
                         )
                         PrayerLogSection(
                             settings = settings,
-                            onEnabledChange = { viewModel.setPrayerLogEnabled(it) }
+                            onEnabledChange = { viewModel.setPrayerLogEnabled(it) },
+                            onReminderChange = { viewModel.setPrayerLogReminder(it) },
+                            onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) }
                         )
                         NotificationSoundSection(
                             settings = settings,
@@ -184,7 +187,9 @@ fun SettingsScreen(
 
                     PrayerLogSection(
                         settings = settings,
-                        onEnabledChange = { viewModel.setPrayerLogEnabled(it) }
+                        onEnabledChange = { viewModel.setPrayerLogEnabled(it) },
+                        onReminderChange = { viewModel.setPrayerLogReminder(it) },
+                        onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) }
                     )
 
                     NotificationSoundSection(
@@ -404,14 +409,22 @@ private fun PrayerTimesSection(
 }
 
 /**
- * Whether the prayer log (çetele) is on. Off, the navigation bar carries the donate tab in its
- * place and the day circle's badges only show their times.
+ * Whether the prayer log (çetele) is on, and while it is, the reminder after Isha to mark the
+ * day's prayers. Off, the navigation bar carries the donate tab in its place and the day circle's
+ * badges only show their times.
  */
 @Composable
 private fun PrayerLogSection(
     settings: UserSettings?,
-    onEnabledChange: (Boolean) -> Unit
+    onEnabledChange: (Boolean) -> Unit,
+    onReminderChange: (Boolean) -> Unit,
+    onReminderMinutesChange: (Int) -> Unit
 ) {
+    var showReminderTimeDialog by remember { mutableStateOf(false) }
+    val reminderOptions = PrayerLogReminderMinutes.map {
+        stringResource(R.string.prayer_log_reminder_after, it) to it
+    }
+
     SettingsSection(
         title = stringResource(R.string.prayer_log_title)
     ) {
@@ -423,9 +436,44 @@ private fun PrayerLogSection(
                 checked = s.prayerLogEnabled,
                 onCheckedChange = onEnabledChange
             )
+
+            if (s.prayerLogEnabled) {
+                SettingsToggleItem(
+                    title = stringResource(R.string.prayer_log_reminder),
+                    subtitle = stringResource(R.string.prayer_log_reminder_desc),
+                    icon = Icons.Rounded.NotificationsActive,
+                    checked = s.prayerLogReminderEnabled,
+                    onCheckedChange = onReminderChange
+                )
+
+                if (s.prayerLogReminderEnabled) {
+                    SettingsClickItem(
+                        title = stringResource(R.string.prayer_log_reminder_time),
+                        subtitle = stringResource(R.string.prayer_log_reminder_after, s.prayerLogReminderMinutes),
+                        icon = Icons.Rounded.Schedule,
+                        onClick = { showReminderTimeDialog = true }
+                    )
+                }
+            }
         }
     }
+
+    if (showReminderTimeDialog) {
+        ModernSelectionDialog(
+            title = stringResource(R.string.prayer_log_reminder_time),
+            options = reminderOptions,
+            selectedKey = settings?.prayerLogReminderMinutes ?: DEFAULT_PRAYER_LOG_REMINDER_MINUTES,
+            onSelected = {
+                onReminderMinutesChange(it)
+                showReminderTimeDialog = false
+            },
+            onDismiss = { showReminderTimeDialog = false }
+        )
+    }
 }
+
+/** How long after Isha the prayer log reminder can come, in minutes. */
+private val PrayerLogReminderMinutes = listOf(30, 60, 90, 120)
 
 /** How the app looks and reads: its language, the day circle's style and the weather effects. */
 @Composable

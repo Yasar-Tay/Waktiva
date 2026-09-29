@@ -68,6 +68,21 @@ object PrayerLog {
         return day.timings[endsAt]?.atDate(day.date)
     }
 
+    /**
+     * The next reminder to mark a day's prayers after [now]: [minutesAfterIsha] after that day's
+     * Isha begins, with the day it's for. Null when no kept day has a reminder still ahead.
+     */
+    fun nextReminder(
+        prayerDays: List<PrayerDay>,
+        now: LocalDateTime,
+        minutesAfterIsha: Int
+    ): Pair<LocalDate, LocalDateTime>? = prayerDays
+        .mapNotNull { day ->
+            day.timings[PrayerType.ISHA]?.let { isha -> day.date to isha.atDate(day.date).plusMinutes(minutesAfterIsha.toLong()) }
+        }
+        .filter { (_, at) -> at.isAfter(now) }
+        .minByOrNull { (_, at) -> at }
+
     /** The first day the log holds prayers to: the day it began, or [today] before it has. */
     fun trackedSince(start: LocalDate?, today: LocalDate): LocalDate =
         start?.takeIf { it.isBefore(today) } ?: today

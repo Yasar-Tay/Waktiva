@@ -446,6 +446,15 @@
     <string name="prayer_log_title">Çetele</string>
     <string name="prayer_log_setting">Çeteleyi kullan</string>
     <string name="prayer_log_setting_desc">Kıldığın namazları işaretle, zaman içinde takip et. Kapalıyken alt menüde Çetele yerine Bağış Yap görünür.</string>
+    <string name="prayer_log_reminder">Yatsı sonrası hatırlatma</string>
+    <string name="prayer_log_reminder_desc">Yatsıdan sonra işaretlenmemiş namaz kaldıysa hatırlatır</string>
+    <string name="prayer_log_reminder_time">Hatırlatma zamanı</string>
+    <string name="prayer_log_reminder_after">Yatsıdan %1$d dakika sonra</string>
+    <string name="prayer_log_reminder_channel">Çetele hatırlatması</string>
+    <string name="prayer_log_reminder_channel_desc">Yatsıdan sonra günün namazlarını işaretleme hatırlatması</string>
+    <string name="prayer_log_reminder_title">Çeteleni işaretledin mi?</string>
+    <string name="prayer_log_reminder_text">Henüz işaretlenmemiş: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Hepsini kıldım</string>
     <string name="prayer_log_mark">Kıldım</string>
     <string name="prayer_log_unmark">İşareti kaldır</string>
     <string name="prayer_log_open">Çeteleyi aç</string>

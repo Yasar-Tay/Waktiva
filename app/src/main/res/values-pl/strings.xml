@@ -445,6 +445,15 @@
     <string name="prayer_log_title">Dziennik modlitw</string>
     <string name="prayer_log_setting">Używaj dziennika modlitw</string>
     <string name="prayer_log_setting_desc">Zaznaczaj odmówione modlitwy i śledź je w czasie. Wyłączony: pasek pokazuje w zamian Wesprzyj.</string>
+    <string name="prayer_log_reminder">Przypomnienie po Isza</string>
+    <string name="prayer_log_reminder_desc">Jeśli po Isza któraś modlitwa nie jest zaznaczona, dostaniesz przypomnienie</string>
+    <string name="prayer_log_reminder_time">Czas przypomnienia</string>
+    <string name="prayer_log_reminder_after">%1$d minut po Isza</string>
+    <string name="prayer_log_reminder_channel">Przypomnienie dziennika</string>
+    <string name="prayer_log_reminder_channel_desc">Przypomnienie po Isza o zaznaczeniu dzisiejszych modlitw</string>
+    <string name="prayer_log_reminder_title">Czy uzupełniono dziennik modlitw?</string>
+    <string name="prayer_log_reminder_text">Jeszcze niezaznaczone: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Wszystkie odmówione</string>
     <string name="prayer_log_mark">Odmówiona</string>
     <string name="prayer_log_unmark">Usuń oznaczenie</string>
     <string name="prayer_log_open">Otwórz dziennik modlitw</string>

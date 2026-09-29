@@ -66,6 +66,8 @@
                 <action android:name="com.ybugmobile.waktiva.ACTION_PRAYER_ALARM" />
                 <action android:name="com.ybugmobile.waktiva.ACTION_PRE_ADHAN_NOTIFICATION" />
                 <action android:name="com.ybugmobile.waktiva.ACTION_SKIP_ADHAN" />
+                <action android:name="com.ybugmobile.waktiva.ACTION_PRAYER_LOG_REMINDER" />
+                <action android:name="com.ybugmobile.waktiva.ACTION_MARK_ALL_PRAYED" />
             </intent-filter>
         </receiver>
 

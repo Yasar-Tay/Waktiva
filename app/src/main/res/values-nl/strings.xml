@@ -445,6 +445,15 @@
     <string name="prayer_log_title">Gebedslog</string>
     <string name="prayer_log_setting">Gebedslog gebruiken</string>
     <string name="prayer_log_setting_desc">Markeer de gebeden die je verricht en volg ze door de tijd. Uit: de balk toont in plaats daarvan Doneren.</string>
+    <string name="prayer_log_reminder">Herinnering na Isha</string>
+    <string name="prayer_log_reminder_desc">Staat er na Isha nog een gebed open, dan krijg je een herinnering</string>
+    <string name="prayer_log_reminder_time">Tijd van herinnering</string>
+    <string name="prayer_log_reminder_after">%1$d minuten na Isha</string>
+    <string name="prayer_log_reminder_channel">Gebedslog-herinnering</string>
+    <string name="prayer_log_reminder_channel_desc">De herinnering na Isha om de gebeden van de dag te markeren</string>
+    <string name="prayer_log_reminder_title">Heb je je gebedslog bijgewerkt?</string>
+    <string name="prayer_log_reminder_text">Nog niet gemarkeerd: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Alles gebeden</string>
     <string name="prayer_log_mark">Gebeden</string>
     <string name="prayer_log_unmark">Markering verwijderen</string>
     <string name="prayer_log_open">Gebedslog openen</string>

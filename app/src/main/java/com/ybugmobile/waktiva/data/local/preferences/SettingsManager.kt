@@ -27,6 +27,7 @@ import javax.inject.Singleton
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 const val DEFAULT_CALCULATION_METHOD = 3
+const val DEFAULT_PRAYER_LOG_REMINDER_MINUTES = 60
 private const val LEGACY_DEFAULT_CALCULATION_METHOD = 2
 
 /**
@@ -63,7 +64,11 @@ data class UserSettings(
      * Whether the prayer log (çetele) is on: its tab in the navigation bar (the donate tab
      * otherwise) and logging prayers from the day circle's badges.
      */
-    val prayerLogEnabled: Boolean = true
+    val prayerLogEnabled: Boolean = true,
+    /** Whether a reminder to mark the day's prayers comes after Isha while some are unmarked. */
+    val prayerLogReminderEnabled: Boolean = true,
+    /** How long after Isha begins the reminder comes. */
+    val prayerLogReminderMinutes: Int = DEFAULT_PRAYER_LOG_REMINDER_MINUTES
 ) {
     /**
      * Whether the adhan audio should play for [type], combining the global
@@ -109,6 +114,8 @@ class SettingsManager @Inject constructor(
         val DAY_CIRCLE_STYLE = stringPreferencesKey("day_circle_style")
         val PRAYER_LOG_START = stringPreferencesKey("prayer_log_start")
         val PRAYER_LOG_ENABLED = booleanPreferencesKey("prayer_log_enabled")
+        val PRAYER_LOG_REMINDER = booleanPreferencesKey("prayer_log_reminder")
+        val PRAYER_LOG_REMINDER_MINUTES = intPreferencesKey("prayer_log_reminder_minutes")
 
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
@@ -153,7 +160,9 @@ class SettingsManager @Inject constructor(
                 ?: emptySet(),
             dayCircleStyle = DayCircleStyle.fromName(preferences[DAY_CIRCLE_STYLE]),
             playAdhanDua = preferences[PLAY_ADHAN_DUA] ?: false,
-            prayerLogEnabled = preferences[PRAYER_LOG_ENABLED] ?: true
+            prayerLogEnabled = preferences[PRAYER_LOG_ENABLED] ?: true,
+            prayerLogReminderEnabled = preferences[PRAYER_LOG_REMINDER] ?: true,
+            prayerLogReminderMinutes = preferences[PRAYER_LOG_REMINDER_MINUTES] ?: DEFAULT_PRAYER_LOG_REMINDER_MINUTES
         )
     }
 
@@ -336,6 +345,18 @@ class SettingsManager @Inject constructor(
     override suspend fun updatePrayerLogEnabled(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PRAYER_LOG_ENABLED] = enabled
+        }
+    }
+
+    override suspend fun updatePrayerLogReminder(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PRAYER_LOG_REMINDER] = enabled
+        }
+    }
+
+    override suspend fun updatePrayerLogReminderMinutes(minutes: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[PRAYER_LOG_REMINDER_MINUTES] = minutes
         }
     }
 

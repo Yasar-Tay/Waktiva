@@ -445,6 +445,15 @@
     <string name="prayer_log_title">Catatan Solat</string>
     <string name="prayer_log_setting">Guna catatan solat</string>
     <string name="prayer_log_setting_desc">Tandakan solat yang ditunaikan dan ikuti dari semasa ke semasa. Jika dimatikan, bar menunjukkan Derma sebagai ganti.</string>
+    <string name="prayer_log_reminder">Peringatan selepas Isyak</string>
+    <string name="prayer_log_reminder_desc">Jika selepas Isyak masih ada solat yang belum ditanda, anda akan diingatkan</string>
+    <string name="prayer_log_reminder_time">Masa peringatan</string>
+    <string name="prayer_log_reminder_after">%1$d minit selepas Isyak</string>
+    <string name="prayer_log_reminder_channel">Peringatan catatan solat</string>
+    <string name="prayer_log_reminder_channel_desc">Peringatan selepas Isyak untuk menanda solat hari ini</string>
+    <string name="prayer_log_reminder_title">Sudahkah anda mengemas kini catatan solat?</string>
+    <string name="prayer_log_reminder_text">Belum ditanda: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Semua sudah</string>
     <string name="prayer_log_mark">Sudah solat</string>
     <string name="prayer_log_unmark">Buang tanda</string>
     <string name="prayer_log_open">Buka catatan solat</string>

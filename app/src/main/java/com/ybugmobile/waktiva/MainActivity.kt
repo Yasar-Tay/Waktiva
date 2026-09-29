@@ -1,6 +1,7 @@
 package com.ybugmobile.waktiva
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -45,6 +46,7 @@ import androidx.navigation.compose.*
 import androidx.work.*
 // Glance updateAll import removed — WaktivaWidget is now a plain AppWidgetProvider
 import com.ybugmobile.waktiva.R
+import com.ybugmobile.waktiva.data.notification.NotificationHelper
 import com.ybugmobile.waktiva.data.worker.LocationUpdateWorker
 import com.ybugmobile.waktiva.data.worker.PrayerUpdateWorker
 import com.ybugmobile.waktiva.domain.manager.TimeManager
@@ -66,6 +68,7 @@ import com.ybugmobile.waktiva.ui.theme.WaktivaTheme
 import com.ybugmobile.waktiva.ui.welcome.WelcomeScreen
 import com.ybugmobile.waktiva.ui.widget.WaktivaWidget
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -85,6 +88,9 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var timeManager: TimeManager
 
+    /** A screen a notification asked to open, until the navigation has opened it. */
+    private val openScreenRequest = MutableStateFlow<String?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -92,6 +98,8 @@ class MainActivity : AppCompatActivity() {
         // Schedule periodic background tasks if this is the first time the activity is created
         if (savedInstanceState == null) {
             scheduleWork()
+            // Only on a fresh start: a recreated activity has already opened it.
+            openScreenRequest.value = intent?.getStringExtra(NotificationHelper.EXTRA_OPEN_SCREEN)
         }
         setContent {
             WaktivaTheme {
@@ -118,10 +126,23 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainNavigation(this@MainActivity, homeViewModel, timeManager)
+                    val openScreen by openScreenRequest.collectAsStateWithLifecycle()
+                    MainNavigation(
+                        context = this@MainActivity,
+                        homeViewModel = homeViewModel,
+                        timeManager = timeManager,
+                        openScreenRequest = openScreen,
+                        onOpenScreenHandled = { openScreenRequest.value = null }
+                    )
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        intent.getStringExtra(NotificationHelper.EXTRA_OPEN_SCREEN)?.let { openScreenRequest.value = it }
     }
 
     /**
@@ -164,7 +185,13 @@ class MainActivity : AppCompatActivity() {
  * (including background wrappers and bottom/rail navigation bars).
  */
 @Composable
-fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: TimeManager) {
+fun MainNavigation(
+    context: Context,
+    homeViewModel: HomeViewModel,
+    timeManager: TimeManager,
+    openScreenRequest: String? = null,
+    onOpenScreenHandled: () -> Unit = {}
+) {
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
     val settings by homeViewModel.settings.collectAsStateWithLifecycle(initialValue = null)
@@ -291,6 +318,14 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                     LicensesScreen(
                         onBack = { navController.popBackStack() }
                     )
+                }
+            }
+
+            // A notification asked for the prayer log (the reminder after Isha).
+            LaunchedEffect(openScreenRequest, startDestination) {
+                if (openScreenRequest == NotificationHelper.SCREEN_PRAYER_LOG && startDestination == Screen.Home.route) {
+                    if (isPrayerLogEnabled) navigateToTab(Screen.PrayerLog.route)
+                    onOpenScreenHandled()
                 }
             }
 

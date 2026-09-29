@@ -446,6 +446,15 @@
     <string name="prayer_log_title">نماز کا ریکارڈ</string>
     <string name="prayer_log_setting">نماز کا ریکارڈ استعمال کریں</string>
     <string name="prayer_log_setting_desc">ادا کی گئی نمازوں پر نشان لگائیں اور وقت کے ساتھ ان کا جائزہ لیں۔ بند ہونے پر نیچے کی پٹی میں اس کی جگہ «عطیہ» دکھے گا۔</string>
+    <string name="prayer_log_reminder">عشاء کے بعد یاد دہانی</string>
+    <string name="prayer_log_reminder_desc">عشاء کے بعد اگر کوئی نماز بغیر نشان رہ جائے تو یاد دہانی ملے گی</string>
+    <string name="prayer_log_reminder_time">یاد دہانی کا وقت</string>
+    <string name="prayer_log_reminder_after">عشاء کے %1$d منٹ بعد</string>
+    <string name="prayer_log_reminder_channel">نماز ریکارڈ کی یاد دہانی</string>
+    <string name="prayer_log_reminder_channel_desc">عشاء کے بعد دن کی نمازوں پر نشان لگانے کی یاد دہانی</string>
+    <string name="prayer_log_reminder_title">کیا آپ نے اپنا نماز ریکارڈ اپ ڈیٹ کیا؟</string>
+    <string name="prayer_log_reminder_text">ابھی نشان نہیں لگا: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">سب پڑھ لیں</string>
     <string name="prayer_log_mark">پڑھ لی</string>
     <string name="prayer_log_unmark">نشان ہٹائیں</string>
     <string name="prayer_log_open">نماز کا ریکارڈ کھولیں</string>

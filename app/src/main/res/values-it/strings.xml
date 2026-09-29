@@ -433,6 +433,15 @@
     <string name="prayer_log_title">Registro delle preghiere</string>
     <string name="prayer_log_setting">Usa il registro delle preghiere</string>
     <string name="prayer_log_setting_desc">Segna le preghiere compiute e seguile nel tempo. Disattivato, la barra mostra Dona al suo posto.</string>
+    <string name="prayer_log_reminder">Promemoria dopo Isha</string>
+    <string name="prayer_log_reminder_desc">Se dopo Isha una preghiera non è ancora segnata, ricevi un promemoria</string>
+    <string name="prayer_log_reminder_time">Ora del promemoria</string>
+    <string name="prayer_log_reminder_after">%1$d minuti dopo Isha</string>
+    <string name="prayer_log_reminder_channel">Promemoria del registro</string>
+    <string name="prayer_log_reminder_channel_desc">Il promemoria dopo Isha per segnare le preghiere del giorno</string>
+    <string name="prayer_log_reminder_title">Hai aggiornato il registro delle preghiere?</string>
+    <string name="prayer_log_reminder_text">Non ancora segnate: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Le ho compiute tutte</string>
     <string name="prayer_log_mark">Ho pregato</string>
     <string name="prayer_log_unmark">Rimuovi segno</string>
     <string name="prayer_log_open">Apri il registro delle preghiere</string>

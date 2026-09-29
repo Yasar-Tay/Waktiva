@@ -33,14 +33,21 @@ class NotificationHelper @Inject constructor(
         const val CHANNEL_ID_ADHAN = "adhan_playback_channel"
         const val CHANNEL_ID_WARNING = "pre_adhan_warning_channel_v1"
         const val CHANNEL_ID_PRAYER_TIME = "prayer_time_notification_channel"
+        const val CHANNEL_ID_PRAYER_LOG = "prayer_log_reminder_channel"
 
         const val NOTIFICATION_ID_ADHAN = 1001
         const val NOTIFICATION_ID_WARNING = 2001
         const val NOTIFICATION_ID_MISSED = 3001
         const val NOTIFICATION_ID_PRAYER_TIME = 4001
+        const val NOTIFICATION_ID_PRAYER_LOG = 5001
 
         const val ACTION_SKIP_ADHAN = "com.ybugmobile.waktiva.ACTION_SKIP_ADHAN"
         const val ACTION_STOP_ADHAN = "com.ybugmobile.waktiva.ACTION_STOP_ADHAN"
+        const val ACTION_MARK_ALL_PRAYED = "com.ybugmobile.waktiva.ACTION_MARK_ALL_PRAYED"
+
+        /** Asks MainActivity to open a screen; see [SCREEN_PRAYER_LOG]. */
+        const val EXTRA_OPEN_SCREEN = "OPEN_SCREEN"
+        const val SCREEN_PRAYER_LOG = "prayer_log"
         const val EXTRA_PRAYER_NAME = "PRAYER_NAME"
         const val EXTRA_PRAYER_DATE = "PRAYER_DATE"
     }
@@ -84,7 +91,18 @@ class NotificationHelper @Inject constructor(
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
 
-            notificationManager.createNotificationChannels(listOf(adhanChannel, warningChannel, prayerTimeChannel))
+            val prayerLogChannel = NotificationChannel(
+                CHANNEL_ID_PRAYER_LOG,
+                context.getString(R.string.prayer_log_reminder_channel),
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = context.getString(R.string.prayer_log_reminder_channel_desc)
+                setShowBadge(true)
+            }
+
+            notificationManager.createNotificationChannels(
+                listOf(adhanChannel, warningChannel, prayerTimeChannel, prayerLogChannel)
+            )
         }
     }
 
@@ -196,6 +214,49 @@ class NotificationHelper @Inject constructor(
             .build()
 
         notificationManager.notify(NOTIFICATION_ID_PRAYER_TIME, notification)
+    }
+
+    /**
+     * Reminds the user to mark [prayerDate]'s prayers in the prayer log, naming those still
+     * [unmarked]. Tapping it opens the log; its action marks them all as prayed.
+     */
+    fun showPrayerLogReminder(prayerDate: String, unmarked: List<PrayerType>) {
+        val openLog = Intent(context, MainActivity::class.java).apply {
+            putExtra(EXTRA_OPEN_SCREEN, SCREEN_PRAYER_LOG)
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+        // Its own request code: sharing the others' would hand them this intent's extra.
+        val contentIntent = PendingIntent.getActivity(
+            context, NOTIFICATION_ID_PRAYER_LOG, openLog,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val markAll = Intent(context, PrayerAlarmReceiver::class.java).apply {
+            action = ACTION_MARK_ALL_PRAYED
+            putExtra(EXTRA_PRAYER_NAME, PrayerType.ISHA.name)
+            putExtra(EXTRA_PRAYER_DATE, prayerDate)
+        }
+        val markAllIntent = PendingIntent.getBroadcast(
+            context, NOTIFICATION_ID_PRAYER_LOG, markAll,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val names = unmarked.joinToString(", ") { it.getDisplayName(context) }
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID_PRAYER_LOG)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(context.getString(R.string.prayer_log_reminder_title))
+            .setContentText(context.getString(R.string.prayer_log_reminder_text, names))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setContentIntent(contentIntent)
+            .addAction(R.drawable.ic_notification, context.getString(R.string.prayer_log_reminder_mark_all), markAllIntent)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager.notify(NOTIFICATION_ID_PRAYER_LOG, notification)
+    }
+
+    fun cancelPrayerLogReminder() {
+        notificationManager.cancel(NOTIFICATION_ID_PRAYER_LOG)
     }
 
     fun showMissedAdhanNotification(prayerName: String) {

@@ -445,6 +445,15 @@
     <string name="prayer_log_title">Учёт намазов</string>
     <string name="prayer_log_setting">Вести учёт намазов</string>
     <string name="prayer_log_setting_desc">Отмечайте совершённые намазы и следите за ними. Если выключено, в панели вместо учёта будет «Пожертвовать».</string>
+    <string name="prayer_log_reminder">Напоминание после Иша</string>
+    <string name="prayer_log_reminder_desc">Если после Иша какой-то намаз не отмечен, придёт напоминание</string>
+    <string name="prayer_log_reminder_time">Время напоминания</string>
+    <string name="prayer_log_reminder_after">Через %1$d минут после Иша</string>
+    <string name="prayer_log_reminder_channel">Напоминание учёта</string>
+    <string name="prayer_log_reminder_channel_desc">Напоминание после Иша отметить намазы дня</string>
+    <string name="prayer_log_reminder_title">Вы обновили учёт намазов?</string>
+    <string name="prayer_log_reminder_text">Ещё не отмечены: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Все совершены</string>
     <string name="prayer_log_mark">Совершён</string>
     <string name="prayer_log_unmark">Снять отметку</string>
     <string name="prayer_log_open">Открыть учёт намазов</string>

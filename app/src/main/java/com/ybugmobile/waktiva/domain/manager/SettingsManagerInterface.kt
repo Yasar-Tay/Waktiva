@@ -31,4 +31,6 @@ interface SettingsManagerInterface {
     suspend fun updateShowQiblaMapHint(enabled: Boolean)
     suspend fun updateDayCircleStyle(style: DayCircleStyle)
     suspend fun updatePrayerLogEnabled(enabled: Boolean)
+    suspend fun updatePrayerLogReminder(enabled: Boolean)
+    suspend fun updatePrayerLogReminderMinutes(minutes: Int)
 }

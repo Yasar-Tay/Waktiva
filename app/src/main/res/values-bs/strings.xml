@@ -445,6 +445,15 @@
     <string name="prayer_log_title">Evidencija namaza</string>
     <string name="prayer_log_setting">Koristi evidenciju namaza</string>
     <string name="prayer_log_setting_desc">Označavaj klanjane namaze i prati ih kroz vrijeme. Kada je isključeno, traka umjesto toga prikazuje Doniraj.</string>
+    <string name="prayer_log_reminder">Podsjetnik nakon jacije</string>
+    <string name="prayer_log_reminder_desc">Ako nakon jacije neki namaz nije označen, dobićeš podsjetnik</string>
+    <string name="prayer_log_reminder_time">Vrijeme podsjetnika</string>
+    <string name="prayer_log_reminder_after">%1$d minuta nakon jacije</string>
+    <string name="prayer_log_reminder_channel">Podsjetnik evidencije</string>
+    <string name="prayer_log_reminder_channel_desc">Podsjetnik nakon jacije da označiš današnje namaze</string>
+    <string name="prayer_log_reminder_title">Je li evidencija namaza ažurirana?</string>
+    <string name="prayer_log_reminder_text">Još nije označeno: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Sve klanjano</string>
     <string name="prayer_log_mark">Klanjano</string>
     <string name="prayer_log_unmark">Ukloni oznaku</string>
     <string name="prayer_log_open">Otvori evidenciju namaza</string>

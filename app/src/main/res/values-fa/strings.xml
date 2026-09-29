@@ -446,6 +446,15 @@
     <string name="prayer_log_title">کارنامهٔ نماز</string>
     <string name="prayer_log_setting">استفاده از کارنامهٔ نماز</string>
     <string name="prayer_log_setting_desc">نمازهایی را که خواندی علامت بزن و در طول زمان دنبال کن. اگر خاموش باشد، نوار پایین به جای آن «حمایت مالی» را نشان می‌دهد.</string>
+    <string name="prayer_log_reminder">یادآوری بعد از عشا</string>
+    <string name="prayer_log_reminder_desc">اگر بعد از عشا نمازی علامت نخورده باشد، یادآوری می‌شود</string>
+    <string name="prayer_log_reminder_time">زمان یادآوری</string>
+    <string name="prayer_log_reminder_after">%1$d دقیقه بعد از عشا</string>
+    <string name="prayer_log_reminder_channel">یادآوری کارنامه</string>
+    <string name="prayer_log_reminder_channel_desc">یادآوری بعد از عشا برای علامت زدن نمازهای روز</string>
+    <string name="prayer_log_reminder_title">کارنامهٔ نمازت را به‌روز کردی؟</string>
+    <string name="prayer_log_reminder_text">هنوز علامت نخورده: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">همه را خواندم</string>
     <string name="prayer_log_mark">خواندم</string>
     <string name="prayer_log_unmark">برداشتن علامت</string>
     <string name="prayer_log_open">باز کردن کارنامهٔ نماز</string>

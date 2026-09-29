@@ -433,6 +433,15 @@
     <string name="prayer_log_title">Carnet de prières</string>
     <string name="prayer_log_setting">Utiliser le carnet de prières</string>
     <string name="prayer_log_setting_desc">Marquez les prières accomplies et suivez-les dans le temps. Désactivé, la barre affiche Faire un don à la place.</string>
+    <string name="prayer_log_reminder">Rappel après Isha</string>
+    <string name="prayer_log_reminder_desc">Si une prière n\'est pas encore marquée après Isha, vous recevez un rappel</string>
+    <string name="prayer_log_reminder_time">Heure du rappel</string>
+    <string name="prayer_log_reminder_after">%1$d minutes après Isha</string>
+    <string name="prayer_log_reminder_channel">Rappel du carnet de prières</string>
+    <string name="prayer_log_reminder_channel_desc">Le rappel après Isha pour marquer les prières du jour</string>
+    <string name="prayer_log_reminder_title">Avez-vous mis à jour votre carnet de prières ?</string>
+    <string name="prayer_log_reminder_text">Pas encore marquées : %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Je les ai toutes accomplies</string>
     <string name="prayer_log_mark">J\'ai prié</string>
     <string name="prayer_log_unmark">Retirer la marque</string>
     <string name="prayer_log_open">Ouvrir le carnet de prières</string>

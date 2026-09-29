@@ -29,6 +29,7 @@ Faz 1 bu çalışmada tamamlandı; sonraki fazlar öncelik sırasına göredir.
 
 ## Faz 2 — Hatırlatma ve hızlı işaretleme
 
+- [x] **Yatsı sonrası hatırlatma:** Yatsıdan 30/60/90/120 dk sonra (varsayılan 60), günün işaretlenmemiş namazı kaldıysa bildirim; dokununca Çetele açılır, "Hepsini kıldım" aksiyonu hepsini işaretler. Ayarlar'da açılıp kapatılabilir, Çetele kapalıyken hiç kurulmaz.
 - [ ] **Bildirimden "Kıldım":** Ezan/sessiz vakit bildirimine "Kıldım" aksiyonu (`BroadcastReceiver` → repository). Uygulamayı açmadan işaretleme.
 - [ ] **Vakit çıkmadan hatırlatma:** İşaretlenmemiş namaz için vakit bitimine X dk kala nazik hatırlatma (ayarlanabilir, varsayılan kapalı).
 - [ ] **Gece yarısı sonrası Yatsı:** 00:00–İmsak arasında ana ekran yeni güne geçtiği için dünün Yatsı'sı halkadan işaretlenemiyor; o aralıkta dünün Yatsı rozetini göster veya sheet'te "Dünkü Yatsı" seçeneği sun.

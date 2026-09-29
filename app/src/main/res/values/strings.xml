@@ -444,6 +444,15 @@
     <string name="prayer_log_title">Prayer Log</string>
     <string name="prayer_log_setting">Use the prayer log</string>
     <string name="prayer_log_setting_desc">Mark the prayers you pray and follow them over time. Off, the navigation bar shows Donate instead.</string>
+    <string name="prayer_log_reminder">Reminder after Isha</string>
+    <string name="prayer_log_reminder_desc">If a prayer is still unmarked after Isha, you get a reminder</string>
+    <string name="prayer_log_reminder_time">Reminder time</string>
+    <string name="prayer_log_reminder_after">%1$d minutes after Isha</string>
+    <string name="prayer_log_reminder_channel">Prayer log reminder</string>
+    <string name="prayer_log_reminder_channel_desc">The reminder after Isha to mark the day\'s prayers</string>
+    <string name="prayer_log_reminder_title">Did you update your prayer log?</string>
+    <string name="prayer_log_reminder_text">Not marked yet: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">I prayed them all</string>
     <string name="prayer_log_mark">I prayed</string>
     <string name="prayer_log_unmark">Remove mark</string>
     <string name="prayer_log_open">Open prayer log</string>

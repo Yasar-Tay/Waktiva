@@ -433,6 +433,15 @@
     <string name="prayer_log_title">Registro de oraciones</string>
     <string name="prayer_log_setting">Usar el registro de oraciones</string>
     <string name="prayer_log_setting_desc">Marca las oraciones que rezas y síguelas en el tiempo. Desactivado, la barra muestra Donar en su lugar.</string>
+    <string name="prayer_log_reminder">Recordatorio después de Isha</string>
+    <string name="prayer_log_reminder_desc">Si alguna oración sigue sin marcar después de Isha, recibes un recordatorio</string>
+    <string name="prayer_log_reminder_time">Hora del recordatorio</string>
+    <string name="prayer_log_reminder_after">%1$d minutos después de Isha</string>
+    <string name="prayer_log_reminder_channel">Recordatorio del registro</string>
+    <string name="prayer_log_reminder_channel_desc">El recordatorio después de Isha para marcar las oraciones del día</string>
+    <string name="prayer_log_reminder_title">¿Actualizaste tu registro de oraciones?</string>
+    <string name="prayer_log_reminder_text">Aún sin marcar: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Las recé todas</string>
     <string name="prayer_log_mark">Ya recé</string>
     <string name="prayer_log_unmark">Quitar marca</string>
     <string name="prayer_log_open">Abrir registro de oraciones</string>

@@ -445,6 +445,15 @@
     <string name="prayer_log_title">Regjistri i namazeve</string>
     <string name="prayer_log_setting">Përdor regjistrin e namazeve</string>
     <string name="prayer_log_setting_desc">Shëno namazet që fal dhe ndiqi me kalimin e kohës. Kur është i fikur, shiriti tregon Dhuro në vend të tij.</string>
+    <string name="prayer_log_reminder">Kujtesë pas jacisë</string>
+    <string name="prayer_log_reminder_desc">Nëse pas jacisë ndonjë namaz nuk është shënuar, merr një kujtesë</string>
+    <string name="prayer_log_reminder_time">Koha e kujtesës</string>
+    <string name="prayer_log_reminder_after">%1$d minuta pas jacisë</string>
+    <string name="prayer_log_reminder_channel">Kujtesa e regjistrit</string>
+    <string name="prayer_log_reminder_channel_desc">Kujtesa pas jacisë për të shënuar namazet e ditës</string>
+    <string name="prayer_log_reminder_title">E ke përditësuar regjistrin e namazeve?</string>
+    <string name="prayer_log_reminder_text">Ende pa shënuar: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">I fala të gjitha</string>
     <string name="prayer_log_mark">E fala</string>
     <string name="prayer_log_unmark">Hiq shenjën</string>
     <string name="prayer_log_open">Hap regjistrin e namazeve</string>

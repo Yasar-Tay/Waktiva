@@ -125,6 +125,23 @@ class PrayerLogTest {
     }
 
     @Test
+    fun theReminderComesAfterTodaysIshaThenTomorrows() {
+        val days = listOf(day, tomorrow)
+        assertEquals(today to at(21, 35), PrayerLog.nextReminder(days, at(20, 0), 60))
+        assertEquals(today.plusDays(1) to at(21, 35, today.plusDays(1)), PrayerLog.nextReminder(days, at(21, 35), 60))
+    }
+
+    @Test
+    fun aLateReminderStillBelongsToItsDay() {
+        assertEquals(today to at(0, 5, today.plusDays(1)), PrayerLog.nextReminder(listOf(day), at(23, 0), 210))
+    }
+
+    @Test
+    fun noReminderWithoutADayAhead() {
+        assertNull(PrayerLog.nextReminder(listOf(day), at(23, 0), 60))
+    }
+
+    @Test
     fun sunriseIsNotLogged() {
         assertEquals(5, LoggedPrayers.size)
         assertNull(LoggedPrayers.find { it == PrayerType.SUNRISE })

@@ -445,6 +445,15 @@
     <string name="prayer_log_title">Rukousloki</string>
     <string name="prayer_log_setting">Käytä rukouslokia</string>
     <string name="prayer_log_setting_desc">Merkitse rukoilemasi rukoukset ja seuraa niitä ajan mittaan. Pois päältä palkissa näkyy sen sijaan Lahjoita.</string>
+    <string name="prayer_log_reminder">Muistutus Ishan jälkeen</string>
+    <string name="prayer_log_reminder_desc">Jos jokin rukous on Ishan jälkeen merkitsemättä, saat muistutuksen</string>
+    <string name="prayer_log_reminder_time">Muistutuksen aika</string>
+    <string name="prayer_log_reminder_after">%1$d minuuttia Ishan jälkeen</string>
+    <string name="prayer_log_reminder_channel">Rukouslokin muistutus</string>
+    <string name="prayer_log_reminder_channel_desc">Muistutus Ishan jälkeen merkitä päivän rukoukset</string>
+    <string name="prayer_log_reminder_title">Päivititkö rukouslokisi?</string>
+    <string name="prayer_log_reminder_text">Vielä merkitsemättä: %1$s</string>
+    <string name="prayer_log_reminder_mark_all">Rukoilin kaikki</string>
     <string name="prayer_log_mark">Rukoiltu</string>
     <string name="prayer_log_unmark">Poista merkintä</string>
     <string name="prayer_log_open">Avaa rukousloki</string>

@@ -8,8 +8,10 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
+import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.data.notification.NotificationHelper
 import com.ybugmobile.waktiva.domain.model.PrayerDay
+import com.ybugmobile.waktiva.domain.model.PrayerLog
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.receiver.PrayerAlarmReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -34,11 +36,13 @@ class AlarmScheduler @Inject constructor(
         const val ACTION_PRAYER_ALARM = "com.ybugmobile.waktiva.ACTION_PRAYER_ALARM"
         const val ACTION_PRE_ADHAN_NOTIFICATION = "com.ybugmobile.waktiva.ACTION_PRE_ADHAN_NOTIFICATION"
         const val ACTION_WIDGET_REFRESH = "com.ybugmobile.waktiva.ACTION_WIDGET_REFRESH"
+        const val ACTION_PRAYER_LOG_REMINDER = "com.ybugmobile.waktiva.ACTION_PRAYER_LOG_REMINDER"
         
         const val REQUEST_CODE_ADHAN = 1001
         const val REQUEST_CODE_PRE_ADHAN = 1002
         const val REQUEST_CODE_WIDGET_REFRESH = 1003
         const val REQUEST_CODE_WIDGET_REFRESH_BACKUP = 1004
+        const val REQUEST_CODE_PRAYER_LOG_REMINDER = 1005
         const val REQUEST_CODE_TEST = 9999
         const val REQUEST_CODE_TEST_PRE = 9998
     }
@@ -111,6 +115,8 @@ class AlarmScheduler @Inject constructor(
             }
         }
 
+        schedulePrayerLogReminder(prayerDays, now, settings)
+
         // 3. Schedule the absolute next milestone (could be Sunrise) to ensure Widget updates
         val absoluteNext = allMilestones.firstOrNull()
         if (absoluteNext != null) {
@@ -135,6 +141,52 @@ class AlarmScheduler @Inject constructor(
                 )
             }
         }
+    }
+
+    /**
+     * Sets the reminder to mark the day's prayers in the prayer log, a while after the next Isha,
+     * or clears it while the log or its reminder is off. The receiver decides when it fires
+     * whether any prayer is still unmarked.
+     */
+    private fun schedulePrayerLogReminder(prayerDays: List<PrayerDay>, now: LocalDateTime, settings: UserSettings) {
+        val next = if (settings.prayerLogEnabled && settings.prayerLogReminderEnabled) {
+            PrayerLog.nextReminder(prayerDays, now, settings.prayerLogReminderMinutes)
+        } else {
+            null
+        }
+        val intent = reminderIntent(next?.first?.toString() ?: LocalDate.now().toString())
+        if (next == null) {
+            PendingIntent.getBroadcast(
+                context, REQUEST_CODE_PRAYER_LOG_REMINDER, intent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            )?.let { alarmManager.cancel(it) }
+            return
+        }
+
+        val (date, at) = next
+        val triggerAt = at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, REQUEST_CODE_PRAYER_LOG_REMINDER, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        Log.d("AlarmScheduler", "Scheduling PRAYER LOG reminder for $date at $at")
+        // Not an alarm clock: a reminder mustn't show up as the phone's next alarm.
+        try {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent)
+            } else {
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent)
+            }
+        } catch (e: SecurityException) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent)
+        }
+    }
+
+    private fun reminderIntent(prayerDate: String) = Intent(context, PrayerAlarmReceiver::class.java).apply {
+        action = ACTION_PRAYER_LOG_REMINDER
+        putExtra(NotificationHelper.EXTRA_PRAYER_NAME, PrayerType.ISHA.name)
+        putExtra(NotificationHelper.EXTRA_PRAYER_DATE, prayerDate)
+        component = ComponentName(context, PrayerAlarmReceiver::class.java)
     }
 
     private fun scheduleAlarm(timeMillis: Long, prayerName: String, prayerDate: String, action: String, requestCode: Int) {
