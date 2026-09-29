@@ -6,7 +6,7 @@
     <string name="nav_home">Home</string>
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Settings</string>
-    <string name="nav_donate">Donate</string>
+    <string name="nav_prayer_log">Prayer Log</string>
     <string name="cd_back">Back</string>
 
     <!-- Qibla Screen -->
@@ -438,4 +438,31 @@
     <string name="widget_empty">Open Waktiva to load prayer times</string>
     <string name="widget_countdown_label">Countdown</string>
     <string name="widget_countdown_description">The time left to the next prayer, large and at a glance</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Prayer Log</string>
+    <string name="prayer_log_mark">I prayed</string>
+    <string name="prayer_log_unmark">Remove mark</string>
+    <string name="prayer_log_open">Open prayer log</string>
+    <string name="prayer_log_status_prayed">Prayed</string>
+    <string name="prayer_log_status_active">In time</string>
+    <string name="prayer_log_status_passed">Time passed</string>
+    <string name="prayer_log_status_missed">Missed</string>
+    <string name="prayer_log_status_upcoming">Upcoming</string>
+    <string name="prayer_log_status_untracked">Not logged</string>
+    <string name="prayer_log_sheet_active">It\'s time for %1$s. If you\'ve prayed it, mark it and it goes into your prayer log.</string>
+    <string name="prayer_log_sheet_passed">The time for %1$s has passed. If you prayed it, you can still mark it in your prayer log.</string>
+    <string name="prayer_log_sheet_prayed">You marked %1$s as prayed. May it be accepted.</string>
+    <string name="prayer_log_today">Today</string>
+    <string name="prayer_log_now">%1$s time is on</string>
+    <string name="prayer_log_today_count">Prayed: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">All of today\'s prayers are prayed</string>
+    <string name="prayer_log_streak">full days in a row</string>
+    <string name="prayer_log_week">Last 7 days</string>
+    <string name="prayer_log_month">Last 30 days</string>
+    <string name="prayer_log_missed_total">Missed in total</string>
+    <string name="prayer_log_timeline">Timeline</string>
+    <string name="prayer_log_earlier">Show earlier days</string>
+    <string name="prayer_log_hint">When a prayer\'s time comes, tap its badge on the home screen\'s circle and choose “I prayed”, or tap it here.</string>
+    <string name="settings_support_desc">Help keep Waktiva free, private and ad-free</string>
 </resources>

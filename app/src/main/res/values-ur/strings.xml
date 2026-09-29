@@ -6,7 +6,7 @@
     <string name="nav_home">ہوم</string>
     <string name="nav_qibla">قبلہ</string>
     <string name="nav_settings">ترتیبات</string>
-    <string name="nav_donate">عطیہ</string>
+    <string name="nav_prayer_log">ریکارڈ</string>
     <string name="cd_back">واپس</string>
 
     <!-- Qibla Screen -->
@@ -440,4 +440,31 @@
     <string name="widget_empty">نماز کے اوقات لوڈ کرنے کے لیے Waktiva کھولیں</string>
     <string name="widget_countdown_label">الٹی گنتی</string>
     <string name="widget_countdown_description">اگلی نماز تک باقی وقت، بڑا اور ایک نظر میں</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">نماز کا ریکارڈ</string>
+    <string name="prayer_log_mark">پڑھ لی</string>
+    <string name="prayer_log_unmark">نشان ہٹائیں</string>
+    <string name="prayer_log_open">نماز کا ریکارڈ کھولیں</string>
+    <string name="prayer_log_status_prayed">ادا ہوئی</string>
+    <string name="prayer_log_status_active">وقت جاری</string>
+    <string name="prayer_log_status_passed">وقت گزر گیا</string>
+    <string name="prayer_log_status_missed">قضا</string>
+    <string name="prayer_log_status_upcoming">آنے والی</string>
+    <string name="prayer_log_status_untracked">درج نہیں</string>
+    <string name="prayer_log_sheet_active">%1$s کا وقت ہو گیا ہے۔ اگر آپ نے پڑھ لی ہے تو نشان لگائیں، یہ آپ کے ریکارڈ میں درج ہو جائے گی۔</string>
+    <string name="prayer_log_sheet_passed">%1$s کا وقت گزر گیا ہے۔ اگر آپ نے پڑھی تھی تو اب بھی نشان لگا سکتے ہیں۔</string>
+    <string name="prayer_log_sheet_prayed">آپ نے %1$s کو ادا شدہ نشان زد کیا۔ اللہ قبول فرمائے۔</string>
+    <string name="prayer_log_today">آج</string>
+    <string name="prayer_log_now">ابھی %1$s کا وقت ہے</string>
+    <string name="prayer_log_today_count">ادا شدہ: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">آج کی تمام نمازیں ادا ہو گئیں</string>
+    <string name="prayer_log_streak">مکمل دن مسلسل</string>
+    <string name="prayer_log_week">پچھلے 7 دن</string>
+    <string name="prayer_log_month">پچھلے 30 دن</string>
+    <string name="prayer_log_missed_total">کل قضا</string>
+    <string name="prayer_log_timeline">ٹائم لائن</string>
+    <string name="prayer_log_earlier">پہلے کے دن دکھائیں</string>
+    <string name="prayer_log_hint">نماز کا وقت آنے پر ہوم اسکرین کے دائرے میں اس کے نشان پر ٹیپ کریں اور «پڑھ لی» چنیں، یا یہیں نشان لگائیں۔</string>
+    <string name="settings_support_desc">Waktiva کو مفت، نجی اور اشتہار سے پاک رکھنے میں مدد کریں</string>
 </resources>

@@ -6,7 +6,7 @@
     <string name="nav_home">হোম</string>
     <string name="nav_qibla">কিবলা</string>
     <string name="nav_settings">সেটিংস</string>
-    <string name="nav_donate">দান করুন</string>
+    <string name="nav_prayer_log">হিসাব</string>
     <string name="cd_back">পিছনে</string>
 
     <!-- Qibla Screen -->
@@ -440,4 +440,31 @@
     <string name="widget_empty">নামাজের সময় লোড করতে Waktiva খুলুন</string>
     <string name="widget_countdown_label">কাউন্টডাউন</string>
     <string name="widget_countdown_description">পরবর্তী নামাজ পর্যন্ত বাকি সময়, বড় করে এক নজরে</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">নামাজের হিসাব</string>
+    <string name="prayer_log_mark">পড়েছি</string>
+    <string name="prayer_log_unmark">চিহ্ন সরান</string>
+    <string name="prayer_log_open">নামাজের হিসাব খুলুন</string>
+    <string name="prayer_log_status_prayed">আদায় হয়েছে</string>
+    <string name="prayer_log_status_active">ওয়াক্ত চলছে</string>
+    <string name="prayer_log_status_passed">ওয়াক্ত শেষ</string>
+    <string name="prayer_log_status_missed">কাজা</string>
+    <string name="prayer_log_status_upcoming">আসন্ন</string>
+    <string name="prayer_log_status_untracked">হিসাবে নেই</string>
+    <string name="prayer_log_sheet_active">%1$s-এর ওয়াক্ত হয়েছে। পড়ে থাকলে চিহ্ন দিন, আপনার হিসাবে যোগ হবে।</string>
+    <string name="prayer_log_sheet_passed">%1$s-এর ওয়াক্ত শেষ হয়েছে। পড়ে থাকলে এখনও চিহ্ন দিতে পারেন।</string>
+    <string name="prayer_log_sheet_prayed">আপনি %1$s আদায় হয়েছে বলে চিহ্ন দিয়েছেন। আল্লাহ কবুল করুন।</string>
+    <string name="prayer_log_today">আজ</string>
+    <string name="prayer_log_now">এখন %1$s-এর ওয়াক্ত</string>
+    <string name="prayer_log_today_count">আদায়: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">আজকের সব নামাজ আদায় হয়েছে</string>
+    <string name="prayer_log_streak">টানা পূর্ণ দিন</string>
+    <string name="prayer_log_week">গত ৭ দিন</string>
+    <string name="prayer_log_month">গত ৩০ দিন</string>
+    <string name="prayer_log_missed_total">মোট কাজা</string>
+    <string name="prayer_log_timeline">সময়রেখা</string>
+    <string name="prayer_log_earlier">আগের দিনগুলো দেখুন</string>
+    <string name="prayer_log_hint">নামাজের ওয়াক্ত হলে হোম স্ক্রিনের বৃত্তে তার ব্যাজে ট্যাপ করে “পড়েছি” বেছে নিন, অথবা এখান থেকে চিহ্ন দিন।</string>
+    <string name="settings_support_desc">Waktiva-কে বিনামূল্যে, ব্যক্তিগত ও বিজ্ঞাপনমুক্ত রাখতে সাহায্য করুন</string>
 </resources>

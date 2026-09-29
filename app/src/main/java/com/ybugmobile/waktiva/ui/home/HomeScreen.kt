@@ -46,7 +46,8 @@ import java.time.LocalDate
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    onOpenPrayerLog: () -> Unit = {}
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     
@@ -64,6 +65,7 @@ fun HomeScreen(
     val atmosphere by viewModel.atmosphereState.collectAsStateWithLifecycle()
     val settings by viewModel.settings.collectAsStateWithLifecycle(initialValue = null)
     val allDays by viewModel.allPrayerDays.collectAsStateWithLifecycle()
+    val prayedToday by viewModel.prayedToday.collectAsStateWithLifecycle()
 
     // Match the Qibla screen guard: avoid firing a second refresh while the
     // ViewModel's initial fetch is still settling, otherwise we can race the
@@ -82,6 +84,9 @@ fun HomeScreen(
     val onStopAdhan = remember(viewModel) { { viewModel.stopAdhan(); Unit } }
     val onStopTest = remember(viewModel) { { viewModel.stopTestAlarm(); Unit } }
     val onResetDate = remember(viewModel) { { viewModel.selectDate(LocalDate.now()); Unit } }
+    val onSetPrayed = remember(viewModel) {
+        { date: LocalDate, type: PrayerType, prayed: Boolean -> viewModel.setPrayed(date, type, prayed) }
+    }
     val onDebugWeather = remember(viewModel) {
         { reported: WeatherCondition, effect: WeatherCondition ->
             viewModel.debugSetWeather(reported, effect)
@@ -103,7 +108,10 @@ fun HomeScreen(
         onStopAdhan = onStopAdhan,
         onStopTest = onStopTest,
         onResetDate = onResetDate,
-        onDebugWeather = onDebugWeather
+        onDebugWeather = onDebugWeather,
+        prayedToday = prayedToday,
+        onSetPrayed = onSetPrayed,
+        onOpenPrayerLog = onOpenPrayerLog
     )
 }
 
@@ -126,7 +134,11 @@ fun HomeScreenContent(
     onStopAdhan: () -> Unit,
     onStopTest: () -> Unit,
     onResetDate: () -> Unit,
-    onDebugWeather: (WeatherCondition, WeatherCondition) -> Unit
+    onDebugWeather: (WeatherCondition, WeatherCondition) -> Unit,
+    /** Today's prayers marked in the prayer log, or null until it has loaded. */
+    prayedToday: Set<PrayerType>? = null,
+    onSetPrayed: (LocalDate, PrayerType, Boolean) -> Unit = { _, _, _ -> },
+    onOpenPrayerLog: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
@@ -183,6 +195,9 @@ fun HomeScreenContent(
     var showMethodDialog by remember { mutableStateOf(false) }
     var showHealthOverlay by remember { mutableStateOf(false) }
     var showDebugWeather by remember { mutableStateOf(false) }
+    // The prayer whose badge opened the prayer log sheet.
+    var loggingPrayer by remember { mutableStateOf<PrayerType?>(null) }
+    val onLogPrayer = remember { { type: PrayerType -> loggingPrayer = type } }
 
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var showToast by remember { mutableStateOf(false) }
@@ -287,7 +302,9 @@ fun HomeScreenContent(
                                 onResetDate = onResetDate,
                                 onMethodClick = { showMethodDialog = true },
                                 onShowToast = handleShowToast,
-                                sunLight = sunLight
+                                sunLight = sunLight,
+                                prayedToday = prayedToday,
+                                onLogPrayer = onLogPrayer
                             )
                         } else {
                             Box(
@@ -313,7 +330,9 @@ fun HomeScreenContent(
                                     onResetDate = onResetDate,
                                     onMethodClick = { showMethodDialog = true },
                                     onShowToast = handleShowToast,
-                                    sunLight = sunLight
+                                    sunLight = sunLight,
+                                    prayedToday = prayedToday,
+                                    onLogPrayer = onLogPrayer
                                 )
                             }
                         }
@@ -330,6 +349,21 @@ fun HomeScreenContent(
                             onMethodSelected(it)
                             showMethodDialog = false
                         }
+                    )
+                }
+
+                val logDay = state.currentPrayerDay
+                val logType = loggingPrayer
+                if (logType != null && logDay != null) {
+                    PrayerLogSheet(
+                        type = logType,
+                        day = logDay,
+                        nextDay = allDays.find { it.date == logDay.date.plusDays(1) },
+                        now = state.currentTime,
+                        isPrayed = prayedToday?.contains(logType) == true,
+                        onPrayedChange = { onSetPrayed(logDay.date, logType, it) },
+                        onOpenLog = onOpenPrayerLog,
+                        onDismiss = { loggingPrayer = null }
                     )
                 }
 

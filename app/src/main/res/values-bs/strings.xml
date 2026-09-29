@@ -6,7 +6,7 @@
     <string name="nav_home">Početna</string>
     <string name="nav_qibla">Kibla</string>
     <string name="nav_settings">Postavke</string>
-    <string name="nav_donate">Doniraj</string>
+    <string name="nav_prayer_log">Evidencija</string>
     <string name="cd_back">Nazad</string>
 
     <!-- Qibla Screen -->
@@ -439,4 +439,31 @@
     <string name="widget_empty">Otvorite Waktiva da učitate vaktiju</string>
     <string name="widget_countdown_label">Odbrojavanje</string>
     <string name="widget_countdown_description">Preostalo vrijeme do sljedećeg namaza, krupno i na prvi pogled</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Evidencija namaza</string>
+    <string name="prayer_log_mark">Klanjano</string>
+    <string name="prayer_log_unmark">Ukloni oznaku</string>
+    <string name="prayer_log_open">Otvori evidenciju namaza</string>
+    <string name="prayer_log_status_prayed">Klanjano</string>
+    <string name="prayer_log_status_active">U vremenu</string>
+    <string name="prayer_log_status_passed">Vrijeme prošlo</string>
+    <string name="prayer_log_status_missed">Propušteno</string>
+    <string name="prayer_log_status_upcoming">Predstoji</string>
+    <string name="prayer_log_status_untracked">Nije evidentirano</string>
+    <string name="prayer_log_sheet_active">Nastupilo je vrijeme za %1$s. Ako je klanjano, označi i biće upisano u evidenciju.</string>
+    <string name="prayer_log_sheet_passed">Vrijeme za %1$s je prošlo. Ako je klanjano, još uvijek ga možeš označiti.</string>
+    <string name="prayer_log_sheet_prayed">%1$s je označen kao klanjan. Neka bude primljeno.</string>
+    <string name="prayer_log_today">Danas</string>
+    <string name="prayer_log_now">Sada je vrijeme za %1$s</string>
+    <string name="prayer_log_today_count">Klanjano: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Svi današnji namazi su klanjani</string>
+    <string name="prayer_log_streak">punih dana zaredom</string>
+    <string name="prayer_log_week">Posljednjih 7 dana</string>
+    <string name="prayer_log_month">Posljednjih 30 dana</string>
+    <string name="prayer_log_missed_total">Ukupno propušteno</string>
+    <string name="prayer_log_timeline">Vremenska linija</string>
+    <string name="prayer_log_earlier">Prikaži ranije dane</string>
+    <string name="prayer_log_hint">Kada nastupi vrijeme namaza, dodirni njegovu oznaku u krugu na početnom ekranu i odaberi „Klanjano“, ili ga označi ovdje.</string>
+    <string name="settings_support_desc">Pomozi da Waktiva ostane besplatna, privatna i bez reklama</string>
 </resources>

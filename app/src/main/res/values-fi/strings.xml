@@ -6,7 +6,7 @@
     <string name="nav_home">Koti</string>
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Asetukset</string>
-    <string name="nav_donate">Lahjoita</string>
+    <string name="nav_prayer_log">Rukousloki</string>
     <string name="cd_back">Takaisin</string>
 
     <!-- Qibla Screen -->
@@ -439,4 +439,31 @@
     <string name="widget_empty">Avaa Waktiva ladataksesi rukousajat</string>
     <string name="widget_countdown_label">Lähtölaskenta</string>
     <string name="widget_countdown_description">Aika seuraavaan rukoukseen, suurena ja yhdellä silmäyksellä</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Rukousloki</string>
+    <string name="prayer_log_mark">Rukoiltu</string>
+    <string name="prayer_log_unmark">Poista merkintä</string>
+    <string name="prayer_log_open">Avaa rukousloki</string>
+    <string name="prayer_log_status_prayed">Rukoiltu</string>
+    <string name="prayer_log_status_active">Aika käynnissä</string>
+    <string name="prayer_log_status_passed">Aika mennyt</string>
+    <string name="prayer_log_status_missed">Väliin jäänyt</string>
+    <string name="prayer_log_status_upcoming">Tulossa</string>
+    <string name="prayer_log_status_untracked">Ei kirjattu</string>
+    <string name="prayer_log_sheet_active">Rukouksen %1$s aika on alkanut. Jos olet rukoillut sen, merkitse se lokiisi.</string>
+    <string name="prayer_log_sheet_passed">Rukouksen %1$s aika on mennyt. Jos rukoilit sen, voit yhä merkitä sen.</string>
+    <string name="prayer_log_sheet_prayed">Merkitsit rukouksen %1$s rukoilluksi. Tulkoon se hyväksytyksi.</string>
+    <string name="prayer_log_today">Tänään</string>
+    <string name="prayer_log_now">Nyt on rukouksen %1$s aika</string>
+    <string name="prayer_log_today_count">Rukoiltu: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Kaikki päivän rukoukset on rukoiltu</string>
+    <string name="prayer_log_streak">täyttä päivää peräkkäin</string>
+    <string name="prayer_log_week">Viimeiset 7 päivää</string>
+    <string name="prayer_log_month">Viimeiset 30 päivää</string>
+    <string name="prayer_log_missed_total">Väliin jääneet yhteensä</string>
+    <string name="prayer_log_timeline">Aikajana</string>
+    <string name="prayer_log_earlier">Näytä aiemmat päivät</string>
+    <string name="prayer_log_hint">Kun rukouksen aika koittaa, napauta sen merkkiä aloitusnäytön ympyrässä ja valitse ”Rukoiltu”, tai merkitse se täällä.</string>
+    <string name="settings_support_desc">Auta pitämään Waktiva ilmaisena, yksityisenä ja mainoksettomana</string>
 </resources>

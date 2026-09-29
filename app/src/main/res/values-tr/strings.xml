@@ -6,7 +6,7 @@
     <string name="nav_home">Ana Sayfa</string>
     <string name="nav_qibla">Kıble</string>
     <string name="nav_settings">Ayarlar</string>
-    <string name="nav_donate">Bağış Yap</string>
+    <string name="nav_prayer_log">Çetele</string>
     <string name="cd_back">Geri</string>
 
     <!-- Qibla Screen -->
@@ -440,4 +440,31 @@
     <string name="widget_empty">Vakitleri yüklemek için Waktiva\'yı açın</string>
     <string name="widget_countdown_label">Geri Sayım</string>
     <string name="widget_countdown_description">Sıradaki vakte kalan süre, büyük ve tek bakışta</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Çetele</string>
+    <string name="prayer_log_mark">Kıldım</string>
+    <string name="prayer_log_unmark">İşareti kaldır</string>
+    <string name="prayer_log_open">Çeteleyi aç</string>
+    <string name="prayer_log_status_prayed">Kılındı</string>
+    <string name="prayer_log_status_active">Vakitte</string>
+    <string name="prayer_log_status_passed">Vakti çıktı</string>
+    <string name="prayer_log_status_missed">Kaçırıldı</string>
+    <string name="prayer_log_status_upcoming">Bekliyor</string>
+    <string name="prayer_log_status_untracked">Kayıt yok</string>
+    <string name="prayer_log_sheet_active">%1$s vakti girdi. Kıldıysan işaretle, çetelene işlensin.</string>
+    <string name="prayer_log_sheet_passed">%1$s vakti çıktı. Kıldıysan yine de çetelene işaretleyebilirsin.</string>
+    <string name="prayer_log_sheet_prayed">%1$s vakti çetelende kılındı olarak işaretli. Allah kabul etsin.</string>
+    <string name="prayer_log_today">Bugün</string>
+    <string name="prayer_log_now">Şu an %1$s vakti</string>
+    <string name="prayer_log_today_count">Kılınan: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Bugünün tüm namazları kılındı</string>
+    <string name="prayer_log_streak">tam gün üst üste</string>
+    <string name="prayer_log_week">Son 7 gün</string>
+    <string name="prayer_log_month">Son 30 gün</string>
+    <string name="prayer_log_missed_total">Toplam kaçırılan</string>
+    <string name="prayer_log_timeline">Zaman çizelgesi</string>
+    <string name="prayer_log_earlier">Daha eski günler</string>
+    <string name="prayer_log_hint">Vakti giren namazı, ana ekrandaki halkada rozetine dokunup “Kıldım” diyerek ya da buradan işaretleyebilirsin.</string>
+    <string name="settings_support_desc">Waktiva\'nın ücretsiz, gizliliğe saygılı ve reklamsız kalmasına destek ol</string>
 </resources>

@@ -6,7 +6,7 @@
     <string name="nav_home">Utama</string>
     <string name="nav_qibla">Kiblat</string>
     <string name="nav_settings">Tetapan</string>
-    <string name="nav_donate">Derma</string>
+    <string name="nav_prayer_log">Catatan</string>
     <string name="cd_back">Kembali</string>
 
     <!-- Qibla Screen -->
@@ -439,4 +439,31 @@
     <string name="widget_empty">Buka Waktiva untuk memuatkan waktu solat</string>
     <string name="widget_countdown_label">Kiraan Detik</string>
     <string name="widget_countdown_description">Baki masa ke solat seterusnya, besar dan sekali pandang</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Catatan Solat</string>
+    <string name="prayer_log_mark">Sudah solat</string>
+    <string name="prayer_log_unmark">Buang tanda</string>
+    <string name="prayer_log_open">Buka catatan solat</string>
+    <string name="prayer_log_status_prayed">Sudah</string>
+    <string name="prayer_log_status_active">Dalam waktu</string>
+    <string name="prayer_log_status_passed">Waktu tamat</string>
+    <string name="prayer_log_status_missed">Tertinggal</string>
+    <string name="prayer_log_status_upcoming">Akan datang</string>
+    <string name="prayer_log_status_untracked">Tidak direkod</string>
+    <string name="prayer_log_sheet_active">Waktu %1$s telah masuk. Jika sudah solat, tandakan supaya direkod dalam catatan solat anda.</string>
+    <string name="prayer_log_sheet_passed">Waktu %1$s telah tamat. Jika sudah solat, anda masih boleh menandakannya.</string>
+    <string name="prayer_log_sheet_prayed">Anda menandakan %1$s sebagai sudah ditunaikan. Semoga diterima.</string>
+    <string name="prayer_log_today">Hari ini</string>
+    <string name="prayer_log_now">Sekarang waktu %1$s</string>
+    <string name="prayer_log_today_count">Ditunaikan: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Semua solat hari ini sudah ditunaikan</string>
+    <string name="prayer_log_streak">hari penuh berturut-turut</string>
+    <string name="prayer_log_week">7 hari lepas</string>
+    <string name="prayer_log_month">30 hari lepas</string>
+    <string name="prayer_log_missed_total">Jumlah tertinggal</string>
+    <string name="prayer_log_timeline">Garis masa</string>
+    <string name="prayer_log_earlier">Tunjukkan hari sebelumnya</string>
+    <string name="prayer_log_hint">Apabila masuk waktu solat, ketik lencananya pada bulatan di skrin utama dan pilih “Sudah solat”, atau tandakan di sini.</string>
+    <string name="settings_support_desc">Bantu Waktiva kekal percuma, peribadi dan tanpa iklan</string>
 </resources>

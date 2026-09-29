@@ -6,7 +6,7 @@
     <string name="nav_home">Kreu</string>
     <string name="nav_qibla">Kibla</string>
     <string name="nav_settings">Cilësimet</string>
-    <string name="nav_donate">Dhuro</string>
+    <string name="nav_prayer_log">Regjistri</string>
     <string name="cd_back">Mbrapa</string>
 
     <!-- Qibla Screen -->
@@ -439,4 +439,31 @@
     <string name="widget_empty">Hapni Waktiva për të ngarkuar kohët e namazit</string>
     <string name="widget_countdown_label">Numërimi mbrapsht</string>
     <string name="widget_countdown_description">Koha që mbetet deri te namazi i radhës, e madhe dhe me një shikim</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Regjistri i namazeve</string>
+    <string name="prayer_log_mark">E fala</string>
+    <string name="prayer_log_unmark">Hiq shenjën</string>
+    <string name="prayer_log_open">Hap regjistrin e namazeve</string>
+    <string name="prayer_log_status_prayed">E falur</string>
+    <string name="prayer_log_status_active">Në kohë</string>
+    <string name="prayer_log_status_passed">Koha kaloi</string>
+    <string name="prayer_log_status_missed">E humbur</string>
+    <string name="prayer_log_status_upcoming">Në vijim</string>
+    <string name="prayer_log_status_untracked">Pa regjistrim</string>
+    <string name="prayer_log_sheet_active">Ka hyrë koha e %1$s. Nëse e fale, shënoje që të regjistrohet.</string>
+    <string name="prayer_log_sheet_passed">Koha e %1$s ka kaluar. Nëse e fale, mund ta shënosh ende.</string>
+    <string name="prayer_log_sheet_prayed">E shënove %1$s si të falur. Allahu e pranoftë.</string>
+    <string name="prayer_log_today">Sot</string>
+    <string name="prayer_log_now">Tani është koha e %1$s</string>
+    <string name="prayer_log_today_count">Të falura: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Të gjitha namazet e sotme janë falur</string>
+    <string name="prayer_log_streak">ditë të plota radhazi</string>
+    <string name="prayer_log_week">7 ditët e fundit</string>
+    <string name="prayer_log_month">30 ditët e fundit</string>
+    <string name="prayer_log_missed_total">Gjithsej të humbura</string>
+    <string name="prayer_log_timeline">Kronologjia</string>
+    <string name="prayer_log_earlier">Shfaq ditët e mëparshme</string>
+    <string name="prayer_log_hint">Kur hyn koha e një namazi, prek shenjën e tij në rrethin e ekranit kryesor dhe zgjidh “E fala”, ose shënoje këtu.</string>
+    <string name="settings_support_desc">Ndihmo që Waktiva të mbetet falas, private dhe pa reklama</string>
 </resources>

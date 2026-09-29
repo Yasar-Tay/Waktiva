@@ -6,7 +6,7 @@
     <string name="nav_home">Início</string>
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Definições</string>
-    <string name="nav_donate">Doar</string>
+    <string name="nav_prayer_log">Registro</string>
     <string name="cd_back">Voltar</string>
 
     <!-- Qibla Screen -->
@@ -439,4 +439,31 @@
     <string name="widget_empty">Abra o Waktiva para carregar os horários de oração</string>
     <string name="widget_countdown_label">Contagem regressiva</string>
     <string name="widget_countdown_description">O tempo que falta para a próxima oração, grande e num relance</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Registro de orações</string>
+    <string name="prayer_log_mark">Já rezei</string>
+    <string name="prayer_log_unmark">Remover marca</string>
+    <string name="prayer_log_open">Abrir registro de orações</string>
+    <string name="prayer_log_status_prayed">Rezada</string>
+    <string name="prayer_log_status_active">No horário</string>
+    <string name="prayer_log_status_passed">Horário passou</string>
+    <string name="prayer_log_status_missed">Perdida</string>
+    <string name="prayer_log_status_upcoming">A seguir</string>
+    <string name="prayer_log_status_untracked">Sem registro</string>
+    <string name="prayer_log_sheet_active">Chegou a hora de %1$s. Se já rezou, marque-a e ela entra no seu registro.</string>
+    <string name="prayer_log_sheet_passed">A hora de %1$s já passou. Se rezou, ainda pode marcá-la no seu registro.</string>
+    <string name="prayer_log_sheet_prayed">Você marcou %1$s como rezada. Que seja aceita.</string>
+    <string name="prayer_log_today">Hoje</string>
+    <string name="prayer_log_now">Agora é a hora de %1$s</string>
+    <string name="prayer_log_today_count">Rezadas: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Todas as orações de hoje foram feitas</string>
+    <string name="prayer_log_streak">dias completos seguidos</string>
+    <string name="prayer_log_week">Últimos 7 dias</string>
+    <string name="prayer_log_month">Últimos 30 dias</string>
+    <string name="prayer_log_missed_total">Perdidas no total</string>
+    <string name="prayer_log_timeline">Linha do tempo</string>
+    <string name="prayer_log_earlier">Ver dias anteriores</string>
+    <string name="prayer_log_hint">Quando chegar a hora de uma oração, toque no seu símbolo no círculo da tela inicial e escolha “Já rezei”, ou marque-a aqui.</string>
+    <string name="settings_support_desc">Ajude o Waktiva a continuar gratuito, privado e sem anúncios</string>
 </resources>

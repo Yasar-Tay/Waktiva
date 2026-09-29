@@ -21,6 +21,7 @@ import com.ybugmobile.waktiva.domain.model.CurrentPrayer
 import com.ybugmobile.waktiva.domain.model.HijriUtils
 import com.ybugmobile.waktiva.domain.model.MoonPhase
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
+import com.ybugmobile.waktiva.domain.repository.PrayerLogRepository
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
@@ -30,6 +31,7 @@ import com.ybugmobile.waktiva.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -56,6 +58,7 @@ class HomeViewModel @Inject constructor(
     private val timeManager: TimeManager,
     private val getNextPrayerUseCase: GetNextPrayerUseCase,
     private val compassManager: CompassManager,
+    private val prayerLogRepository: PrayerLogRepository,
     @ApplicationContext private val context: Context
 ) : ViewModel(), DefaultLifecycleObserver {
 
@@ -106,6 +109,12 @@ class HomeViewModel @Inject constructor(
     private val tomorrowPrayerDay: Flow<PrayerDay?> = combine(allPrayerDays, activePrayerDate) { days, date ->
         days.find { it.date == date.plusDays(1) }
     }
+
+    /** Today's prayers marked in the prayer log, following the day as it turns; null until loaded. */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val prayedToday: StateFlow<Set<PrayerType>?> = activePrayerDate
+        .flatMapLatest { prayerLogRepository.getPrayedPrayers(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     private val todayPrayerTimes = todayPrayerDay.map { day ->
         if (day == null) return@map null
@@ -387,6 +396,11 @@ class HomeViewModel @Inject constructor(
                 alarmScheduler.scheduleNextAlarm(days, s.enablePreAdhanWarning, s.preAdhanWarningMinutes)
             }
         }
+    }
+
+    /** Marks [type] on [date] in the prayer log as prayed, or takes the mark back. */
+    fun setPrayed(date: LocalDate, type: PrayerType, prayed: Boolean) {
+        viewModelScope.launch { prayerLogRepository.setPrayed(date, type, prayed) }
     }
 
     fun selectDate(date: LocalDate) {

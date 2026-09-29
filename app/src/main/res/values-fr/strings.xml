@@ -6,7 +6,7 @@
     <string name="nav_home">Accueil</string>
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Paramètres</string>
-    <string name="nav_donate">Faire un don</string>
+    <string name="nav_prayer_log">Carnet</string>
     <string name="cd_back">Retour</string>
 
     <!-- Qibla Screen -->
@@ -427,4 +427,31 @@
     <string name="widget_empty">Ouvrez Waktiva pour charger les heures de prière</string>
     <string name="widget_countdown_label">Compte à rebours</string>
     <string name="widget_countdown_description">Le temps restant avant la prochaine prière, en grand et d\'un coup d\'œil</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Carnet de prières</string>
+    <string name="prayer_log_mark">J\'ai prié</string>
+    <string name="prayer_log_unmark">Retirer la marque</string>
+    <string name="prayer_log_open">Ouvrir le carnet de prières</string>
+    <string name="prayer_log_status_prayed">Accomplie</string>
+    <string name="prayer_log_status_active">En cours</string>
+    <string name="prayer_log_status_passed">Heure passée</string>
+    <string name="prayer_log_status_missed">Manquée</string>
+    <string name="prayer_log_status_upcoming">À venir</string>
+    <string name="prayer_log_status_untracked">Non suivie</string>
+    <string name="prayer_log_sheet_active">C\'est l\'heure de %1$s. Si vous l\'avez accomplie, marquez-la dans votre carnet de prières.</string>
+    <string name="prayer_log_sheet_passed">L\'heure de %1$s est passée. Si vous l\'avez accomplie, vous pouvez encore la marquer.</string>
+    <string name="prayer_log_sheet_prayed">Vous avez marqué %1$s comme accomplie. Qu\'elle soit acceptée.</string>
+    <string name="prayer_log_today">Aujourd\'hui</string>
+    <string name="prayer_log_now">C\'est l\'heure de %1$s</string>
+    <string name="prayer_log_today_count">Accomplies : %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Toutes les prières du jour sont accomplies</string>
+    <string name="prayer_log_streak">jours complets d\'affilée</string>
+    <string name="prayer_log_week">7 derniers jours</string>
+    <string name="prayer_log_month">30 derniers jours</string>
+    <string name="prayer_log_missed_total">Manquées au total</string>
+    <string name="prayer_log_timeline">Chronologie</string>
+    <string name="prayer_log_earlier">Afficher les jours précédents</string>
+    <string name="prayer_log_hint">À l\'heure d\'une prière, touchez son badge sur le cercle de l\'écran d\'accueil et choisissez « J\'ai prié », ou marquez-la ici.</string>
+    <string name="settings_support_desc">Aidez Waktiva à rester gratuite, privée et sans publicité</string>
 </resources>

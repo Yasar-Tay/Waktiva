@@ -6,7 +6,7 @@
     <string name="nav_home">Home</string>
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Instellingen</string>
-    <string name="nav_donate">Doneren</string>
+    <string name="nav_prayer_log">Gebedslog</string>
     <string name="cd_back">Terug</string>
 
     <!-- Qibla Screen -->
@@ -439,4 +439,31 @@
     <string name="widget_empty">Open Waktiva om de gebedstijden te laden</string>
     <string name="widget_countdown_label">Aftellen</string>
     <string name="widget_countdown_description">De tijd tot het volgende gebed, groot en in één oogopslag</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Gebedslog</string>
+    <string name="prayer_log_mark">Gebeden</string>
+    <string name="prayer_log_unmark">Markering verwijderen</string>
+    <string name="prayer_log_open">Gebedslog openen</string>
+    <string name="prayer_log_status_prayed">Gebeden</string>
+    <string name="prayer_log_status_active">Nu</string>
+    <string name="prayer_log_status_passed">Tijd voorbij</string>
+    <string name="prayer_log_status_missed">Gemist</string>
+    <string name="prayer_log_status_upcoming">Komt nog</string>
+    <string name="prayer_log_status_untracked">Niet bijgehouden</string>
+    <string name="prayer_log_sheet_active">Het is tijd voor %1$s. Heb je het gebeden? Markeer het dan in je gebedslog.</string>
+    <string name="prayer_log_sheet_passed">De tijd voor %1$s is voorbij. Heb je het gebeden, dan kun je het nog steeds markeren.</string>
+    <string name="prayer_log_sheet_prayed">Je hebt %1$s als gebeden gemarkeerd. Moge het aanvaard worden.</string>
+    <string name="prayer_log_today">Vandaag</string>
+    <string name="prayer_log_now">Nu is het tijd voor %1$s</string>
+    <string name="prayer_log_today_count">Gebeden: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Alle gebeden van vandaag zijn verricht</string>
+    <string name="prayer_log_streak">volle dagen op rij</string>
+    <string name="prayer_log_week">Laatste 7 dagen</string>
+    <string name="prayer_log_month">Laatste 30 dagen</string>
+    <string name="prayer_log_missed_total">Totaal gemist</string>
+    <string name="prayer_log_timeline">Tijdlijn</string>
+    <string name="prayer_log_earlier">Eerdere dagen tonen</string>
+    <string name="prayer_log_hint">Als de tijd van een gebed aanbreekt, tik je op het symbool in de cirkel op het startscherm en kies je „Gebeden”, of markeer je het hier.</string>
+    <string name="settings_support_desc">Help Waktiva gratis, privé en reclamevrij te houden</string>
 </resources>

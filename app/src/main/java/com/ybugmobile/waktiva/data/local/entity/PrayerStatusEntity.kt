@@ -1,22 +1,16 @@
 package com.ybugmobile.waktiva.data.local.entity
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
 import com.ybugmobile.waktiva.domain.model.PrayerType
 
+/**
+ * A prayer the user marked in their prayer log (çetele). It stands on its own, with no link to
+ * [PrayerDayEntity]: prayer days are replaced month by month and pruned as they pass, but the log
+ * is the user's own record and has to outlive them.
+ */
 @Entity(
     tableName = "prayer_status",
-    primaryKeys = ["date", "prayerType"],
-    foreignKeys = [
-        ForeignKey(
-            entity = PrayerDayEntity::class,
-            parentColumns = ["date"],
-            childColumns = ["date"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [Index(value = ["date"])]
+    primaryKeys = ["date", "prayerType"]
 )
 data class PrayerStatusEntity(
     val date: String, // Format: YYYY-MM-DD

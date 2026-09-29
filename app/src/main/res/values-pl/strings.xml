@@ -6,7 +6,7 @@
     <string name="nav_home">Główna</string>
     <string name="nav_qibla">Kibla</string>
     <string name="nav_settings">Ustawienia</string>
-    <string name="nav_donate">Wesprzyj</string>
+    <string name="nav_prayer_log">Dziennik</string>
     <string name="cd_back">Wstecz</string>
 
     <!-- Qibla Screen -->
@@ -439,4 +439,31 @@
     <string name="widget_empty">Otwórz Waktiva, aby wczytać czasy modlitw</string>
     <string name="widget_countdown_label">Odliczanie</string>
     <string name="widget_countdown_description">Czas do następnej modlitwy, duży i widoczny od razu</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Dziennik modlitw</string>
+    <string name="prayer_log_mark">Odmówiona</string>
+    <string name="prayer_log_unmark">Usuń oznaczenie</string>
+    <string name="prayer_log_open">Otwórz dziennik modlitw</string>
+    <string name="prayer_log_status_prayed">Odmówiona</string>
+    <string name="prayer_log_status_active">W czasie</string>
+    <string name="prayer_log_status_passed">Czas minął</string>
+    <string name="prayer_log_status_missed">Pominięta</string>
+    <string name="prayer_log_status_upcoming">Nadchodzi</string>
+    <string name="prayer_log_status_untracked">Nie zapisano</string>
+    <string name="prayer_log_sheet_active">Nadszedł czas: %1$s. Jeśli modlitwa jest odmówiona, zaznacz ją w dzienniku modlitw.</string>
+    <string name="prayer_log_sheet_passed">Czas modlitwy %1$s minął. Jeśli została odmówiona, nadal możesz ją zaznaczyć.</string>
+    <string name="prayer_log_sheet_prayed">Modlitwa %1$s jest oznaczona jako odmówiona. Oby została przyjęta.</string>
+    <string name="prayer_log_today">Dziś</string>
+    <string name="prayer_log_now">Teraz czas: %1$s</string>
+    <string name="prayer_log_today_count">Odmówione: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Wszystkie dzisiejsze modlitwy odmówione</string>
+    <string name="prayer_log_streak">pełnych dni z rzędu</string>
+    <string name="prayer_log_week">Ostatnie 7 dni</string>
+    <string name="prayer_log_month">Ostatnie 30 dni</string>
+    <string name="prayer_log_missed_total">Pominięte łącznie</string>
+    <string name="prayer_log_timeline">Oś czasu</string>
+    <string name="prayer_log_earlier">Pokaż wcześniejsze dni</string>
+    <string name="prayer_log_hint">Gdy nadejdzie czas modlitwy, dotknij jej symbolu w kole na ekranie głównym i wybierz „Odmówiona” albo zaznacz ją tutaj.</string>
+    <string name="settings_support_desc">Pomóż utrzymać Waktiva darmową, prywatną i bez reklam</string>
 </resources>

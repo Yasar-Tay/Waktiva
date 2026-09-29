@@ -31,6 +31,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +58,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.CurrentPrayer
 import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.PrayerDay
@@ -65,6 +65,9 @@ import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.provider.ReligiousDaysProvider
 import com.ybugmobile.waktiva.ui.home.composables.CurrentPrayerHeader
+import com.ybugmobile.waktiva.ui.home.composables.PrayedGlow
+import com.ybugmobile.waktiva.ui.home.composables.accentColor
+import com.ybugmobile.waktiva.ui.home.composables.iconRes
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import kotlinx.coroutines.delay
@@ -76,7 +79,8 @@ import kotlin.math.hypot
  * The clockwork day circle in [style] (anything but [DayCircleStyle.CLASSIC]).
  * Use it through DayCircle, which picks between this and the classic circle.
  * [sunLight] is the screen angle the sunlight falls from (see [sunLightAngle]), or null
- * for the default light.
+ * for the default light. [prayedPrayers] glow as marked in the prayer log (null until it has
+ * loaded); [onPrayerTap] gets a tapped prayer first and returns true when it handled the tap.
  */
 @Composable
 internal fun GearDayCircle(
@@ -88,7 +92,9 @@ internal fun GearDayCircle(
     isHijriVisible: Boolean,
     onToggleHijri: () -> Unit,
     contentColor: Color,
-    sunLight: Float? = null
+    sunLight: Float? = null,
+    prayedPrayers: Set<PrayerType>? = null,
+    onPrayerTap: (PrayerType) -> Boolean = { false }
 ) {
     val density = LocalDensity.current
     val lightAngle = rememberEasedAngle(sunLight ?: GearLight.DEFAULT_ANGLE)
@@ -207,6 +213,8 @@ internal fun GearDayCircle(
             dialSizePx = sizePx,
             selected = selected,
             onSelect = { selected = it },
+            prayedPrayers = prayedPrayers,
+            onPrayerTap = onPrayerTap,
             phase = phase,
             isRtl = isRtl,
             compact = isLandscape
@@ -234,8 +242,9 @@ internal fun GearDayCircle(
 }
 
 /**
- * Invisible tap targets over the drawn prayer markers. A tapped marker turns into its
- * [GearPlaque], kept inside the dial so it never runs off the screen edge.
+ * Invisible tap targets over the drawn prayer markers, with the glow of those marked as prayed.
+ * A tapped marker goes to [onPrayerTap] first; if it doesn't take the tap, the marker turns into
+ * its [GearPlaque], kept inside the dial so it never runs off the screen edge.
  */
 @Composable
 private fun BoxScope.PrayerMarkers(
@@ -246,6 +255,8 @@ private fun BoxScope.PrayerMarkers(
     dialSizePx: Float,
     selected: PrayerType?,
     onSelect: (PrayerType?) -> Unit,
+    prayedPrayers: Set<PrayerType>?,
+    onPrayerTap: (PrayerType) -> Boolean,
     phase: State<Float>,
     isRtl: Boolean,
     compact: Boolean
@@ -255,12 +266,25 @@ private fun BoxScope.PrayerMarkers(
     val locale = LocalConfiguration.current.locales[0]
     val targetSize = with(density) { (dial.markerRadius * 2).toDp() }.coerceAtLeast(32.dp)
     val edge = with(density) { 4.dp.toPx() }
+    val currentOnPrayerTap by rememberUpdatedState(onPrayerTap)
 
     prayers.forEach { prayer ->
         key(prayer.type) {
             val isSelected = selected == prayer.type
             val offset = pointOn(Offset.Zero, dial.markerDistance, dayAngle(prayer.minutes, isRtl))
             var contentSize by remember { mutableStateOf(IntSize.Zero) }
+            PrayedGlow(
+                prayed = prayedPrayers?.contains(prayer.type),
+                color = prayer.color,
+                badgeRadius = dial.markerRadius,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .zIndex(4f)
+                    .graphicsLayer {
+                        translationX = offset.x
+                        translationY = offset.y
+                    }
+            )
             Box(
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -294,7 +318,11 @@ private fun BoxScope.PrayerMarkers(
                         Box(
                             modifier = Modifier
                                 .size(targetSize)
-                                .pointerInput(prayer.type) { detectTapGestures { onSelect(prayer.type) } }
+                                .pointerInput(prayer.type) {
+                                    detectTapGestures {
+                                        if (!currentOnPrayerTap(prayer.type)) onSelect(prayer.type)
+                                    }
+                                }
                         )
                     }
                 }
@@ -320,15 +348,8 @@ internal fun rememberEasedAngle(target: Float): State<Float> {
 @Composable
 private fun rememberGearPrayers(day: PrayerDay, weather: WeatherCondition): List<GearPrayer> {
     val formatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
-    val art = listOf(
-        PrayerType.FAJR to R.drawable.haze_day_rotated,
-        PrayerType.SUNRISE to R.drawable.sunrise,
-        PrayerType.DHUHR to R.drawable.clear_day,
-        PrayerType.ASR to R.drawable.clear_day,
-        PrayerType.MAGHRIB to R.drawable.sunset,
-        PrayerType.ISHA to R.drawable.clear_night
-    ).map { (type, res) ->
-        val icon = ImageVector.vectorResource(res)
+    val art = PrayerType.entries.map { type ->
+        val icon = ImageVector.vectorResource(type.iconRes)
         Triple(type, icon, rememberVectorPainter(icon))
     }
 
@@ -339,7 +360,7 @@ private fun rememberGearPrayers(day: PrayerDay, weather: WeatherCondition): List
             GearPrayer(
                 type = type,
                 minutes = (time.hour * 60 + time.minute).toFloat(),
-                color = tone(PrayerColors.getValue(type)),
+                color = tone(type.accentColor),
                 painter = painter,
                 icon = icon,
                 label = time.format(formatter)
@@ -347,15 +368,6 @@ private fun rememberGearPrayers(day: PrayerDay, weather: WeatherCondition): List
         }
     }
 }
-
-private val PrayerColors = mapOf(
-    PrayerType.FAJR to Color(0xFF81D4FA),
-    PrayerType.SUNRISE to Color(0xFFFFE082),
-    PrayerType.DHUHR to Color(0xFFFFF59D),
-    PrayerType.ASR to Color(0xFFFFCC80),
-    PrayerType.MAGHRIB to Color(0xFFCE93D8),
-    PrayerType.ISHA to Color(0xFF9FA8DA)
-)
 
 /** The prayer whose time has most recently passed, wrapping to Isha before Fajr. */
 private fun currentPrayerType(day: PrayerDay, now: LocalTime): PrayerType {

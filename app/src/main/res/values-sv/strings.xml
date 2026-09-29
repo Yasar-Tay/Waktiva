@@ -6,7 +6,7 @@
     <string name="nav_home">Hem</string>
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Inställningar</string>
-    <string name="nav_donate">Donera</string>
+    <string name="nav_prayer_log">Bönelogg</string>
     <string name="cd_back">Bakåt</string>
 
     <!-- Qibla Screen -->
@@ -439,4 +439,31 @@
     <string name="widget_empty">Öppna Waktiva för att ladda bönetiderna</string>
     <string name="widget_countdown_label">Nedräkning</string>
     <string name="widget_countdown_description">Tiden kvar till nästa bön, stort och med en blick</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Bönelogg</string>
+    <string name="prayer_log_mark">Jag har bett</string>
+    <string name="prayer_log_unmark">Ta bort markering</string>
+    <string name="prayer_log_open">Öppna böneloggen</string>
+    <string name="prayer_log_status_prayed">Bedd</string>
+    <string name="prayer_log_status_active">Pågår</string>
+    <string name="prayer_log_status_passed">Tiden gått</string>
+    <string name="prayer_log_status_missed">Missad</string>
+    <string name="prayer_log_status_upcoming">Kommande</string>
+    <string name="prayer_log_status_untracked">Ej loggad</string>
+    <string name="prayer_log_sheet_active">Det är dags för %1$s. Har du bett den, markera den så hamnar den i din bönelogg.</string>
+    <string name="prayer_log_sheet_passed">Tiden för %1$s har gått. Har du bett den kan du fortfarande markera den.</string>
+    <string name="prayer_log_sheet_prayed">Du har markerat %1$s som bedd. Må den bli godtagen.</string>
+    <string name="prayer_log_today">Idag</string>
+    <string name="prayer_log_now">Nu är det dags för %1$s</string>
+    <string name="prayer_log_today_count">Bedda: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Alla dagens böner är bedda</string>
+    <string name="prayer_log_streak">hela dagar i rad</string>
+    <string name="prayer_log_week">Senaste 7 dagarna</string>
+    <string name="prayer_log_month">Senaste 30 dagarna</string>
+    <string name="prayer_log_missed_total">Missade totalt</string>
+    <string name="prayer_log_timeline">Tidslinje</string>
+    <string name="prayer_log_earlier">Visa tidigare dagar</string>
+    <string name="prayer_log_hint">När en bönetid inleds, tryck på dess märke i cirkeln på startskärmen och välj ”Jag har bett”, eller markera den här.</string>
+    <string name="settings_support_desc">Hjälp till att hålla Waktiva gratis, privat och reklamfritt</string>
 </resources>

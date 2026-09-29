@@ -6,7 +6,7 @@
     <string name="nav_home">الرئيسية</string>
     <string name="nav_qibla">القبلة</string>
     <string name="nav_settings">الإعدادات</string>
-    <string name="nav_donate">تبرع</string>
+    <string name="nav_prayer_log">السجل</string>
     <string name="cd_back">رجوع</string>
 
     <!-- Qibla Screen -->
@@ -440,4 +440,31 @@
     <string name="widget_empty">افتح Waktiva لتحميل مواقيت الصلاة</string>
     <string name="widget_countdown_label">العد التنازلي</string>
     <string name="widget_countdown_description">الوقت المتبقي حتى الصلاة التالية، كبيرًا وبنظرة واحدة</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">سجل الصلوات</string>
+    <string name="prayer_log_mark">صلّيت</string>
+    <string name="prayer_log_unmark">إزالة العلامة</string>
+    <string name="prayer_log_open">فتح سجل الصلوات</string>
+    <string name="prayer_log_status_prayed">أُدّيت</string>
+    <string name="prayer_log_status_active">في وقتها</string>
+    <string name="prayer_log_status_passed">انتهى الوقت</string>
+    <string name="prayer_log_status_missed">فائتة</string>
+    <string name="prayer_log_status_upcoming">قادمة</string>
+    <string name="prayer_log_status_untracked">غير مسجلة</string>
+    <string name="prayer_log_sheet_active">دخل وقت %1$s. إن صلّيتها فعلّمها لتُسجَّل في سجل صلواتك.</string>
+    <string name="prayer_log_sheet_passed">انتهى وقت %1$s. إن صلّيتها فيمكنك تعليمها في سجلك.</string>
+    <string name="prayer_log_sheet_prayed">علّمت %1$s على أنها أُدّيت. تقبّل الله.</string>
+    <string name="prayer_log_today">اليوم</string>
+    <string name="prayer_log_now">الآن وقت %1$s</string>
+    <string name="prayer_log_today_count">المؤدّاة: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">أُدّيت جميع صلوات اليوم</string>
+    <string name="prayer_log_streak">أيام كاملة متتالية</string>
+    <string name="prayer_log_week">آخر 7 أيام</string>
+    <string name="prayer_log_month">آخر 30 يومًا</string>
+    <string name="prayer_log_missed_total">مجموع الفائتة</string>
+    <string name="prayer_log_timeline">الخط الزمني</string>
+    <string name="prayer_log_earlier">عرض الأيام السابقة</string>
+    <string name="prayer_log_hint">عند دخول وقت الصلاة، اضغط على شارتها في الدائرة بالشاشة الرئيسية واختر «صلّيت»، أو علّمها من هنا.</string>
+    <string name="settings_support_desc">ساعد في إبقاء Waktiva مجانيًا وخاصًا وبلا إعلانات</string>
 </resources>

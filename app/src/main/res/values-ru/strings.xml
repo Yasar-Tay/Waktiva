@@ -6,7 +6,7 @@
     <string name="nav_home">Главная</string>
     <string name="nav_qibla">Кибла</string>
     <string name="nav_settings">Настройки</string>
-    <string name="nav_donate">Пожертвовать</string>
+    <string name="nav_prayer_log">Учёт</string>
     <string name="cd_back">Назад</string>
 
     <!-- Qibla Screen -->
@@ -439,4 +439,31 @@
     <string name="widget_empty">Откройте Waktiva, чтобы загрузить время намаза</string>
     <string name="widget_countdown_label">Обратный отсчёт</string>
     <string name="widget_countdown_description">Время до следующего намаза, крупно и с одного взгляда</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Учёт намазов</string>
+    <string name="prayer_log_mark">Совершён</string>
+    <string name="prayer_log_unmark">Снять отметку</string>
+    <string name="prayer_log_open">Открыть учёт намазов</string>
+    <string name="prayer_log_status_prayed">Совершён</string>
+    <string name="prayer_log_status_active">Время идёт</string>
+    <string name="prayer_log_status_passed">Время вышло</string>
+    <string name="prayer_log_status_missed">Пропущен</string>
+    <string name="prayer_log_status_upcoming">Впереди</string>
+    <string name="prayer_log_status_untracked">Не учтён</string>
+    <string name="prayer_log_sheet_active">Наступило время намаза %1$s. Если вы его совершили, отметьте — он попадёт в учёт.</string>
+    <string name="prayer_log_sheet_passed">Время намаза %1$s прошло. Если вы его совершили, всё равно можете отметить.</string>
+    <string name="prayer_log_sheet_prayed">Вы отметили намаз %1$s как совершённый. Да примет его Аллах.</string>
+    <string name="prayer_log_today">Сегодня</string>
+    <string name="prayer_log_now">Сейчас время: %1$s</string>
+    <string name="prayer_log_today_count">Совершено: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Все намазы сегодня совершены</string>
+    <string name="prayer_log_streak">полных дней подряд</string>
+    <string name="prayer_log_week">Последние 7 дней</string>
+    <string name="prayer_log_month">Последние 30 дней</string>
+    <string name="prayer_log_missed_total">Всего пропущено</string>
+    <string name="prayer_log_timeline">Хронология</string>
+    <string name="prayer_log_earlier">Показать более ранние дни</string>
+    <string name="prayer_log_hint">Когда наступит время намаза, нажмите на его значок в круге на главном экране и выберите «Совершён» или отметьте здесь.</string>
+    <string name="settings_support_desc">Помогите Waktiva оставаться бесплатным, приватным и без рекламы</string>
 </resources>

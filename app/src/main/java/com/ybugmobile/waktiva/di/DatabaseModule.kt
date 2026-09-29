@@ -27,7 +27,11 @@ object DatabaseModule {
             WaktivaDatabase::class.java,
             WaktivaDatabase.DATABASE_NAME
         )
-            .addMigrations(WaktivaDatabase.MIGRATION_3_4, WaktivaDatabase.MIGRATION_4_5)
+            .addMigrations(
+                WaktivaDatabase.MIGRATION_3_4,
+                WaktivaDatabase.MIGRATION_4_5,
+                WaktivaDatabase.MIGRATION_5_6
+            )
             .build()
     }
 

@@ -6,7 +6,7 @@
     <string name="nav_home">Startseite</string>
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Einstellungen</string>
-    <string name="nav_donate">Spenden</string>
+    <string name="nav_prayer_log">Gebetstagebuch</string>
     <string name="cd_back">Zurück</string>
 
     <!-- Qibla Screen -->
@@ -427,4 +427,31 @@
     <string name="widget_empty">Öffne Waktiva, um die Gebetszeiten zu laden</string>
     <string name="widget_countdown_label">Countdown</string>
     <string name="widget_countdown_description">Die Zeit bis zum nächsten Gebet, groß und auf einen Blick</string>
+
+    <!-- Prayer log (çetele) -->
+    <string name="prayer_log_title">Gebetstagebuch</string>
+    <string name="prayer_log_mark">Gebetet</string>
+    <string name="prayer_log_unmark">Markierung entfernen</string>
+    <string name="prayer_log_open">Gebetstagebuch öffnen</string>
+    <string name="prayer_log_status_prayed">Gebetet</string>
+    <string name="prayer_log_status_active">Zeit läuft</string>
+    <string name="prayer_log_status_passed">Zeit vorbei</string>
+    <string name="prayer_log_status_missed">Verpasst</string>
+    <string name="prayer_log_status_upcoming">Ausstehend</string>
+    <string name="prayer_log_status_untracked">Nicht erfasst</string>
+    <string name="prayer_log_sheet_active">Die Zeit für %1$s ist gekommen. Wenn du es gebetet hast, markiere es für dein Gebetstagebuch.</string>
+    <string name="prayer_log_sheet_passed">Die Zeit für %1$s ist vorbei. Wenn du es gebetet hast, kannst du es trotzdem markieren.</string>
+    <string name="prayer_log_sheet_prayed">Du hast %1$s als gebetet markiert. Möge es angenommen werden.</string>
+    <string name="prayer_log_today">Heute</string>
+    <string name="prayer_log_now">Jetzt: Zeit für %1$s</string>
+    <string name="prayer_log_today_count">Gebetet: %1$d / %2$d</string>
+    <string name="prayer_log_all_done">Alle Gebete von heute sind verrichtet</string>
+    <string name="prayer_log_streak">volle Tage in Folge</string>
+    <string name="prayer_log_week">Letzte 7 Tage</string>
+    <string name="prayer_log_month">Letzte 30 Tage</string>
+    <string name="prayer_log_missed_total">Insgesamt verpasst</string>
+    <string name="prayer_log_timeline">Zeitleiste</string>
+    <string name="prayer_log_earlier">Frühere Tage zeigen</string>
+    <string name="prayer_log_hint">Wenn die Zeit eines Gebets kommt, tippe im Kreis auf dem Startbildschirm auf sein Symbol und wähle „Gebetet“ – oder markiere es hier.</string>
+    <string name="settings_support_desc">Hilf mit, Waktiva kostenlos, privat und werbefrei zu halten</string>
 </resources>

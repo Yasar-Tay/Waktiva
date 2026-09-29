@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.domain.model.DayCircleStyle
+import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.ui.home.HomeViewState
 import com.ybugmobile.waktiva.ui.theme.GlassTheme
@@ -51,7 +52,10 @@ fun HomeLandscapeContent(
     onMethodClick: () -> Unit,
     onShowToast: (String) -> Unit,
     /** Screen angle of the sunlight on the day circle's metal (see DayCircle), or null for the default. */
-    sunLight: Float? = null
+    sunLight: Float? = null,
+    /** Today's prayers marked in the prayer log, or null until it has loaded. */
+    prayedToday: Set<PrayerType>? = null,
+    onLogPrayer: ((PrayerType) -> Unit)? = null
 ) {
     val screenHeightDp = LocalConfiguration.current.screenHeightDp
     val hasWeatherData = remember(state.temperature, state.weatherCondition) {
@@ -97,7 +101,9 @@ fun HomeLandscapeContent(
                                 isHijriVisible = state.isHijriSelected,
                                 onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
                                 contentColor = contentColor,
-                                sunLight = sunLight
+                                sunLight = sunLight,
+                                prayedPrayers = prayedToday,
+                                onLogPrayer = onLogPrayer
                             )
                         }
                     }

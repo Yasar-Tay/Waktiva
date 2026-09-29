@@ -87,6 +87,9 @@ import kotlin.math.sign
  * @param onSkipAudio Callback for muting the next specific prayer audio.
  * @param sunLight Screen angle (radians) the sunlight falls from, which the ring's sheen follows,
  * or null for the default light.
+ * @param prayedPrayers Prayers marked in the prayer log, whose badges glow; null until it has loaded.
+ * @param onPrayerTap Called with a tapped prayer; returns true when it handled the tap, otherwise
+ * the badge shows its info card.
  */
 @Composable
 fun PrayerCircleVisualization(
@@ -101,7 +104,9 @@ fun PrayerCircleVisualization(
     isMuted: Boolean = false,
     playAdhanAudio: Boolean = false,
     onSkipAudio: (String) -> Unit = {},
-    sunLight: Float? = null
+    sunLight: Float? = null,
+    prayedPrayers: Set<PrayerType>? = null,
+    onPrayerTap: (PrayerType) -> Boolean = { false }
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -113,6 +118,7 @@ fun PrayerCircleVisualization(
     val lightAngle = rememberEasedAngle(sunLight ?: GearLight.DEFAULT_ANGLE)
 
     var selectedInfo by remember { mutableStateOf<DetailedInfo?>(null) }
+    val currentOnPrayerTap by rememberUpdatedState(onPrayerTap)
 
     // Auto-dismiss interaction card
     LaunchedEffect(selectedInfo) {
@@ -249,6 +255,19 @@ fun PrayerCircleVisualization(
                 val isSelected = selectedInfo?.id == prayer.type.name
                 val offset = pointOn(Offset.Zero, ring.track, dayAngle(prayer.time.minutes(), isRtl))
                 var contentSize by remember { mutableStateOf(IntSize.Zero) }
+                val isCurrent = isSelectedDayToday && prayer.type == currentPrayerType
+                PrayedGlow(
+                    prayed = prayedPrayers?.contains(prayer.type),
+                    color = prayer.color,
+                    badgeRadius = if (isCurrent) ring.badgeCurrent else ring.badge,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .zIndex(4f)
+                        .graphicsLayer {
+                            translationX = offset.x
+                            translationY = offset.y
+                        }
+                )
                 Box(
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -287,6 +306,7 @@ fun PrayerCircleVisualization(
                                     .size(targetSize)
                                     .pointerInput(prayer.type) {
                                         detectTapGestures {
+                                            if (currentOnPrayerTap(prayer.type)) return@detectTapGestures
                                             selectedInfo = DetailedInfo(
                                                 prayer.type.name,
                                                 prayer.type.getDisplayName(context),

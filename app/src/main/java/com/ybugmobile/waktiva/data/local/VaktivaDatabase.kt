@@ -19,7 +19,7 @@ import com.ybugmobile.waktiva.data.local.entity.PrayerStatusEntity
         PrayerStatusEntity::class,
         MosqueEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(PrayerTypeConverter::class)
@@ -50,6 +50,31 @@ abstract class WaktivaDatabase : RoomDatabase() {
         val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE mosques ADD COLUMN address TEXT")
+            }
+        }
+
+        /**
+         * Frees the prayer log from prayer_days. Its rows cascaded away whenever a month of prayer
+         * days was replaced or pruned, which would wipe the user's log; SQLite can't drop a foreign
+         * key, so the table is rebuilt without it, keeping any rows.
+         */
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """CREATE TABLE IF NOT EXISTS prayer_status_new (
+                        date TEXT NOT NULL,
+                        prayerType TEXT NOT NULL,
+                        isDone INTEGER NOT NULL,
+                        updatedAt INTEGER NOT NULL,
+                        PRIMARY KEY(date, prayerType)
+                    )"""
+                )
+                database.execSQL(
+                    "INSERT OR REPLACE INTO prayer_status_new (date, prayerType, isDone, updatedAt) " +
+                        "SELECT date, prayerType, isDone, updatedAt FROM prayer_status"
+                )
+                database.execSQL("DROP TABLE prayer_status")
+                database.execSQL("ALTER TABLE prayer_status_new RENAME TO prayer_status")
             }
         }
     }

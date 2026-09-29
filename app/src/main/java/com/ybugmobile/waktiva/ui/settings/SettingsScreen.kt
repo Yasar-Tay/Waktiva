@@ -2,7 +2,10 @@ package com.ybugmobile.waktiva.ui.settings
 
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -11,7 +14,9 @@ import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +30,8 @@ import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.ui.settings.composables.*
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
+import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.waktiva.utils.applyAppLanguage
 import com.ybugmobile.waktiva.utils.LanguageUtils
 import com.ybugmobile.waktiva.utils.PermissionUtils
@@ -34,6 +41,7 @@ import com.ybugmobile.waktiva.utils.PermissionUtils
 fun SettingsScreen(
     onNavigateToAudio: () -> Unit,
     onNavigateToLicenses: () -> Unit,
+    onNavigateToDonate: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.settings.collectAsState(initial = null)
@@ -104,6 +112,7 @@ fun SettingsScreen(
                             .verticalScroll(rememberScrollState())
                     ) {
                         Spacer(modifier = Modifier.height(12.dp))
+                        SupportCard(onClick = onNavigateToDonate)
                         SystemHealthCard(
                             hasPrayerData = allDays.isNotEmpty()
                         )
@@ -156,6 +165,9 @@ fun SettingsScreen(
 
                     // Most used and most consequential first: what sets the prayer times, then how
                     // they are announced and what that needs, then the look of the app, then the rest.
+                    // Supporting the app leads, as the navigation bar no longer carries it.
+                    SupportCard(onClick = onNavigateToDonate)
+
                     SystemHealthCard(
                         hasPrayerData = allDays.isNotEmpty()
                     )
@@ -224,6 +236,64 @@ fun SettingsScreen(
         }
     )
 }
+
+/** The way to the donation screen: a card in the glass, warmed with the heart's rose. */
+@Composable
+private fun SupportCard(onClick: () -> Unit) {
+    val glassTheme = LocalGlassTheme.current
+    GlassSurface(
+        onClick = onClick,
+        shape = RoundedCornerShape(24.dp),
+        tint = SupportRose,
+        accent = SupportRose.copy(alpha = 0.4f),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 20.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(
+                        Brush.linearGradient(listOf(SupportRose, Color(0xFFFB923C))),
+                        CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Favorite,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.donate_title),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+                    color = glassTheme.contentColor
+                )
+                Text(
+                    text = stringResource(R.string.settings_support_desc),
+                    style = MaterialTheme.typography.bodySmall.copy(letterSpacing = 0.3.sp),
+                    color = glassTheme.contentColor.copy(alpha = 0.75f)
+                )
+            }
+            Icon(
+                imageVector = Icons.Rounded.ChevronRight,
+                contentDescription = null,
+                tint = glassTheme.contentColor.copy(alpha = 0.6f),
+                modifier = Modifier.size(22.dp)
+            )
+        }
+    }
+}
+
+private val SupportRose = Color(0xFFF87171)
 
 @Composable
 private fun NotificationSoundSection(

@@ -14,12 +14,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.TaskAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -51,6 +51,7 @@ import com.ybugmobile.waktiva.ui.home.HomeScreen
 import com.ybugmobile.waktiva.ui.home.HomeViewModel
 import com.ybugmobile.waktiva.ui.donation.DonateScreen
 import com.ybugmobile.waktiva.ui.navigation.Screen
+import com.ybugmobile.waktiva.ui.prayerlog.PrayerLogScreen
 import com.ybugmobile.waktiva.ui.qibla.QiblaScreen
 import com.ybugmobile.waktiva.ui.settings.AudioSettingsScreen
 import com.ybugmobile.waktiva.ui.settings.LicensesScreen
@@ -185,9 +186,20 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
     val items = listOf(
         NavigationItem(Screen.Home.route, R.string.nav_home, Icons.Rounded.Home),
         NavigationItem(Screen.Qibla.route, R.string.nav_qibla, Icons.Rounded.LocationOn),
-        NavigationItem(Screen.Donate.route, R.string.nav_donate, Icons.Default.Favorite),
+        NavigationItem(Screen.PrayerLog.route, R.string.nav_prayer_log, Icons.Rounded.TaskAlt),
         NavigationItem(Screen.Settings.route, R.string.nav_settings, Icons.Rounded.Settings)
     )
+
+    // Switches tabs the way the navigation bar does, keeping each tab's state.
+    val navigateToTab: (String) -> Unit = { route ->
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -238,9 +250,13 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                     )
                 }
                 composable(Screen.Home.route) {
-                    HomeScreen(viewModel = homeViewModel)
+                    HomeScreen(
+                        viewModel = homeViewModel,
+                        onOpenPrayerLog = { navigateToTab(Screen.PrayerLog.route) }
+                    )
                 }
                 composable(Screen.Qibla.route) { QiblaScreen() }
+                composable(Screen.PrayerLog.route) { PrayerLogScreen() }
                 composable(Screen.Donate.route) {
                     DonateScreen(onBack = { navController.popBackStack() })
                 }
@@ -251,6 +267,9 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                         },
                         onNavigateToLicenses = {
                             navController.navigate(Screen.Licenses.route)
+                        },
+                        onNavigateToDonate = {
+                            navController.navigate(Screen.Donate.route)
                         }
                     )
                 }
@@ -277,15 +296,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                     SmoothTouchNavigationRail(
                         items = items,
                         currentRoute = currentDestination?.route,
-                        onItemClick = { route ->
-                            navController.navigate(route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
+                        onItemClick = navigateToTab
                     )
                 }
             }
@@ -303,15 +314,7 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                     SmoothTouchNavigationBar(
                         items = items,
                         currentRoute = currentDestination?.route,
-                        onItemClick = { route ->
-                            navController.navigate(route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
+                        onItemClick = navigateToTab
                     )
                 }
             }

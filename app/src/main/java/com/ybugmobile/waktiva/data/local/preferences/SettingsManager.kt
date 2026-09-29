@@ -18,7 +18,9 @@ import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -100,6 +102,7 @@ class SettingsManager @Inject constructor(
         val SHOW_SILENT_PRAYER_NOTIFICATION = booleanPreferencesKey("show_silent_prayer_notification")
         val ADHAN_DISABLED_PRAYERS = stringSetPreferencesKey("adhan_disabled_prayers")
         val DAY_CIRCLE_STYLE = stringPreferencesKey("day_circle_style")
+        val PRAYER_LOG_START = stringPreferencesKey("prayer_log_start")
 
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
@@ -344,6 +347,19 @@ class SettingsManager @Inject constructor(
     suspend fun updateShowSilentPrayerNotification(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[SHOW_SILENT_PRAYER_NOTIFICATION] = enabled
+        }
+    }
+
+    /** The day the user began the prayer log, or null before they mark their first prayer. */
+    val prayerLogStartFlow: Flow<LocalDate?> = context.dataStore.data
+        .map { preferences -> preferences[PRAYER_LOG_START]?.let { runCatching { LocalDate.parse(it) }.getOrNull() } }
+        .distinctUntilChanged()
+
+    /** Records [date] as the day the prayer log began, unless it began earlier. */
+    suspend fun markPrayerLogStarted(date: LocalDate) {
+        context.dataStore.edit { preferences ->
+            val start = preferences[PRAYER_LOG_START]?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+            if (start == null || date.isBefore(start)) preferences[PRAYER_LOG_START] = date.toString()
         }
     }
 

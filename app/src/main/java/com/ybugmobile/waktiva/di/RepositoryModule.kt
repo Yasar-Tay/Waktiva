@@ -1,8 +1,10 @@
 package com.ybugmobile.waktiva.di
 
 import com.ybugmobile.waktiva.data.repository.MosqueRepositoryImpl
+import com.ybugmobile.waktiva.data.repository.PrayerLogRepositoryImpl
 import com.ybugmobile.waktiva.data.repository.PrayerRepositoryImpl
 import com.ybugmobile.waktiva.domain.repository.MosqueRepository
+import com.ybugmobile.waktiva.domain.repository.PrayerLogRepository
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import dagger.Binds
 import dagger.Module
@@ -25,4 +27,10 @@ abstract class RepositoryModule {
     abstract fun bindMosqueRepository(
         mosqueRepositoryImpl: MosqueRepositoryImpl
     ): MosqueRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPrayerLogRepository(
+        prayerLogRepositoryImpl: PrayerLogRepositoryImpl
+    ): PrayerLogRepository
 }

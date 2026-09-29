@@ -4,7 +4,6 @@ import android.util.Log
 import com.ybugmobile.waktiva.BuildConfig
 import com.ybugmobile.waktiva.data.local.LocalPrayerCalculator
 import com.ybugmobile.waktiva.data.local.dao.PrayerDao
-import com.ybugmobile.waktiva.data.local.dao.PrayerStatusDao
 import com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
 import com.ybugmobile.waktiva.data.remote.AladhanApiService
@@ -47,7 +46,6 @@ class PrayerRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApiService,
     private val localCalculator: LocalPrayerCalculator,
     private val dao: PrayerDao,
-    private val statusDao: PrayerStatusDao,
     private val settingsManager: SettingsManager
 ) : PrayerRepository {
 
@@ -284,8 +282,8 @@ class PrayerRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deletePastData(currentDate: String) {
+        // The prayer log is the user's own record, not cached data, so it stays.
         dao.deletePastDays(currentDate)
-        statusDao.deletePastStatuses(currentDate)
     }
 
     override suspend fun recalculatePrayerTimesLocally(
