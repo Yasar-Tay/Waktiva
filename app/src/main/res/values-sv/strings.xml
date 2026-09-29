@@ -474,8 +474,8 @@
     <string name="prayer_log_week">Senaste 7 dagarna</string>
     <string name="prayer_log_month">Senaste 30 dagarna</string>
     <string name="prayer_log_missed_total">Missade totalt</string>
-    <string name="prayer_log_timeline">Tidslinje</string>
-    <string name="prayer_log_earlier">Visa tidigare dagar</string>
+    <string name="prayer_log_prev_month">Föregående månad</string>
+    <string name="prayer_log_next_month">Nästa månad</string>
     <string name="prayer_log_hint">När en bönetid inleds, tryck på dess märke i cirkeln på startskärmen och välj ”Jag har bett”, eller markera den här.</string>
     <string name="settings_support_desc">Hjälp till att hålla Waktiva gratis, privat och reklamfritt</string>
 </resources>

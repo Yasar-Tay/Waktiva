@@ -462,8 +462,8 @@
     <string name="prayer_log_week">Últimos 7 días</string>
     <string name="prayer_log_month">Últimos 30 días</string>
     <string name="prayer_log_missed_total">Perdidas en total</string>
-    <string name="prayer_log_timeline">Cronología</string>
-    <string name="prayer_log_earlier">Ver días anteriores</string>
+    <string name="prayer_log_prev_month">Mes anterior</string>
+    <string name="prayer_log_next_month">Mes siguiente</string>
     <string name="prayer_log_hint">Cuando llegue la hora de una oración, toca su insignia en el círculo de la pantalla de inicio y elige «Ya recé», o márcala aquí.</string>
     <string name="settings_support_desc">Ayuda a que Waktiva siga siendo gratuita, privada y sin anuncios</string>
 </resources>

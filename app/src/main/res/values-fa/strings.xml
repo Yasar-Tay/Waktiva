@@ -475,8 +475,8 @@
     <string name="prayer_log_week">۷ روز گذشته</string>
     <string name="prayer_log_month">۳۰ روز گذشته</string>
     <string name="prayer_log_missed_total">مجموع قضا</string>
-    <string name="prayer_log_timeline">خط زمانی</string>
-    <string name="prayer_log_earlier">نمایش روزهای قبل</string>
+    <string name="prayer_log_prev_month">ماه قبل</string>
+    <string name="prayer_log_next_month">ماه بعد</string>
     <string name="prayer_log_hint">وقتی وقت نماز رسید، روی نشان آن در دایرهٔ صفحهٔ اصلی بزن و «خواندم» را انتخاب کن، یا از همین‌جا علامت بزن.</string>
     <string name="settings_support_desc">کمک کن Waktiva رایگان، خصوصی و بدون تبلیغ بماند</string>
 </resources>

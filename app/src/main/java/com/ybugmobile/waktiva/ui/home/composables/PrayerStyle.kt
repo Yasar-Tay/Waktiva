@@ -30,8 +30,8 @@ val PrayerType.iconRes: Int
 /** The gold a prayer marked as prayed glows in, on the day circle and in the prayer log. */
 val PrayedGold = Color(0xFFFFD54F)
 
-/** The green of the seal on a prayer marked as prayed. */
-val PrayedSeal = Color(0xFF10B981)
+/** The green of a prayer whose time is on. */
+val InTimeGreen = Color(0xFF10B981)
 
 /** The red of a prayer whose time went without being marked. */
 val MissedRed = Color(0xFFF87171)

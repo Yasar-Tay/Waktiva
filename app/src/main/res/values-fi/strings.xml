@@ -474,8 +474,8 @@
     <string name="prayer_log_week">Viimeiset 7 päivää</string>
     <string name="prayer_log_month">Viimeiset 30 päivää</string>
     <string name="prayer_log_missed_total">Väliin jääneet yhteensä</string>
-    <string name="prayer_log_timeline">Aikajana</string>
-    <string name="prayer_log_earlier">Näytä aiemmat päivät</string>
+    <string name="prayer_log_prev_month">Edellinen kuukausi</string>
+    <string name="prayer_log_next_month">Seuraava kuukausi</string>
     <string name="prayer_log_hint">Kun rukouksen aika koittaa, napauta sen merkkiä aloitusnäytön ympyrässä ja valitse ”Rukoiltu”, tai merkitse se täällä.</string>
     <string name="settings_support_desc">Auta pitämään Waktiva ilmaisena, yksityisenä ja mainoksettomana</string>
 </resources>

@@ -15,26 +15,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import kotlin.math.max
 
 /**
  * The glow a prayer's badge on the day circle wears once the prayer is marked as prayed: a warm
- * gold bloom around the badge, a bright double rim and a green seal with a tick. Marking it sends
- * a ring rippling out while the glow swells in with a small overshoot; taking the mark back lets
- * it fade. The glow only draws around the badge, which shows through its middle.
+ * gold bloom around the badge and a bright double rim. Marking it sends a ring rippling out while
+ * the glow swells in with a small overshoot; taking the mark back lets it fade. The glow only draws around the badge, which shows through its middle.
  *
  * [prayed] is null until the log has loaded, so a prayer already marked lights up without the
  * ripple. [badgeRadius] is the badge's radius in pixels; the glow centres on this composable,
@@ -124,22 +117,4 @@ private fun DrawScope.drawGlow(r: Float, g: Float, tone: Color) {
     )
     drawCircle(Color.White.copy(alpha = 0.95f * alpha), r + 1.dp.toPx(), center, style = Stroke(1.6.dp.toPx()))
     drawCircle(tone.copy(alpha = alpha), r + 3.2.dp.toPx(), center, style = Stroke(1.2.dp.toPx()))
-
-    // The seal sits at the badge's lower end corner.
-    val sealRadius = max(r * 0.4f, 6.dp.toPx()) * (0.4f + 0.6f * g)
-    val side = if (layoutDirection == LayoutDirection.Rtl) -1f else 1f
-    val seal = Offset(center.x + side * r * 0.8f, center.y + r * 0.8f)
-    drawCircle(Color.Black.copy(alpha = 0.3f * alpha), sealRadius + 1.4.dp.toPx(), seal)
-    drawCircle(PrayedSeal.copy(alpha = alpha), sealRadius, seal)
-    drawCircle(Color.White.copy(alpha = 0.9f * alpha), sealRadius, seal, style = Stroke(1.dp.toPx()))
-    val tick = Path().apply {
-        moveTo(seal.x - sealRadius * 0.45f, seal.y + sealRadius * 0.02f)
-        lineTo(seal.x - sealRadius * 0.12f, seal.y + sealRadius * 0.34f)
-        lineTo(seal.x + sealRadius * 0.46f, seal.y - sealRadius * 0.3f)
-    }
-    drawPath(
-        tick,
-        Color.White.copy(alpha = alpha),
-        style = Stroke(max(1.4.dp.toPx(), sealRadius * 0.24f), cap = StrokeCap.Round, join = StrokeJoin.Round)
-    )
 }

@@ -474,8 +474,8 @@
     <string name="prayer_log_week">7 ditët e fundit</string>
     <string name="prayer_log_month">30 ditët e fundit</string>
     <string name="prayer_log_missed_total">Gjithsej të humbura</string>
-    <string name="prayer_log_timeline">Kronologjia</string>
-    <string name="prayer_log_earlier">Shfaq ditët e mëparshme</string>
+    <string name="prayer_log_prev_month">Muaji i mëparshëm</string>
+    <string name="prayer_log_next_month">Muaji tjetër</string>
     <string name="prayer_log_hint">Kur hyn koha e një namazi, prek shenjën e tij në rrethin e ekranit kryesor dhe zgjidh “E fala”, ose shënoje këtu.</string>
     <string name="settings_support_desc">Ndihmo që Waktiva të mbetet falas, private dhe pa reklama</string>
 </resources>

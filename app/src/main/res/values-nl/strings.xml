@@ -474,8 +474,8 @@
     <string name="prayer_log_week">Laatste 7 dagen</string>
     <string name="prayer_log_month">Laatste 30 dagen</string>
     <string name="prayer_log_missed_total">Totaal gemist</string>
-    <string name="prayer_log_timeline">Tijdlijn</string>
-    <string name="prayer_log_earlier">Eerdere dagen tonen</string>
+    <string name="prayer_log_prev_month">Vorige maand</string>
+    <string name="prayer_log_next_month">Volgende maand</string>
     <string name="prayer_log_hint">Als de tijd van een gebed aanbreekt, tik je op het symbool in de cirkel op het startscherm en kies je „Gebeden”, of markeer je het hier.</string>
     <string name="settings_support_desc">Help Waktiva gratis, privé en reclamevrij te houden</string>
 </resources>

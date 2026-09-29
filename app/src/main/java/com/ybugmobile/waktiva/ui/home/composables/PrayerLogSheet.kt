@@ -148,7 +148,7 @@ fun PrayerLogSheet(
                     ),
                     color = when {
                         isPrayed -> PrayedGold
-                        isOpen -> PrayedSeal
+                        isOpen -> InTimeGreen
                         else -> MissedRed
                     }
                 )
