@@ -7,6 +7,7 @@
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Asetukset</string>
     <string name="nav_prayer_log">Rukousloki</string>
+    <string name="nav_donate">Lahjoita</string>
     <string name="cd_back">Takaisin</string>
 
     <!-- Qibla Screen -->
@@ -442,6 +443,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Rukousloki</string>
+    <string name="prayer_log_setting">Käytä rukouslokia</string>
+    <string name="prayer_log_setting_desc">Merkitse rukoilemasi rukoukset ja seuraa niitä ajan mittaan. Pois päältä palkissa näkyy sen sijaan Lahjoita.</string>
     <string name="prayer_log_mark">Rukoiltu</string>
     <string name="prayer_log_unmark">Poista merkintä</string>
     <string name="prayer_log_open">Avaa rukousloki</string>

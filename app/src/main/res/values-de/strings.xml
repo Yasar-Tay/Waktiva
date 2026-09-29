@@ -7,6 +7,7 @@
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Einstellungen</string>
     <string name="nav_prayer_log">Gebetstagebuch</string>
+    <string name="nav_donate">Spenden</string>
     <string name="cd_back">Zurück</string>
 
     <!-- Qibla Screen -->
@@ -430,6 +431,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Gebetstagebuch</string>
+    <string name="prayer_log_setting">Gebetstagebuch verwenden</string>
+    <string name="prayer_log_setting_desc">Markiere deine verrichteten Gebete und verfolge sie über die Zeit. Aus: Die Leiste zeigt stattdessen Spenden.</string>
     <string name="prayer_log_mark">Gebetet</string>
     <string name="prayer_log_unmark">Markierung entfernen</string>
     <string name="prayer_log_open">Gebetstagebuch öffnen</string>

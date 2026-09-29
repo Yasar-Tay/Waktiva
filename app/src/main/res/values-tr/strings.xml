@@ -7,6 +7,7 @@
     <string name="nav_qibla">Kıble</string>
     <string name="nav_settings">Ayarlar</string>
     <string name="nav_prayer_log">Çetele</string>
+    <string name="nav_donate">Bağış Yap</string>
     <string name="cd_back">Geri</string>
 
     <!-- Qibla Screen -->
@@ -443,6 +444,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Çetele</string>
+    <string name="prayer_log_setting">Çeteleyi kullan</string>
+    <string name="prayer_log_setting_desc">Kıldığın namazları işaretle, zaman içinde takip et. Kapalıyken alt menüde Çetele yerine Bağış Yap görünür.</string>
     <string name="prayer_log_mark">Kıldım</string>
     <string name="prayer_log_unmark">İşareti kaldır</string>
     <string name="prayer_log_open">Çeteleyi aç</string>

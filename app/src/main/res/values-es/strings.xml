@@ -7,6 +7,7 @@
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Ajustes</string>
     <string name="nav_prayer_log">Registro</string>
+    <string name="nav_donate">Donar</string>
     <string name="cd_back">Atrás</string>
 
     <!-- Qibla Screen -->
@@ -430,6 +431,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Registro de oraciones</string>
+    <string name="prayer_log_setting">Usar el registro de oraciones</string>
+    <string name="prayer_log_setting_desc">Marca las oraciones que rezas y síguelas en el tiempo. Desactivado, la barra muestra Donar en su lugar.</string>
     <string name="prayer_log_mark">Ya recé</string>
     <string name="prayer_log_unmark">Quitar marca</string>
     <string name="prayer_log_open">Abrir registro de oraciones</string>

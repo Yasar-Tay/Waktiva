@@ -7,6 +7,7 @@
     <string name="nav_qibla">Kibla</string>
     <string name="nav_settings">Ustawienia</string>
     <string name="nav_prayer_log">Dziennik</string>
+    <string name="nav_donate">Wesprzyj</string>
     <string name="cd_back">Wstecz</string>
 
     <!-- Qibla Screen -->
@@ -442,6 +443,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Dziennik modlitw</string>
+    <string name="prayer_log_setting">Używaj dziennika modlitw</string>
+    <string name="prayer_log_setting_desc">Zaznaczaj odmówione modlitwy i śledź je w czasie. Wyłączony: pasek pokazuje w zamian Wesprzyj.</string>
     <string name="prayer_log_mark">Odmówiona</string>
     <string name="prayer_log_unmark">Usuń oznaczenie</string>
     <string name="prayer_log_open">Otwórz dziennik modlitw</string>

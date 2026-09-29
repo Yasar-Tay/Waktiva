@@ -7,6 +7,7 @@
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_prayer_log">Prayer Log</string>
+    <string name="nav_donate">Donate</string>
     <string name="cd_back">Back</string>
 
     <!-- Qibla Screen -->
@@ -441,6 +442,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Prayer Log</string>
+    <string name="prayer_log_setting">Use the prayer log</string>
+    <string name="prayer_log_setting_desc">Mark the prayers you pray and follow them over time. Off, the navigation bar shows Donate instead.</string>
     <string name="prayer_log_mark">I prayed</string>
     <string name="prayer_log_unmark">Remove mark</string>
     <string name="prayer_log_open">Open prayer log</string>

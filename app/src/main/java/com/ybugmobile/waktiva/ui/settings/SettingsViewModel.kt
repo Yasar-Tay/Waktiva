@@ -115,6 +115,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setPrayerLogEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsManager.updatePrayerLogEnabled(enabled)
+        }
+    }
+
     fun setSilentPrayerNotification(enabled: Boolean) {
         viewModelScope.launch {
             settingsManager.updateShowSilentPrayerNotification(enabled)

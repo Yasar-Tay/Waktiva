@@ -7,6 +7,7 @@
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Inställningar</string>
     <string name="nav_prayer_log">Bönelogg</string>
+    <string name="nav_donate">Donera</string>
     <string name="cd_back">Bakåt</string>
 
     <!-- Qibla Screen -->
@@ -442,6 +443,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Bönelogg</string>
+    <string name="prayer_log_setting">Använd böneloggen</string>
+    <string name="prayer_log_setting_desc">Markera de böner du ber och följ dem över tid. Avstängd visar fältet Donera i stället.</string>
     <string name="prayer_log_mark">Jag har bett</string>
     <string name="prayer_log_unmark">Ta bort markering</string>
     <string name="prayer_log_open">Öppna böneloggen</string>

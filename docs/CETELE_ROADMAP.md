@@ -21,7 +21,8 @@ Faz 1 bu çalışmada tamamlandı; sonraki fazlar öncelik sırasına göredir.
 **Çetele ekranı**
 - [x] Navbar'da Bağış butonunun yerine Çetele.
 - [x] Bugün kartı (5 dilimli halka, seri, dokunarak işaretleme), son 7/30 gün oranları, toplam kaçırılan, geriye doğru zaman çizelgesi (14'er gün, 366 güne kadar).
-- [x] Ayarlar'ın en üstünde "Waktiva'yı Destekle" kartı → Bağış ekranı.
+- [x] Ayarlar'ın en üstünde "Waktiva'yı Destekle" kartı → Bağış ekranı (Çetele açık da kapalı da olsa orada).
+- [x] Çetele isteğe bağlı: Ayarlar'da ve karşılama ekranında "Çeteleyi kullan" anahtarı (varsayılan açık). Kapalıyken alt menüde Çetele yerine Bağış sekmesi durur, rozetler yalnızca vakit kartını açar ve parlama gösterilmez; kayıtlar silinmez.
 - [x] 20 dilde metinler; `PrayerLog` ve durum üretimi için birim testler.
 
 ---

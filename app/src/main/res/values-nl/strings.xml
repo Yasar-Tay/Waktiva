@@ -7,6 +7,7 @@
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Instellingen</string>
     <string name="nav_prayer_log">Gebedslog</string>
+    <string name="nav_donate">Doneren</string>
     <string name="cd_back">Terug</string>
 
     <!-- Qibla Screen -->
@@ -442,6 +443,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Gebedslog</string>
+    <string name="prayer_log_setting">Gebedslog gebruiken</string>
+    <string name="prayer_log_setting_desc">Markeer de gebeden die je verricht en volg ze door de tijd. Uit: de balk toont in plaats daarvan Doneren.</string>
     <string name="prayer_log_mark">Gebeden</string>
     <string name="prayer_log_unmark">Markering verwijderen</string>
     <string name="prayer_log_open">Gebedslog openen</string>

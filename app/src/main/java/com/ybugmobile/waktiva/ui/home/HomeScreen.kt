@@ -197,7 +197,10 @@ fun HomeScreenContent(
     var showDebugWeather by remember { mutableStateOf(false) }
     // The prayer whose badge opened the prayer log sheet.
     var loggingPrayer by remember { mutableStateOf<PrayerType?>(null) }
-    val onLogPrayer = remember { { type: PrayerType -> loggingPrayer = type } }
+    // With the log off, the badges only show their times and nothing glows as prayed.
+    val isPrayerLogEnabled = settings?.prayerLogEnabled == true
+    val onLogPrayer = remember { { type: PrayerType -> loggingPrayer = type } }.takeIf { isPrayerLogEnabled }
+    val prayedPrayers = prayedToday.takeIf { isPrayerLogEnabled }
 
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var showToast by remember { mutableStateOf(false) }
@@ -303,7 +306,7 @@ fun HomeScreenContent(
                                 onMethodClick = { showMethodDialog = true },
                                 onShowToast = handleShowToast,
                                 sunLight = sunLight,
-                                prayedToday = prayedToday,
+                                prayedToday = prayedPrayers,
                                 onLogPrayer = onLogPrayer
                             )
                         } else {
@@ -331,7 +334,7 @@ fun HomeScreenContent(
                                     onMethodClick = { showMethodDialog = true },
                                     onShowToast = handleShowToast,
                                     sunLight = sunLight,
-                                    prayedToday = prayedToday,
+                                    prayedToday = prayedPrayers,
                                     onLogPrayer = onLogPrayer
                                 )
                             }
@@ -354,7 +357,7 @@ fun HomeScreenContent(
 
                 val logDay = state.currentPrayerDay
                 val logType = loggingPrayer
-                if (logType != null && logDay != null) {
+                if (logType != null && logDay != null && isPrayerLogEnabled) {
                     PrayerLogSheet(
                         type = logType,
                         day = logDay,

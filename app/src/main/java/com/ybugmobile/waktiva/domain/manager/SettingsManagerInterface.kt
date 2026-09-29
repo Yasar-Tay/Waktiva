@@ -30,4 +30,5 @@ interface SettingsManagerInterface {
     suspend fun updateShowWeatherEffects(enabled: Boolean)
     suspend fun updateShowQiblaMapHint(enabled: Boolean)
     suspend fun updateDayCircleStyle(style: DayCircleStyle)
+    suspend fun updatePrayerLogEnabled(enabled: Boolean)
 }

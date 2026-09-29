@@ -7,6 +7,7 @@
     <string name="nav_qibla">Kibla</string>
     <string name="nav_settings">Postavke</string>
     <string name="nav_prayer_log">Evidencija</string>
+    <string name="nav_donate">Doniraj</string>
     <string name="cd_back">Nazad</string>
 
     <!-- Qibla Screen -->
@@ -442,6 +443,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Evidencija namaza</string>
+    <string name="prayer_log_setting">Koristi evidenciju namaza</string>
+    <string name="prayer_log_setting_desc">Označavaj klanjane namaze i prati ih kroz vrijeme. Kada je isključeno, traka umjesto toga prikazuje Doniraj.</string>
     <string name="prayer_log_mark">Klanjano</string>
     <string name="prayer_log_unmark">Ukloni oznaku</string>
     <string name="prayer_log_open">Otvori evidenciju namaza</string>

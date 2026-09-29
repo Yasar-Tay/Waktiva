@@ -7,6 +7,7 @@
     <string name="nav_qibla">قبلہ</string>
     <string name="nav_settings">ترتیبات</string>
     <string name="nav_prayer_log">ریکارڈ</string>
+    <string name="nav_donate">عطیہ</string>
     <string name="cd_back">واپس</string>
 
     <!-- Qibla Screen -->
@@ -443,6 +444,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">نماز کا ریکارڈ</string>
+    <string name="prayer_log_setting">نماز کا ریکارڈ استعمال کریں</string>
+    <string name="prayer_log_setting_desc">ادا کی گئی نمازوں پر نشان لگائیں اور وقت کے ساتھ ان کا جائزہ لیں۔ بند ہونے پر نیچے کی پٹی میں اس کی جگہ «عطیہ» دکھے گا۔</string>
     <string name="prayer_log_mark">پڑھ لی</string>
     <string name="prayer_log_unmark">نشان ہٹائیں</string>
     <string name="prayer_log_open">نماز کا ریکارڈ کھولیں</string>

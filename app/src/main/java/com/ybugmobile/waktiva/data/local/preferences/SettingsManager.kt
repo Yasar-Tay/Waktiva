@@ -58,7 +58,12 @@ data class UserSettings(
     val showSilentPrayerNotification: Boolean = true,
     val adhanDisabledPrayers: Set<PrayerType> = emptySet(),
     val dayCircleStyle: DayCircleStyle = DayCircleStyle.DEFAULT,
-    val playAdhanDua: Boolean = false
+    val playAdhanDua: Boolean = false,
+    /**
+     * Whether the prayer log (çetele) is on: its tab in the navigation bar (the donate tab
+     * otherwise) and logging prayers from the day circle's badges.
+     */
+    val prayerLogEnabled: Boolean = true
 ) {
     /**
      * Whether the adhan audio should play for [type], combining the global
@@ -103,6 +108,7 @@ class SettingsManager @Inject constructor(
         val ADHAN_DISABLED_PRAYERS = stringSetPreferencesKey("adhan_disabled_prayers")
         val DAY_CIRCLE_STYLE = stringPreferencesKey("day_circle_style")
         val PRAYER_LOG_START = stringPreferencesKey("prayer_log_start")
+        val PRAYER_LOG_ENABLED = booleanPreferencesKey("prayer_log_enabled")
 
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
     }
@@ -146,7 +152,8 @@ class SettingsManager @Inject constructor(
                 ?.toSet()
                 ?: emptySet(),
             dayCircleStyle = DayCircleStyle.fromName(preferences[DAY_CIRCLE_STYLE]),
-            playAdhanDua = preferences[PLAY_ADHAN_DUA] ?: false
+            playAdhanDua = preferences[PLAY_ADHAN_DUA] ?: false,
+            prayerLogEnabled = preferences[PRAYER_LOG_ENABLED] ?: true
         )
     }
 
@@ -323,6 +330,12 @@ class SettingsManager @Inject constructor(
     override suspend fun updateDayCircleStyle(style: DayCircleStyle) {
         context.dataStore.edit { preferences ->
             preferences[DAY_CIRCLE_STYLE] = style.name
+        }
+    }
+
+    override suspend fun updatePrayerLogEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PRAYER_LOG_ENABLED] = enabled
         }
     }
 

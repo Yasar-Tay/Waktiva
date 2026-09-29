@@ -7,6 +7,7 @@
     <string name="nav_qibla">Kibla</string>
     <string name="nav_settings">Cilësimet</string>
     <string name="nav_prayer_log">Regjistri</string>
+    <string name="nav_donate">Dhuro</string>
     <string name="cd_back">Mbrapa</string>
 
     <!-- Qibla Screen -->
@@ -442,6 +443,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Regjistri i namazeve</string>
+    <string name="prayer_log_setting">Përdor regjistrin e namazeve</string>
+    <string name="prayer_log_setting_desc">Shëno namazet që fal dhe ndiqi me kalimin e kohës. Kur është i fikur, shiriti tregon Dhuro në vend të tij.</string>
     <string name="prayer_log_mark">E fala</string>
     <string name="prayer_log_unmark">Hiq shenjën</string>
     <string name="prayer_log_open">Hap regjistrin e namazeve</string>

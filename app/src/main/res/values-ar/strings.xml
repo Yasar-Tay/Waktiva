@@ -7,6 +7,7 @@
     <string name="nav_qibla">القبلة</string>
     <string name="nav_settings">الإعدادات</string>
     <string name="nav_prayer_log">السجل</string>
+    <string name="nav_donate">تبرع</string>
     <string name="cd_back">رجوع</string>
 
     <!-- Qibla Screen -->
@@ -443,6 +444,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">سجل الصلوات</string>
+    <string name="prayer_log_setting">استخدام سجل الصلوات</string>
+    <string name="prayer_log_setting_desc">علّم الصلوات التي أدّيتها وتابعها مع الوقت. عند الإيقاف يظهر «تبرع» في الشريط بدلًا منه.</string>
     <string name="prayer_log_mark">صلّيت</string>
     <string name="prayer_log_unmark">إزالة العلامة</string>
     <string name="prayer_log_open">فتح سجل الصلوات</string>

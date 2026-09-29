@@ -7,6 +7,7 @@
     <string name="nav_qibla">Kiblat</string>
     <string name="nav_settings">Pengaturan</string>
     <string name="nav_prayer_log">Catatan</string>
+    <string name="nav_donate">Donasi</string>
     <string name="cd_back">Kembali</string>
 
     <!-- Qibla Screen -->
@@ -443,6 +444,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Catatan Salat</string>
+    <string name="prayer_log_setting">Gunakan catatan salat</string>
+    <string name="prayer_log_setting_desc">Tandai salat yang sudah dikerjakan dan pantau dari waktu ke waktu. Jika nonaktif, bilah menampilkan Donasi sebagai gantinya.</string>
     <string name="prayer_log_mark">Sudah salat</string>
     <string name="prayer_log_unmark">Hapus tanda</string>
     <string name="prayer_log_open">Buka catatan salat</string>

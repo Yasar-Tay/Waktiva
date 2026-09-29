@@ -7,6 +7,7 @@
     <string name="nav_qibla">قبله</string>
     <string name="nav_settings">تنظیمات</string>
     <string name="nav_prayer_log">کارنامه</string>
+    <string name="nav_donate">حمایت مالی</string>
     <string name="cd_back">بازگشت</string>
 
     <!-- Qibla Screen -->
@@ -443,6 +444,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">کارنامهٔ نماز</string>
+    <string name="prayer_log_setting">استفاده از کارنامهٔ نماز</string>
+    <string name="prayer_log_setting_desc">نمازهایی را که خواندی علامت بزن و در طول زمان دنبال کن. اگر خاموش باشد، نوار پایین به جای آن «حمایت مالی» را نشان می‌دهد.</string>
     <string name="prayer_log_mark">خواندم</string>
     <string name="prayer_log_unmark">برداشتن علامت</string>
     <string name="prayer_log_open">باز کردن کارنامهٔ نماز</string>

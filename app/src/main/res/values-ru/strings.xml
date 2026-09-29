@@ -7,6 +7,7 @@
     <string name="nav_qibla">Кибла</string>
     <string name="nav_settings">Настройки</string>
     <string name="nav_prayer_log">Учёт</string>
+    <string name="nav_donate">Пожертвовать</string>
     <string name="cd_back">Назад</string>
 
     <!-- Qibla Screen -->
@@ -442,6 +443,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Учёт намазов</string>
+    <string name="prayer_log_setting">Вести учёт намазов</string>
+    <string name="prayer_log_setting_desc">Отмечайте совершённые намазы и следите за ними. Если выключено, в панели вместо учёта будет «Пожертвовать».</string>
     <string name="prayer_log_mark">Совершён</string>
     <string name="prayer_log_unmark">Снять отметку</string>
     <string name="prayer_log_open">Открыть учёт намазов</string>

@@ -7,6 +7,7 @@
     <string name="nav_qibla">Qibla</string>
     <string name="nav_settings">Paramètres</string>
     <string name="nav_prayer_log">Carnet</string>
+    <string name="nav_donate">Faire un don</string>
     <string name="cd_back">Retour</string>
 
     <!-- Qibla Screen -->
@@ -430,6 +431,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Carnet de prières</string>
+    <string name="prayer_log_setting">Utiliser le carnet de prières</string>
+    <string name="prayer_log_setting_desc">Marquez les prières accomplies et suivez-les dans le temps. Désactivé, la barre affiche Faire un don à la place.</string>
     <string name="prayer_log_mark">J\'ai prié</string>
     <string name="prayer_log_unmark">Retirer la marque</string>
     <string name="prayer_log_open">Ouvrir le carnet de prières</string>

@@ -407,6 +407,30 @@ private fun PreferencesStep(
                 )
             }
 
+            // The prayer log (çetele): marking prayers as prayed. Off, the donate tab takes its place.
+            PreferenceSection(title = stringResource(R.string.prayer_log_title)) {
+                GlassSurface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    glass = WelcomeGlass
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(stringResource(R.string.prayer_log_setting), fontWeight = FontWeight.Bold, color = Color.White)
+                            Text(stringResource(R.string.prayer_log_setting_desc), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
+                        }
+                        Switch(
+                            checked = settings?.prayerLogEnabled ?: true,
+                            onCheckedChange = { settingsViewModel.setPrayerLogEnabled(it) },
+                            colors = switchColors
+                        )
+                    }
+                }
+            }
+
             // The adhan: whether it plays, for which prayers, with which recording, and the dua after it.
             // Everything past the switch only matters while it is on, so it only shows then.
             PreferenceSection(title = stringResource(R.string.welcome_adhan_audio_header)) {

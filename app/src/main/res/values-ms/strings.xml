@@ -7,6 +7,7 @@
     <string name="nav_qibla">Kiblat</string>
     <string name="nav_settings">Tetapan</string>
     <string name="nav_prayer_log">Catatan</string>
+    <string name="nav_donate">Derma</string>
     <string name="cd_back">Kembali</string>
 
     <!-- Qibla Screen -->
@@ -442,6 +443,8 @@
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Catatan Solat</string>
+    <string name="prayer_log_setting">Guna catatan solat</string>
+    <string name="prayer_log_setting_desc">Tandakan solat yang ditunaikan dan ikuti dari semasa ke semasa. Jika dimatikan, bar menunjukkan Derma sebagai ganti.</string>
     <string name="prayer_log_mark">Sudah solat</string>
     <string name="prayer_log_unmark">Buang tanda</string>
     <string name="prayer_log_open">Buka catatan solat</string>

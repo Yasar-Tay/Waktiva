@@ -121,6 +121,10 @@ fun SettingsScreen(
                             onMethodClick = { showMethodDialog = true },
                             onMadhabClick = { showMadhabDialog = true }
                         )
+                        PrayerLogSection(
+                            settings = settings,
+                            onEnabledChange = { viewModel.setPrayerLogEnabled(it) }
+                        )
                         NotificationSoundSection(
                             settings = settings,
                             onPlayAdhanChange = { viewModel.setPlayAdhanAudio(it) },
@@ -176,6 +180,11 @@ fun SettingsScreen(
                         settings = settings,
                         onMethodClick = { showMethodDialog = true },
                         onMadhabClick = { showMadhabDialog = true }
+                    )
+
+                    PrayerLogSection(
+                        settings = settings,
+                        onEnabledChange = { viewModel.setPrayerLogEnabled(it) }
                     )
 
                     NotificationSoundSection(
@@ -389,6 +398,30 @@ private fun PrayerTimesSection(
                 subtitle = madhabOptions.find { it.second == s.madhab }?.first ?: "",
                 icon = Icons.Rounded.School,
                 onClick = onMadhabClick
+            )
+        }
+    }
+}
+
+/**
+ * Whether the prayer log (çetele) is on. Off, the navigation bar carries the donate tab in its
+ * place and the day circle's badges only show their times.
+ */
+@Composable
+private fun PrayerLogSection(
+    settings: UserSettings?,
+    onEnabledChange: (Boolean) -> Unit
+) {
+    SettingsSection(
+        title = stringResource(R.string.prayer_log_title)
+    ) {
+        settings?.let { s ->
+            SettingsToggleItem(
+                title = stringResource(R.string.prayer_log_setting),
+                subtitle = stringResource(R.string.prayer_log_setting_desc),
+                icon = Icons.Rounded.TaskAlt,
+                checked = s.prayerLogEnabled,
+                onCheckedChange = onEnabledChange
             )
         }
     }

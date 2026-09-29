@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Update
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Settings
@@ -183,10 +184,16 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
 
     if (startDestination == null) return
 
+    // The prayer log's tab, or the donate tab in its place for those who keep the log off.
+    val isPrayerLogEnabled = settings?.prayerLogEnabled != false
     val items = listOf(
         NavigationItem(Screen.Home.route, R.string.nav_home, Icons.Rounded.Home),
         NavigationItem(Screen.Qibla.route, R.string.nav_qibla, Icons.Rounded.LocationOn),
-        NavigationItem(Screen.PrayerLog.route, R.string.nav_prayer_log, Icons.Rounded.TaskAlt),
+        if (isPrayerLogEnabled) {
+            NavigationItem(Screen.PrayerLog.route, R.string.nav_prayer_log, Icons.Rounded.TaskAlt)
+        } else {
+            NavigationItem(Screen.Donate.route, R.string.nav_donate, Icons.Rounded.Favorite)
+        },
         NavigationItem(Screen.Settings.route, R.string.nav_settings, Icons.Rounded.Settings)
     )
 
@@ -269,7 +276,9 @@ fun MainNavigation(context: Context, homeViewModel: HomeViewModel, timeManager: 
                             navController.navigate(Screen.Licenses.route)
                         },
                         onNavigateToDonate = {
-                            navController.navigate(Screen.Donate.route)
+                            // While donate is a tab, go there as the tab does, so its tab lights up.
+                            if (isPrayerLogEnabled) navController.navigate(Screen.Donate.route)
+                            else navigateToTab(Screen.Donate.route)
                         }
                     )
                 }
