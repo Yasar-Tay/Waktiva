@@ -29,4 +29,9 @@ object ReligiousDaysProvider {
     fun getReligiousDay(date: LocalDate): ReligiousDay? {
         return days2026.find { it.date == date }
     }
+
+    /** The religious days of [year] in date order; empty for a year with no data. */
+    fun getReligiousDays(year: Int): List<ReligiousDay> {
+        return days2026.filter { it.date.year == year }.sortedBy { it.date }
+    }
 }

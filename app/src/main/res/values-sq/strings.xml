@@ -353,6 +353,8 @@
     <string name="rel_day_hijri_new_year">Viti i Ri Hixhri</string>
     <string name="rel_day_ashura">Dita e Ashures</string>
     <string name="rel_day_mawlid">Mevludi</string>
+    <string name="religious_days_title">Ditët fetare</string>
+    <string name="religious_days_empty">Ende nuk ka ditë fetare për vitin %1$d.</string>
 
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">Ezani u Hesht</string>

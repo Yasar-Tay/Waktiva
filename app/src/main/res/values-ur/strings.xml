@@ -342,6 +342,8 @@
     <string name="rel_day_hijri_new_year">ہجری سالِ نو</string>
     <string name="rel_day_ashura">یومِ عاشورہ</string>
     <string name="rel_day_mawlid">میلاد النبی ﷺ</string>
+    <string name="religious_days_title">مذہبی ایام</string>
+    <string name="religious_days_empty">سال %1$d کے لیے ابھی کوئی مذہبی دن درج نہیں۔</string>
 
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">اذان میوٹ ہے</string>

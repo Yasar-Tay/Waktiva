@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Mosque
 import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.*
@@ -41,7 +42,8 @@ import java.util.Locale
 /**
  * A modern, horizontal calendar strip that allows users to select different days.
  * Supports both Gregorian and Hijri calendar systems with a smooth transition.
- * Includes visual cues for current day, selected day, and religious events (Ramadan, Eid).
+ * Includes visual cues for current day, selected day, and religious events (Ramadan, Eid),
+ * and a button that lists the selected year's religious days ([ReligiousDaysSheet]).
  *
  * @param selectedDate The date currently selected and focused.
  * @param availableDays The list of days available for selection.
@@ -69,6 +71,7 @@ fun ModernCalendarStrip(
     val context = LocalContext.current
     val currentLocale = Locale.getDefault()
     val isNonLatin = currentLocale.language in listOf("ar", "fa", "ur", "bn")
+    var showReligiousDays by remember { mutableStateOf(false) }
 
     // Automatically scroll to the selected date whenever it changes
     LaunchedEffect(selectedDate) {
@@ -129,7 +132,34 @@ fun ModernCalendarStrip(
                 )
             }
 
-            ReligiousBadge(gregorianDate = selectedDate, contentColor = contentColor, hijriDate = effectiveHijri)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 12.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                ReligiousBadge(gregorianDate = selectedDate, contentColor = contentColor, hijriDate = effectiveHijri)
+            }
+
+            // Opens the year's religious days
+            Surface(
+                color = contentColor.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Box(modifier = Modifier.padding(4.dp)) {
+                    CalendarToggleOption(
+                        icon = Icons.Default.Mosque,
+                        isSelected = true,
+                        onClick = { showReligiousDays = true },
+                        contentColor = contentColor,
+                        contentDescription = stringResource(R.string.religious_days_title)
+                    )
+                }
+            }
+        }
+
+        if (showReligiousDays) {
+            ReligiousDaysSheet(year = selectedDate.year, onDismiss = { showReligiousDays = false })
         }
 
         // Horizontal List of individual day cards
@@ -270,7 +300,8 @@ private fun CalendarToggleOption(
     icon: ImageVector,
     isSelected: Boolean,
     onClick: () -> Unit,
-    contentColor: Color
+    contentColor: Color,
+    contentDescription: String? = null
 ) {
     Surface(
         color = if (isSelected) contentColor.copy(alpha = 0.2f) else Color.Transparent,
@@ -279,7 +310,7 @@ private fun CalendarToggleOption(
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = null,
+            contentDescription = contentDescription,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp).size(20.dp),
             tint = if (isSelected) contentColor else contentColor.copy(alpha = 0.5f)
         )

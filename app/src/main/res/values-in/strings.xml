@@ -348,6 +348,8 @@
     <string name="rel_day_hijri_new_year">Tahun Baru Hijriah</string>
     <string name="rel_day_ashura">Hari Asyura</string>
     <string name="rel_day_mawlid">Maulid Nabi</string>
+    <string name="religious_days_title">Hari Keagamaan</string>
+    <string name="religious_days_empty">Belum ada hari keagamaan untuk tahun %1$d.</string>
 
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">Adzan Disenyapkan</string>

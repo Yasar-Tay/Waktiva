@@ -353,6 +353,8 @@
     <string name="rel_day_hijri_new_year">Nova hidžretska godina</string>
     <string name="rel_day_ashura">Dan Ašure</string>
     <string name="rel_day_mawlid">Mevlud</string>
+    <string name="religious_days_title">Vjerski dani</string>
+    <string name="religious_days_empty">Za %1$d. godinu još nema vjerskih dana.</string>
 
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">Ezan utišan</string>

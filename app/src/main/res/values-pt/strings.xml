@@ -348,6 +348,8 @@
     <string name="rel_day_hijri_new_year">Ano Novo Hijri</string>
     <string name="rel_day_ashura">Dia de Ashura</string>
     <string name="rel_day_mawlid">Mawlid Kandili</string>
+    <string name="religious_days_title">Dias religiosos</string>
+    <string name="religious_days_empty">Ainda não há dias religiosos para %1$d.</string>
 
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">Adhan Silenciado</string>

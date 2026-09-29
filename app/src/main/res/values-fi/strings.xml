@@ -348,6 +348,8 @@
     <string name="rel_day_hijri_new_year">Hijri-uusi vuosi</string>
     <string name="rel_day_ashura">Ashura-päivä</string>
     <string name="rel_day_mawlid">Mawlid Kandili</string>
+    <string name="religious_days_title">Uskonnolliset päivät</string>
+    <string name="religious_days_empty">Vuodelle %1$d ei ole vielä uskonnollisia päiviä.</string>
 
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">Adhan mykistetty</string>

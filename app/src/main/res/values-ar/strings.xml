@@ -348,6 +348,8 @@
     <string name="rel_day_hijri_new_year">رأس السنة الهجرية</string>
     <string name="rel_day_ashura">يوم عاشوراء</string>
     <string name="rel_day_mawlid">المولد النبوي الشريف</string>
+    <string name="religious_days_title">الأيام الدينية</string>
+    <string name="religious_days_empty">لا توجد أيام دينية مدرجة لعام %1$d بعد.</string>
 
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">تم كتم الأذان</string>

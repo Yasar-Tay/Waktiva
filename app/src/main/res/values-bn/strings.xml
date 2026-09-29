@@ -347,6 +347,8 @@
     <string name="rel_day_hijri_new_year">হিজরি নববর্ষ</string>
     <string name="rel_day_ashura">আশুরা</string>
     <string name="rel_day_mawlid">ঈদে মিলাদুন্নবী</string>
+    <string name="religious_days_title">ধর্মীয় দিবস</string>
+    <string name="religious_days_empty">%1$d সালের জন্য এখনও কোনো ধর্মীয় দিবস তালিকাভুক্ত নেই।</string>
 
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">আজান মিউট করা হয়েছে</string>

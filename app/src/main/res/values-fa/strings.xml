@@ -347,6 +347,8 @@
     <string name="rel_day_hijri_new_year">سال نو هجری</string>
     <string name="rel_day_ashura">روز عاشورا</string>
     <string name="rel_day_mawlid">میلاد پیامبر (ص)</string>
+    <string name="religious_days_title">روزهای مذهبی</string>
+    <string name="religious_days_empty">هنوز روز مذهبی‌ای برای سال %1$d ثبت نشده است.</string>
 
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">اذان بی‌صدا شد</string>

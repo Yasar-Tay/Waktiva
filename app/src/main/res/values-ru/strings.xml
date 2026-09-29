@@ -346,6 +346,8 @@
     <string name="rel_day_hijri_new_year">Мусульманский Новый год</string>
     <string name="rel_day_ashura">День Ашура</string>
     <string name="rel_day_mawlid">Мавлид ан-Наби</string>
+    <string name="religious_days_title">Религиозные дни</string>
+    <string name="religious_days_empty">Религиозные дни на %1$d год пока не указаны.</string>
 
     <!-- Notification Strings -->
     <string name="notification_adhan_muted">Азан отключен</string>

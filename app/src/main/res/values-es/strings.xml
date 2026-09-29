@@ -359,6 +359,8 @@
     <string name="rel_day_hijri_new_year">Año Nuevo hégira</string>
     <string name="rel_day_ashura">Día de Ashura</string>
     <string name="rel_day_mawlid">Mawlid</string>
+    <string name="religious_days_title">Días religiosos</string>
+    <string name="religious_days_empty">Aún no hay días religiosos para %1$d.</string>
     <string name="notification_adhan_muted">Adhan silenciado</string>
     <string name="notification_adhan_skipped_text">Se omitió el Adhan de %s.</string>
     <string name="notification_upcoming_adhan_title">Próximo Adhan: %s</string>

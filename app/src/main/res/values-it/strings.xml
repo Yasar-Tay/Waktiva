@@ -359,6 +359,8 @@
     <string name="rel_day_hijri_new_year">Capodanno egiriano</string>
     <string name="rel_day_ashura">Giorno di Ashura</string>
     <string name="rel_day_mawlid">Mawlid</string>
+    <string name="religious_days_title">Giorni religiosi</string>
+    <string name="religious_days_empty">Non ci sono ancora giorni religiosi per il %1$d.</string>
     <string name="notification_adhan_muted">Adhan silenziato</string>
     <string name="notification_adhan_skipped_text">L’Adhan per %s è stato saltato.</string>
     <string name="notification_upcoming_adhan_title">Adhan imminente: %s</string>
