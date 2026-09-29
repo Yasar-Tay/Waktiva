@@ -48,8 +48,8 @@ internal class MoonTexture(val size: Int) {
      *
      * Light falls off with the Lommel-Seeliger law, so the full Moon looks evenly bright, as the
      * real one does, rather than like a shaded ball, and the terminator is soft and slightly
-     * ragged where relief catches the low sun. The night side is faint earthshine and mostly lets
-     * the sky show through.
+     * ragged where relief catches the low sun. The night side is dim, nearly opaque earthshine,
+     * so the whole disc stays visible and keeps its size however thin the crescent.
      *
      * The day side is exposed brighter through a soft shoulder, so the highlands shine without
      * clipping and the maria keep their contrast, and a faint sheen rises where the sun is
@@ -76,12 +76,15 @@ internal class MoonTexture(val size: Int) {
                 val a = albedo[i]
                 val day = if (shine > 0f) expose(a * lit / shine) else 0f
                 val sheen = if (shine > 0f) SheenStrength * max(0f, incidence).pow(4) else 0f
-                val night = (1f - shine) * a
-                val red = channel(255f * (day + sheen) + 150f * night)
-                val green = channel(251f * (day + sheen) + 160f * night)
-                val blue = channel(240f * (day + sheen) + 185f * night)
+                // Earthshine: dim, but the maria still show, with a faint rim that holds the limb.
+                val dark = 1f - shine
+                val night = dark * (0.55f + 0.45f * a)
+                val rim = dark * NightRim * exp(-z / 0.12f)
+                val red = channel(255f * (day + sheen) + 50f * night + 120f * rim)
+                val green = channel(251f * (day + sheen) + 55f * night + 126f * rim)
+                val blue = channel(240f * (day + sheen) + 70f * night + 145f * rim)
                 val edge = ((1f - sqrt(rr)) * r + 0.5f).coerceIn(0f, 1f)
-                val alpha = channel(255f * edge * (0.14f + 0.86f * shine))
+                val alpha = channel(255f * edge * (NightOpacity + (1f - NightOpacity) * shine))
                 pixels[i] = (alpha shl 24) or (red shl 16) or (green shl 8) or blue
             }
         }
@@ -138,6 +141,12 @@ internal class MoonTexture(val size: Int) {
 
         /** Brightness of the sheen where the sun stands overhead. */
         const val SheenStrength = 0.1f
+
+        /** Opacity of the night side, high enough that the whole disc keeps its shape on any sky. */
+        const val NightOpacity = 0.9f
+
+        /** Brightness of the thin light line along the night side's limb. */
+        const val NightRim = 0.25f
 
         val Maria = listOf(
             Mare(-0.30f, -0.40f, 0.30f, 0.24f, 0.32f), // Imbrium
