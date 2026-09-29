@@ -16,8 +16,13 @@ class DayCircleStyleTest {
     }
 
     @Test
-    fun defaultsToBrass() {
-        assertEquals(DayCircleStyle.BRASS, DayCircleStyle.DEFAULT)
+    fun defaultsToClassic() {
+        assertEquals(DayCircleStyle.CLASSIC, DayCircleStyle.DEFAULT)
+    }
+
+    @Test
+    fun readsTheRemovedSkeletonStyleAsClassic() {
+        assertEquals(DayCircleStyle.CLASSIC, DayCircleStyle.fromName("SKELETON"))
     }
 
     @Test
