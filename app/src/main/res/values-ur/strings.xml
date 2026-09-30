@@ -475,8 +475,8 @@
     <string name="prayer_log_week">پچھلے 7 دن</string>
     <string name="prayer_log_month">پچھلے 30 دن</string>
     <string name="prayer_log_missed_total">کل قضا</string>
-    <string name="prayer_log_timeline">ٹائم لائن</string>
-    <string name="prayer_log_earlier">پہلے کے دن دکھائیں</string>
+    <string name="prayer_log_prev_month">پچھلا مہینہ</string>
+    <string name="prayer_log_next_month">اگلا مہینہ</string>
     <string name="prayer_log_hint">نماز کا وقت آنے پر ہوم اسکرین کے دائرے میں اس کے نشان پر ٹیپ کریں اور «پڑھ لی» چنیں، یا یہیں نشان لگائیں۔</string>
     <string name="settings_support_desc">Waktiva کو مفت، نجی اور اشتہار سے پاک رکھنے میں مدد کریں</string>
 </resources>

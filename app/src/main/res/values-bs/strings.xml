@@ -474,8 +474,8 @@
     <string name="prayer_log_week">Posljednjih 7 dana</string>
     <string name="prayer_log_month">Posljednjih 30 dana</string>
     <string name="prayer_log_missed_total">Ukupno propušteno</string>
-    <string name="prayer_log_timeline">Vremenska linija</string>
-    <string name="prayer_log_earlier">Prikaži ranije dane</string>
+    <string name="prayer_log_prev_month">Prethodni mjesec</string>
+    <string name="prayer_log_next_month">Sljedeći mjesec</string>
     <string name="prayer_log_hint">Kada nastupi vrijeme namaza, dodirni njegovu oznaku u krugu na početnom ekranu i odaberi „Klanjano“, ili ga označi ovdje.</string>
     <string name="settings_support_desc">Pomozi da Waktiva ostane besplatna, privatna i bez reklama</string>
 </resources>

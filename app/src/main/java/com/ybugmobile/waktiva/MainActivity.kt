@@ -21,7 +21,6 @@ import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.rounded.TaskAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -55,6 +54,7 @@ import com.ybugmobile.waktiva.ui.home.HomeViewModel
 import com.ybugmobile.waktiva.ui.donation.DonateScreen
 import com.ybugmobile.waktiva.ui.navigation.Screen
 import com.ybugmobile.waktiva.ui.prayerlog.PrayerLogScreen
+import com.ybugmobile.waktiva.ui.prayerlog.TallyIcon
 import com.ybugmobile.waktiva.ui.qibla.QiblaScreen
 import com.ybugmobile.waktiva.ui.settings.AudioSettingsScreen
 import com.ybugmobile.waktiva.ui.settings.LicensesScreen
@@ -217,7 +217,7 @@ fun MainNavigation(
         NavigationItem(Screen.Home.route, R.string.nav_home, Icons.Rounded.Home),
         NavigationItem(Screen.Qibla.route, R.string.nav_qibla, Icons.Rounded.LocationOn),
         if (isPrayerLogEnabled) {
-            NavigationItem(Screen.PrayerLog.route, R.string.nav_prayer_log, Icons.Rounded.TaskAlt)
+            NavigationItem(Screen.PrayerLog.route, R.string.nav_prayer_log, TallyIcon)
         } else {
             NavigationItem(Screen.Donate.route, R.string.nav_donate, Icons.Rounded.Favorite)
         },

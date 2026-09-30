@@ -16,11 +16,11 @@ Faz 1 bu çalışmada tamamlandı; sonraki fazlar öncelik sırasına göredir.
 
 **Ana ekran**
 - [x] Vakti girmiş/geçmiş bir namaz rozetine dokununca "Kıldım" mini ekranı (sheet); kılınmışsa "İşareti kaldır". Güneş ve henüz girmemiş vakitler eskisi gibi vakit kartını gösterir.
-- [x] Kılınan rozet: altın parlama, çift halka, yeşil onay mührü. İşaretlenince dalga + yaylı büyüme animasyonu; klasik, pirinç ve çelik halkaların hepsinde.
+- [x] Kılınan rozet: altın parlama ve çift halka (onay mührü yok). İşaretlenince dalga + yaylı büyüme animasyonu; klasik, pirinç ve çelik halkaların hepsinde.
 
 **Çetele ekranı**
-- [x] Navbar'da Bağış butonunun yerine Çetele.
-- [x] Bugün kartı (5 dilimli halka, seri, dokunarak işaretleme), son 7/30 gün oranları, toplam kaçırılan, geriye doğru zaman çizelgesi (14'er gün, 366 güne kadar).
+- [x] Navbar'da Bağış butonunun yerine Çetele; ikon özel çizim çetele çentikleri (4 çizgi + çapraz 5.).
+- [x] İki kartlık sade ekran: **Bugün** (5 dilimli halka, akıllı durum satırı, vakti giren namaz nabız gibi atar, seri + son 7/30 gün oranları kartın altında) ve **Geçmiş** (her günü minik 5 dilimli halka olan ay takvimi; kaydırarak/oklarla 12 ay geriye; seçili günün namazları takvimin altında düzenlenir, varsayılan dün; toplam kaçırılan başlıkta).
 - [x] Ayarlar'ın en üstünde "Waktiva'yı Destekle" kartı → Bağış ekranı (Çetele açık da kapalı da olsa orada).
 - [x] Çetele isteğe bağlı: Ayarlar'da ve karşılama ekranında "Çeteleyi kullan" anahtarı (varsayılan açık). Kapalıyken alt menüde Çetele yerine Bağış sekmesi durur, rozetler yalnızca vakit kartını açar ve parlama gösterilmez; kayıtlar silinmez.
 - [x] 20 dilde metinler; `PrayerLog` ve durum üretimi için birim testler.
@@ -44,7 +44,6 @@ Faz 1 bu çalışmada tamamlandı; sonraki fazlar öncelik sırasına göredir.
 
 ## Faz 4 — İstatistik ve motivasyon
 
-- [ ] **Aylık ısı haritası** (takvim görünümü): her gün 0–5 doluluk tonu.
 - [ ] **Vakit bazlı analiz:** En çok kaçırılan vakit, haftanın günlerine göre dağılım.
 - [ ] **Seri kilometre taşları:** 7 / 30 / 100 günlük tam seri kutlaması (abartısız, tek seferlik animasyon).
 - [ ] **Cemaatle / vaktinde kılındı** ayrımı (opsiyonel ikinci işaret) ve "ilk vaktinde" oranı.

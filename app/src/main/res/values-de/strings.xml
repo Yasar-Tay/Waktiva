@@ -462,8 +462,8 @@
     <string name="prayer_log_week">Letzte 7 Tage</string>
     <string name="prayer_log_month">Letzte 30 Tage</string>
     <string name="prayer_log_missed_total">Insgesamt verpasst</string>
-    <string name="prayer_log_timeline">Zeitleiste</string>
-    <string name="prayer_log_earlier">Frühere Tage zeigen</string>
+    <string name="prayer_log_prev_month">Vorheriger Monat</string>
+    <string name="prayer_log_next_month">Nächster Monat</string>
     <string name="prayer_log_hint">Wenn die Zeit eines Gebets kommt, tippe im Kreis auf dem Startbildschirm auf sein Symbol und wähle „Gebetet“ – oder markiere es hier.</string>
     <string name="settings_support_desc">Hilf mit, Waktiva kostenlos, privat und werbefrei zu halten</string>
 </resources>

@@ -30,6 +30,7 @@ import com.ybugmobile.waktiva.data.local.preferences.DEFAULT_PRAYER_LOG_REMINDER
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.PrayerType
+import com.ybugmobile.waktiva.ui.prayerlog.TallyIcon
 import com.ybugmobile.waktiva.ui.settings.composables.*
 import com.ybugmobile.waktiva.ui.theme.GlassSurface
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
@@ -432,7 +433,7 @@ private fun PrayerLogSection(
             SettingsToggleItem(
                 title = stringResource(R.string.prayer_log_setting),
                 subtitle = stringResource(R.string.prayer_log_setting_desc),
-                icon = Icons.Rounded.TaskAlt,
+                icon = TallyIcon,
                 checked = s.prayerLogEnabled,
                 onCheckedChange = onEnabledChange
             )

@@ -473,8 +473,8 @@
     <string name="prayer_log_week">Last 7 days</string>
     <string name="prayer_log_month">Last 30 days</string>
     <string name="prayer_log_missed_total">Missed in total</string>
-    <string name="prayer_log_timeline">Timeline</string>
-    <string name="prayer_log_earlier">Show earlier days</string>
+    <string name="prayer_log_prev_month">Previous month</string>
+    <string name="prayer_log_next_month">Next month</string>
     <string name="prayer_log_hint">When a prayer\'s time comes, tap its badge on the home screen\'s circle and choose “I prayed”, or tap it here.</string>
     <string name="settings_support_desc">Help keep Waktiva free, private and ad-free</string>
 </resources>

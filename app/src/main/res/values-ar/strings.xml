@@ -475,8 +475,8 @@
     <string name="prayer_log_week">آخر 7 أيام</string>
     <string name="prayer_log_month">آخر 30 يومًا</string>
     <string name="prayer_log_missed_total">مجموع الفائتة</string>
-    <string name="prayer_log_timeline">الخط الزمني</string>
-    <string name="prayer_log_earlier">عرض الأيام السابقة</string>
+    <string name="prayer_log_prev_month">الشهر السابق</string>
+    <string name="prayer_log_next_month">الشهر التالي</string>
     <string name="prayer_log_hint">عند دخول وقت الصلاة، اضغط على شارتها في الدائرة بالشاشة الرئيسية واختر «صلّيت»، أو علّمها من هنا.</string>
     <string name="settings_support_desc">ساعد في إبقاء Waktiva مجانيًا وخاصًا وبلا إعلانات</string>
 </resources>

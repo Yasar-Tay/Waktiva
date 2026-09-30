@@ -475,8 +475,8 @@
     <string name="prayer_log_week">7 hari terakhir</string>
     <string name="prayer_log_month">30 hari terakhir</string>
     <string name="prayer_log_missed_total">Total terlewat</string>
-    <string name="prayer_log_timeline">Linimasa</string>
-    <string name="prayer_log_earlier">Tampilkan hari sebelumnya</string>
+    <string name="prayer_log_prev_month">Bulan sebelumnya</string>
+    <string name="prayer_log_next_month">Bulan berikutnya</string>
     <string name="prayer_log_hint">Saat waktu salat tiba, ketuk lencananya di lingkaran layar beranda lalu pilih “Sudah salat”, atau tandai di sini.</string>
     <string name="settings_support_desc">Bantu Waktiva tetap gratis, privat, dan bebas iklan</string>
 </resources>
