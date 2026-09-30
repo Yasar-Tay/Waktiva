@@ -238,18 +238,19 @@ fun DonateScreen(
 
             // Donation Items
             items(sortedProducts) { product ->
-                val (titleRes, descRes, icon) = when {
-                    product.id.contains("donation_small") -> Triple(R.string.donate_item_small_title, R.string.donate_item_small_desc, "✨")
-                    product.id.contains("donation_medium") -> Triple(R.string.donate_item_medium_title, R.string.donate_item_medium_desc, "🤝")
-                    product.id.contains("donation_large") -> Triple(R.string.donate_item_large_title, R.string.donate_item_large_desc, "🌟")
-                    else -> Triple(null, null, "💝")
+                // The tiers are the moon filling up: crescent, half moon, full moon.
+                val (titleRes, descRes, moonPhase) = when {
+                    product.id.contains("donation_small") -> Triple(R.string.donate_item_small_title, R.string.donate_item_small_desc, CrescentPhase)
+                    product.id.contains("donation_medium") -> Triple(R.string.donate_item_medium_title, R.string.donate_item_medium_desc, HalfMoonPhase)
+                    product.id.contains("donation_large") -> Triple(R.string.donate_item_large_title, R.string.donate_item_large_desc, FullMoonPhase)
+                    else -> Triple(null, null, FullMoonPhase)
                 }
 
                 PremiumSupportCard(
                     product = product,
                     displayTitle = if (titleRes != null) stringResource(titleRes) else product.title,
                     displayDesc = if (descRes != null) stringResource(descRes) else product.description,
-                    icon = icon,
+                    moonPhase = moonPhase,
                     glassTheme = glassTheme,
                     onClick = {
                         val activity = context.findActivity()
@@ -321,7 +322,7 @@ fun PremiumSupportCard(
     product: DonationProduct,
     displayTitle: String,
     displayDesc: String,
-    icon: String,
+    moonPhase: Double,
     glassTheme: GlassTheme,
     onClick: () -> Unit
 ) {
@@ -335,8 +336,8 @@ fun PremiumSupportCard(
             modifier = Modifier.padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = icon, fontSize = 24.sp)
-            Spacer(modifier = Modifier.width(16.dp))
+            MoonIcon(phase = moonPhase, size = 40.dp)
+            Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = displayTitle,
@@ -372,3 +373,8 @@ fun PremiumSupportCard(
         }
     }
 }
+
+/** Moon phases of the three tiers (0 new, 0.25 first quarter, 0.5 full). */
+private const val CrescentPhase = 0.12
+private const val HalfMoonPhase = 0.25
+private const val FullMoonPhase = 0.5

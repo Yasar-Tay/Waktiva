@@ -318,12 +318,12 @@
     <string name="rate_button">Ocijeni sa 5 zvjezdica</string>
     <string name="badge_no_ads">Bez reklama</string>
     <string name="badge_no_tracking">Bez praćenja</string>
-    <string name="donate_item_small_title">Iskrena podrška</string>
-    <string name="donate_item_small_desc">Dajte mali, ali značajan doprinos za Waktiva.</string>
-    <string name="donate_item_medium_title">Volonter dobre volje</string>
-    <string name="donate_item_medium_desc">Podržite opstanak ovog open-source projekta bez oglasa.</string>
-    <string name="donate_item_large_title">Jedinstvo srca</string>
-    <string name="donate_item_large_desc">Pružite najjaču podršku da Waktiva napreduje dalje.</string>
+    <string name="donate_item_small_title">Mlađak</string>
+    <string name="donate_item_small_desc">Malo hvala: pokazuje da ti Waktiva koristi.</string>
+    <string name="donate_item_medium_title">Prva četvrt</string>
+    <string name="donate_item_medium_desc">Pomaže održavanju Waktive: ažuriranja, ispravke i prijevodi.</string>
+    <string name="donate_item_large_title">Pun mjesec</string>
+    <string name="donate_item_large_desc">Otvara put novim mogućnostima, poput evidencije namaza i dnevnog kruga.</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharrem</string>

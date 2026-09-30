@@ -427,12 +427,12 @@
     <string name="lang_nl">Nederlands</string>
     <string name="lang_sv">Svenska</string>
     <string name="lang_fi">Suomi</string>
-    <string name="donate_item_small_title">پُرخلوص حمایت</string>
-    <string name="donate_item_small_desc">ایک چھوٹی مگر بامعنی معاونت کریں۔</string>
-    <string name="donate_item_medium_title">خیرسگالی رضاکار</string>
-    <string name="donate_item_medium_desc">اس اشتہار سے پاک منصوبے کی بقا میں مدد کریں۔</string>
-    <string name="donate_item_large_title">دلوں کی یکجائی</string>
-    <string name="donate_item_large_desc">Waktiva کو مزید آگے لے جانے کے لیے مضبوط ترین حمایت فراہم کریں۔</string>
+    <string name="donate_item_small_title">ہلال</string>
+    <string name="donate_item_small_desc">ایک چھوٹا سا شکریہ: یہ بتاتا ہے کہ Waktiva آپ کے کام آتا ہے۔</string>
+    <string name="donate_item_medium_title">آدھا چاند</string>
+    <string name="donate_item_medium_desc">Waktiva کو برقرار رکھنے میں مدد: اپ ڈیٹس، اصلاحات اور ترجمے۔</string>
+    <string name="donate_item_large_title">پورا چاند</string>
+    <string name="donate_item_large_desc">نئی خصوصیات کی راہ ہموار کرتا ہے، جیسے نماز کا ریکارڈ اور دن کا دائرہ۔</string>
 
     <!-- iOS-style widget -->
     <string name="widget_label">نماز کے اوقات</string>

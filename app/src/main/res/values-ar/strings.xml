@@ -312,12 +312,12 @@
     <string name="badge_no_ads">بدون إعلانات</string>
     <string name="badge_no_tracking">بدون تتبع</string>
     <string name="badge_open_source">مفتوح المصدر</string>
-    <string name="donate_item_small_title">دعم قلبي</string>
-    <string name="donate_item_small_desc">قدم مساهمة صغيرة ولكن ذات مغزى لـ Waktiva.</string>
-    <string name="donate_item_medium_title">متطوع النوايا الحسنة</string>
-    <string name="donate_item_medium_desc">ادعم استمرارية هذا المشروع المفتوح المصدر والخالي من الإعلانات.</string>
-    <string name="donate_item_large_title">وحدة القلوب</string>
-    <string name="donate_item_large_desc">قدم أقوى دعم للمضي قدماً بـ Waktiva.</string>
+    <string name="donate_item_small_title">هلال</string>
+    <string name="donate_item_small_desc">شكر صغير: يدل على أن Waktiva مفيد لك.</string>
+    <string name="donate_item_medium_title">نصف قمر</string>
+    <string name="donate_item_medium_desc">يساعد على صيانة Waktiva: تحديثات وإصلاحات وترجمات.</string>
+    <string name="donate_item_large_title">بدر</string>
+    <string name="donate_item_large_desc">يفسح المجال لميزات جديدة، مثل سجل الصلوات ودائرة اليوم.</string>
 
 
     <!-- Hijri Months -->

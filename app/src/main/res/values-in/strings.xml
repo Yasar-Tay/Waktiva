@@ -312,12 +312,12 @@
     <string name="badge_no_ads">Tanpa Iklan</string>
     <string name="badge_no_tracking">Tanpa Pelacakan</string>
     <string name="badge_open_source">Sumber Terbuka</string>
-    <string name="donate_item_small_title">Dukungan Tulus</string>
-    <string name="donate_item_small_desc">Berikan kontribusi kecil namun berarti untuk Waktiva.</string>
-    <string name="donate_item_medium_title">Relawan Kebaikan</string>
-    <string name="donate_item_medium_desc">Dukung keberlangsungan proyek sumber terbuka dan bebas iklan ini.</string>
-    <string name="donate_item_large_title">Kesatuan Hati</string>
-    <string name="donate_item_large_desc">Berikan dukungan terkuat untuk membawa Waktiva lebih maju.</string>
+    <string name="donate_item_small_title">Bulan Sabit</string>
+    <string name="donate_item_small_desc">Terima kasih kecil: menunjukkan Waktiva bermanfaat bagimu.</string>
+    <string name="donate_item_medium_title">Bulan Separuh</string>
+    <string name="donate_item_medium_desc">Membantu merawat Waktiva: pembaruan, perbaikan, dan terjemahan.</string>
+    <string name="donate_item_large_title">Bulan Purnama</string>
+    <string name="donate_item_large_desc">Membuka jalan bagi fitur baru, seperti catatan salat dan lingkaran hari.</string>
 
 
     <!-- Hijri Months -->

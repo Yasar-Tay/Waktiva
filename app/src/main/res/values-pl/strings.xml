@@ -318,12 +318,12 @@
     <string name="rate_button">Oceń na 5 gwiazdek</string>
     <string name="badge_no_ads">Bez reklam</string>
     <string name="badge_no_tracking">Bez śledzenia</string>
-    <string name="donate_item_small_title">Serdeczne Wsparcie</string>
-    <string name="donate_item_small_desc">Przekaż mały, ale znaczący wkład w rozwój Waktiva.</string>
-    <string name="donate_item_medium_title">Wolontariusz Dobrej Woli</string>
-    <string name="donate_item_medium_desc">Wesprzyj trwanie tego projektu open-source bez reklam.</string>
-    <string name="donate_item_large_title">Jedność Serc</string>
-    <string name="donate_item_large_desc">Zapewnij najsilniejsze wsparcie, aby rozwijać Waktiva.</string>
+    <string name="donate_item_small_title">Sierp księżyca</string>
+    <string name="donate_item_small_desc">Małe podziękowanie: pokazuje, że Waktiva się przydaje.</string>
+    <string name="donate_item_medium_title">Półksiężyc</string>
+    <string name="donate_item_medium_desc">Pomaga utrzymać Waktiva: aktualizacje, poprawki i tłumaczenia.</string>
+    <string name="donate_item_large_title">Pełnia</string>
+    <string name="donate_item_large_desc">Otwiera drogę nowym funkcjom, takim jak dziennik modlitw i koło dnia.</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>

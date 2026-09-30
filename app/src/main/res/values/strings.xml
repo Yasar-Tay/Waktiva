@@ -319,12 +319,12 @@
     <string name="badge_no_ads">No Ads</string>
     <string name="badge_no_tracking">No Tracking</string>
     <string name="badge_open_source">Open Source</string>
-    <string name="donate_item_small_title">Heartfelt Support</string>
-    <string name="donate_item_small_desc">Make a small but meaningful contribution.</string>
-    <string name="donate_item_medium_title">Goodwill Volunteer</string>
-    <string name="donate_item_medium_desc">Support the survival of this ad-free project.</string>
-    <string name="donate_item_large_title">Unity of Hearts</string>
-    <string name="donate_item_large_desc">Provide the strongest support to take Waktiva further.</string>
+    <string name="donate_item_small_title">Crescent</string>
+    <string name="donate_item_small_desc">A small thank-you: it shows Waktiva helps you.</string>
+    <string name="donate_item_medium_title">Half Moon</string>
+    <string name="donate_item_medium_desc">Helps keep Waktiva up to date: updates, fixes and translations.</string>
+    <string name="donate_item_large_title">Full Moon</string>
+    <string name="donate_item_large_desc">Makes room for new features, like the prayer log and the day circle.</string>
 
     <!-- Hijri Months -->
     <string name="hijri_month_1">Muharram</string>

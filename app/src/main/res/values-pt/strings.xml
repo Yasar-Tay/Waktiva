@@ -426,12 +426,12 @@
     <string name="license_github_link">Waktiva é um projeto de código aberto. Você pode encontrar o código-fonte, relatar problemas ou contribuir em:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Versão</string>
 
-    <string name="donate_item_small_title">Apoio sincero</string>
-    <string name="donate_item_small_desc">Faça uma contribuição pequena, mas significativa.</string>
-    <string name="donate_item_medium_title">Voluntário de boa vontade</string>
-    <string name="donate_item_medium_desc">Apoie a continuidade deste projeto sem anúncios.</string>
-    <string name="donate_item_large_title">União dos corações</string>
-    <string name="donate_item_large_desc">Ofereça o apoio mais forte para levar o Waktiva ainda mais longe.</string>
+    <string name="donate_item_small_title">Crescente</string>
+    <string name="donate_item_small_desc">Um pequeno obrigado: mostra que o Waktiva é útil para você.</string>
+    <string name="donate_item_medium_title">Meia-lua</string>
+    <string name="donate_item_medium_desc">Ajuda a manter o Waktiva: atualizações, correções e traduções.</string>
+    <string name="donate_item_large_title">Lua cheia</string>
+    <string name="donate_item_large_desc">Abre espaço para novos recursos, como o registro de orações e o círculo do dia.</string>
 
     <!-- iOS-style widget -->
     <string name="widget_label">Horários de oração</string>

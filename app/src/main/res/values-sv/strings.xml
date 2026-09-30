@@ -426,12 +426,12 @@
     <string name="license_github_link">Waktiva är ett open source-projekt. Du hittar källkoden, kan rapportera problem eller bidra på:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
     <string name="about_version_label">Version</string>
 
-    <string name="donate_item_small_title">Hjärtligt stöd</string>
-    <string name="donate_item_small_desc">Ge ett litet men meningsfullt bidrag.</string>
-    <string name="donate_item_medium_title">Välvillig stödjare</string>
-    <string name="donate_item_medium_desc">Stöd fortsatt drift av detta reklamfria projekt.</string>
-    <string name="donate_item_large_title">Hjärtans enighet</string>
-    <string name="donate_item_large_desc">Ge det starkaste stödet för att föra Waktiva vidare.</string>
+    <string name="donate_item_small_title">Månskära</string>
+    <string name="donate_item_small_desc">Ett litet tack: det visar att Waktiva är till nytta för dig.</string>
+    <string name="donate_item_medium_title">Halvmåne</string>
+    <string name="donate_item_medium_desc">Hjälper till att hålla Waktiva uppdaterad: uppdateringar, rättelser och översättningar.</string>
+    <string name="donate_item_large_title">Fullmåne</string>
+    <string name="donate_item_large_desc">Banar väg för nya funktioner, som böneloggen och dagcirkeln.</string>
 
     <!-- iOS-style widget -->
     <string name="widget_label">Bönetider</string>
