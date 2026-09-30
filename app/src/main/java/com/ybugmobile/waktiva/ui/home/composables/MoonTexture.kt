@@ -80,9 +80,12 @@ internal class MoonTexture(val size: Int) {
                 val dark = 1f - shine
                 val night = dark * (0.55f + 0.45f * a)
                 val rim = dark * NightRim * exp(-z / 0.12f)
-                val red = channel(255f * (day + sheen) + 50f * night + 120f * rim)
-                val green = channel(251f * (day + sheen) + 55f * night + 126f * rim)
-                val blue = channel(240f * (day + sheen) + 70f * night + 145f * rim)
+                // Day and night blend by [shine] across the terminator. Adding the day side at full
+                // strength there, where it is already a constant a/6, drew a bright line along it.
+                val sunlit = shine * (day + sheen)
+                val red = channel(255f * sunlit + 50f * night + 120f * rim)
+                val green = channel(251f * sunlit + 55f * night + 126f * rim)
+                val blue = channel(240f * sunlit + 70f * night + 145f * rim)
                 val edge = ((1f - sqrt(rr)) * r + 0.5f).coerceIn(0f, 1f)
                 val alpha = channel(255f * edge * (NightOpacity + (1f - NightOpacity) * shine))
                 pixels[i] = (alpha shl 24) or (red shl 16) or (green shl 8) or blue
