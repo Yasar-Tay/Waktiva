@@ -231,12 +231,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Gestión de datos</string>
-    <string name="settings_delete_history">Eliminar historial de oración</string>
-    <string name="settings_delete_history_desc">Eliminar todos los datos de oración pasados para liberar espacio</string>
-    <string name="settings_delete_history_confirm_title">¿Eliminar historial?</string>
-    <string name="settings_delete_history_confirm_desc">Esto eliminará permanentemente todos los registros antes de hoy. Acción irreversible.</string>
-    <string name="settings_delete_history_success">Se eliminaron los datos de oraciones anteriores</string>
-    <string name="settings_delete_history_error">No se pudieron eliminar los datos de oración</string>
+    <string name="settings_delete_history">Borrar horarios pasados</string>
+    <string name="settings_delete_history_desc">Elimina los horarios de oración descargados de días anteriores. Tu registro de oraciones se conserva.</string>
+    <string name="settings_delete_history_confirm_title">¿Borrar horarios pasados?</string>
+    <string name="settings_delete_history_confirm_desc">Se borrarán los horarios de oración de los días anteriores a hoy. Tu registro de oraciones no se ve afectado.</string>
+    <string name="settings_delete_history_success">Horarios pasados borrados</string>
+    <string name="settings_delete_history_error">No se pudieron borrar los horarios pasados</string>
     <string name="map_custom_location">Ubicación seleccionada</string>
     <string name="qibla_map_hint_title">Coloca un marcador personalizado</string>
     <string name="qibla_map_hint_body">Mantén pulsado cualquier punto del mapa para colocar un marcador y comparar la quibla desde otro lugar.</string>
@@ -375,7 +375,7 @@
     <string name="settings_hijri_day_start">Inicio del día hégira</string>
     <string name="settings_hijri_day_start_maghrib">Comienza en Maghrib</string>
     <string name="settings_hijri_day_start_desc">Cambia la fecha hégira al atardecer (Maghrib) en lugar de a medianoche.</string>
-    <string name="settings_about">Acerca de</string>
+    <string name="settings_about">Acerca de Waktiva</string>
     <string name="settings_licenses_desc">Detalles de licencia del software de código abierto</string>
     <string name="license_legal_info">Waktiva – Información legal y de licencias</string>
     <string name="license_app_copyright">Copyright © 2026 YBugMobile\nTodos los derechos reservados.</string>

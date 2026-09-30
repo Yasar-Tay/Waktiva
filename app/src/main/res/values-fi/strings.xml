@@ -238,12 +238,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Tietojen hallinta</string>
-    <string name="settings_delete_history">Poista rukoushistoria</string>
-    <string name="settings_delete_history_desc">Poista kaikki aiemmat rukoustiedot</string>
-    <string name="settings_delete_history_confirm_title">Poistetaanko historia?</string>
-    <string name="settings_delete_history_confirm_desc">Tämä poistaa pysyvästi kaikki rukousmerkinnät ennen tätä päivää. Tätä toimintoa ei voi peruuttaa.</string>
-    <string name="settings_delete_history_success">Aiemmat rukoustiedot poistettiin</string>
-    <string name="settings_delete_history_error">Rukoustietoja ei voitu poistaa</string>
+    <string name="settings_delete_history">Poista menneet rukousajat</string>
+    <string name="settings_delete_history_desc">Poistaa aiempien päivien ladatut rukousajat. Rukousloki säilyy.</string>
+    <string name="settings_delete_history_confirm_title">Poistetaanko menneet rukousajat?</string>
+    <string name="settings_delete_history_confirm_desc">Tätä päivää edeltävien päivien rukousajat poistetaan. Rukousloki ei muutu.</string>
+    <string name="settings_delete_history_success">Menneet rukousajat poistettu</string>
+    <string name="settings_delete_history_error">Menneitä rukousaikoja ei voitu poistaa</string>
     <string name="map_custom_location">Valittu sijainti</string>
     <string name="qibla_map_hint_title">Lisää oma merkki</string>
     <string name="qibla_map_hint_body">Paina pitkään mitä tahansa kohtaa kartalla asettaaksesi merkin ja vertaillaksesi Qiblan suuntaa toisesta sijainnista.</string>
@@ -370,7 +370,7 @@
     <string name="settings_hijri_day_start_desc">Vaihda Hijri-päivämäärä auringonlaskun aikaan (Maghrib) keskiyön sijaan.</string>
 
     <!-- About Section -->
-    <string name="settings_about">Tietoja</string>
+    <string name="settings_about">Tietoja Waktivasta</string>
     <string name="settings_licenses_desc">Avoimen lähdekoodin ohjelmistojen lisenssitiedot</string>
 
     <!-- Licenses Screen -->

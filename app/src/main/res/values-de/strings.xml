@@ -231,12 +231,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Datenverwaltung</string>
-    <string name="settings_delete_history">Gebetshistorie löschen</string>
-    <string name="settings_delete_history_desc">Alle Gebetsdaten aus der Vergangenheit löschen, um Platz freizugeben</string>
-    <string name="settings_delete_history_confirm_title">Historie löschen?</string>
-    <string name="settings_delete_history_confirm_desc">Dies löscht alle Gebetsaufzeichnungen vor heute dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.</string>
-    <string name="settings_delete_history_success">Vergangene Gebetsdaten wurden gelöscht</string>
-    <string name="settings_delete_history_error">Gebetsdaten konnten nicht gelöscht werden</string>
+    <string name="settings_delete_history">Vergangene Gebetszeiten löschen</string>
+    <string name="settings_delete_history_desc">Entfernt die geladenen Gebetszeiten vergangener Tage. Dein Gebetstagebuch bleibt erhalten.</string>
+    <string name="settings_delete_history_confirm_title">Vergangene Gebetszeiten löschen?</string>
+    <string name="settings_delete_history_confirm_desc">Die Gebetszeiten der Tage vor heute werden gelöscht. Dein Gebetstagebuch ist davon nicht betroffen.</string>
+    <string name="settings_delete_history_success">Vergangene Gebetszeiten gelöscht</string>
+    <string name="settings_delete_history_error">Vergangene Gebetszeiten konnten nicht gelöscht werden</string>
     <string name="map_custom_location">Ausgewählter Standort</string>
     <string name="qibla_map_hint_title">Benutzerdefinierte Markierung setzen</string>
     <string name="qibla_map_hint_body">Halten Sie eine beliebige Stelle auf der Karte gedrückt, um eine Markierung zu setzen und die Qibla von einem anderen Ort aus zu vergleichen.</string>
@@ -375,7 +375,7 @@
     <string name="settings_hijri_day_start">Beginn des Hidschri-Tages</string>
     <string name="settings_hijri_day_start_maghrib">Beginnt bei Maghrib</string>
     <string name="settings_hijri_day_start_desc">Wechseln Sie das Hidschri-Datum bei Sonnenuntergang (Maghrib) statt um Mitternacht.</string>
-    <string name="settings_about">Über</string>
+    <string name="settings_about">Über Waktiva</string>
     <string name="settings_licenses_desc">Lizenzdetails für Open-Source-Software</string>
     <string name="license_legal_info">Waktiva – Lizenz- und Rechtshinweise</string>
     <string name="license_app_copyright">Urheberrecht © 2026 YBugMobile\nAlle Rechte vorbehalten.</string>

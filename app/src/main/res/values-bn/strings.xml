@@ -231,12 +231,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">ডেটা ম্যানেজমেন্ট</string>
-    <string name="settings_delete_history">নামাজের ইতিহাস মুছুন</string>
-    <string name="settings_delete_history_desc">জায়গা খালি করতে পূর্বের সকল ডেটা মুছে ফেলুন</string>
-    <string name="settings_delete_history_confirm_title">ইতিহাস মুছবেন?</string>
-    <string name="settings_delete_history_confirm_desc">এটি আজকের আগের সকল নামাজ রেকর্ড স্থায়ীভাবে মুছে ফেলবে। এটি আর ফিরে পাওয়া যাবে না।</string>
-    <string name="settings_delete_history_success">আগের নামাজের তথ্য মুছে ফেলা হয়েছে</string>
-    <string name="settings_delete_history_error">নামাজের তথ্য মুছে ফেলা যায়নি</string>
+    <string name="settings_delete_history">আগের নামাজের সময় মুছুন</string>
+    <string name="settings_delete_history_desc">আগের দিনগুলোর ডাউনলোড করা নামাজের সময় মুছে ফেলে। আপনার নামাজের হিসাব থেকে যায়।</string>
+    <string name="settings_delete_history_confirm_title">আগের সময়গুলো মুছবেন?</string>
+    <string name="settings_delete_history_confirm_desc">আজকের আগের দিনগুলোর নামাজের সময় মুছে যাবে। আপনার নামাজের হিসাবে কোনো প্রভাব পড়বে না।</string>
+    <string name="settings_delete_history_success">আগের নামাজের সময় মুছে ফেলা হয়েছে</string>
+    <string name="settings_delete_history_error">আগের নামাজের সময় মোছা যায়নি</string>
     <string name="map_custom_location">নির্বাচিত অবস্থান</string>
     <string name="qibla_map_hint_title">একটি কাস্টম মার্কার রাখুন</string>
     <string name="qibla_map_hint_body">মানচিত্রের যেকোনো স্থানে দীর্ঘক্ষণ চাপ দিন। অন্য একটি স্থান থেকে কিবলার দিক তুলনা করতে একটি অস্থায়ী মার্কার বসানো হবে।</string>
@@ -369,7 +369,7 @@
     <string name="settings_hijri_day_start_desc">মধ্যরাতের পরিবর্তে সূর্যাস্তের (মাগরিব) সময় হিজরি তারিখ পরিবর্তন করুন।</string>
 
     <!-- About Section -->
-    <string name="settings_about">সম্পর্কে</string>
+    <string name="settings_about">Waktiva সম্পর্কে</string>
     <string name="settings_licenses_desc">ওপেন সোর্স সফটওয়্যারের লাইসেন্স বিস্তারিত</string>
 
     <!-- Licenses Screen -->

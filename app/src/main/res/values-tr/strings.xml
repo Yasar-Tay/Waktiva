@@ -231,12 +231,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Veri Yönetimi</string>
-    <string name="settings_delete_history">Namaz Geçmişini Sil</string>
-    <string name="settings_delete_history_desc">Yer açmak için geçmişteki tüm namaz verilerini sil</string>
-    <string name="settings_delete_history_confirm_title">Geçmiş Silinsin mi?</string>
-    <string name="settings_delete_history_confirm_desc">Bu işlem bugünden önceki tüm namaz kayıtlarını kalıcı olarak silecektir. Bu işlem geri alınamaz.</string>
-    <string name="settings_delete_history_success">Geçmiş namaz verileri silindi</string>
-    <string name="settings_delete_history_error">Namaz verileri silinemedi</string>
+    <string name="settings_delete_history">Geçmiş Namaz Vakitlerini Sil</string>
+    <string name="settings_delete_history_desc">Önceki günlerin indirilmiş namaz vakitlerini siler. Çetelen korunur.</string>
+    <string name="settings_delete_history_confirm_title">Geçmiş vakitler silinsin mi?</string>
+    <string name="settings_delete_history_confirm_desc">Bugünden önceki günlerin namaz vakitleri silinecek. Çetele kayıtların bundan etkilenmez.</string>
+    <string name="settings_delete_history_success">Geçmiş namaz vakitleri silindi</string>
+    <string name="settings_delete_history_error">Geçmiş namaz vakitleri silinemedi</string>
     <string name="map_custom_location">Seçilen konum</string>
     <string name="qibla_map_hint_title">Özel işaret ekleyin</string>
     <string name="qibla_map_hint_body">Haritada herhangi bir yere uzun basın. Başka bir noktadan kıbleyi karşılaştırmak için geçici bir işaret bırakılır.</string>
@@ -370,7 +370,7 @@
     <string name="settings_hijri_day_start_desc">Hicri tarihi gece yarısı yerine akşam vaktinde (gün batımı) değiştirin.</string>
 
     <!-- About Section -->
-    <string name="settings_about">Hakkında</string>
+    <string name="settings_about">Waktiva Hakkında</string>
     <string name="settings_licenses_desc">Açık kaynaklı yazılımlar için lisans ayrıntıları</string>
 
     <!-- Licenses Screen -->

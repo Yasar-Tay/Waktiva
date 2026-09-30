@@ -238,12 +238,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Upravljanje podacima</string>
-    <string name="settings_delete_history">Obriši historiju namaza</string>
-    <string name="settings_delete_history_desc">Obrišite sve prošle podatke o namazima</string>
-    <string name="settings_delete_history_confirm_title">Obrisati historiju?</string>
-    <string name="settings_delete_history_confirm_desc">Ovo će trajno obrisati sve zapise o namazima prije današnjeg dana. Ova radnja se ne može poništiti.</string>
-    <string name="settings_delete_history_success">Prethodni podaci o namazima su izbrisani</string>
-    <string name="settings_delete_history_error">Podaci o namazima nisu mogli biti izbrisani</string>
+    <string name="settings_delete_history">Obriši prošla vremena namaza</string>
+    <string name="settings_delete_history_desc">Briše preuzeta vremena namaza prethodnih dana. Evidencija namaza ostaje.</string>
+    <string name="settings_delete_history_confirm_title">Obrisati prošla vremena?</string>
+    <string name="settings_delete_history_confirm_desc">Vremena namaza za dane prije današnjeg bit će obrisana. Evidencija namaza ostaje netaknuta.</string>
+    <string name="settings_delete_history_success">Prošla vremena namaza obrisana</string>
+    <string name="settings_delete_history_error">Prošla vremena namaza nije moguće obrisati</string>
     <string name="map_custom_location">Odabrana lokacija</string>
     <string name="qibla_map_hint_title">Postavite prilagođeni marker</string>
     <string name="qibla_map_hint_body">Pritisnite i zadržite bilo gdje na mapi da postavite marker i uporedite smjer Kible s druge lokacije.</string>
@@ -375,7 +375,7 @@
     <string name="settings_hijri_day_start_desc">Promjena hidžretskog datuma prilikom zalaska sunca (Akšama) umjesto u ponoć.</string>
 
     <!-- About Section -->
-    <string name="settings_about">O aplikaciji</string>
+    <string name="settings_about">O Waktivi</string>
     <string name="settings_licenses_desc">Detalji licenci za softver otvorenog koda</string>
 
     <!-- Licenses Screen -->

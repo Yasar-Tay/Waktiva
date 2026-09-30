@@ -231,12 +231,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Gestion des données</string>
-    <string name="settings_delete_history">Supprimer l\'historique des prières</string>
-    <string name="settings_delete_history_desc">Supprimer toutes les données de prière passées pour libérer de l\'espace</string>
-    <string name="settings_delete_history_confirm_title">Supprimer l\'historique ?</string>
-    <string name="settings_delete_history_confirm_desc">Ceci supprimera définitivement tous les enregistrements avant aujourd\'hui. Action irréversible.</string>
-    <string name="settings_delete_history_success">Les anciennes données de prière ont été supprimées</string>
-    <string name="settings_delete_history_error">Impossible de supprimer les données de prière</string>
+    <string name="settings_delete_history">Supprimer les horaires passés</string>
+    <string name="settings_delete_history_desc">Supprime les horaires de prière téléchargés des jours précédents. Votre carnet de prières est conservé.</string>
+    <string name="settings_delete_history_confirm_title">Supprimer les horaires passés ?</string>
+    <string name="settings_delete_history_confirm_desc">Les horaires de prière des jours avant aujourd\'hui seront supprimés. Votre carnet de prières n\'est pas concerné.</string>
+    <string name="settings_delete_history_success">Horaires passés supprimés</string>
+    <string name="settings_delete_history_error">Impossible de supprimer les horaires passés</string>
     <string name="map_custom_location">Emplacement sélectionné</string>
     <string name="qibla_map_hint_title">Ajouter un repère personnalisé</string>
     <string name="qibla_map_hint_body">Appuyez longuement n\'importe où sur la carte pour placer un repère et comparer la Qibla depuis un autre endroit.</string>
@@ -375,7 +375,7 @@
     <string name="settings_hijri_day_start">Début de la journée hégirienne</string>
     <string name="settings_hijri_day_start_maghrib">Commence au Maghrib</string>
     <string name="settings_hijri_day_start_desc">Faites passer la date hégirienne au coucher du soleil (Maghrib) au lieu de minuit.</string>
-    <string name="settings_about">À propos</string>
+    <string name="settings_about">À propos de Waktiva</string>
     <string name="settings_licenses_desc">Détails des licences des logiciels open source</string>
     <string name="license_legal_info">Waktiva – Informations légales et de licence</string>
     <string name="license_app_copyright">Copyright © 2026 YBugMobile\nTous droits réservés.</string>

@@ -231,12 +231,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Data Manajemen</string>
-    <string name="settings_delete_history">Hapus Riwayat Shalat</string>
-    <string name="settings_delete_history_desc">Hapus semua data shalat masa lalu untuk mengosongkan ruang</string>
-    <string name="settings_delete_history_confirm_title">Hapus Riwayat?</string>
-    <string name="settings_delete_history_confirm_desc">Ini akan menghapus secara permanen semua catatan shalat sebelum hari ini. Tindakan ini tidak dapat dibatalkan.</string>
-    <string name="settings_delete_history_success">Data salat sebelumnya telah dihapus</string>
-    <string name="settings_delete_history_error">Data salat tidak dapat dihapus</string>
+    <string name="settings_delete_history">Hapus Jadwal Salat Lampau</string>
+    <string name="settings_delete_history_desc">Menghapus jadwal salat yang diunduh untuk hari-hari sebelumnya. Catatan salatmu tetap tersimpan.</string>
+    <string name="settings_delete_history_confirm_title">Hapus jadwal lampau?</string>
+    <string name="settings_delete_history_confirm_desc">Jadwal salat untuk hari-hari sebelum hari ini akan dihapus. Catatan salatmu tidak terpengaruh.</string>
+    <string name="settings_delete_history_success">Jadwal salat lampau dihapus</string>
+    <string name="settings_delete_history_error">Jadwal salat lampau tidak dapat dihapus</string>
     <string name="map_custom_location">Lokasi yang dipilih</string>
     <string name="qibla_map_hint_title">Tambahkan penanda khusus</string>
     <string name="qibla_map_hint_body">Tekan dan tahan di mana saja pada peta untuk menempatkan penanda dan membandingkan arah kiblat dari lokasi lain.</string>
@@ -370,7 +370,7 @@
     <string name="settings_hijri_day_start_desc">Ganti tanggal Hijriah saat matahari terbenam (Maghrib) alih-alih tengah malam.</string>
 
     <!-- About Section -->
-    <string name="settings_about">Tentang</string>
+    <string name="settings_about">Tentang Waktiva</string>
     <string name="settings_licenses_desc">Detail lisensi untuk perangkat lunak sumber terbuka</string>
 
     <!-- Licenses Screen -->

@@ -231,12 +231,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Управление данными</string>
-    <string name="settings_delete_history">Удалить историю молитв</string>
-    <string name="settings_delete_history_desc">Удалить все прошлые данные о молитвах, чтобы освободить место</string>
-    <string name="settings_delete_history_confirm_title">Удалить историю?</string>
-    <string name="settings_delete_history_confirm_desc">Это навсегда удалит все записи о молитвах до сегодняшнего дня. Это действие нельзя отменить.</string>
-    <string name="settings_delete_history_success">Прошлые данные о молитвах удалены</string>
-    <string name="settings_delete_history_error">Не удалось удалить данные о молитвах</string>
+    <string name="settings_delete_history">Удалить прошлые времена намазов</string>
+    <string name="settings_delete_history_desc">Удаляет загруженные времена намазов прошедших дней. Учёт намазов сохраняется.</string>
+    <string name="settings_delete_history_confirm_title">Удалить прошлые времена?</string>
+    <string name="settings_delete_history_confirm_desc">Времена намазов за дни до сегодняшнего будут удалены. Учёт намазов не затрагивается.</string>
+    <string name="settings_delete_history_success">Прошлые времена намазов удалены</string>
+    <string name="settings_delete_history_error">Не удалось удалить прошлые времена намазов</string>
     <string name="map_custom_location">Выбранное местоположение</string>
     <string name="qibla_map_hint_title">Добавьте свою метку</string>
     <string name="qibla_map_hint_body">Нажмите и удерживайте любое место на карте, чтобы поставить метку и сравнить направление киблы из другой точки.</string>
@@ -368,7 +368,7 @@
     <string name="settings_hijri_day_start_desc">Переключать дату по Хиджре на закате (Магриб) вместо полуночи.</string>
 
     <!-- About Section -->
-    <string name="settings_about">О приложении</string>
+    <string name="settings_about">О Waktiva</string>
     <string name="settings_licenses_desc">Сведения о лицензиях программного обеспечения с открытым исходным кодом</string>
 
     <!-- Licenses Screen -->

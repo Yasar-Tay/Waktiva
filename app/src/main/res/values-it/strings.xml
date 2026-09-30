@@ -231,12 +231,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Gestione dati</string>
-    <string name="settings_delete_history">Elimina cronologia preghiere</string>
-    <string name="settings_delete_history_desc">Elimina tutti i dati di preghiera passati per liberare spazio</string>
-    <string name="settings_delete_history_confirm_title">Eliminare cronologia?</string>
-    <string name="settings_delete_history_confirm_desc">Questo eliminerà permanentemente tutti i record prima di oggi. Azione irreversibile.</string>
-    <string name="settings_delete_history_success">I dati delle preghiere passate sono stati eliminati</string>
-    <string name="settings_delete_history_error">Impossibile eliminare i dati delle preghiere</string>
+    <string name="settings_delete_history">Elimina orari passati</string>
+    <string name="settings_delete_history_desc">Rimuove gli orari di preghiera scaricati dei giorni precedenti. Il registro delle preghiere resta.</string>
+    <string name="settings_delete_history_confirm_title">Eliminare gli orari passati?</string>
+    <string name="settings_delete_history_confirm_desc">Gli orari di preghiera dei giorni prima di oggi verranno eliminati. Il registro delle preghiere non viene toccato.</string>
+    <string name="settings_delete_history_success">Orari passati eliminati</string>
+    <string name="settings_delete_history_error">Impossibile eliminare gli orari passati</string>
     <string name="map_custom_location">Posizione selezionata</string>
     <string name="qibla_map_hint_title">Aggiungi un indicatore personalizzato</string>
     <string name="qibla_map_hint_body">Tieni premuto in qualsiasi punto della mappa per posizionare un indicatore e confrontare la Qibla da un altro luogo.</string>
@@ -375,7 +375,7 @@
     <string name="settings_hijri_day_start">Inizio del giorno egiriano</string>
     <string name="settings_hijri_day_start_maghrib">Inizia al Maghrib</string>
     <string name="settings_hijri_day_start_desc">Cambia la data egiriana al tramonto (Maghrib) invece che a mezzanotte.</string>
-    <string name="settings_about">Informazioni</string>
+    <string name="settings_about">Informazioni su Waktiva</string>
     <string name="settings_licenses_desc">Dettagli della licenza del software open source</string>
     <string name="license_legal_info">Waktiva – Informazioni legali e sulla licenza</string>
     <string name="license_app_copyright">Copyright © 2026 YBugMobile\nTutti i diritti riservati.</string>

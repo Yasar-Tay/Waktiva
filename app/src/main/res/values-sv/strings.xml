@@ -238,12 +238,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Datahantering</string>
-    <string name="settings_delete_history">Radera bönehistorik</string>
-    <string name="settings_delete_history_desc">Radera all tidigare bönedata</string>
-    <string name="settings_delete_history_confirm_title">Radera historik?</string>
-    <string name="settings_delete_history_confirm_desc">Detta kommer att permanent radera alla böneposter före idag. Denna åtgärd kan inte ångras.</string>
-    <string name="settings_delete_history_success">Tidigare bönedata har raderats</string>
-    <string name="settings_delete_history_error">Bönedata kunde inte raderas</string>
+    <string name="settings_delete_history">Radera tidigare bönetider</string>
+    <string name="settings_delete_history_desc">Tar bort nedladdade bönetider för tidigare dagar. Din bönelogg finns kvar.</string>
+    <string name="settings_delete_history_confirm_title">Radera tidigare bönetider?</string>
+    <string name="settings_delete_history_confirm_desc">Bönetiderna för dagarna före idag raderas. Din bönelogg påverkas inte.</string>
+    <string name="settings_delete_history_success">Tidigare bönetider raderade</string>
+    <string name="settings_delete_history_error">Tidigare bönetider kunde inte raderas</string>
     <string name="map_custom_location">Vald plats</string>
     <string name="qibla_map_hint_title">Placera en egen markör</string>
     <string name="qibla_map_hint_body">Tryck och håll var som helst på kartan för att placera en markör och jämföra qiblariktningen från en annan plats.</string>
@@ -370,7 +370,7 @@
     <string name="settings_hijri_day_start_desc">Byt Hijri-datum vid solnedgången (Maghrib) istället för vid midnatt.</string>
 
     <!-- About Section -->
-    <string name="settings_about">Om</string>
+    <string name="settings_about">Om Waktiva</string>
     <string name="settings_licenses_desc">Licensdetaljer för programvara med öppen källkod</string>
 
     <!-- Licenses Screen -->

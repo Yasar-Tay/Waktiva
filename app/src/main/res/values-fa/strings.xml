@@ -231,12 +231,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">مدیریت داده‌ها</string>
-    <string name="settings_delete_history">پاک کردن تاریخچه نماز</string>
-    <string name="settings_delete_history_desc">تمام داده‌های نماز گذشته را برای آزاد کردن فضا پاک کنید</string>
-    <string name="settings_delete_history_confirm_title">حذف تاریخچه؟</string>
-    <string name="settings_delete_history_confirm_desc">این کار تمام رکوردهای نماز پیش از امروز را برای همیشه پاک می‌کند. این عمل قابل بازگشت نیست.</string>
-    <string name="settings_delete_history_success">داده‌های نمازهای گذشته حذف شد</string>
-    <string name="settings_delete_history_error">داده‌های نماز حذف نشد</string>
+    <string name="settings_delete_history">حذف اوقات شرعی گذشته</string>
+    <string name="settings_delete_history_desc">اوقات نماز دانلودشدهٔ روزهای قبل را حذف می‌کند. کارنامهٔ نمازت حفظ می‌شود.</string>
+    <string name="settings_delete_history_confirm_title">اوقات گذشته حذف شود؟</string>
+    <string name="settings_delete_history_confirm_desc">اوقات نماز روزهای پیش از امروز حذف می‌شود. کارنامهٔ نمازت تغییری نمی‌کند.</string>
+    <string name="settings_delete_history_success">اوقات گذشته حذف شد</string>
+    <string name="settings_delete_history_error">حذف اوقات گذشته ممکن نشد</string>
     <string name="map_custom_location">مکان انتخاب‌شده</string>
     <string name="qibla_map_hint_title">یک نشانگر سفارشی اضافه کنید</string>
     <string name="qibla_map_hint_body">روی هر نقطه از نقشه لمس طولانی کنید تا یک نشانگر قرار گیرد و جهت قبله را از مکان دیگری مقایسه کنید.</string>
@@ -369,7 +369,7 @@
     <string name="settings_hijri_day_start_desc">تغيير تاریخ هجری در هنگام غروب خورشید (مغرب) به جای نیمه‌شب.</string>
 
     <!-- About Section -->
-    <string name="settings_about">درباره برنامه</string>
+    <string name="settings_about">دربارهٔ Waktiva</string>
     <string name="settings_licenses_desc">جزئیات مجوزهای نرم‌افزارهای متن‌باز</string>
 
     <!-- Licenses Screen -->

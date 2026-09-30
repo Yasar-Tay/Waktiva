@@ -238,12 +238,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Gestão de Dados</string>
-    <string name="settings_delete_history">Eliminar Histórico de Orações</string>
-    <string name="settings_delete_history_desc">Eliminar todos os registos antigos</string>
-    <string name="settings_delete_history_confirm_title">Eliminar Histórico?</string>
-    <string name="settings_delete_history_confirm_desc">Isto eliminará permanentemente os registos antes de hoje. Ação irreversível.</string>
-    <string name="settings_delete_history_success">Os dados de orações anteriores foram eliminados</string>
-    <string name="settings_delete_history_error">Não foi possível eliminar os dados de oração</string>
+    <string name="settings_delete_history">Apagar horários passados</string>
+    <string name="settings_delete_history_desc">Remove os horários de oração baixados de dias anteriores. Seu registro de orações é mantido.</string>
+    <string name="settings_delete_history_confirm_title">Apagar horários passados?</string>
+    <string name="settings_delete_history_confirm_desc">Os horários de oração dos dias anteriores a hoje serão apagados. Seu registro de orações não é afetado.</string>
+    <string name="settings_delete_history_success">Horários passados apagados</string>
+    <string name="settings_delete_history_error">Não foi possível apagar os horários passados</string>
     <string name="map_custom_location">Localização selecionada</string>
     <string name="qibla_map_hint_title">Coloque um marcador personalizado</string>
     <string name="qibla_map_hint_body">Toque e mantenha pressionado em qualquer ponto do mapa para colocar um marcador e comparar a Qibla a partir de outro local.</string>
@@ -370,7 +370,7 @@
     <string name="settings_hijri_day_start_desc">Trocar a data ao pôr do sol em vez da meia-noite.</string>
 
     <!-- About Section -->
-    <string name="settings_about">Sobre</string>
+    <string name="settings_about">Sobre o Waktiva</string>
     <string name="settings_licenses_desc">Detalhes de licença</string>
 
     <!-- Licenses Screen -->

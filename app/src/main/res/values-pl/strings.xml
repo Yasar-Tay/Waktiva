@@ -238,12 +238,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Zarządzanie danymi</string>
-    <string name="settings_delete_history">Usuń historię modlitw</string>
-    <string name="settings_delete_history_desc">Usuń wszystkie dane modlitw z przeszłości</string>
-    <string name="settings_delete_history_confirm_title">Usunąć historię?</string>
-    <string name="settings_delete_history_confirm_desc">Spowoduje to trwałe usunięcie wszystkich zapisów modlitw przed dniem dzisiejszym. Tej czynności nie można cofnąć.</string>
-    <string name="settings_delete_history_success">Usunięto wcześniejsze dane modlitw</string>
-    <string name="settings_delete_history_error">Nie udało się usunąć danych modlitw</string>
+    <string name="settings_delete_history">Usuń minione godziny modlitw</string>
+    <string name="settings_delete_history_desc">Usuwa pobrane godziny modlitw z poprzednich dni. Dziennik modlitw zostaje.</string>
+    <string name="settings_delete_history_confirm_title">Usunąć minione godziny modlitw?</string>
+    <string name="settings_delete_history_confirm_desc">Godziny modlitw z dni przed dzisiejszym zostaną usunięte. Dziennik modlitw pozostaje bez zmian.</string>
+    <string name="settings_delete_history_success">Minione godziny modlitw usunięte</string>
+    <string name="settings_delete_history_error">Nie udało się usunąć minionych godzin modlitw</string>
     <string name="map_custom_location">Wybrana lokalizacja</string>
     <string name="qibla_map_hint_title">Dodaj własny znacznik</string>
     <string name="qibla_map_hint_body">Naciśnij i przytrzymaj dowolne miejsce na mapie, aby dodać znacznik i porównać kierunek kibli z innej lokalizacji.</string>
@@ -375,7 +375,7 @@
     <string name="settings_hijri_day_start_desc">Zmień datę Hidżry po zachodzie słońca (Maghrib) zamiast o północy.</string>
 
     <!-- About Section -->
-    <string name="settings_about">O aplikacji</string>
+    <string name="settings_about">O Waktiva</string>
     <string name="settings_licenses_desc">Szczegóły licencji open source</string>
 
     <!-- Licenses Screen -->

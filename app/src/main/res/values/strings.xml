@@ -238,12 +238,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Data Management</string>
-    <string name="settings_delete_history">Delete Prayer History</string>
-    <string name="settings_delete_history_desc">Delete all prayer data from the past to free up space</string>
-    <string name="settings_delete_history_confirm_title">Delete History?</string>
-    <string name="settings_delete_history_confirm_desc">This will permanently delete all prayer records before today. This action cannot be undone.</string>
-    <string name="settings_delete_history_success">Past prayer data deleted</string>
-    <string name="settings_delete_history_error">Prayer data could not be deleted</string>
+    <string name="settings_delete_history">Delete Past Prayer Times</string>
+    <string name="settings_delete_history_desc">Removes the downloaded prayer times of earlier days. Your prayer log is kept.</string>
+    <string name="settings_delete_history_confirm_title">Delete past prayer times?</string>
+    <string name="settings_delete_history_confirm_desc">The prayer times of the days before today will be deleted. Your prayer log isn\'t affected.</string>
+    <string name="settings_delete_history_success">Past prayer times deleted</string>
+    <string name="settings_delete_history_error">Past prayer times could not be deleted</string>
     <string name="map_custom_location">Selected location</string>
     <string name="qibla_map_hint_title">Drop a custom marker</string>
     <string name="qibla_map_hint_body">Press and hold anywhere on the map to place a marker and compare the Qibla from another spot.</string>
@@ -376,7 +376,7 @@
     <string name="settings_hijri_day_start_desc">Switch Hijri date at sunset (Maghrib) instead of midnight.</string>
 
     <!-- About Section -->
-    <string name="settings_about">About</string>
+    <string name="settings_about">About Waktiva</string>
     <string name="settings_licenses_desc">License details for open source software</string>
 
     <!-- Licenses Screen -->

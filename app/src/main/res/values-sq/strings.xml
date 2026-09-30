@@ -238,12 +238,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Menaxhimi i të Dhënave</string>
-    <string name="settings_delete_history">Fshi Historikun e Lutjeve</string>
-    <string name="settings_delete_history_desc">Fshini të gjitha të dhënat e lutjeve nga e kaluara</string>
-    <string name="settings_delete_history_confirm_title">Fshini Historikun?</string>
-    <string name="settings_delete_history_confirm_desc">Kjo do të fshijë përgjithmonë të gjitha të dhënat para ditës së sotme. Ky veprim nuk mund të kthehet.</string>
-    <string name="settings_delete_history_success">Të dhënat e mëparshme të namazeve u fshinë</string>
-    <string name="settings_delete_history_error">Të dhënat e namazeve nuk mund të fshiheshin</string>
+    <string name="settings_delete_history">Fshi oraret e kaluara</string>
+    <string name="settings_delete_history_desc">Fshin oraret e shkarkuara të namazit për ditët e mëparshme. Regjistri i namazeve ruhet.</string>
+    <string name="settings_delete_history_confirm_title">Të fshihen oraret e kaluara?</string>
+    <string name="settings_delete_history_confirm_desc">Oraret e namazit për ditët para sotme do të fshihen. Regjistri i namazeve nuk preket.</string>
+    <string name="settings_delete_history_success">Oraret e kaluara u fshinë</string>
+    <string name="settings_delete_history_error">Oraret e kaluara nuk u fshinë</string>
     <string name="map_custom_location">Vendndodhja e zgjedhur</string>
     <string name="qibla_map_hint_title">Vendos një shenjues të personalizuar</string>
     <string name="qibla_map_hint_body">Mbaje të shtypur kudo në hartë për të vendosur një shenjues dhe për të krahasuar drejtimin e Kibles nga një vend tjetër.</string>
@@ -375,7 +375,7 @@
     <string name="settings_hijri_day_start_desc">Ndërroni datën Hixhri në perëndim të diellit (Aksham) në vend të mesnatës.</string>
 
     <!-- About Section -->
-    <string name="settings_about">Rreth</string>
+    <string name="settings_about">Rreth Waktiva</string>
     <string name="settings_licenses_desc">Detajet e licencës për softuerin me burim të hapur</string>
 
     <!-- Licenses Screen -->

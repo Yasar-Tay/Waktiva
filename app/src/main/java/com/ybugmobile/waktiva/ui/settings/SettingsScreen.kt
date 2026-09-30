@@ -118,16 +118,11 @@ fun SettingsScreen(
                         SystemHealthCard(
                             hasPrayerData = allDays.isNotEmpty()
                         )
-                        PrayerTimesSection(
+                        AppearanceSection(
                             settings = settings,
-                            onMethodClick = { showMethodDialog = true },
-                            onMadhabClick = { showMadhabDialog = true }
-                        )
-                        PrayerLogSection(
-                            settings = settings,
-                            onEnabledChange = { viewModel.setPrayerLogEnabled(it) },
-                            onReminderChange = { viewModel.setPrayerLogReminder(it) },
-                            onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) }
+                            onLanguageClick = { showLanguageDialog = true },
+                            onDayCircleClick = { showDayCircleDialog = true },
+                            onWeatherEffectsChange = { viewModel.setShowWeatherEffects(it) }
                         )
                         NotificationSoundSection(
                             settings = settings,
@@ -136,6 +131,11 @@ fun SettingsScreen(
                             onPrayerAdhanToggle = { type, enabled -> viewModel.setPrayerAdhanEnabled(type, enabled) },
                             onSilentNotificationChange = { viewModel.setSilentPrayerNotification(it) },
                             onNavigateToAudio = onNavigateToAudio
+                        )
+                        PrayerTimesSection(
+                            settings = settings,
+                            onMethodClick = { showMethodDialog = true },
+                            onMadhabClick = { showMadhabDialog = true }
                         )
                         Spacer(modifier = Modifier.height(80.dp))
                     }
@@ -146,17 +146,16 @@ fun SettingsScreen(
                             .verticalScroll(rememberScrollState())
                     ) {
                         Spacer(modifier = Modifier.height(12.dp))
-
-                        PermissionsSection()
-                        AppearanceSection(
-                            settings = settings,
-                            onLanguageClick = { showLanguageDialog = true },
-                            onDayCircleClick = { showDayCircleDialog = true },
-                            onWeatherEffectsChange = { viewModel.setShowWeatherEffects(it) }
-                        )
                         DataManagementSection(
                             onDeleteHistoryClick = { showDeleteHistoryDialog = true }
                         )
+                        PrayerLogSection(
+                            settings = settings,
+                            onEnabledChange = { viewModel.setPrayerLogEnabled(it) },
+                            onReminderChange = { viewModel.setPrayerLogReminder(it) },
+                            onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) }
+                        )
+                        PermissionsSection()
                         AboutSection(onShowLicensesClick = onNavigateToLicenses)
                         Spacer(modifier = Modifier.height(80.dp))
                     }
@@ -171,26 +170,20 @@ fun SettingsScreen(
                 ) {
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Most used and most consequential first: what sets the prayer times, then how
-                    // they are announced and what that needs, then the look of the app, then the rest.
-                    // Supporting the app leads, as the navigation bar no longer carries it.
+                    // Supporting the app leads, then any system issue to fix. Then what the app looks like and
+                    // how it announces the prayers, the prayer times themselves, the data it keeps, the prayer
+                    // log; the permissions and the app's own details come last.
                     SupportCard(onClick = onNavigateToDonate)
 
                     SystemHealthCard(
                         hasPrayerData = allDays.isNotEmpty()
                     )
 
-                    PrayerTimesSection(
+                    AppearanceSection(
                         settings = settings,
-                        onMethodClick = { showMethodDialog = true },
-                        onMadhabClick = { showMadhabDialog = true }
-                    )
-
-                    PrayerLogSection(
-                        settings = settings,
-                        onEnabledChange = { viewModel.setPrayerLogEnabled(it) },
-                        onReminderChange = { viewModel.setPrayerLogReminder(it) },
-                        onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) }
+                        onLanguageClick = { showLanguageDialog = true },
+                        onDayCircleClick = { showDayCircleDialog = true },
+                        onWeatherEffectsChange = { viewModel.setShowWeatherEffects(it) }
                     )
 
                     NotificationSoundSection(
@@ -202,18 +195,24 @@ fun SettingsScreen(
                         onNavigateToAudio = onNavigateToAudio
                     )
 
-                    PermissionsSection()
-
-                    AppearanceSection(
+                    PrayerTimesSection(
                         settings = settings,
-                        onLanguageClick = { showLanguageDialog = true },
-                        onDayCircleClick = { showDayCircleDialog = true },
-                        onWeatherEffectsChange = { viewModel.setShowWeatherEffects(it) }
+                        onMethodClick = { showMethodDialog = true },
+                        onMadhabClick = { showMadhabDialog = true }
                     )
 
                     DataManagementSection(
                         onDeleteHistoryClick = { showDeleteHistoryDialog = true }
                     )
+
+                    PrayerLogSection(
+                        settings = settings,
+                        onEnabledChange = { viewModel.setPrayerLogEnabled(it) },
+                        onReminderChange = { viewModel.setPrayerLogReminder(it) },
+                        onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) }
+                    )
+
+                    PermissionsSection()
 
                     AboutSection(onShowLicensesClick = onNavigateToLicenses)
 

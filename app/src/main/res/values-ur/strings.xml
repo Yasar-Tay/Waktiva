@@ -231,12 +231,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">ڈیٹا مینجمنٹ</string>
-    <string name="settings_delete_history">نماز کی تاریخ حذف کریں</string>
-    <string name="settings_delete_history_desc">جگہ خالی کرنے کے لیے ماضی کا تمام ڈیٹا حذف کریں</string>
-    <string name="settings_delete_history_confirm_title">تاریخ حذف کریں؟</string>
-    <string name="settings_delete_history_confirm_desc">اس سے آج سے پہلے کے تمام ریکارڈز مستقل طور پر حذف ہو جائیں گے۔ یہ عمل واپس نہیں لیا جا سکتا۔</string>
-    <string name="settings_delete_history_success">پچھلا نماز کا ڈیٹا حذف کر دیا گیا</string>
-    <string name="settings_delete_history_error">نماز کا ڈیٹا حذف نہیں ہو سکا</string>
+    <string name="settings_delete_history">گزشتہ اوقاتِ نماز حذف کریں</string>
+    <string name="settings_delete_history_desc">پچھلے دنوں کے ڈاؤن لوڈ شدہ اوقاتِ نماز ہٹا دیتا ہے۔ آپ کا نماز کا ریکارڈ محفوظ رہتا ہے۔</string>
+    <string name="settings_delete_history_confirm_title">گزشتہ اوقات حذف کریں؟</string>
+    <string name="settings_delete_history_confirm_desc">آج سے پہلے کے دنوں کے اوقاتِ نماز حذف ہو جائیں گے۔ آپ کے نماز کے ریکارڈ پر کوئی اثر نہیں پڑے گا۔</string>
+    <string name="settings_delete_history_success">گزشتہ اوقاتِ نماز حذف ہو گئے</string>
+    <string name="settings_delete_history_error">گزشتہ اوقاتِ نماز حذف نہیں ہو سکے</string>
     <string name="map_custom_location">منتخب مقام</string>
     <string name="qibla_map_hint_title">اپنا نشان لگائیں</string>
     <string name="qibla_map_hint_body">نقشے پر کہیں بھی دیر تک دبائیں تاکہ ایک نشان لگ جائے اور کسی دوسری جگہ سے قبلہ کے رخ کا موازنہ کیا جا سکے۔</string>
@@ -364,7 +364,7 @@
     <string name="settings_hijri_day_start_desc">ہجری تاریخ آدھی رات کے بجائے غروبِ آفتاب (مغرب) پر تبدیل کریں۔</string>
 
     <!-- About Section -->
-    <string name="settings_about">متعلق</string>
+    <string name="settings_about">Waktiva کے بارے میں</string>
     <string name="settings_licenses_desc">اوپن سورس سافٹ ویئر کے لائسنس کی تفصیلات</string>
 
     <!-- Licenses Screen -->

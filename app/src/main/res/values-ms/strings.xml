@@ -231,12 +231,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Pengurusan Data</string>
-    <string name="settings_delete_history">Padam Sejarah Solat</string>
-    <string name="settings_delete_history_desc">Padam semua data solat masa lalu untuk mengosongkan ruang</string>
-    <string name="settings_delete_history_confirm_title">Padam Sejarah?</string>
-    <string name="settings_delete_history_confirm_desc">Ini akan memadamkan secara kekal semua rekod solat sebelum hari ini. Tindakan ini tidak boleh diubah.</string>
-    <string name="settings_delete_history_success">Data solat terdahulu telah dipadamkan</string>
-    <string name="settings_delete_history_error">Data solat tidak dapat dipadamkan</string>
+    <string name="settings_delete_history">Padam Waktu Solat Lepas</string>
+    <string name="settings_delete_history_desc">Memadam waktu solat yang dimuat turun bagi hari-hari sebelumnya. Catatan solat anda kekal.</string>
+    <string name="settings_delete_history_confirm_title">Padam waktu lepas?</string>
+    <string name="settings_delete_history_confirm_desc">Waktu solat bagi hari sebelum hari ini akan dipadam. Catatan solat anda tidak terjejas.</string>
+    <string name="settings_delete_history_success">Waktu solat lepas dipadam</string>
+    <string name="settings_delete_history_error">Waktu solat lepas tidak dapat dipadam</string>
     <string name="map_custom_location">Lokasi dipilih</string>
     <string name="qibla_map_hint_title">Letakkan penanda tersuai</string>
     <string name="qibla_map_hint_body">Tekan lama di mana-mana pada peta untuk meletakkan penanda dan membandingkan arah kiblat dari lokasi lain.</string>
@@ -363,7 +363,7 @@
     <string name="settings_hijri_day_start_desc">Tukar tarikh Hijriah pada waktu matahari terbenam (Maghrib) bukannya tengah malam.</string>
 
     <!-- About Section -->
-    <string name="settings_about">Mengenai</string>
+    <string name="settings_about">Perihal Waktiva</string>
     <string name="settings_licenses_desc">Butiran lesen bagi perisian sumber terbuka</string>
 
     <!-- Licenses Screen -->

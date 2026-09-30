@@ -238,12 +238,12 @@
 
     <!-- Data Management -->
     <string name="settings_data_management">Gegevensbeheer</string>
-    <string name="settings_delete_history">Gebedsgeschiedenis Verwijderen</string>
-    <string name="settings_delete_history_desc">Verwijder alle gebedsgegevens uit het verleden</string>
-    <string name="settings_delete_history_confirm_title">Geschiedenis Verwijderen?</string>
-    <string name="settings_delete_history_confirm_desc">Dit verwijdert permanent alle gebedsgegevens van vóór vandaag. Dit kan niet ongedaan worden gemaakt.</string>
-    <string name="settings_delete_history_success">Eerdere gebedsgegevens zijn verwijderd</string>
-    <string name="settings_delete_history_error">Gebedsgegevens konden niet worden verwijderd</string>
+    <string name="settings_delete_history">Oude gebedstijden verwijderen</string>
+    <string name="settings_delete_history_desc">Verwijdert de gedownloade gebedstijden van eerdere dagen. Je gebedslog blijft bewaard.</string>
+    <string name="settings_delete_history_confirm_title">Oude gebedstijden verwijderen?</string>
+    <string name="settings_delete_history_confirm_desc">De gebedstijden van de dagen vóór vandaag worden verwijderd. Je gebedslog blijft ongewijzigd.</string>
+    <string name="settings_delete_history_success">Oude gebedstijden verwijderd</string>
+    <string name="settings_delete_history_error">Oude gebedstijden konden niet worden verwijderd</string>
     <string name="map_custom_location">Geselecteerde locatie</string>
     <string name="qibla_map_hint_title">Plaats een aangepaste markering</string>
     <string name="qibla_map_hint_body">Houd ergens op de kaart ingedrukt om een markering te plaatsen en de qibla vanaf een andere locatie te vergelijken.</string>
@@ -375,7 +375,7 @@
     <string name="settings_hijri_day_start_desc">Wissel Hijri-datum bij zonsondergang (Maghrib) in plaats van middernacht.</string>
 
     <!-- About Section -->
-    <string name="settings_about">Over</string>
+    <string name="settings_about">Over Waktiva</string>
     <string name="settings_licenses_desc">Licentiedetails voor open source software</string>
 
     <!-- Licenses Screen -->
