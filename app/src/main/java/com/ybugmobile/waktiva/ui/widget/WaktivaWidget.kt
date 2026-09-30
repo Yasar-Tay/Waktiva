@@ -25,12 +25,15 @@ import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.toArgb
 import com.ybugmobile.waktiva.MainActivity
 import com.ybugmobile.waktiva.R
+import com.ybugmobile.waktiva.data.local.WeatherCache
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.domain.model.HijriData
 import com.ybugmobile.waktiva.domain.model.HijriUtils
 import com.ybugmobile.waktiva.domain.model.NextPrayer
+import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
+import com.ybugmobile.waktiva.domain.repository.PrayerLogRepository
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
 import com.ybugmobile.waktiva.ui.theme.getGradientColorsForTime
@@ -44,6 +47,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -68,8 +72,9 @@ import java.util.Locale
  * On Android 12+ every family is sent at once and the launcher picks the one that fits;
  * older versions get the family matching the reported size.
  *
- * [WaktivaCountdownWidget], the small countdown tile, shares this data and refresh path:
- * [updateAll] renders both.
+ * [WaktivaCountdownWidget], the small countdown tile, and the day circle widgets
+ * ([WaktivaDayRingWidget], [WaktivaMyDayWidget]) share this data and refresh path: [updateAll]
+ * renders them all.
  */
 class WaktivaWidget : AppWidgetProvider() {
 
@@ -80,6 +85,8 @@ class WaktivaWidget : AppWidgetProvider() {
         fun getNextPrayerUseCase(): GetNextPrayerUseCase
         fun timeManager(): TimeManager
         fun settingsManager(): SettingsManagerInterface
+        fun prayerLogRepository(): PrayerLogRepository
+        fun weatherCache(): WeatherCache
     }
 
     override fun onUpdate(
@@ -115,7 +122,9 @@ class WaktivaWidget : AppWidgetProvider() {
     }
 
     /** Everything a render needs, read once and shared by every widget instance. */
-    private class Snapshot(
+    internal class Snapshot(
+        val days: List<PrayerDay>,
+        val now: LocalDateTime,
         val nextPrayer: NextPrayer?,
         val rows: List<WidgetPrayerRow>,
         val chronometer: WidgetChronometerState?,
@@ -129,7 +138,7 @@ class WaktivaWidget : AppWidgetProvider() {
 
     companion object {
 
-        private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.US)
+        internal val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.US)
 
         private val segmentIds = intArrayOf(
             R.id.widget_seg_1, R.id.widget_seg_2, R.id.widget_seg_3,
@@ -156,15 +165,27 @@ class WaktivaWidget : AppWidgetProvider() {
         @Volatile private var cachedPrayerKey: String = ""
         @Volatile private var cachedBaseTime: Long = 0L
 
-        /** Push a fresh frame to every instance of this widget and of the countdown widget. */
+        /**
+         * Push a fresh frame to every instance of this widget, of the countdown widget and of the
+         * day circle widgets ([DayWidgets]).
+         */
         suspend fun updateAll(context: Context) {
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(ComponentName(context, WaktivaWidget::class.java))
             val countdownIds = manager.getAppWidgetIds(ComponentName(context, WaktivaCountdownWidget::class.java))
-            if (ids.isEmpty() && countdownIds.isEmpty()) return
+            val ringIds = manager.getAppWidgetIds(ComponentName(context, WaktivaDayRingWidget::class.java))
+            val dayIds = manager.getAppWidgetIds(ComponentName(context, WaktivaMyDayWidget::class.java))
+            if (ids.isEmpty() && countdownIds.isEmpty() && ringIds.isEmpty() && dayIds.isEmpty()) return
             val snapshot = loadSnapshot(context)
             ids.forEach { id -> manager.updateAppWidget(id, buildViews(context, manager, id, snapshot)) }
             countdownIds.forEach { id -> manager.updateAppWidget(id, buildCountdown(context, snapshot)) }
+            DayWidgets.render(context, manager, ringIds, dayIds, snapshot)
+        }
+
+        /** Renders the day circle widget instances; used by their providers. */
+        internal suspend fun renderDayWidgets(context: Context, manager: AppWidgetManager, ringIds: IntArray, dayIds: IntArray) {
+            if (ringIds.isEmpty() && dayIds.isEmpty()) return
+            DayWidgets.render(context, manager, ringIds, dayIds, loadSnapshot(context))
         }
 
         /** Renders the countdown widget instances [ids]; used by [WaktivaCountdownWidget]. */
@@ -180,11 +201,13 @@ class WaktivaWidget : AppWidgetProvider() {
             ids.forEach { id -> manager.updateAppWidget(id, buildViews(context, manager, id, snapshot)) }
         }
 
+        internal fun entryPoint(context: Context): WidgetEntryPoint = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            WidgetEntryPoint::class.java
+        )
+
         private suspend fun loadSnapshot(context: Context): Snapshot {
-            val ep = EntryPointAccessors.fromApplication(
-                context.applicationContext,
-                WidgetEntryPoint::class.java
-            )
+            val ep = entryPoint(context)
 
             val days = ep.prayerRepository().getPrayerDays().first()
             val now = ep.timeManager().now()
@@ -204,6 +227,8 @@ class WaktivaWidget : AppWidgetProvider() {
 
             val skyColors = getGradientColorsForTime(now.toLocalTime(), today).map { it.toArgb() }
             return Snapshot(
+                days = days,
+                now = now,
                 nextPrayer = nextPrayer,
                 rows = WidgetDayModel.rows(days, nextPrayer, now),
                 chronometer = chronometer,
@@ -397,7 +422,7 @@ class WaktivaWidget : AppWidgetProvider() {
 
         // ── Helpers ───────────────────────────────────────────────────────────
 
-        private fun openAppIntent(context: Context): PendingIntent = PendingIntent.getActivity(
+        internal fun openAppIntent(context: Context): PendingIntent = PendingIntent.getActivity(
             context,
             0,
             Intent(context, MainActivity::class.java),
@@ -405,7 +430,7 @@ class WaktivaWidget : AppWidgetProvider() {
         )
 
         /** "Thursday, 25 September · 3 Rabi‘ al-Awwal 1448" in the app's current language. */
-        private fun dateLine(context: Context, today: LocalDate, hijri: HijriData?): String {
+        internal fun dateLine(context: Context, today: LocalDate, hijri: HijriData?): String {
             val locale = context.resources.configuration.locales[0] ?: Locale.getDefault()
             val gregorian = today.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", locale))
             val hijriMonth = hijri?.let { hijriMonthRes(it.monthNumber) } ?: return gregorian
@@ -429,7 +454,7 @@ class WaktivaWidget : AppWidgetProvider() {
         }
 
         @DrawableRes
-        private fun iconFor(type: PrayerType): Int = when (type) {
+        internal fun iconFor(type: PrayerType): Int = when (type) {
             PrayerType.FAJR -> R.drawable.haze_day_rotated
             PrayerType.SUNRISE -> R.drawable.sunrise
             PrayerType.DHUHR -> R.drawable.clear_day
@@ -439,7 +464,7 @@ class WaktivaWidget : AppWidgetProvider() {
         }
 
         /** Each prayer's colour, as on the day circle, which lights the countdown widget. */
-        private fun accentFor(type: PrayerType): Int = when (type) {
+        internal fun accentFor(type: PrayerType): Int = when (type) {
             PrayerType.FAJR -> 0xFF81D4FA.toInt()
             PrayerType.SUNRISE -> 0xFFFFE082.toInt()
             PrayerType.DHUHR -> 0xFFFFF59D.toInt()

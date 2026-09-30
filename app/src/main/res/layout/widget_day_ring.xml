@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The 4×2 day ring widget: the day circle on the left with the weather in its middle, and on
+  the right the next prayer, its live countdown, the day's weather and today's prayer log as
+  tokens a tap marks. The ring and the tokens are filled in by DayWidgets.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_clip"
+    android:clipToOutline="true">
+
+    <ImageView
+        android:id="@+id/widget_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_sheen" />
+
+    <LinearLayout
+        android:id="@+id/widget_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="8dp">
+
+        <!-- The ring takes the widget's height and is as wide as it is tall. -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/widget_ring"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+
+            <!-- The weather now, in the ring's sky; the date when there is no weather. -->
+            <LinearLayout
+                android:id="@+id/widget_ring_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/widget_weather_icon"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:scaleType="fitCenter" />
+
+                <TextView
+                    android:id="@+id/widget_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:fontFeatureSettings="tnum"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:shadowColor="#99000000"
+                    android:shadowRadius="4"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/widget_ring_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/widget_day_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:shadowColor="#99000000"
+                    android:shadowRadius="4"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/widget_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.08"
+                    android:maxLines="1"
+                    android:textAllCaps="true"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="9sp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- The next prayer: its icon in its colour, its name and time. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/widget_icon"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginEnd="6dp"
+                    android:scaleType="fitCenter" />
+
+                <TextView
+                    android:id="@+id/widget_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.06"
+                    android:maxLines="1"
+                    android:textAllCaps="true"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/widget_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <Chronometer
+                android:id="@+id/widget_chrono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:countDown="true"
+                android:fontFamily="sans-serif-medium"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.02"
+                android:maxLines="1"
+                android:textColor="#FFFFFFFF"
+                android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/widget_weather_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:textColor="#B3FFFFFF"
+                android:textSize="11sp" />
+
+            <!-- Today's prayer log; tokens are added at runtime from widget_log_token. -->
+            <LinearLayout
+                android:id="@+id/widget_log"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <include layout="@layout/widget_empty" />
+
+</FrameLayout>

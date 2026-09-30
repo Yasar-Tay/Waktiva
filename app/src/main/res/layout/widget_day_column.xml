@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One time of the day in the "my day" strip: its token, which a tap marks, its name and its time. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_cell"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <ImageView
+        android:id="@+id/widget_token"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="7dp"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:id="@+id/widget_cell_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="1"
+        android:textColor="#B3FFFFFF"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/widget_cell_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:fontFeatureSettings="tnum"
+        android:maxLines="1"
+        android:textColor="#FFFFFFFF"
+        android:textSize="12sp" />
+</LinearLayout>

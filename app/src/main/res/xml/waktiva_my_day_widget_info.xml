@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The "my day" widget: a 4×4 with the place and weather, the day circle around the countdown, and
+  the day's times as today's prayer log. Refreshed like the day ring (see DayWidgets), so
+  updatePeriodMillis stays 0.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_my_day_description"
+    android:initialLayout="@layout/widget_my_day"
+    android:minWidth="250dp"
+    android:minHeight="250dp"
+    android:minResizeWidth="250dp"
+    android:minResizeHeight="250dp"
+    android:previewLayout="@layout/widget_my_day_preview"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="4"
+    android:targetCellHeight="4"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />

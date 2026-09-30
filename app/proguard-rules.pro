@@ -41,6 +41,9 @@
 # The prayer log's backup file is read and written by Gson in the same way.
 -keep class com.ybugmobile.waktiva.data.backup.** { *; }
 
+# The weather cache the widgets read is kept as Gson JSON too.
+-keep class com.ybugmobile.waktiva.data.local.WeatherCache*Dto { *; }
+
 # Keep Retrofit API service interfaces (Retrofit generates implementations at runtime)
 -keep interface com.ybugmobile.waktiva.data.remote.** { *; }
 

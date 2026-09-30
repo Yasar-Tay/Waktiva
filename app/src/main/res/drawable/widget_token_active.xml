@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A prayer whose time is on and waits to be marked: frosted, ringed in the log's green. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#3310B981" />
+    <stroke android:width="1.5dp" android:color="#FF34D399" />
+</shape>

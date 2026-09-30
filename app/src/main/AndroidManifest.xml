@@ -113,6 +113,36 @@
                 android:resource="@xml/waktiva_countdown_widget_info" />
         </receiver>
 
+        <!-- The day circle widgets: the 4×2 day ring and the 4×4 "my day"; refreshed with the others by WaktivaWidget.updateAll -->
+        <receiver
+            android:name=".ui.widget.WaktivaDayRingWidget"
+            android:exported="true"
+            android:label="@string/widget_ring_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/waktiva_day_ring_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".ui.widget.WaktivaMyDayWidget"
+            android:exported="true"
+            android:label="@string/widget_my_day_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/waktiva_my_day_widget_info" />
+        </receiver>
+
+        <!-- Marks a prayer from a day circle widget's token, and runs those widgets' half-hourly tick -->
+        <receiver
+            android:name=".ui.widget.DayWidgetActionReceiver"
+            android:exported="false" />
+
         <!-- WorkManager's internal service: must declare foregroundServiceType to match
              the type used in AdhanWorker's ForegroundInfo (FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK) -->
         <service

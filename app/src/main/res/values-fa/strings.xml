@@ -441,6 +441,10 @@
     <string name="widget_empty">برای بارگیری اوقات نماز، Waktiva را باز کنید</string>
     <string name="widget_countdown_label">شمارش معکوس</string>
     <string name="widget_countdown_description">زمان باقی‌مانده تا نماز بعدی، بزرگ و در یک نگاه</string>
+    <string name="widget_ring_label">حلقه روز</string>
+    <string name="widget_ring_description">دایره روز با آسمانش، آب‌وهوا، شمارش معکوس و دفتر نمازت که با یک لمس علامت می‌خورد</string>
+    <string name="widget_my_day_label">روز من</string>
+    <string name="widget_my_day_description">همه روز: دایره، آب‌وهوا، شمارش معکوس و همه اوقات، با یک لمس در دفتر نماز علامت‌گذاری می‌شوند</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">کارنامهٔ نماز</string>

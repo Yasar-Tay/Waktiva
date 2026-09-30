@@ -440,6 +440,10 @@
     <string name="widget_empty">Open Waktiva om de gebedstijden te laden</string>
     <string name="widget_countdown_label">Aftellen</string>
     <string name="widget_countdown_description">De tijd tot het volgende gebed, groot en in één oogopslag</string>
+    <string name="widget_ring_label">Dagring</string>
+    <string name="widget_ring_description">De dagcirkel met zijn lucht, het weer, het aftellen en je gebedslogboek, afgevinkt met één tik</string>
+    <string name="widget_my_day_label">Mijn dag</string>
+    <string name="widget_my_day_description">De hele dag: de cirkel, het weer, het aftellen en elke tijd, met één tik afgevinkt in je gebedslogboek</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Gebedslog</string>

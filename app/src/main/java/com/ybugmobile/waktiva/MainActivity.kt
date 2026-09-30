@@ -105,12 +105,14 @@ class MainActivity : AppCompatActivity() {
             WaktivaTheme {
                 val homeViewModel: HomeViewModel = hiltViewModel()
 
-                // Trigger widget update whenever the app is launched (onStart)
+                // Trigger widget update whenever the app is launched (onStart), and again on
+                // leaving it (onStop), so prayers marked and weather fetched meanwhile show on
+                // the home screen the user goes back to.
                 val lifecycleOwner = LocalLifecycleOwner.current
                 val scope = rememberCoroutineScope()
                 DisposableEffect(lifecycleOwner) {
                     val observer = LifecycleEventObserver { _, event ->
-                        if (event == Lifecycle.Event.ON_START) {
+                        if (event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_STOP) {
                             scope.launch {
                                 WaktivaWidget.updateAll(this@MainActivity)
                             }

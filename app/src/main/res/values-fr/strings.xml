@@ -428,6 +428,10 @@
     <string name="widget_empty">Ouvrez Waktiva pour charger les heures de prière</string>
     <string name="widget_countdown_label">Compte à rebours</string>
     <string name="widget_countdown_description">Le temps restant avant la prochaine prière, en grand et d\'un coup d\'œil</string>
+    <string name="widget_ring_label">Anneau du jour</string>
+    <string name="widget_ring_description">Le cercle du jour et son ciel, la météo, le compte à rebours et ton journal de prière, coché d’un geste</string>
+    <string name="widget_my_day_label">Ma journée</string>
+    <string name="widget_my_day_description">Toute la journée : le cercle, la météo, le compte à rebours et chaque heure, cochées d’un geste dans ton journal</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Carnet de prières</string>

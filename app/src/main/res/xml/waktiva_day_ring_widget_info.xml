@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The day ring widget: a 4×2 with the day circle, the countdown, the weather and today's prayer
+  log. Below ~150 dp tall it drops the weather line and the tokens' times (see DayWidgets).
+  Refreshed by WaktivaWidget.updateAll at prayer boundaries and by DayWidgets' half-hourly tick,
+  so updatePeriodMillis stays 0.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_ring_description"
+    android:initialLayout="@layout/widget_day_ring"
+    android:minWidth="250dp"
+    android:minHeight="110dp"
+    android:minResizeWidth="250dp"
+    android:minResizeHeight="100dp"
+    android:previewLayout="@layout/widget_day_ring_preview"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />

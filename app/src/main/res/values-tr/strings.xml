@@ -441,6 +441,10 @@
     <string name="widget_empty">Vakitleri yüklemek için Waktiva\'yı açın</string>
     <string name="widget_countdown_label">Geri Sayım</string>
     <string name="widget_countdown_description">Sıradaki vakte kalan süre, büyük ve tek bakışta</string>
+    <string name="widget_ring_label">Gün Halkası</string>
+    <string name="widget_ring_description">Gökyüzüyle günün halkası, hava durumu, geri sayım ve dokunarak işaretlenen çetelen</string>
+    <string name="widget_my_day_label">Günüm</string>
+    <string name="widget_my_day_description">Günün tamamı: halka, hava durumu, geri sayım ve dokunarak çeteleye işlenen tüm vakitler</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Çetele</string>

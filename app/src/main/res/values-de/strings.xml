@@ -428,6 +428,10 @@
     <string name="widget_empty">Öffne Waktiva, um die Gebetszeiten zu laden</string>
     <string name="widget_countdown_label">Countdown</string>
     <string name="widget_countdown_description">Die Zeit bis zum nächsten Gebet, groß und auf einen Blick</string>
+    <string name="widget_ring_label">Tagesring</string>
+    <string name="widget_ring_description">Der Tageskreis mit seinem Himmel, das Wetter, der Countdown und dein Gebetsprotokoll, mit einem Tipp markiert</string>
+    <string name="widget_my_day_label">Mein Tag</string>
+    <string name="widget_my_day_description">Der ganze Tag: Kreis, Wetter, Countdown und alle Zeiten, mit einem Tipp im Gebetsprotokoll markiert</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Gebetstagebuch</string>

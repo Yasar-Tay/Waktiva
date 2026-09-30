@@ -3,6 +3,7 @@ package com.ybugmobile.waktiva.data.repository
 import android.util.Log
 import com.ybugmobile.waktiva.BuildConfig
 import com.ybugmobile.waktiva.data.local.LocalPrayerCalculator
+import com.ybugmobile.waktiva.data.local.WeatherCache
 import com.ybugmobile.waktiva.data.local.dao.PrayerDao
 import com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity
 import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
@@ -47,7 +48,8 @@ class PrayerRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApiService,
     private val localCalculator: LocalPrayerCalculator,
     private val dao: PrayerDao,
-    private val settingsManager: SettingsManager
+    private val settingsManager: SettingsManager,
+    private val weatherCache: WeatherCache
 ) : PrayerRepository {
 
     private val inFlightRequests: MutableSet<String> = Collections.synchronizedSet(mutableSetOf())
@@ -137,6 +139,7 @@ class PrayerRepositoryImpl @Inject constructor(
                 ),
                 forecast = response.forecast?.days.orEmpty().mapNotNull { it.toDayForecast() }
             )
+            weatherCache.save(info)
             Result.success(info)
         } catch (e: Exception) {
             Result.failure(e)

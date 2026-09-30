@@ -441,6 +441,10 @@
     <string name="widget_empty">Buka Waktiva untuk memuat jadwal salat</string>
     <string name="widget_countdown_label">Hitung Mundur</string>
     <string name="widget_countdown_description">Sisa waktu menuju salat berikutnya, besar dan sekilas pandang</string>
+    <string name="widget_ring_label">Cincin Hari</string>
+    <string name="widget_ring_description">Lingkaran hari dengan langitnya, cuaca, hitung mundur, dan catatan salatmu yang ditandai dengan sekali ketuk</string>
+    <string name="widget_my_day_label">Hariku</string>
+    <string name="widget_my_day_description">Seluruh hari: lingkaran, cuaca, hitung mundur, dan setiap waktu, ditandai di catatan salat dengan sekali ketuk</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Catatan Salat</string>

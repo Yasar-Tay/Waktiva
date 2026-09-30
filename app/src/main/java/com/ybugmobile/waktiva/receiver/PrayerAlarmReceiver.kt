@@ -84,6 +84,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                     val date = LocalDate.parse(prayerDate)
                     unmarkedPrayers(date).forEach { prayerLogRepository.setPrayed(date, it, true) }
                     notificationHelper.cancelPrayerLogReminder()
+                    WaktivaWidget.updateAll(context)
                 } catch (e: Exception) {
                     Log.e("PrayerAlarmReceiver", "Could not mark the prayers", e)
                 } finally {
