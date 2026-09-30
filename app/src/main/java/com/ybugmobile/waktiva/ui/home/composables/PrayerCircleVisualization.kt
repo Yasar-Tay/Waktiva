@@ -48,7 +48,10 @@ import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
+import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.ui.home.composables.gear.GearLight
+import com.ybugmobile.waktiva.ui.home.composables.gear.GearPlaque
+import com.ybugmobile.waktiva.ui.home.composables.gear.GearPrayer
 import com.ybugmobile.waktiva.ui.home.composables.gear.GearPalette
 import com.ybugmobile.waktiva.ui.home.composables.gear.WeatherTone
 import com.ybugmobile.waktiva.ui.home.composables.gear.dayAngle
@@ -123,15 +126,20 @@ fun PrayerCircleVisualization(
     val palette = remember(weatherCondition) { GearPalette(WeatherTone.forScenery(weatherCondition)) }
     val lightAngle = rememberEasedAngle(sunLight ?: GearLight.DEFAULT_ANGLE)
 
-    var selectedInfo by remember { mutableStateOf<DetailedInfo?>(null) }
-    val weatherLines = prayerWeather.mapValues { (_, w) -> context.getString(w.condition.nameRes) to w.temperature?.degrees() }
+    var selected by remember { mutableStateOf<PrayerType?>(null) }
+    val locale = LocalConfiguration.current.locales[0]
+    val weatherLines = prayerWeather.mapValues { (_, w) ->
+        context.getString(w.condition.nameRes).uppercase(locale) to w.temperature?.degrees()
+    }
     val currentOnPrayerTap by rememberUpdatedState(onPrayerTap)
+    // The plaque's gemstone never turns; it only needs the phase the gear medallions take.
+    val stillPhase = remember { mutableFloatStateOf(0f) }
 
     // Auto-dismiss interaction card
-    LaunchedEffect(selectedInfo) {
-        if (selectedInfo != null) {
+    LaunchedEffect(selected) {
+        if (selected != null) {
             delay(4000)
-            selectedInfo = null
+            selected = null
         }
     }
 
@@ -213,7 +221,7 @@ fun PrayerCircleVisualization(
         Spacer(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(Unit) { detectTapGestures { selectedInfo = null } }
+                .pointerInput(Unit) { detectTapGestures { selected = null } }
                 .drawWithCache {
                     val light = GearLight(lightAngle.value)
                     val labels = prayers.map { textMeasurer.measure(it.time.format(formatter), labelStyle) }
@@ -271,12 +279,17 @@ fun PrayerCircleVisualization(
             PrayerWeatherIcons(prayerWeather, offsets, iconSize)
         }
 
-        // Invisible tap targets over the badges; a tapped badge turns into its glass info card.
+        // Invisible tap targets over the badges; a tapped badge turns into its night plaque.
+        val plaquePrayers = remember(prayers) {
+            prayers.associate { p ->
+                p.type to GearPrayer(p.type, p.time.minutes(), p.color, p.painter, p.icon, p.time.format(formatter))
+            }
+        }
         val targetSize = with(density) { (ring.badgeCurrent * 2).toDp() }.coerceAtLeast(32.dp)
         val edge = with(density) { 4.dp.toPx() }
         prayers.forEach { prayer ->
             key(prayer.type) {
-                val isSelected = selectedInfo?.id == prayer.type.name
+                val isSelected = selected == prayer.type
                 val offset = pointOn(Offset.Zero, ring.track, dayAngle(prayer.time.minutes(), isRtl))
                 var contentSize by remember { mutableStateOf(IntSize.Zero) }
                 val isCurrent = isSelectedDayToday && prayer.type == currentPrayerType
@@ -313,18 +326,16 @@ fun PrayerCircleVisualization(
                         label = "classicMarker"
                     ) { open ->
                         if (open) {
-                            Box(Modifier.pointerInput(Unit) { detectTapGestures { selectedInfo = null } }) {
-                                InfoGlassCard(
-                                    DetailedInfo(
-                                        prayer.type.name,
-                                        prayer.type.getDisplayName(context),
-                                        prayer.time.format(formatter),
-                                        prayer.color,
-                                        prayer.icon,
-                                        weatherLines[prayer.type]
-                                    )
-                                )
-                            }
+                            GearPlaque(
+                                prayer = plaquePrayers.getValue(prayer.type),
+                                name = prayer.type.getDisplayName(context).uppercase(locale),
+                                style = DayCircleStyle.CLASSIC,
+                                palette = palette,
+                                phase = stillPhase,
+                                compact = isLandscape,
+                                weather = weatherLines[prayer.type],
+                                modifier = Modifier.pointerInput(Unit) { detectTapGestures { selected = null } }
+                            )
                         } else {
                             Box(
                                 modifier = Modifier
@@ -332,14 +343,7 @@ fun PrayerCircleVisualization(
                                     .pointerInput(prayer.type) {
                                         detectTapGestures {
                                             if (currentOnPrayerTap(prayer.type)) return@detectTapGestures
-                                            selectedInfo = DetailedInfo(
-                                                prayer.type.name,
-                                                prayer.type.getDisplayName(context),
-                                                prayer.time.format(formatter),
-                                                prayer.color,
-                                                prayer.icon,
-                                                weatherLines[prayer.type]
-                                            )
+                                            selected = prayer.type
                                         }
                                     }
                             )
@@ -507,154 +511,6 @@ private const val TWO_PI = (2 * Math.PI).toFloat()
 
 private fun LocalTime.minutes() = (hour * 60 + minute).toFloat()
 
-/**
- * A floating "glass" card providing details about a selected prayer node.
- */
-@Composable
-fun InfoGlassCard(info: DetailedInfo) {
-    val glassTheme = LocalGlassTheme.current
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-    val bgColor = if (glassTheme.isLightMode) Color.White.copy(0.18f) else Color.Black.copy(0.15f)
-    val borderColor = if (glassTheme.isLightMode) Color.White.copy(0.45f) else Color.White.copy(0.1f)
-    val cardShape = RoundedCornerShape(18.dp)
-
-    val cardHeight = if (isLandscape) 36.dp else 40.dp       // portrait: 50 → 40 (−20 %)
-    val iconSize = if (isLandscape) 12.dp else 12.dp         // portrait: 15 → 12 (−20 %)
-    val nameFontSize = if (isLandscape) 7.sp else 6.5.sp     // portrait:  8 → 6.5 (−20 %)
-    val timeFontSize = if (isLandscape) 13.sp else 14.sp     // portrait: 18 → 14 (−20 %)
-
-    Surface(
-        color = bgColor,
-        shape = cardShape,
-        modifier = Modifier
-            .wrapContentWidth()
-            .height(cardHeight)
-            .drawWithContent {
-                drawContent()
-                // Soft color wash bleeding from left
-                drawRoundRect(
-                    brush = Brush.horizontalGradient(
-                        0f to info.color.copy(alpha = 0.18f),
-                        0.45f to Color.Transparent
-                    ),
-                    size = size,
-                    cornerRadius = CornerRadius(18.dp.toPx())
-                )
-                // Hair-line border
-                drawRoundRect(
-                    color = borderColor,
-                    size = size,
-                    cornerRadius = CornerRadius(18.dp.toPx()),
-                    style = Stroke(0.75.dp.toPx())
-                )
-            },
-        contentColor = Color.White
-    ) {
-        Row(
-            modifier = Modifier.fillMaxHeight(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Thin vertical accent bar
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(2.5.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            listOf(Color.Transparent, info.color.copy(0.85f), Color.Transparent)
-                        ),
-                        shape = RoundedCornerShape(topStart = 18.dp, bottomStart = 18.dp)
-                    )
-            )
-
-            Spacer(Modifier.width(10.dp))
-
-            // Solid circle in the prayer's marker color, icon tinted like the marker
-            val iconContainerSize = 22.dp
-            val iconTint = if (info.color.luminance() > 0.5f) Color.Black.copy(0.7f) else Color.White
-            Box(
-                modifier = Modifier
-                    .size(iconContainerSize)
-                    .background(info.color, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = info.icon,
-                    contentDescription = null,
-                    tint = iconTint,
-                    modifier = Modifier.size(iconSize)
-                )
-            }
-
-            Spacer(Modifier.width(8.dp))
-
-            // Prayer name + time stacked
-            Column(
-                modifier = Modifier.padding(end = 14.dp),
-                verticalArrangement = Arrangement.spacedBy((-1).dp, Alignment.CenterVertically)
-            ) {
-                Text(
-                    text = info.title.uppercase(),
-                    style = TextStyle(
-                        fontSize = nameFontSize,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White.copy(0.42f),
-                        letterSpacing = 1.5.sp
-                    )
-                )
-                Text(
-                    text = info.time,
-                    style = TextStyle(
-                        fontSize = timeFontSize,
-                        fontFamily = IBMPlexArabic,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White,
-                        letterSpacing = (-0.5).sp
-                    )
-                )
-            }
-
-            // The weather in the prayer's hour: its name over its temperature, like name over time.
-            info.weather?.let { (name, temperature) ->
-                Box(
-                    Modifier
-                        .padding(end = 12.dp)
-                        .width(0.75.dp)
-                        .fillMaxHeight(0.55f)
-                        .background(Color.White.copy(alpha = 0.18f))
-                )
-                Column(
-                    modifier = Modifier.padding(end = 14.dp),
-                    verticalArrangement = Arrangement.spacedBy((-1).dp, Alignment.CenterVertically)
-                ) {
-                    Text(
-                        text = name.uppercase(),
-                        style = TextStyle(
-                            fontSize = nameFontSize,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White.copy(0.42f),
-                            letterSpacing = 1.5.sp
-                        ),
-                        maxLines = 1
-                    )
-                    Text(
-                        text = temperature.orEmpty(),
-                        style = TextStyle(
-                            fontSize = timeFontSize,
-                            fontFamily = IBMPlexArabic,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.White,
-                            letterSpacing = (-0.5).sp
-                        )
-                    )
-                }
-            }
-        }
-    }
-}
-
 /** Metadata for a single prayer point on the circle. */
 data class PrayerNodeInfo(
     val type: PrayerType,
@@ -662,14 +518,4 @@ data class PrayerNodeInfo(
     val color: Color,
     val painter: VectorPainter,
     val icon: ImageVector
-)
-
-/** State for the interactive information card; [weather] is the prayer's weather name and temperature. */
-data class DetailedInfo(
-    val id: String,
-    val title: String,
-    val time: String,
-    val color: Color,
-    val icon: ImageVector,
-    val weather: Pair<String, String?>? = null
 )

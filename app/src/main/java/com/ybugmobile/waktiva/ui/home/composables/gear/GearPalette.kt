@@ -3,6 +3,7 @@ package com.ybugmobile.waktiva.ui.home.composables.gear
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import com.ybugmobile.waktiva.domain.model.DayCircleStyle
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.ui.theme.darken
@@ -124,8 +125,26 @@ internal class GearPalette(private val weather: WeatherTone) {
         )
     }
 
+    /** A dark plate with gold hairlines, for the classic circle, which has no metal of its own. */
+    private val nightFinish by lazy {
+        PlateFinish(
+            metal = null,
+            edge = gold.copy(alpha = 0.65f),
+            inset = gold.copy(alpha = 0.28f),
+            highlight = null,
+            stripe = gold.copy(alpha = 0.07f),
+            ink = tone(Color(0xFFE9C983)),
+            strongInk = Color.White,
+            screw = null
+        )
+    }
+
     /** Surface of the plaque and bridge for [style]. */
-    fun finish(style: DayCircleStyle): PlateFinish = if (style == DayCircleStyle.STEEL) steelFinish else brassFinish
+    fun finish(style: DayCircleStyle): PlateFinish = when (style) {
+        DayCircleStyle.STEEL -> steelFinish
+        DayCircleStyle.BRASS -> brassFinish
+        DayCircleStyle.CLASSIC -> nightFinish
+    }
 
     private fun toned(vararg stops: Pair<Float, Color>) = stops.map { (at, color) -> at to tone(color) }.toTypedArray()
 
@@ -134,19 +153,26 @@ internal class GearPalette(private val weather: WeatherTone) {
 
 /**
  * Surface shared by the prayer plaque and the special-day bridge, so both match their dial:
- * engraved brass or steel.
+ * engraved brass or steel, or for the classic circle a dark plate with gold hairlines.
  */
 internal class PlateFinish(
-    private val metal: Array<Pair<Float, Color>>,
+    /** The metal's colours; null for the dark plate. */
+    private val metal: Array<Pair<Float, Color>>?,
     val edge: Color,
     val inset: Color,
-    /** Light line under the engraved inset. */
-    val highlight: Color,
+    /** Light line under the engraved inset; null on the dark plate. */
+    val highlight: Color?,
     val stripe: Color,
     val ink: Color,
     val strongInk: Color,
-    /** Screw head colour. */
-    val screw: Color
+    /** Screw head colour; null draws no screw. */
+    val screw: Color?
 ) {
-    fun fill(from: Offset, to: Offset): Brush = Brush.linearGradient(*metal, start = from, end = to)
+    val isMetal get() = metal != null
+
+    fun fill(from: Offset, to: Offset): Brush =
+        metal?.let { Brush.linearGradient(*it, start = from, end = to) } ?: SolidColor(NightPlate)
 }
+
+/** The dark plate: the night sky, nearly opaque, so the gold and white lettering read on any sky. */
+private val NightPlate = Color(0xE60C0F18)
