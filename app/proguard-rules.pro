@@ -38,6 +38,9 @@
 # Keep all DTO classes in the remote package (Gson reads them reflectively)
 -keep class com.ybugmobile.waktiva.data.remote.dto.** { *; }
 
+# The prayer log's backup file is read and written by Gson in the same way.
+-keep class com.ybugmobile.waktiva.data.backup.** { *; }
+
 # Keep Retrofit API service interfaces (Retrofit generates implementations at runtime)
 -keep interface com.ybugmobile.waktiva.data.remote.** { *; }
 

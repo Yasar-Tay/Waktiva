@@ -1,5 +1,6 @@
 package com.ybugmobile.waktiva.domain.repository
 
+import com.ybugmobile.waktiva.domain.model.PrayerLogBackup
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -21,4 +22,16 @@ interface PrayerLogRepository {
 
     /** Marks [type] on [date] as prayed, or takes the mark back. */
     suspend fun setPrayed(date: LocalDate, type: PrayerType, prayed: Boolean)
+
+    /** A copy of the whole log, to export. */
+    suspend fun backup(): PrayerLogBackup
+
+    /**
+     * Adds the prayers in [backup] to the log, keeping every mark already in it; the log begins
+     * on the earlier of the two start days. Returns how many prayers were new.
+     */
+    suspend fun restore(backup: PrayerLogBackup): Int
+
+    /** Deletes every mark and forgets when the log began. */
+    suspend fun clear()
 }

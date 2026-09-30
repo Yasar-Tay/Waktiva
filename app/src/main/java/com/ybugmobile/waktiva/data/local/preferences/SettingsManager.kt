@@ -389,6 +389,11 @@ class SettingsManager @Inject constructor(
         .map { preferences -> preferences[PRAYER_LOG_START]?.let { runCatching { LocalDate.parse(it) }.getOrNull() } }
         .distinctUntilChanged()
 
+    /** Forgets when the prayer log began, as when it's cleared: it begins again with the next mark. */
+    suspend fun clearPrayerLogStart() {
+        context.dataStore.edit { it.remove(PRAYER_LOG_START) }
+    }
+
     /** Records [date] as the day the prayer log began, unless it began earlier. */
     suspend fun markPrayerLogStarted(date: LocalDate) {
         context.dataStore.edit { preferences ->

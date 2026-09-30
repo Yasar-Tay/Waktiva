@@ -51,8 +51,8 @@ Faz 1 bu çalışmada tamamlandı; sonraki fazlar öncelik sırasına göredir.
 
 ## Faz 5 — Veri güvenliği ve taşınabilirlik
 
-- [ ] **Yedekleme:** Çeteleyi JSON olarak dışa/içe aktarma (SAF ile dosya seçimi). Room tablosu Android Auto Backup kurallarına dahil mi, `backup_rules.xml` / `data_extraction_rules.xml` kontrolü.
-- [ ] **Çeteleyi sıfırla** ayarı (onaylı) — şu an yalnızca "Namaz geçmişini sil" var ve o Çeteleye dokunmuyor.
+- [x] **Yedekleme:** Ayarlar > Çetele'den JSON olarak dışa/içe aktarma (sistem dosya seçicisiyle). İçe aktarma birleştirir: mevcut işaretler kalır, başlangıç tarihi ikisinden eskisi olur. Room tablosunun Android Auto Backup'a dahil olup olmadığı (`backup_rules.xml`) hâlâ kontrol edilmeli.
+- [x] **Çeteleyi temizle** (onaylı): tüm işaretleri ve başlangıç tarihini siler. "Geçmiş namaz vakitlerini sil" Çeteleye dokunmaz, metni de bunu söylüyor.
 - [ ] Room şemasını dışa aktarmayı aç (`exportSchema = true`) ve `MigrationTestHelper` ile 5→6 (ve sonrası) için enstrümantasyon testi yaz.
 
 ## Faz 6 — Cila ve erişilebilirlik

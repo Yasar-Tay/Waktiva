@@ -15,4 +15,14 @@ interface PrayerStatusDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateStatus(status: PrayerStatusEntity)
+
+    /** Every prayer marked as prayed, once, oldest first. */
+    @Query("SELECT * FROM prayer_status WHERE isDone = 1 ORDER BY date ASC")
+    suspend fun getDoneStatusesOnce(): List<PrayerStatusEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertStatuses(statuses: List<PrayerStatusEntity>)
+
+    @Query("DELETE FROM prayer_status")
+    suspend fun deleteAll()
 }

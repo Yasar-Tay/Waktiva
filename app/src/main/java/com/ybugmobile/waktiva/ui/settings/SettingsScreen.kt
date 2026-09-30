@@ -2,6 +2,8 @@ package com.ybugmobile.waktiva.ui.settings
 
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -37,6 +39,7 @@ import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.waktiva.utils.applyAppLanguage
 import com.ybugmobile.waktiva.utils.LanguageUtils
 import com.ybugmobile.waktiva.utils.PermissionUtils
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,12 +62,30 @@ fun SettingsScreen(
     var showMadhabDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showDeleteHistoryDialog by remember { mutableStateOf(false) }
+    var showClearPrayerLogDialog by remember { mutableStateOf(false) }
+
+    // The prayer log's file goes where the user picks, through the system's own file picker.
+    val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        uri?.let(viewModel::exportPrayerLog)
+    }
+    val importLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let(viewModel::importPrayerLog)
+    }
+    val onExportPrayerLog = { exportLauncher.launch("waktiva-prayer-log-${LocalDate.now()}.json") }
+    // Some file managers don't know .json and call it a binary or text file.
+    val onImportPrayerLog = { importLauncher.launch(arrayOf("application/json", "application/octet-stream", "text/plain")) }
 
     LaunchedEffect(viewModel) {
         viewModel.uiEvents.collect { event ->
             val message = when (event) {
-                SettingsViewModel.UiEvent.PrayerHistoryDeleted -> R.string.settings_delete_history_success
-                SettingsViewModel.UiEvent.PrayerHistoryDeleteFailed -> R.string.settings_delete_history_error
+                SettingsViewModel.UiEvent.PrayerHistoryDeleted -> context.getString(R.string.settings_delete_history_success)
+                SettingsViewModel.UiEvent.PrayerHistoryDeleteFailed -> context.getString(R.string.settings_delete_history_error)
+                SettingsViewModel.UiEvent.PrayerLogExported -> context.getString(R.string.prayer_log_exported)
+                SettingsViewModel.UiEvent.PrayerLogExportFailed -> context.getString(R.string.prayer_log_export_failed)
+                is SettingsViewModel.UiEvent.PrayerLogImported -> context.getString(R.string.prayer_log_imported, event.added)
+                SettingsViewModel.UiEvent.PrayerLogImportInvalid -> context.getString(R.string.prayer_log_import_invalid)
+                SettingsViewModel.UiEvent.PrayerLogImportFailed -> context.getString(R.string.prayer_log_import_failed)
+                SettingsViewModel.UiEvent.PrayerLogCleared -> context.getString(R.string.prayer_log_cleared)
             }
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
@@ -153,7 +174,10 @@ fun SettingsScreen(
                             settings = settings,
                             onEnabledChange = { viewModel.setPrayerLogEnabled(it) },
                             onReminderChange = { viewModel.setPrayerLogReminder(it) },
-                            onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) }
+                            onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) },
+                            onExport = onExportPrayerLog,
+                            onImport = onImportPrayerLog,
+                            onClear = { showClearPrayerLogDialog = true }
                         )
                         PermissionsSection()
                         AboutSection(onShowLicensesClick = onNavigateToLicenses)
@@ -209,7 +233,10 @@ fun SettingsScreen(
                         settings = settings,
                         onEnabledChange = { viewModel.setPrayerLogEnabled(it) },
                         onReminderChange = { viewModel.setPrayerLogReminder(it) },
-                        onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) }
+                        onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) },
+                        onExport = onExportPrayerLog,
+                        onImport = onImportPrayerLog,
+                        onClear = { showClearPrayerLogDialog = true }
                     )
 
                     PermissionsSection()
@@ -223,6 +250,30 @@ fun SettingsScreen(
     }
 
     // Dialogs
+    if (showClearPrayerLogDialog) {
+        AlertDialog(
+            onDismissRequest = { showClearPrayerLogDialog = false },
+            title = { Text(stringResource(R.string.prayer_log_clear_confirm_title)) },
+            text = { Text(stringResource(R.string.prayer_log_clear_confirm_desc)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.clearPrayerLog()
+                        showClearPrayerLogDialog = false
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFF87171))
+                ) {
+                    Text(stringResource(R.string.prayer_log_clear))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearPrayerLogDialog = false }) {
+                    Text(stringResource(R.string.settings_cancel))
+                }
+            }
+        )
+    }
+
     SettingsDialogs(
         settings = settings,
         showLanguageDialog = showLanguageDialog,
@@ -411,14 +462,18 @@ private fun PrayerTimesSection(
 /**
  * Whether the prayer log (çetele) is on, and while it is, the reminder after Isha to mark the
  * day's prayers. Off, the navigation bar carries the donate tab in its place and the day circle's
- * badges only show their times.
+ * badges only show their times. The log can be exported to a file, imported from one, or cleared,
+ * whether it is on or not.
  */
 @Composable
 private fun PrayerLogSection(
     settings: UserSettings?,
     onEnabledChange: (Boolean) -> Unit,
     onReminderChange: (Boolean) -> Unit,
-    onReminderMinutesChange: (Int) -> Unit
+    onReminderMinutesChange: (Int) -> Unit,
+    onExport: () -> Unit,
+    onImport: () -> Unit,
+    onClear: () -> Unit
 ) {
     var showReminderTimeDialog by remember { mutableStateOf(false) }
     val reminderOptions = PrayerLogReminderMinutes.map {
@@ -456,6 +511,25 @@ private fun PrayerLogSection(
                 }
             }
         }
+
+        SettingsClickItem(
+            title = stringResource(R.string.prayer_log_export),
+            subtitle = stringResource(R.string.prayer_log_export_desc),
+            icon = Icons.Rounded.FileUpload,
+            onClick = onExport
+        )
+        SettingsClickItem(
+            title = stringResource(R.string.prayer_log_import),
+            subtitle = stringResource(R.string.prayer_log_import_desc),
+            icon = Icons.Rounded.FileDownload,
+            onClick = onImport
+        )
+        SettingsClickItem(
+            title = stringResource(R.string.prayer_log_clear),
+            subtitle = stringResource(R.string.prayer_log_clear_desc),
+            icon = Icons.Rounded.DeleteForever,
+            onClick = onClear
+        )
     }
 
     if (showReminderTimeDialog) {
