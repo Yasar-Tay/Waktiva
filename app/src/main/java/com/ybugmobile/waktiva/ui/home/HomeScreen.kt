@@ -35,8 +35,10 @@ import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthEmptyState
 import com.ybugmobile.waktiva.ui.settings.composables.SystemHealthOverlay
 import com.ybugmobile.waktiva.ui.theme.LocalBackgroundGradient
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.waktiva.ui.theme.LocalLightningFlash
 import com.ybugmobile.waktiva.ui.theme.getGlassTheme
 import com.ybugmobile.waktiva.ui.theme.getGradientForTime
+import com.ybugmobile.waktiva.ui.theme.rememberLightningFlash
 import java.time.LocalDate
 
 /**
@@ -191,6 +193,11 @@ fun HomeScreenContent(
     val glassTheme = remember(minuteTime, state.currentPrayerDay, effectiveWeather) {
         getGlassTheme(minuteTime, state.currentPrayerDay, effectiveWeather)
     }
+
+    // One lightning for the screen, so the day circle's storm hours flash with the background.
+    val isStorm = settings?.showWeatherEffects == true &&
+        (effectiveWeather == WeatherCondition.THUNDERSTORM || effectiveWeather == WeatherCondition.THUNDERSTORM_HAIL)
+    val lightning = if (isStorm) rememberLightningFlash() else null
     
     var showMethodDialog by remember { mutableStateOf(false) }
     var showHealthOverlay by remember { mutableStateOf(false) }
@@ -224,7 +231,8 @@ fun HomeScreenContent(
 
     CompositionLocalProvider(
         LocalGlassTheme provides glassTheme,
-        LocalBackgroundGradient provides backgroundGradient
+        LocalBackgroundGradient provides backgroundGradient,
+        LocalLightningFlash provides lightning
     ) {
         Scaffold(
             containerColor = Color.Transparent,

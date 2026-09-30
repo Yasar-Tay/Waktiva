@@ -128,6 +128,8 @@ private const val SweepStops = 96
 class DaySky internal constructor(
     internal val sweep: Array<Pair<Float, Color>>,
     internal val starryHours: List<Int>,
+    /** Each hour's weather as the sky shows it, from midnight; null where the sky is untoned. */
+    internal val hours: List<WeatherCondition?>,
     internal val rtl: Boolean
 )
 
@@ -150,7 +152,7 @@ internal fun daySky(day: PrayerDay, weather: DayCircleWeather?, now: LocalTime?,
         val isNight = sunrise != null && maghrib != null && (middle.isBefore(sunrise) || !middle.isBefore(maghrib))
         isNight && hourWeather(hour) in ClearSkies
     }
-    return DaySky(skySweep(day, hourWeather, rtl), starry, rtl)
+    return DaySky(skySweep(day, hourWeather, rtl), starry, List(24, hourWeather), rtl)
 }
 
 private val ClearSkies = setOf(WeatherCondition.CLEAR, WeatherCondition.MAINLY_CLEAR)

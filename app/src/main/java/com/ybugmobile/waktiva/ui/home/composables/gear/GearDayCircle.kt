@@ -68,6 +68,7 @@ import com.ybugmobile.waktiva.ui.home.composables.CurrentPrayerHeader
 import com.ybugmobile.waktiva.ui.home.composables.DaySky
 import com.ybugmobile.waktiva.ui.home.composables.PrayerWeather
 import com.ybugmobile.waktiva.ui.home.composables.PrayerWeatherIcons
+import com.ybugmobile.waktiva.ui.home.composables.SkyPrecipitation
 import com.ybugmobile.waktiva.ui.home.composables.daySky
 import com.ybugmobile.waktiva.ui.home.composables.degrees
 import com.ybugmobile.waktiva.ui.home.composables.weatherIconOffset
@@ -185,7 +186,10 @@ internal fun GearDayCircle(
         }
 
         // The day's sky, under the dial: it shows through the open face between the moving parts.
-        sky?.let { Spacer(Modifier.fillMaxSize().daySky(it, radius = dial.skyRadius, fadeFrom = 0.9f)) }
+        sky?.let {
+            Spacer(Modifier.fillMaxSize().daySky(it, radius = dial.skyRadius, fadeFrom = 0.9f))
+            SkyPrecipitation(it, radius = dial.skyRadius, fadeFrom = 0.9f)
+        }
 
         // The dial redraws every frame as it turns, so it has its own layer: the rest of the screen
         // isn't redrawn with it. Its still parts are recorded once per minute (or whenever what they

@@ -216,6 +216,7 @@ fun PrayerCircleVisualization(
         // The day's sky fills the ring, under everything else.
         sky?.let {
             Spacer(Modifier.fillMaxSize().daySky(it, radius = ring.track - ring.trackWidth / 2f))
+            SkyPrecipitation(it, radius = ring.track - ring.trackWidth / 2f)
         }
 
         Spacer(

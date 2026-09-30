@@ -214,7 +214,7 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
         )
         val sceneClock = rememberSceneClock()
         val isThunder = condition == WeatherCondition.THUNDERSTORM || condition == WeatherCondition.THUNDERSTORM_HAIL
-        val lightning = if (isThunder) rememberLightningFlash() else null
+        val lightning = if (isThunder) LocalLightningFlash.current ?: rememberLightningFlash() else null
 
         val precipElements = remember(condition) {
             val count = when (condition) {
@@ -330,11 +330,17 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
 }
 
 /**
+ * The screen's lightning while there is a storm, shared so everything that flashes flashes with
+ * the background: the day circle's storm hours light up with it. Null without a storm.
+ */
+val LocalLightningFlash = staticCompositionLocalOf<State<Float>?> { null }
+
+/**
  * Lightning strikes at random intervals, each one or two quick pulses. The value (0..1) drives
  * both the sky flash and the storm clouds lighting up from within.
  */
 @Composable
-private fun rememberLightningFlash(): State<Float> {
+fun rememberLightningFlash(): State<Float> {
     val flash = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
         while (true) {
