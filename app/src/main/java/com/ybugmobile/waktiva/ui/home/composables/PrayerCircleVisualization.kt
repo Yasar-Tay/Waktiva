@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.VectorPainter
@@ -205,13 +206,16 @@ fun PrayerCircleVisualization(
     }
 
     val textMeasurer = rememberTextMeasurer()
+    // The prayer times: large and near white, each over a soft shade (see timeShade), so they read
+    // over any colour the sky inside the ring takes, from a pale dawn to the night.
     val labelStyle = remember(contentColor, isLandscape) {
         TextStyle(
-            color = contentColor.copy(alpha = 0.62f),
-            fontSize = if (isLandscape) 8.sp else 10.sp,
+            color = contentColor.copy(alpha = 0.95f),
+            fontSize = if (isLandscape) 9.5.sp else 12.sp,
             fontFamily = IBMPlexArabic,
             fontWeight = FontWeight.Bold,
-            shadow = Shadow(Color.Black.copy(alpha = 0.8f), blurRadius = 4f)
+            letterSpacing = 0.3.sp,
+            shadow = Shadow(Color.Black.copy(alpha = 0.85f), offset = Offset(0f, 1f), blurRadius = 6f)
         )
     }
 
@@ -266,6 +270,7 @@ fun PrayerCircleVisualization(
                             prayerBadge(prayer, pointOn(ring.center, ring.track, theta), radius, isCurrent, palette, light, badgeSkies.getValue(prayer.type))
                             val label = labels[i]
                             val at = pointOn(ring.center, ring.labelDistance(radius), theta)
+                            timeShade(at, label.size.width.toFloat(), label.size.height.toFloat())
                             drawText(label, topLeft = Offset(at.x - label.size.width / 2f, at.y - label.size.height / 2f))
                         }
                     }
@@ -400,14 +405,12 @@ fun PrayerCircleVisualization(
             )
         }
 
-        ReligiousBadge(
-            day.date,
-            contentColor,
-            hijriDate = day.hijriDate,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .offset(y = bezelDiameter / 2 + if (isLandscape) 8.dp else 12.dp)
-                .zIndex(5f)
+        // A religious day's name, on a glass ribbon round the bottom of the bezel.
+        ReligiousRibbon(
+            date = day.date,
+            innerRadius = ring.bezelRadius + with(density) { 3.dp.toPx() },
+            palette = palette,
+            modifier = Modifier.zIndex(5f)
         )
 
         // The prayer name sits just above the bezel.
@@ -678,6 +681,27 @@ private fun DrawScope.prayerBadge(
 
     // A fine gold edge, as on the ring and the bezel
     drawCircle(palette.gold.copy(alpha = 0.6f), radius + 0.35.dp.toPx(), at, style = Stroke(0.7.dp.toPx()))
+}
+
+/**
+ * A soft dark shade behind a prayer time of [width] × [height] at [at], fading out at its edges
+ * like the shadow behind the weather icons, so the time reads over a pale sky as well as a dark one.
+ */
+private fun DrawScope.timeShade(at: Offset, width: Float, height: Float) {
+    val radius = width * 0.72f
+    withTransform({ scale(1f, height * 1.35f / (2f * radius), pivot = at) }) {
+        drawCircle(
+            Brush.radialGradient(
+                0f to Color.Black.copy(alpha = 0.38f),
+                0.55f to Color.Black.copy(alpha = 0.22f),
+                1f to Color.Transparent,
+                center = at,
+                radius = radius
+            ),
+            radius,
+            at
+        )
+    }
 }
 
 private fun Color.lighten(amount: Float) =
