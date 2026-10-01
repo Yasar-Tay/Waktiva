@@ -26,8 +26,11 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.layer.CompositingStrategy
+import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -40,6 +43,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -71,6 +75,7 @@ import com.ybugmobile.waktiva.ui.theme.darken
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.delay
+import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.sign
 
@@ -246,35 +251,52 @@ fun PrayerCircleVisualization(
                 .drawWithCache {
                     val light = GearLight(lightAngle.value)
                     val labels = prayers.map { textMeasurer.measure(it.time.format(formatter), labelStyle) }
+                    // The dial changes at most once a minute, with the hand, while the screen
+                    // round it animates every frame. So it's drawn once into an offscreen layer,
+                    // which the GPU keeps as a texture and only composites each frame, instead of
+                    // replaying its dozens of gradients. The layer reaches past the dial by its
+                    // overflow so the halo and glows aren't cut off at its edge.
+                    val dial = obtainGraphicsLayer().apply { compositingStrategy = CompositingStrategy.Offscreen }
+                    var recorded = false
                     onDrawBehind {
-                        drawRing(ring, prayers, palette, light, currentPrayerColor, isRtl, current = currentPrayerType.takeIf { isSelectedDayToday })
+                        if (!recorded) {
+                            val margin = ceil(ring.overflow).toInt()
+                            dial.record(IntSize(size.width.toInt() + 2 * margin, size.height.toInt() + 2 * margin)) {
+                                inset(margin.toFloat()) {
+                                    drawRing(ring, prayers, palette, light, currentPrayerColor, isRtl, current = currentPrayerType.takeIf { isSelectedDayToday })
 
-                        if (isSelectedDayToday) {
-                            // The hand starts at the bezel, so it doesn't show through the glass date card.
-                            val handAngle = dayAngle(nowMinutes, isRtl)
-                            val root = pointOn(ring.center, ring.bezelRadius, handAngle)
-                            val tip = pointOn(ring.center, ring.track - size.minDimension * 0.03f, handAngle)
-                            drawLine(
-                                Brush.linearGradient(
-                                    listOf(Color.White.copy(alpha = 0f), Color.White.copy(alpha = 0.75f)),
-                                    start = root,
-                                    end = tip
-                                ),
-                                root, tip, 1.5.dp.toPx(), StrokeCap.Round
-                            )
-                            nowIndicator(ring.center, ring.track, handAngle, currentPrayerColor, density.density)
-                        }
+                                    if (isSelectedDayToday) {
+                                        // The hand starts at the bezel, so it doesn't show through the glass date card.
+                                        val handAngle = dayAngle(nowMinutes, isRtl)
+                                        val root = pointOn(ring.center, ring.bezelRadius, handAngle)
+                                        val tip = pointOn(ring.center, ring.track - size.minDimension * 0.03f, handAngle)
+                                        drawLine(
+                                            Brush.linearGradient(
+                                                listOf(Color.White.copy(alpha = 0f), Color.White.copy(alpha = 0.75f)),
+                                                start = root,
+                                                end = tip
+                                            ),
+                                            root, tip, 1.5.dp.toPx(), StrokeCap.Round
+                                        )
+                                        nowIndicator(ring.center, ring.track, handAngle, currentPrayerColor, density.density)
+                                    }
 
-                        prayers.forEachIndexed { i, prayer ->
-                            val theta = dayAngle(prayer.time.minutes(), isRtl)
-                            val isCurrent = isSelectedDayToday && prayer.type == currentPrayerType
-                            val radius = if (isCurrent) ring.badgeCurrent else ring.badge
-                            prayerBadge(prayer, pointOn(ring.center, ring.track, theta), radius, isCurrent, palette, light, badgeSkies.getValue(prayer.type))
-                            val label = labels[i]
-                            val at = pointOn(ring.center, ring.labelDistance(radius), theta)
-                            timeShade(at, label.size.width.toFloat(), label.size.height.toFloat())
-                            drawText(label, topLeft = Offset(at.x - label.size.width / 2f, at.y - label.size.height / 2f))
+                                    prayers.forEachIndexed { i, prayer ->
+                                        val theta = dayAngle(prayer.time.minutes(), isRtl)
+                                        val isCurrent = isSelectedDayToday && prayer.type == currentPrayerType
+                                        val radius = if (isCurrent) ring.badgeCurrent else ring.badge
+                                        prayerBadge(prayer, pointOn(ring.center, ring.track, theta), radius, isCurrent, palette, light, badgeSkies.getValue(prayer.type))
+                                        val label = labels[i]
+                                        val at = pointOn(ring.center, ring.labelDistance(radius), theta)
+                                        timeShade(at, label.size.width.toFloat(), label.size.height.toFloat())
+                                        drawText(label, topLeft = Offset(at.x - label.size.width / 2f, at.y - label.size.height / 2f))
+                                    }
+                                }
+                            }
+                            dial.topLeft = IntOffset(-margin, -margin)
+                            recorded = true
                         }
+                        drawLayer(dial)
                     }
                 }
         )
@@ -388,6 +410,9 @@ fun PrayerCircleVisualization(
             Spacer(
                 modifier = Modifier
                     .fillMaxSize()
+                    // Its own layer, so it's only redrawn when the light changes, not with
+                    // everything else drawn round it.
+                    .graphicsLayer()
                     .drawWithCache {
                         val light = GearLight(lightAngle.value)
                         onDrawBehind { goldBezel(palette, light, density.density) }
@@ -441,6 +466,12 @@ private class HaloRing(s: Float, dp: Float) {
 
     /** Outer radius of the gold bezel around the date card. */
     val bezelRadius = dateRadius / BEZEL_FACE_RATIO
+
+    /**
+     * How far the dial's drawing reaches past its square: the halo round the ring, the ring's
+     * shadow and the current prayer's glow.
+     */
+    val overflow = max(0f, maxOf(track * 1.22f, track + trackWidth / 2f + 6f * dp, track + badgeCurrent * 2.2f) - s / 2f)
 
     private val labelGap = 0.05f * s
 
