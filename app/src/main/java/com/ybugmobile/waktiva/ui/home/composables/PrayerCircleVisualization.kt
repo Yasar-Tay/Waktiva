@@ -261,7 +261,10 @@ fun PrayerCircleVisualization(
                     onDrawBehind {
                         if (!recorded) {
                             val margin = ceil(ring.overflow).toInt()
-                            dial.record(IntSize(size.width.toInt() + 2 * margin, size.height.toInt() + 2 * margin)) {
+                            // Recorded with the composition's density: DrawScope.record would hand
+                            // the layer this draw scope as its density, whose density in turn reads
+                            // the layer's, and the first toPx() inside recursed until it overflowed.
+                            dial.record(density, layoutDirection, IntSize(size.width.toInt() + 2 * margin, size.height.toInt() + 2 * margin)) {
                                 inset(margin.toFloat()) {
                                     drawRing(ring, prayers, palette, light, currentPrayerColor, isRtl, current = currentPrayerType.takeIf { isSelectedDayToday })
 
