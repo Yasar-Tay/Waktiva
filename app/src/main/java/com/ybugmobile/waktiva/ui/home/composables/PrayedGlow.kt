@@ -41,12 +41,12 @@ import kotlin.math.sin
 /**
  * The glow a prayer's badge on the day circle wears once the prayer is marked as prayed, drawn
  * like a skill in a game's skill tree coming alive: a rune circle turning slowly round the badge
- * with four node gems on it, sparks orbiting the rim, a rim of light running round it and a
- * breathing gold bloom.
+ * with four node gems on it, two motes orbiting the rim, a rim of light running round it, a
+ * breathing gold bloom, and the badge lit from within under a twinkling glint.
  *
  * Marking it plays the unlock: motes of light gather into the badge, then it bursts in a white
  * flash with a shockwave, rays and a spray of sparks while the rune circle swells in. Taking the
- * mark back lets it all fade. The glow only draws around the badge, which shows through its middle.
+ * mark back lets it all fade. Over the badge the light stays faint in the middle, so its sign reads.
  *
  * [prayed] is null until the log has loaded, so a prayer already marked lights up without the
  * unlock. [badgeRadius] is the badge's radius in pixels; the glow centres on this composable,
@@ -234,13 +234,13 @@ private fun DrawScope.drawActive(r: Float, g: Float, t: Float, tone: Color, hot:
     val breath = 0.5f + 0.5f * sin(t * 2f * PI.toFloat() / 2.6f)
     val outer = r * 2.4f * (0.6f + 0.4f * g) * (0.95f + 0.07f * breath)
 
-    // The bloom starts at the badge's edge, breathes, and leaves the badge itself clear.
+    // The bloom starts at the badge's edge and breathes.
     drawCircle(
         brush = Brush.radialGradient(
             0f to Color.Transparent,
             (r * 0.92f / outer) to Color.Transparent,
-            (r * 1.04f / outer) to tone.copy(alpha = (0.75f + 0.2f * breath) * alpha),
-            (r * 1.45f / outer) to tone.copy(alpha = (0.22f + 0.14f * breath) * alpha),
+            (r * 1.04f / outer) to tone.copy(alpha = (0.82f + 0.18f * breath) * alpha),
+            (r * 1.5f / outer) to tone.copy(alpha = (0.28f + 0.12f * breath) * alpha),
             1f to Color.Transparent,
             center = center,
             radius = outer
@@ -248,6 +248,25 @@ private fun DrawScope.drawActive(r: Float, g: Float, t: Float, tone: Color, hot:
         radius = outer,
         center = center
     )
+
+    // The badge itself lit from within, as the burst left it: light pooled under the glass,
+    // strongest round its edge, breathing with the bloom. Faint at the middle so the sign reads.
+    drawCircle(
+        brush = Brush.radialGradient(
+            0f to hot.copy(alpha = (0.16f + 0.1f * breath) * alpha),
+            0.55f to tone.copy(alpha = 0.1f * alpha),
+            0.82f to tone.copy(alpha = (0.32f + 0.14f * breath) * alpha),
+            1f to hot.copy(alpha = (0.65f + 0.2f * breath) * alpha),
+            center = center,
+            radius = r
+        ),
+        radius = r,
+        center = center,
+        blendMode = BlendMode.Plus
+    )
+    // A star glint on the glass that flares and fades, a little out of step with the breath.
+    val twinkle = (0.5f + 0.5f * sin(t * 2f * PI.toFloat() / 1.9f + 1.3f)).let { it * it }
+    glint(center + Offset(-0.42f, -0.42f) * r, r * (0.38f + 0.22f * twinkle), (0.35f + 0.65f * twinkle) * alpha)
 
     // The rune circle: a dashed ring of runes turning slowly, a hairline under it and four
     // node gems, as on a skill tree. It grows into place as the glow swells.
@@ -300,15 +319,15 @@ private fun DrawScope.drawActive(r: Float, g: Float, t: Float, tone: Color, hot:
         )
     }
 
-    // Motes orbiting just outside the rim, each with a fading trail.
+    // Two motes orbiting just outside the rim, each with a fading trail.
     val orbit = r * 1.22f
-    for (i in 0 until 3) {
-        val speed = 1.1f + 0.35f * i
-        val a = t * speed + i * 2.1f
-        for (k in 4 downTo 0) {
-            val back = a - k * 0.11f
+    for (i in 0 until 2) {
+        val speed = 1.1f + 0.45f * i
+        val a = t * speed + i * PI.toFloat()
+        for (k in 3 downTo 0) {
+            val back = a - k * 0.12f
             val at = center + Offset(cos(back), sin(back)) * (orbit + i * 1.2.dp.toPx())
-            val fade = 1f - k / 5f
+            val fade = 1f - k / 4f
             drawCircle(
                 (if (k == 0) Color.White else hot).copy(alpha = 0.9f * fade * alpha),
                 (1.5f * fade + 0.3f).dp.toPx(),
@@ -316,6 +335,28 @@ private fun DrawScope.drawActive(r: Float, g: Float, t: Float, tone: Color, hot:
             )
         }
     }
+}
+
+/** A four-pointed star of light [size] across from its centre to a point, at [at]. */
+private fun DrawScope.glint(at: Offset, size: Float, alpha: Float) {
+    drawCircle(
+        Brush.radialGradient(listOf(Color.White.copy(alpha = 0.6f * alpha), Color.Transparent), at, size * 0.45f),
+        size * 0.45f,
+        at
+    )
+    val waist = size * 0.12f
+    val star = Path().apply {
+        moveTo(at.x, at.y - size)
+        lineTo(at.x + waist, at.y - waist)
+        lineTo(at.x + size, at.y)
+        lineTo(at.x + waist, at.y + waist)
+        lineTo(at.x, at.y + size)
+        lineTo(at.x - waist, at.y + waist)
+        lineTo(at.x - size, at.y)
+        lineTo(at.x - waist, at.y - waist)
+        close()
+    }
+    drawPath(star, Color.White.copy(alpha = alpha))
 }
 
 /** A node gem on the rune circle: a small lit diamond with a glow. */
