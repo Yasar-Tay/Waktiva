@@ -263,7 +263,9 @@ fun HomeScreenContent(
             ) {
                 HomeBackground(
                     backgroundGradient = backgroundGradient,
-                    currentTime = state.currentTime.toLocalTime(),
+                    // To the minute: the sky only changes with the prayer times, so the background
+                    // can skip the seconds.
+                    currentTime = minuteTime,
                     currentPrayerDay = state.currentPrayerDay,
                     sunAzimuth = { atmosphere.sunAzimuth },
                     sunAltitude = { atmosphere.sunAltitude },

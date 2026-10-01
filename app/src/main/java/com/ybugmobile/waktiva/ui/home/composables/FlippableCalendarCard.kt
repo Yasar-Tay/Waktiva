@@ -71,9 +71,11 @@ fun FlippableCalendarCard(
         label = "cardFlip"
     )
 
-    // "Chronos" Animation: A slow, eternal rotation of a light sweep across the card's surface
+    // "Chronos" Animation: A slow, eternal rotation of a light sweep across the card's surface.
+    // Kept as a State and read only while drawing, so the sweep redraws the card each frame
+    // without recomposing it.
     val infiniteTransition = rememberInfiniteTransition(label = "chronos")
-    val timeAngle by infiniteTransition.animateFloat(
+    val timeAngle = infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
@@ -118,7 +120,7 @@ fun FlippableCalendarCard(
                     bottomText = day.date.format(monthFormatter).uppercase(Locale.getDefault()),
                     isBack = false,
                     accentColor = accentColor,
-                    timeAngle = timeAngle,
+                    timeAngle = { timeAngle.value },
                     isSelectedDayToday = isSelectedDayToday,
                     note = temperatureRange
                 )
@@ -138,7 +140,7 @@ fun FlippableCalendarCard(
                     bottomText = displayMonth.uppercase(Locale.getDefault()),
                     isBack = true,
                     accentColor = accentColor,
-                    timeAngle = timeAngle,
+                    timeAngle = { timeAngle.value },
                     isSelectedDayToday = isSelectedDayToday,
                     note = temperatureRange
                 )
@@ -157,7 +159,7 @@ private fun CalendarSide(
     bottomText: String,
     isBack: Boolean,
     accentColor: Color,
-    timeAngle: Float,
+    timeAngle: () -> Float,
     isSelectedDayToday: Boolean,
     note: String? = null
 ) {
@@ -188,15 +190,14 @@ private fun CalendarSide(
             modifier = Modifier
                 .fillMaxSize()
                 .drawWithCache {
+                    val sheen = Brush.verticalGradient(
+                        listOf(Color.Transparent, Color.White.copy(alpha = 0.06f), Color.Transparent),
+                        endY = size.height * 2.5f
+                    )
                     onDrawBehind {
                         // "Temporal Sheen": A subtle reflection that passes across the card surface
-                        rotate(timeAngle + 45f) {
-                            drawRect(
-                                brush = Brush.verticalGradient(
-                                    listOf(Color.Transparent, Color.White.copy(alpha = 0.06f), Color.Transparent)
-                                ),
-                                size = size * 2.5f
-                            )
+                        rotate(timeAngle() + 45f) {
+                            drawRect(brush = sheen, size = size * 2.5f)
                         }
                     }
                 },

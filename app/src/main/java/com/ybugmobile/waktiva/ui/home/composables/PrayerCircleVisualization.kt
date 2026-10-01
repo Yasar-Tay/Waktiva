@@ -133,8 +133,10 @@ fun PrayerCircleVisualization(
 
     var selected by remember { mutableStateOf<PrayerType?>(null) }
     val locale = LocalConfiguration.current.locales[0]
-    val weatherLines = prayerWeather.mapValues { (_, w) ->
-        context.getString(w.condition.nameRes).uppercase(locale) to w.temperature?.degrees()
+    val weatherLines = remember(prayerWeather, locale) {
+        prayerWeather.mapValues { (_, w) ->
+            context.getString(w.condition.nameRes).uppercase(locale) to w.temperature?.degrees()
+        }
     }
     val currentOnPrayerTap by rememberUpdatedState(onPrayerTap)
     // The plaque's gemstone never turns; it only needs the phase the gear medallions take.

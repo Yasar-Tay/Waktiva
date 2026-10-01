@@ -69,6 +69,10 @@ fun HomePortraitContent(
     val screenHeightDp = LocalConfiguration.current.screenHeightDp
     val screenWidthDp = LocalConfiguration.current.screenWidthDp
     val availableDays = remember(allDays) { allDays.filter { !it.date.isBefore(LocalDate.now()) } }
+    // Captures only the flag, not the state that changes every second, so the day circle can
+    // skip the seconds.
+    val isHijriSelected = state.isHijriSelected
+    val onToggleHijri = remember(isHijriSelected, onToggleCalendarType) { { onToggleCalendarType(!isHijriSelected) } }
     val hasWeatherData = remember(state.temperature, state.weatherCondition) {
         state.temperature != null || state.weatherCondition != WeatherCondition.UNKNOWN
     }
@@ -146,7 +150,7 @@ fun HomePortraitContent(
                                 currentPrayer = if (isToday) state.currentPrayer else null,
                                 isSelectedDayToday = isToday,
                                 isHijriVisible = state.isHijriSelected,
-                                onToggleHijri = { onToggleCalendarType(!state.isHijriSelected) },
+                                onToggleHijri = onToggleHijri,
                                 contentColor = contentColor,
                                 sunLight = sunLight,
                                 prayedPrayers = prayedToday,
