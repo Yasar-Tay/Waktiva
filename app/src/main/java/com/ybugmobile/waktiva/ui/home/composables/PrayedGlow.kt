@@ -18,8 +18,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -94,8 +96,18 @@ fun PrayedGlow(
         if (!active) return@LaunchedEffect
         val from = clock.floatValue
         val start = withFrameNanos { it }
+        var ticked = start
         while (true) {
-            withFrameNanos { clock.floatValue = from + (it - start) / 1_000_000_000f }
+            withFrameNanos { now ->
+                // The unlock plays at the full frame rate. Once it has settled the idle motion
+                // only moves on about every IDLE_FRAME_NANOS, so the glow isn't redrawn on every
+                // frame of a fast screen.
+                val unlocking = glow.isRunning || charge.value < 1f || burst.value < 1f
+                if (unlocking || now - ticked >= IDLE_FRAME_NANOS) {
+                    clock.floatValue = from + (now - start) / 1_000_000_000f
+                    ticked = now
+                }
+            }
         }
     }
 
@@ -103,19 +115,120 @@ fun PrayedGlow(
     Box(
         modifier = modifier
             .size(size)
-            .drawBehind {
-                val g = glow.value
-                val c = charge.value
-                val b = burst.value
-                val t = clock.floatValue
+            .drawWithCache {
                 val tone = lerp(color, PrayedGold, 0.6f)
                 val hot = lerp(tone, Color.White, 0.55f)
-                if (c < 1f) drawCharge(badgeRadius, c, hot)
-                if (g > 0.01f) drawActive(badgeRadius, g, t, tone, hot)
-                if (b < 1f) drawBurst(badgeRadius, b, tone, hot)
+                val parts = GlowParts(badgeRadius, this.size.center, tone, hot, density)
+                onDrawBehind {
+                    val g = glow.value
+                    val c = charge.value
+                    val b = burst.value
+                    val t = clock.floatValue
+                    if (c < 1f) drawCharge(badgeRadius, c, hot)
+                    if (g > 0.01f) drawActive(badgeRadius, g, t, parts)
+                    if (b < 1f) drawBurst(badgeRadius, b, tone, hot)
+                }
             }
     )
 }
+
+/**
+ * How long the idle glow holds each step of its motion: about 30 a second, smooth for its slow
+ * turning and breathing, where a 120 Hz screen would otherwise redraw it four times as often.
+ */
+private const val IDLE_FRAME_NANOS = 30_000_000L
+
+/**
+ * The parts of the active glow that stay the same from frame to frame, for a badge of radius [r]
+ * centred on [center]: the glint's and gems' shapes and glows at unit size, which are moved and
+ * scaled into place as they're drawn, and, once the glow has swollen in, the rune circles' dashes
+ * and the rim's spark. Built once per size and colour instead of on every frame.
+ */
+private class GlowParts(r: Float, private val center: Offset, val tone: Color, val hot: Color, private val dp: Float) {
+    /** A four-pointed star reaching 1 from its centre to each point. */
+    val star = Path().apply {
+        val waist = 0.12f
+        moveTo(0f, -1f)
+        lineTo(waist, -waist)
+        lineTo(1f, 0f)
+        lineTo(waist, waist)
+        lineTo(0f, 1f)
+        lineTo(-waist, waist)
+        lineTo(-1f, 0f)
+        lineTo(-waist, -waist)
+        close()
+    }
+    val starGlow = Brush.radialGradient(listOf(Color.White.copy(alpha = 0.6f), Color.Transparent), Offset.Zero, STAR_GLOW)
+
+    /** A gem's diamond, reaching 1 from its centre to its top and bottom. */
+    val diamond = Path().apply {
+        moveTo(0f, -1f)
+        lineTo(0.7f, 0f)
+        lineTo(0f, 1f)
+        lineTo(-0.7f, 0f)
+        close()
+    }
+    val gemGlow = Brush.radialGradient(listOf(hot.copy(alpha = 0.7f), Color.Transparent), Offset.Zero, GEM_GLOW)
+
+    private val settledRune = buildRuneStroke(r * RUNE_RING)
+    private val settledInnerRune = buildInnerRuneStroke(r * RUNE_RING - 3f * dp)
+    private val settledRimSpark = buildRimSpark(1f)
+
+    /**
+     * The badge's light from within, steady and breathing: the breathing part, drawn at the
+     * breath's strength over the steady one, makes up the light at any breath. Both badge-sized.
+     */
+    val innerLight = Brush.radialGradient(
+        0f to hot.copy(alpha = 0.16f),
+        0.55f to tone.copy(alpha = 0.1f),
+        0.82f to tone.copy(alpha = 0.32f),
+        1f to hot.copy(alpha = 0.65f),
+        center = center,
+        radius = r
+    )
+    val innerBreath = Brush.radialGradient(
+        0f to hot.copy(alpha = 0.1f),
+        0.55f to tone.copy(alpha = 0f),
+        0.82f to tone.copy(alpha = 0.14f),
+        1f to hot.copy(alpha = 0.2f),
+        center = center,
+        radius = r
+    )
+
+    /** The rune circle's dashes at [rune]; the same ones each frame once the glow has [settled]. */
+    fun runeStroke(rune: Float, settled: Boolean) = if (settled) settledRune else buildRuneStroke(rune)
+
+    /** The finer ring's dashes at [inner]; the same ones each frame once the glow has [settled]. */
+    fun innerRuneStroke(inner: Float, settled: Boolean) = if (settled) settledInnerRune else buildInnerRuneStroke(inner)
+
+    /** The spark running round the rim at [alpha]; the same one each frame at full strength. */
+    fun rimSpark(alpha: Float, settled: Boolean) = if (settled) settledRimSpark else buildRimSpark(alpha)
+
+    private fun buildRuneStroke(rune: Float): Stroke {
+        val dash = rune * 2f * PI.toFloat() / 36f
+        return Stroke(
+            width = 1.8f * dp,
+            pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash * 0.28f, dash * 0.22f, dash * 0.12f, dash * 0.38f))
+        )
+    }
+
+    private fun buildInnerRuneStroke(inner: Float): Stroke {
+        val dash = inner * 2f * PI.toFloat() / 60f
+        return Stroke(0.8f * dp, pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash * 0.5f, dash * 0.5f)))
+    }
+
+    private fun buildRimSpark(alpha: Float) = Brush.sweepGradient(
+        0f to Color.Transparent,
+        0.72f to Color.Transparent,
+        0.97f to Color.White.copy(alpha = 0.95f * alpha),
+        1f to Color.Transparent,
+        center = center
+    )
+}
+
+/** Radii of the glint's and a gem's glows, against a glint and a gem of size 1. */
+private const val STAR_GLOW = 0.45f
+private const val GEM_GLOW = 2.4f
 
 /** How far the glow reaches, in badge radii, including the sparks at their widest. */
 private const val GLOW_REACH = 3.6f
@@ -227,10 +340,15 @@ private val SPARK_SPEED = floatArrayOf(1f, 0.72f, 0.9f, 0.6f, 0.95f, 0.78f, 0.66
 
 /**
  * The skill once it's active, [g] from 0 (none) to 1 (full), briefly above 1 as it swells in;
- * [t] is the clock, in seconds, that turns and breathes it.
+ * [t] is the clock, in seconds, that turns and breathes it. What stays the same between frames
+ * comes from [parts].
  */
-private fun DrawScope.drawActive(r: Float, g: Float, t: Float, tone: Color, hot: Color) {
+private fun DrawScope.drawActive(r: Float, g: Float, t: Float, parts: GlowParts) {
+    val tone = parts.tone
+    val hot = parts.hot
     val alpha = g.coerceIn(0f, 1f)
+    // Swollen into place: the rune circle and the rim's spark are at their full size and strength.
+    val settled = g == 1f
     val breath = 0.5f + 0.5f * sin(t * 2f * PI.toFloat() / 2.6f)
     val outer = r * 2.4f * (0.6f + 0.4f * g) * (0.95f + 0.07f * breath)
 
@@ -251,22 +369,12 @@ private fun DrawScope.drawActive(r: Float, g: Float, t: Float, tone: Color, hot:
 
     // The badge itself lit from within, as the burst left it: light pooled under the glass,
     // strongest round its edge, breathing with the bloom. Faint at the middle so the sign reads.
-    drawCircle(
-        brush = Brush.radialGradient(
-            0f to hot.copy(alpha = (0.16f + 0.1f * breath) * alpha),
-            0.55f to tone.copy(alpha = 0.1f * alpha),
-            0.82f to tone.copy(alpha = (0.32f + 0.14f * breath) * alpha),
-            1f to hot.copy(alpha = (0.65f + 0.2f * breath) * alpha),
-            center = center,
-            radius = r
-        ),
-        radius = r,
-        center = center,
-        blendMode = BlendMode.Plus
-    )
+    // Added light, so it's the steady part plus the breathing part at the breath's strength.
+    drawCircle(parts.innerLight, r, center, alpha = alpha, blendMode = BlendMode.Plus)
+    drawCircle(parts.innerBreath, r, center, alpha = breath * alpha, blendMode = BlendMode.Plus)
     // A star glint on the glass that flares and fades, a little out of step with the breath.
     val twinkle = (0.5f + 0.5f * sin(t * 2f * PI.toFloat() / 1.9f + 1.3f)).let { it * it }
-    glint(center + Offset(-0.42f, -0.42f) * r, r * (0.38f + 0.22f * twinkle), (0.35f + 0.65f * twinkle) * alpha)
+    glint(parts, center + Offset(-0.42f, -0.42f) * r, r * (0.38f + 0.22f * twinkle), (0.35f + 0.65f * twinkle) * alpha)
 
     // The rune circle: a dashed ring of runes turning slowly, a hairline under it and four
     // node gems, as on a skill tree. It grows into place as the glow swells.
@@ -274,49 +382,24 @@ private fun DrawScope.drawActive(r: Float, g: Float, t: Float, tone: Color, hot:
     val spin = t * 18f
     drawCircle(tone.copy(alpha = 0.35f * alpha), rune, center, style = Stroke(0.6.dp.toPx()))
     rotate(spin) {
-        val dash = rune * 2f * PI.toFloat() / 36f
-        drawCircle(
-            tone.copy(alpha = 0.8f * alpha),
-            rune,
-            center,
-            style = Stroke(
-                width = 1.8.dp.toPx(),
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash * 0.28f, dash * 0.22f, dash * 0.12f, dash * 0.38f))
-            )
-        )
+        drawCircle(tone.copy(alpha = 0.8f * alpha), rune, center, style = parts.runeStroke(rune, settled))
+        val gemSize = 2.6.dp.toPx() * (0.8f + 0.2f * breath)
         for (i in 0 until 4) {
             val a = (i * PI / 2).toFloat()
-            gem(center + Offset(cos(a), sin(a)) * rune, 2.6.dp.toPx() * (0.8f + 0.2f * breath), hot, alpha)
+            gem(parts, center + Offset(cos(a), sin(a)) * rune, gemSize, alpha)
         }
     }
     // A finer ring turning the other way just inside it.
     rotate(-spin * 1.6f) {
         val inner = rune - 3.dp.toPx()
-        val dash = inner * 2f * PI.toFloat() / 60f
-        drawCircle(
-            hot.copy(alpha = 0.45f * alpha),
-            inner,
-            center,
-            style = Stroke(0.8.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash * 0.5f, dash * 0.5f)))
-        )
+        drawCircle(hot.copy(alpha = 0.45f * alpha), inner, center, style = parts.innerRuneStroke(inner, settled))
     }
 
     // The rim: white and gold, with a spark of light running round it.
     drawCircle(Color.White.copy(alpha = 0.95f * alpha), r + 1.dp.toPx(), center, style = Stroke(1.6.dp.toPx()))
     drawCircle(tone.copy(alpha = alpha), r + 3.2.dp.toPx(), center, style = Stroke(1.2.dp.toPx()))
     rotate(t * 150f) {
-        drawCircle(
-            Brush.sweepGradient(
-                0f to Color.Transparent,
-                0.72f to Color.Transparent,
-                0.97f to Color.White.copy(alpha = 0.95f * alpha),
-                1f to Color.Transparent,
-                center = center
-            ),
-            r + 2.1.dp.toPx(),
-            center,
-            style = Stroke(2.2.dp.toPx())
-        )
+        drawCircle(parts.rimSpark(alpha, settled), r + 2.1.dp.toPx(), center, style = Stroke(2.2.dp.toPx()))
     }
 
     // Two motes orbiting just outside the rim, each with a fading trail.
@@ -338,41 +421,25 @@ private fun DrawScope.drawActive(r: Float, g: Float, t: Float, tone: Color, hot:
 }
 
 /** A four-pointed star of light [size] across from its centre to a point, at [at]. */
-private fun DrawScope.glint(at: Offset, size: Float, alpha: Float) {
-    drawCircle(
-        Brush.radialGradient(listOf(Color.White.copy(alpha = 0.6f * alpha), Color.Transparent), at, size * 0.45f),
-        size * 0.45f,
-        at
-    )
-    val waist = size * 0.12f
-    val star = Path().apply {
-        moveTo(at.x, at.y - size)
-        lineTo(at.x + waist, at.y - waist)
-        lineTo(at.x + size, at.y)
-        lineTo(at.x + waist, at.y + waist)
-        lineTo(at.x, at.y + size)
-        lineTo(at.x - waist, at.y + waist)
-        lineTo(at.x - size, at.y)
-        lineTo(at.x - waist, at.y - waist)
-        close()
+private fun DrawScope.glint(parts: GlowParts, at: Offset, size: Float, alpha: Float) {
+    withTransform({
+        translate(at.x, at.y)
+        scale(size, size, pivot = Offset.Zero)
+    }) {
+        drawCircle(parts.starGlow, STAR_GLOW, Offset.Zero, alpha = alpha)
+        drawPath(parts.star, Color.White.copy(alpha = alpha))
     }
-    drawPath(star, Color.White.copy(alpha = alpha))
 }
 
-/** A node gem on the rune circle: a small lit diamond with a glow. */
-private fun DrawScope.gem(at: Offset, size: Float, hot: Color, alpha: Float) {
-    drawCircle(
-        Brush.radialGradient(listOf(hot.copy(alpha = 0.7f * alpha), Color.Transparent), at, size * 2.4f),
-        size * 2.4f,
-        at
-    )
-    val diamond = Path().apply {
-        moveTo(at.x, at.y - size)
-        lineTo(at.x + size * 0.7f, at.y)
-        lineTo(at.x, at.y + size)
-        lineTo(at.x - size * 0.7f, at.y)
-        close()
+/** A node gem on the rune circle, [size] from its centre to its top: a small lit diamond with a glow. */
+private fun DrawScope.gem(parts: GlowParts, at: Offset, size: Float, alpha: Float) {
+    withTransform({
+        translate(at.x, at.y)
+        scale(size, size, pivot = Offset.Zero)
+    }) {
+        drawCircle(parts.gemGlow, GEM_GLOW, Offset.Zero, alpha = alpha)
+        drawPath(parts.diamond, parts.hot.copy(alpha = alpha))
+        // The outline's width is set against the scale, so it stays a fixed hairline.
+        drawPath(parts.diamond, Color.White.copy(alpha = 0.9f * alpha), style = Stroke(0.7.dp.toPx() / size))
     }
-    drawPath(diamond, hot.copy(alpha = alpha))
-    drawPath(diamond, Color.White.copy(alpha = 0.9f * alpha), style = Stroke(0.7.dp.toPx()))
 }
