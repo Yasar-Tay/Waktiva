@@ -10,9 +10,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 /**
- * The 4×2 day ring widget: the day circle with the weather in its middle, the countdown to the
- * next prayer, the day's weather and today's prayer log, marked with a tap. Drawn by
- * [DayWidgets] and refreshed with the other widgets by [WaktivaWidget.updateAll].
+ * The 4×2 "prayer now" widget: the prayer whose time it is, the time left for it and "I prayed";
+ * once it's marked, the countdown to the next prayer with the weather and today's marks. Drawn
+ * by [DayWidgets] and refreshed with the other widgets by [WaktivaWidget.updateAll].
  */
 class WaktivaDayRingWidget : AppWidgetProvider() {
 

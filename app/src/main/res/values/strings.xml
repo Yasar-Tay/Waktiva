@@ -439,10 +439,14 @@
     <string name="widget_empty">Open Waktiva to load prayer times</string>
     <string name="widget_countdown_label">Countdown</string>
     <string name="widget_countdown_description">The time left to the next prayer, large and at a glance</string>
-    <string name="widget_ring_label">Day Ring</string>
-    <string name="widget_ring_description">The day circle with its sky, the weather, the countdown and your prayer log, marked with a tap</string>
+    <string name="widget_ring_label">Prayer Now</string>
+    <string name="widget_ring_description">The prayer whose time it is, the time left for it, and “I prayed” in one tap</string>
     <string name="widget_my_day_label">My Day</string>
-    <string name="widget_my_day_description">The whole day: the circle, the weather, the countdown and every time, marked in your prayer log with a tap</string>
+    <string name="widget_my_day_description">The prayer whose time it is and the time left for it, with the day’s circle and its times</string>
+    <string name="widget_prayer_time">%1$s time</string>
+    <string name="widget_prayer_time_ending">%1$s time is ending</string>
+    <string name="widget_prayer_prayed">%1$s prayed</string>
+    <string name="widget_left_until">left · %1$s %2$s</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Prayer Log</string>

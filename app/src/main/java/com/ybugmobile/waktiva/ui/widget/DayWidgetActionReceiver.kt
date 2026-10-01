@@ -12,9 +12,9 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 /**
- * What the day circle widgets ask of the app: a tap on a prayer's token marks it in the prayer
- * log or takes the mark back ([DayWidgets.ACTION_TOGGLE_PRAYER]), and the half-hourly tick moves
- * the circle's hand and sky along ([DayWidgets.ACTION_TICK]). Either way every widget is redrawn.
+ * What the day circle widgets ask of the app: "I prayed" marks the prayer in the prayer log, and
+ * a tap on "✓ … prayed" takes the mark back ([DayWidgets.ACTION_TOGGLE_PRAYER]); the ticks keep
+ * the widgets up with the day ([DayWidgets.ACTION_TICK]). Either way every widget is redrawn.
  */
 class DayWidgetActionReceiver : BroadcastReceiver() {
 

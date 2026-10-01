@@ -9,10 +9,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 /**
- * The 4×4 "my day" widget: the place, the dates and the weather, the day circle with the
- * countdown at its heart and the prayers' weather round it, and the day's times as today's
- * prayer log, marked with a tap. Drawn by [DayWidgets] and refreshed with the other widgets by
- * [WaktivaWidget.updateAll].
+ * The 4×4 "my day" widget: the same moment as the 4×2 with the weather as a note, the day circle
+ * with the current prayer's stretch lit, and the day's five times. Drawn by [DayWidgets] and
+ * refreshed with the other widgets by [WaktivaWidget.updateAll].
  */
 class WaktivaMyDayWidget : AppWidgetProvider() {
 

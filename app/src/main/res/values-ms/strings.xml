@@ -440,10 +440,14 @@
     <string name="widget_empty">Buka Waktiva untuk memuatkan waktu solat</string>
     <string name="widget_countdown_label">Kiraan Detik</string>
     <string name="widget_countdown_description">Baki masa ke solat seterusnya, besar dan sekali pandang</string>
-    <string name="widget_ring_label">Cincin Hari</string>
-    <string name="widget_ring_description">Bulatan hari dengan langitnya, cuaca, kiraan detik dan catatan solatmu yang ditanda dengan satu ketikan</string>
+    <string name="widget_ring_label">Solat Sekarang</string>
+    <string name="widget_ring_description">Solat yang sedang masuk waktunya, baki masanya dan “Sudah solat” dengan satu ketikan</string>
     <string name="widget_my_day_label">Hariku</string>
-    <string name="widget_my_day_description">Sepanjang hari: bulatan, cuaca, kiraan detik dan setiap waktu, ditanda dalam catatan solat dengan satu ketikan</string>
+    <string name="widget_my_day_description">Solat yang sedang masuk waktunya dan baki masanya, bersama bulatan hari dan waktunya</string>
+    <string name="widget_prayer_time">Waktu %1$s</string>
+    <string name="widget_prayer_time_ending">Waktu %1$s hampir tamat</string>
+    <string name="widget_prayer_prayed">%1$s sudah</string>
+    <string name="widget_left_until">berbaki · %1$s %2$s</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Catatan Solat</string>

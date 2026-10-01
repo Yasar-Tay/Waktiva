@@ -113,7 +113,7 @@
                 android:resource="@xml/waktiva_countdown_widget_info" />
         </receiver>
 
-        <!-- The day circle widgets: the 4×2 day ring and the 4×4 "my day"; refreshed with the others by WaktivaWidget.updateAll -->
+        <!-- The day circle widgets: the 4×2 "prayer now" and the 4×4 "my day"; refreshed with the others by WaktivaWidget.updateAll -->
         <receiver
             android:name=".ui.widget.WaktivaDayRingWidget"
             android:exported="true"
@@ -138,7 +138,7 @@
                 android:resource="@xml/waktiva_my_day_widget_info" />
         </receiver>
 
-        <!-- Marks a prayer from a day circle widget's token, and runs those widgets' half-hourly tick -->
+        <!-- Marks a prayer from a day circle widget's "I prayed", and runs those widgets' ticks -->
         <receiver
             android:name=".ui.widget.DayWidgetActionReceiver"
             android:exported="false" />

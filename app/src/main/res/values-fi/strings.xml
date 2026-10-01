@@ -440,10 +440,14 @@
     <string name="widget_empty">Avaa Waktiva ladataksesi rukousajat</string>
     <string name="widget_countdown_label">Lähtölaskenta</string>
     <string name="widget_countdown_description">Aika seuraavaan rukoukseen, suurena ja yhdellä silmäyksellä</string>
-    <string name="widget_ring_label">Päivän rengas</string>
-    <string name="widget_ring_description">Päivän ympyrä taivaineen, sää, lähtölaskenta ja rukouskirjasi yhdellä napautuksella</string>
+    <string name="widget_ring_label">Rukous nyt</string>
+    <string name="widget_ring_description">Rukous, jonka aika on nyt, jäljellä oleva aika ja ”Rukoilin” yhdellä napautuksella</string>
     <string name="widget_my_day_label">Minun päiväni</string>
-    <string name="widget_my_day_description">Koko päivä: ympyrä, sää, lähtölaskenta ja kaikki ajat, merkittynä rukouskirjaan napautuksella</string>
+    <string name="widget_my_day_description">Rukous, jonka aika on nyt, ja jäljellä oleva aika, päivän ympyrän ja aikojen kanssa</string>
+    <string name="widget_prayer_time">%1$s-aika</string>
+    <string name="widget_prayer_time_ending">%1$s-aika päättymässä</string>
+    <string name="widget_prayer_prayed">%1$s rukoiltu</string>
+    <string name="widget_left_until">jäljellä · %1$s %2$s</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Rukousloki</string>

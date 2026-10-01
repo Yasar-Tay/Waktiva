@@ -440,10 +440,14 @@
     <string name="widget_empty">Abra o Waktiva para carregar os horários de oração</string>
     <string name="widget_countdown_label">Contagem regressiva</string>
     <string name="widget_countdown_description">O tempo que falta para a próxima oração, grande e num relance</string>
-    <string name="widget_ring_label">Anel do dia</string>
-    <string name="widget_ring_description">O círculo do dia com o seu céu, o tempo, a contagem regressiva e o teu registo de orações, marcado com um toque</string>
+    <string name="widget_ring_label">Oração agora</string>
+    <string name="widget_ring_description">A oração cuja hora é agora, o tempo que lhe resta e «Rezei» com um toque</string>
     <string name="widget_my_day_label">O meu dia</string>
-    <string name="widget_my_day_description">O dia inteiro: o círculo, o tempo, a contagem regressiva e cada horário, marcados no registo com um toque</string>
+    <string name="widget_my_day_description">A oração cuja hora é agora e o tempo que lhe resta, com o círculo do dia e os seus horários</string>
+    <string name="widget_prayer_time">Hora de %1$s</string>
+    <string name="widget_prayer_time_ending">A hora de %1$s está a acabar</string>
+    <string name="widget_prayer_prayed">%1$s rezada</string>
+    <string name="widget_left_until">faltam · %1$s %2$s</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Registro de orações</string>

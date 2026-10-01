@@ -440,10 +440,14 @@
     <string name="widget_empty">Otvorite Waktiva da učitate vaktiju</string>
     <string name="widget_countdown_label">Odbrojavanje</string>
     <string name="widget_countdown_description">Preostalo vrijeme do sljedećeg namaza, krupno i na prvi pogled</string>
-    <string name="widget_ring_label">Dnevni krug</string>
-    <string name="widget_ring_description">Dnevni krug s nebom, vrijeme, odbrojavanje i tvoj dnevnik namaza, označen jednim dodirom</string>
+    <string name="widget_ring_label">Namaz sada</string>
+    <string name="widget_ring_description">Namaz čije je vrijeme, koliko mu je ostalo i „Klanjao sam“ jednim dodirom</string>
     <string name="widget_my_day_label">Moj dan</string>
-    <string name="widget_my_day_description">Cijeli dan: krug, vrijeme, odbrojavanje i svi vakti, označeni u dnevniku namaza jednim dodirom</string>
+    <string name="widget_my_day_description">Namaz čije je vrijeme i koliko mu je ostalo, uz dnevni krug i vakte</string>
+    <string name="widget_prayer_time">Vrijeme za %1$s</string>
+    <string name="widget_prayer_time_ending">Vrijeme za %1$s ističe</string>
+    <string name="widget_prayer_prayed">%1$s klanjan</string>
+    <string name="widget_left_until">preostalo · %1$s %2$s</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Evidencija namaza</string>

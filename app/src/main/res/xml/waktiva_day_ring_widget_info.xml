@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  The day ring widget: a 4×2 with the day circle, the countdown, the weather and today's prayer
-  log. Below ~150 dp tall it drops the weather line and the tokens' times (see DayWidgets).
+  The "prayer now" widget: a 4×2 with the prayer whose time it is, the time left for it and
+  "I prayed". Below ~150 dp tall its countdown is smaller (see DayWidgets).
   Refreshed by WaktivaWidget.updateAll at prayer boundaries and by DayWidgets' half-hourly tick,
   so updatePeriodMillis stays 0.
 -->

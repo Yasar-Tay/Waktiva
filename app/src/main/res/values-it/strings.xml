@@ -428,10 +428,14 @@
     <string name="widget_empty">Apri Waktiva per caricare gli orari di preghiera</string>
     <string name="widget_countdown_label">Conto alla rovescia</string>
     <string name="widget_countdown_description">Il tempo che manca alla prossima preghiera, in grande e a colpo d\'occhio</string>
-    <string name="widget_ring_label">Anello del giorno</string>
-    <string name="widget_ring_description">Il cerchio del giorno con il suo cielo, il meteo, il conto alla rovescia e il tuo registro delle preghiere, segnato con un tocco</string>
+    <string name="widget_ring_label">Preghiera ora</string>
+    <string name="widget_ring_description">La preghiera di cui è l’ora, il tempo che le resta e «Ho pregato» con un tocco</string>
     <string name="widget_my_day_label">La mia giornata</string>
-    <string name="widget_my_day_description">Tutta la giornata: il cerchio, il meteo, il conto alla rovescia e ogni orario, segnati nel registro con un tocco</string>
+    <string name="widget_my_day_description">La preghiera di cui è l’ora e il tempo che le resta, con il cerchio del giorno e i suoi orari</string>
+    <string name="widget_prayer_time">Ora di %1$s</string>
+    <string name="widget_prayer_time_ending">L’ora di %1$s sta finendo</string>
+    <string name="widget_prayer_prayed">%1$s pregata</string>
+    <string name="widget_left_until">restano · %1$s %2$s</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Registro delle preghiere</string>

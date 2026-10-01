@@ -440,10 +440,14 @@
     <string name="widget_empty">Откройте Waktiva, чтобы загрузить время намаза</string>
     <string name="widget_countdown_label">Обратный отсчёт</string>
     <string name="widget_countdown_description">Время до следующего намаза, крупно и с одного взгляда</string>
-    <string name="widget_ring_label">Кольцо дня</string>
-    <string name="widget_ring_description">Круг дня с его небом, погода, обратный отсчёт и твой дневник намазов, отмечаемый одним касанием</string>
+    <string name="widget_ring_label">Намаз сейчас</string>
+    <string name="widget_ring_description">Намаз, время которого идёт, сколько его осталось и «Совершил» одним касанием</string>
     <string name="widget_my_day_label">Мой день</string>
-    <string name="widget_my_day_description">Весь день: круг, погода, обратный отсчёт и каждое время, отмечаемое в дневнике намазов одним касанием</string>
+    <string name="widget_my_day_description">Намаз, время которого идёт, и сколько его осталось, с кругом дня и временами</string>
+    <string name="widget_prayer_time">Время %1$s</string>
+    <string name="widget_prayer_time_ending">Время %1$s истекает</string>
+    <string name="widget_prayer_prayed">%1$s совершён</string>
+    <string name="widget_left_until">осталось · %1$s %2$s</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Учёт намазов</string>

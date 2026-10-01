@@ -441,10 +441,14 @@
     <string name="widget_empty">نماز کے اوقات لوڈ کرنے کے لیے Waktiva کھولیں</string>
     <string name="widget_countdown_label">الٹی گنتی</string>
     <string name="widget_countdown_description">اگلی نماز تک باقی وقت، بڑا اور ایک نظر میں</string>
-    <string name="widget_ring_label">دن کا حلقہ</string>
-    <string name="widget_ring_description">آسمان کے ساتھ دن کا دائرہ، موسم، الٹی گنتی اور ایک چھونے سے نشان زد نماز کا حساب</string>
+    <string name="widget_ring_label">ابھی کی نماز</string>
+    <string name="widget_ring_description">جس نماز کا وقت ہے، اس کا باقی وقت اور ایک چھونے سے “پڑھ لی”</string>
     <string name="widget_my_day_label">میرا دن</string>
-    <string name="widget_my_day_description">پورا دن: دائرہ، موسم، الٹی گنتی اور ہر وقت، ایک چھونے سے نماز کے حساب میں نشان زد</string>
+    <string name="widget_my_day_description">جس نماز کا وقت ہے اور اس کا باقی وقت، دن کے دائرے اور اوقات کے ساتھ</string>
+    <string name="widget_prayer_time">%1$s کا وقت</string>
+    <string name="widget_prayer_time_ending">%1$s کا وقت ختم ہو رہا ہے</string>
+    <string name="widget_prayer_prayed">%1$s ادا ہو گئی</string>
+    <string name="widget_left_until">باقی · %1$s %2$s</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">نماز کا ریکارڈ</string>

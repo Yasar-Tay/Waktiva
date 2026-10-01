@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A prayer marked in the prayer log: the log's gold, with a bright rim. -->
+<!-- The "I prayed" disc: the prayer log's gold, with a bright rim. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <solid android:color="#FFFFD54F" />

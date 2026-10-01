@@ -441,10 +441,14 @@
     <string name="widget_empty">নামাজের সময় লোড করতে Waktiva খুলুন</string>
     <string name="widget_countdown_label">কাউন্টডাউন</string>
     <string name="widget_countdown_description">পরবর্তী নামাজ পর্যন্ত বাকি সময়, বড় করে এক নজরে</string>
-    <string name="widget_ring_label">দিনের বৃত্ত</string>
-    <string name="widget_ring_description">আকাশসহ দিনের বৃত্ত, আবহাওয়া, কাউন্টডাউন আর এক ছোঁয়ায় চিহ্নিত নামাজের হিসাব</string>
+    <string name="widget_ring_label">এখনকার নামাজ</string>
+    <string name="widget_ring_description">যে নামাজের ওয়াক্ত চলছে, তার বাকি সময় আর এক ছোঁয়ায় “নামাজ পড়েছি”</string>
     <string name="widget_my_day_label">আমার দিন</string>
-    <string name="widget_my_day_description">পুরো দিন: বৃত্ত, আবহাওয়া, কাউন্টডাউন আর প্রতিটি ওয়াক্ত, এক ছোঁয়ায় নামাজের হিসাবে চিহ্নিত</string>
+    <string name="widget_my_day_description">যে নামাজের ওয়াক্ত চলছে ও তার বাকি সময়, দিনের বৃত্ত ও ওয়াক্তগুলোসহ</string>
+    <string name="widget_prayer_time">%1$s-এর ওয়াক্ত</string>
+    <string name="widget_prayer_time_ending">%1$s-এর ওয়াক্ত শেষ হচ্ছে</string>
+    <string name="widget_prayer_prayed">%1$s আদায় হয়েছে</string>
+    <string name="widget_left_until">বাকি · %1$s %2$s</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">নামাজের হিসাব</string>

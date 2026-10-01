@@ -440,10 +440,14 @@
     <string name="widget_empty">Otwórz Waktiva, aby wczytać czasy modlitw</string>
     <string name="widget_countdown_label">Odliczanie</string>
     <string name="widget_countdown_description">Czas do następnej modlitwy, duży i widoczny od razu</string>
-    <string name="widget_ring_label">Pierścień dnia</string>
-    <string name="widget_ring_description">Krąg dnia z niebem, pogoda, odliczanie i twój dziennik modlitw, zaznaczany jednym dotknięciem</string>
+    <string name="widget_ring_label">Modlitwa teraz</string>
+    <string name="widget_ring_description">Modlitwa, której czas trwa, ile go zostało i „Modliłem się” jednym dotknięciem</string>
     <string name="widget_my_day_label">Mój dzień</string>
-    <string name="widget_my_day_description">Cały dzień: krąg, pogoda, odliczanie i wszystkie pory, zaznaczane w dzienniku modlitw jednym dotknięciem</string>
+    <string name="widget_my_day_description">Modlitwa, której czas trwa, i ile go zostało, z kręgiem dnia i porami</string>
+    <string name="widget_prayer_time">Czas na %1$s</string>
+    <string name="widget_prayer_time_ending">Czas na %1$s się kończy</string>
+    <string name="widget_prayer_prayed">%1$s odmówiona</string>
+    <string name="widget_left_until">zostało · %1$s %2$s</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Dziennik modlitw</string>

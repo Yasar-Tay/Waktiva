@@ -3,9 +3,8 @@ package com.ybugmobile.waktiva.ui.widget
 import com.ybugmobile.waktiva.data.local.CachedWeather
 import com.ybugmobile.waktiva.domain.model.DayForecast
 import com.ybugmobile.waktiva.domain.model.HourForecast
-import com.ybugmobile.waktiva.domain.model.LoggedPrayers
+import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerDay
-import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.model.WeatherInfo
@@ -14,7 +13,9 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
 
@@ -22,56 +23,85 @@ class DayWidgetModelTest {
 
     private val today = LocalDate.of(2026, 9, 30)
     private val day = day(today)
-    private val nextDay = day(today.plusDays(1))
 
     @Test
     fun currentPrayerIsTheLastToHaveBegun() {
         assertEquals(PrayerType.DHUHR, DayWidgetModel.currentPrayer(day, LocalTime.of(15, 0)))
         assertEquals(PrayerType.ASR, DayWidgetModel.currentPrayer(day, LocalTime.of(16, 30)))
-    }
-
-    @Test
-    fun currentPrayerBeforeFajrIsTheNightsIsha() {
         assertEquals(PrayerType.ISHA, DayWidgetModel.currentPrayer(day, LocalTime.of(3, 0)))
     }
 
     @Test
-    fun cellsFollowThePrayerLog() {
-        val cells = DayWidgetModel.cells(
-            day, nextDay, LoggedPrayers,
-            prayed = setOf(PrayerType.FAJR),
-            now = today.atTime(15, 0),
-            logStart = today.minusDays(3),
-            logEnabled = true
-        ).associateBy { it.type }
+    fun anUnmarkedPrayerIsOpenWithIPrayedOffered() {
+        val now = today.atTime(15, 0)
+        val moment = DayWidgetModel.moment(day, now, next(PrayerType.ASR, today, 16, 10, now), emptyMap(), logEnabled = true)
 
-        assertEquals(PrayerLogStatus.PRAYED, cells.getValue(PrayerType.FAJR).status)
-        assertEquals(PrayerLogStatus.ACTIVE, cells.getValue(PrayerType.DHUHR).status)
-        assertEquals(PrayerLogStatus.UPCOMING, cells.getValue(PrayerType.ASR).status)
-        assertTrue(cells.getValue(PrayerType.DHUHR).isCurrent)
-        assertTrue(cells.getValue(PrayerType.FAJR).canMark)
-        assertTrue(cells.getValue(PrayerType.DHUHR).canMark)
-        assertFalse(cells.getValue(PrayerType.ASR).canMark)
+        assertEquals(MomentState.OPEN, moment.state)
+        assertEquals(PrayerType.DHUHR, moment.prayer)
+        assertEquals(today, moment.logDate)
+        assertEquals(today.atTime(16, 10), moment.endsAt)
+        assertTrue(moment.canMark)
     }
 
     @Test
-    fun anUnmarkedPrayerWhoseTimeWentIsMissedAndCanStillBeMarked() {
-        val fajr = DayWidgetModel.cells(day, nextDay, LoggedPrayers, emptySet(), today.atTime(15, 0), today.minusDays(3), true)
-            .first { it.type == PrayerType.FAJR }
+    fun theLastHalfHourIsEnding() {
+        val now = today.atTime(15, 45)
+        val moment = DayWidgetModel.moment(day, now, next(PrayerType.ASR, today, 16, 10, now), emptyMap(), logEnabled = true)
 
-        assertEquals(PrayerLogStatus.MISSED, fajr.status)
-        assertTrue(fajr.isPassed)
-        assertTrue(fajr.canMark)
+        assertEquals(MomentState.ENDING, moment.state)
+        assertTrue(moment.canMark)
     }
 
     @Test
-    fun sunriseAndEveryTimeWithTheLogOffCarryNoStatus() {
-        val withLog = DayWidgetModel.cells(day, nextDay, PrayerType.entries, emptySet(), today.atTime(15, 0), null, true)
-        assertNull(withLog.first { it.type == PrayerType.SUNRISE }.status)
-        assertFalse(withLog.first { it.type == PrayerType.SUNRISE }.canMark)
+    fun aMarkedPrayerIsPrayedWithNothingToMark() {
+        val now = today.atTime(15, 45)
+        val prayed = mapOf(today to setOf(PrayerType.DHUHR))
+        val moment = DayWidgetModel.moment(day, now, next(PrayerType.ASR, today, 16, 10, now), prayed, logEnabled = true)
 
-        val withoutLog = DayWidgetModel.cells(day, nextDay, PrayerType.entries, setOf(PrayerType.FAJR), today.atTime(15, 0), null, false)
-        assertTrue(withoutLog.all { it.status == null && !it.canMark })
+        assertEquals(MomentState.PRAYED, moment.state)
+        assertFalse(moment.canMark)
+    }
+
+    @Test
+    fun afterSunriseItsTheWaitForDhuhr() {
+        val now = today.atTime(9, 0)
+        val moment = DayWidgetModel.moment(day, now, next(PrayerType.DHUHR, today, 12, 55, now), emptyMap(), logEnabled = true)
+
+        assertEquals(MomentState.WAITING, moment.state)
+        assertFalse(moment.canMark)
+    }
+
+    @Test
+    fun beforeDawnTheNightsIshaIsYesterdays() {
+        val now = today.atTime(3, 0)
+        val next = next(PrayerType.FAJR, today, 5, 20, now)
+
+        val open = DayWidgetModel.moment(day, now, next, emptyMap(), logEnabled = true)
+        assertEquals(PrayerType.ISHA, open.prayer)
+        assertEquals(today.minusDays(1), open.logDate)
+        assertTrue(open.canMark)
+
+        val prayed = DayWidgetModel.moment(day, now, next, mapOf(today.minusDays(1) to setOf(PrayerType.ISHA)), logEnabled = true)
+        assertEquals(MomentState.PRAYED, prayed.state)
+    }
+
+    @Test
+    fun withTheLogOffTheTimeStillCountsButNothingIsMarked() {
+        val now = today.atTime(15, 45)
+        val moment = DayWidgetModel.moment(day, now, next(PrayerType.ASR, today, 16, 10, now), mapOf(today to setOf(PrayerType.DHUHR)), logEnabled = false)
+
+        assertEquals(MomentState.ENDING, moment.state)
+        assertFalse(moment.canMark)
+    }
+
+    @Test
+    fun timesAreTheFivePrayersWithTheCurrentOneAndThosePrayed() {
+        val times = DayWidgetModel.times(day, today.atTime(15, 0), PrayerType.DHUHR, setOf(PrayerType.FAJR))
+
+        assertEquals(listOf(PrayerType.FAJR, PrayerType.DHUHR, PrayerType.ASR, PrayerType.MAGHRIB, PrayerType.ISHA), times.map { it.type })
+        assertTrue(times.first { it.type == PrayerType.DHUHR }.isCurrent)
+        assertTrue(times.first { it.type == PrayerType.FAJR }.let { it.isPassed && it.isPrayed })
+        assertFalse(times.first { it.type == PrayerType.ASR }.isPassed)
     }
 
     @Test
@@ -81,7 +111,6 @@ class DayWidgetModelTest {
 
         assertEquals(WeatherCondition.RAINY, weather?.condition)
         assertEquals(18.0, weather!!.temperature, 0.0)
-        assertEquals(today, weather.forecast?.date)
     }
 
     @Test
@@ -100,7 +129,10 @@ class DayWidgetModelTest {
         assertNull(DayWidgetModel.weatherNow(null, now, millis(now)))
     }
 
-    private fun millis(at: java.time.LocalDateTime) = at.toInstant(ZoneOffset.UTC).toEpochMilli()
+    private fun next(type: PrayerType, date: LocalDate, hour: Int, minute: Int, now: LocalDateTime) =
+        NextPrayer(type, LocalTime.of(hour, minute), date, Duration.between(now, date.atTime(hour, minute)))
+
+    private fun millis(at: LocalDateTime) = at.toInstant(ZoneOffset.UTC).toEpochMilli()
 
     private fun cache(fetchedAt: Long) = CachedWeather(
         WeatherInfo(

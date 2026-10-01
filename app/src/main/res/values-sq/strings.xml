@@ -440,10 +440,14 @@
     <string name="widget_empty">Hapni Waktiva për të ngarkuar kohët e namazit</string>
     <string name="widget_countdown_label">Numërimi mbrapsht</string>
     <string name="widget_countdown_description">Koha që mbetet deri te namazi i radhës, e madhe dhe me një shikim</string>
-    <string name="widget_ring_label">Unaza e ditës</string>
-    <string name="widget_ring_description">Rrethi i ditës me qiellin e tij, moti, numërimi mbrapsht dhe regjistri yt i namazeve, i shënuar me një prekje</string>
+    <string name="widget_ring_label">Namazi tani</string>
+    <string name="widget_ring_description">Namazi që ka hyrë, koha që i mbetet dhe “U fala” me një prekje</string>
     <string name="widget_my_day_label">Dita ime</string>
-    <string name="widget_my_day_description">E gjithë dita: rrethi, moti, numërimi mbrapsht dhe çdo kohë, të shënuara në regjistër me një prekje</string>
+    <string name="widget_my_day_description">Namazi që ka hyrë dhe koha që i mbetet, me rrethin e ditës dhe kohët</string>
+    <string name="widget_prayer_time">Koha e %1$s</string>
+    <string name="widget_prayer_time_ending">Koha e %1$s po mbaron</string>
+    <string name="widget_prayer_prayed">%1$s u fal</string>
+    <string name="widget_left_until">mbetet · %1$s %2$s</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Regjistri i namazeve</string>

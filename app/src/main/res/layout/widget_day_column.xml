@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One time of the day in the "my day" strip: its token, which a tap marks, its name and its time. -->
+<!-- One of the day's times in the "my day" widget: the prayer's name over its time. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_cell"
     android:layout_width="0dp"
@@ -10,23 +10,15 @@
     android:paddingTop="4dp"
     android:paddingBottom="4dp">
 
-    <ImageView
-        android:id="@+id/widget_token"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:padding="7dp"
-        android:scaleType="fitCenter" />
-
     <TextView
         android:id="@+id/widget_cell_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:maxLines="1"
         android:textColor="#B3FFFFFF"
-        android:textSize="10sp" />
+        android:textSize="11sp" />
 
     <TextView
         android:id="@+id/widget_cell_time"
@@ -36,5 +28,5 @@
         android:fontFeatureSettings="tnum"
         android:maxLines="1"
         android:textColor="#FFFFFFFF"
-        android:textSize="12sp" />
+        android:textSize="13sp" />
 </LinearLayout>

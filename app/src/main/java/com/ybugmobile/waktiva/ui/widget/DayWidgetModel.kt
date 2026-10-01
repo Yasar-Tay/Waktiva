@@ -1,43 +1,69 @@
 package com.ybugmobile.waktiva.ui.widget
 
 import com.ybugmobile.waktiva.data.local.CachedWeather
-import com.ybugmobile.waktiva.domain.model.DayForecast
+import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerDay
-import com.ybugmobile.waktiva.domain.model.PrayerLog
-import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.model.isLogged
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 /**
- * One time of the day in the day circle widgets' strip. [status] is where the prayer stands in
- * the prayer log, or null for a time the log doesn't keep (sunrise, or every time while the log
- * is off).
+ * Where the day stands for the day circle widgets, which show only what matters at this moment
+ * rather than the whole day at once.
  */
-internal data class DayCell(
-    val type: PrayerType,
-    val time: LocalTime,
-    val status: PrayerLogStatus?,
-    val isCurrent: Boolean,
-    val isPassed: Boolean
-) {
-    /** Whether a tap marks it, or takes the mark back: once its time has come. */
-    val canMark: Boolean get() = status != null && status != PrayerLogStatus.UPCOMING
+internal enum class MomentState {
+    /** A prayer's time is on and it isn't marked: the time left for it, and "I prayed". */
+    OPEN,
+
+    /** As [OPEN], in the last [DayWidgetModel.ENDING_MINUTES] of its time. */
+    ENDING,
+
+    /** The prayer whose time it is is marked: a calm countdown to the next one. */
+    PRAYED,
+
+    /** No prayer's time is on (after sunrise): the countdown to the next one. */
+    WAITING
 }
 
-/** The weather the widgets show for now, and the day's forecast when there is one. */
+/**
+ * The moment: the [prayer] whose time it is (sunrise after sunrise), the day it's kept under in
+ * the prayer log ([logDate], yesterday for the night's Isha before dawn), what comes [next] and
+ * when the [prayer]'s time ends, which is when [next] begins.
+ */
+internal data class Moment(
+    val state: MomentState,
+    val prayer: PrayerType,
+    val logDate: LocalDate,
+    val next: NextPrayer,
+    val endsAt: LocalDateTime,
+    /** Whether "I prayed" is offered: the log is on and the prayer is one it keeps, not yet marked. */
+    val canMark: Boolean
+)
+
+/** One prayer in the 4×4 widget's line of times. */
+internal data class DayTime(
+    val type: PrayerType,
+    val time: LocalTime,
+    val isCurrent: Boolean,
+    val isPassed: Boolean,
+    val isPrayed: Boolean
+)
+
+/** The weather the widgets show for now. */
 internal data class WidgetWeather(
     val condition: WeatherCondition,
-    val effectCondition: WeatherCondition,
     val isDay: Boolean,
-    val temperature: Double,
-    val forecast: DayForecast?
+    val temperature: Double
 )
 
 internal object DayWidgetModel {
+
+    /** The last stretch of a prayer's time, when the widgets warn that it's ending. */
+    const val ENDING_MINUTES = 30L
 
     /** How long the weather fetched stays "now"; after that the forecast for the hour stands in. */
     const val CURRENT_WEATHER_FRESH_MILLIS = 2 * 60 * 60 * 1000L
@@ -50,46 +76,53 @@ internal object DayWidgetModel {
             ?.key ?: PrayerType.ISHA
 
     /**
-     * [day]'s [types] at [now], each with its place in the prayer log from the prayers marked on
-     * it ([prayed]) when [logEnabled]. [nextDay] closes Isha's time at the next dawn; [logStart]
-     * is the day the log began.
+     * The moment at [now] on [today], with [next] the prayer the app counts down to. [prayed] are
+     * the prayers marked in the log, by day; with [logEnabled] off nothing is offered to mark.
      */
-    fun cells(
-        day: PrayerDay,
-        nextDay: PrayerDay?,
-        types: List<PrayerType>,
-        prayed: Set<PrayerType>,
+    fun moment(
+        today: PrayerDay,
         now: LocalDateTime,
-        logStart: LocalDate?,
+        next: NextPrayer,
+        prayed: Map<LocalDate, Set<PrayerType>>,
         logEnabled: Boolean
-    ): List<DayCell> {
-        val current = currentPrayer(day, now.toLocalTime()).takeIf { day.date == now.toLocalDate() }
-        val trackedSince = PrayerLog.trackedSince(logStart, now.toLocalDate())
-        return types.mapNotNull { type ->
+    ): Moment {
+        val fajr = today.timings[PrayerType.FAJR]
+        val beforeDawn = fajr != null && now.toLocalTime().isBefore(fajr)
+        val prayer = if (beforeDawn) PrayerType.ISHA else currentPrayer(today, now.toLocalTime())
+        val logDate = if (beforeDawn) today.date.minusDays(1) else today.date
+        val endsAt = next.date.atTime(next.time)
+
+        val isPrayed = prayer in prayed[logDate].orEmpty()
+        val keeps = logEnabled && prayer.isLogged
+        val state = when {
+            prayer == PrayerType.SUNRISE -> MomentState.WAITING
+            keeps && isPrayed -> MomentState.PRAYED
+            Duration.between(now, endsAt) <= Duration.ofMinutes(ENDING_MINUTES) -> MomentState.ENDING
+            else -> MomentState.OPEN
+        }
+        return Moment(
+            state = state,
+            prayer = prayer,
+            logDate = logDate,
+            next = next,
+            endsAt = endsAt,
+            canMark = keeps && !isPrayed && state != MomentState.WAITING
+        )
+    }
+
+    /** [day]'s five prayers at [now], with those marked in [prayed]. */
+    fun times(day: PrayerDay, now: LocalDateTime, current: PrayerType, prayed: Set<PrayerType>): List<DayTime> =
+        PrayerType.entries.filter { it.isLogged }.mapNotNull { type ->
             val time = day.timings[type] ?: return@mapNotNull null
-            val start = time.atDate(day.date)
-            val status = if (logEnabled && type.isLogged) {
-                PrayerLog.status(
-                    date = day.date,
-                    type = type,
-                    prayed = type in prayed,
-                    now = now,
-                    start = start,
-                    end = PrayerLog.windowEnd(type, day, nextDay),
-                    trackedSince = trackedSince
-                )
-            } else {
-                null
-            }
-            DayCell(
+            val isCurrent = type == current && !day.date.atTime(time).isAfter(now)
+            DayTime(
                 type = type,
                 time = time,
-                status = status,
-                isCurrent = type == current,
-                isPassed = !start.isAfter(now) && type != current
+                isCurrent = isCurrent,
+                isPassed = !isCurrent && !day.date.atTime(time).isAfter(now),
+                isPrayed = type in prayed
             )
         }
-    }
 
     /**
      * The weather for [now] from the [cache]: what was reported while it's fresh, the forecast
@@ -97,13 +130,12 @@ internal object DayWidgetModel {
      */
     fun weatherNow(cache: CachedWeather?, now: LocalDateTime, nowMillis: Long): WidgetWeather? {
         cache ?: return null
-        val forecast = cache.info.forecast.firstOrNull { it.date == now.toLocalDate() }
         val age = nowMillis - cache.fetchedAtMillis
         if (age in 0 until CURRENT_WEATHER_FRESH_MILLIS) {
             val info = cache.info
-            return WidgetWeather(info.condition, info.effectCondition, info.isDay, info.temperature, forecast)
+            return WidgetWeather(info.condition, info.isDay, info.temperature)
         }
-        val hour = forecast?.at(now.toLocalTime()) ?: return null
-        return WidgetWeather(hour.condition, hour.effectCondition, hour.isDay, hour.temperature, forecast)
+        val hour = cache.info.forecast.firstOrNull { it.date == now.toLocalDate() }?.at(now.toLocalTime()) ?: return null
+        return WidgetWeather(hour.condition, hour.isDay, hour.temperature)
     }
 }
