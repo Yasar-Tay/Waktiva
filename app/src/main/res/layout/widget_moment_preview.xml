@@ -5,49 +5,110 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:maxLines="1"
-        android:text="@string/prayer_dhuhr"
-        android:textColor="#FF6EE7B7"
-        android:textSize="13sp" />
+        android:background="@drawable/widget_chip"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingTop="3dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="3dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:fontFeatureSettings="tnum"
-        android:includeFontPadding="false"
-        android:letterSpacing="-0.02"
-        android:maxLines="1"
-        android:text="1:10:24"
-        android:textColor="#FFFFFFFF"
-        android:textSize="40sp" />
+        <ImageView
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/widget_dot"
+            android:tint="#FF6EE7B7" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:letterSpacing="0.1"
+            android:maxLines="1"
+            android:text="@string/prayer_dhuhr"
+            android:textAllCaps="true"
+            android:textColor="#E6FFFFFF"
+            android:textSize="10.5sp" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="4dp"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="@font/inter_light"
+            android:includeFontPadding="false"
+            android:letterSpacing="-0.03"
             android:maxLines="1"
-            android:text="@string/prayer_asr"
-            android:textColor="#B3FFFFFF"
-            android:textSize="13sp" />
+            android:text="1:10:24"
+            android:textColor="#FFFFFFFF"
+            android:textSize="44sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
+            android:layout_marginStart="6dp"
+            android:fontFamily="@font/inter_regular"
             android:maxLines="1"
-            android:text=" · 16:10"
+            android:text="@string/widget_left"
             android:textColor="#B3FFFFFF"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/clear_day"
+            android:tint="#FFFFCC80" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:maxLines="1"
+            android:text="@string/prayer_asr"
+            android:textColor="#CCFFFFFF"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/inter_medium"
+            android:maxLines="1"
+            android:text="  16:10"
+            android:textColor="#CCFFFFFF"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="3dp"
+            android:src="@drawable/partly_cloudy_day" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:text="18°"
+            android:textColor="#E6FFFFFF"
             android:textSize="13sp" />
     </LinearLayout>
 </LinearLayout>

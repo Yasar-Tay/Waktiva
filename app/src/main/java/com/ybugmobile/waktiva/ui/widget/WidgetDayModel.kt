@@ -6,31 +6,21 @@ import com.ybugmobile.waktiva.domain.model.PrayerType
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-/** Widget families. The launcher cell size decides which one is rendered. */
+/** The 2×2 widget's families. The launcher cell size decides which one is rendered. */
 internal enum class WidgetSize {
-    /** Single-row bar (e.g. 4×1) — also keeps widgets placed with the previous design readable. */
+    /** Short cells (e.g. 4×1), kept readable for widgets placed with an earlier design: the countdown bar. */
     COMPACT,
     /** iOS 2×2 square. */
-    SMALL,
-    /** iOS 4×2. */
-    MEDIUM,
-    /** iOS 4×4. */
-    LARGE;
+    SMALL;
 
     companion object {
         /** Minimum dp dimensions at which each family starts. */
         const val MIN_WIDTH_DP = 110f
         const val COMPACT_MIN_HEIGHT_DP = 40f
         const val SQUARE_MIN_HEIGHT_DP = 110f
-        const val WIDE_MIN_WIDTH_DP = 250f
-        const val LARGE_MIN_HEIGHT_DP = 280f
 
-        fun from(widthDp: Int, heightDp: Int): WidgetSize = when {
-            heightDp in 1 until SQUARE_MIN_HEIGHT_DP.toInt() -> COMPACT
-            widthDp < WIDE_MIN_WIDTH_DP -> SMALL
-            heightDp < LARGE_MIN_HEIGHT_DP -> MEDIUM
-            else -> LARGE
-        }
+        fun from(widthDp: Int, heightDp: Int): WidgetSize =
+            if (heightDp in 1 until SQUARE_MIN_HEIGHT_DP.toInt()) COMPACT else SMALL
     }
 }
 

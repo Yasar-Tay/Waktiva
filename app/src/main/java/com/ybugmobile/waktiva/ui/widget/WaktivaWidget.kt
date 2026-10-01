@@ -16,20 +16,18 @@ import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.SizeF
-import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.DrawableRes
-import androidx.annotation.LayoutRes
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.toArgb
 import com.ybugmobile.waktiva.MainActivity
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.WeatherCache
+import com.ybugmobile.waktiva.data.worker.WidgetWeatherWorker
+import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.waktiva.domain.manager.TimeManager
-import com.ybugmobile.waktiva.domain.model.HijriData
-import com.ybugmobile.waktiva.domain.model.HijriUtils
 import com.ybugmobile.waktiva.domain.model.NextPrayer
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
@@ -53,11 +51,10 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 /**
- * iOS-style home-screen widget in four families:
- *   COMPACT (4×1) – single row: icon, next prayer and time, live countdown
- *   SMALL   (2×2) – next prayer, its time, a live countdown and a six-segment day timeline
- *   MEDIUM  (4×2) – the small block plus the whole day's list
- *   LARGE   (4×4) – location and dates header, hero countdown, timeline and the day's list
+ * iOS-style 2×2 home-screen widget: the next prayer, its time, a live countdown and a
+ * six-segment day timeline. The wider sizes are their own widgets ([WaktivaCountdownWidget],
+ * [WaktivaDayRingWidget], [WaktivaMyDayWidget]); a widget still placed short from the earlier
+ * design (COMPACT) gets the countdown bar.
  *
  * This is a plain [AppWidgetProvider] (no Glance). The update path is:
  *   external trigger (PrayerAlarmReceiver / MainActivity / onUpdate)
@@ -131,9 +128,11 @@ class WaktivaWidget : AppWidgetProvider() {
         val background: Bitmap,
         /** The sky of the hour, top to bottom, which the countdown widget lights in its own way. */
         val skyColors: List<Int>,
-        val locationName: String,
         val today: LocalDate,
-        val hijri: HijriData?
+        /** The weather now, from the cache the app's fetches fill; null without one. */
+        val weather: WidgetWeather?,
+        /** The clouds or stars the backgrounds draw over the sky. */
+        val atmosphere: Atmosphere
     )
 
     companion object {
@@ -145,21 +144,15 @@ class WaktivaWidget : AppWidgetProvider() {
             R.id.widget_seg_4, R.id.widget_seg_5, R.id.widget_seg_6
         )
 
-        // Text colours for the day list: iOS primary / secondary / tertiary labels on dark glass.
-        private const val COLOR_PRIMARY = 0xFFFFFFFF.toInt()
-        private const val COLOR_SECONDARY = 0xE6FFFFFF.toInt()
-        private const val COLOR_TERTIARY = 0x73FFFFFF
-
         private const val ALPHA_OPAQUE = 255
-        private const val ALPHA_PASSED_ICON = 115
         private const val ALPHA_UPCOMING_SEGMENT = 64
-
-        private const val DENSE_ROW_TEXT_SP = 12.5f
 
         @Volatile private var cachedGradientKey: String? = null
         @Volatile private var cachedBitmap: Bitmap? = null
-        @Volatile private var cachedCountdownKey: String? = null
-        @Volatile private var cachedCountdownBitmap: Bitmap? = null
+        /** The lit backgrounds of the hour, by sky, colour and [Backdrop]; a handful at most. */
+        private val litCache = object : LinkedHashMap<String, Bitmap>(8, 0.75f, true) {
+            override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Bitmap>?) = size > 8
+        }
 
         // Keep the same Chronometer base for the same prayer so re-renders don't jitter.
         @Volatile private var cachedPrayerKey: String = ""
@@ -226,6 +219,13 @@ class WaktivaWidget : AppWidgetProvider() {
             cachedBaseTime = chronometer?.baseTime ?: 0L
 
             val skyColors = getGradientColorsForTime(now.toLocalTime(), today).map { it.toArgb() }
+            val cache = ep.weatherCache().load()
+            WidgetWeatherWorker.requestIfStale(context, cache?.fetchedAtMillis)
+            val weather = DayWidgetModel.weatherNow(cache, now, System.currentTimeMillis())
+            val sunrise = today?.timings?.get(PrayerType.SUNRISE)
+            val maghrib = today?.timings?.get(PrayerType.MAGHRIB)
+            val isDay = weather?.isDay
+                ?: (sunrise != null && maghrib != null && !now.toLocalTime().isBefore(sunrise) && now.toLocalTime().isBefore(maghrib))
             return Snapshot(
                 days = days,
                 now = now,
@@ -234,9 +234,9 @@ class WaktivaWidget : AppWidgetProvider() {
                 chronometer = chronometer,
                 background = gradientBitmap(skyColors),
                 skyColors = skyColors,
-                locationName = ep.settingsManager().settingsFlow.first().locationName,
                 today = now.toLocalDate(),
-                hijri = HijriUtils.getEffectiveHijriDate(now.toLocalDate(), days)
+                weather = weather,
+                atmosphere = Atmosphere(weather?.condition, isDay)
             )
         }
 
@@ -268,24 +268,17 @@ class WaktivaWidget : AppWidgetProvider() {
         private fun WidgetSize.minSize(): SizeF = when (this) {
             WidgetSize.COMPACT -> SizeF(WidgetSize.MIN_WIDTH_DP, WidgetSize.COMPACT_MIN_HEIGHT_DP)
             WidgetSize.SMALL -> SizeF(WidgetSize.MIN_WIDTH_DP, WidgetSize.SQUARE_MIN_HEIGHT_DP)
-            WidgetSize.MEDIUM -> SizeF(WidgetSize.WIDE_MIN_WIDTH_DP, WidgetSize.SQUARE_MIN_HEIGHT_DP)
-            WidgetSize.LARGE -> SizeF(WidgetSize.WIDE_MIN_WIDTH_DP, WidgetSize.LARGE_MIN_HEIGHT_DP)
         }
 
         private fun buildFamily(context: Context, size: WidgetSize, snapshot: Snapshot): RemoteViews {
-            @LayoutRes val layout = when (size) {
-                WidgetSize.COMPACT -> R.layout.widget_compact
-                WidgetSize.SMALL -> R.layout.widget_small
-                WidgetSize.MEDIUM -> R.layout.widget_medium
-                WidgetSize.LARGE -> R.layout.widget_large
-            }
-            val views = RemoteViews(context.packageName, layout)
+            if (size == WidgetSize.COMPACT) return buildCountdown(context, snapshot)
+            val views = RemoteViews(context.packageName, R.layout.widget_small)
 
-            views.setImageViewBitmap(R.id.widget_bg, snapshot.background)
             views.setOnClickPendingIntent(android.R.id.background, openAppIntent(context))
 
             val next = snapshot.nextPrayer
             if (next == null) {
+                views.setImageViewBitmap(R.id.widget_bg, snapshot.background)
                 views.setViewVisibility(R.id.widget_content, View.GONE)
                 views.setViewVisibility(R.id.widget_empty, View.VISIBLE)
                 return views
@@ -293,6 +286,7 @@ class WaktivaWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.widget_content, View.VISIBLE)
             views.setViewVisibility(R.id.widget_empty, View.GONE)
 
+            views.setImageViewBitmap(R.id.widget_bg, litBackground(snapshot.skyColors, accentFor(next.type), Backdrop.SQUARE, snapshot.atmosphere))
             views.setTextViewText(R.id.widget_name, next.type.getDisplayName(context))
             views.setTextViewText(R.id.widget_time, next.time.format(timeFormatter))
             views.setImageViewResource(R.id.widget_icon, iconFor(next.type))
@@ -306,25 +300,7 @@ class WaktivaWidget : AppWidgetProvider() {
             )
             views.setChronometerCountDown(R.id.widget_chrono, true)
 
-            if (size != WidgetSize.COMPACT) {
-                bindTimeline(views, snapshot.rows)
-            }
-
-            if (size == WidgetSize.MEDIUM || size == WidgetSize.LARGE) {
-                val dense = size == WidgetSize.MEDIUM
-                views.removeAllViews(R.id.widget_rows)
-                snapshot.rows.forEach { row ->
-                    views.addView(R.id.widget_rows, buildRow(context, row, dense))
-                }
-            }
-
-            if (size == WidgetSize.LARGE) {
-                views.setTextViewText(
-                    R.id.widget_location,
-                    snapshot.locationName.ifBlank { context.getString(R.string.app_name) }
-                )
-                views.setTextViewText(R.id.widget_date, dateLine(context, snapshot.today, snapshot.hijri))
-            }
+            bindTimeline(views, snapshot.rows)
 
             return views
         }
@@ -332,7 +308,7 @@ class WaktivaWidget : AppWidgetProvider() {
         /**
          * The countdown widget, a 4×1 bar: the next prayer's name, time and a stroke of its colour
          * on the left, the countdown at the bar's full height on the right, on the sky of the hour
-         * lit by that colour (see [countdownBackground]).
+         * lit by that colour (see [litBackground]).
          */
         private fun buildCountdown(context: Context, snapshot: Snapshot): RemoteViews {
             val views = RemoteViews(context.packageName, R.layout.widget_countdown_bar)
@@ -349,7 +325,7 @@ class WaktivaWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.widget_empty, View.GONE)
 
             val accent = accentFor(next.type)
-            views.setImageViewBitmap(R.id.widget_bg, countdownBackground(snapshot.skyColors, accent))
+            views.setImageViewBitmap(R.id.widget_bg, litBackground(snapshot.skyColors, accent, Backdrop.BAR, snapshot.atmosphere))
             views.setTextViewText(R.id.widget_name, next.type.getDisplayName(context))
             views.setTextViewText(R.id.widget_time, next.time.format(timeFormatter))
             views.setImageViewResource(R.id.widget_icon, iconFor(next.type))
@@ -387,39 +363,6 @@ class WaktivaWidget : AppWidgetProvider() {
             }
         }
 
-        private fun buildRow(context: Context, row: WidgetPrayerRow, dense: Boolean): RemoteViews {
-            val isNext = row.status == WidgetRowStatus.NEXT
-            val views = RemoteViews(
-                context.packageName,
-                if (isNext) R.layout.widget_row_next else R.layout.widget_row
-            )
-            views.setTextViewText(R.id.widget_row_name, row.type.getDisplayName(context))
-            views.setTextViewText(R.id.widget_row_time, row.time.format(timeFormatter))
-
-            val color = when (row.status) {
-                WidgetRowStatus.PASSED -> COLOR_TERTIARY
-                WidgetRowStatus.NEXT -> COLOR_PRIMARY
-                WidgetRowStatus.UPCOMING -> COLOR_SECONDARY
-            }
-            views.setTextColor(R.id.widget_row_name, color)
-            views.setTextColor(R.id.widget_row_time, color)
-
-            if (dense) {
-                // The 4×2 list has ~20 dp per row: drop the icon and tighten the type.
-                views.setViewVisibility(R.id.widget_row_icon, View.GONE)
-                views.setTextViewTextSize(R.id.widget_row_name, TypedValue.COMPLEX_UNIT_SP, DENSE_ROW_TEXT_SP)
-                views.setTextViewTextSize(R.id.widget_row_time, TypedValue.COMPLEX_UNIT_SP, DENSE_ROW_TEXT_SP)
-            } else {
-                views.setImageViewResource(R.id.widget_row_icon, iconFor(row.type))
-                views.setInt(
-                    R.id.widget_row_icon,
-                    "setImageAlpha",
-                    if (row.status == WidgetRowStatus.PASSED) ALPHA_PASSED_ICON else ALPHA_OPAQUE
-                )
-            }
-            return views
-        }
-
         // ── Helpers ───────────────────────────────────────────────────────────
 
         internal fun openAppIntent(context: Context): PendingIntent = PendingIntent.getActivity(
@@ -428,30 +371,6 @@ class WaktivaWidget : AppWidgetProvider() {
             Intent(context, MainActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-
-        /** "Thursday, 25 September · 3 Rabi‘ al-Awwal 1448" in the app's current language. */
-        internal fun dateLine(context: Context, today: LocalDate, hijri: HijriData?): String {
-            val locale = context.resources.configuration.locales[0] ?: Locale.getDefault()
-            val gregorian = today.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", locale))
-            val hijriMonth = hijri?.let { hijriMonthRes(it.monthNumber) } ?: return gregorian
-            return "$gregorian · ${hijri.day} ${context.getString(hijriMonth)} ${hijri.year}"
-        }
-
-        private fun hijriMonthRes(month: Int): Int? = when (month) {
-            1 -> R.string.hijri_month_1
-            2 -> R.string.hijri_month_2
-            3 -> R.string.hijri_month_3
-            4 -> R.string.hijri_month_4
-            5 -> R.string.hijri_month_5
-            6 -> R.string.hijri_month_6
-            7 -> R.string.hijri_month_7
-            8 -> R.string.hijri_month_8
-            9 -> R.string.hijri_month_9
-            10 -> R.string.hijri_month_10
-            11 -> R.string.hijri_month_11
-            12 -> R.string.hijri_month_12
-            else -> null
-        }
 
         @DrawableRes
         internal fun iconFor(type: PrayerType): Int = when (type) {
@@ -474,38 +393,39 @@ class WaktivaWidget : AppWidgetProvider() {
         }
 
         /**
-         * The countdown widget's background: the sky of the hour, shaded towards the right where the
-         * countdown sits so its white figures read on a bright day, and a glow of the next prayer's
-         * [accent] spreading from the left edge behind the prayer's name. Laid out for a 4×1 bar.
-         * Cached per sky and prayer.
+         * A widget's background, as the countdown bar first had it: the sky of the hour with the
+         * home screen's clouds or stars ([atmosphere]), shaded away from the text, and a glow of the
+         * prayer's [accent] spreading behind it, laid out for the widget's [backdrop]. Cached per
+         * sky, weather, colour and backdrop.
          */
-        private fun countdownBackground(sky: List<Int>, accent: Int): Bitmap {
-            val key = sky.joinToString(",") + "|" + accent
-            cachedCountdownBitmap?.takeIf { key == cachedCountdownKey }?.let { return it }
+        internal fun litBackground(sky: List<Int>, accent: Int, backdrop: Backdrop, atmosphere: Atmosphere): Bitmap {
+            val key = sky.joinToString(",") + "|" + accent + "|" + backdrop + "|" + atmosphere
+            synchronized(litCache) { litCache[key] }?.let { return it }
 
-            val width = 400f
-            val height = 100f
-            val bitmap = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
+            val width = backdrop.width.toFloat()
+            val height = backdrop.height.toFloat()
+            val bitmap = Bitmap.createBitmap(backdrop.width, backdrop.height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
-            canvas.drawBitmap(gradientBitmap(sky).let { Bitmap.createScaledBitmap(it, width.toInt(), height.toInt(), true) }, 0f, 0f, null)
+            canvas.drawBitmap(Bitmap.createScaledBitmap(gradientBitmap(sky), backdrop.width, backdrop.height, true), 0f, 0f, null)
+            WidgetArt.drawAtmosphere(canvas, backdrop.width, backdrop.height, atmosphere.condition, atmosphere.isDay)
             canvas.drawRect(0f, 0f, width, height, Paint().apply {
                 shader = LinearGradient(
-                    0f, 0f, width, 0f,
+                    backdrop.shadeFrom.first * width, backdrop.shadeFrom.second * height,
+                    backdrop.shadeTo.first * width, backdrop.shadeTo.second * height,
                     intArrayOf(0x00000000, 0x14000000, 0x47000000), floatArrayOf(0f, 0.45f, 1f),
                     Shader.TileMode.CLAMP
                 )
             })
             canvas.drawRect(0f, 0f, width, height, Paint().apply {
                 shader = RadialGradient(
-                    width * 0.08f, height * 0.5f, width * 0.5f,
+                    width * backdrop.glowX, height * backdrop.glowY, width * backdrop.reach,
                     intArrayOf(withAlpha(accent, 0x8C), withAlpha(accent, 0x26), withAlpha(accent, 0)),
                     floatArrayOf(0f, 0.45f, 1f),
                     Shader.TileMode.CLAMP
                 )
             })
 
-            cachedCountdownBitmap = bitmap
-            cachedCountdownKey = key
+            synchronized(litCache) { litCache[key] = bitmap }
             return bitmap
         }
 
@@ -537,3 +457,34 @@ class WaktivaWidget : AppWidgetProvider() {
         }
     }
 }
+
+/**
+ * Where a widget's main text sits, which its background is lit behind: the bitmap's size in
+ * the widget's proportions, the glow's centre and reach, and the line the shade deepens
+ * along, away from the glow, so white figures read on a bright day. Fractions of the size;
+ * the reach is of the width.
+ */
+internal enum class Backdrop(
+    val width: Int,
+    val height: Int,
+    val glowX: Float,
+    val glowY: Float,
+    val reach: Float,
+    val shadeFrom: Pair<Float, Float>,
+    val shadeTo: Pair<Float, Float>
+) {
+    /** 4×1: the prayer's name on the left, the countdown on the right. */
+    BAR(400, 100, 0.08f, 0.5f, 0.5f, 0f to 0f, 1f to 0f),
+
+    /** 2×2: the next prayer at the top left. */
+    SQUARE(200, 200, 0.12f, 0.2f, 0.95f, 0.12f to 0.2f, 1f to 1f),
+
+    /** 4×2: the prayer and its countdown on the left. */
+    WIDE(400, 200, 0.08f, 0.4f, 0.6f, 0.08f to 0.4f, 1f to 1f),
+
+    /** 4×4: the prayer and its countdown along the top. */
+    LARGE(400, 400, 0.1f, 0.14f, 0.75f, 0.1f to 0.14f, 1f to 1f)
+}
+
+/** The weather a widget's sky shows: clouds for [condition], or stars on a clear night. */
+internal data class Atmosphere(val condition: WeatherCondition?, val isDay: Boolean)

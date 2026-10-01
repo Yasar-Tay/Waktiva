@@ -22,81 +22,31 @@
         android:paddingEnd="16dp"
         android:paddingBottom="12dp">
 
-        <LinearLayout
+        <include
+            layout="@layout/widget_moment_preview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content" />
 
-            <include
-                layout="@layout/widget_moment_preview"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:gravity="end"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginEnd="4dp"
-                        android:src="@drawable/partly_cloudy_day" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="18°"
-                        android:textColor="#CCFFFFFF"
-                        android:textSize="13sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="68dp"
-                    android:layout_height="68dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/widget_mark_button"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@drawable/ic_widget_check"
-                        android:tint="#FF3B2A00" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:maxLines="1"
-                        android:text="@string/prayer_log_mark"
-                        android:textColor="#FF3B2A00"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <ImageView
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            android:scaleType="fitCenter"
-            android:src="@drawable/widget_ring_preview" />
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/widget_ring_preview" />
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/clear_day"
+                android:tint="#F5FFFFFF" />
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -119,7 +69,8 @@
                     android:maxLines="1"
                     android:text="@string/prayer_fajr"
                     android:textColor="#FFFFD54F"
-                    android:textSize="11sp" />
+                    android:textSize="9.5sp"
+                    android:textAllCaps="true" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -146,7 +97,8 @@
                     android:maxLines="1"
                     android:text="@string/prayer_dhuhr"
                     android:textColor="#FFFFFFFF"
-                    android:textSize="11sp" />
+                    android:textSize="9.5sp"
+                    android:textAllCaps="true" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -172,7 +124,8 @@
                     android:maxLines="1"
                     android:text="@string/prayer_asr"
                     android:textColor="#B3FFFFFF"
-                    android:textSize="11sp" />
+                    android:textSize="9.5sp"
+                    android:textAllCaps="true" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -198,7 +151,8 @@
                     android:maxLines="1"
                     android:text="@string/prayer_maghrib"
                     android:textColor="#B3FFFFFF"
-                    android:textSize="11sp" />
+                    android:textSize="9.5sp"
+                    android:textAllCaps="true" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -224,7 +178,8 @@
                     android:maxLines="1"
                     android:text="@string/prayer_isha"
                     android:textColor="#B3FFFFFF"
-                    android:textSize="11sp" />
+                    android:textSize="9.5sp"
+                    android:textAllCaps="true" />
 
                 <TextView
                     android:layout_width="wrap_content"

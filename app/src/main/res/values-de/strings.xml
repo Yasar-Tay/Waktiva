@@ -435,7 +435,7 @@
     <string name="widget_prayer_time">Zeit für %1$s</string>
     <string name="widget_prayer_time_ending">Zeit für %1$s endet bald</string>
     <string name="widget_prayer_prayed">%1$s gebetet</string>
-    <string name="widget_left_until">übrig · %1$s %2$s</string>
+    <string name="widget_left">übrig</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Gebetstagebuch</string>

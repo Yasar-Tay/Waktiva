@@ -39,10 +39,20 @@ internal data class Moment(
     val prayer: PrayerType,
     val logDate: LocalDate,
     val next: NextPrayer,
+    /** When the [prayer]'s time began; null when that day's times aren't kept. */
+    val startsAt: LocalDateTime?,
     val endsAt: LocalDateTime,
     /** Whether "I prayed" is offered: the log is on and the prayer is one it keeps, not yet marked. */
     val canMark: Boolean
-)
+) {
+    /** How much of the [prayer]'s time is left at [now], from 1 as it begins to 0 as it ends. */
+    fun remaining(now: LocalDateTime): Float {
+        val start = startsAt ?: return 1f
+        val whole = Duration.between(start, endsAt).toMillis()
+        if (whole <= 0L) return 0f
+        return (Duration.between(now, endsAt).toMillis().toFloat() / whole).coerceIn(0f, 1f)
+    }
+}
 
 /** One prayer in the 4×4 widget's line of times. */
 internal data class DayTime(
@@ -91,6 +101,8 @@ internal object DayWidgetModel {
         val prayer = if (beforeDawn) PrayerType.ISHA else currentPrayer(today, now.toLocalTime())
         val logDate = if (beforeDawn) today.date.minusDays(1) else today.date
         val endsAt = next.date.atTime(next.time)
+        // Before dawn the night's Isha began yesterday, a minute or two off today's time.
+        val startsAt = today.timings[prayer]?.atDate(logDate)
 
         val isPrayed = prayer in prayed[logDate].orEmpty()
         val keeps = logEnabled && prayer.isLogged
@@ -105,6 +117,7 @@ internal object DayWidgetModel {
             prayer = prayer,
             logDate = logDate,
             next = next,
+            startsAt = startsAt,
             endsAt = endsAt,
             canMark = keeps && !isPrayed && state != MomentState.WAITING
         )

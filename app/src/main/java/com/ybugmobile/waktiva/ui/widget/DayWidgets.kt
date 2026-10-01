@@ -14,34 +14,39 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.ybugmobile.waktiva.R
-import com.ybugmobile.waktiva.data.worker.WidgetWeatherWorker
-import com.ybugmobile.waktiva.domain.model.LoggedPrayers
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.isLogged
+import com.ybugmobile.waktiva.ui.home.composables.accentColor
 import com.ybugmobile.waktiva.ui.home.composables.degrees
+import com.ybugmobile.waktiva.ui.home.composables.iconRes
+import com.ybugmobile.waktiva.ui.home.composables.skyLight
 import com.ybugmobile.waktiva.ui.home.composables.weatherIconRes
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.time.ZoneId
+import java.util.Locale
 
 /**
  * The two day circle widgets. A widget is read in a glance, so they don't show the whole day at
  * once: they show the moment ([Moment]) and change with it.
  *
- *   OPEN    – "Dhuhr time", the time left for it, and "I prayed" beside it
+ *   OPEN    – "Dhuhr time", the time left for it, and the sphere offering "I prayed"
  *   ENDING  – the same in amber in the last half hour of its time
- *   PRAYED  – "✓ Dhuhr prayed" (tap to take the mark back), a calm countdown to the next prayer
+ *   PRAYED  – "✓ Dhuhr prayed", the sphere gold, a calm countdown to the next prayer
  *   WAITING – after sunrise, the countdown to the next prayer
  *
- * The 4×2 ([WaktivaDayRingWidget]) is the moment alone; once the prayer is marked, the weather and
- * today's five marks take the button's place. The 4×4 ([WaktivaMyDayWidget]) adds the day circle,
- * with only the current prayer's stretch lit, and the day's five times.
+ * The moment's sphere is a glass orb in the home screen's materials, holding the sky of the hour
+ * in the prayer's colour; it is the "I prayed" button, and a tap on it once gold takes the mark
+ * back. In the 4×2 ([WaktivaDayRingWidget]) it sits in a ring of the time left; in the 4×4
+ * ([WaktivaMyDayWidget]) it is the heart of the day circle, whose prayers are glass spheres too.
  *
- * "I prayed" marks the prayer without opening the app ([DayWidgetActionReceiver]). The circle
- * moves with a half-hourly tick that doesn't wake the phone, and a redraw is set for when a
- * prayer's time starts ending ([ensureTicking]); prayer boundaries come from the app's alarms.
+ * Marks go to the prayer log without opening the app ([DayWidgetActionReceiver]). The widgets
+ * redraw every quarter hour without waking the phone and when a prayer's time starts ending
+ * ([ensureTicking], [scheduleEnding]); prayer boundaries come from the app's alarms.
  */
 internal object DayWidgets {
 
@@ -55,42 +60,54 @@ internal object DayWidgets {
     private const val RING_MIN_WIDTH_DP = 250f
     private const val SHORT_MIN_HEIGHT_DP = 100f
 
-    /** The 4×4 circle's bitmap, in dp at the most, and in pixels at the most whatever the density. */
-    private const val RING_DP = 220
-    private const val RING_MAX_PX = 680
+    /** The painted parts' bitmaps, in dp at the most, and in pixels at the most whatever the density. */
+    private const val ORB_DP = 112
+    private const val ORB_MAX_PX = 360
+    private const val RING_DP = 240
+    private const val RING_MAX_PX = 720
 
-    private const val REQUEST_TICK = 7_300
+    private const val REQUEST_TICK = 7_303
+
+    /** The half-hourly tick the widgets had before the quarter-hourly one; cancelled once seen. */
+    private const val REQUEST_OLD_TICK = 7_300
     private const val REQUEST_ENDING = 7_302
     private const val REQUEST_TOGGLE = 7_310
 
     private const val COLOR_PRIMARY = 0xFFFFFFFF.toInt()
     private const val COLOR_SECONDARY = 0xB3FFFFFF.toInt()
     private const val COLOR_TERTIARY = 0x73FFFFFF
-    private const val COLOR_OPEN = 0xFF6EE7B7.toInt()
-    private const val COLOR_ENDING = 0xFFFBBF24.toInt()
     private const val COLOR_ENDING_COUNT = 0xFFFDE68A.toInt()
     private const val COLOR_PRAYED = 0xFFFFD54F.toInt()
-    private const val COLOR_UNMARKED = 0x40FFFFFF
 
-    private val markIds = intArrayOf(R.id.widget_mark_1, R.id.widget_mark_2, R.id.widget_mark_3, R.id.widget_mark_4, R.id.widget_mark_5)
+    /** The green of a prayer whose time is on, as on the prayer log's chips. */
+    private val Open = Color(0xFF6EE7B7)
+
+    /** The amber of a prayer whose time is ending. */
+    private val Ending = Color(0xFFFBBF24)
 
     /** What both widgets show, read once per redraw and shared by every instance. */
     private class Today(
         val day: PrayerDay,
         val moment: Moment,
         val times: List<DayTime>,
-        val prayedToday: Set<PrayerType>,
         val logEnabled: Boolean,
-        val weather: WidgetWeather?,
-        private val ring: DayRing
+        val orb: WidgetArt.Orb,
+        val remaining: Float,
+        val ring: DayRing
     ) {
+        private var orbBitmap: Bitmap? = null
         private var ringBitmap: Bitmap? = null
 
+        fun orb(context: Context): Bitmap = orbBitmap ?: WidgetArt.momentOrb(
+            context, orb, remaining, arcColor(moment), px(context, ORB_DP, ORB_MAX_PX)
+        ).also { orbBitmap = it }
+
         fun ring(context: Context): Bitmap = ringBitmap ?: DayRingPainter.render(
-            context,
-            ring,
-            (RING_DP * context.resources.displayMetrics.density).toInt().coerceIn(1, RING_MAX_PX)
+            context, ring, px(context, RING_DP, RING_MAX_PX)
         ).also { ringBitmap = it }
+
+        private fun px(context: Context, dp: Int, max: Int) =
+            (dp * context.resources.displayMetrics.density).toInt().coerceIn(1, max)
     }
 
     suspend fun render(
@@ -114,8 +131,8 @@ internal object DayWidgets {
         val next = snapshot.nextPrayer ?: return null
 
         val ep = WaktivaWidget.entryPoint(context)
-        val settings = ep.settingsManager().settingsFlow.first()
-        val prayed = if (settings.prayerLogEnabled) {
+        val logEnabled = ep.settingsManager().settingsFlow.first().prayerLogEnabled
+        val prayed = if (logEnabled) {
             val log = ep.prayerLogRepository()
             mapOf(
                 date to log.getPrayedPrayers(date).first(),
@@ -125,28 +142,44 @@ internal object DayWidgets {
             emptyMap()
         }
 
-        val cache = ep.weatherCache().load()
-        WidgetWeatherWorker.requestIfStale(context, cache?.fetchedAtMillis)
-
-        val moment = DayWidgetModel.moment(day, snapshot.now, next, prayed, settings.prayerLogEnabled)
+        val now = snapshot.now
+        val moment = DayWidgetModel.moment(day, now, next, prayed, logEnabled)
         val prayedToday = prayed[date].orEmpty()
-        val current = DayWidgetModel.currentPrayer(day, snapshot.now.toLocalTime())
+        val current = DayWidgetModel.currentPrayer(day, now.toLocalTime())
+        val hero = hero(moment)
+        val orb = WidgetArt.Orb(
+            color = hero.accentColor,
+            sky = skyLight(now.hour * 60f + now.minute, day),
+            icon = hero.iconRes,
+            prayed = moment.state == MomentState.PRAYED,
+            raised = true,
+            caption = if (moment.canMark) context.getString(R.string.prayer_log_mark).uppercase(locale(context)) else null
+        )
         return Today(
             day = day,
             moment = moment,
-            times = DayWidgetModel.times(day, snapshot.now, current, prayedToday),
-            prayedToday = prayedToday,
-            logEnabled = settings.prayerLogEnabled,
-            weather = DayWidgetModel.weatherNow(cache, snapshot.now, System.currentTimeMillis()),
+            times = DayWidgetModel.times(day, now, current, prayedToday),
+            logEnabled = logEnabled,
+            orb = orb,
+            remaining = moment.remaining(now),
             ring = DayRing(
                 day = day,
-                now = snapshot.now.toLocalTime(),
+                now = now.toLocalTime(),
                 current = current,
                 prayed = prayedToday,
+                hub = orb,
                 rtl = context.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
             )
         )
     }
+
+    /** The prayer the moment is about: the one whose time it is, or the next one while none is. */
+    private fun hero(moment: Moment): PrayerType =
+        if (moment.state == MomentState.WAITING) moment.next.type else moment.prayer
+
+    /** The colour of the time left: the prayer's own, amber while it's ending. */
+    private fun arcColor(moment: Moment): Color =
+        if (moment.state == MomentState.ENDING) Ending else hero(moment).accentColor
 
     // ── Prayer now (4×2) ──────────────────────────────────────────────────
 
@@ -174,20 +207,13 @@ internal object DayWidgets {
 
     private fun buildNow(context: Context, snapshot: WaktivaWidget.Snapshot, today: Today?, tall: Boolean): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_day_ring)
-        views.setImageViewBitmap(R.id.widget_bg, snapshot.background)
         views.setOnClickPendingIntent(android.R.id.background, WaktivaWidget.openAppIntent(context))
-        if (today == null) return views.showEmpty()
+        if (today == null) return views.showEmpty(snapshot)
         views.showContent()
+        views.setImageViewBitmap(R.id.widget_bg, background(snapshot, today.moment, Backdrop.WIDE))
 
-        bindMoment(context, views, snapshot, today.moment, countSp = if (tall) 40f else 32f)
-
-        // Once nothing is asked of the user, the weather and today's marks take the button's place.
-        val calm = !today.moment.canMark
-        views.setViewVisibility(R.id.widget_calm, if (calm) View.VISIBLE else View.GONE)
-        if (calm) {
-            bindWeather(views, today.weather)
-            bindMarks(views, today)
-        }
+        bindMoment(context, views, snapshot, today, countSp = if (tall) 44f else 34f)
+        views.setImageViewBitmap(R.id.widget_orb, today.orb(context))
         return views
     }
 
@@ -195,13 +221,12 @@ internal object DayWidgets {
 
     private fun buildMyDay(context: Context, snapshot: WaktivaWidget.Snapshot, today: Today?): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_my_day)
-        views.setImageViewBitmap(R.id.widget_bg, snapshot.background)
         views.setOnClickPendingIntent(android.R.id.background, WaktivaWidget.openAppIntent(context))
-        if (today == null) return views.showEmpty()
+        if (today == null) return views.showEmpty(snapshot)
         views.showContent()
+        views.setImageViewBitmap(R.id.widget_bg, background(snapshot, today.moment, Backdrop.LARGE))
 
-        bindMoment(context, views, snapshot, today.moment, countSp = 44f)
-        bindWeather(views, today.weather)
+        bindMoment(context, views, snapshot, today, countSp = 48f)
         views.setImageViewBitmap(R.id.widget_ring, today.ring(context))
 
         views.removeAllViews(R.id.widget_times)
@@ -225,7 +250,8 @@ internal object DayWidgets {
 
     // ── Shared pieces ─────────────────────────────────────────────────────
 
-    private fun RemoteViews.showEmpty(): RemoteViews = apply {
+    private fun RemoteViews.showEmpty(snapshot: WaktivaWidget.Snapshot): RemoteViews = apply {
+        setImageViewBitmap(R.id.widget_bg, snapshot.background)
         setViewVisibility(R.id.widget_content, View.GONE)
         setViewVisibility(R.id.widget_empty, View.VISIBLE)
     }
@@ -236,29 +262,36 @@ internal object DayWidgets {
     }
 
     /**
-     * The moment: its label, the live countdown to the end of the prayer's time (the next
-     * prayer's start, so one figure serves both) and the line under it; and "I prayed".
+     * The sky of the hour with its clouds or stars, lit by the moment's prayer, amber while its
+     * time is ending.
      */
-    private fun bindMoment(context: Context, views: RemoteViews, snapshot: WaktivaWidget.Snapshot, moment: Moment, countSp: Float) {
-        val prayer = moment.prayer.getDisplayName(context)
-        val next = moment.next.type.getDisplayName(context)
-        val nextTime = moment.next.time.format(WaktivaWidget.timeFormatter)
+    private fun background(snapshot: WaktivaWidget.Snapshot, moment: Moment, backdrop: Backdrop): Bitmap =
+        WaktivaWidget.litBackground(snapshot.skyColors, arcColor(moment).toArgb(), backdrop, snapshot.atmosphere)
 
-        val (label, labelColor) = when (moment.state) {
-            MomentState.OPEN -> context.getString(R.string.widget_prayer_time, prayer) to COLOR_OPEN
-            MomentState.ENDING -> context.getString(R.string.widget_prayer_time_ending, prayer) to COLOR_ENDING
-            MomentState.PRAYED -> context.getString(R.string.widget_prayer_prayed, prayer) to COLOR_PRIMARY
-            MomentState.WAITING -> context.getString(R.string.widget_next_up) to COLOR_SECONDARY
+    /**
+     * The moment: its chip, the live countdown to the end of the prayer's time (the next
+     * prayer's start, so one figure serves both), what comes next with the weather now, and the
+     * sphere's tap: "I prayed", or taking the mark back once it's gold.
+     */
+    private fun bindMoment(context: Context, views: RemoteViews, snapshot: WaktivaWidget.Snapshot, today: Today, countSp: Float) {
+        val moment = today.moment
+        val prayer = moment.prayer.getDisplayName(context)
+        val label = when (moment.state) {
+            MomentState.OPEN -> context.getString(R.string.widget_prayer_time, prayer)
+            MomentState.ENDING -> context.getString(R.string.widget_prayer_time_ending, prayer)
+            MomentState.PRAYED -> context.getString(R.string.widget_prayer_prayed, prayer)
+            MomentState.WAITING -> context.getString(R.string.widget_next_up)
         }
         views.setTextViewText(R.id.widget_label, label)
-        views.setTextColor(R.id.widget_label, labelColor)
-        views.setViewVisibility(R.id.widget_label_check, if (moment.state == MomentState.PRAYED) View.VISIBLE else View.GONE)
-
-        val counting = moment.state == MomentState.OPEN || moment.state == MomentState.ENDING
-        views.setTextViewText(
-            R.id.widget_sub,
-            if (counting) context.getString(R.string.widget_left_until, next, nextTime) else "$next · $nextTime"
-        )
+        val prayed = moment.state == MomentState.PRAYED
+        views.setViewVisibility(R.id.widget_label_check, if (prayed) View.VISIBLE else View.GONE)
+        views.setViewVisibility(R.id.widget_label_dot, if (prayed) View.GONE else View.VISIBLE)
+        val dot = when (moment.state) {
+            MomentState.OPEN -> Open
+            MomentState.ENDING -> Ending
+            else -> hero(moment).accentColor
+        }
+        views.setInt(R.id.widget_label_dot, "setColorFilter", dot.toArgb())
 
         val chronometer = snapshot.chronometer
         views.setChronometer(
@@ -270,35 +303,33 @@ internal object DayWidgets {
         views.setChronometerCountDown(R.id.widget_chrono, true)
         views.setTextColor(R.id.widget_chrono, if (moment.state == MomentState.ENDING) COLOR_ENDING_COUNT else COLOR_PRIMARY)
         views.setTextViewTextSize(R.id.widget_chrono, TypedValue.COMPLEX_UNIT_SP, countSp)
+        val counting = moment.state == MomentState.OPEN || moment.state == MomentState.ENDING
+        views.setViewVisibility(R.id.widget_left, if (counting) View.VISIBLE else View.GONE)
 
-        views.setViewVisibility(R.id.widget_mark, if (moment.canMark) View.VISIBLE else View.GONE)
-        if (moment.canMark) {
-            views.setOnClickPendingIntent(R.id.widget_mark, toggleIntent(context, moment.logDate, moment.prayer))
-            views.setContentDescription(R.id.widget_mark, "${context.getString(R.string.prayer_log_mark)}: $prayer")
-        }
-        // A mark made by a slip of the finger is taken back from where it shows.
-        if (moment.state == MomentState.PRAYED) {
-            views.setOnClickPendingIntent(R.id.widget_label_row, toggleIntent(context, moment.logDate, moment.prayer))
-            views.setContentDescription(R.id.widget_label_row, "$label. ${context.getString(R.string.prayer_log_unmark)}")
-        }
-    }
+        views.setImageViewResource(R.id.widget_next_icon, moment.next.type.iconRes)
+        views.setInt(R.id.widget_next_icon, "setColorFilter", moment.next.type.accentColor.toArgb())
+        views.setTextViewText(
+            R.id.widget_sub,
+            "${moment.next.type.getDisplayName(context)}  ${moment.next.time.format(WaktivaWidget.timeFormatter)}"
+        )
 
-    private fun bindWeather(views: RemoteViews, weather: WidgetWeather?) {
+        val weather = snapshot.weather
         views.setViewVisibility(R.id.widget_weather, if (weather != null) View.VISIBLE else View.GONE)
-        weather ?: return
-        views.setImageViewResource(R.id.widget_weather_icon, weatherIconRes(weather.condition, weather.isDay))
-        views.setTextViewText(R.id.widget_temp, weather.temperature.degrees())
-    }
+        if (weather != null) {
+            views.setImageViewResource(R.id.widget_weather_icon, weatherIconRes(weather.condition, weather.isDay))
+            views.setTextViewText(R.id.widget_temp, weather.temperature.degrees())
+        }
 
-    /** Today's five prayers as dots, gold once prayed; hidden with the log off. */
-    private fun bindMarks(views: RemoteViews, today: Today) {
-        views.setViewVisibility(R.id.widget_marks, if (today.logEnabled) View.VISIBLE else View.GONE)
-        if (!today.logEnabled) return
-        LoggedPrayers.forEachIndexed { i, type ->
-            val id = markIds.getOrNull(i) ?: return@forEachIndexed
-            views.setInt(id, "setColorFilter", if (type in today.prayedToday) COLOR_PRAYED else COLOR_UNMARKED)
+        if (moment.canMark || prayed) {
+            views.setOnClickPendingIntent(R.id.widget_mark, toggleIntent(context, moment.logDate, moment.prayer))
+            views.setContentDescription(
+                R.id.widget_mark,
+                if (prayed) "$label. ${context.getString(R.string.prayer_log_unmark)}" else "${context.getString(R.string.prayer_log_mark)}: $prayer"
+            )
         }
     }
+
+    private fun locale(context: Context): Locale = context.resources.configuration.locales[0] ?: Locale.getDefault()
 
     private fun toggleIntent(context: Context, date: LocalDate, type: PrayerType): PendingIntent {
         val intent = Intent(context, DayWidgetActionReceiver::class.java).apply {
@@ -340,7 +371,7 @@ internal object DayWidgets {
         log.setPrayed(date, type, !prayed)
     }
 
-    // ── The tick ──────────────────────────────────────────────────────────
+    // ── The ticks ─────────────────────────────────────────────────────────
 
     private fun tickIntent(context: Context, requestCode: Int, flags: Int): PendingIntent? = PendingIntent.getBroadcast(
         context,
@@ -350,16 +381,21 @@ internal object DayWidgets {
     )
 
     /**
-     * Redraws the widgets every half hour, so the circle keeps up with the day. The alarm doesn't
-     * wake the phone: it waits for the screen to be on, when the widgets are seen.
+     * Redraws the widgets every quarter hour, so the ring of the time left and the circle keep up
+     * with the day. The alarm doesn't wake the phone: it waits for the screen to be on, when the
+     * widgets are seen.
      */
     private fun ensureTicking(context: Context) {
+        tickIntent(context, REQUEST_OLD_TICK, PendingIntent.FLAG_NO_CREATE)?.let {
+            context.getSystemService(AlarmManager::class.java)?.cancel(it)
+            it.cancel()
+        }
         if (tickIntent(context, REQUEST_TICK, PendingIntent.FLAG_NO_CREATE) != null) return
         val intent = tickIntent(context, REQUEST_TICK, 0) ?: return
         context.getSystemService(AlarmManager::class.java)?.setInexactRepeating(
             AlarmManager.RTC,
-            System.currentTimeMillis() + AlarmManager.INTERVAL_HALF_HOUR,
-            AlarmManager.INTERVAL_HALF_HOUR,
+            System.currentTimeMillis() + AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+            AlarmManager.INTERVAL_FIFTEEN_MINUTES,
             intent
         )
     }
@@ -377,14 +413,14 @@ internal object DayWidgets {
         context.getSystemService(AlarmManager::class.java)?.setWindow(AlarmManager.RTC, at, 60_000L, intent)
     }
 
-    /** Stops the tick once neither day circle widget is on the home screen. */
+    /** Stops the ticks once neither day circle widget is on the home screen. */
     fun stopTickingIfUnused(context: Context) {
         val manager = AppWidgetManager.getInstance(context)
         val inUse = listOf(WaktivaDayRingWidget::class.java, WaktivaMyDayWidget::class.java)
             .any { manager.getAppWidgetIds(ComponentName(context, it)).isNotEmpty() }
         if (inUse) return
         val alarms = context.getSystemService(AlarmManager::class.java)
-        listOf(REQUEST_TICK, REQUEST_ENDING).forEach { code ->
+        listOf(REQUEST_TICK, REQUEST_OLD_TICK, REQUEST_ENDING).forEach { code ->
             tickIntent(context, code, PendingIntent.FLAG_NO_CREATE)?.let {
                 alarms?.cancel(it)
                 it.cancel()

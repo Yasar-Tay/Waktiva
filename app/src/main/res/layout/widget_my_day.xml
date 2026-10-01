@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  The 4×4 "my day" widget: the same moment as the 4×2 on top (the prayer whose time it is, the
-  time left for it and "I prayed"), the weather as a note in the corner, the day circle below
-  with only the current prayer's stretch lit, and the day's five times in one line.
+  The 4×4 "my day" widget: the same moment as the 4×2 on top, the day circle below with the
+  prayers as glass spheres and the moment's sphere at its heart, which is the "I prayed"
+  button, and the day's five times in one line.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/background"
@@ -31,45 +31,33 @@
         android:paddingStart="18dp"
         android:paddingTop="14dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="12dp">
+        android:paddingBottom="10dp">
 
-        <LinearLayout
+        <include
+            layout="@layout/widget_moment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content" />
 
-            <include
-                layout="@layout/widget_moment"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:gravity="end"
-                android:orientation="vertical">
-
-                <include layout="@layout/widget_weather_now" />
-
-                <include
-                    layout="@layout/widget_mark_button"
-                    android:layout_width="68dp"
-                    android:layout_height="68dp"
-                    android:layout_marginTop="6dp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/widget_ring"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            android:scaleType="fitCenter" />
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/widget_ring"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter" />
+
+            <!-- The tap target over the sphere at the ring's heart. -->
+            <FrameLayout
+                android:id="@+id/widget_mark"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
         <!-- The day's five times; cells are added at runtime from widget_day_column. -->
         <LinearLayout

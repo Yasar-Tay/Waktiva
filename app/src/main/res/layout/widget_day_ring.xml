@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   The 4×2 "prayer now" widget. It shows only what matters at this moment (see DayWidgets): the
-  prayer whose time it is and the time left for it, with "I prayed" beside it until it's marked;
-  once it is, a calm countdown to the next prayer with the weather and today's five marks.
+  prayer whose time it is and the time left for it, and beside it the moment's glass sphere in a
+  ring of the time left, which is the "I prayed" button and turns gold once the prayer is marked.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/background"
@@ -31,7 +31,7 @@
         android:orientation="horizontal"
         android:paddingStart="18dp"
         android:paddingTop="10dp"
-        android:paddingEnd="14dp"
+        android:paddingEnd="10dp"
         android:paddingBottom="10dp">
 
         <include
@@ -40,32 +40,22 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <!-- "I prayed", while the prayer whose time it is isn't marked. -->
-        <include
-            layout="@layout/widget_mark_button"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:layout_marginStart="10dp" />
-
-        <!-- Once it's marked: the weather and today's five marks. -->
-        <LinearLayout
-            android:id="@+id/widget_calm"
+        <!-- The moment's sphere: "I prayed" while the prayer waits, gold once it's marked. -->
+        <FrameLayout
+            android:id="@+id/widget_mark"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:gravity="end"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:layout_marginStart="8dp">
 
-            <include layout="@layout/widget_weather_now" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <include layout="@layout/widget_marks" />
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/widget_orb"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:maxHeight="112dp"
+                android:scaleType="fitCenter" />
+        </FrameLayout>
     </LinearLayout>
 
     <include layout="@layout/widget_empty" />

@@ -447,7 +447,7 @@
     <string name="widget_prayer_time">Waktu %1$s</string>
     <string name="widget_prayer_time_ending">Waktu %1$s hampir tamat</string>
     <string name="widget_prayer_prayed">%1$s sudah</string>
-    <string name="widget_left_until">berbaki · %1$s %2$s</string>
+    <string name="widget_left">berbaki</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Catatan Solat</string>

@@ -447,7 +447,7 @@
     <string name="widget_prayer_time">Vrijeme za %1$s</string>
     <string name="widget_prayer_time_ending">Vrijeme za %1$s ističe</string>
     <string name="widget_prayer_prayed">%1$s klanjan</string>
-    <string name="widget_left_until">preostalo · %1$s %2$s</string>
+    <string name="widget_left">preostalo</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Evidencija namaza</string>

@@ -448,7 +448,7 @@
     <string name="widget_prayer_time">%1$s-এর ওয়াক্ত</string>
     <string name="widget_prayer_time_ending">%1$s-এর ওয়াক্ত শেষ হচ্ছে</string>
     <string name="widget_prayer_prayed">%1$s আদায় হয়েছে</string>
-    <string name="widget_left_until">বাকি · %1$s %2$s</string>
+    <string name="widget_left">বাকি</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">নামাজের হিসাব</string>

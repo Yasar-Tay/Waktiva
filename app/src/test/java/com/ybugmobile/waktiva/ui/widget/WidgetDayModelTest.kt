@@ -76,16 +76,15 @@ class WidgetDayModelTest {
     }
 
     @Test
-    fun picksFamilyFromCellSize() {
+    fun squareAndLargerCellsUseTheSquare() {
         assertEquals(WidgetSize.SMALL, WidgetSize.from(0, 0))
-        assertEquals(WidgetSize.SMALL, WidgetSize.from(160, 400))
-        assertEquals(WidgetSize.MEDIUM, WidgetSize.from(320, 160))
-        assertEquals(WidgetSize.LARGE, WidgetSize.from(320, 320))
+        assertEquals(WidgetSize.SMALL, WidgetSize.from(160, 160))
+        assertEquals(WidgetSize.SMALL, WidgetSize.from(320, 320))
     }
 
     @Test
-    fun shortCellsUseCompactBar() {
-        // Widgets placed with the previous 4×1 design keep a readable single-row layout.
+    fun shortCellsUseTheCountdownBar() {
+        // Widgets placed with the earlier 4×1 design keep a readable single-row layout.
         assertEquals(WidgetSize.COMPACT, WidgetSize.from(320, 70))
         assertEquals(WidgetSize.COMPACT, WidgetSize.from(160, 60))
         assertEquals(WidgetSize.SMALL, WidgetSize.from(160, 110))

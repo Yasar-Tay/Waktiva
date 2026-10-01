@@ -435,7 +435,7 @@
     <string name="widget_prayer_time">Ora di %1$s</string>
     <string name="widget_prayer_time_ending">L’ora di %1$s sta finendo</string>
     <string name="widget_prayer_prayed">%1$s pregata</string>
-    <string name="widget_left_until">restano · %1$s %2$s</string>
+    <string name="widget_left">restano</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">Registro delle preghiere</string>

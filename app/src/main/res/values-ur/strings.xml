@@ -448,7 +448,7 @@
     <string name="widget_prayer_time">%1$s کا وقت</string>
     <string name="widget_prayer_time_ending">%1$s کا وقت ختم ہو رہا ہے</string>
     <string name="widget_prayer_prayed">%1$s ادا ہو گئی</string>
-    <string name="widget_left_until">باقی · %1$s %2$s</string>
+    <string name="widget_left">باقی</string>
 
     <!-- Prayer log (çetele) -->
     <string name="prayer_log_title">نماز کا ریکارڈ</string>
