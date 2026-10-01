@@ -12,8 +12,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.vectorResource
@@ -234,9 +236,11 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
             condition == WeatherCondition.HEAVY_SNOW ||
             condition == WeatherCondition.SNOW_GRAINS ||
             condition == WeatherCondition.SNOW_SHOWERS
-        val snowflakePainter = if (isSnowCondition) {
-            rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_snowflake))
-        } else null
+        // One painter for the small flakes and one for the large, each kept at a single size
+        // (see drawSnowflake).
+        val snowflake = if (isSnowCondition) ImageVector.vectorResource(id = R.drawable.ic_snowflake) else null
+        val smallFlake = snowflake?.let { rememberVectorPainter(it) }
+        val largeFlake = snowflake?.let { rememberVectorPainter(it) }
 
         Box(modifier = Modifier.fillMaxSize()) {
             lightning?.let { ThunderLayer(it.value) }
@@ -306,19 +310,16 @@ fun WeatherBackgroundLayer(condition: WeatherCondition, isDay: Boolean) {
                                 center = Offset(x, y)
                             )
 
-                            snowflakePainter?.let { painter ->
-                                val sizePx = 14.dp.toPx() * scale
-                                withTransform({
-                                    translate(x - sizePx / 2, y - sizePx / 2)
-                                    rotate(
-                                        degrees = fallProgress * 360f * (if (index % 3 == 0) 1.5f else -1f),
-                                        pivot = Offset(sizePx / 2, sizePx / 2)
-                                    )
-                                }) {
-                                    with(painter) {
-                                        draw(size = Size(sizePx, sizePx), alpha = alpha)
-                                    }
-                                }
+                            (if (isSmall) smallFlake else largeFlake)?.let { painter ->
+                                drawSnowflake(
+                                    flake = painter,
+                                    center = Offset(x, y),
+                                    size = 14.dp.toPx() * scale,
+                                    // The largest of its kind, so the flakes only ever scale down.
+                                    baseSize = 14.dp.toPx() * (baseScale + 0.14f),
+                                    degrees = fallProgress * 360f * (if (index % 3 == 0) 1.5f else -1f),
+                                    alpha = alpha
+                                )
                             }
                         }
                     }
@@ -353,6 +354,33 @@ fun rememberLightningFlash(): State<Float> {
         }
     }
     return flash.asState()
+}
+
+/**
+ * A snowflake [size] across at [center], turned by [degrees].
+ *
+ * The vector is always drawn at [baseSize] and scaled to [size]: a vector painter keeps the bitmap
+ * it last rasterised and redraws it whenever it's asked for another size, which flakes of many
+ * sizes sharing one painter would do for every flake on every frame. A [flake] painter should be
+ * drawn at one [baseSize] only, ideally the largest it is shown at, so it only ever scales down.
+ */
+internal fun DrawScope.drawSnowflake(
+    flake: Painter,
+    center: Offset,
+    size: Float,
+    baseSize: Float,
+    degrees: Float,
+    alpha: Float
+) {
+    val half = baseSize / 2f
+    val factor = size / baseSize
+    withTransform({
+        translate(center.x - half, center.y - half)
+        rotate(degrees, pivot = Offset(half, half))
+        scale(factor, factor, pivot = Offset(half, half))
+    }) {
+        with(flake) { draw(Size(baseSize, baseSize), alpha = alpha) }
+    }
 }
 
 /** Whole-screen lightning flash; [flash] 1 is the brightest strike. */

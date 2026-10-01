@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -24,6 +23,7 @@ import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.ui.home.composables.gear.dayAngle
 import com.ybugmobile.waktiva.ui.theme.LocalLightningFlash
 import com.ybugmobile.waktiva.ui.theme.clouds.rememberSceneClock
+import com.ybugmobile.waktiva.ui.theme.drawSnowflake
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.max
@@ -49,7 +49,11 @@ internal fun SkyPrecipitation(sky: DaySky, radius: Float, fadeFrom: Float = 0.78
 
     val seconds = rememberSceneClock()
     val lightning = LocalLightningFlash.current
-    val flake = rememberVectorPainter(ImageVector.vectorResource(R.drawable.ic_snowflake))
+    // One painter for the small flakes and one for the large, each kept at a single size
+    // (see drawSnowflake).
+    val flake = ImageVector.vectorResource(R.drawable.ic_snowflake)
+    val smallFlake = rememberVectorPainter(flake)
+    val largeFlake = rememberVectorPainter(flake)
 
     Spacer(
         Modifier
@@ -98,22 +102,22 @@ internal fun SkyPrecipitation(sky: DaySky, radius: Float, fadeFrom: Float = 0.78
 
                         if (d.snow) {
                             val small = d.index % 2 == 0
-                            val scale = ((if (small) 0.30f else 0.60f) + d.x * 0.14f) * FarSize
+                            val baseScale = if (small) 0.30f else 0.60f
+                            val scale = (baseScale + d.x * 0.14f) * FarSize
                             drawCircle(
                                 Color.White.copy(alpha = 0.12f * FarAlpha),
                                 radius = (if (small) 2.8f else 4.9f) * dp * FarSize,
                                 center = Offset(x, y)
                             )
-                            val flakeSize = 14f * dp * scale
-                            withTransform({
-                                translate(x - flakeSize / 2f, y - flakeSize / 2f)
-                                rotate(
-                                    degrees = t / SnowSeconds * 360f * (if (d.index % 3 == 0) 1.5f else -1f),
-                                    pivot = Offset(flakeSize / 2f, flakeSize / 2f)
-                                )
-                            }) {
-                                with(flake) { draw(Size(flakeSize, flakeSize), alpha = (if (small) 0.60f else 0.80f) * FarAlpha) }
-                            }
+                            drawSnowflake(
+                                flake = if (small) smallFlake else largeFlake,
+                                center = Offset(x, y),
+                                size = 14f * dp * scale,
+                                // The largest of its kind, so the flakes only ever scale down.
+                                baseSize = 14f * dp * (baseScale + 0.14f) * FarSize,
+                                degrees = t / SnowSeconds * 360f * (if (d.index % 3 == 0) 1.5f else -1f),
+                                alpha = (if (small) 0.60f else 0.80f) * FarAlpha
+                            )
                         } else {
                             // The screen's three sizes of drop, by the same rules.
                             val kind = d.index % 3
