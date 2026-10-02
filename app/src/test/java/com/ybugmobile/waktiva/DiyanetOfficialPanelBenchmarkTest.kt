@@ -44,10 +44,11 @@ class DiyanetOfficialPanelBenchmarkTest {
     }
 
     /**
-     * The 2026 rules against a second year of official tables, which nothing was tuned on. It
-     * only reports: the 2026 guardrails don't all hold here yet. Near the equinoxes, Fajr and
-     * Isha drift past them at 60 to 64 degrees north (up to 12 minutes in Reykjavik, 9 in Oslo
-     * and Umea, 8 in Trondheim; Tromso's Fajr reaches 92 against 88).
+     * The V9 rules against a second year of official tables, which nothing was tuned on. It only
+     * reports: the 2026 guardrails don't all hold here. Near the equinoxes, V9's Fajr and Isha
+     * drift past them at 60 to 64 degrees north (up to 12 minutes in Reykjavik, 9 in Oslo and
+     * Umea, 8 in Trondheim; Tromso's Fajr reaches 92 against 88). Those cities are V14's in the
+     * app, which DiyanetProductionPanelTest holds to both years.
      */
     @Test
     fun `print v9 official panel benchmark 2027`() {

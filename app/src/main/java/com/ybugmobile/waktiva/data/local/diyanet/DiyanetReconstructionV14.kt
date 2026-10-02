@@ -214,7 +214,20 @@ class DiyanetReconstructionV14(
         val raw = solarAstronomy.rawEvents(date, location, profile)
         val noon = requireNotNull(raw.prayerNoon) { "Solar noon is required for $date at $location" }
         val sunrise = raw.prayerSunrise
-        val maghrib = raw.prayerMaghrib
+        // The day's own sunset can fall after midnight (around midsummer above ~64°N, or where
+        // solar noon is late). The day's search window then finds the previous evening's sunset,
+        // before this sunrise, which made a 22-hour day read as a negative one and take the short
+        // winter axis. That evening's sunset is the first in the next day's window; with none
+        // there either, the sun doesn't set and the day is a long one.
+        val maghrib = raw.prayerMaghrib?.let { found ->
+            if (sunrise != null && found.isBefore(sunrise)) {
+                solarAstronomy.rawEvents(date.plusDays(1), location, profile).prayerMaghrib
+                    ?.takeIf { it.isAfter(sunrise) }
+                    ?: return boundedAxis(noon, LONG_DAY_HALF_MINUTES, "long_day_19h")
+            } else {
+                found
+            }
+        }
 
         if (sunrise == null || maghrib == null) {
             return when (polarState(date, location, noon)) {
@@ -1074,7 +1087,9 @@ class DiyanetReconstructionV14(
 
     companion object {
         const val BASELINE_V14_VERSION = "diyanet_reconstruction_v14_fajr_transition_regimes"
-        const val CANDIDATE_VERSION = "diyanet_reconstruction_v14_1_asymmetric_fajr_shoulder"
+        // v14.2: the day's sunset after midnight no longer puts a midsummer day on the winter axis.
+        // A new version so the prayer days cached under v14.1 are calculated again.
+        const val CANDIDATE_VERSION = "diyanet_reconstruction_v14_2_sunset_after_midnight"
         const val MIN_ABS_LATITUDE = 45.0
 
         private const val FAJR_ANGLE = 18.0
