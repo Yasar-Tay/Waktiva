@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -37,6 +39,7 @@ import com.ybugmobile.waktiva.ui.home.composables.gear.dayAngle
 import com.ybugmobile.waktiva.ui.home.composables.gear.pointOn
 import java.time.LocalTime
 import java.util.Locale
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -233,6 +236,128 @@ internal fun prayerWeather(
     }.toMap()
 }
 
+/**
+ * A spell of one kind of weather in the circle's sky: [startMinute] to [endMinute] of the dial (the
+ * end past 1440 when it runs on over midnight), with the weather its icon shows.
+ */
+@Immutable
+class WeatherSpell internal constructor(val startMinute: Float, val endMinute: Float, val weather: PrayerWeather)
+
+/**
+ * The day's weather as spells, one icon each: the hours from midnight, grouped by what their icon
+ * shows (clear, a few clouds, overcast, fog, rain, snow, a storm) and, where that icon has a sun
+ * and a moon, by day and night. Spells run on over midnight, as the dial joins its ends. A dry
+ * spell shorter than [MinSpellHours] is taken into the longer of its neighbours, so a passing
+ * cloud doesn't crowd the dial; rain, snow and storms always keep an icon of their own.
+ *
+ * Each hour has the weather the sky shows in it (the reported weather in today's current hour,
+ * [now]); a spell's icon shows the most frequent of its own hours. On today's circle a spell that
+ * has ended is gone by. Empty without a forecast.
+ */
+internal fun weatherSpells(day: PrayerDay, weather: DayCircleWeather?, now: LocalTime?): List<WeatherSpell> {
+    val forecast = weather?.forecast ?: return emptyList()
+    val conditions = (0 until 24).map { h ->
+        if (now != null && now.hour == h && weather.nowEffect != WeatherCondition.UNKNOWN) weather.nowEffect
+        else forecast.hours.firstOrNull { it.hour == h }?.effectCondition ?: return emptyList()
+    }
+    val sunrise = day.timings[PrayerType.SUNRISE]?.minutes()
+    val maghrib = day.timings[PrayerType.MAGHRIB]?.minutes()
+    fun isDay(minute: Float): Boolean {
+        val m = ((minute % 1440f) + 1440f) % 1440f
+        return if (sunrise != null && maghrib != null) m >= sunrise && m < maghrib else m >= 360f && m < 1080f
+    }
+    val own = (0 until 24).map { h ->
+        val group = conditions[h].spellGroup
+        SpellKind(group, if (group.hasSunAndMoon) isDay(h * 60f + 30f) else null)
+    }
+
+    // Each hour's kind as the dial shows it, short dry spells taken into their neighbours.
+    val kinds = own.toMutableList()
+    var runs = spellRuns(kinds)
+    while (runs.size > 1) {
+        val short = runs.indices
+            .filter { runs[it].length < MinSpellHours && !kinds[runs[it].start].group.falls }
+            .minByOrNull { runs[it].length } ?: break
+        val before = runs[(short - 1 + runs.size) % runs.size]
+        val after = runs[(short + 1) % runs.size]
+        val into = if (after.length > before.length) after else before
+        val run = runs[short]
+        for (k in 0 until run.length) kinds[(run.start + k) % 24] = kinds[into.start]
+        runs = spellRuns(kinds)
+    }
+
+    val nowMinute = now?.minutes()
+    return runs.map { run ->
+        val kind = kinds[run.start]
+        val hours = (0 until run.length).map { (run.start + it) % 24 }
+        val condition = hours.filter { own[it] == kind }.ifEmpty { hours }
+            .groupingBy { conditions[it] }.eachCount().maxBy { it.value }.key
+        val start = run.start * 60f
+        val end = start + run.length * 60f
+        WeatherSpell(
+            start,
+            end,
+            PrayerWeather(
+                condition = condition,
+                effectCondition = condition,
+                isDay = kind.isDay ?: isDay((start + end) / 2f),
+                temperature = null,
+                isPast = nowMinute != null && end <= 1440f && end <= nowMinute
+            )
+        )
+    }
+}
+
+/** What an hour's icon shows: its [group] of weather and, for a sun or a moon, [isDay]. */
+private data class SpellKind(val group: SpellGroup, val isDay: Boolean?)
+
+private class SpellRun(val start: Int, val length: Int)
+
+/**
+ * The runs of hours of one kind in [kinds], round the clock: a run over midnight is one run. A day
+ * of one kind all through is a single run from midnight.
+ */
+private fun spellRuns(kinds: List<SpellKind>): List<SpellRun> {
+    val first = (0 until 24).firstOrNull { kinds[it] != kinds[(it + 23) % 24] } ?: return listOf(SpellRun(0, 24))
+    val runs = mutableListOf<SpellRun>()
+    var h = first
+    while (h < first + 24) {
+        val start = h
+        while (h < first + 24 && kinds[h % 24] == kinds[start % 24]) h++
+        runs += SpellRun(start % 24, h - start)
+    }
+    return runs
+}
+
+/** The weathers the dial gives one icon, whatever their strength. */
+private enum class SpellGroup(val hasSunAndMoon: Boolean = false, val falls: Boolean = false) {
+    CLEAR(hasSunAndMoon = true),
+    FEW_CLOUDS(hasSunAndMoon = true),
+    OVERCAST,
+    FOG,
+    RAIN(falls = true),
+    SNOW(falls = true),
+    STORM(falls = true)
+}
+
+private val WeatherCondition.spellGroup: SpellGroup
+    get() = when (this) {
+        WeatherCondition.CLEAR -> SpellGroup.CLEAR
+        WeatherCondition.MAINLY_CLEAR, WeatherCondition.PARTLY_CLOUDY -> SpellGroup.FEW_CLOUDS
+        WeatherCondition.OVERCAST, WeatherCondition.UNKNOWN -> SpellGroup.OVERCAST
+        WeatherCondition.FOGGY -> SpellGroup.FOG
+        WeatherCondition.DRIZZLE, WeatherCondition.FREEZING_DRIZZLE, WeatherCondition.RAINY,
+        WeatherCondition.HEAVY_RAIN, WeatherCondition.RAIN_SHOWERS, WeatherCondition.FREEZING_RAIN -> SpellGroup.RAIN
+        WeatherCondition.SNOWY, WeatherCondition.HEAVY_SNOW, WeatherCondition.SNOW_SHOWERS,
+        WeatherCondition.SNOW_GRAINS -> SpellGroup.SNOW
+        WeatherCondition.THUNDERSTORM, WeatherCondition.THUNDERSTORM_HAIL -> SpellGroup.STORM
+    }
+
+/** The shortest dry spell that keeps an icon of its own, in hours. */
+private const val MinSpellHours = 2
+
+private fun LocalTime.minutes() = hour * 60f + minute
+
 /** The day's range of temperatures, as the date card shows it, e.g. "15° – 26°". */
 internal fun DayForecast.temperatureRange(): String =
     String.format(Locale.US, "%d° – %d°", minTemp.roundToInt(), maxTemp.roundToInt())
@@ -263,55 +388,76 @@ fun weatherIconRes(condition: WeatherCondition, isDay: Boolean): Int = when (con
 // ---------------------------------------------------------------------------
 
 /**
- * Where a prayer's weather icon sits, as an offset from the dial's centre: beside its time label
- * on the ring of labels, on the side with more room before the next prayer, so it keeps clear of
- * the prayer name above the centre, the special-day bridge below it and the markers outside.
- * When neither side has room it sits just inside the label instead.
+ * Where each spell's icon sits, as offsets from the dial's centre, on a ring just inside the time
+ * labels at [labelRadius]: as far out as the most a label can reach towards the centre at that
+ * angle allows. Each icon goes as near the middle of its spell as it can without touching another
+ * icon, any of [keepOut] (the prayer's name over the hub, a special day's plate) or the hub within
+ * [innerLimit], trying every five minutes out to either end of the spell; rain, snow and storms
+ * are placed first, then the longer spells. A spell with no room anywhere along it is left
+ * without an icon.
  *
- * [minutes] are all the prayers' times on the dial; sizes are in pixels.
+ * Sizes are in pixels; [keepOut] is relative to the centre.
  */
-internal fun weatherIconOffset(
-    minutes: List<Float>,
-    index: Int,
+internal fun spellIconOffsets(
+    spells: List<WeatherSpell>,
     labelRadius: Float,
     labelHalfWidth: Float,
     labelHalfHeight: Float,
     iconSize: Float,
     gap: Float,
+    keepOut: List<Rect>,
+    innerLimit: Float,
     rtl: Boolean
-): Offset {
-    val sorted = minutes.sorted()
-    val m = minutes[index]
-    val at = sorted.indexOf(m)
-    val before = (m - sorted[(at - 1 + sorted.size) % sorted.size] + 1440f) % 1440f
-    val after = (sorted[(at + 1) % sorted.size] - m + 1440f) % 1440f
-    // How far round the ring the icon's centre is from the label's, in minutes of the dial.
-    val shift = (labelHalfWidth + gap + iconSize / 2f) / labelRadius / TWO_PI * 1440f
-    // The icon plus the neighbour's label half must fit in the gap.
-    val needed = 2f * shift + gap / labelRadius / TWO_PI * 1440f
-    return if (max(before, after) >= needed) {
-        val towards = if (after >= before) m + shift else m - shift
-        pointOn(Offset.Zero, labelRadius, dayAngle(towards, rtl))
-    } else {
-        pointOn(Offset.Zero, labelRadius - labelHalfHeight - gap - iconSize / 2f, dayAngle(m, rtl))
+): List<Pair<PrayerWeather, Offset>> {
+    fun at(minute: Float): Offset {
+        val direction = pointOn(Offset.Zero, 1f, dayAngle(((minute % 1440f) + 1440f) % 1440f, rtl))
+        // A label reaches its half width towards the centre at 3 and 9 o'clock, its half height at 12 and 6.
+        val reach = abs(direction.x) * labelHalfWidth + abs(direction.y) * labelHalfHeight
+        return direction * (labelRadius - reach - gap - iconSize / 2f)
     }
+    val placed = mutableListOf<Offset>()
+    fun free(o: Offset): Boolean {
+        val half = iconSize / 2f
+        if (o.getDistance() - half < innerLimit) return false
+        if (placed.any { (it - o).getDistance() < iconSize + gap }) return false
+        val box = Rect(o.x - half, o.y - half, o.x + half, o.y + half)
+        return keepOut.none { it.overlaps(box) }
+    }
+    val order = spells.indices.sortedWith(
+        compareByDescending<Int> { spells[it].weather.condition.spellGroup.falls }
+            .thenByDescending { spells[it].endMinute - spells[it].startMinute }
+    )
+    val offsets = arrayOfNulls<Offset>(spells.size)
+    for (i in order) {
+        val spell = spells[i]
+        val middle = (spell.startMinute + spell.endMinute) / 2f
+        val reach = (spell.endMinute - spell.startMinute) / 2f
+        var step = 0f
+        search@ while (step <= reach) {
+            for (minute in listOf(middle + step, middle - step)) {
+                val o = at(minute)
+                if (free(o)) {
+                    offsets[i] = o
+                    placed += o
+                    break@search
+                }
+            }
+            step += 5f
+        }
+    }
+    return spells.indices.mapNotNull { i -> offsets[i]?.let { spells[i].weather to it } }
 }
-
-private const val TWO_PI = (2 * Math.PI).toFloat()
 
 /** How long the weather icons' clock takes to go round once. */
 private const val WEATHER_LOOP_MS = 6_000
 
 /**
- * The prayers' weather icons over the dial, at [offsets] from its centre, in the same colours as
- * the weather at the top of the screen. Icons of prayers already gone by fade back.
+ * The day's weather icons over the dial, one for each spell, at its offset from the centre (see
+ * [spellIconOffsets]), in the same colours as the weather at the top of the screen. Icons of
+ * spells already gone by fade back.
  */
 @Composable
-internal fun BoxScope.PrayerWeatherIcons(
-    weather: Map<PrayerType, PrayerWeather>,
-    offsets: Map<PrayerType, Offset>,
-    size: Dp
-) {
+internal fun BoxScope.WeatherSpellIcons(icons: List<Pair<PrayerWeather, Offset>>, size: Dp) {
     // One slow clock for every icon; each icon reads it only while drawing.
     val clock = rememberInfiniteTransition(label = "weather icons").animateFloat(
         initialValue = 0f,
@@ -319,36 +465,39 @@ internal fun BoxScope.PrayerWeatherIcons(
         animationSpec = infiniteRepeatable(tween(WEATHER_LOOP_MS, easing = LinearEasing)),
         label = "weather icon clock"
     )
-    weather.forEach { (type, w) ->
-        val offset = offsets[type] ?: return@forEach
-        key(type) {
-            AnimatedWeatherIcon(
-                condition = w.condition,
-                isDay = w.isDay,
-                clock = clock,
-                phase = type.ordinal / 6f,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .zIndex(3f)
-                    .graphicsLayer {
-                        translationX = offset.x
-                        translationY = offset.y
-                        alpha = if (w.isPast) 0.45f else 1f
-                    }
-                    .size(size)
-                    // A soft shadow, so an icon keeps its edge over any colour of the sky.
-                    .drawBehind {
-                        drawCircle(
-                            Brush.radialGradient(
-                                0.3f to Color.Black.copy(alpha = 0.28f),
-                                1f to Color.Transparent,
-                                center = center,
-                                radius = this.size.minDimension * 0.75f
-                            ),
-                            this.size.minDimension * 0.75f
-                        )
-                    }
-            )
-        }
+    icons.forEachIndexed { i, (w, offset) ->
+        // Each in its own phase, so the icons never move in step.
+        key(i) { DialWeatherIcon(w, offset, size, clock, phase = i * 0.31f) }
     }
+}
+
+@Composable
+private fun BoxScope.DialWeatherIcon(w: PrayerWeather, offset: Offset, size: Dp, clock: State<Float>, phase: Float) {
+    AnimatedWeatherIcon(
+        condition = w.condition,
+        isDay = w.isDay,
+        clock = clock,
+        phase = phase,
+        modifier = Modifier
+            .align(Alignment.Center)
+            .zIndex(3f)
+            .graphicsLayer {
+                translationX = offset.x
+                translationY = offset.y
+                alpha = if (w.isPast) 0.45f else 1f
+            }
+            .size(size)
+            // A soft shadow, so an icon keeps its edge over any colour of the sky.
+            .drawBehind {
+                drawCircle(
+                    Brush.radialGradient(
+                        0.3f to Color.Black.copy(alpha = 0.28f),
+                        1f to Color.Transparent,
+                        center = center,
+                        radius = this.size.minDimension * 0.75f
+                    ),
+                    this.size.minDimension * 0.75f
+                )
+            }
+    )
 }

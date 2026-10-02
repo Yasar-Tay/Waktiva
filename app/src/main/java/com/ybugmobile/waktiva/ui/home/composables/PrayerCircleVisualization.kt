@@ -102,8 +102,9 @@ import kotlin.math.sign
  * @param onPrayerTap Called with a tapped prayer; returns true when it handled the tap, otherwise
  * the badge shows its info card.
  * @param sky The day's sky, painted inside the ring; null for none.
- * @param prayerWeather Each prayer's weather, shown as an icon beside its time and on its card.
+ * @param prayerWeather Each prayer's weather, shown on its card.
  * @param badgeWeather The weather each badge is toned for, where it differs from the screen's.
+ * @param weatherSpells The day's weather in spells, each shown as an icon just inside the times.
  * @param temperatureRange The day's range of temperatures, shown on the date card.
  */
 @Composable
@@ -125,6 +126,7 @@ fun PrayerCircleVisualization(
     sky: DaySky? = null,
     prayerWeather: Map<PrayerType, PrayerWeather> = emptyMap(),
     badgeWeather: Map<PrayerType, WeatherCondition> = emptyMap(),
+    weatherSpells: List<WeatherSpell> = emptyList(),
     temperatureRange: String? = null
 ) {
     val context = LocalContext.current
@@ -304,26 +306,30 @@ fun PrayerCircleVisualization(
                 }
         )
 
-        // Each prayer's weather beside its time.
-        if (prayerWeather.isNotEmpty()) {
+        // The day's weather, an icon for each spell of it, on a ring just inside the times. The
+        // prayers' own weather shows on their plaques.
+        if (weatherSpells.isNotEmpty()) {
             val iconSize = if (isLandscape) 30.dp else 40.dp
             val label = remember(textMeasurer, labelStyle) { textMeasurer.measure("00:00", labelStyle).size }
-            val offsets = remember(prayers, ring, label, isRtl, iconSize) {
-                val minutes = prayers.map { it.time.minutes() }
-                prayers.mapIndexed { i, p ->
-                    p.type to weatherIconOffset(
-                        minutes = minutes,
-                        index = i,
+            val hasHeader = currentPrayer != null
+            val spells = remember(weatherSpells, ring, label, isRtl, iconSize, hasHeader, isLandscape) {
+                with(density) {
+                    // The current prayer's name, centred just above the bezel, as placed below.
+                    val header = if (hasHeader) listOf(currentPrayerHeaderBounds(-(ring.bezelRadius.toDp() + 18.dp), isLandscape)) else emptyList()
+                    spellIconOffsets(
+                        spells = weatherSpells,
                         labelRadius = ring.labelDistance(ring.badge),
                         labelHalfWidth = label.width / 2f,
                         labelHalfHeight = label.height / 2f,
-                        iconSize = with(density) { iconSize.toPx() },
-                        gap = with(density) { 3.dp.toPx() },
+                        iconSize = iconSize.toPx(),
+                        gap = 3.dp.toPx(),
+                        keepOut = header,
+                        innerLimit = ring.bezelRadius + 3.dp.toPx(),
                         rtl = isRtl
                     )
-                }.toMap()
+                }
             }
-            PrayerWeatherIcons(prayerWeather, offsets, iconSize)
+            WeatherSpellIcons(spells, iconSize)
         }
 
         // Invisible tap targets over the badges; a tapped badge turns into its night plaque.

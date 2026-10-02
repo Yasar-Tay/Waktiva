@@ -52,6 +52,8 @@ fun DayCircle(
     // The sky changes by the hour; the prayers' weather also fades the prayers gone by.
     val sky = remember(day, weather, now?.hour, rtl) { daySky(day, weather, now, rtl) }
     val prayersWeather = remember(day, weather, now, prayer?.type) { prayerWeather(day, weather, now, prayer?.type) }
+    // The day's weather as the dial shows it: an icon for each spell of one kind of weather.
+    val spells = remember(day, weather, now?.hour) { weatherSpells(day, weather, now) }
     // With weather effects on, each badge is toned for its own hour, as the sky is.
     val badgeWeather = remember(prayersWeather, weather?.effectsOn) {
         if (weather?.effectsOn == true) prayersWeather.mapValues { it.value.effectCondition } else emptyMap()
@@ -84,6 +86,7 @@ fun DayCircle(
             sky = sky,
             prayerWeather = prayersWeather,
             badgeWeather = badgeWeather,
+            weatherSpells = spells,
             temperatureRange = temperatureRange
         )
     } else {
@@ -102,6 +105,7 @@ fun DayCircle(
             sky = sky,
             prayerWeather = prayersWeather,
             badgeWeather = badgeWeather,
+            weatherSpells = spells,
             temperatureRange = temperatureRange
         )
     }

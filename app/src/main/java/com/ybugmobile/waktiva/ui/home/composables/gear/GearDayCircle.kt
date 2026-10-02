@@ -67,11 +67,13 @@ import com.ybugmobile.waktiva.domain.provider.ReligiousDaysProvider
 import com.ybugmobile.waktiva.ui.home.composables.CurrentPrayerHeader
 import com.ybugmobile.waktiva.ui.home.composables.DaySky
 import com.ybugmobile.waktiva.ui.home.composables.PrayerWeather
-import com.ybugmobile.waktiva.ui.home.composables.PrayerWeatherIcons
+import com.ybugmobile.waktiva.ui.home.composables.WeatherSpellIcons
 import com.ybugmobile.waktiva.ui.home.composables.SkyPrecipitation
 import com.ybugmobile.waktiva.ui.home.composables.daySky
 import com.ybugmobile.waktiva.ui.home.composables.degrees
-import com.ybugmobile.waktiva.ui.home.composables.weatherIconOffset
+import com.ybugmobile.waktiva.ui.home.composables.WeatherSpell
+import com.ybugmobile.waktiva.ui.home.composables.currentPrayerHeaderBounds
+import com.ybugmobile.waktiva.ui.home.composables.spellIconOffsets
 import com.ybugmobile.waktiva.ui.home.composables.PrayedGlow
 import com.ybugmobile.waktiva.ui.home.composables.accentColor
 import com.ybugmobile.waktiva.ui.home.composables.iconRes
@@ -81,6 +83,7 @@ import kotlinx.coroutines.delay
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.hypot
+import kotlin.math.min
 
 /**
  * The clockwork day circle in [style] (anything but [DayCircleStyle.CLASSIC]).
@@ -88,8 +91,8 @@ import kotlin.math.hypot
  * [sunLight] is the screen angle the sunlight falls from (see [sunLightAngle]), or null
  * for the default light. [prayedPrayers] glow as marked in the prayer log (null until it has
  * loaded); [onPrayerTap] gets a tapped prayer first and returns true when it handled the tap.
- * [sky] shows through the dial's open face, [prayerWeather] beside the times and on the plaques,
- * [badgeWeather] tones each prayer gear and [temperatureRange] goes under the date.
+ * [sky] shows through the dial's open face, [prayerWeather] on the plaques, [weatherSpells] as icons
+ * just inside the times, [badgeWeather] tones each prayer gear and [temperatureRange] goes under the date.
  */
 @Composable
 internal fun GearDayCircle(
@@ -107,6 +110,7 @@ internal fun GearDayCircle(
     sky: DaySky? = null,
     prayerWeather: Map<PrayerType, PrayerWeather> = emptyMap(),
     badgeWeather: Map<PrayerType, WeatherCondition> = emptyMap(),
+    weatherSpells: List<WeatherSpell> = emptyList(),
     temperatureRange: String? = null
 ) {
     val density = LocalDensity.current
@@ -224,26 +228,37 @@ internal fun GearDayCircle(
                 }
         )
 
-        // Each prayer's weather beside its time, over the turning parts.
-        if (prayerWeather.isNotEmpty()) {
-            val iconSize = if (isLandscape) 12.dp else 16.dp
+        // The day's weather, an icon for each spell of it, on a ring just inside the times and
+        // over the turning parts. The prayers' own weather shows on their plaques.
+        if (weatherSpells.isNotEmpty()) {
             val label = remember(textMeasurer, labelStyle) { textMeasurer.measure("00:00", labelStyle).size }
-            val offsets = remember(prayers, dial, label, isRtl, iconSize) {
-                val minutes = prayers.map { it.minutes }
-                prayers.mapIndexed { i, p ->
-                    p.type to weatherIconOffset(
-                        minutes = minutes,
-                        index = i,
+            val hasHeader = currentPrayer != null
+            val placed = remember(weatherSpells, dial, bridge, label, labelReach, isRtl, hasHeader, isLandscape) {
+                with(density) {
+                    val gap = 3.dp.toPx()
+                    // As large as the classic dial's, where the ring between the hub and the times
+                    // has room; never so large that an icon reaches over the hub.
+                    val room = dial.labelRadius - labelReach - gap - (dial.hubOuterRadius + gap)
+                    val iconSize = min((if (isLandscape) 30.dp else 40.dp).toPx(), room)
+                    val keepOut = listOfNotNull(
+                        // The current prayer's name, centred just above the hub, as placed below.
+                        if (hasHeader) currentPrayerHeaderBounds(-(dial.hubOuterRadius.toDp() + 18.dp), isLandscape) else null,
+                        bridge?.bounds
+                    )
+                    iconSize.toDp() to spellIconOffsets(
+                        spells = weatherSpells,
                         labelRadius = dial.labelRadius,
                         labelHalfWidth = label.width / 2f,
                         labelHalfHeight = label.height / 2f,
-                        iconSize = with(density) { iconSize.toPx() },
-                        gap = with(density) { 3.dp.toPx() },
+                        iconSize = iconSize,
+                        gap = gap,
+                        keepOut = keepOut,
+                        innerLimit = dial.hubOuterRadius + gap,
                         rtl = isRtl
                     )
-                }.toMap()
+                }
             }
-            PrayerWeatherIcons(prayerWeather, offsets, iconSize)
+            WeatherSpellIcons(placed.second, placed.first)
         }
 
         PrayerMarkers(

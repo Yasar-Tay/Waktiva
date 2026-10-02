@@ -6,14 +6,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.domain.model.CurrentPrayer
+
+/**
+ * Roughly the box the header's name takes up, in pixels relative to the dial's centre, when it
+ * is [verticalOffset] from it: wide enough for the longest prayer name, for what must keep clear.
+ */
+internal fun Density.currentPrayerHeaderBounds(verticalOffset: Dp, isLandscape: Boolean): Rect {
+    val y = verticalOffset.toPx()
+    val halfWidth = (if (isLandscape) 46.dp else 58.dp).toPx()
+    val halfHeight = (if (isLandscape) 10.dp else 12.dp).toPx()
+    return Rect(-halfWidth, y - halfHeight, halfWidth, y + halfHeight)
+}
 
 /**
  * A floating header component that identifies the currently active prayer period.

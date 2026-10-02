@@ -120,6 +120,19 @@ internal class SpecialDayBridge(
         }
     }
 
+    /**
+     * The box the bridge takes up, relative to the dial's centre, for what must keep clear of it;
+     * null when it isn't drawn.
+     */
+    val bounds: Rect? = if (!fits) null else {
+        // The plate's ends are rounded: reach out by half its thickness either way along the arc.
+        val points = (0..16).flatMap { k ->
+            val a = start - (thickness / 2f) / mid + (end - start + thickness / mid) * k / 16f
+            listOf(pointOn(Offset.Zero, inner, a), pointOn(Offset.Zero, outer, a))
+        }
+        Rect(points.minOf { it.x }, points.minOf { it.y }, points.maxOf { it.x }, points.maxOf { it.y })
+    }
+
     /** Annular sector from [start] to [end] with rounded ends. */
     private fun bridgeOutline(innerEdge: Float, outerEdge: Float) = Path().apply {
         val capCentre = (innerEdge + outerEdge) / 2f
