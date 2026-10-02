@@ -21,21 +21,43 @@ class DiyanetOfficialPanelBenchmarkTest {
 
     @Test
     fun `official panel fixture is complete and unique`() {
-        val rows = loadOfficialRows()
+        PANEL_YEARS.forEach(::assertPanelComplete)
+    }
+
+    private fun assertPanelComplete(year: Int) {
+        val rows = loadOfficialRows(year)
 
         assertEquals(14 * 365, rows.size)
         assertEquals(rows.size, rows.map { it.city to it.date }.toSet().size)
         assertEquals(PANEL_CITIES.map { it.key }.toSet(), rows.map { it.city }.toSet())
         rows.groupBy { it.city }.forEach { (_, cityRows) ->
             assertEquals(365, cityRows.size)
-            assertEquals(LocalDate.of(2026, 1, 1), cityRows.minOf { it.date })
-            assertEquals(LocalDate.of(2026, 12, 31), cityRows.maxOf { it.date })
+            assertEquals(LocalDate.of(year, 1, 1), cityRows.minOf { it.date })
+            assertEquals(LocalDate.of(year, 12, 31), cityRows.maxOf { it.date })
         }
     }
 
     @Test
     fun `print v9 official panel benchmark`() {
-        val officialByCity = loadOfficialRows().groupBy { it.city }
+        val (metricsByKey, unavailable) = benchmark(2026)
+        assertV9Guardrails(metricsByKey, unavailable)
+    }
+
+    /**
+     * The 2026 rules against a second year of official tables, which nothing was tuned on. It
+     * only reports: the 2026 guardrails don't all hold here yet. Near the equinoxes, Fajr and
+     * Isha drift past them at 60 to 64 degrees north (up to 12 minutes in Reykjavik, 9 in Oslo
+     * and Umea, 8 in Trondheim; Tromso's Fajr reaches 92 against 88).
+     */
+    @Test
+    fun `print v9 official panel benchmark 2027`() {
+        benchmark(2027)
+    }
+
+    private fun benchmark(
+        year: Int
+    ): Pair<Map<Triple<EvaluationGroup, String, PrayerEvent>, BenchmarkMetrics>, List<UnavailableMonth>> {
+        val officialByCity = loadOfficialRows(year).groupBy { it.city }
         val allErrors = mutableListOf<BenchmarkError>()
         val unavailable = mutableListOf<UnavailableMonth>()
 
@@ -47,7 +69,7 @@ class DiyanetOfficialPanelBenchmarkTest {
             val actualRows = (1..12).flatMap { month ->
                 runCatching {
                     calculator.calculateMonthlyPrayerTimes(
-                            year = 2026,
+                            year = year,
                             month = month,
                             latitude = city.latitude,
                             longitude = city.longitude,
@@ -90,7 +112,7 @@ class DiyanetOfficialPanelBenchmarkTest {
 
         unavailable.forEach { failure ->
             println(
-                "DIYANET_BASELINE_UNAVAILABLE|city=${failure.city}|" +
+                "DIYANET_BASELINE_UNAVAILABLE|year=$year|city=${failure.city}|" +
                     "month=${failure.month}|reason=${failure.reason}"
             )
         }
@@ -103,7 +125,7 @@ class DiyanetOfficialPanelBenchmarkTest {
             .toSortedMap(compareBy({ it.first.name }, { it.second }, { it.third.ordinal }))
             .forEach { (key, metrics) ->
                 println(
-                    "DIYANET_BASELINE|group=${key.first}|city=${key.second}|" +
+                    "DIYANET_BASELINE|year=$year|group=${key.first}|city=${key.second}|" +
                         "event=${key.third}|count=${metrics.count}|" +
                         "mae=${formatDecimal(metrics.mae)}|p95=${metrics.p95}|" +
                         "max=${metrics.maxAbsolute}|max_date=${metrics.maxDate}|" +
@@ -114,7 +136,7 @@ class DiyanetOfficialPanelBenchmarkTest {
         PrayerEvent.entries.forEach { event ->
             assertEquals(14 * 365, allErrors.count { it.event == event })
         }
-        assertV9Guardrails(metricsByKey, unavailable)
+        return metricsByKey to unavailable
     }
 
     private fun assertV9Guardrails(
@@ -157,9 +179,9 @@ class DiyanetOfficialPanelBenchmarkTest {
         }
     }
 
-    private fun loadOfficialRows(): List<OfficialRow> {
+    private fun loadOfficialRows(year: Int): List<OfficialRow> {
         val stream = DiyanetOfficialPanelBenchmarkTest::class.java.classLoader!!.getResourceAsStream(
-            "diyanet/official_panel_2026/official_panel_2026.csv"
+            "diyanet/official_panel_$year/official_panel_$year.csv"
         )
         assertNotNull("Official Diyanet panel fixture is missing", stream)
         return stream!!.bufferedReader(Charsets.UTF_8).useLines { lines ->
@@ -281,6 +303,8 @@ class DiyanetOfficialPanelBenchmarkTest {
     }
 
     private companion object {
+        val PANEL_YEARS = listOf(2026, 2027)
+
         // These fixtures contain dates without a physical sunrise or sunset.
         // Their synthetic core-axis accuracy is covered by the global golden runner;
         // this legacy V9 panel keeps only a bounded discontinuity guard for them.
