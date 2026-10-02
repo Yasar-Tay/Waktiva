@@ -1,6 +1,11 @@
 package com.ybugmobile.waktiva.ui.home.composables
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.size
@@ -294,6 +299,9 @@ internal fun weatherIconOffset(
 
 private const val TWO_PI = (2 * Math.PI).toFloat()
 
+/** How long the weather icons' clock takes to go round once. */
+private const val WEATHER_LOOP_MS = 6_000
+
 /**
  * The prayers' weather icons over the dial, at [offsets] from its centre, in the same colours as
  * the weather at the top of the screen. Icons of prayers already gone by fade back.
@@ -304,12 +312,21 @@ internal fun BoxScope.PrayerWeatherIcons(
     offsets: Map<PrayerType, Offset>,
     size: Dp
 ) {
+    // One slow clock for every icon; each icon reads it only while drawing.
+    val clock = rememberInfiniteTransition(label = "weather icons").animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(WEATHER_LOOP_MS, easing = LinearEasing)),
+        label = "weather icon clock"
+    )
     weather.forEach { (type, w) ->
         val offset = offsets[type] ?: return@forEach
         key(type) {
-            Image(
-                painter = painterResource(weatherIconRes(w.condition, w.isDay)),
-                contentDescription = null,
+            AnimatedWeatherIcon(
+                condition = w.condition,
+                isDay = w.isDay,
+                clock = clock,
+                phase = type.ordinal / 6f,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .zIndex(3f)
