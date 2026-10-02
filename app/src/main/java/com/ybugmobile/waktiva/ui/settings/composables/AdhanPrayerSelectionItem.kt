@@ -113,7 +113,7 @@ fun AdhanPrayerPills(
     ) {
         ADHAN_PRAYERS.forEach { type ->
             PrayerPill(
-                label = type.displayName,
+                label = type.prayerName,
                 selected = type !in disabledPrayers,
                 accentColor = accentColor,
                 onToggle = { onPrayerToggle(type, it) }

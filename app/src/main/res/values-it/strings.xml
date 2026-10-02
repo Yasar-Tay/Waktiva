@@ -86,6 +86,7 @@
 
     <!-- Prayer Names -->
     <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_name_fajr">Fajr</string>
     <string name="prayer_sunrise">Alba</string>
     <string name="prayer_dhuhr">Dhuhr</string>
     <string name="prayer_asr">Asr</string>

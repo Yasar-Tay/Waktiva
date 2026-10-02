@@ -142,7 +142,7 @@ fun AdhanScreen(
 ) {
     val prayerType = PrayerType.fromString(prayerName)
     val context = androidx.compose.ui.platform.LocalContext.current
-    val displayedPrayerName = prayerType?.getDisplayName(context) ?: prayerName
+    val displayedPrayerName = prayerType?.getPrayerName(context) ?: prayerName
 
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseScale by infiniteTransition.animateFloat(

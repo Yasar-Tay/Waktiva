@@ -124,7 +124,7 @@ fun AdhanControls(
                         val locale = Locale.getDefault()
                         val title = when {
                             isTest -> stringResource(R.string.adhan_test_alarm).uppercase(locale)
-                            prayerType != null -> prayerType.displayName.uppercase(locale)
+                            prayerType != null -> prayerType.prayerName.uppercase(locale)
                             else -> stringResource(R.string.adhan_playing).uppercase(locale)
                         }
                         

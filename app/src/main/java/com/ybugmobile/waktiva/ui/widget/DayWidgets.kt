@@ -275,7 +275,7 @@ internal object DayWidgets {
      */
     private fun bindMoment(context: Context, views: RemoteViews, snapshot: WaktivaWidget.Snapshot, today: Today, countSp: Float) {
         val moment = today.moment
-        val prayer = moment.prayer.getDisplayName(context)
+        val prayer = moment.prayer.getPrayerName(context)
         val label = when (moment.state) {
             MomentState.OPEN -> context.getString(R.string.widget_prayer_time, prayer)
             MomentState.ENDING -> context.getString(R.string.widget_prayer_time_ending, prayer)

@@ -149,7 +149,7 @@ fun AudioSettingsScreen(
                                         ?: audioItems.find { it.isDefault }
 
                                     PrayerAdhanRow(
-                                        prayerName = prayer.getDisplayName(context),
+                                        prayerName = prayer.getPrayerName(context),
                                         adhanTitle = adhanItem?.name ?: "",
                                         adhanArtist = adhanItem?.artist,
                                         onClick = {
@@ -189,7 +189,7 @@ fun AudioSettingsScreen(
 
             if (showSelectionDialog) {
                 AdhanSelectionDialog(
-                    title = selectedPrayerType?.getDisplayName(context) ?: stringResource(R.string.audio_header_all_prayers),
+                    title = selectedPrayerType?.getPrayerName(context) ?: stringResource(R.string.audio_header_all_prayers),
                     audioItems = audioItems,
                     onSelect = { 
                         viewModel.selectAudio(it)

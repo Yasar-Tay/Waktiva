@@ -71,7 +71,7 @@ fun PrayerLogSheet(
     val formatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
 
     val color = type.accentColor
-    val name = type.displayName
+    val name = type.prayerName
     val start = day.timings[type]
     val end = remember(type, day, nextDay) { PrayerLog.windowEnd(type, day, nextDay) }
     val isOpen = end == null || now.isBefore(end)

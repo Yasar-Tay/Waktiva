@@ -108,7 +108,7 @@ class NotificationHelper @Inject constructor(
 
     fun showPreAdhanWarning(prayerName: String, prayerDate: String, minutes: Int, isMuted: Boolean = false) {
         val prayerType = PrayerType.fromString(prayerName)
-        val displayedPrayerName = prayerType?.getDisplayName(context) ?: prayerName
+        val displayedPrayerName = prayerType?.getPrayerName(context) ?: prayerName
 
         val contentIntent = PendingIntent.getActivity(
             context, 0, Intent(context, MainActivity::class.java), 
@@ -161,7 +161,7 @@ class NotificationHelper @Inject constructor(
      */
     fun createAdhanNotification(prayerName: String): Notification {
         val prayerType = PrayerType.fromString(prayerName)
-        val displayedPrayerName = prayerType?.getDisplayName(context) ?: prayerName
+        val displayedPrayerName = prayerType?.getPrayerName(context) ?: prayerName
 
         val fullScreenIntent = Intent(context, AdhanActivity::class.java).apply {
             putExtra(EXTRA_PRAYER_NAME, prayerName)
@@ -195,7 +195,7 @@ class NotificationHelper @Inject constructor(
 
     fun showSilentPrayerTimeNotification(prayerName: String) {
         val prayerType = PrayerType.fromString(prayerName)
-        val displayedPrayerName = prayerType?.getDisplayName(context) ?: prayerName
+        val displayedPrayerName = prayerType?.getPrayerName(context) ?: prayerName
 
         val contentIntent = PendingIntent.getActivity(
             context, 0, Intent(context, MainActivity::class.java),
@@ -239,7 +239,7 @@ class NotificationHelper @Inject constructor(
             context, NOTIFICATION_ID_PRAYER_LOG, markAll,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        val names = unmarked.joinToString(", ") { it.getDisplayName(context) }
+        val names = unmarked.joinToString(", ") { it.getPrayerName(context) }
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID_PRAYER_LOG)
             .setSmallIcon(R.drawable.ic_notification)
@@ -261,7 +261,7 @@ class NotificationHelper @Inject constructor(
 
     fun showMissedAdhanNotification(prayerName: String) {
         val prayerType = PrayerType.fromString(prayerName)
-        val displayedPrayerName = prayerType?.getDisplayName(context) ?: prayerName
+        val displayedPrayerName = prayerType?.getPrayerName(context) ?: prayerName
 
         val contentIntent = PendingIntent.getActivity(
             context, 0, Intent(context, MainActivity::class.java),

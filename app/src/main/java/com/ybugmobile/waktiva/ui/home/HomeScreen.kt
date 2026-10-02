@@ -215,7 +215,7 @@ fun HomeScreenContent(
 
     val handleShowToast = remember(context, state.isMuted) {
         { prayerName: String ->
-            val localizedPrayerName = PrayerType.fromString(prayerName)?.getDisplayName(context)
+            val localizedPrayerName = PrayerType.fromString(prayerName)?.getPrayerName(context)
                 ?: prayerName.lowercase().replaceFirstChar { it.uppercase() }
 
             toastMessage = if (!state.isMuted)

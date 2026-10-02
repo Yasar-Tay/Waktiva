@@ -519,7 +519,7 @@ private fun PreferencesStep(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Column(modifier = Modifier.weight(1f)) {
-                                        Text(prayer.getDisplayName(context), fontWeight = FontWeight.Bold, color = Color.White)
+                                        Text(prayer.getPrayerName(context), fontWeight = FontWeight.Bold, color = Color.White)
                                         Text(adhanItem?.name ?: "", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
                                     }
                                     Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color.White.copy(alpha = 0.3f))
@@ -751,7 +751,7 @@ private fun PreferencesStep(
 
     if (showAudioSelectionDialog) {
         WelcomeSelectionDialog(
-            title = selectedPrayerType?.getDisplayName(context) ?: stringResource(R.string.audio_header_all_prayers),
+            title = selectedPrayerType?.getPrayerName(context) ?: stringResource(R.string.audio_header_all_prayers),
             options = audioItems.map { it.name to it.path },
             selectedKey = settings?.prayerSpecificAdhanPaths?.get(selectedPrayerType) ?: settings?.selectedAdhanPath ?: "",
             onSelected = { 

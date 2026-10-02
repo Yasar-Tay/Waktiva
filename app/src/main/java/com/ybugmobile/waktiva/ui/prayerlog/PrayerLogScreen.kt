@@ -208,7 +208,7 @@ private fun TodayCard(
                     Text(
                         text = when {
                             today.isComplete -> stringResource(R.string.prayer_log_all_done)
-                            active != null -> stringResource(R.string.prayer_log_now, active.type.displayName)
+                            active != null -> stringResource(R.string.prayer_log_now, active.type.prayerName)
                             state.startDate == null -> stringResource(R.string.prayer_log_hint)
                             else -> stringResource(R.string.prayer_log_today_count, today.prayed, today.entries.size)
                         },
@@ -633,7 +633,7 @@ private fun PrayerChip(entry: PrayerLogEntry, size: Dp, onClick: () -> Unit) {
     val accent = entry.type.accentColor
     val status = entry.status
     val isPrayed = status == PrayerLogStatus.PRAYED
-    val name = entry.type.displayName
+    val name = entry.type.prayerName
     val statusText = stringResource(status.labelRes)
 
     val fill by animateColorAsState(
