@@ -12,6 +12,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
+import java.time.YearMonth
 import java.util.Calendar
 import java.util.Locale
 
@@ -41,25 +42,20 @@ class PrayerUpdateWorker @AssistedInject constructor(
             
             // If less than 15 days of data remaining, proactively fetch to maintain a buffer
             if (remainingDays < 15) {
-                Log.d("PrayerUpdateWorker", "Proactively fetching prayer times for next 3 months")
-                
-                var allSuccess = true
-                
-                // Fetch current and next 2 months (Total 3 months)
-                for (i in 0..2) {
-                    val fetchCal = calendar.clone() as Calendar
-                    fetchCal.add(Calendar.MONTH, i)
-                    val result = repository.refreshPrayerTimes(
-                        year = fetchCal.get(Calendar.YEAR),
-                        month = fetchCal.get(Calendar.MONTH) + 1,
-                        latitude = settings.latitude,
-                        longitude = settings.longitude,
-                        method = settings.calculationMethod
-                    )
-                    if (!result.isSuccess) allSuccess = false
-                }
-                
-                if (allSuccess) {
+                Log.d(
+                    "PrayerUpdateWorker",
+                    "Proactively fetching prayer times for next ${PrayerRepository.CACHED_MONTHS} months"
+                )
+
+                val result = repository.refreshPrayerTimesForMonths(
+                    start = YearMonth.now(),
+                    monthCount = PrayerRepository.CACHED_MONTHS,
+                    latitude = settings.latitude,
+                    longitude = settings.longitude,
+                    method = settings.calculationMethod
+                )
+
+                if (result.isSuccess) {
                     scheduleAlarms()
                     Result.success()
                 } else {

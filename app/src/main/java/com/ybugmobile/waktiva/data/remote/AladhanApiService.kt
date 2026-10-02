@@ -1,6 +1,7 @@
 package com.ybugmobile.waktiva.data.remote
 
 import com.ybugmobile.waktiva.data.remote.dto.AladhanResponseDto
+import com.ybugmobile.waktiva.data.remote.dto.AladhanYearResponseDto
 import com.ybugmobile.waktiva.data.remote.dto.AstroResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -22,6 +23,14 @@ interface AladhanApiService {
         @Query("latitudeAdjustmentMethod") latitudeAdjustmentMethod: Int? = null,
         @Query("adjustment") adjustment: Int? = null
     ): AladhanResponseDto
+
+    @GET("v1/calendar/{year}")
+    suspend fun getPrayerTimesYearCalendar(
+        @Path("year") year: Int,
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("method") method: Int = 2
+    ): AladhanYearResponseDto
 
     @GET("v1/astro")
     suspend fun getAstroData(

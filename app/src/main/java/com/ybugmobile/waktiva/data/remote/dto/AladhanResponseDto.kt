@@ -8,6 +8,13 @@ data class AladhanResponseDto(
     @SerializedName("data") val data: List<PrayerDayDto>
 )
 
+/** A whole year's calendar: [data] maps each month number ("1".."12") to its days. */
+data class AladhanYearResponseDto(
+    @SerializedName("code") val code: Int,
+    @SerializedName("status") val status: String,
+    @SerializedName("data") val data: Map<String, List<PrayerDayDto>>
+)
+
 data class PrayerDayDto(
     @SerializedName("timings") val timings: TimingsDto,
     @SerializedName("date") val date: DateDto,

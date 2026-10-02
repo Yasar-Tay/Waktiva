@@ -43,6 +43,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.YearMonth
 import java.time.ZoneId
 import kotlin.math.abs
 import javax.inject.Inject
@@ -482,16 +483,14 @@ class HomeViewModel @Inject constructor(
             if (address != null) settingsManager.saveLocation(lat, lng, address)
         }
         
-        if (forceFullRefresh) {
-            for (i in 0..2) {
-                val fetchDate = now.plusMonths(i.toLong())
-                prayerRepository.refreshPrayerTimes(fetchDate.year, fetchDate.monthValue, lat, lng, s.calculationMethod, force = true)
-            }
-        } else {
-            prayerRepository.refreshPrayerTimes(now.year, now.monthValue, lat, lng, s.calculationMethod)
-            val nextMonth = now.plusMonths(1)
-            prayerRepository.refreshPrayerTimes(nextMonth.year, nextMonth.monthValue, lat, lng, s.calculationMethod)
-        }
+        prayerRepository.refreshPrayerTimesForMonths(
+            start = YearMonth.from(now),
+            monthCount = PrayerRepository.CACHED_MONTHS,
+            latitude = lat,
+            longitude = lng,
+            method = s.calculationMethod,
+            force = forceFullRefresh
+        )
     }
 
     private fun angularDifferenceDegrees(first: Float, second: Float): Float {

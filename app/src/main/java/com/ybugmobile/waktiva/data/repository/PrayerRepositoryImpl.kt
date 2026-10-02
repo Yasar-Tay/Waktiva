@@ -19,6 +19,9 @@ import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.model.WeatherInfo
 import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.Dispatchers
@@ -198,15 +201,55 @@ class PrayerRepositoryImpl @Inject constructor(
         longitude: Double?,
         method: Int,
         force: Boolean
+    ): Result<Unit> = refreshPrayerTimesForMonths(
+        start = YearMonth.of(year, month),
+        monthCount = 1,
+        latitude = latitude,
+        longitude = longitude,
+        method = method,
+        force = force
+    )
+
+    override suspend fun refreshPrayerTimesForMonths(
+        start: YearMonth,
+        monthCount: Int,
+        latitude: Double?,
+        longitude: Double?,
+        method: Int,
+        force: Boolean
     ): Result<Unit> {
         if (latitude == null || longitude == null) {
             return Result.failure(Exception("Location is required for fetching prayer times"))
         }
 
-        val yearMonth = "$year-${month.toString().padStart(2, '0')}"
-        val storedParams = settingsManager.getFetchParams(yearMonth)
-        // A month filled by the local fallback is marked, so the API is tried again next time.
-        val isLocalFallback = storedParams?.endsWith(LOCAL_FALLBACK_MARKER) == true
+        val months = (0 until monthCount).map { start.plusMonths(it.toLong()) }
+        val results = coroutineScope {
+            months.groupBy { it.year }
+                .map { (year, yearMonths) ->
+                    async { refreshMonthsOfYear(year, yearMonths, latitude, longitude, method, force) }
+                }
+                .awaitAll()
+        }
+        return results.firstOrNull { it.isFailure } ?: Result.success(Unit)
+    }
+
+    /** A month's cache state against the parameters it would be fetched with now. */
+    private class MonthFetch(
+        val yearMonth: YearMonth,
+        val key: String,
+        val inFlightKey: String,
+        val hasMatchingCache: Boolean,
+        val isLocalFallback: Boolean
+    )
+
+    private suspend fun monthFetch(
+        yearMonth: YearMonth,
+        latitude: Double,
+        longitude: Double,
+        method: Int
+    ): MonthFetch {
+        val key = "${yearMonth.year}-${yearMonth.monthValue.toString().padStart(2, '0')}"
+        val storedParams = settingsManager.getFetchParams(key)
         val cachedParams = storedParams?.removeSuffix(LOCAL_FALLBACK_MARKER)
         val currentParams = if (method == 13) {
             compatibleMethod13FetchParams(cachedParams, latitude, longitude)
@@ -214,29 +257,88 @@ class PrayerRepositoryImpl @Inject constructor(
         } else {
             buildFetchParams(latitude, longitude, method)
         }
-        val inFlightKey = "$year/$month/$currentParams"
+        return MonthFetch(
+            yearMonth = yearMonth,
+            key = key,
+            inFlightKey = "${yearMonth.year}/${yearMonth.monthValue}/$currentParams",
+            hasMatchingCache = cachedParams == currentParams &&
+                dao.getCountForYearMonth(key) >= yearMonth.lengthOfMonth(),
+            // A month filled by the local fallback is marked, so the API is tried again next time.
+            isLocalFallback = storedParams?.endsWith(LOCAL_FALLBACK_MARKER) == true
+        )
+    }
 
-        if (!inFlightRequests.add(inFlightKey)) return Result.success(Unit)
-
-        var hasMatchingCache = false
+    /**
+     * Fills the [yearMonths] of [year] that are missing or stale. A single month is fetched
+     * on its own; several share one yearly call. A month the API cannot provide is kept if
+     * it is already cached, and calculated locally otherwise.
+     */
+    private suspend fun refreshMonthsOfYear(
+        year: Int,
+        yearMonths: List<YearMonth>,
+        latitude: Double,
+        longitude: Double,
+        method: Int,
+        force: Boolean
+    ): Result<Unit> {
+        val claimed = mutableListOf<MonthFetch>()
         return try {
-            val expectedDayCount = YearMonth.of(year, month).lengthOfMonth()
-            val cachedDayCount = dao.getCountForYearMonth(yearMonth)
-            hasMatchingCache = cachedParams == currentParams && cachedDayCount >= expectedDayCount
+            for (yearMonth in yearMonths) {
+                val fetch = monthFetch(yearMonth, latitude, longitude, method)
+                if (fetch.hasMatchingCache && !fetch.isLocalFallback && !force) continue
+                if (!inFlightRequests.add(fetch.inFlightKey)) continue
+                claimed += fetch
+            }
+            if (claimed.isEmpty()) return Result.success(Unit)
 
-            if (hasMatchingCache && !isLocalFallback && !force) {
-                return Result.success(Unit)
+            val daysByMonth: Map<Int, List<PrayerDayDto>> = try {
+                if (claimed.size == 1) {
+                    val month = claimed.single().yearMonth.monthValue
+                    val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method)
+                    if (response.code != 200) throw IOException("Aladhan API error ${response.code}")
+                    mapOf(month to response.data)
+                } else {
+                    val response = aladhanApi.getPrayerTimesYearCalendar(year, latitude, longitude, method)
+                    if (response.code != 200) throw IOException("Aladhan API error ${response.code}")
+                    response.data.mapNotNull { (month, days) -> month.toIntOrNull()?.let { it to days } }.toMap()
+                }
+            } catch (e: Exception) {
+                if (e is CancellationException) throw e
+                Log.w("PrayerRepository", "Aladhan calendar fetch failed for $year", e)
+                emptyMap()
             }
 
-            val response = aladhanApi.getPrayerTimesCalendar(year, month, latitude, longitude, method)
-            if (response.code != 200) throw IOException("Aladhan API error ${response.code}")
+            claimed
+                .map { fetch ->
+                    saveMonth(fetch, daysByMonth[fetch.yearMonth.monthValue], latitude, longitude, method)
+                }
+                .firstOrNull { it.isFailure } ?: Result.success(Unit)
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(e)
+        } finally {
+            claimed.forEach { inFlightRequests.remove(it.inFlightKey) }
+        }
+    }
+
+    private suspend fun saveMonth(
+        fetch: MonthFetch,
+        days: List<PrayerDayDto>?,
+        latitude: Double,
+        longitude: Double,
+        method: Int
+    ): Result<Unit> {
+        val year = fetch.yearMonth.year
+        val month = fetch.yearMonth.monthValue
+        return try {
+            if (days.isNullOrEmpty()) throw IOException("Aladhan returned no days for ${fetch.key}")
 
             val resolvedZoneId = if (method == 13) {
-                resolveApiZoneId(response.data)
+                resolveApiZoneId(days)
             } else {
                 ZoneId.systemDefault()
             }
-            var entities = response.data.map { it.toEntity() }
+            var entities = days.map { it.toEntity() }
             if (method == 13) {
                 entities = applyDiyanetCorrection(
                     entities = entities,
@@ -247,9 +349,9 @@ class PrayerRepositoryImpl @Inject constructor(
                     zoneId = resolvedZoneId
                 )
             }
-            dao.replacePrayerDaysForYearMonth(yearMonth, entities)
+            dao.replacePrayerDaysForYearMonth(fetch.key, entities)
             settingsManager.saveFetchParams(
-                yearMonth,
+                fetch.key,
                 buildFetchParams(latitude, longitude, method, resolvedZoneId)
             )
             Result.success(Unit)
@@ -257,7 +359,7 @@ class PrayerRepositoryImpl @Inject constructor(
             if (e is CancellationException) throw e
             // The month is already cached for these parameters: keep it rather than
             // replacing it with a local calculation.
-            if (hasMatchingCache) return Result.success(Unit)
+            if (fetch.hasMatchingCache) return Result.success(Unit)
             try {
                 val fallbackZoneId = ZoneId.systemDefault()
                 val localEntities = calculateMonthlyPrayerTimesOffMain(
@@ -268,17 +370,16 @@ class PrayerRepositoryImpl @Inject constructor(
                     methodId = method,
                     zoneId = fallbackZoneId
                 )
-                dao.replacePrayerDaysForYearMonth(yearMonth, localEntities)
+                dao.replacePrayerDaysForYearMonth(fetch.key, localEntities)
                 settingsManager.saveFetchParams(
-                    yearMonth,
+                    fetch.key,
                     buildFetchParams(latitude, longitude, method, fallbackZoneId) + LOCAL_FALLBACK_MARKER
                 )
                 Result.success(Unit)
             } catch (localEx: Exception) {
+                if (localEx is CancellationException) throw localEx
                 Result.failure(localEx)
             }
-        } finally {
-            inFlightRequests.remove(inFlightKey)
         }
     }
 

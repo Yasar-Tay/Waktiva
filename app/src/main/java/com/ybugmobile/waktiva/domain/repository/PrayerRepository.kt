@@ -6,6 +6,7 @@ import com.ybugmobile.waktiva.domain.model.WeatherInfo
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.YearMonth
 
 /**
  * Repository interface defining the contract for managing prayer data, lunar information,
@@ -60,7 +61,23 @@ interface PrayerRepository {
         method: Int,
         force: Boolean = false
     ): Result<Unit>
-    
+
+    /**
+     * Refreshes [monthCount] consecutive months starting at [start]. The months of one year
+     * that are missing or stale are fetched in a single yearly API call.
+     *
+     * @param force Fetch from the API even when a month is already cached for these parameters.
+     * @return A [Result] that fails when any of the months could not be filled.
+     */
+    suspend fun refreshPrayerTimesForMonths(
+        start: YearMonth,
+        monthCount: Int,
+        latitude: Double?,
+        longitude: Double?,
+        method: Int,
+        force: Boolean = false
+    ): Result<Unit>
+
     /**
      * Counts how many days of cached prayer data remain starting from the provided date.
      * Used by [WorkManager] tasks to determine if a proactive refresh is needed.
@@ -94,4 +111,9 @@ interface PrayerRepository {
         latitude: Double,
         longitude: Double
     ): Result<Unit>
+
+    companion object {
+        /** How many months ahead, the current one included, the prayer cache is kept filled. */
+        const val CACHED_MONTHS = 12
+    }
 }

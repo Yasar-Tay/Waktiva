@@ -10,7 +10,7 @@ import com.ybugmobile.waktiva.domain.repository.PrayerRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
-import java.util.Calendar
+import java.time.YearMonth
 
 @HiltWorker
 class LocationUpdateWorker @AssistedInject constructor(
@@ -43,11 +43,9 @@ class LocationUpdateWorker @AssistedInject constructor(
 
             // If user moved more than 50km or no previous location, refresh data
             if (shouldUpdate) {
-                val calendar = Calendar.getInstance()
-                
-                val result = repository.refreshPrayerTimes(
-                    year = calendar.get(Calendar.YEAR),
-                    month = calendar.get(Calendar.MONTH) + 1,
+                val result = repository.refreshPrayerTimesForMonths(
+                    start = YearMonth.now(),
+                    monthCount = PrayerRepository.CACHED_MONTHS,
                     latitude = currentLocation.latitude,
                     longitude = currentLocation.longitude,
                     method = settings.calculationMethod
