@@ -60,6 +60,28 @@ class MoonTextureTest {
     }
 
     @Test
+    fun theShareThatLooksLitMatchesTheIllumination() {
+        // What the eye calls lit is what shows clearly above earthshine, not merely what the sun
+        // touches: a day side fading slowly into the terminator reads as a thinner Moon than the
+        // percentage printed under it.
+        val r = size / 2f
+        for (phase in listOf(0.15, 0.25, 0.35, 0.4, 0.6, 0.75, 0.85)) {
+            val pixels = texture.light(phase)
+            var disc = 0
+            var bright = 0
+            for (py in 0 until size) for (px in 0 until size) {
+                val x = (px + 0.5f - r) / r
+                val y = (py + 0.5f - r) / r
+                if (x * x + y * y > 0.96f) continue
+                disc++
+                if (brightness(pixels[py * size + px]) > DaylightLevel) bright++
+            }
+            val expected = ((1 - cos(2 * PI * phase)) / 2).toFloat()
+            assertEquals("phase $phase", expected, bright.toFloat() / disc, 0.04f)
+        }
+    }
+
+    @Test
     fun waxingIsLitOnTheRightAndWaningOnTheLeft() {
         val waxing = texture.light(0.25)
         assertTrue(meanBrightness(waxing, size / 2, size) > meanBrightness(waxing, 0, size / 2) * 2)
@@ -79,12 +101,17 @@ class MoonTextureTest {
     fun theTerminatorHasNoBrightLine() {
         // At first quarter the terminator runs down the middle. Going from the night side into the
         // day, no pixel near it may stand out above both of its neighbours a few pixels either side.
+        // Each pixel is taken against the full Moon there, so a bright highland beside a mare is
+        // not mistaken for a line: only the lighting is compared, not the surface.
         val quarter = texture.light(0.25)
+        val full = texture.light(0.5)
+        fun lighting(i: Int) = brightness(quarter[i]).toFloat() / brightness(full[i])
         for (py in size / 4 until size * 3 / 4) {
             for (px in size / 2 - 6..size / 2 + 6) {
-                val here = brightness(quarter[py * size + px])
-                val sides = maxOf(brightness(quarter[py * size + px - 3]), brightness(quarter[py * size + px + 3]))
-                assertTrue("row $py, column $px: $here against $sides", here <= sides + 15)
+                val i = py * size + px
+                val here = lighting(i)
+                val sides = maxOf(lighting(i - 3), lighting(i + 3))
+                assertTrue("row $py, column $px: $here against $sides", here <= sides + 0.06f)
             }
         }
     }

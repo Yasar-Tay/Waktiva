@@ -26,6 +26,7 @@ import com.ybugmobile.waktiva.ui.theme.clouds.rememberSceneClock
 import com.ybugmobile.waktiva.ui.theme.drawSnowflake
 import kotlin.math.PI
 import kotlin.math.atan2
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -34,6 +35,8 @@ import kotlin.random.Random
 /**
  * Rain and snow falling in the circle's sky, in the hours whose weather has them (see
  * [DaySky.hours]), faded out at the sky's edge from [fadeFrom] of [radius] like the sky itself.
+ * They fall inwards, from the rim towards the centre, each along its own radius, and fade before
+ * they reach it.
  *
  * They are the screen's own drops and flakes (WeatherBackgroundLayer): the same slanting white
  * streaks and turning snowflakes, but further off, so smaller, fainter and slower, and the two
@@ -87,25 +90,33 @@ internal fun SkyPrecipitation(sky: DaySky, radius: Float, fadeFrom: Float = 0.78
                         }
                     }
 
-                    val travel = span + 30f * dp
+                    // Each drop falls along its own radius, from just outside the rim in to the
+                    // centre, so it stays in its hour's slice all the way down.
+                    val start = radius + 15f * dp
+                    val rainSway = 0.025f * sin(t / 12f * PI.toFloat()) * radius
                     for (d in drops) {
                         val speed = (if (d.snow) SnowSpeed else RainSpeed) * dp
-                        val y = top - 15f * dp + ((d.y + t * speed / travel) % 1f) * travel
-                        val x = left + d.x * span + if (d.snow) {
-                            sin(t / SnowSeconds * TWO_PI + d.x * 10f) * 15f * dp * FarSize
-                        } else {
-                            // The slow sway of the screen's rain.
-                            0.05f * sin(t / 12f * PI.toFloat()) * span
-                        }
+                        val r = start * (1f - (d.y + t * speed / start) % 1f)
+                        // Thinned out before the centre, where the radii crowd together and the
+                        // prayer's name sits.
+                        val fade = ((r / radius - InnerFadeEnd) / (InnerFadeStart - InnerFadeEnd)).coerceIn(0f, 1f)
+                        if (fade <= 0f) continue
+                        val angle = d.x * TWO_PI
+                        val inX = -cos(angle)
+                        val inY = -sin(angle)
+                        // Sideways to the fall: the screen's slow sway for rain, a drift for snow.
+                        val sway = if (d.snow) sin(t / SnowSeconds * TWO_PI + d.x * 10f) * 15f * dp * FarSize else rainSway
+                        val x = c.x - inX * r - inY * sway
+                        val y = c.y - inY * r + inX * sway
                         val weather = hours[hourAt(Offset(x, y), c, sky.rtl)] ?: continue
                         if (d.snow != weather.isSnow || d.rank >= weather.density) continue
 
                         if (d.snow) {
                             val small = d.index % 2 == 0
                             val baseScale = if (small) 0.30f else 0.60f
-                            val scale = (baseScale + d.x * 0.14f) * FarSize
+                            val scale = (baseScale + d.y * 0.14f) * FarSize
                             drawCircle(
-                                Color.White.copy(alpha = 0.12f * FarAlpha),
+                                Color.White.copy(alpha = 0.12f * FarAlpha * fade),
                                 radius = (if (small) 2.8f else 4.9f) * dp * FarSize,
                                 center = Offset(x, y)
                             )
@@ -116,7 +127,7 @@ internal fun SkyPrecipitation(sky: DaySky, radius: Float, fadeFrom: Float = 0.78
                                 // The largest of its kind, so the flakes only ever scale down.
                                 baseSize = 14f * dp * (baseScale + 0.14f) * FarSize,
                                 degrees = t / SnowSeconds * 360f * (if (d.index % 3 == 0) 1.5f else -1f),
-                                alpha = (if (small) 0.60f else 0.80f) * FarAlpha
+                                alpha = (if (small) 0.60f else 0.80f) * FarAlpha * fade
                             )
                         } else {
                             // The screen's three sizes of drop, by the same rules.
@@ -138,11 +149,14 @@ internal fun SkyPrecipitation(sky: DaySky, radius: Float, fadeFrom: Float = 0.78
                                 1 -> 0.65f
                                 else -> if (heavy) 0.95f else 0.78f
                             }
+                            // Streaked along the fall, towards the centre, leaning a little as the
+                            // screen's drops do.
                             val slant = (if (heavy) 2f else 1f) * dp * FarSize
+                            val streak = length * dp * FarSize
                             drawLine(
-                                Color.White.copy(alpha = alpha * FarAlpha),
+                                Color.White.copy(alpha = alpha * FarAlpha * fade),
                                 Offset(x, y),
-                                Offset(x - slant, y + length * dp * FarSize),
+                                Offset(x + inX * streak - inY * slant, y + inY * streak + inX * slant),
                                 thickness * dp * max(0.8f, FarSize),
                                 StrokeCap.Round
                             )
@@ -155,7 +169,10 @@ internal fun SkyPrecipitation(sky: DaySky, radius: Float, fadeFrom: Float = 0.78
     )
 }
 
-/** A drop or flake, placed across the sky's square from 0 to 1; [rank] decides the weathers it falls in. */
+/**
+ * A drop or flake: [x] is the share of a turn round the dial it falls along, [y] how far down that
+ * radius it starts, both from 0 to 1; [rank] decides the weathers it falls in.
+ */
 private class Drop(val snow: Boolean, val index: Int, val rank: Float, val x: Float, val y: Float)
 
 /**
@@ -164,7 +181,7 @@ private class Drop(val snow: Boolean, val index: Int, val rank: Float, val x: Fl
  */
 private fun drops(hours: List<WeatherCondition?>, spanDp: Float): List<Drop> {
     val random = Random(7)
-    val perDp2 = spanDp * spanDp / (ScreenWidthDp * ScreenHeightDp) * 1.6f
+    val perDp2 = spanDp * spanDp / (ScreenWidthDp * ScreenHeightDp) * 1.6f * CircleShare
     val list = mutableListOf<Drop>()
     if (hours.any { it?.isRain == true }) {
         repeat((96 * perDp2).roundToInt()) { list += Drop(false, it, random.nextFloat(), random.nextFloat(), random.nextFloat()) }
@@ -215,6 +232,13 @@ private const val TWO_PI = (2 * PI).toFloat()
 /** Size, opacity and speed of the circle's drops against the screen's: the same fall, further off. */
 private const val FarSize = 0.6f
 private const val FarAlpha = 0.7f
+
+/** The disc's share of the square round it, which the drop counts were once spread over. */
+private const val CircleShare = (PI / 4).toFloat()
+
+/** Where, as a share of the radius, the falling drops start to fade and are gone, short of the centre. */
+private const val InnerFadeStart = 0.5f
+private const val InnerFadeEnd = 0.22f
 
 /** A typical phone screen, which the screen's drop counts and speeds are for. */
 private const val ScreenWidthDp = 392f

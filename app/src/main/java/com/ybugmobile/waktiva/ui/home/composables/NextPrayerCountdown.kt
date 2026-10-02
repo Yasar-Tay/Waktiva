@@ -114,13 +114,15 @@ fun NextPrayerCountdown(
                     )
                 }
 
-                // 3. Skip/Mute Adhan Control (Pill-shaped glass button)
-                if (playAdhanAudio) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
+                // 3. Skip/Mute Adhan Control (Pill-shaped glass button). Its room is kept even when
+                // the adhan is off, so the label and the countdown stay put either way.
+                val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                val skipButtonHeight = if (isLandscape) 36.dp else 50.dp
+                Spacer(modifier = Modifier.height(16.dp))
+                if (!playAdhanAudio) {
+                    Spacer(modifier = Modifier.height(skipButtonHeight))
+                } else {
                     val glassTheme = LocalGlassTheme.current
-                    val configuration = LocalConfiguration.current
-                    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
                     
                     val cardShape = RoundedCornerShape(18.dp)
 
@@ -173,7 +175,7 @@ fun NextPrayerCountdown(
                     ) {
                         Box(
                             modifier = Modifier
-                                .height(if (isLandscape) 36.dp else 50.dp)
+                                .height(skipButtonHeight)
                                 .wrapContentWidth()
                                 .graphicsLayer {
                                     scaleX = scale
@@ -247,7 +249,7 @@ fun NextPrayerCountdown(
                                     verticalArrangement = Arrangement.spacedBy((-1).dp, Alignment.CenterVertically)
                                 ) {
                                     Text(
-                                        text = targetPrayerType.getDisplayName(context).uppercase(),
+                                        text = targetPrayerType.getPrayerName(context).uppercase(),
                                         style = TextStyle(
                                             fontSize = if (isLandscape) 7.sp else 8.sp,
                                             fontWeight = FontWeight.Bold,

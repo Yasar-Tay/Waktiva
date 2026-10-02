@@ -72,6 +72,7 @@ internal class MoonTexture(val size: Int) {
                 val incidence = x * sunX + z * sunZ + roughness[i]
                 var lit = if (incidence > 0f) 0.8f * (2f * incidence / (incidence + z + 1e-4f)) + 0.2f * incidence else 0f
                 lit *= ((incidence + 0.02f) / 0.08f).coerceIn(0f, 1f)
+                lit = lit.pow(TerminatorSharpness)
                 val shine = min(1f, lit * 6f)
                 val a = albedo[i]
                 val day = if (shine > 0f) expose(a * lit / shine) else 0f
@@ -144,6 +145,12 @@ internal class MoonTexture(val size: Int) {
 
         /** Brightness of the sheen where the sun stands overhead. */
         const val SheenStrength = 0.1f
+
+        /**
+         * Exponent on the day side's brightness. Below 1 it holds nearer the terminator, so the part
+         * that reads as lit is as wide as the phase (and the percentage under the Moon) says.
+         */
+        const val TerminatorSharpness = 0.5f
 
         /** Opacity of the night side, high enough that the whole disc keeps its shape on any sky. */
         const val NightOpacity = 0.9f

@@ -306,7 +306,7 @@ fun PrayerCircleVisualization(
 
         // Each prayer's weather beside its time.
         if (prayerWeather.isNotEmpty()) {
-            val iconSize = if (isLandscape) 15.dp else 20.dp
+            val iconSize = if (isLandscape) 30.dp else 40.dp
             val label = remember(textMeasurer, labelStyle) { textMeasurer.measure("00:00", labelStyle).size }
             val offsets = remember(prayers, ring, label, isRtl, iconSize) {
                 val minutes = prayers.map { it.time.minutes() }
