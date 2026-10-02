@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.drawText
+import com.ybugmobile.waktiva.ui.home.composables.timeShade
 import kotlin.math.sign
 
 // Shared drawing helpers for the gear dials, the prayer plaque and the special-day bridge.
@@ -114,8 +115,10 @@ internal fun DrawScope.nowIndicator(center: Offset, radius: Float, angle: Float,
     drawCircle(color, s * 0.015f, p, style = Stroke(1.5f * pxPerDp))
 }
 
+/** A prayer time over its soft shade, as on the classic dial. */
 internal fun DrawScope.timeLabel(f: GearFrame, text: String, at: Offset) {
     val layout = f.textMeasurer.measure(text, f.labelStyle)
+    timeShade(at, layout.size.width.toFloat(), layout.size.height.toFloat())
     drawText(layout, topLeft = Offset(at.x - layout.size.width / 2f, at.y - layout.size.height / 2f))
 }
 

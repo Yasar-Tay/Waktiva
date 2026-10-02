@@ -70,6 +70,7 @@ import com.ybugmobile.waktiva.ui.home.composables.PrayerWeather
 import com.ybugmobile.waktiva.ui.home.composables.WeatherSpellIcons
 import com.ybugmobile.waktiva.ui.home.composables.SkyPrecipitation
 import com.ybugmobile.waktiva.ui.home.composables.daySky
+import com.ybugmobile.waktiva.ui.home.composables.dialTimeStyle
 import com.ybugmobile.waktiva.ui.home.composables.degrees
 import com.ybugmobile.waktiva.ui.home.composables.WeatherSpell
 import com.ybugmobile.waktiva.ui.home.composables.currentPrayerHeaderBounds
@@ -141,14 +142,10 @@ internal fun GearDayCircle(
     }
 
     val textMeasurer = rememberTextMeasurer()
+    // As white and shaded as the classic dial's prayer times, but at the gear dials' own smaller
+    // size: the ring between the times and the hub is narrower here, and holds the weather icons.
     val labelStyle = remember(contentColor, isLandscape) {
-        TextStyle(
-            color = contentColor.copy(alpha = 0.62f),
-            fontSize = if (isLandscape) 8.sp else 10.sp,
-            fontFamily = IBMPlexArabic,
-            fontWeight = FontWeight.Bold,
-            shadow = Shadow(Color.Black.copy(alpha = 0.8f), blurRadius = 4f)
-        )
+        dialTimeStyle(contentColor, isLandscape).copy(fontSize = if (isLandscape) 8.sp else 10.sp, letterSpacing = 0.sp)
     }
     // How far a time label reaches from its centre, so dials can keep labels clear of other parts.
     val labelReach = remember(labelStyle, textMeasurer) {

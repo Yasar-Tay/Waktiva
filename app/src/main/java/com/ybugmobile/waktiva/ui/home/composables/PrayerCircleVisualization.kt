@@ -215,18 +215,7 @@ fun PrayerCircleVisualization(
     }
 
     val textMeasurer = rememberTextMeasurer()
-    // The prayer times: large and near white, each over a soft shade (see timeShade), so they read
-    // over any colour the sky inside the ring takes, from a pale dawn to the night.
-    val labelStyle = remember(contentColor, isLandscape) {
-        TextStyle(
-            color = contentColor.copy(alpha = 0.95f),
-            fontSize = if (isLandscape) 9.5.sp else 12.sp,
-            fontFamily = IBMPlexArabic,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 0.3.sp,
-            shadow = Shadow(Color.Black.copy(alpha = 0.85f), offset = Offset(0f, 1f), blurRadius = 6f)
-        )
-    }
+    val labelStyle = remember(contentColor, isLandscape) { dialTimeStyle(contentColor, isLandscape) }
 
     // Square that fits the parent's smaller dimension. fillMaxWidth() here would pin the width
     // and force the square taller than a short parent, overflowing it on wide (tablet) screens.
@@ -726,10 +715,24 @@ private fun DrawScope.prayerBadge(
 }
 
 /**
+ * The prayer times on every day dial: large and near white, each over a soft shade (see
+ * [timeShade]), so they read over any colour the sky inside the ring takes, from a pale dawn to
+ * the night, and over a dial's moving parts.
+ */
+internal fun dialTimeStyle(contentColor: Color, isLandscape: Boolean) = TextStyle(
+    color = contentColor.copy(alpha = 0.95f),
+    fontSize = if (isLandscape) 9.5.sp else 12.sp,
+    fontFamily = IBMPlexArabic,
+    fontWeight = FontWeight.Bold,
+    letterSpacing = 0.3.sp,
+    shadow = Shadow(Color.Black.copy(alpha = 0.85f), offset = Offset(0f, 1f), blurRadius = 6f)
+)
+
+/**
  * A soft dark shade behind a prayer time of [width] × [height] at [at], fading out at its edges
  * like the shadow behind the weather icons, so the time reads over a pale sky as well as a dark one.
  */
-private fun DrawScope.timeShade(at: Offset, width: Float, height: Float) {
+internal fun DrawScope.timeShade(at: Offset, width: Float, height: Float) {
     val radius = width * 0.72f
     withTransform({ scale(1f, height * 1.35f / (2f * radius), pivot = at) }) {
         drawCircle(
