@@ -529,8 +529,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Mark 500 prayers</string>
     <string name="prayer_log_game_setting">Game notifications</string>
     <string name="prayer_log_game_setting_desc">A nudge for XP before a prayer\'s time ends, your streak in the evening reminder, and cheers for full days, levels and badges</string>
-    <string name="prayer_log_game_channel">Prayer log game</string>
-    <string name="prayer_log_game_channel_desc">Nudges before a prayer\'s time ends and cheers for what you reach</string>
+    <string name="prayer_log_game_channel">Before a prayer\'s time ends</string>
+    <string name="prayer_log_game_channel_desc">A nudge to mark a prayer for XP before its time ends, with sound</string>
+    <string name="prayer_log_celebration_channel">Prayer log cheers</string>
+    <string name="prayer_log_celebration_channel_desc">Full days, levels and badges reached, without sound</string>
     <string name="prayer_log_nudge_title">%1$s time is ending soon</string>
     <string name="prayer_log_nudge_text">Prayed it? Mark it for +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">Prayed it? Mark it for +%1$d XP and keep your %2$d-day streak going 🔥</string>

@@ -528,8 +528,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Merkitse 500 rukousta</string>
     <string name="prayer_log_game_setting">Peli-ilmoitukset</string>
     <string name="prayer_log_game_setting_desc">Muistutus XP:stä ennen kuin rukouksen aika päättyy, putkesi iltamuistutuksessa ja juhlinta täysistä päivistä, tasoista ja merkeistä</string>
-    <string name="prayer_log_game_channel">Rukouslokipeli</string>
-    <string name="prayer_log_game_channel_desc">Muistutukset ennen rukousajan päättymistä ja juhlinta saavutuksistasi</string>
+    <string name="prayer_log_game_channel">Ennen rukousajan päättymistä</string>
+    <string name="prayer_log_game_channel_desc">Äänellinen muistutus merkitä rukous XP:tä varten ennen sen ajan päättymistä</string>
+    <string name="prayer_log_celebration_channel">Rukouslokin juhlinta</string>
+    <string name="prayer_log_celebration_channel_desc">Täydet päivät, tasot ja ansaitut merkit, ilman ääntä</string>
     <string name="prayer_log_nudge_title">Rukouksen %1$s aika päättyy pian</string>
     <string name="prayer_log_nudge_text">Rukoilitko? Merkitse ja saat +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">Rukoilitko? Merkitse, saat +%1$d XP ja %2$d päivän putkesi jatkuu 🔥</string>

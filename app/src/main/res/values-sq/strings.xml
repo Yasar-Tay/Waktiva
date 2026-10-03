@@ -528,8 +528,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Shëno 500 namaze</string>
     <string name="prayer_log_game_setting">Njoftimet e lojës</string>
     <string name="prayer_log_game_setting_desc">Një kujtesë për XP para se të mbarojë koha e namazit, seria jote në kujtesën e mbrëmjes dhe festim për ditë të plota, nivele e distinktivë</string>
-    <string name="prayer_log_game_channel">Loja e regjistrit të namazeve</string>
-    <string name="prayer_log_game_channel_desc">Kujtesa para se të mbarojë koha e namazit dhe festim për arritjet e tua</string>
+    <string name="prayer_log_game_channel">Para se të mbarojë koha</string>
+    <string name="prayer_log_game_channel_desc">Kujtesë me zë për të shënuar namazin për XP para se t\'i mbarojë koha</string>
+    <string name="prayer_log_celebration_channel">Festimet e regjistrit</string>
+    <string name="prayer_log_celebration_channel_desc">Ditë të plota, nivele dhe distinktivë të fituar, pa zë</string>
     <string name="prayer_log_nudge_title">Koha e %1$s po mbaron</string>
     <string name="prayer_log_nudge_text">E fale? Shënoje për +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">E fale? Shënoje për +%1$d XP dhe mbaje serinë tënde %2$d-ditore 🔥</string>

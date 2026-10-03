@@ -39,7 +39,11 @@ class NotificationHelper @Inject constructor(
         const val CHANNEL_ID_WARNING = "pre_adhan_warning_channel_v1"
         const val CHANNEL_ID_PRAYER_TIME = "prayer_time_notification_channel"
         const val CHANNEL_ID_PRAYER_LOG = "prayer_log_reminder_channel"
+        /** The prayer log game's nudges before a prayer's time ends: with the phone's sound. */
         const val CHANNEL_ID_PRAYER_LOG_GAME = "prayer_log_game_channel"
+
+        /** The prayer log game's cheers, which follow the user's own tap: silent. */
+        const val CHANNEL_ID_PRAYER_LOG_CELEBRATION = "prayer_log_celebration_channel"
 
         const val NOTIFICATION_ID_ADHAN = 1001
         const val NOTIFICATION_ID_WARNING = 2001
@@ -121,8 +125,22 @@ class NotificationHelper @Inject constructor(
                 setShowBadge(true)
             }
 
+            val prayerLogCelebrationChannel = NotificationChannel(
+                CHANNEL_ID_PRAYER_LOG_CELEBRATION,
+                context.getString(R.string.prayer_log_celebration_channel),
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = context.getString(R.string.prayer_log_celebration_channel_desc)
+                setSound(null, null)
+                enableVibration(false)
+                setShowBadge(true)
+            }
+
             notificationManager.createNotificationChannels(
-                listOf(adhanChannel, warningChannel, prayerTimeChannel, prayerLogChannel, prayerLogGameChannel)
+                listOf(
+                    adhanChannel, warningChannel, prayerTimeChannel, prayerLogChannel,
+                    prayerLogGameChannel, prayerLogCelebrationChannel
+                )
             )
         }
     }
@@ -316,6 +334,8 @@ class NotificationHelper @Inject constructor(
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setContentIntent(openPrayerLogIntent(NOTIFICATION_ID_PRAYER_LOG_NUDGE))
             .addAction(R.drawable.ic_notification, context.getString(R.string.prayer_log_nudge_mark, xp), markIntent)
+            // Before Android 8 there are no channels to give it its sound.
+            .setDefaults(NotificationCompat.DEFAULT_SOUND)
             .setAutoCancel(true)
             .build()
 
@@ -344,7 +364,7 @@ class NotificationHelper @Inject constructor(
         }
         val rest = lines.drop(1)
 
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID_PRAYER_LOG_GAME)
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID_PRAYER_LOG_CELEBRATION)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(PRAYED_GOLD)
             .setContentTitle(lines.first())
@@ -352,6 +372,7 @@ class NotificationHelper @Inject constructor(
             .setStyle(NotificationCompat.BigTextStyle().bigText(rest.joinToString("\n")))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_SOCIAL)
+            .setSilent(true)
             .setContentIntent(openPrayerLogIntent(NOTIFICATION_ID_PRAYER_LOG_CELEBRATION))
             .setAutoCancel(true)
             .build()

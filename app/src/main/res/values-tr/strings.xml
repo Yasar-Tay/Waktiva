@@ -529,8 +529,10 @@
     <string name="prayer_log_badge_prayers_500_desc">500 namaz işaretle</string>
     <string name="prayer_log_game_setting">Oyun bildirimleri</string>
     <string name="prayer_log_game_setting_desc">Vakit çıkmadan XP için hatırlatır, akşam hatırlatmasında serini gösterir; tam günleri, seviyeleri ve rozetleri kutlar</string>
-    <string name="prayer_log_game_channel">Çetele oyunu</string>
-    <string name="prayer_log_game_channel_desc">Vakit çıkmadan hatırlatmalar ve kazandıklarının kutlaması</string>
+    <string name="prayer_log_game_channel">Vakit çıkmadan hatırlatma</string>
+    <string name="prayer_log_game_channel_desc">Vakti çıkmadan namazı işaretleyip XP kazanman için sesli hatırlatma</string>
+    <string name="prayer_log_celebration_channel">Çetele kutlamaları</string>
+    <string name="prayer_log_celebration_channel_desc">Tam günler, seviyeler ve kazanılan rozetler; sessiz</string>
     <string name="prayer_log_nudge_title">%1$s vakti çıkmak üzere</string>
     <string name="prayer_log_nudge_text">Kıldıysan işaretle, +%1$d XP kazan.</string>
     <string name="prayer_log_nudge_text_streak">Kıldıysan işaretle, +%1$d XP kazan; %2$d günlük serin sürsün 🔥</string>

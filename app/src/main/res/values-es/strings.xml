@@ -516,8 +516,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Marca 500 oraciones</string>
     <string name="prayer_log_game_setting">Notificaciones de juego</string>
     <string name="prayer_log_game_setting_desc">Un aviso para ganar XP antes de que termine el tiempo de una oración, tu racha en el recordatorio nocturno y celebraciones por días completos, niveles e insignias</string>
-    <string name="prayer_log_game_channel">Juego del registro de oraciones</string>
-    <string name="prayer_log_game_channel_desc">Avisos antes de que termine el tiempo de una oración y celebraciones por lo que logras</string>
+    <string name="prayer_log_game_channel">Antes de que termine el tiempo</string>
+    <string name="prayer_log_game_channel_desc">Un aviso con sonido para marcar una oración y ganar XP antes de que termine su tiempo</string>
+    <string name="prayer_log_celebration_channel">Celebraciones del registro</string>
+    <string name="prayer_log_celebration_channel_desc">Días completos, niveles e insignias conseguidas, sin sonido</string>
     <string name="prayer_log_nudge_title">El tiempo de %1$s termina pronto</string>
     <string name="prayer_log_nudge_text">¿La rezaste? Márcala y gana +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">¿La rezaste? Márcala, gana +%1$d XP y mantén tu racha de %2$d días 🔥</string>

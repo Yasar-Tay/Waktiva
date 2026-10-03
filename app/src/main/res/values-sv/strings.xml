@@ -528,8 +528,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Markera 500 böner</string>
     <string name="prayer_log_game_setting">Spelaviseringar</string>
     <string name="prayer_log_game_setting_desc">En påminnelse om XP innan en böns tid tar slut, din svit i kvällspåminnelsen och firande av hela dagar, nivåer och märken</string>
-    <string name="prayer_log_game_channel">Böneloggens spel</string>
-    <string name="prayer_log_game_channel_desc">Påminnelser innan en böns tid tar slut och firande av det du når</string>
+    <string name="prayer_log_game_channel">Innan bönetiden tar slut</string>
+    <string name="prayer_log_game_channel_desc">En påminnelse med ljud att markera en bön för XP innan dess tid tar slut</string>
+    <string name="prayer_log_celebration_channel">Firande i böneloggen</string>
+    <string name="prayer_log_celebration_channel_desc">Hela dagar, nivåer och uppnådda märken, utan ljud</string>
     <string name="prayer_log_nudge_title">Tiden för %1$s tar snart slut</string>
     <string name="prayer_log_nudge_text">Har du bett? Markera för +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">Har du bett? Markera för +%1$d XP och håll din svit på %2$d dagar vid liv 🔥</string>

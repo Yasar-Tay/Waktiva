@@ -516,8 +516,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Segna 500 preghiere</string>
     <string name="prayer_log_game_setting">Notifiche di gioco</string>
     <string name="prayer_log_game_setting_desc">Un promemoria per gli XP prima che finisca il tempo di una preghiera, la tua serie nel promemoria serale e festeggiamenti per giornate complete, livelli e badge</string>
-    <string name="prayer_log_game_channel">Gioco del registro delle preghiere</string>
-    <string name="prayer_log_game_channel_desc">Promemoria prima che finisca il tempo di una preghiera e festeggiamenti per i tuoi traguardi</string>
+    <string name="prayer_log_game_channel">Prima che finisca il tempo</string>
+    <string name="prayer_log_game_channel_desc">Un promemoria con suono per segnare una preghiera e guadagnare XP prima che finisca il suo tempo</string>
+    <string name="prayer_log_celebration_channel">Festeggiamenti del registro</string>
+    <string name="prayer_log_celebration_channel_desc">Giornate complete, livelli e badge ottenuti, senza suono</string>
     <string name="prayer_log_nudge_title">Il tempo di %1$s sta per finire</string>
     <string name="prayer_log_nudge_text">L\'hai compiuta? Segnala per +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">L\'hai compiuta? Segnala per +%1$d XP e mantieni la tua serie di %2$d giorni 🔥</string>

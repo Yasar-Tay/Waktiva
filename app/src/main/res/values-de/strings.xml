@@ -516,8 +516,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Markiere 500 Gebete</string>
     <string name="prayer_log_game_setting">Spiel-Benachrichtigungen</string>
     <string name="prayer_log_game_setting_desc">Ein Anstoß für XP, bevor die Zeit eines Gebets endet, deine Serie in der Abenderinnerung und Jubel für volle Tage, Stufen und Abzeichen</string>
-    <string name="prayer_log_game_channel">Gebetstagebuch-Spiel</string>
-    <string name="prayer_log_game_channel_desc">Anstöße vor dem Ende einer Gebetszeit und Jubel für das, was du erreichst</string>
+    <string name="prayer_log_game_channel">Bevor die Gebetszeit endet</string>
+    <string name="prayer_log_game_channel_desc">Ein Anstoß mit Ton, ein Gebet für XP zu markieren, bevor seine Zeit endet</string>
+    <string name="prayer_log_celebration_channel">Jubel im Gebetstagebuch</string>
+    <string name="prayer_log_celebration_channel_desc">Volle Tage, Stufen und erreichte Abzeichen, ohne Ton</string>
     <string name="prayer_log_nudge_title">Die Zeit für %1$s endet bald</string>
     <string name="prayer_log_nudge_text">Gebetet? Markiere es für +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">Gebetet? Markiere es für +%1$d XP und halte deine %2$d-Tage-Serie am Leben 🔥</string>

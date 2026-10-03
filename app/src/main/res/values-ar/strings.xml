@@ -529,8 +529,10 @@
     <string name="prayer_log_badge_prayers_500_desc">علّم 500 صلاة</string>
     <string name="prayer_log_game_setting">إشعارات اللعبة</string>
     <string name="prayer_log_game_setting_desc">تذكير لكسب XP قبل خروج وقت الصلاة، وسلسلتك في تذكير المساء، واحتفال بالأيام الكاملة والمستويات والأوسمة</string>
-    <string name="prayer_log_game_channel">لعبة سجل الصلوات</string>
-    <string name="prayer_log_game_channel_desc">تذكيرات قبل خروج وقت الصلاة واحتفال بما تحققه</string>
+    <string name="prayer_log_game_channel">قبل خروج وقت الصلاة</string>
+    <string name="prayer_log_game_channel_desc">تذكير بصوت لتعليم الصلاة وكسب XP قبل خروج وقتها</string>
+    <string name="prayer_log_celebration_channel">احتفالات سجل الصلوات</string>
+    <string name="prayer_log_celebration_channel_desc">الأيام الكاملة والمستويات والأوسمة، بلا صوت</string>
     <string name="prayer_log_nudge_title">وقت %1$s يوشك على الانتهاء</string>
     <string name="prayer_log_nudge_text">صلّيتها؟ علّمها واكسب +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">صلّيتها؟ علّمها واكسب +%1$d XP وحافظ على سلسلة %2$d أيام 🔥</string>

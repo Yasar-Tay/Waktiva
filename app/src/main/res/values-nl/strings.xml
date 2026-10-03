@@ -528,8 +528,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Markeer 500 gebeden</string>
     <string name="prayer_log_game_setting">Spelmeldingen</string>
     <string name="prayer_log_game_setting_desc">Een seintje voor XP voordat de tijd van een gebed eindigt, je reeks in de avondherinnering, en gejuich voor volle dagen, niveaus en badges</string>
-    <string name="prayer_log_game_channel">Gebedslog-spel</string>
-    <string name="prayer_log_game_channel_desc">Seintjes voordat een gebedstijd eindigt en gejuich voor wat je bereikt</string>
+    <string name="prayer_log_game_channel">Voordat de gebedstijd eindigt</string>
+    <string name="prayer_log_game_channel_desc">Een seintje met geluid om een gebed voor XP te markeren voordat de tijd eindigt</string>
+    <string name="prayer_log_celebration_channel">Gejuich in het gebedslog</string>
+    <string name="prayer_log_celebration_channel_desc">Volle dagen, niveaus en behaalde badges, zonder geluid</string>
     <string name="prayer_log_nudge_title">De tijd voor %1$s eindigt bijna</string>
     <string name="prayer_log_nudge_text">Gebeden? Markeer het voor +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">Gebeden? Markeer het voor +%1$d XP en houd je reeks van %2$d dagen vast 🔥</string>

@@ -529,8 +529,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Tandai 500 salat</string>
     <string name="prayer_log_game_setting">Notifikasi game</string>
     <string name="prayer_log_game_setting_desc">Pengingat untuk XP sebelum waktu salat habis, streak-mu di pengingat malam, dan perayaan hari penuh, level, dan lencana</string>
-    <string name="prayer_log_game_channel">Game catatan salat</string>
-    <string name="prayer_log_game_channel_desc">Pengingat sebelum waktu salat habis dan perayaan atas capaianmu</string>
+    <string name="prayer_log_game_channel">Sebelum waktu salat habis</string>
+    <string name="prayer_log_game_channel_desc">Pengingat bersuara untuk menandai salat demi XP sebelum waktunya habis</string>
+    <string name="prayer_log_celebration_channel">Perayaan catatan salat</string>
+    <string name="prayer_log_celebration_channel_desc">Hari penuh, level, dan lencana yang diraih, tanpa suara</string>
     <string name="prayer_log_nudge_title">Waktu %1$s segera habis</string>
     <string name="prayer_log_nudge_text">Sudah salat? Tandai untuk +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">Sudah salat? Tandai untuk +%1$d XP dan jaga streak %2$d harimu 🔥</string>

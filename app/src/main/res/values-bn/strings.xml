@@ -529,8 +529,10 @@
     <string name="prayer_log_badge_prayers_500_desc">৫০০ নামাজ চিহ্নিত করুন</string>
     <string name="prayer_log_game_setting">গেম নোটিফিকেশন</string>
     <string name="prayer_log_game_setting_desc">ওয়াক্ত শেষ হওয়ার আগে XP-এর জন্য মনে করিয়ে দেয়, সন্ধ্যার রিমাইন্ডারে আপনার ধারা দেখায়, আর পূর্ণ দিন, লেভেল ও ব্যাজ উদযাপন করে</string>
-    <string name="prayer_log_game_channel">নামাজের হিসাব গেম</string>
-    <string name="prayer_log_game_channel_desc">ওয়াক্ত শেষ হওয়ার আগে রিমাইন্ডার ও অর্জনের উদযাপন</string>
+    <string name="prayer_log_game_channel">ওয়াক্ত শেষ হওয়ার আগে</string>
+    <string name="prayer_log_game_channel_desc">ওয়াক্ত শেষ হওয়ার আগে নামাজ চিহ্নিত করে XP পেতে শব্দসহ রিমাইন্ডার</string>
+    <string name="prayer_log_celebration_channel">নামাজের হিসাবের উদযাপন</string>
+    <string name="prayer_log_celebration_channel_desc">পূর্ণ দিন, লেভেল ও অর্জিত ব্যাজ, শব্দ ছাড়া</string>
     <string name="prayer_log_nudge_title">%1$s-এর ওয়াক্ত শেষ হতে চলেছে</string>
     <string name="prayer_log_nudge_text">পড়েছেন? চিহ্নিত করুন, +%1$d XP পান।</string>
     <string name="prayer_log_nudge_text_streak">পড়েছেন? চিহ্নিত করুন, +%1$d XP পান আর %2$d দিনের ধারা বজায় রাখুন 🔥</string>

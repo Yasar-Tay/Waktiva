@@ -528,8 +528,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Marque 500 orações</string>
     <string name="prayer_log_game_setting">Notificações de jogo</string>
     <string name="prayer_log_game_setting_desc">Um lembrete para ganhar XP antes que o tempo de uma oração acabe, sua sequência no lembrete da noite e comemorações por dias completos, níveis e medalhas</string>
-    <string name="prayer_log_game_channel">Jogo do registro de orações</string>
-    <string name="prayer_log_game_channel_desc">Lembretes antes que o tempo de uma oração acabe e comemorações pelo que você conquista</string>
+    <string name="prayer_log_game_channel">Antes que o tempo acabe</string>
+    <string name="prayer_log_game_channel_desc">Um lembrete com som para marcar uma oração e ganhar XP antes que o tempo dela acabe</string>
+    <string name="prayer_log_celebration_channel">Comemorações do registro</string>
+    <string name="prayer_log_celebration_channel_desc">Dias completos, níveis e medalhas conquistadas, sem som</string>
     <string name="prayer_log_nudge_title">O tempo de %1$s está acabando</string>
     <string name="prayer_log_nudge_text">Rezou? Marque e ganhe +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">Rezou? Marque, ganhe +%1$d XP e mantenha sua sequência de %2$d dias 🔥</string>

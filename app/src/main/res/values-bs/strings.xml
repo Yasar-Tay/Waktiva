@@ -528,8 +528,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Označi 500 namaza</string>
     <string name="prayer_log_game_setting">Obavijesti igre</string>
     <string name="prayer_log_game_setting_desc">Podsjetnik za XP prije isteka vremena namaza, tvoj niz u večernjem podsjetniku i slavlje punih dana, nivoa i znački</string>
-    <string name="prayer_log_game_channel">Igra evidencije namaza</string>
-    <string name="prayer_log_game_channel_desc">Podsjetnici prije isteka vremena namaza i slavlje onoga što postigneš</string>
+    <string name="prayer_log_game_channel">Prije isteka vremena namaza</string>
+    <string name="prayer_log_game_channel_desc">Podsjetnik sa zvukom da označiš namaz za XP prije isteka njegovog vremena</string>
+    <string name="prayer_log_celebration_channel">Slavlja evidencije namaza</string>
+    <string name="prayer_log_celebration_channel_desc">Puni dani, nivoi i osvojene značke, bez zvuka</string>
     <string name="prayer_log_nudge_title">Vrijeme za %1$s uskoro ističe</string>
     <string name="prayer_log_nudge_text">Klanjao si? Označi i osvoji +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">Klanjao si? Označi i osvoji +%1$d XP, neka tvoj niz od %2$d dana traje 🔥</string>

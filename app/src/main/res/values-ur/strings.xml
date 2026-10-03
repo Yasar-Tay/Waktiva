@@ -529,8 +529,10 @@
     <string name="prayer_log_badge_prayers_500_desc">500 نمازیں نشان زد کریں</string>
     <string name="prayer_log_game_setting">گیم نوٹیفکیشنز</string>
     <string name="prayer_log_game_setting_desc">نماز کا وقت ختم ہونے سے پہلے XP کی یاد دہانی، شام کی یاد دہانی میں آپ کا سلسلہ، اور مکمل دنوں، لیولز اور بیجز کا جشن</string>
-    <string name="prayer_log_game_channel">نماز ریکارڈ گیم</string>
-    <string name="prayer_log_game_channel_desc">نماز کا وقت ختم ہونے سے پہلے یاد دہانیاں اور کامیابیوں کا جشن</string>
+    <string name="prayer_log_game_channel">نماز کا وقت ختم ہونے سے پہلے</string>
+    <string name="prayer_log_game_channel_desc">وقت ختم ہونے سے پہلے نماز نشان زد کر کے XP پانے کی آواز والی یاد دہانی</string>
+    <string name="prayer_log_celebration_channel">نماز ریکارڈ کے جشن</string>
+    <string name="prayer_log_celebration_channel_desc">مکمل دن، لیولز اور حاصل کردہ بیجز، بغیر آواز کے</string>
     <string name="prayer_log_nudge_title">%1$s کا وقت ختم ہونے والا ہے</string>
     <string name="prayer_log_nudge_text">پڑھ لی؟ نشان زد کریں اور +%1$d XP پائیں۔</string>
     <string name="prayer_log_nudge_text_streak">پڑھ لی؟ نشان زد کریں، +%1$d XP پائیں اور %2$d دن کا سلسلہ جاری رکھیں 🔥</string>

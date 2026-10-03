@@ -528,8 +528,10 @@
     <string name="prayer_log_badge_prayers_500_desc">Tandakan 500 solat</string>
     <string name="prayer_log_game_setting">Pemberitahuan permainan</string>
     <string name="prayer_log_game_setting_desc">Peringatan untuk XP sebelum waktu solat tamat, rentetan anda dalam peringatan malam, dan raikan hari penuh, tahap dan lencana</string>
-    <string name="prayer_log_game_channel">Permainan catatan solat</string>
-    <string name="prayer_log_game_channel_desc">Peringatan sebelum waktu solat tamat dan raikan pencapaian anda</string>
+    <string name="prayer_log_game_channel">Sebelum waktu solat tamat</string>
+    <string name="prayer_log_game_channel_desc">Peringatan bersuara untuk menandakan solat demi XP sebelum waktunya tamat</string>
+    <string name="prayer_log_celebration_channel">Raikan catatan solat</string>
+    <string name="prayer_log_celebration_channel_desc">Hari penuh, tahap dan lencana yang diperoleh, tanpa bunyi</string>
     <string name="prayer_log_nudge_title">Waktu %1$s hampir tamat</string>
     <string name="prayer_log_nudge_text">Sudah solat? Tandakan untuk +%1$d XP.</string>
     <string name="prayer_log_nudge_text_streak">Sudah solat? Tandakan untuk +%1$d XP dan kekalkan rentetan %2$d hari anda 🔥</string>
