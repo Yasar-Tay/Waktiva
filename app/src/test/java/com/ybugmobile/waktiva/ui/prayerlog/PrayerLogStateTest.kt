@@ -33,6 +33,15 @@ class PrayerLogStateTest {
     }
 
     @Test
+    fun theLastWeekRunsUpToTodayAcrossTheMonthsStart() {
+        val first = LocalDate.of(2026, 10, 3)
+        val state = buildPrayerLogState(
+            emptyMap(), null, emptyList(), LocalDateTime.of(first, LocalTime.NOON), YearMonth.from(first), null
+        )
+        assertEquals((6L downTo 0L).map { first.minusDays(it) }, state.lastWeek.map { it.date })
+    }
+
+    @Test
     fun anEarlierMonthPicksItsLastDay() {
         val august = thisMonth.minusMonths(1)
         val state = buildPrayerLogState(emptyMap(), null, listOf(prayerDay(today)), now, august, null)

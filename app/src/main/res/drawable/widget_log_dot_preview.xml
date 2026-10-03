@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A prayer marked in the prayer log widget preview: a gold dot. -->
+<!-- A prayer marked in the prayer log widget preview: a sphere, tinted to its prayer's colour where it's used. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <size android:width="26dp" android:height="26dp" />
-    <solid android:color="#FFFFD54F" />
+    <solid android:color="#FFFFFFFF" />
+    <stroke android:width="0.7dp" android:color="#59FFFFFF" />
 </shape>

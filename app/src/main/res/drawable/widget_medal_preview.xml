@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The prayer log widget preview's medal: a gold coin in a faint ring. -->
+<!-- The prayer log widget preview's medal: a coral sphere in a dark groove. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
-            <stroke android:width="4dp" android:color="#33FFFFFF" />
+            <stroke android:width="5dp" android:color="#47000000" />
         </shape>
     </item>
     <item
-        android:bottom="7dp"
-        android:left="7dp"
-        android:right="7dp"
-        android:top="7dp">
+        android:bottom="8dp"
+        android:left="8dp"
+        android:right="8dp"
+        android:top="8dp">
         <shape android:shape="oval">
             <gradient
                 android:angle="315"
-                android:centerColor="#FFFFD54F"
-                android:endColor="#FFE0A800"
-                android:startColor="#FFFFECB3" />
+                android:centerColor="#FFF0997B"
+                android:endColor="#FFC07A62"
+                android:startColor="#FFF7C2AE" />
+            <stroke android:width="0.7dp" android:color="#59FFFFFF" />
         </shape>
     </item>
 </layer-list>

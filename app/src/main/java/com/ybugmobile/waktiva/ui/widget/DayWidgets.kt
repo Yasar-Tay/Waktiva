@@ -22,6 +22,7 @@ import com.ybugmobile.waktiva.domain.model.PrayerLogProgress
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.isLogged
 import com.ybugmobile.waktiva.ui.home.composables.accentColor
+import com.ybugmobile.waktiva.ui.prayerlog.logColor
 import com.ybugmobile.waktiva.ui.home.composables.degrees
 import com.ybugmobile.waktiva.ui.home.composables.iconRes
 import com.ybugmobile.waktiva.ui.home.composables.skyLight
@@ -81,7 +82,7 @@ internal object DayWidgets {
     private const val COLOR_SECONDARY = 0xB3FFFFFF.toInt()
     private const val COLOR_TERTIARY = 0x73FFFFFF
     private const val COLOR_ENDING_COUNT = 0xFFFDE68A.toInt()
-    private const val COLOR_PRAYED = 0xFFFFD54F.toInt()
+
 
     /** The green of a prayer whose time is on, as on the prayer log's chips. */
     private val Open = Color(0xFF6EE7B7)
@@ -252,7 +253,7 @@ internal object DayWidgets {
         val prayed = time.isPrayed && today.logEnabled
         val markable = today.logEnabled && (time.isCurrent || time.isPassed)
         val (nameColor, clockColor) = when {
-            prayed -> COLOR_PRAYED to COLOR_PRAYED
+            prayed -> time.type.logColor.toArgb().let { it to it }
             time.isCurrent -> COLOR_PRIMARY to COLOR_PRIMARY
             time.isPassed -> if (markable) COLOR_SECONDARY to COLOR_SECONDARY else COLOR_TERTIARY to COLOR_TERTIARY
             else -> COLOR_SECONDARY to COLOR_PRIMARY
@@ -267,7 +268,7 @@ internal object DayWidgets {
         if (prayed || markable) {
             cell.setViewVisibility(R.id.widget_cell_mark, View.VISIBLE)
             cell.setImageViewResource(R.id.widget_cell_mark, if (prayed) R.drawable.ic_widget_check else R.drawable.widget_mark_ring)
-            if (prayed) cell.setInt(R.id.widget_cell_mark, "setColorFilter", COLOR_PRAYED)
+            if (prayed) cell.setInt(R.id.widget_cell_mark, "setColorFilter", time.type.logColor.toArgb())
         }
         if (markable) {
             val prayerName = time.type.getPrayerName(context)
