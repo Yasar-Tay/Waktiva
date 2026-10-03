@@ -230,7 +230,7 @@ internal object DayWidgets {
         views.showContent()
         views.setImageViewBitmap(R.id.widget_bg, background(snapshot, today.moment, Backdrop.LARGE))
 
-        bindMoment(context, views, snapshot, today, countSp = 38f)
+        bindMoment(context, views, snapshot, today, countSp = 38f, showNext = false)
         views.setImageViewBitmap(R.id.widget_ring, today.ring(context))
 
         views.removeAllViews(R.id.widget_times)
@@ -306,7 +306,14 @@ internal object DayWidgets {
      * prayer's start, so one figure serves both), what comes next with the weather now, and the
      * sphere's tap: "I prayed", or taking the mark back once it's gold.
      */
-    private fun bindMoment(context: Context, views: RemoteViews, snapshot: WaktivaWidget.Snapshot, today: Today, countSp: Float) {
+    private fun bindMoment(
+        context: Context,
+        views: RemoteViews,
+        snapshot: WaktivaWidget.Snapshot,
+        today: Today,
+        countSp: Float,
+        showNext: Boolean = true
+    ) {
         val moment = today.moment
         val prayer = moment.prayer.getPrayerName(context)
         val label = when (moment.state) {
@@ -341,12 +348,15 @@ internal object DayWidgets {
         val counting = moment.state == MomentState.OPEN || moment.state == MomentState.ENDING
         views.setViewVisibility(R.id.widget_left, if (counting) View.VISIBLE else View.GONE)
 
-        views.setImageViewResource(R.id.widget_next_icon, moment.next.type.iconRes)
-        views.setInt(R.id.widget_next_icon, "setColorFilter", moment.next.type.accentColor.toArgb())
-        views.setTextViewText(
-            R.id.widget_sub,
-            "${moment.next.type.getDisplayName(context)}  ${moment.next.time.format(WaktivaWidget.timeFormatter)}"
-        )
+        // The "my day" widget has no line for it: its cards show the next prayer's time.
+        if (showNext) {
+            views.setImageViewResource(R.id.widget_next_icon, moment.next.type.iconRes)
+            views.setInt(R.id.widget_next_icon, "setColorFilter", moment.next.type.accentColor.toArgb())
+            views.setTextViewText(
+                R.id.widget_sub,
+                "${moment.next.type.getDisplayName(context)}  ${moment.next.time.format(WaktivaWidget.timeFormatter)}"
+            )
+        }
 
         val weather = snapshot.weather
         views.setViewVisibility(R.id.widget_weather, if (weather != null) View.VISIBLE else View.GONE)
