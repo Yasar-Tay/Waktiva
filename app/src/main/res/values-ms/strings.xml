@@ -435,8 +435,6 @@
     <string name="donate_item_large_desc">Membuka jalan untuk ciri baharu, seperti catatan solat dan bulatan hari.</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Waktu Solat</string>
-    <string name="widget_description">Solat seterusnya, kiraan detik langsung dan waktu sepanjang hari dengan sekali pandang</string>
     <string name="widget_next_up">Seterusnya</string>
     <string name="widget_empty">Buka Waktiva untuk memuatkan waktu solat</string>
     <string name="widget_countdown_label">Kiraan Detik</string>

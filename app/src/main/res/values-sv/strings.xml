@@ -435,8 +435,6 @@
     <string name="donate_item_large_desc">Banar väg för nya funktioner, som böneloggen och dagcirkeln.</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Bönetider</string>
-    <string name="widget_description">Nästa bön, nedräkning i realtid och hela dagen i en överblick</string>
     <string name="widget_next_up">Nästa</string>
     <string name="widget_empty">Öppna Waktiva för att ladda bönetiderna</string>
     <string name="widget_countdown_label">Nedräkning</string>

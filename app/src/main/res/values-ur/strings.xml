@@ -436,8 +436,6 @@
     <string name="donate_item_large_desc">نئی خصوصیات کی راہ ہموار کرتا ہے، جیسے نماز کا ریکارڈ اور دن کا دائرہ۔</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">نماز کے اوقات</string>
-    <string name="widget_description">اگلی نماز، براہِ راست الٹی گنتی اور پورے دن کے اوقات ایک نظر میں</string>
     <string name="widget_next_up">اگلی</string>
     <string name="widget_empty">نماز کے اوقات لوڈ کرنے کے لیے Waktiva کھولیں</string>
     <string name="widget_countdown_label">الٹی گنتی</string>

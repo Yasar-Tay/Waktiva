@@ -435,8 +435,6 @@
     <string name="donate_item_large_desc">Abre espaço para novos recursos, como o registro de orações e o círculo do dia.</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Horários de oração</string>
-    <string name="widget_description">Próxima oração, contagem regressiva ao vivo e o dia inteiro num relance</string>
     <string name="widget_next_up">A seguir</string>
     <string name="widget_empty">Abra o Waktiva para carregar os horários de oração</string>
     <string name="widget_countdown_label">Contagem regressiva</string>

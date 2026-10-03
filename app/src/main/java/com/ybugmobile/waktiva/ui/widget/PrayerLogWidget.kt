@@ -41,8 +41,8 @@ import java.time.LocalDate
  */
 internal object PrayerLogWidget {
 
-    private const val MEDAL_DP = 56
-    private const val DOT_DP = 30
+    private const val MEDAL_DP = 52
+    private const val DOT_DP = 38
     private const val MAX_PX = 300
 
     private const val REQUEST_TOGGLE = 7_320

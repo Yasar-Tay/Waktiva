@@ -89,20 +89,8 @@
             </intent-filter>
         </receiver>
 
-        <!-- Widget receiver (plain AppWidgetProvider — no Glance) -->
-        <receiver
-            android:name=".ui.widget.WaktivaWidget"
-            android:exported="true"
-            android:label="@string/widget_label">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/waktiva_widget_info" />
-        </receiver>
 
-        <!-- The small countdown widget, beside the main one; refreshed with it by WaktivaWidget.updateAll -->
+        <!-- The countdown widget, a 4×1 bar; refreshed with the others by WaktivaWidget.updateAll -->
         <receiver
             android:name=".ui.widget.WaktivaCountdownWidget"
             android:exported="true"

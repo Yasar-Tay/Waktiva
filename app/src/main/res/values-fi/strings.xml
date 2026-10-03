@@ -435,8 +435,6 @@
     <string name="donate_item_large_desc">Raivaa tilaa uusille ominaisuuksille, kuten rukouslokille ja päivän ympyrälle.</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Rukousajat</string>
-    <string name="widget_description">Seuraava rukous, reaaliaikainen lähtölaskenta ja koko päivä yhdellä silmäyksellä</string>
     <string name="widget_next_up">Seuraavaksi</string>
     <string name="widget_empty">Avaa Waktiva ladataksesi rukousajat</string>
     <string name="widget_countdown_label">Lähtölaskenta</string>

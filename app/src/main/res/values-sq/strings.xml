@@ -435,8 +435,6 @@
     <string name="badge_open_source">Burim i hapur</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Kohët e namazit</string>
-    <string name="widget_description">Namazi i radhës, numërim mbrapsht i drejtpërdrejtë dhe e gjithë dita me një shikim</string>
     <string name="widget_next_up">Në vijim</string>
     <string name="widget_empty">Hapni Waktiva për të ngarkuar kohët e namazit</string>
     <string name="widget_countdown_label">Numërimi mbrapsht</string>
