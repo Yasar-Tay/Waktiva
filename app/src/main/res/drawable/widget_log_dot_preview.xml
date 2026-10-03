@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A prayer marked in the prayer log widget preview: a gold dot. -->
+<!-- A prayer marked in the prayer log widget preview: a brass sphere. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <size android:width="26dp" android:height="26dp" />
-    <solid android:color="#FFFFD54F" />
+    <gradient
+        android:angle="315"
+        android:centerColor="#FFDEBE78"
+        android:endColor="#FFA77C34"
+        android:startColor="#FFF6E1A2" />
+    <stroke android:width="0.7dp" android:color="#B3F6E1A2" />
 </shape>

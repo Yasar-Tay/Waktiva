@@ -36,7 +36,7 @@
                 android:fontFamily="@font/inter_medium"
                 android:gravity="center"
                 android:text="5"
-                android:textColor="#FF3B2A00"
+                android:textColor="#FF2E2108"
                 android:textSize="22sp"
                 android:textStyle="bold" />
 
