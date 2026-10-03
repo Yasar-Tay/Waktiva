@@ -54,8 +54,6 @@ data class PrayerLogViewState(
     /** XP, level and badges: the log as a game. */
     val progress: PrayerLogProgress = PrayerLogProgress(),
     val last7Days: PrayerLogTally = PrayerLogTally(),
-    /** The last seven days, oldest first, today last. */
-    val lastWeek: List<PrayerLogDay> = emptyList(),
     val last30Days: PrayerLogTally = PrayerLogTally(),
     /** Prayers missed since the log began. */
     val missedSinceStart: Int = 0,
@@ -194,7 +192,6 @@ internal fun buildPrayerLogState(
         streak = PrayerLog.streak(prayed, today),
         progress = PrayerLogProgress.of(prayed),
         last7Days = tally(7),
-        lastWeek = (6L downTo 0L).mapNotNull { days[today.minusDays(it)] },
         last30Days = tally(30),
         missedSinceStart = days.values.sumOf { it.missed },
         startDate = start,

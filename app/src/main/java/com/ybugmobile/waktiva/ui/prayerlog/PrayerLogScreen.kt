@@ -68,12 +68,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
+import com.ybugmobile.waktiva.ui.home.composables.InTimeGreen
+import com.ybugmobile.waktiva.ui.home.composables.MissedRed
+import com.ybugmobile.waktiva.ui.home.composables.PrayedGold
+import com.ybugmobile.waktiva.ui.home.composables.accentColor
 import com.ybugmobile.waktiva.ui.home.composables.iconRes
 import com.ybugmobile.waktiva.ui.theme.GlassSurface
-import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
-import com.ybugmobile.waktiva.ui.theme.darken
-import com.ybugmobile.waktiva.ui.theme.liquidGlass
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
 import java.time.LocalDate
@@ -200,7 +201,7 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
                             .padding(top = 12.dp, bottom = bottomInset + 16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        TodayCard(today, state, onToggle, compact = true)
+                        LandscapeTodayCard(today, state, onToggle)
                         BadgesCard(state.progress)
                     }
                     Column(
@@ -221,7 +222,8 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
                         .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = bottomInset + 100.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    TodayCard(today, state, onToggle, compact = false)
+                    LevelCard(state.progress)
+                    TodayCard(today, state, onToggle)
                     BadgesCard(state.progress)
                     historyCard(false)
                 }
@@ -239,40 +241,69 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
 }
 
 /**
- * Today, with the level: the ring beside the headline and the level line, the five prayers to
- * mark, the full day's bonus, and the last seven days with the streak and the next badge along
- * the bottom. [compact], for landscape's short height, makes it all a little smaller.
+ * Today: the ring, a line saying what's next, the five prayers to mark, and the streak and
+ * week's and month's share of prayers prayed along the bottom.
  */
 @Composable
 private fun TodayCard(
     today: PrayerLogDay,
     state: PrayerLogViewState,
-    onToggle: (LocalDate, PrayerLogEntry) -> Unit,
-    compact: Boolean
+    onToggle: (LocalDate, PrayerLogEntry) -> Unit
 ) {
     val contentColor = LocalGlassTheme.current.contentColor
-    val gap = if (compact) 10.dp else 16.dp
 
     GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(horizontal = if (compact) 16.dp else 20.dp, vertical = if (compact) 12.dp else 18.dp)) {
+        Column(Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                DayRing(today, Modifier.size(if (compact) 76.dp else 88.dp))
-                Spacer(Modifier.width(if (compact) 14.dp else 16.dp))
+                DayRing(today, Modifier.size(92.dp))
+                Spacer(Modifier.width(18.dp))
+                TodayHeadline(today, state, Modifier.weight(1f))
+            }
+
+            Spacer(Modifier.height(20.dp))
+            PrayerRow(today, chipSize = 46.dp, onToggle = onToggle)
+            Spacer(Modifier.height(16.dp))
+            FullDayBonus(today.isComplete, Modifier.align(Alignment.CenterHorizontally))
+            Spacer(Modifier.height(16.dp))
+            HorizontalDivider(color = contentColor.copy(alpha = 0.1f))
+            Spacer(Modifier.height(14.dp))
+            Stats(state)
+        }
+    }
+}
+
+/**
+ * Landscape's today, with the level folded in to spare the short height: the ring beside the
+ * headline and the level line, then the five prayers, the full day's bonus and the figures.
+ */
+@Composable
+private fun LandscapeTodayCard(
+    today: PrayerLogDay,
+    state: PrayerLogViewState,
+    onToggle: (LocalDate, PrayerLogEntry) -> Unit
+) {
+    val contentColor = LocalGlassTheme.current.contentColor
+
+    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                DayRing(today, Modifier.size(76.dp))
+                Spacer(Modifier.width(14.dp))
                 Column(Modifier.weight(1f)) {
                     TodayHeadline(today, state)
-                    Spacer(Modifier.height(if (compact) 8.dp else 10.dp))
+                    Spacer(Modifier.height(8.dp))
                     LevelLine(state.progress, compact = true)
                 }
             }
 
-            Spacer(Modifier.height(if (compact) 12.dp else 18.dp))
-            PrayerRow(today, chipSize = if (compact) 40.dp else 46.dp, onToggle = onToggle)
-            Spacer(Modifier.height(gap))
+            Spacer(Modifier.height(12.dp))
+            PrayerRow(today, chipSize = 40.dp, onToggle = onToggle)
+            Spacer(Modifier.height(10.dp))
             FullDayBonus(today.isComplete, Modifier.align(Alignment.CenterHorizontally))
-            Spacer(Modifier.height(gap))
+            Spacer(Modifier.height(10.dp))
             HorizontalDivider(color = contentColor.copy(alpha = 0.1f))
-            Spacer(Modifier.height(if (compact) 8.dp else 12.dp))
-            WeekStrip(state)
+            Spacer(Modifier.height(8.dp))
+            Stats(state)
         }
     }
 }
@@ -311,88 +342,95 @@ private fun TodayHeadline(today: PrayerLogDay, state: PrayerLogViewState, modifi
     }
 }
 
-/**
- * The last seven days as the calendar draws them, today last, and under them the streak of full
- * days (with the best one) and the badge nearest to being earned.
- */
+/** The streak and the last week's and month's share of prayers prayed, as one row of figures. */
 @Composable
-private fun WeekStrip(state: PrayerLogViewState) {
+private fun Stats(state: PrayerLogViewState) {
     val contentColor = LocalGlassTheme.current.contentColor
     val locale = LocalConfiguration.current.locales[0]
-    val today = state.today?.date
-
-    Row(Modifier.fillMaxWidth()) {
-        state.lastWeek.forEach { day ->
-            val isToday = day.date == today
-            Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = day.date.dayOfWeek.getDisplayName(TextStyle.SHORT, locale),
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = if (isToday) FontWeight.Black else FontWeight.Medium
-                    ),
-                    color = contentColor.copy(alpha = if (isToday) 0.9f else 0.5f),
-                    maxLines = 1
-                )
-                Spacer(Modifier.height(2.dp))
-                Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
-                    DayCell(date = day.date, day = day, isToday = isToday, isSelected = isToday, onClick = null)
-                }
-            }
-        }
-    }
-
-    Spacer(Modifier.height(10.dp))
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            Icons.Rounded.LocalFireDepartment,
-            contentDescription = null,
-            tint = if (state.streak > 0) accentInk() else contentColor.copy(alpha = 0.3f),
-            modifier = Modifier.size(20.dp)
-        )
-        Spacer(Modifier.width(4.dp))
-        Text(
-            text = state.streak.toString(),
-            style = MaterialTheme.typography.titleMedium.copy(fontFamily = IBMPlexArabic, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
-            color = contentColor
-        )
-        Spacer(Modifier.width(6.dp))
-        Text(
-            text = stringResource(R.string.prayer_log_streak),
-            style = MaterialTheme.typography.labelMedium,
-            color = contentColor.copy(alpha = 0.6f),
-            maxLines = 1,
+    val percent = remember(locale) { NumberFormat.getPercentInstance(locale) }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Stat(
+            value = state.streak.toString(),
+            label = stringResource(R.string.prayer_log_streak),
+            icon = Icons.Rounded.LocalFireDepartment,
+            iconTint = if (state.streak > 0) PrayedGold else contentColor.copy(alpha = 0.3f),
+            note = state.progress.bestStreak.takeIf { it > 0 }
+                ?.let { stringResource(R.string.prayer_log_best_streak, it) },
             modifier = Modifier.weight(1f)
         )
-        state.progress.bestStreak.takeIf { it > 0 }?.let { best ->
+        StatDivider()
+        Stat(
+            value = state.last7Days.rate?.let { percent.format(it) } ?: "—",
+            label = stringResource(R.string.prayer_log_week),
+            modifier = Modifier.weight(1f)
+        )
+        StatDivider()
+        Stat(
+            value = state.last30Days.rate?.let { percent.format(it) } ?: "—",
+            label = stringResource(R.string.prayer_log_month),
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun Stat(
+    value: String,
+    label: String,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    iconTint: Color = Color.Unspecified,
+    note: String? = null
+) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (icon != null) {
+                Icon(icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(4.dp))
+            }
             Text(
-                text = stringResource(R.string.prayer_log_best_streak, best),
-                style = accentText(MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)),
+                text = value,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    fontFeatureSettings = "tnum"
+                ),
+                color = contentColor,
+                maxLines = 1
+            )
+        }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = contentColor.copy(alpha = 0.55f),
+            textAlign = TextAlign.Center,
+            maxLines = 2
+        )
+        if (note != null) {
+            Text(
+                text = note,
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                color = PrayedGold.copy(alpha = 0.85f),
                 maxLines = 1
             )
         }
     }
+}
 
-    state.progress.nextBadge?.let { next ->
-        Spacer(Modifier.height(8.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(next.badge.icon, contentDescription = null, tint = accentInk(), modifier = Modifier.size(18.dp))
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.prayer_log_next_goal) + ": " + stringResource(next.badge.nameRes),
-                style = MaterialTheme.typography.labelMedium,
-                color = contentColor.copy(alpha = 0.8f),
-                maxLines = 1,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = "${next.current}/${next.target}",
-                style = MaterialTheme.typography.labelMedium.copy(fontFamily = IBMPlexArabic, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
-                color = contentColor.copy(alpha = 0.8f)
-            )
-        }
-        Spacer(Modifier.height(6.dp))
-        GoalBar(next.fraction, Modifier.fillMaxWidth().height(5.dp))
-    }
+@Composable
+private fun StatDivider() {
+    Box(
+        Modifier
+            .padding(vertical = 4.dp)
+            .width(1.dp)
+            .fillMaxHeight()
+            .background(LocalGlassTheme.current.contentColor.copy(alpha = 0.1f))
+    )
 }
 
 /**
@@ -448,12 +486,13 @@ private fun MonthHeader(state: PrayerLogViewState, onShowMonth: (Long) -> Unit) 
     val contentColor = LocalGlassTheme.current.contentColor
     val locale = LocalConfiguration.current.locales[0]
     Row(verticalAlignment = Alignment.CenterVertically) {
-        GlassIconButton(
-            icon = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
-            contentDescription = stringResource(R.string.prayer_log_prev_month),
-            enabled = state.canShowPreviousMonth,
-            onClick = { onShowMonth(-1) }
-        )
+        IconButton(onClick = { onShowMonth(-1) }, enabled = state.canShowPreviousMonth) {
+            Icon(
+                Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
+                contentDescription = stringResource(R.string.prayer_log_prev_month),
+                tint = contentColor.copy(alpha = if (state.canShowPreviousMonth) 0.8f else 0.2f)
+            )
+        }
         Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = state.shownMonth.format(DateTimeFormatter.ofPattern("LLLL yyyy", locale))
@@ -471,18 +510,19 @@ private fun MonthHeader(state: PrayerLogViewState, onShowMonth: (Long) -> Unit) 
                     Spacer(Modifier.width(6.dp))
                     Text(
                         text = NumberFormat.getIntegerInstance(locale).format(state.missedSinceStart),
-                        style = MaterialTheme.typography.labelMedium.copy(fontFamily = IBMPlexArabic, fontWeight = FontWeight.Bold),
-                        color = LogColors.Missed
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black),
+                        color = MissedRed
                     )
                 }
             }
         }
-        GlassIconButton(
-            icon = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-            contentDescription = stringResource(R.string.prayer_log_next_month),
-            enabled = state.canShowNextMonth,
-            onClick = { onShowMonth(1) }
-        )
+        IconButton(onClick = { onShowMonth(1) }, enabled = state.canShowNextMonth) {
+            Icon(
+                Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                contentDescription = stringResource(R.string.prayer_log_next_month),
+                tint = contentColor.copy(alpha = if (state.canShowNextMonth) 0.8f else 0.2f)
+            )
+        }
     }
 }
 
@@ -599,7 +639,7 @@ private fun SelectedDayColumn(day: PrayerLogDay, onToggle: (LocalDate, PrayerLog
                         text = entry.type.prayerName,
                         style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
                         color = when (entry.status) {
-                            PrayerLogStatus.PRAYED -> entry.type.logColor
+                            PrayerLogStatus.PRAYED -> PrayedGold
                             PrayerLogStatus.UPCOMING -> contentColor.copy(alpha = 0.45f)
                             else -> contentColor.copy(alpha = 0.85f)
                         },
@@ -617,11 +657,10 @@ private fun DayCount(day: PrayerLogDay) {
     Text(
         text = "${day.prayed}/${day.entries.size}",
         style = MaterialTheme.typography.titleSmall.copy(
-            fontFamily = IBMPlexArabic,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.ExtraBold,
             fontFeatureSettings = "tnum"
         ),
-        color = if (day.isComplete) accentInk() else LocalGlassTheme.current.contentColor.copy(alpha = 0.7f)
+        color = if (day.isComplete) PrayedGold else LocalGlassTheme.current.contentColor.copy(alpha = 0.7f)
     )
 }
 
@@ -694,12 +733,11 @@ private fun DayCell(
     day: PrayerLogDay?,
     isToday: Boolean,
     isSelected: Boolean,
-    onClick: (() -> Unit)?
+    onClick: () -> Unit
 ) {
-    val glass = LocalGlassTheme.current
-    val contentColor = glass.contentColor
+    val contentColor = LocalGlassTheme.current.contentColor
     val isComplete = day?.isComplete == true
-    val colors = day?.entries?.map { statusColor(it.status, it.type.logColor) }
+    val colors = day?.entries?.map { statusColor(it.status, PrayedGold, contentColor) }
     val description = day?.let { "${date.dayOfMonth}: ${it.prayed}/${it.entries.size}" } ?: date.dayOfMonth.toString()
 
     Box(
@@ -707,95 +745,102 @@ private fun DayCell(
             .padding(3.dp)
             .fillMaxHeight()
             .aspectRatio(1f, matchHeightConstraintsFirst = true)
-            .then(if (isSelected) Modifier.liquidGlass(CircleShape, glass, emphasis = 0.6f) else Modifier)
             .clip(CircleShape)
-            .then(if (day != null && onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .then(if (isSelected) Modifier.background(contentColor.copy(alpha = 0.16f)) else Modifier)
+            .then(if (day != null) Modifier.clickable(onClick = onClick) else Modifier)
             .semantics { contentDescription = description },
         contentAlignment = Alignment.Center
     ) {
         if (colors != null) {
             Canvas(Modifier.fillMaxSize()) {
-                // A full day: the whole spectrum round, lit within.
-                if (isComplete) drawCircle(Color.White.copy(alpha = 0.16f), size.minDimension / 2f - 5.dp.toPx())
-                drawStatusRing(colors, stroke = 2.4.dp.toPx(), inset = 3.5.dp.toPx(), gap = if (isComplete) 10f else 16f)
+                if (isComplete) {
+                    drawCircle(PrayedGold, radius = size.minDimension / 2f - 3.dp.toPx())
+                } else {
+                    drawStatusRing(colors, stroke = 2.5.dp.toPx(), inset = 3.dp.toPx(), gap = 14f)
+                }
             }
         }
         Text(
             text = date.dayOfMonth.toString(),
             style = MaterialTheme.typography.labelMedium.copy(
-                fontFamily = IBMPlexArabic,
-                fontWeight = if (isToday || isComplete) FontWeight.Bold else FontWeight.Medium,
+                fontWeight = if (isToday || isComplete) FontWeight.Black else FontWeight.SemiBold,
                 fontFeatureSettings = "tnum"
             ),
             color = when {
-                isComplete -> Color.White
+                isComplete -> PrayedInk
                 day == null -> contentColor.copy(alpha = 0.25f)
-                isToday -> accentInk()
+                isToday -> PrayedGold
                 !day.isTracked && day.prayed == 0 -> contentColor.copy(alpha = 0.45f)
-                else -> contentColor.copy(alpha = 0.9f)
+                else -> contentColor
             }
         )
     }
 }
 
-/**
- * Today's ring: a groove with an arc in each prayer's colour once prayed (paler while its time is
- * on), grey once missed, and the count inside. A full day is the whole spectrum round, and glows.
- */
+/** Today's ring: a segment per prayer in its own colour once prayed, with the count inside. */
 @Composable
 private fun DayRing(day: PrayerLogDay, modifier: Modifier = Modifier) {
     val contentColor = LocalGlassTheme.current.contentColor
     val colors = day.entries.map { entry ->
-        animateColorAsState(statusColor(entry.status, entry.type.logColor) ?: Color.Transparent, label = "ringArc").value
+        val target = statusColor(entry.status, lerp(entry.type.accentColor, PrayedGold, 0.35f), contentColor)
+        animateColorAsState(target, label = "ringArc").value
     }
     val glow by animateFloatAsState(if (day.isComplete) 1f else 0f, label = "ringGlow")
 
     Box(modifier, contentAlignment = Alignment.Center) {
         Canvas(Modifier.fillMaxSize()) {
-            glow(center, size.minDimension / 2f, Color.White, 0.18f * glow)
-            drawStatusRing(colors, stroke = 7.dp.toPx(), inset = 8.dp.toPx(), gap = 9f)
+            if (glow > 0f) {
+                drawCircle(
+                    Brush.radialGradient(
+                        listOf(PrayedGold.copy(alpha = 0.45f * glow), Color.Transparent),
+                        center = center,
+                        radius = size.minDimension / 2f
+                    )
+                )
+            }
+            drawStatusRing(colors, stroke = 8.dp.toPx(), inset = 8.dp.toPx(), gap = 8f)
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "${day.prayed}/${day.entries.size}",
                 style = MaterialTheme.typography.headlineSmall.copy(
-                    fontFamily = IBMPlexArabic,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.ExtraBold,
                     fontFeatureSettings = "tnum"
                 ),
-                color = if (day.isComplete) accentInk() else contentColor
+                color = contentColor
             )
             Text(
                 text = stringResource(R.string.prayer_log_today).uppercase(),
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.5.sp),
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
                 color = contentColor.copy(alpha = 0.5f)
             )
         }
     }
 }
 
-/**
- * A ring of equal segments, clockwise from the top, [inset] from the edge, lying in a groove:
- * [colors] for each segment, none where it's transparent or null.
- */
-private fun DrawScope.drawStatusRing(colors: List<Color?>, stroke: Float, inset: Float, gap: Float) {
-    ringGroove(stroke, inset)
+/** A ring of equal segments in [colors], clockwise from the top, [inset] from the edge. */
+private fun DrawScope.drawStatusRing(colors: List<Color>, stroke: Float, inset: Float, gap: Float) {
     val sweep = 360f / colors.size
+    val arcSize = Size(size.width - inset * 2, size.height - inset * 2)
     colors.forEachIndexed { i, color ->
-        if (color == null || color.alpha == 0f) return@forEachIndexed
-        glazedArc(color, -90f + i * sweep + gap / 2f, sweep - gap, stroke, inset)
+        drawArc(
+            color = color,
+            startAngle = -90f + i * sweep + gap / 2f,
+            sweepAngle = sweep - gap,
+            useCenter = false,
+            topLeft = Offset(inset, inset),
+            size = arcSize,
+            style = Stroke(stroke, cap = StrokeCap.Round)
+        )
     }
 }
 
-/**
- * A prayer's arc in the rings: its [color] once prayed, the same paler while its time is on,
- * grey once missed, none otherwise.
- */
-private fun statusColor(status: PrayerLogStatus, color: Color): Color? = when (status) {
-    PrayerLogStatus.PRAYED -> color
-    PrayerLogStatus.MISSED -> LogColors.Missed.copy(alpha = 0.6f)
-    PrayerLogStatus.ACTIVE -> color.copy(alpha = 0.45f)
-    else -> null
+/** A prayer's colour in the rings: [prayed] once prayed, red once missed, faint otherwise. */
+private fun statusColor(status: PrayerLogStatus, prayed: Color, contentColor: Color): Color = when (status) {
+    PrayerLogStatus.PRAYED -> prayed
+    PrayerLogStatus.MISSED -> MissedRed.copy(alpha = 0.75f)
+    PrayerLogStatus.ACTIVE -> InTimeGreen.copy(alpha = 0.55f)
+    else -> contentColor.copy(alpha = 0.14f)
 }
 
 /** A day's five prayers as marks to tap, with their names. */
@@ -816,37 +861,37 @@ private fun PrayerRow(day: PrayerLogDay, chipSize: Dp, onToggle: (LocalDate, Pra
 }
 
 /**
- * A prayer as a glass sphere, as the home dial draws its prayers: deep glass ringed in its own
- * colour with its sign while its time is on (gently pulsing: the one to mark next), a sphere of
- * its colour with a tick once prayed, dimmed grey with a cross once missed, faint before its time.
- * Tapping marks or unmarks it, except before its time.
+ * A prayer as a round mark: filled in its colour and ringed in gold with a tick once prayed, red
+ * with a cross once missed, ringed in its colour and gently pulsing while its time is on (the one
+ * to mark next), faint before its time. Tapping marks or unmarks it, except before its time.
  */
 @Composable
 private fun PrayerChip(entry: PrayerLogEntry, size: Dp, onClick: () -> Unit, showName: Boolean = true) {
     val contentColor = LocalGlassTheme.current.contentColor
-    val accent = entry.type.logColor
+    val accent = entry.type.accentColor
     val status = entry.status
     val isPrayed = status == PrayerLogStatus.PRAYED
     val name = entry.type.prayerName
     val statusText = stringResource(status.labelRes)
 
-    val rim by animateColorAsState(
-        when (status) {
-            PrayerLogStatus.PRAYED -> accent
-            PrayerLogStatus.MISSED -> LogColors.Missed.darken(0.25f)
-            PrayerLogStatus.ACTIVE -> accent
-            else -> Color.White.copy(alpha = 0.28f)
-        },
-        label = "chipRim"
-    )
     val fill by animateColorAsState(
         when (status) {
             PrayerLogStatus.PRAYED -> accent
-            PrayerLogStatus.MISSED -> lerp(LogColors.Night, LogColors.Missed, 0.15f)
-            PrayerLogStatus.ACTIVE -> lerp(LogColors.Night, accent, 0.3f)
-            else -> LogColors.Night.copy(alpha = 0.45f)
+            PrayerLogStatus.MISSED -> MissedRed.copy(alpha = 0.14f)
+            PrayerLogStatus.ACTIVE -> accent.copy(alpha = 0.18f)
+            else -> Color.Transparent
         },
         label = "chipFill"
+    )
+    val ring by animateColorAsState(
+        when (status) {
+            PrayerLogStatus.PRAYED -> PrayedGold
+            PrayerLogStatus.MISSED -> MissedRed.copy(alpha = 0.8f)
+            PrayerLogStatus.ACTIVE -> accent
+            PrayerLogStatus.UPCOMING -> contentColor.copy(alpha = 0.18f)
+            PrayerLogStatus.UNTRACKED -> contentColor.copy(alpha = 0.12f)
+        },
+        label = "chipRing"
     )
     val glow by animateFloatAsState(if (isPrayed) 1f else 0f, label = "chipGlow")
     val pop by animateFloatAsState(
@@ -858,7 +903,7 @@ private fun PrayerChip(entry: PrayerLogEntry, size: Dp, onClick: () -> Unit, sho
         rememberInfiniteTransition(label = "chipPulse").animateFloat(
             initialValue = 0f,
             targetValue = 1f,
-            animationSpec = infiniteRepeatable(tween(1800), RepeatMode.Restart),
+            animationSpec = infiniteRepeatable(tween(1600), RepeatMode.Restart),
             label = "chipPulse"
         )
     } else {
@@ -871,55 +916,58 @@ private fun PrayerChip(entry: PrayerLogEntry, size: Dp, onClick: () -> Unit, sho
         if (isPrayed && lastStatus != PrayerLogStatus.PRAYED) marks++
         lastStatus = status
     }
-    val faint = status == PrayerLogStatus.UPCOMING || status == PrayerLogStatus.UNTRACKED
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(Modifier.size(size), contentAlignment = Alignment.TopCenter) {
             Box(
                 modifier = Modifier
                     .size(size)
-                    .scale(if (faint) 1f else pop)
+                    .scale(if (status == PrayerLogStatus.UPCOMING || status == PrayerLogStatus.UNTRACKED) 1f else pop)
                     .drawBehind {
-                        val r = this.size.minDimension / 2f
-                        glow(center, r * 1.45f, accent, 0.4f * glow)
+                        if (glow > 0f) {
+                            val reach = this.size.minDimension * 0.85f
+                            drawCircle(
+                                Brush.radialGradient(
+                                    0.55f to PrayedGold.copy(alpha = 0.5f * glow),
+                                    1f to Color.Transparent,
+                                    center = center,
+                                    radius = reach
+                                ),
+                                radius = reach
+                            )
+                        }
                         // A ring widening out and fading, over and over: this one's time is on.
                         pulse?.value?.let { t ->
                             drawCircle(
-                                color = accent.copy(alpha = 0.55f * (1f - t)),
-                                radius = r * (1f + 0.4f * t),
-                                style = Stroke(1.2.dp.toPx())
+                                color = accent.copy(alpha = 0.6f * (1f - t)),
+                                radius = this.size.minDimension / 2f * (1f + 0.35f * t),
+                                style = Stroke(1.5.dp.toPx())
                             )
                         }
-                        glassOrb(
-                            center,
-                            r,
-                            rim = rim,
-                            fill = fill,
-                            edge = if (faint) null else Color.White.copy(alpha = 0.3f),
-                            shadow = !faint
-                        )
                     }
                     .clip(CircleShape)
+                    .background(fill)
+                    .border(1.5.dp, ring, CircleShape)
                     .semantics { contentDescription = "$name, $statusText" }
                     .then(
                         if (status != PrayerLogStatus.UPCOMING) Modifier.clickable(onClick = onClick) else Modifier
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                val iconSize = size * 0.48f
+                val iconSize = size * 0.5f
                 Crossfade(targetState = status, label = "chipIcon") { shown ->
                     when (shown) {
                         PrayerLogStatus.PRAYED -> Icon(
                             Icons.Rounded.Check,
                             contentDescription = null,
-                            tint = accent.ink,
+                            tint = if (accent.luminance() > 0.5f) Color.Black.copy(alpha = 0.75f) else Color.White,
                             modifier = Modifier.size(iconSize)
                         )
                         PrayerLogStatus.MISSED -> Icon(
                             Icons.Rounded.Close,
                             contentDescription = null,
-                            tint = LogColors.Missed,
-                            modifier = Modifier.size(iconSize * 0.85f)
+                            tint = MissedRed,
+                            modifier = Modifier.size(iconSize * 0.9f)
                         )
                         PrayerLogStatus.UNTRACKED -> Icon(
                             Icons.Rounded.Remove,
@@ -930,7 +978,7 @@ private fun PrayerChip(entry: PrayerLogEntry, size: Dp, onClick: () -> Unit, sho
                         else -> Icon(
                             ImageVector.vectorResource(entry.type.iconRes),
                             contentDescription = null,
-                            tint = if (shown == PrayerLogStatus.ACTIVE) Color.White.copy(alpha = 0.96f) else contentColor.copy(alpha = 0.4f),
+                            tint = if (shown == PrayerLogStatus.ACTIVE) accent else contentColor.copy(alpha = 0.3f),
                             modifier = Modifier.size(iconSize)
                         )
                     }
@@ -943,11 +991,7 @@ private fun PrayerChip(entry: PrayerLogEntry, size: Dp, onClick: () -> Unit, sho
             Text(
                 text = name,
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                color = when (status) {
-                    PrayerLogStatus.PRAYED -> accent
-                    PrayerLogStatus.UPCOMING -> contentColor.copy(alpha = 0.45f)
-                    else -> contentColor.copy(alpha = 0.8f)
-                },
+                color = contentColor.copy(alpha = if (status == PrayerLogStatus.UPCOMING) 0.45f else 0.8f),
                 maxLines = 1
             )
         }
@@ -964,7 +1008,7 @@ private val PrayerLogStatus.labelRes: Int
     }
 
 /** Ink on a day filled in gold. */
-internal val PrayedInk = LogColors.AccentInk
+internal val PrayedInk = Color(0xFF3B2A00)
 
 internal val CardShape = RoundedCornerShape(28.dp)
 

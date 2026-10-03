@@ -36,7 +36,7 @@
                 android:fontFamily="@font/inter_medium"
                 android:gravity="center"
                 android:text="5"
-                android:textColor="#FF4A1B0C"
+                android:textColor="#FF3B2A00"
                 android:textSize="22sp"
                 android:textStyle="bold" />
 
@@ -90,38 +90,33 @@
                 android:layout_width="0dp"
                 android:layout_height="26dp"
                 android:layout_weight="1"
-                android:src="@drawable/widget_log_dot_preview"
-                android:tint="#FF7FB2E5" />
+                android:src="@drawable/widget_log_dot_preview" />
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="26dp"
                 android:layout_weight="1"
-                android:src="@drawable/widget_log_dot_preview"
-                android:tint="#FFE8D9A8" />
+                android:src="@drawable/widget_log_dot_preview" />
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="26dp"
                 android:layout_weight="1"
-                android:src="@drawable/widget_log_dot_preview"
-                android:tint="#FFF2B48A" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="26dp"
-                android:layout_weight="1"
-                android:alpha="0.3"
-                android:src="@drawable/widget_log_dot_preview"
-                android:tint="#FFE28F9B" />
+                android:src="@drawable/widget_log_dot_preview" />
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="26dp"
                 android:layout_weight="1"
                 android:alpha="0.3"
-                android:src="@drawable/widget_log_dot_preview"
-                android:tint="#FF9A8FD8" />
+                android:src="@drawable/widget_log_dot_preview" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="26dp"
+                android:layout_weight="1"
+                android:alpha="0.3"
+                android:src="@drawable/widget_log_dot_preview" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

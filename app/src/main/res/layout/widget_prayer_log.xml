@@ -81,10 +81,7 @@
                         android:fontFamily="@font/inter_medium"
                         android:fontFeatureSettings="tnum"
                         android:maxLines="1"
-                        android:shadowColor="#80000000"
-                        android:shadowDy="1"
-                        android:shadowRadius="5"
-                        android:textColor="#FFF7B9A2"
+                        android:textColor="#FFFFD54F"
                         android:textSize="13sp"
                         android:textStyle="bold" />
                 </LinearLayout>
