@@ -7,8 +7,8 @@ import kotlin.math.exp
 import kotlin.math.roundToLong
 
 /**
- * Fajr and Isha from 45°N up to where the sun still rises and sets every day, the way Diyanet's
- * tables give them through the summer, on the sun of [DiyanetClassicAlmanac].
+ * Fajr and Isha from 45°N up to 72°N, the way Diyanet's tables give them through the summer, on the
+ * sun of [DiyanetClassicAlmanac] and its prayer day ([DiyanetClassicAlmanac.prayerAxis]).
  *
  * The tables follow the angles (18° and 16°) until a summer target comes within reach, move to it
  * along a straight line in clock time, hold a constant share of the night through the summer and
@@ -17,13 +17,11 @@ import kotlin.math.roundToLong
  * - **Reference night.** The shortest night on which the sun still gets 18° below the horizon:
  *   the eve of the first night it doesn't, or the solstice where it always does (below about
  *   48.5°N). How far that night's 18° Fajr falls after midnight, Δ, sets the summer.
- * - **Summer share.** Fajr is a share of the night before sunrise, Isha a share after Maghrib
- *   (both measured from the temkin'd times): Fajr 0.1866 + 0.379·Δ/N, Isha (1 + 2Δ/N)/6, N the
- *   reference night. It holds from the first night without 18° to the last, or is the single
- *   point of the solstice.
- * - **Short nights.** When a night is shorter than about five and a half hours the shares are
- *   taken of a five-hour night centred on Dhuhr + 12 h, so Fajr and Isha stop following sunrise
- *   and sunset (north of about 59.5°N around the solstice).
+ * - **Summer share.** Fajr is a share of the night before Sunrise, Isha a share of the night
+ *   after Maghrib, the nights between the tables' own Sunrise and Maghrib: Fajr 0.1866 + 0.379·Δ/N,
+ *   Isha (1 + 2Δ/N)/6, N the reference night. It holds from the first night without 18° to the
+ *   last, or is the single point of the solstice. Where the prayer day is held to 19 hours the
+ *   night is 5, so north of about 59.5°N around midsummer Fajr and Isha stay all but still.
  * - **Transitions.** Fajr leaves the 18° time on the last day it is still at least 20.5 minutes
  *   later than the summer target and moves to it in a straight line; Isha mirrors it with 16°, and
  *   both come back the same way in the autumn, which the tables compare in clock time.
@@ -33,13 +31,14 @@ import kotlin.math.roundToLong
  * time below 0.01°), likely because their coordinates for a place differ from ours by a few km.
  * Around that edge the two candidate shares are blended by how likely each is.
  *
- * Found on the official 2026 tables (2,900 places from 45°N to 65.5°N) and checked on 2027, which
- * was not used: Fajr's mean error 0.78 → 0.26 minutes against V14, Isha's 0.68 → 0.22.
+ * Found on the official 2026 tables (2,900 places from 45°N to 70.7°N) and checked on 2027, which
+ * was not used: Fajr's mean error 0.78 → 0.24 minutes against V14, Isha's 0.68 → 0.21; north of
+ * 65.5°N Fajr's 2.0 → 0.4 and Isha's 1.7 → 0.3.
  */
 object DiyanetHighLatitudeTwilight {
 
     fun day(date: LocalDate, location: PrayerLocation): DiyanetHighLatitudeDay? {
-        if (location.latitude < MIN_LATITUDE) return null
+        if (location.latitude < MIN_LATITUDE || location.latitude > MAX_LATITUDE) return null
         val year = profile(date.year, location) ?: return null
         val index = date.dayOfYear - 1
         return DiyanetHighLatitudeDay(
@@ -65,24 +64,22 @@ object DiyanetHighLatitudeTwilight {
         return computed
     }
 
-    /** Minutes UT after 0h UT of each date of [year]; null where a day has no sunrise or sunset. */
+    /** Minutes UT after 0h UT of each date of [year]. */
     private fun buildProfile(year: Int, latitude: Double, longitude: Double, zoneId: ZoneId): YearProfile? {
         val first = LocalDate.of(year, 1, 1)
         val days = first.lengthOfYear()
         // Index i + 1 is day i of the year; one day of padding at each end.
         val suns = Array(days + 2) { DiyanetClassicSun(first.plusDays(it - 1L), latitude, longitude) }
+        val axes = Array(days + 2) { DiyanetClassicAlmanac.prayerAxis(suns[it], first.plusDays(it - 1L), latitude, longitude) }
         fun sun(i: Int) = suns[i + 1]
         fun noon(i: Int) = sun(i).noonMinutes
-        fun horizon(i: Int) = sun(i).hourAngleMinutes(DiyanetClassicAlmanac.HORIZON_DEPRESSION)
-        if ((-1..days).any { horizon(it) == null }) return null
-
-        fun sunrise(i: Int) = noon(i) - horizon(i)!!
-        fun sunset(i: Int) = noon(i) + horizon(i)!!
+        fun sunrise(i: Int) = axes[i + 1].first
+        fun maghrib(i: Int) = axes[i + 1].second
         fun directFajr(i: Int) = sun(i).hourAngleMinutes(DiyanetClassicAlmanac.FAJR_ANGLE)?.let { noon(i) - it }
         fun directIsha(i: Int) = sun(i).hourAngleMinutes(ISHA_ANGLE)?.let { noon(i) + it }
-        // The night between the temkin'd Maghrib and Sunrise, ending on day i and starting on day i.
-        fun nightBefore(i: Int) = (sunrise(i) - TEMKIN) - (sunset(i - 1) - MINUTES_PER_DAY + TEMKIN)
-        fun nightAfter(i: Int) = (sunrise(i + 1) + MINUTES_PER_DAY - TEMKIN) - (sunset(i) + TEMKIN)
+        // The night between the tables' Maghrib and Sunrise, ending on day i and starting on day i.
+        fun nightBefore(i: Int) = sunrise(i) - (maghrib(i - 1) - MINUTES_PER_DAY)
+        fun nightAfter(i: Int) = sunrise(i + 1) + MINUTES_PER_DAY - maghrib(i)
 
         val fajr = DoubleArray(days) { directFajr(it) ?: Double.NaN }
         val isha = DoubleArray(days) { directIsha(it) ?: Double.NaN }
@@ -114,15 +111,8 @@ object DiyanetHighLatitudeTwilight {
         val fajrShare = share(FAJR_SHARE_BASE, FAJR_SHARE_SLOPE)
         val ishaShare = share(ISHA_SHARE_BASE, ISHA_SHARE_SLOPE)
 
-        // Diyanet's midnight is Dhuhr + 12 h, Dhuhr's temkin included.
-        fun summerFajr(i: Int) = maxOf(
-            sunrise(i) - TEMKIN - fajrShare * nightBefore(i),
-            noon(i) - MINUTES_PER_DAY / 2 + DiyanetClassicAlmanac.DHUHR_TEMKIN + SHORT_NIGHT / 2 - fajrShare * SHORT_NIGHT
-        )
-        fun summerIsha(i: Int) = minOf(
-            sunset(i) + TEMKIN + ishaShare * nightAfter(i),
-            noon(i) + MINUTES_PER_DAY / 2 + DiyanetClassicAlmanac.DHUHR_TEMKIN - SHORT_NIGHT / 2 + ishaShare * SHORT_NIGHT
-        )
+        fun summerFajr(i: Int) = sunrise(i) - fajrShare * nightBefore(i)
+        fun summerIsha(i: Int) = maghrib(i) + ishaShare * nightAfter(i)
 
         for (i in summerStart..summerEnd) {
             fajr[i] = summerFajr(i)
@@ -172,12 +162,13 @@ object DiyanetHighLatitudeTwilight {
         return YearProfile(fajr, isha, regime)
     }
 
-    const val VERSION = "diyanet_high_latitude_reference_night_v1"
+    const val VERSION = "diyanet_high_latitude_reference_night_v2_prayer_day"
     const val MIN_LATITUDE = 45.0
+    // The official sets reach 70.7°N; beyond, the winter sun stops reaching 18° as well.
+    const val MAX_LATITUDE = 72.0
 
     private const val FAJR_DEPRESSION = DiyanetClassicAlmanac.FAJR_ANGLE
     private const val ISHA_ANGLE = 16.0
-    private const val TEMKIN = DiyanetClassicAlmanac.MAGHRIB_TEMKIN.toDouble()
     private const val MINUTES_PER_DAY = 1440.0
 
     // Fitted on 2026: Fajr's share of the night, against how far the reference night's 18° Fajr falls after midnight.
@@ -187,7 +178,6 @@ object DiyanetHighLatitudeTwilight {
     private const val ISHA_SHARE_BASE = 1.0 / 6.0
     private const val ISHA_SHARE_SLOPE = 1.0 / 3.0
     private const val TRANSITION_MINUTES = 20.5
-    private const val SHORT_NIGHT = 300.0
     // How likely the tables take the night before as the reference, by where in the day the 18°
     // night is lost: about half at 0.035 of a day after the reference night's 0h UT.
     private const val EDGE_CENTRE = 0.035

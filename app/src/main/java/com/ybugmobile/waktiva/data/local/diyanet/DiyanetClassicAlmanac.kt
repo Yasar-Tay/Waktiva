@@ -26,7 +26,9 @@ import kotlin.math.tan
  * around the dates an angle stops being reached, the published time lags the precise one by up
  * to a day's change. Nothing here is fitted: the angles and temkin are Diyanet's.
  *
- * Every time is null where the sun doesn't reach the altitude it needs.
+ * Sunrise and Maghrib are the tables' prayer day ([prayerAxis]): never longer than 19 hours or
+ * shorter than 5, so they exist on every day, polar ones included. Fajr, Asr and Isha are null
+ * where the sun doesn't reach the altitude they need.
  */
 object DiyanetClassicAlmanac {
 
@@ -53,13 +55,13 @@ object DiyanetClassicAlmanac {
             val asrDepression = -deg(atan(1.0 / (1.0 + tan(rad(abs(latitude - sun.declination))))))
             at(sun.hourAngleMinutes(asrDepression)?.let { noon + it }, ASR_TEMKIN)?.let { maxOf(it, dhuhr) }
         }
-        val horizon = sun.hourAngleMinutes(HORIZON_DEPRESSION)
+        val (sunrise, maghrib) = prayerAxis(sun, date, latitude, location.longitude)
         return DiyanetClassicDay(
             fajr = at(sun.hourAngleMinutes(FAJR_ANGLE)?.let { noon - it }, FAJR_TEMKIN),
-            sunrise = at(horizon?.let { noon - it }, SUNRISE_TEMKIN),
+            sunrise = atMinutes(date, sunrise, location.zoneId),
             dhuhr = dhuhr,
             asr = asr,
-            maghrib = at(horizon?.let { noon + it }, MAGHRIB_TEMKIN),
+            maghrib = atMinutes(date, maghrib, location.zoneId),
             isha = at(sun.hourAngleMinutes(ishaAngle(latitude))?.let { noon + it }, ISHA_TEMKIN)
         )
     }
@@ -69,6 +71,38 @@ object DiyanetClassicAlmanac {
      * 43°N (Toronto and the north).
      */
     fun ishaAngle(latitude: Double): Double = if (latitude > 43.0) 16.0 else 17.0
+
+    /**
+     * The tables' Sunrise and Maghrib, temkin included, in minutes UT after 0h UT of [date].
+     *
+     * The prayer day is the sun's, but never more than 9.5 hours either side of Dhuhr (its temkin
+     * included), nor of the summer solstice's Dhuhr, and never less than 2.5 hours either side of
+     * Dhuhr. So above ~59°N around midsummer Sunrise stays at its solstice clock time until the
+     * solstice and then follows Dhuhr, and Maghrib the other way round (Umea 2026: Sunrise 01:16 UT
+     * from 18 May to 24 June); on polar days and nights the bounds alone give the day. Against the
+     * tables north of 58°N: 98 % of these days within a minute, where V14's axis was 1.2 to 1.7
+     * minutes off on average. The nights between them are what Fajr and Isha's shares are taken of
+     * ([DiyanetHighLatitudeTwilight]): 5 hours where both bounds hold.
+     */
+    internal fun prayerAxis(sun: DiyanetClassicSun, date: LocalDate, latitude: Double, longitude: Double): Pair<Double, Double> {
+        val dhuhr = sun.noonMinutes + DHUHR_TEMKIN
+        val solstice = if (latitude >= 0) {
+            LocalDate.of(date.year, 6, 21)
+        } else {
+            LocalDate.of(if (date.monthValue <= 6) date.year - 1 else date.year, 12, 21)
+        }
+        val solsticeDhuhr = DiyanetClassicSun(solstice, latitude, longitude).noonMinutes + DHUHR_TEMKIN
+        val horizon = sun.hourAngleMinutes(HORIZON_DEPRESSION)
+        // Without a sunrise the sun is either up all day or down all day.
+        val up = 90.0 - abs(latitude - sun.declination) > 0.0
+        var sunrise = horizon?.let { sun.noonMinutes - it + SUNRISE_TEMKIN }
+            ?: if (up) Double.NEGATIVE_INFINITY else Double.POSITIVE_INFINITY
+        var maghrib = horizon?.let { sun.noonMinutes + it + MAGHRIB_TEMKIN }
+            ?: if (up) Double.POSITIVE_INFINITY else Double.NEGATIVE_INFINITY
+        sunrise = minOf(maxOf(sunrise, dhuhr - LONG_DAY_HALF, solsticeDhuhr - LONG_DAY_HALF), dhuhr - SHORT_DAY_HALF)
+        maghrib = maxOf(minOf(maghrib, dhuhr + LONG_DAY_HALF, solsticeDhuhr + LONG_DAY_HALF), dhuhr + SHORT_DAY_HALF)
+        return sunrise to maghrib
+    }
 
     /** The instant [minutesUt] minutes after 0h UT of [date], in [zoneId]. */
     internal fun atMinutes(date: LocalDate, minutesUt: Double, zoneId: ZoneId): ZonedDateTime =
@@ -94,15 +128,18 @@ object DiyanetClassicAlmanac {
     internal fun rad(degrees: Double) = Math.toRadians(degrees)
     internal fun deg(radians: Double) = Math.toDegrees(radians)
 
-    const val VERSION = "diyanet_classic_almanac_0h_ut_v1"
+    const val VERSION = "diyanet_classic_almanac_0h_ut_v2_prayer_day_bounds"
     const val FAJR_ANGLE = 18.0
     const val HORIZON_DEPRESSION = 0.833
     private const val J2000 = 2451545.0
     internal const val UNIX_EPOCH_JULIAN_DAY = 2440587.5
 
+    private const val LONG_DAY_HALF = 570.0
+    private const val SHORT_DAY_HALF = 150.0
+
     // Diyanet's temkin, in minutes.
     private const val FAJR_TEMKIN = 0L
-    private const val SUNRISE_TEMKIN = -7L
+    const val SUNRISE_TEMKIN = -7L
     const val DHUHR_TEMKIN = 5L
     private const val ASR_TEMKIN = 4L
     const val MAGHRIB_TEMKIN = 7L

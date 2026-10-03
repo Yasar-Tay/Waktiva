@@ -23,9 +23,9 @@ class DiyanetProductionPanelTest {
     private val calculator = LocalPrayerCalculator()
 
     @Test
-    fun `method 13 stays within a quarter hour of both official panels`() {
-        val failures = offPanel(CITIES.keys, limitMinutes = 15)
-        assertTrue(failures.take(20).joinToString("\n", "${failures.size} times off by more than 15 minutes:\n"), failures.isEmpty())
+    fun `method 13 stays within 8 minutes of both official panels`() {
+        val failures = offPanel(CITIES.keys, limitMinutes = 8)
+        assertTrue(failures.take(20).joinToString("\n", "${failures.size} times off by more than 8 minutes:\n"), failures.isEmpty())
     }
 
     /**
@@ -39,13 +39,15 @@ class DiyanetProductionPanelTest {
     }
 
     /**
-     * Between 45°N and the polar regions Fajr and Isha follow the tables' summer rule
+     * From 45°N into the polar regions Fajr and Isha follow the tables' summer rule
      * (DiyanetHighLatitudeTwilight): within 8 minutes every day of both years, under a minute and a
      * half on average. V14 was 1 to 2.4 minutes off on average in these cities, up to 10.
      */
     @Test
-    fun `method 13 follows the summer rule from 45 degrees north to the polar regions`() {
-        val cities = setOf("stockholm", "gothenburg", "umea", "oslo", "trondheim", "helsinki", "oulu", "copenhagen", "reykjavik")
+    fun `method 13 follows the summer rule from 45 degrees north into the polar regions`() {
+        val cities = setOf(
+            "stockholm", "gothenburg", "umea", "oslo", "trondheim", "helsinki", "oulu", "copenhagen", "reykjavik", "tromso", "rovaniemi"
+        )
         val failures = offPanel(cities, limitMinutes = 8, events = setOf("fajr", "isha"))
         assertTrue(failures.take(20).joinToString("\n", "${failures.size} times off by more than 8 minutes:\n"), failures.isEmpty())
         for (year in listOf(2026, 2027)) {

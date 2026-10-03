@@ -15,11 +15,11 @@ katsayı yok. 2026 verisinde bulundu, 2027'de aynen tuttu.
 - **Öğle ve İkindi:** Her gün klasik formülden.
 - **İkindi'nin özel durumları:** Güneş öğlede ufkun altındaysa İkindi = Öğle. Güneş ufkun çok az
   üstündeyse formül İkindi'yi Öğle'den önceye düşürür; o zaman da Öğle'nin vakti verilir.
-- **Güneş ve Akşam:** Doğuşu ve batışı olan normal günlerde klasik formülden. V14'ün sentetik
-  ekseni, yani 19 saatlik uzun gün ve 5 saatlik kısa gün, olduğu gibi kalıyor.
-- **İmsak ve Yatsı:** 45°K'nin altında her gün klasik formülden. 45°K'den güneşin her gün doğup
-  battığı yere kadar (~65,7°K) Diyanet'in yaz kuralından (`DiyanetHighLatitudeTwilight`, aşağıda).
-  Kutup bölgelerinde V14 kalıyor.
+- **Güneş ve Akşam:** Her gün klasik formülden, Diyanet'in namaz günü sınırlarıyla (aşağıda,
+  "Namaz günü sınırları"). V14'ün sentetik ekseni artık kullanılmıyor.
+- **İmsak ve Yatsı:** 45°K'nin altında her gün klasik formülden. 45°K ile 72°K arasında, kutup
+  bölgesi dahil, Diyanet'in yaz kuralından (`DiyanetHighLatitudeTwilight`, aşağıda). V14 yalnızca
+  72°K'nin kuzeyinde İmsak ve Yatsı için kalıyor.
 - **Güney (≤45°G):** Düz 18°/17° açıları kullanılıyor. Açı oluşmayan gecelerde Diyanet'in
   yazdığı gibi 00:00 veriliyor. Diyanet güneyde kuzeyin yüksek enlem kurallarını kullanmıyor.
 
@@ -128,6 +128,41 @@ Ortalama hata 1,5 dakikanın altında; V14'te aynı şehirlerde 1–2,4.
 
 Türetmede kullanılan Python prototipi ve ayrıntılar `Diyanet Algorithm/diyanet-global-audit/
 high_latitude/` klasöründe.
+
+## Namaz günü sınırları ve kutup bölgesi
+
+Diyanet'in yayımladığı Güneş ve Akşam, güneşin doğuş ve batışı (temkinli), ama:
+
+- **Uzun gün:** Öğle'nin (temkinli) en fazla 9,5 saat öncesi ve sonrası. Aynı sınır 21 Haziran'ın
+  Öğle'sine göre de uygulanıyor. Bu yüzden ~59°K'nin kuzeyinde yaz ortasında Güneş solstise kadar
+  aynı saatte kalıyor, sonra Öğle ile kayıyor; Akşam tersine. Umeå 2026'da Güneş 18 Mayıs'tan
+  24 Haziran'a kadar 01:16 UT.
+- **Kısa gün:** Öğle'nin en az 2,5 saat öncesi ve sonrası.
+- **Kutup günü ve gecesi:** Yalnızca bu sınırlar.
+
+İmsak ve Yatsı payları bu sınırlanmış Güneş ve Akşam arasındaki geceden alınıyor. Yukarıdaki
+"5 saatlik kısa gece" bunun sonucu: 19 saatlik namaz gününün bıraktığı gece. Kural böylece kutup
+bölgesine de uzanıyor.
+
+58°K'nin kuzeyinde Güneş ve Akşam'ın %98'i 1 dakika içinde. V14'ün 19 saatlik ekseninde ortalama
+hata 1,2–1,7 dakikaydı.
+
+| | 2026 önce | 2026 sonra | 2027 önce | 2027 sonra |
+|---|---|---|---|---|
+| Güneş, tümü | 0,095 | 0,083 | 0,095 | 0,083 |
+| Akşam, tümü | 0,091 | 0,080 | 0,091 | 0,080 |
+| İmsak, tümü | 0,767 | 0,230 | 0,777 | 0,243 |
+| Yatsı, tümü | 0,672 | 0,199 | 0,683 | 0,206 |
+| İmsak, ≥65,5°K (16 şehir) | 1,77 | 0,53 | 2,00 | 0,43 |
+| Yatsı, ≥65,5°K | 1,51 | 0,44 | 1,68 | 0,32 |
+| Güneş/Akşam, ≥65,5°K | 0,60/0,55 | 0,08/0,08 | 0,60/0,56 | 0,09/0,08 |
+
+"Önce" sütunu V14.2, "sonra" sütunu bu sürüm; değerler ortalama mutlak hata, dakika. Kapsam
+güvenilir segment, saat dilimi politikası farklı şehirler hariç. Kutup şehirlerinde en büyük
+İmsak hatası 12 → 5 dakika.
+
+Panel testinin bütün şehirleri artık her vakitte 8 dakika içinde: Tromsø ve Rovaniemi dahil
+(önceki sınır 15 dakikaydı).
 
 ## Araçlar
 
