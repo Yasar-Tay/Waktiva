@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The prayer log widget preview's medal: a brass sphere in a dark groove. -->
+<!-- The prayer log widget preview's medal: a coral sphere in a dark groove. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
@@ -14,10 +14,10 @@
         <shape android:shape="oval">
             <gradient
                 android:angle="315"
-                android:centerColor="#FFDEBE78"
-                android:endColor="#FFA77C34"
-                android:startColor="#FFF6E1A2" />
-            <stroke android:width="0.7dp" android:color="#B3F6E1A2" />
+                android:centerColor="#FFF0997B"
+                android:endColor="#FFC07A62"
+                android:startColor="#FFF7C2AE" />
+            <stroke android:width="0.7dp" android:color="#59FFFFFF" />
         </shape>
     </item>
 </layer-list>

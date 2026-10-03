@@ -28,10 +28,11 @@ import com.ybugmobile.waktiva.domain.model.PrayerLog
 import com.ybugmobile.waktiva.domain.model.PrayerLogProgress
 import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
 import com.ybugmobile.waktiva.domain.model.PrayerType
-import com.ybugmobile.waktiva.ui.home.composables.accentColor
 import com.ybugmobile.waktiva.ui.home.composables.iconRes
 import com.ybugmobile.waktiva.ui.prayerlog.LogColors
+import com.ybugmobile.waktiva.ui.prayerlog.ink
 import com.ybugmobile.waktiva.ui.prayerlog.lighten
+import com.ybugmobile.waktiva.ui.prayerlog.logColor
 import com.ybugmobile.waktiva.ui.theme.darken
 import kotlinx.coroutines.flow.first
 import java.text.NumberFormat
@@ -39,10 +40,10 @@ import java.time.LocalDate
 
 /**
  * The prayer log widget ([WaktivaPrayerLogWidget]): the çetele as a game, as on the prayer log
- * screen and in its materials. The level on a brass sphere in a groove filling with how far the
+ * screen and in its colours. The level on a coral sphere in a groove filling with how far the
  * level has come, the XP bar with what the next level takes, the streak and the badges earned,
- * and today's five prayers as glass spheres: brass once marked, ringed in their colour while
- * their time is on, rose once missed. A tap on one whose
+ * and today's five prayers as glass spheres: of their own colour once marked, ringed in it while
+ * their time is on, grey once missed. A tap on one whose
  * time has come marks it or takes the mark back, as the day circle widgets do.
  */
 internal object PrayerLogWidget {
@@ -97,7 +98,7 @@ internal object PrayerLogWidget {
         views.setOnClickPendingIntent(android.R.id.background, openLogIntent(context))
         views.setImageViewBitmap(
             R.id.widget_bg,
-            WaktivaWidget.litBackground(snapshot.skyColors, LogColors.Gold.toArgb(), Backdrop.WIDE, snapshot.atmosphere)
+            WaktivaWidget.litBackground(snapshot.skyColors, LogColors.Accent.toArgb(), Backdrop.WIDE, snapshot.atmosphere)
         )
         views.setViewVisibility(R.id.widget_content, if (today != null) View.VISIBLE else View.GONE)
         views.setViewVisibility(R.id.widget_log_off, if (!enabled) View.VISIBLE else View.GONE)
@@ -129,7 +130,7 @@ internal object PrayerLogWidget {
             cell.setTextColor(
                 R.id.widget_log_name,
                 when (status) {
-                    PrayerLogStatus.PRAYED -> LogColors.GoldText.toArgb()
+                    PrayerLogStatus.PRAYED -> type.logColor.toArgb()
                     PrayerLogStatus.UPCOMING -> 0x73FFFFFF
                     else -> 0xCCFFFFFF.toInt()
                 }
@@ -159,13 +160,13 @@ internal object PrayerLogWidget {
     )
 
     // ── Painted parts ─────────────────────────────────────────────────────
-    // As the prayer log screen draws them (see PrayerLogStyle): the home dial's brass and gold,
-    // glass spheres lit from the upper left, rings lying in a groove.
+    // As the prayer log screen draws them (see PrayerLogStyle): each prayer in its colour of the
+    // day's spectrum, the game in coral, glass spheres lit from the upper left, rings in a groove.
 
     private fun px(context: Context, dp: Int) =
         (dp * context.resources.displayMetrics.density).toInt().coerceIn(1, MAX_PX)
 
-    /** The level on a sphere of brass, in a groove that fills with how far the level has come. */
+    /** The level on a sphere of the game's coral, in a groove that fills with how far the level has come. */
     private fun medal(context: Context, level: Int, fraction: Float): Bitmap {
         val size = px(context, MEDAL_DP)
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
@@ -185,7 +186,7 @@ internal object PrayerLogWidget {
         if (f > 0f) {
             ring.strokeWidth = stroke
             ring.strokeCap = Paint.Cap.ROUND
-            ring.color = LogColors.Brass.toArgb()
+            ring.color = LogColors.Accent.toArgb()
             canvas.drawArc(arc, -90f, 360f * f, false, ring)
             val glaze = inset - stroke * 0.22f
             ring.strokeWidth = maxOf(0.8f * dp, stroke * 0.22f)
@@ -194,11 +195,11 @@ internal object PrayerLogWidget {
         }
 
         val r = c - stroke - 3f * dp
-        orb(canvas, c, c, r, LogColors.Brass, LogColors.Gold, LogColors.BrassLight.copy(alpha = 0.7f), shadow = true, dp = dp)
+        orb(canvas, c, c, r, LogColors.Accent, LogColors.Accent, Color.White.copy(alpha = 0.35f), shadow = true, dp = dp)
 
         val text = level.toString()
         val label = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = LogColors.Ink.toArgb()
+            color = LogColors.AccentInk.toArgb()
             typeface = runCatching { ResourcesCompat.getFont(context, R.font.ibm_plex_arabic_medium) }.getOrNull()
                 ?: Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
             isFakeBoldText = true
@@ -210,8 +211,8 @@ internal object PrayerLogWidget {
     }
 
     /**
-     * A prayer as a glass sphere: brass with a tick once prayed, deep glass ringed in its own
-     * colour with its sign while its time is on, dimmed with a rose rim once missed, faint before.
+     * A prayer as a glass sphere: of its own colour with a tick once prayed, deep glass ringed in
+     * its colour with its sign while its time is on, dimmed grey once missed, faint before.
      */
     private fun dot(context: Context, type: PrayerType, status: PrayerLogStatus): Bitmap {
         val size = px(context, DOT_DP)
@@ -221,23 +222,23 @@ internal object PrayerLogWidget {
         val c = size / 2f
         // Room around the sphere for its glow and shadow.
         val r = c * 0.78f
-        val accent = type.accentColor
-        val edge = LogColors.Gold.copy(alpha = 0.55f)
+        val color = type.logColor
+        val edge = Color.White.copy(alpha = 0.3f)
 
         val (icon, tint) = when (status) {
             PrayerLogStatus.PRAYED -> {
-                glow(canvas, c, c, c, LogColors.Gold, 0.45f)
-                orb(canvas, c, c, r, LogColors.Brass, LogColors.Gold, LogColors.BrassLight.copy(alpha = 0.7f), shadow = true, dp = dp)
-                R.drawable.ic_widget_check to LogColors.Ink
+                glow(canvas, c, c, c, color, 0.4f)
+                orb(canvas, c, c, r, color, color, Color.White.copy(alpha = 0.35f), shadow = true, dp = dp)
+                R.drawable.ic_widget_check to color.ink
             }
             PrayerLogStatus.ACTIVE -> {
-                glow(canvas, c, c, c, accent, 0.3f)
-                orb(canvas, c, c, r, accent, lerp(LogColors.Night, accent, 0.35f), edge, shadow = true, dp = dp)
+                glow(canvas, c, c, c, color, 0.3f)
+                orb(canvas, c, c, r, color, lerp(LogColors.Night, color, 0.3f), edge, shadow = true, dp = dp)
                 type.iconRes to Color.White.copy(alpha = 0.96f)
             }
             PrayerLogStatus.MISSED -> {
-                orb(canvas, c, c, r, LogColors.Rose.darken(0.15f), lerp(LogColors.Night, LogColors.Rose, 0.2f), edge, shadow = true, dp = dp)
-                type.iconRes to LogColors.Rose.lighten(0.25f)
+                orb(canvas, c, c, r, LogColors.Missed.darken(0.25f), lerp(LogColors.Night, LogColors.Missed, 0.15f), edge, shadow = true, dp = dp)
+                type.iconRes to LogColors.Missed
             }
             PrayerLogStatus.UPCOMING, PrayerLogStatus.UNTRACKED -> {
                 orb(canvas, c, c, r, Color.White.copy(alpha = 0.28f), LogColors.Night.copy(alpha = 0.45f), null, shadow = false, dp = dp)

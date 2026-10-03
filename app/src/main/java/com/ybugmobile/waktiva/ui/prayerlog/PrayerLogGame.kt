@@ -67,10 +67,10 @@ import com.ybugmobile.waktiva.domain.model.BadgeProgress
 import com.ybugmobile.waktiva.domain.model.PrayerLogBadge
 import com.ybugmobile.waktiva.domain.model.PrayerLogProgress
 import com.ybugmobile.waktiva.domain.model.PrayerType
-import com.ybugmobile.waktiva.ui.home.composables.accentColor
 import com.ybugmobile.waktiva.ui.theme.GlassSurface
 import com.ybugmobile.waktiva.ui.theme.IBMPlexArabic
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
+import com.ybugmobile.waktiva.ui.theme.darken
 import com.ybugmobile.waktiva.ui.theme.liquidGlass
 import java.text.NumberFormat
 import kotlin.math.cos
@@ -100,7 +100,7 @@ internal fun LevelLine(progress: PrayerLogProgress, modifier: Modifier = Modifie
             )
             Text(
                 text = stringResource(R.string.prayer_log_xp, integer.format(xp)),
-                style = goldText(
+                style = accentText(
                     MaterialTheme.typography.labelLarge.copy(
                         fontFamily = IBMPlexArabic,
                         fontWeight = FontWeight.Bold,
@@ -154,7 +154,7 @@ internal fun BadgesCard(progress: PrayerLogProgress) {
                 Icon(
                     Icons.Rounded.EmojiEvents,
                     contentDescription = null,
-                    tint = goldInk(),
+                    tint = accentInk(),
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(Modifier.width(8.dp))
@@ -233,8 +233,8 @@ private fun BadgeCell(progress: BadgeProgress, isSelected: Boolean, onClick: () 
 }
 
 /**
- * A badge as a medal: a sphere of brass once earned, with its sign in ink; before, a sphere of
- * deep glass in a groove filling with its progress.
+ * A badge as a medal: a sphere of the game's coral once earned, with its sign in ink; before, a
+ * sphere of deep glass in a groove filling with its progress.
  */
 @Composable
 private fun BadgeMedal(progress: BadgeProgress, modifier: Modifier = Modifier) {
@@ -251,19 +251,19 @@ private fun BadgeMedal(progress: BadgeProgress, modifier: Modifier = Modifier) {
         Canvas(Modifier.fillMaxSize()) {
             val r = size.minDimension / 2f
             if (earned) {
-                glow(center, r * 1.15f, LogColors.Gold, 0.35f)
-                brassOrb(center, r - 3.dp.toPx())
+                glow(center, r * 1.15f, LogColors.Accent, 0.35f)
+                colorOrb(center, r - 3.dp.toPx(), LogColors.Accent)
             } else {
                 val stroke = 3.dp.toPx()
                 ringGroove(stroke, stroke / 2f + 0.8.dp.toPx())
-                if (fraction > 0f) glazedArc(LogColors.Brass, -90f, 360f * fraction, stroke, stroke / 2f + 0.8.dp.toPx())
+                if (fraction > 0f) glazedArc(LogColors.Accent, -90f, 360f * fraction, stroke, stroke / 2f + 0.8.dp.toPx())
                 glassOrb(center, r - stroke - 3.dp.toPx(), rim = Color.White.copy(alpha = 0.3f), fill = LogColors.Night.copy(alpha = 0.55f), edge = null, shadow = false)
             }
         }
         Icon(
             progress.badge.icon,
             contentDescription = null,
-            tint = if (earned) LogColors.Ink else contentColor.copy(alpha = 0.4f),
+            tint = if (earned) LogColors.AccentInk else contentColor.copy(alpha = 0.4f),
             modifier = Modifier.size(if (earned) 24.dp else 20.dp)
         )
     }
@@ -276,7 +276,7 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
         if (isNext) {
             Text(
                 text = stringResource(R.string.prayer_log_next_goal).uppercase(),
-                style = goldText(MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp))
+                style = accentText(MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp))
             )
             Spacer(Modifier.height(2.dp))
         }
@@ -296,11 +296,11 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
             Spacer(Modifier.width(12.dp))
             if (progress.isEarned) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.Check, contentDescription = null, tint = goldInk(), modifier = Modifier.size(18.dp))
+                    Icon(Icons.Rounded.Check, contentDescription = null, tint = accentInk(), modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(4.dp))
                     Text(
                         text = stringResource(R.string.prayer_log_badge_earned),
-                        style = goldText(MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                        style = accentText(MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
                     )
                 }
             } else {
@@ -321,7 +321,7 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
     }
 }
 
-/** Today's bonus for a full day: a capsule of glass until all five are prayed, then of brass. */
+/** Today's bonus for a full day: a capsule of glass until all five are prayed, then of the game's coral. */
 @Composable
 internal fun FullDayBonus(isComplete: Boolean, modifier: Modifier = Modifier) {
     val glass = LocalGlassTheme.current
@@ -331,7 +331,7 @@ internal fun FullDayBonus(isComplete: Boolean, modifier: Modifier = Modifier) {
         spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
         label = "bonusPop"
     )
-    val ink = if (isComplete) LogColors.Ink else glass.contentColor.copy(alpha = 0.75f)
+    val ink = if (isComplete) LogColors.AccentInk else glass.contentColor.copy(alpha = 0.75f)
     Row(
         modifier = modifier
             .scale(pop)
@@ -339,7 +339,7 @@ internal fun FullDayBonus(isComplete: Boolean, modifier: Modifier = Modifier) {
             .then(
                 if (isComplete) {
                     Modifier.background(
-                        Brush.linearGradient(listOf(LogColors.BrassLight, LogColors.Gold, LogColors.Brass)),
+                        Brush.linearGradient(listOf(LogColors.Accent.lighten(0.25f), LogColors.Accent, LogColors.Accent.darken(0.1f))),
                         shape
                     )
                 } else {
@@ -352,7 +352,7 @@ internal fun FullDayBonus(isComplete: Boolean, modifier: Modifier = Modifier) {
         Icon(
             if (isComplete) Icons.Rounded.Check else Icons.Rounded.AutoAwesome,
             contentDescription = null,
-            tint = if (isComplete) LogColors.Ink else goldInk(),
+            tint = if (isComplete) LogColors.AccentInk else accentInk(),
             modifier = Modifier.size(16.dp)
         )
         Spacer(Modifier.width(6.dp))
@@ -365,9 +365,9 @@ internal fun FullDayBonus(isComplete: Boolean, modifier: Modifier = Modifier) {
         Text(
             text = stringResource(R.string.prayer_log_xp_gain, PrayerLogProgress.FULL_DAY_BONUS),
             style = if (isComplete) {
-                MaterialTheme.typography.labelMedium.copy(fontFamily = IBMPlexArabic, fontWeight = FontWeight.Bold, color = LogColors.Ink)
+                MaterialTheme.typography.labelMedium.copy(fontFamily = IBMPlexArabic, fontWeight = FontWeight.Bold, color = LogColors.AccentInk)
             } else {
-                goldText(MaterialTheme.typography.labelMedium.copy(fontFamily = IBMPlexArabic, fontWeight = FontWeight.Bold))
+                accentText(MaterialTheme.typography.labelMedium.copy(fontFamily = IBMPlexArabic, fontWeight = FontWeight.Bold))
             }
         )
     }
@@ -391,7 +391,7 @@ internal fun XpPop(trigger: Int, modifier: Modifier = Modifier) {
     if (rise.value < 1f) {
         Text(
             text = stringResource(R.string.prayer_log_xp_gain, PrayerLogProgress.XP_PER_PRAYER),
-            style = goldText(MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black)),
+            style = accentText(MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black)),
             maxLines = 1,
             softWrap = false,
             modifier = modifier.graphicsLayer {
@@ -439,20 +439,20 @@ internal fun UnlockToast(unlock: Unlock?, modifier: Modifier = Modifier) {
         val shape = RoundedCornerShape(24.dp)
         Row(
             Modifier
-                .liquidGlass(shape, glass, emphasis = 1f, accent = LogColors.Gold.copy(alpha = 0.8f))
+                .liquidGlass(shape, glass, emphasis = 1f, accent = LogColors.Accent.copy(alpha = 0.8f))
                 .background(Color.Black.copy(alpha = 0.25f), shape)
                 .padding(start = 10.dp, end = 20.dp, top = 10.dp, bottom = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(Modifier.size(42.dp), contentAlignment = Alignment.Center) {
-                Canvas(Modifier.fillMaxSize()) { brassOrb(center, size.minDimension / 2f - 1.dp.toPx()) }
-                Icon(icon, contentDescription = null, tint = LogColors.Ink, modifier = Modifier.size(22.dp))
+                Canvas(Modifier.fillMaxSize()) { colorOrb(center, size.minDimension / 2f - 1.dp.toPx(), LogColors.Accent) }
+                Icon(icon, contentDescription = null, tint = LogColors.AccentInk, modifier = Modifier.size(22.dp))
             }
             Spacer(Modifier.width(12.dp))
             Column {
                 Text(
                     text = label.uppercase(),
-                    style = goldText(MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.5.sp))
+                    style = accentText(MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.5.sp))
                 )
                 Text(
                     text = title,
@@ -541,8 +541,8 @@ private class Piece(
 
 private const val ConfettiMillis = 1900
 
-private val ConfettiColors = listOf(LogColors.Gold, LogColors.BrassLight, LogColors.Brass, Color.White) +
-    PrayerType.entries.map { it.accentColor }
+private val ConfettiColors = listOf(LogColors.Accent, LogColors.AccentText, Color.White) +
+    PrayerType.entries.map { it.logColor }
 
 internal val PrayerLogBadge.icon: ImageVector
     get() = when (this) {

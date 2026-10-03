@@ -22,59 +22,72 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.waktiva.ui.theme.darken
 import com.ybugmobile.waktiva.ui.theme.liquidGlass
 import kotlin.math.max
 
 /**
- * The prayer log's materials, taken from the home screen's dials so the two read as one app:
- * the antique gold and brass of the gears and the plaque, glass spheres lit from the upper left
- * like the dial's prayer badges, and grooves like the dial's ring. Status colours stay soft: a
- * prayer's own colour while its time is on, a muted rose once missed, gold once prayed.
+ * The prayer log's colours: the day's spectrum. Each prayer has the colour of its hour's sky,
+ * from the dawn's blue through the noon's sand, the afternoon's peach and the dusk's rose to the
+ * night's violet ([logColor]); a prayer prayed is a sphere of its colour, and a full day is the
+ * whole spectrum round. The game (XP, levels, the streak, badges, the full day's bonus) has a
+ * colour of its own, a warm coral apart from every prayer's. A missed prayer is a quiet grey.
+ * The spheres and grooves are drawn as on the home screen's dial.
  */
 internal object LogColors {
-    /** The dial's gold (GearPalette.gold). */
-    val Gold = Color(0xFFDEBE78)
+    /** The game's colour. */
+    val Accent = Color(0xFFF0997B)
 
-    /** Brass, from its lit edge to its shade, as GearPalette.brass. */
-    val BrassLight = Color(0xFFF6E1A2)
-    val Brass = Color(0xFFD4AB5A)
-    val BrassDeep = Color(0xFFA77C34)
+    /** The game's colour for words and small marks: paler, so it holds on the glass. */
+    val AccentText = Color(0xFFF7B9A2)
 
-    /** Words and small marks in gold: paler than the metal, so they hold on the glass. */
-    val GoldText = Color(0xFFF1D895)
+    /** Ink on the game's colour. */
+    val AccentInk = Color(0xFF4A1B0C)
 
-    /** Ink on gold. */
-    val Ink = Color(0xFF2E2108)
-
-    /** A missed prayer: rose, not alarm red. */
-    val Rose = Color(0xFFD99A9A)
+    /** A missed prayer: grey, not alarm red. */
+    val Missed = Color(0xFFA6A4B4)
 
     /** The deep glass of a sphere with nothing in it yet. */
     val Night = Color(0xFF0F1A33)
 }
 
-/** Gold for small marks on the glass. */
+/** Each prayer's colour in the log: its hour's sky, in a spectrum across the day. */
+internal val PrayerType.logColor: Color
+    get() = when (this) {
+        PrayerType.FAJR -> Color(0xFF7FB2E5)
+        PrayerType.SUNRISE -> Color(0xFFF2D49B)
+        PrayerType.DHUHR -> Color(0xFFE8D9A8)
+        PrayerType.ASR -> Color(0xFFF2B48A)
+        PrayerType.MAGHRIB -> Color(0xFFE28F9B)
+        PrayerType.ISHA -> Color(0xFF9A8FD8)
+    }
+
+/** Ink on a sphere of this colour: its own hue, nearly black. */
+internal val Color.ink: Color get() = lerp(this, Color.Black, 0.72f)
+
+/** The game's colour for small marks on the glass. */
 @Composable
 @ReadOnlyComposable
-internal fun goldInk(): Color = LogColors.GoldText
+internal fun accentInk(): Color = LogColors.AccentText
 
 /**
- * [base] in gold words, over a soft shade as the dial's times have, deeper by day so it holds
- * against the pale day sky (the glass theme is "light" at night).
+ * [base] in the game's colour, over a soft shade as the dial's times have, deeper by day so it
+ * holds against the pale day sky (the glass theme is "light" at night).
  */
 @Composable
 @ReadOnlyComposable
-internal fun goldText(base: TextStyle): TextStyle {
+internal fun accentText(base: TextStyle): TextStyle {
     val night = LocalGlassTheme.current.isLightMode
     return base.copy(
-        color = LogColors.GoldText,
+        color = LogColors.AccentText,
         shadow = Shadow(Color.Black.copy(alpha = if (night) 0.35f else 0.6f), Offset(0f, 1f), if (night) 4f else 8f)
     )
 }
@@ -88,14 +101,14 @@ internal fun Color.lighten(amount: Float) =
 /**
  * A glass sphere as the dial's prayer badges are drawn: a soft shadow under it, a rim in [rim]
  * bright where it faces the light, [fill] inside, paler towards the light, a gleam across that
- * side, and a fine [edge] around it, gold by default.
+ * side, and a fine [edge] around it.
  */
 internal fun DrawScope.glassOrb(
     center: Offset,
     radius: Float,
     rim: Color,
     fill: Color,
-    edge: Color? = LogColors.Gold.copy(alpha = 0.6f),
+    edge: Color? = Color.White.copy(alpha = 0.3f),
     shadow: Boolean = true
 ) {
     if (shadow) {
@@ -149,9 +162,9 @@ internal fun DrawScope.glassOrb(
     edge?.let { drawCircle(it, radius + 0.35.dp.toPx(), center, style = Stroke(0.7.dp.toPx())) }
 }
 
-/** A sphere of polished brass: a prayer prayed, a day made full, a badge earned. */
-internal fun DrawScope.brassOrb(center: Offset, radius: Float, shadow: Boolean = true) =
-    glassOrb(center, radius, rim = LogColors.Brass, fill = LogColors.Gold, edge = LogColors.BrassLight.copy(alpha = 0.7f), shadow = shadow)
+/** A sphere of [color] all through: a prayer prayed, a badge earned. */
+internal fun DrawScope.colorOrb(center: Offset, radius: Float, color: Color, shadow: Boolean = true) =
+    glassOrb(center, radius, rim = color, fill = color, edge = Color.White.copy(alpha = 0.35f), shadow = shadow)
 
 /** A soft light around [center], for what's gold or on. */
 internal fun DrawScope.glow(center: Offset, radius: Float, color: Color, alpha: Float) {
@@ -213,8 +226,8 @@ internal fun DrawScope.glazedArc(color: Color, startAngle: Float, sweepAngle: Fl
 }
 
 /**
- * A bar in a groove, filled in brass to [fraction], with a glaze along its top and a light at
- * its end, as the dial's track is lit. Its height is the [modifier]'s.
+ * A bar in a groove, filled in the game's colour to [fraction], with a glaze along its top and a
+ * light at its end, as the dial's track is lit. Its height is the [modifier]'s.
  */
 @Composable
 internal fun GrooveBar(fraction: Float, modifier: Modifier = Modifier) {
@@ -234,7 +247,7 @@ internal fun GrooveBar(fraction: Float, modifier: Modifier = Modifier) {
         val w = max(size.width * f, h)
         drawRoundRect(
             Brush.horizontalGradient(
-                listOf(LogColors.BrassDeep, LogColors.Brass, LogColors.Gold, LogColors.BrassLight),
+                listOf(LogColors.Accent.darken(0.2f), LogColors.Accent, LogColors.Accent.lighten(0.3f)),
                 endX = w
             ),
             size = Size(w, h),
@@ -246,7 +259,7 @@ internal fun GrooveBar(fraction: Float, modifier: Modifier = Modifier) {
             size = Size(max(w - h * 0.5f, 0f), h * 0.45f),
             cornerRadius = CornerRadius(h * 0.25f)
         )
-        glow(Offset(w - h / 2f, h / 2f), h * 1.8f, LogColors.BrassLight, 0.45f)
+        glow(Offset(w - h / 2f, h / 2f), h * 1.8f, LogColors.Accent.lighten(0.4f), 0.45f)
     }
 }
 
