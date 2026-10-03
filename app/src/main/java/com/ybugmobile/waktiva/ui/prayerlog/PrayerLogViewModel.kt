@@ -6,6 +6,7 @@ import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.domain.model.LoggedPrayers
 import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerLog
+import com.ybugmobile.waktiva.domain.model.PrayerLogProgress
 import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerLogRepository
@@ -50,6 +51,8 @@ data class PrayerLogViewState(
     val today: PrayerLogDay? = null,
     /** Days in a row with all five prayers prayed. */
     val streak: Int = 0,
+    /** XP, level and badges: the log as a game. */
+    val progress: PrayerLogProgress = PrayerLogProgress(),
     val last7Days: PrayerLogTally = PrayerLogTally(),
     val last30Days: PrayerLogTally = PrayerLogTally(),
     /** Prayers missed since the log began. */
@@ -187,6 +190,7 @@ internal fun buildPrayerLogState(
     return PrayerLogViewState(
         today = days[today],
         streak = PrayerLog.streak(prayed, today),
+        progress = PrayerLogProgress.of(prayed),
         last7Days = tally(7),
         last30Days = tally(30),
         missedSinceStart = days.values.sumOf { it.missed },

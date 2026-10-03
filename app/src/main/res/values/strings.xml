@@ -500,4 +500,31 @@
     <string name="prayer_log_next_month">Next month</string>
     <string name="prayer_log_hint">When a prayer\'s time comes, tap its badge on the home screen\'s circle and choose “I prayed”, or tap it here.</string>
     <string name="settings_support_desc">Help keep Waktiva free, private and ad-free</string>
+    <string name="prayer_log_xp" translatable="false">%1$s XP</string>
+    <string name="prayer_log_xp_gain" translatable="false">+%1$d XP</string>
+    <string name="prayer_log_level">Level %1$d</string>
+    <string name="prayer_log_xp_to_next">%1$d XP to level %2$d</string>
+    <string name="prayer_log_full_day_bonus">Full day bonus</string>
+    <string name="prayer_log_best_streak">Best: %1$d</string>
+    <string name="prayer_log_badges">Badges</string>
+    <string name="prayer_log_badge_unlocked">New badge</string>
+    <string name="prayer_log_level_up">Level up!</string>
+    <string name="prayer_log_badge_earned">Earned</string>
+    <string name="prayer_log_next_goal">Next goal</string>
+    <string name="prayer_log_badge_first_prayer">First Step</string>
+    <string name="prayer_log_badge_first_prayer_desc">Mark your first prayer</string>
+    <string name="prayer_log_badge_first_full_day">Full Day</string>
+    <string name="prayer_log_badge_first_full_day_desc">Pray all five prayers in one day</string>
+    <string name="prayer_log_badge_streak_3">Spark</string>
+    <string name="prayer_log_badge_streak_3_desc">3 full days in a row</string>
+    <string name="prayer_log_badge_streak_7">Flame</string>
+    <string name="prayer_log_badge_streak_7_desc">7 full days in a row</string>
+    <string name="prayer_log_badge_fajr_7">Morning Star</string>
+    <string name="prayer_log_badge_fajr_7_desc">Pray Fajr 7 days in a row</string>
+    <string name="prayer_log_badge_prayers_100">Hundred</string>
+    <string name="prayer_log_badge_prayers_100_desc">Mark 100 prayers</string>
+    <string name="prayer_log_badge_streak_40">Forty Days</string>
+    <string name="prayer_log_badge_streak_40_desc">40 full days in a row</string>
+    <string name="prayer_log_badge_prayers_500">Steadfast</string>
+    <string name="prayer_log_badge_prayers_500_desc">Mark 500 prayers</string>
 </resources>
