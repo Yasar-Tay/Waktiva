@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A prayed prayer's card in the "my day" widget: tinted and edged in gold, brighter while pressed. -->
+<!-- A prayed prayer's card in the "my day" widget: tinted and edged in the dial's gold, brighter while pressed. -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <solid android:color="#4DFFD54F" />
-            <stroke android:width="1dp" android:color="#B3FFD54F" />
+            <solid android:color="#4DDEBE78" />
+            <stroke android:width="1dp" android:color="#B3DEBE78" />
             <corners android:radius="14dp" />
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#26FFD54F" />
-            <stroke android:width="1dp" android:color="#80FFD54F" />
+            <solid android:color="#26DEBE78" />
+            <stroke android:width="1dp" android:color="#80DEBE78" />
             <corners android:radius="14dp" />
         </shape>
     </item>

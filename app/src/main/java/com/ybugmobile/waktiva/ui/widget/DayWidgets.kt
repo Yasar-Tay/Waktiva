@@ -81,7 +81,8 @@ internal object DayWidgets {
     private const val COLOR_SECONDARY = 0xB3FFFFFF.toInt()
     private const val COLOR_TERTIARY = 0x73FFFFFF
     private const val COLOR_ENDING_COUNT = 0xFFFDE68A.toInt()
-    private const val COLOR_PRAYED = 0xFFFFD54F.toInt()
+    /** Gold words and ticks, as the prayer log writes them (LogColors.GoldText). */
+    private const val COLOR_PRAYED = 0xFFF1D895.toInt()
 
     /** The green of a prayer whose time is on, as on the prayer log's chips. */
     private val Open = Color(0xFF6EE7B7)

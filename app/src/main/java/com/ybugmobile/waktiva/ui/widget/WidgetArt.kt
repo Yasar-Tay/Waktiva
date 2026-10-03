@@ -20,7 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
-import com.ybugmobile.waktiva.ui.home.composables.PrayedGold
+import com.ybugmobile.waktiva.ui.prayerlog.LogColors
 import com.ybugmobile.waktiva.ui.theme.clouds.buildCloudScene
 import kotlin.math.cos
 import kotlin.math.max
@@ -41,14 +41,13 @@ internal object WidgetArt {
     private const val LIGHT_Y = -0.7071f
 
     private val Gold = Color(0xFFDEBE78)
-    private val PrayedInk = Color(0xFF3B2A00)
 
     /** What a glass sphere shows: its prayer's [color], the [sky] inside it and its [icon]. */
     class Orb(
         val color: Color,
         val sky: Color,
         val icon: Int,
-        /** Marked in the prayer log: a gold sphere with a tick. */
+        /** Marked in the prayer log: a brass sphere with a tick, as the prayer log draws it. */
         val prayed: Boolean,
         /** Faded back, for a prayer whose time has gone by. */
         val dim: Boolean = false,
@@ -62,18 +61,18 @@ internal object WidgetArt {
      * Paints [orb] as a glass sphere of radius [r] at ([x], [y]): a shadow on what's below, a rim
      * in the prayer's colour bright towards the light, the sky inside deeper away from it, the
      * prayer's sign in white over a glow of its colour, and a gleam across the glass. A prayed
-     * sphere is gold, with a tick and a bloom of gold around it.
+     * sphere is brass, with a tick and a bloom of gold around it, as in the prayer log.
      */
     fun drawOrb(context: Context, canvas: Canvas, x: Float, y: Float, r: Float, orb: Orb, dp: Float) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         val lx = LIGHT_X
         val ly = LIGHT_Y
         val alpha = if (orb.dim && !orb.prayed) 0.62f else 1f
-        val color = if (orb.prayed) PrayedGold else orb.color
+        val color = if (orb.prayed) LogColors.Brass else orb.color
 
         if (orb.raised || orb.prayed) {
             val outer = r * 2f
-            val glow = if (orb.prayed) PrayedGold else orb.color
+            val glow = if (orb.prayed) LogColors.Gold else orb.color
             paint.shader = RadialGradient(
                 x, y, outer,
                 intArrayOf(argb(glow, 0.5f), argb(glow, 0.18f), 0),
@@ -103,7 +102,7 @@ internal object WidgetArt {
 
         // The inside: the sky of the hour, or gold once prayed.
         val inner = r - max(1.6f * dp, r * 0.09f)
-        val face = if (orb.prayed) Color(0xFFFFE08A) else orb.sky
+        val face = if (orb.prayed) LogColors.Gold else orb.sky
         paint.shader = RadialGradient(
             x + lx * inner * 0.45f, y + ly * inner * 0.45f, inner * 1.25f,
             intArrayOf(argb(lighten(face, 0.38f), alpha), argb(lighten(face, 0.1f), alpha), argb(darken(face, 0.3f), alpha)),
@@ -133,7 +132,7 @@ internal object WidgetArt {
         val iconRes = if (orb.prayed) R.drawable.ic_widget_check else orb.icon
         val iconSize = inner * if (orb.caption != null) 0.85f else 1.15f
         val iconY = if (orb.caption != null) y - inner * 0.2f else y
-        val ink = if (orb.prayed) PrayedInk.toArgb() else argb(Color.White, 0.96f * alpha)
+        val ink = if (orb.prayed) LogColors.Ink.toArgb() else argb(Color.White, 0.96f * alpha)
         ContextCompat.getDrawable(context, iconRes)?.mutate()?.let { icon ->
             val half = iconSize / 2f
             if (!orb.prayed) {
@@ -171,7 +170,7 @@ internal object WidgetArt {
             paint.color = argb(Color.White, 0.9f)
             canvas.drawCircle(x, y, r + 1.4f * dp, paint)
             paint.strokeWidth = 1.1f * dp
-            paint.color = argb(lerp(orb.color, PrayedGold, 0.6f), 1f)
+            paint.color = argb(lerp(orb.color, LogColors.Gold, 0.6f), 1f)
             canvas.drawCircle(x, y, r + 3.4f * dp, paint)
         }
     }

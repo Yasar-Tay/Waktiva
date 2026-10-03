@@ -75,7 +75,7 @@
                         android:layout_marginEnd="5dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_widget_check"
-                        android:tint="#FFFFD54F"
+                        android:tint="#FFF1D895"
                         android:visibility="gone" />
 
                     <TextView

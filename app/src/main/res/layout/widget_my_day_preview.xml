@@ -157,7 +157,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_widget_check"
-                    android:tint="#FFFFD54F" />
+                    android:tint="#FFF1D895" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -167,7 +167,7 @@
                     android:maxLines="1"
                     android:text="@string/prayer_fajr"
                     android:textAllCaps="true"
-                    android:textColor="#FFFFD54F"
+                    android:textColor="#FFF1D895"
                     android:textSize="10.5sp" />
 
                 <TextView
@@ -176,7 +176,7 @@
                     android:layout_marginTop="1dp"
                     android:fontFamily="@font/inter_medium"
                     android:text="05:20"
-                    android:textColor="#FFFFD54F"
+                    android:textColor="#FFF1D895"
                     android:textSize="16sp" />
             </LinearLayout>
 
