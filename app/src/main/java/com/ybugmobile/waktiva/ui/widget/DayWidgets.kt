@@ -230,24 +230,6 @@ internal object DayWidgets {
         bindMoment(context, views, snapshot, today, countSp = 48f)
         views.setImageViewBitmap(R.id.widget_ring, today.ring(context))
 
-        // Besides the sphere at the ring's heart, a button that can't be missed.
-        val moment = today.moment
-        views.setViewVisibility(R.id.widget_mark_button, if (moment.canMark) View.VISIBLE else View.GONE)
-        if (moment.canMark) {
-            views.setTextViewText(
-                R.id.widget_mark_button,
-                context.getString(R.string.prayer_log_nudge_mark, PrayerLogProgress.XP_PER_PRAYER)
-            )
-            views.setContentDescription(
-                R.id.widget_mark_button,
-                "${context.getString(R.string.prayer_log_mark)}: ${moment.prayer.getPrayerName(context)}"
-            )
-            views.setOnClickPendingIntent(
-                R.id.widget_mark_button,
-                toggleIntent(context, moment.logDate, moment.prayer, REQUEST_TOGGLE)
-            )
-        }
-
         views.removeAllViews(R.id.widget_times)
         today.times.forEach { time ->
             val cell = RemoteViews(context.packageName, R.layout.widget_day_column)
