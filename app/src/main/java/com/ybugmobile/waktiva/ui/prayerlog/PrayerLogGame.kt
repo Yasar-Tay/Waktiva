@@ -58,6 +58,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -75,23 +77,6 @@ import java.text.NumberFormat
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
-
-/**
- * The player's level: a gold medal with the level in it, ringed by how far the level has come,
- * and beside it the XP bar, what the next level takes, and all the XP gathered.
- */
-@Composable
-internal fun LevelCard(progress: PrayerLogProgress) {
-    val fraction by animateLevelFraction(progress)
-
-    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
-        Row(Modifier.padding(horizontal = 20.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-            LevelMedal(progress.level, fraction, Modifier.size(64.dp))
-            Spacer(Modifier.width(16.dp))
-            LevelLine(progress, Modifier.weight(1f))
-        }
-    }
-}
 
 /**
  * The level in a line: "Level 5" with all the XP gathered beside it, the XP bar, and what the
@@ -116,11 +101,12 @@ internal fun LevelLine(progress: PrayerLogProgress, modifier: Modifier = Modifie
             )
             Text(
                 text = stringResource(R.string.prayer_log_xp, integer.format(xp)),
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.Black,
-                    fontFeatureSettings = "tnum"
-                ),
-                color = PrayedGold
+                style = goldText(
+                    MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.Black,
+                        fontFeatureSettings = "tnum"
+                    )
+                )
             )
         }
         Spacer(Modifier.height(if (compact) 6.dp else 8.dp))
@@ -146,59 +132,9 @@ private fun animateLevelFraction(progress: PrayerLogProgress) = animateFloatAsSt
     label = "levelFraction"
 )
 
+/** A bar filled in gold to [fraction]: the XP towards the next level, or a badge's progress. */
 @Composable
-private fun LevelMedal(level: Int, fraction: Float, modifier: Modifier = Modifier) {
-    val contentColor = LocalGlassTheme.current.contentColor
-    val pop = remember { Animatable(1f) }
-    // A bounce each time the level goes up.
-    var shownLevel by remember { mutableIntStateOf(level) }
-    LaunchedEffect(level) {
-        if (level > shownLevel) {
-            pop.snapTo(1.25f)
-            pop.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow))
-        }
-        shownLevel = level
-    }
-
-    Box(modifier.scale(pop.value), contentAlignment = Alignment.Center) {
-        Canvas(Modifier.fillMaxSize()) {
-            val stroke = 5.dp.toPx()
-            val inset = stroke / 2f
-            val arcSize = Size(size.width - stroke, size.height - stroke)
-            drawArc(
-                color = contentColor.copy(alpha = 0.12f),
-                startAngle = 0f,
-                sweepAngle = 360f,
-                useCenter = false,
-                topLeft = Offset(inset, inset),
-                size = arcSize,
-                style = Stroke(stroke)
-            )
-            drawArc(
-                color = PrayedGold,
-                startAngle = -90f,
-                sweepAngle = 360f * fraction.coerceIn(0f, 1f),
-                useCenter = false,
-                topLeft = Offset(inset, inset),
-                size = arcSize,
-                style = Stroke(stroke, cap = StrokeCap.Round)
-            )
-            drawCircle(
-                Brush.linearGradient(
-                    listOf(GoldLight, PrayedGold, GoldDeep),
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, size.height)
-                ),
-                radius = size.minDimension / 2f - stroke - 3.dp.toPx()
-            )
-        }
-        Text(
-            text = level.toString(),
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Black, fontFeatureSettings = "tnum"),
-            color = PrayedInk
-        )
-    }
-}
+internal fun GoalBar(fraction: Float, modifier: Modifier = Modifier) = XpBar(fraction, modifier)
 
 @Composable
 private fun XpBar(fraction: Float, modifier: Modifier = Modifier) {
@@ -236,7 +172,7 @@ internal fun BadgesCard(progress: PrayerLogProgress) {
                 Icon(
                     Icons.Rounded.EmojiEvents,
                     contentDescription = null,
-                    tint = PrayedGold,
+                    tint = goldInk(),
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(Modifier.width(8.dp))
@@ -387,8 +323,7 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
         if (isNext) {
             Text(
                 text = stringResource(R.string.prayer_log_next_goal).uppercase(),
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
-                color = PrayedGold
+                style = goldText(MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp))
             )
             Spacer(Modifier.height(2.dp))
         }
@@ -408,12 +343,11 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
             Spacer(Modifier.width(12.dp))
             if (progress.isEarned) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.Check, contentDescription = null, tint = PrayedGold, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Rounded.Check, contentDescription = null, tint = goldInk(), modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(4.dp))
                     Text(
                         text = stringResource(R.string.prayer_log_badge_earned),
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                        color = PrayedGold
+                        style = goldText(MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
                     )
                 }
             } else {
@@ -458,7 +392,7 @@ internal fun FullDayBonus(isComplete: Boolean, modifier: Modifier = Modifier) {
         Icon(
             if (isComplete) Icons.Rounded.Check else Icons.Rounded.AutoAwesome,
             contentDescription = null,
-            tint = if (isComplete) PrayedInk else PrayedGold,
+            tint = if (isComplete) PrayedInk else goldInk(),
             modifier = Modifier.size(16.dp)
         )
         Spacer(Modifier.width(6.dp))
@@ -471,7 +405,7 @@ internal fun FullDayBonus(isComplete: Boolean, modifier: Modifier = Modifier) {
         Text(
             text = stringResource(R.string.prayer_log_xp_gain, PrayerLogProgress.FULL_DAY_BONUS),
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black),
-            color = if (isComplete) PrayedInk else PrayedGold
+            color = if (isComplete) PrayedInk else goldInk()
         )
     }
 }
@@ -494,8 +428,7 @@ internal fun XpPop(trigger: Int, modifier: Modifier = Modifier) {
     if (rise.value < 1f) {
         Text(
             text = stringResource(R.string.prayer_log_xp_gain, PrayerLogProgress.XP_PER_PRAYER),
-            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black),
-            color = PrayedGold,
+            style = goldText(MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black)),
             maxLines = 1,
             softWrap = false,
             modifier = modifier.graphicsLayer {
@@ -651,6 +584,27 @@ private class Piece(
     val round: Boolean
 )
 
+/**
+ * Gold for words and small marks on the glass. The pale gold of the marks reads on the night sky
+ * (the glass theme's light mode), but washes out on the bright day sky, where the glass is
+ * smoky: there it's a deeper amber.
+ */
+@Composable
+@ReadOnlyComposable
+internal fun goldInk(): Color = if (LocalGlassTheme.current.isLightMode) PrayedGold else GoldInkDay
+
+/** [base] in [goldInk], with a soft shade under it by day so it holds against a pale sky. */
+@Composable
+@ReadOnlyComposable
+internal fun goldText(base: TextStyle): TextStyle =
+    if (LocalGlassTheme.current.isLightMode) {
+        base.copy(color = PrayedGold)
+    } else {
+        base.copy(color = GoldInkDay, shadow = Shadow(Color.Black.copy(alpha = 0.4f), Offset(0f, 1f), 6f))
+    }
+
+private val GoldInkDay = Color(0xFFFFA000)
+
 private val GoldLight = Color(0xFFFFECB3)
 private val GoldDeep = Color(0xFFE0A800)
 
@@ -659,7 +613,7 @@ private const val ConfettiMillis = 1900
 private val ConfettiColors = listOf(PrayedGold, GoldLight, Color.White) +
     PrayerType.entries.map { it.accentColor }
 
-private val PrayerLogBadge.icon: ImageVector
+internal val PrayerLogBadge.icon: ImageVector
     get() = when (this) {
         PrayerLogBadge.FIRST_PRAYER -> Icons.Rounded.Flag
         PrayerLogBadge.FIRST_FULL_DAY -> Icons.Rounded.Verified

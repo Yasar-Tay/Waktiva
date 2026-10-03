@@ -201,7 +201,7 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
                             .padding(top = 12.dp, bottom = bottomInset + 16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        LandscapeTodayCard(today, state, onToggle)
+                        TodayCard(today, state, onToggle, compact = true)
                         BadgesCard(state.progress)
                     }
                     Column(
@@ -222,8 +222,7 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
                         .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = bottomInset + 100.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    LevelCard(state.progress)
-                    TodayCard(today, state, onToggle)
+                    TodayCard(today, state, onToggle, compact = false)
                     BadgesCard(state.progress)
                     historyCard(false)
                 }
@@ -241,69 +240,40 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
 }
 
 /**
- * Today: the ring, a line saying what's next, the five prayers to mark, and the streak and
- * week's and month's share of prayers prayed along the bottom.
+ * Today, with the level: the ring beside the headline and the level line, the five prayers to
+ * mark, the full day's bonus, and the last seven days with the streak and the next badge along
+ * the bottom. [compact], for landscape's short height, makes it all a little smaller.
  */
 @Composable
 private fun TodayCard(
     today: PrayerLogDay,
     state: PrayerLogViewState,
-    onToggle: (LocalDate, PrayerLogEntry) -> Unit
+    onToggle: (LocalDate, PrayerLogEntry) -> Unit,
+    compact: Boolean
 ) {
     val contentColor = LocalGlassTheme.current.contentColor
+    val gap = if (compact) 10.dp else 16.dp
 
     GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(20.dp)) {
+        Column(Modifier.padding(horizontal = if (compact) 16.dp else 20.dp, vertical = if (compact) 12.dp else 18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                DayRing(today, Modifier.size(92.dp))
-                Spacer(Modifier.width(18.dp))
-                TodayHeadline(today, state, Modifier.weight(1f))
-            }
-
-            Spacer(Modifier.height(20.dp))
-            PrayerRow(today, chipSize = 46.dp, onToggle = onToggle)
-            Spacer(Modifier.height(16.dp))
-            FullDayBonus(today.isComplete, Modifier.align(Alignment.CenterHorizontally))
-            Spacer(Modifier.height(16.dp))
-            HorizontalDivider(color = contentColor.copy(alpha = 0.1f))
-            Spacer(Modifier.height(14.dp))
-            Stats(state)
-        }
-    }
-}
-
-/**
- * Landscape's today, with the level folded in to spare the short height: the ring beside the
- * headline and the level line, then the five prayers, the full day's bonus and the figures.
- */
-@Composable
-private fun LandscapeTodayCard(
-    today: PrayerLogDay,
-    state: PrayerLogViewState,
-    onToggle: (LocalDate, PrayerLogEntry) -> Unit
-) {
-    val contentColor = LocalGlassTheme.current.contentColor
-
-    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                DayRing(today, Modifier.size(76.dp))
-                Spacer(Modifier.width(14.dp))
+                DayRing(today, Modifier.size(if (compact) 76.dp else 88.dp))
+                Spacer(Modifier.width(if (compact) 14.dp else 16.dp))
                 Column(Modifier.weight(1f)) {
                     TodayHeadline(today, state)
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(if (compact) 8.dp else 10.dp))
                     LevelLine(state.progress, compact = true)
                 }
             }
 
-            Spacer(Modifier.height(12.dp))
-            PrayerRow(today, chipSize = 40.dp, onToggle = onToggle)
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(if (compact) 12.dp else 18.dp))
+            PrayerRow(today, chipSize = if (compact) 40.dp else 46.dp, onToggle = onToggle)
+            Spacer(Modifier.height(gap))
             FullDayBonus(today.isComplete, Modifier.align(Alignment.CenterHorizontally))
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(gap))
             HorizontalDivider(color = contentColor.copy(alpha = 0.1f))
-            Spacer(Modifier.height(8.dp))
-            Stats(state)
+            Spacer(Modifier.height(if (compact) 8.dp else 12.dp))
+            WeekStrip(state)
         }
     }
 }
@@ -342,95 +312,88 @@ private fun TodayHeadline(today: PrayerLogDay, state: PrayerLogViewState, modifi
     }
 }
 
-/** The streak and the last week's and month's share of prayers prayed, as one row of figures. */
+/**
+ * The last seven days as the calendar draws them, today last, and under them the streak of full
+ * days (with the best one) and the badge nearest to being earned.
+ */
 @Composable
-private fun Stats(state: PrayerLogViewState) {
+private fun WeekStrip(state: PrayerLogViewState) {
     val contentColor = LocalGlassTheme.current.contentColor
     val locale = LocalConfiguration.current.locales[0]
-    val percent = remember(locale) { NumberFormat.getPercentInstance(locale) }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Stat(
-            value = state.streak.toString(),
-            label = stringResource(R.string.prayer_log_streak),
-            icon = Icons.Rounded.LocalFireDepartment,
-            iconTint = if (state.streak > 0) PrayedGold else contentColor.copy(alpha = 0.3f),
-            note = state.progress.bestStreak.takeIf { it > 0 }
-                ?.let { stringResource(R.string.prayer_log_best_streak, it) },
-            modifier = Modifier.weight(1f)
-        )
-        StatDivider()
-        Stat(
-            value = state.last7Days.rate?.let { percent.format(it) } ?: "—",
-            label = stringResource(R.string.prayer_log_week),
-            modifier = Modifier.weight(1f)
-        )
-        StatDivider()
-        Stat(
-            value = state.last30Days.rate?.let { percent.format(it) } ?: "—",
-            label = stringResource(R.string.prayer_log_month),
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
+    val today = state.today?.date
 
-@Composable
-private fun Stat(
-    value: String,
-    label: String,
-    modifier: Modifier = Modifier,
-    icon: ImageVector? = null,
-    iconTint: Color = Color.Unspecified,
-    note: String? = null
-) {
-    val contentColor = LocalGlassTheme.current.contentColor
-    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (icon != null) {
-                Icon(icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
+    Row(Modifier.fillMaxWidth()) {
+        state.lastWeek.forEach { day ->
+            val isToday = day.date == today
+            Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = day.date.dayOfWeek.getDisplayName(TextStyle.SHORT, locale),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = if (isToday) FontWeight.Black else FontWeight.Medium
+                    ),
+                    color = contentColor.copy(alpha = if (isToday) 0.9f else 0.5f),
+                    maxLines = 1
+                )
+                Spacer(Modifier.height(2.dp))
+                Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
+                    DayCell(date = day.date, day = day, isToday = isToday, isSelected = isToday, onClick = null)
+                }
             }
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.ExtraBold,
-                    fontFeatureSettings = "tnum"
-                ),
-                color = contentColor,
-                maxLines = 1
-            )
         }
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = contentColor.copy(alpha = 0.55f),
-            textAlign = TextAlign.Center,
-            maxLines = 2
+    }
+
+    Spacer(Modifier.height(10.dp))
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            Icons.Rounded.LocalFireDepartment,
+            contentDescription = null,
+            tint = if (state.streak > 0) goldInk() else contentColor.copy(alpha = 0.3f),
+            modifier = Modifier.size(20.dp)
         )
-        if (note != null) {
+        Spacer(Modifier.width(4.dp))
+        Text(
+            text = state.streak.toString(),
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold, fontFeatureSettings = "tnum"),
+            color = contentColor
+        )
+        Spacer(Modifier.width(6.dp))
+        Text(
+            text = stringResource(R.string.prayer_log_streak),
+            style = MaterialTheme.typography.labelMedium,
+            color = contentColor.copy(alpha = 0.6f),
+            maxLines = 1,
+            modifier = Modifier.weight(1f)
+        )
+        state.progress.bestStreak.takeIf { it > 0 }?.let { best ->
             Text(
-                text = note,
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                color = PrayedGold.copy(alpha = 0.85f),
+                text = stringResource(R.string.prayer_log_best_streak, best),
+                style = goldText(MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)),
                 maxLines = 1
             )
         }
     }
-}
 
-@Composable
-private fun StatDivider() {
-    Box(
-        Modifier
-            .padding(vertical = 4.dp)
-            .width(1.dp)
-            .fillMaxHeight()
-            .background(LocalGlassTheme.current.contentColor.copy(alpha = 0.1f))
-    )
+    state.progress.nextBadge?.let { next ->
+        Spacer(Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(next.badge.icon, contentDescription = null, tint = goldInk(), modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.prayer_log_next_goal) + ": " + stringResource(next.badge.nameRes),
+                style = MaterialTheme.typography.labelMedium,
+                color = contentColor.copy(alpha = 0.8f),
+                maxLines = 1,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = "${next.current}/${next.target}",
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.ExtraBold, fontFeatureSettings = "tnum"),
+                color = contentColor.copy(alpha = 0.8f)
+            )
+        }
+        Spacer(Modifier.height(6.dp))
+        GoalBar(next.fraction, Modifier.fillMaxWidth().height(5.dp))
+    }
 }
 
 /**
@@ -639,7 +602,7 @@ private fun SelectedDayColumn(day: PrayerLogDay, onToggle: (LocalDate, PrayerLog
                         text = entry.type.prayerName,
                         style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
                         color = when (entry.status) {
-                            PrayerLogStatus.PRAYED -> PrayedGold
+                            PrayerLogStatus.PRAYED -> goldInk()
                             PrayerLogStatus.UPCOMING -> contentColor.copy(alpha = 0.45f)
                             else -> contentColor.copy(alpha = 0.85f)
                         },
@@ -660,7 +623,7 @@ private fun DayCount(day: PrayerLogDay) {
             fontWeight = FontWeight.ExtraBold,
             fontFeatureSettings = "tnum"
         ),
-        color = if (day.isComplete) PrayedGold else LocalGlassTheme.current.contentColor.copy(alpha = 0.7f)
+        color = if (day.isComplete) goldInk() else LocalGlassTheme.current.contentColor.copy(alpha = 0.7f)
     )
 }
 
@@ -733,7 +696,7 @@ private fun DayCell(
     day: PrayerLogDay?,
     isToday: Boolean,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: (() -> Unit)?
 ) {
     val contentColor = LocalGlassTheme.current.contentColor
     val isComplete = day?.isComplete == true
@@ -747,7 +710,7 @@ private fun DayCell(
             .aspectRatio(1f, matchHeightConstraintsFirst = true)
             .clip(CircleShape)
             .then(if (isSelected) Modifier.background(contentColor.copy(alpha = 0.16f)) else Modifier)
-            .then(if (day != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .then(if (day != null && onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .semantics { contentDescription = description },
         contentAlignment = Alignment.Center
     ) {
@@ -769,7 +732,7 @@ private fun DayCell(
             color = when {
                 isComplete -> PrayedInk
                 day == null -> contentColor.copy(alpha = 0.25f)
-                isToday -> PrayedGold
+                isToday -> goldInk()
                 !day.isTracked && day.prayed == 0 -> contentColor.copy(alpha = 0.45f)
                 else -> contentColor
             }
