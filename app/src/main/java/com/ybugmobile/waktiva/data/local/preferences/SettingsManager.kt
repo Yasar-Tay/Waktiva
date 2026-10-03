@@ -68,7 +68,13 @@ data class UserSettings(
     /** Whether a reminder to mark the day's prayers comes after Isha while some are unmarked. */
     val prayerLogReminderEnabled: Boolean = true,
     /** How long after Isha begins the reminder comes. */
-    val prayerLogReminderMinutes: Int = DEFAULT_PRAYER_LOG_REMINDER_MINUTES
+    val prayerLogReminderMinutes: Int = DEFAULT_PRAYER_LOG_REMINDER_MINUTES,
+    /**
+     * Whether the prayer log speaks as a game in notifications: a nudge before a prayer's time
+     * ends while it's unmarked, the reminder after Isha about the streak, and cheers for what a
+     * mark from a widget or a notification reaches.
+     */
+    val prayerLogGameNotifications: Boolean = false
 ) {
     /**
      * Whether the adhan audio should play for [type], combining the global
@@ -115,6 +121,7 @@ class SettingsManager @Inject constructor(
         val PRAYER_LOG_START = stringPreferencesKey("prayer_log_start")
         val PRAYER_LOG_ENABLED = booleanPreferencesKey("prayer_log_enabled")
         val PRAYER_LOG_REMINDER = booleanPreferencesKey("prayer_log_reminder")
+        val PRAYER_LOG_GAME_NOTIFICATIONS = booleanPreferencesKey("prayer_log_game_notifications")
         val PRAYER_LOG_REMINDER_MINUTES = intPreferencesKey("prayer_log_reminder_minutes")
 
         private fun prayerPathKey(type: PrayerType) = stringPreferencesKey("adhan_path_${type.name}")
@@ -162,7 +169,8 @@ class SettingsManager @Inject constructor(
             playAdhanDua = preferences[PLAY_ADHAN_DUA] ?: false,
             prayerLogEnabled = preferences[PRAYER_LOG_ENABLED] ?: true,
             prayerLogReminderEnabled = preferences[PRAYER_LOG_REMINDER] ?: true,
-            prayerLogReminderMinutes = preferences[PRAYER_LOG_REMINDER_MINUTES] ?: DEFAULT_PRAYER_LOG_REMINDER_MINUTES
+            prayerLogReminderMinutes = preferences[PRAYER_LOG_REMINDER_MINUTES] ?: DEFAULT_PRAYER_LOG_REMINDER_MINUTES,
+            prayerLogGameNotifications = preferences[PRAYER_LOG_GAME_NOTIFICATIONS] ?: false
         )
     }
 
@@ -357,6 +365,12 @@ class SettingsManager @Inject constructor(
     override suspend fun updatePrayerLogReminderMinutes(minutes: Int) {
         context.dataStore.edit { preferences ->
             preferences[PRAYER_LOG_REMINDER_MINUTES] = minutes
+        }
+    }
+
+    override suspend fun updatePrayerLogGameNotifications(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PRAYER_LOG_GAME_NOTIFICATIONS] = enabled
         }
     }
 

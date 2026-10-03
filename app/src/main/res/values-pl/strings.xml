@@ -435,8 +435,6 @@
     <string name="license_adhan_restrictions">Dźwięk adhanu nie może być wyodrębniany, rozpowszechniany ani używany poza aplikacją Waktiva bez wyraźnej zgody właściciela praw.</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Czasy modlitw</string>
-    <string name="widget_description">Następna modlitwa, odliczanie na żywo i cały dzień w jednym miejscu</string>
     <string name="widget_next_up">Następna</string>
     <string name="widget_empty">Otwórz Waktiva, aby wczytać czasy modlitw</string>
     <string name="widget_countdown_label">Odliczanie</string>
@@ -501,4 +499,47 @@
     <string name="prayer_log_next_month">Następny miesiąc</string>
     <string name="prayer_log_hint">Gdy nadejdzie czas modlitwy, dotknij jej symbolu w kole na ekranie głównym i wybierz „Odmówiona” albo zaznacz ją tutaj.</string>
     <string name="settings_support_desc">Pomóż utrzymać Waktiva darmową, prywatną i bez reklam</string>
+    <string name="prayer_log_level">Poziom %1$d</string>
+    <string name="prayer_log_xp_to_next">%1$d XP do poziomu %2$d</string>
+    <string name="prayer_log_full_day_bonus">Premia za pełny dzień</string>
+    <string name="prayer_log_best_streak">Rekord: %1$d</string>
+    <string name="prayer_log_badges">Odznaki</string>
+    <string name="prayer_log_badge_unlocked">Nowa odznaka</string>
+    <string name="prayer_log_level_up">Nowy poziom!</string>
+    <string name="prayer_log_badge_earned">Zdobyta</string>
+    <string name="prayer_log_next_goal">Następny cel</string>
+    <string name="prayer_log_badge_first_prayer">Pierwszy krok</string>
+    <string name="prayer_log_badge_first_prayer_desc">Zaznacz swoją pierwszą modlitwę</string>
+    <string name="prayer_log_badge_first_full_day">Pełny dzień</string>
+    <string name="prayer_log_badge_first_full_day_desc">Odmów wszystkie pięć modlitw w jeden dzień</string>
+    <string name="prayer_log_badge_streak_3">Iskra</string>
+    <string name="prayer_log_badge_streak_3_desc">3 pełne dni z rzędu</string>
+    <string name="prayer_log_badge_streak_7">Płomień</string>
+    <string name="prayer_log_badge_streak_7_desc">7 pełnych dni z rzędu</string>
+    <string name="prayer_log_badge_fajr_7">Gwiazda poranna</string>
+    <string name="prayer_log_badge_fajr_7_desc">Odmawiaj Fadżr 7 dni z rzędu</string>
+    <string name="prayer_log_badge_prayers_100">Setka</string>
+    <string name="prayer_log_badge_prayers_100_desc">Zaznacz 100 modlitw</string>
+    <string name="prayer_log_badge_streak_40">Czterdzieści dni</string>
+    <string name="prayer_log_badge_streak_40_desc">40 pełnych dni z rzędu</string>
+    <string name="prayer_log_badge_prayers_500">Wytrwałość</string>
+    <string name="prayer_log_badge_prayers_500_desc">Zaznacz 500 modlitw</string>
+    <string name="prayer_log_game_setting">Powiadomienia gry</string>
+    <string name="prayer_log_game_setting_desc">Przypomnienie o XP przed końcem czasu modlitwy, twoja seria w wieczornym przypomnieniu i świętowanie pełnych dni, poziomów i odznak</string>
+    <string name="prayer_log_game_channel">Przed końcem czasu modlitwy</string>
+    <string name="prayer_log_game_channel_desc">Przypomnienie z dźwiękiem, by zaznaczyć modlitwę za XP przed końcem jej czasu</string>
+    <string name="prayer_log_celebration_channel">Świętowanie w dzienniku</string>
+    <string name="prayer_log_celebration_channel_desc">Pełne dni, poziomy i zdobyte odznaki, bez dźwięku</string>
+    <string name="prayer_log_nudge_title">Czas na %1$s wkrótce się kończy</string>
+    <string name="prayer_log_nudge_text">Odmówiona? Zaznacz ją za +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Odmówiona? Zaznacz ją za +%1$d XP i utrzymaj serię %2$d dni 🔥</string>
+    <string name="prayer_log_nudge_mark">Odmówiłem · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Twoja seria %1$d dni jest zagrożona 🔥</string>
+    <string name="prayer_log_game_finish_title">Dokończ dzień: czeka +%1$d XP</string>
+    <string name="prayer_log_celebrate_full_day">Pełny dzień! Premia +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Seria: %1$d dni 🔥</string>
+    <string name="prayer_log_celebrate_badge">Nowa odznaka: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Nowy poziom! Masz teraz poziom %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Twój poziom, seria i odznaki oraz dzisiejsze modlitwy do zaznaczenia jednym dotknięciem</string>
+    <string name="widget_prayer_log_off">Włącz dziennik modlitw w Ustawieniach</string>
 </resources>

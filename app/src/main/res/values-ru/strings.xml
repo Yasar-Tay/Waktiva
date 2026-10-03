@@ -435,8 +435,6 @@
     <string name="badge_open_source">Открытый исходный код</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Время намаза</string>
-    <string name="widget_description">Следующий намаз, живой обратный отсчёт и весь день с одного взгляда</string>
     <string name="widget_next_up">Далее</string>
     <string name="widget_empty">Откройте Waktiva, чтобы загрузить время намаза</string>
     <string name="widget_countdown_label">Обратный отсчёт</string>
@@ -501,4 +499,47 @@
     <string name="prayer_log_next_month">Следующий месяц</string>
     <string name="prayer_log_hint">Когда наступит время намаза, нажмите на его значок в круге на главном экране и выберите «Совершён» или отметьте здесь.</string>
     <string name="settings_support_desc">Помогите Waktiva оставаться бесплатным, приватным и без рекламы</string>
+    <string name="prayer_log_level">Уровень %1$d</string>
+    <string name="prayer_log_xp_to_next">%1$d XP до уровня %2$d</string>
+    <string name="prayer_log_full_day_bonus">Бонус за полный день</string>
+    <string name="prayer_log_best_streak">Рекорд: %1$d</string>
+    <string name="prayer_log_badges">Значки</string>
+    <string name="prayer_log_badge_unlocked">Новый значок</string>
+    <string name="prayer_log_level_up">Новый уровень!</string>
+    <string name="prayer_log_badge_earned">Получен</string>
+    <string name="prayer_log_next_goal">Следующая цель</string>
+    <string name="prayer_log_badge_first_prayer">Первый шаг</string>
+    <string name="prayer_log_badge_first_prayer_desc">Отметьте свой первый намаз</string>
+    <string name="prayer_log_badge_first_full_day">Полный день</string>
+    <string name="prayer_log_badge_first_full_day_desc">Совершите все пять намазов за день</string>
+    <string name="prayer_log_badge_streak_3">Искра</string>
+    <string name="prayer_log_badge_streak_3_desc">3 полных дня подряд</string>
+    <string name="prayer_log_badge_streak_7">Пламя</string>
+    <string name="prayer_log_badge_streak_7_desc">7 полных дней подряд</string>
+    <string name="prayer_log_badge_fajr_7">Утренняя звезда</string>
+    <string name="prayer_log_badge_fajr_7_desc">Совершайте Фаджр 7 дней подряд</string>
+    <string name="prayer_log_badge_prayers_100">Сотня</string>
+    <string name="prayer_log_badge_prayers_100_desc">Отметьте 100 намазов</string>
+    <string name="prayer_log_badge_streak_40">Сорок дней</string>
+    <string name="prayer_log_badge_streak_40_desc">40 полных дней подряд</string>
+    <string name="prayer_log_badge_prayers_500">Стойкость</string>
+    <string name="prayer_log_badge_prayers_500_desc">Отметьте 500 намазов</string>
+    <string name="prayer_log_game_setting">Игровые уведомления</string>
+    <string name="prayer_log_game_setting_desc">Напоминание об XP до конца времени намаза, ваша серия в вечернем напоминании и поздравления с полными днями, уровнями и значками</string>
+    <string name="prayer_log_game_channel">До конца времени намаза</string>
+    <string name="prayer_log_game_channel_desc">Напоминание со звуком отметить намаз и получить XP до конца его времени</string>
+    <string name="prayer_log_celebration_channel">Поздравления учёта намазов</string>
+    <string name="prayer_log_celebration_channel_desc">Полные дни, уровни и полученные значки, без звука</string>
+    <string name="prayer_log_nudge_title">Время %1$s скоро закончится</string>
+    <string name="prayer_log_nudge_text">Совершили? Отметьте и получите +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Совершили? Отметьте, получите +%1$d XP и сохраните серию из %2$d дн. 🔥</string>
+    <string name="prayer_log_nudge_mark">Совершил · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Ваша серия из %1$d дн. под угрозой 🔥</string>
+    <string name="prayer_log_game_finish_title">Завершите день: вас ждут +%1$d XP</string>
+    <string name="prayer_log_celebrate_full_day">Полный день! Бонус +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Серия: %1$d дн. 🔥</string>
+    <string name="prayer_log_celebrate_badge">Новый значок: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Новый уровень! Теперь у вас уровень %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Ваш уровень, серия и значки, а также сегодняшние намазы — отметить одним касанием</string>
+    <string name="widget_prayer_log_off">Включите учёт намазов в настройках</string>
 </resources>

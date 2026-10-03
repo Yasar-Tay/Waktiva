@@ -33,4 +33,5 @@ interface SettingsManagerInterface {
     suspend fun updatePrayerLogEnabled(enabled: Boolean)
     suspend fun updatePrayerLogReminder(enabled: Boolean)
     suspend fun updatePrayerLogReminderMinutes(minutes: Int)
+    suspend fun updatePrayerLogGameNotifications(enabled: Boolean)
 }

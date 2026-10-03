@@ -435,8 +435,6 @@
     <string name="donate_item_large_desc">Banar väg för nya funktioner, som böneloggen och dagcirkeln.</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Bönetider</string>
-    <string name="widget_description">Nästa bön, nedräkning i realtid och hela dagen i en överblick</string>
     <string name="widget_next_up">Nästa</string>
     <string name="widget_empty">Öppna Waktiva för att ladda bönetiderna</string>
     <string name="widget_countdown_label">Nedräkning</string>
@@ -501,4 +499,47 @@
     <string name="prayer_log_next_month">Nästa månad</string>
     <string name="prayer_log_hint">När en bönetid inleds, tryck på dess märke i cirkeln på startskärmen och välj ”Jag har bett”, eller markera den här.</string>
     <string name="settings_support_desc">Hjälp till att hålla Waktiva gratis, privat och reklamfritt</string>
+    <string name="prayer_log_level">Nivå %1$d</string>
+    <string name="prayer_log_xp_to_next">%1$d XP till nivå %2$d</string>
+    <string name="prayer_log_full_day_bonus">Bonus för hel dag</string>
+    <string name="prayer_log_best_streak">Rekord: %1$d</string>
+    <string name="prayer_log_badges">Märken</string>
+    <string name="prayer_log_badge_unlocked">Nytt märke</string>
+    <string name="prayer_log_level_up">Ny nivå!</string>
+    <string name="prayer_log_badge_earned">Uppnått</string>
+    <string name="prayer_log_next_goal">Nästa mål</string>
+    <string name="prayer_log_badge_first_prayer">Första steget</string>
+    <string name="prayer_log_badge_first_prayer_desc">Markera din första bön</string>
+    <string name="prayer_log_badge_first_full_day">Hel dag</string>
+    <string name="prayer_log_badge_first_full_day_desc">Be alla fem böner under en dag</string>
+    <string name="prayer_log_badge_streak_3">Gnista</string>
+    <string name="prayer_log_badge_streak_3_desc">3 hela dagar i rad</string>
+    <string name="prayer_log_badge_streak_7">Låga</string>
+    <string name="prayer_log_badge_streak_7_desc">7 hela dagar i rad</string>
+    <string name="prayer_log_badge_fajr_7">Morgonstjärna</string>
+    <string name="prayer_log_badge_fajr_7_desc">Be Fajr 7 dagar i rad</string>
+    <string name="prayer_log_badge_prayers_100">Hundra</string>
+    <string name="prayer_log_badge_prayers_100_desc">Markera 100 böner</string>
+    <string name="prayer_log_badge_streak_40">Fyrtio dagar</string>
+    <string name="prayer_log_badge_streak_40_desc">40 hela dagar i rad</string>
+    <string name="prayer_log_badge_prayers_500">Ståndaktig</string>
+    <string name="prayer_log_badge_prayers_500_desc">Markera 500 böner</string>
+    <string name="prayer_log_game_setting">Spelaviseringar</string>
+    <string name="prayer_log_game_setting_desc">En påminnelse om XP innan en böns tid tar slut, din svit i kvällspåminnelsen och firande av hela dagar, nivåer och märken</string>
+    <string name="prayer_log_game_channel">Innan bönetiden tar slut</string>
+    <string name="prayer_log_game_channel_desc">En påminnelse med ljud att markera en bön för XP innan dess tid tar slut</string>
+    <string name="prayer_log_celebration_channel">Firande i böneloggen</string>
+    <string name="prayer_log_celebration_channel_desc">Hela dagar, nivåer och uppnådda märken, utan ljud</string>
+    <string name="prayer_log_nudge_title">Tiden för %1$s tar snart slut</string>
+    <string name="prayer_log_nudge_text">Har du bett? Markera för +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Har du bett? Markera för +%1$d XP och håll din svit på %2$d dagar vid liv 🔥</string>
+    <string name="prayer_log_nudge_mark">Jag har bett · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Din svit på %1$d dagar är i fara 🔥</string>
+    <string name="prayer_log_game_finish_title">Fullborda dagen: +%1$d XP väntar</string>
+    <string name="prayer_log_celebrate_full_day">Hel dag! +%1$d XP bonus</string>
+    <string name="prayer_log_celebrate_streak">Svit: %1$d dagar 🔥</string>
+    <string name="prayer_log_celebrate_badge">Nytt märke: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Ny nivå! Du är nu nivå %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Din nivå, svit och dina märken, med dagens böner att markera med ett tryck</string>
+    <string name="widget_prayer_log_off">Slå på böneloggen i Inställningar</string>
 </resources>

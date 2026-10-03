@@ -435,8 +435,6 @@
     <string name="donate_item_large_desc">Raivaa tilaa uusille ominaisuuksille, kuten rukouslokille ja päivän ympyrälle.</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Rukousajat</string>
-    <string name="widget_description">Seuraava rukous, reaaliaikainen lähtölaskenta ja koko päivä yhdellä silmäyksellä</string>
     <string name="widget_next_up">Seuraavaksi</string>
     <string name="widget_empty">Avaa Waktiva ladataksesi rukousajat</string>
     <string name="widget_countdown_label">Lähtölaskenta</string>
@@ -501,4 +499,47 @@
     <string name="prayer_log_next_month">Seuraava kuukausi</string>
     <string name="prayer_log_hint">Kun rukouksen aika koittaa, napauta sen merkkiä aloitusnäytön ympyrässä ja valitse ”Rukoiltu”, tai merkitse se täällä.</string>
     <string name="settings_support_desc">Auta pitämään Waktiva ilmaisena, yksityisenä ja mainoksettomana</string>
+    <string name="prayer_log_level">Taso %1$d</string>
+    <string name="prayer_log_xp_to_next">%1$d XP tasoon %2$d</string>
+    <string name="prayer_log_full_day_bonus">Täyden päivän bonus</string>
+    <string name="prayer_log_best_streak">Paras: %1$d</string>
+    <string name="prayer_log_badges">Merkit</string>
+    <string name="prayer_log_badge_unlocked">Uusi merkki</string>
+    <string name="prayer_log_level_up">Taso nousi!</string>
+    <string name="prayer_log_badge_earned">Ansaittu</string>
+    <string name="prayer_log_next_goal">Seuraava tavoite</string>
+    <string name="prayer_log_badge_first_prayer">Ensimmäinen askel</string>
+    <string name="prayer_log_badge_first_prayer_desc">Merkitse ensimmäinen rukouksesi</string>
+    <string name="prayer_log_badge_first_full_day">Täysi päivä</string>
+    <string name="prayer_log_badge_first_full_day_desc">Rukoile kaikki viisi rukousta yhtenä päivänä</string>
+    <string name="prayer_log_badge_streak_3">Kipinä</string>
+    <string name="prayer_log_badge_streak_3_desc">3 täyttä päivää peräkkäin</string>
+    <string name="prayer_log_badge_streak_7">Liekki</string>
+    <string name="prayer_log_badge_streak_7_desc">7 täyttä päivää peräkkäin</string>
+    <string name="prayer_log_badge_fajr_7">Aamutähti</string>
+    <string name="prayer_log_badge_fajr_7_desc">Rukoile Fajr 7 päivää peräkkäin</string>
+    <string name="prayer_log_badge_prayers_100">Sata</string>
+    <string name="prayer_log_badge_prayers_100_desc">Merkitse 100 rukousta</string>
+    <string name="prayer_log_badge_streak_40">Neljäkymmentä päivää</string>
+    <string name="prayer_log_badge_streak_40_desc">40 täyttä päivää peräkkäin</string>
+    <string name="prayer_log_badge_prayers_500">Sinnikkyys</string>
+    <string name="prayer_log_badge_prayers_500_desc">Merkitse 500 rukousta</string>
+    <string name="prayer_log_game_setting">Peli-ilmoitukset</string>
+    <string name="prayer_log_game_setting_desc">Muistutus XP:stä ennen kuin rukouksen aika päättyy, putkesi iltamuistutuksessa ja juhlinta täysistä päivistä, tasoista ja merkeistä</string>
+    <string name="prayer_log_game_channel">Ennen rukousajan päättymistä</string>
+    <string name="prayer_log_game_channel_desc">Äänellinen muistutus merkitä rukous XP:tä varten ennen sen ajan päättymistä</string>
+    <string name="prayer_log_celebration_channel">Rukouslokin juhlinta</string>
+    <string name="prayer_log_celebration_channel_desc">Täydet päivät, tasot ja ansaitut merkit, ilman ääntä</string>
+    <string name="prayer_log_nudge_title">Rukouksen %1$s aika päättyy pian</string>
+    <string name="prayer_log_nudge_text">Rukoilitko? Merkitse ja saat +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Rukoilitko? Merkitse, saat +%1$d XP ja %2$d päivän putkesi jatkuu 🔥</string>
+    <string name="prayer_log_nudge_mark">Rukoilin · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">%1$d päivän putkesi on vaarassa 🔥</string>
+    <string name="prayer_log_game_finish_title">Täytä päivä: +%1$d XP odottaa</string>
+    <string name="prayer_log_celebrate_full_day">Täysi päivä! +%1$d XP bonus</string>
+    <string name="prayer_log_celebrate_streak">Putki: %1$d päivää 🔥</string>
+    <string name="prayer_log_celebrate_badge">Uusi merkki: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Taso nousi! Olet nyt tasolla %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Tasosi, putkesi ja merkkisi sekä päivän rukoukset merkittäväksi yhdellä napautuksella</string>
+    <string name="widget_prayer_log_off">Ota rukousloki käyttöön asetuksista</string>
 </resources>

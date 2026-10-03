@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerDay
+import com.ybugmobile.waktiva.domain.model.PrayerLogProgress
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.isLogged
 import com.ybugmobile.waktiva.ui.home.composables.accentColor
@@ -72,6 +73,9 @@ internal object DayWidgets {
     private const val REQUEST_OLD_TICK = 7_300
     private const val REQUEST_ENDING = 7_302
     private const val REQUEST_TOGGLE = 7_310
+
+    /** The "my day" widget's cards, one request code per prayer from here. */
+    private const val REQUEST_DAY_CARD = 7_340
 
     private const val COLOR_PRIMARY = 0xFFFFFFFF.toInt()
     private const val COLOR_SECONDARY = 0xB3FFFFFF.toInt()
@@ -226,26 +230,55 @@ internal object DayWidgets {
         views.showContent()
         views.setImageViewBitmap(R.id.widget_bg, background(snapshot, today.moment, Backdrop.LARGE))
 
-        bindMoment(context, views, snapshot, today, countSp = 48f)
+        bindMoment(context, views, snapshot, today, countSp = 38f, showNext = false)
         views.setImageViewBitmap(R.id.widget_ring, today.ring(context))
 
         views.removeAllViews(R.id.widget_times)
-        today.times.forEach { time ->
-            val cell = RemoteViews(context.packageName, R.layout.widget_day_column)
-            cell.setTextViewText(R.id.widget_cell_name, time.type.getDisplayName(context))
-            cell.setTextViewText(R.id.widget_cell_time, time.time.format(WaktivaWidget.timeFormatter))
-            val (name, clock) = when {
-                time.isCurrent -> COLOR_PRIMARY to COLOR_PRIMARY
-                time.isPrayed && today.logEnabled -> COLOR_PRAYED to COLOR_PRAYED
-                time.isPassed -> COLOR_TERTIARY to COLOR_TERTIARY
-                else -> COLOR_SECONDARY to COLOR_PRIMARY
-            }
-            cell.setTextColor(R.id.widget_cell_name, name)
-            cell.setTextColor(R.id.widget_cell_time, clock)
-            if (time.isCurrent) cell.setInt(R.id.widget_cell, "setBackgroundResource", R.drawable.widget_cell_highlight)
-            views.addView(R.id.widget_times, cell)
-        }
+        today.times.forEach { time -> views.addView(R.id.widget_times, dayCard(context, today, time)) }
         return views
+    }
+
+    /**
+     * One of the day's prayers as a card. With the log on, a prayer whose time has come (the
+     * current one or an earlier one) is marked or unmarked with a tap: gold with a tick once
+     * prayed, an empty ring while it waits.
+     */
+    private fun dayCard(context: Context, today: Today, time: DayTime): RemoteViews {
+        val cell = RemoteViews(context.packageName, R.layout.widget_day_column)
+        val name = time.type.getDisplayName(context)
+        cell.setTextViewText(R.id.widget_cell_name, name)
+        cell.setTextViewText(R.id.widget_cell_time, time.time.format(WaktivaWidget.timeFormatter))
+
+        val prayed = time.isPrayed && today.logEnabled
+        val markable = today.logEnabled && (time.isCurrent || time.isPassed)
+        val (nameColor, clockColor) = when {
+            prayed -> COLOR_PRAYED to COLOR_PRAYED
+            time.isCurrent -> COLOR_PRIMARY to COLOR_PRIMARY
+            time.isPassed -> if (markable) COLOR_SECONDARY to COLOR_SECONDARY else COLOR_TERTIARY to COLOR_TERTIARY
+            else -> COLOR_SECONDARY to COLOR_PRIMARY
+        }
+        cell.setTextColor(R.id.widget_cell_name, nameColor)
+        cell.setTextColor(R.id.widget_cell_time, clockColor)
+        when {
+            prayed -> cell.setInt(R.id.widget_cell, "setBackgroundResource", R.drawable.widget_day_card_prayed)
+            time.isCurrent -> cell.setInt(R.id.widget_cell, "setBackgroundResource", R.drawable.widget_cell_highlight)
+        }
+
+        if (prayed || markable) {
+            cell.setViewVisibility(R.id.widget_cell_mark, View.VISIBLE)
+            cell.setImageViewResource(R.id.widget_cell_mark, if (prayed) R.drawable.ic_widget_check else R.drawable.widget_mark_ring)
+            if (prayed) cell.setInt(R.id.widget_cell_mark, "setColorFilter", COLOR_PRAYED)
+        }
+        if (markable) {
+            val prayerName = time.type.getPrayerName(context)
+            cell.setOnClickPendingIntent(R.id.widget_cell, toggleIntent(context, today.day.date, time.type, REQUEST_DAY_CARD))
+            cell.setContentDescription(
+                R.id.widget_cell,
+                if (prayed) "$prayerName. ${context.getString(R.string.prayer_log_unmark)}"
+                else "${context.getString(R.string.prayer_log_mark)}: $prayerName"
+            )
+        }
+        return cell
     }
 
     // ── Shared pieces ─────────────────────────────────────────────────────
@@ -273,13 +306,22 @@ internal object DayWidgets {
      * prayer's start, so one figure serves both), what comes next with the weather now, and the
      * sphere's tap: "I prayed", or taking the mark back once it's gold.
      */
-    private fun bindMoment(context: Context, views: RemoteViews, snapshot: WaktivaWidget.Snapshot, today: Today, countSp: Float) {
+    private fun bindMoment(
+        context: Context,
+        views: RemoteViews,
+        snapshot: WaktivaWidget.Snapshot,
+        today: Today,
+        countSp: Float,
+        showNext: Boolean = true
+    ) {
         val moment = today.moment
         val prayer = moment.prayer.getPrayerName(context)
         val label = when (moment.state) {
             MomentState.OPEN -> context.getString(R.string.widget_prayer_time, prayer)
             MomentState.ENDING -> context.getString(R.string.widget_prayer_time_ending, prayer)
-            MomentState.PRAYED -> context.getString(R.string.widget_prayer_prayed, prayer)
+            // With the log's XP for it: the prayer log is a game, on the home screen too.
+            MomentState.PRAYED -> context.getString(R.string.widget_prayer_prayed, prayer) + "  " +
+                context.getString(R.string.prayer_log_xp_gain, PrayerLogProgress.XP_PER_PRAYER)
             MomentState.WAITING -> context.getString(R.string.widget_next_up)
         }
         views.setTextViewText(R.id.widget_label, label)
@@ -306,12 +348,15 @@ internal object DayWidgets {
         val counting = moment.state == MomentState.OPEN || moment.state == MomentState.ENDING
         views.setViewVisibility(R.id.widget_left, if (counting) View.VISIBLE else View.GONE)
 
-        views.setImageViewResource(R.id.widget_next_icon, moment.next.type.iconRes)
-        views.setInt(R.id.widget_next_icon, "setColorFilter", moment.next.type.accentColor.toArgb())
-        views.setTextViewText(
-            R.id.widget_sub,
-            "${moment.next.type.getDisplayName(context)}  ${moment.next.time.format(WaktivaWidget.timeFormatter)}"
-        )
+        // The "my day" widget has no line for it: its cards show the next prayer's time.
+        if (showNext) {
+            views.setImageViewResource(R.id.widget_next_icon, moment.next.type.iconRes)
+            views.setInt(R.id.widget_next_icon, "setColorFilter", moment.next.type.accentColor.toArgb())
+            views.setTextViewText(
+                R.id.widget_sub,
+                "${moment.next.type.getDisplayName(context)}  ${moment.next.time.format(WaktivaWidget.timeFormatter)}"
+            )
+        }
 
         val weather = snapshot.weather
         views.setViewVisibility(R.id.widget_weather, if (weather != null) View.VISIBLE else View.GONE)
@@ -321,7 +366,7 @@ internal object DayWidgets {
         }
 
         if (moment.canMark || prayed) {
-            views.setOnClickPendingIntent(R.id.widget_mark, toggleIntent(context, moment.logDate, moment.prayer))
+            views.setOnClickPendingIntent(R.id.widget_mark, toggleIntent(context, moment.logDate, moment.prayer, REQUEST_TOGGLE))
             views.setContentDescription(
                 R.id.widget_mark,
                 if (prayed) "$label. ${context.getString(R.string.prayer_log_unmark)}" else "${context.getString(R.string.prayer_log_mark)}: $prayer"
@@ -331,7 +376,11 @@ internal object DayWidgets {
 
     private fun locale(context: Context): Locale = context.resources.configuration.locales[0] ?: Locale.getDefault()
 
-    private fun toggleIntent(context: Context, date: LocalDate, type: PrayerType): PendingIntent {
+    /**
+     * Marks [type] on [date] or takes the mark back ([togglePrayer]). Each widget kind passes its
+     * own [requestBase], so one's taps can't hand another theirs.
+     */
+    fun toggleIntent(context: Context, date: LocalDate, type: PrayerType, requestBase: Int): PendingIntent {
         val intent = Intent(context, DayWidgetActionReceiver::class.java).apply {
             action = ACTION_TOGGLE_PRAYER
             putExtra(EXTRA_DATE, date.toString())
@@ -339,7 +388,7 @@ internal object DayWidgets {
         }
         return PendingIntent.getBroadcast(
             context,
-            REQUEST_TOGGLE + type.ordinal,
+            requestBase + type.ordinal,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -350,7 +399,8 @@ internal object DayWidgets {
     /**
      * Marks [type] on [date] as prayed, or takes the mark back, as the widget asks. Only a prayer
      * whose time has come: one of today's, or the night's Isha (yesterday's) before dawn. A widget
-     * drawn earlier can't mark what the app wouldn't.
+     * drawn earlier can't mark what the app wouldn't. What a mark reaches is cheered for in a
+     * notification while the log's game notifications are on.
      */
     suspend fun togglePrayer(context: Context, date: LocalDate, type: PrayerType) {
         val ep = WaktivaWidget.entryPoint(context)
@@ -366,9 +416,8 @@ internal object DayWidgets {
         }
         if (!allowed) return
 
-        val log = ep.prayerLogRepository()
-        val prayed = type in log.getPrayedPrayers(date).first()
-        log.setPrayed(date, type, !prayed)
+        val prayed = type in ep.prayerLogRepository().getPrayedPrayers(date).first()
+        ep.prayerLogGame().setPrayed(date, type, !prayed, today)
     }
 
     // ── The ticks ─────────────────────────────────────────────────────────

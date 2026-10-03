@@ -435,8 +435,6 @@
     <string name="donate_item_large_desc">Membuka jalan untuk ciri baharu, seperti catatan solat dan bulatan hari.</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Waktu Solat</string>
-    <string name="widget_description">Solat seterusnya, kiraan detik langsung dan waktu sepanjang hari dengan sekali pandang</string>
     <string name="widget_next_up">Seterusnya</string>
     <string name="widget_empty">Buka Waktiva untuk memuatkan waktu solat</string>
     <string name="widget_countdown_label">Kiraan Detik</string>
@@ -501,4 +499,47 @@
     <string name="prayer_log_next_month">Bulan berikutnya</string>
     <string name="prayer_log_hint">Apabila masuk waktu solat, ketik lencananya pada bulatan di skrin utama dan pilih “Sudah solat”, atau tandakan di sini.</string>
     <string name="settings_support_desc">Bantu Waktiva kekal percuma, peribadi dan tanpa iklan</string>
+    <string name="prayer_log_level">Tahap %1$d</string>
+    <string name="prayer_log_xp_to_next">%1$d XP lagi ke tahap %2$d</string>
+    <string name="prayer_log_full_day_bonus">Bonus hari penuh</string>
+    <string name="prayer_log_best_streak">Terbaik: %1$d</string>
+    <string name="prayer_log_badges">Lencana</string>
+    <string name="prayer_log_badge_unlocked">Lencana baharu</string>
+    <string name="prayer_log_level_up">Naik tahap!</string>
+    <string name="prayer_log_badge_earned">Diperoleh</string>
+    <string name="prayer_log_next_goal">Sasaran seterusnya</string>
+    <string name="prayer_log_badge_first_prayer">Langkah Pertama</string>
+    <string name="prayer_log_badge_first_prayer_desc">Tandakan solat pertama anda</string>
+    <string name="prayer_log_badge_first_full_day">Hari Penuh</string>
+    <string name="prayer_log_badge_first_full_day_desc">Tunaikan kelima-lima solat dalam sehari</string>
+    <string name="prayer_log_badge_streak_3">Percikan</string>
+    <string name="prayer_log_badge_streak_3_desc">3 hari penuh berturut-turut</string>
+    <string name="prayer_log_badge_streak_7">Nyalaan</string>
+    <string name="prayer_log_badge_streak_7_desc">7 hari penuh berturut-turut</string>
+    <string name="prayer_log_badge_fajr_7">Bintang Fajar</string>
+    <string name="prayer_log_badge_fajr_7_desc">Solat Subuh 7 hari berturut-turut</string>
+    <string name="prayer_log_badge_prayers_100">Seratus</string>
+    <string name="prayer_log_badge_prayers_100_desc">Tandakan 100 solat</string>
+    <string name="prayer_log_badge_streak_40">Empat Puluh Hari</string>
+    <string name="prayer_log_badge_streak_40_desc">40 hari penuh berturut-turut</string>
+    <string name="prayer_log_badge_prayers_500">Istiqamah</string>
+    <string name="prayer_log_badge_prayers_500_desc">Tandakan 500 solat</string>
+    <string name="prayer_log_game_setting">Pemberitahuan permainan</string>
+    <string name="prayer_log_game_setting_desc">Peringatan untuk XP sebelum waktu solat tamat, rentetan anda dalam peringatan malam, dan raikan hari penuh, tahap dan lencana</string>
+    <string name="prayer_log_game_channel">Sebelum waktu solat tamat</string>
+    <string name="prayer_log_game_channel_desc">Peringatan bersuara untuk menandakan solat demi XP sebelum waktunya tamat</string>
+    <string name="prayer_log_celebration_channel">Raikan catatan solat</string>
+    <string name="prayer_log_celebration_channel_desc">Hari penuh, tahap dan lencana yang diperoleh, tanpa bunyi</string>
+    <string name="prayer_log_nudge_title">Waktu %1$s hampir tamat</string>
+    <string name="prayer_log_nudge_text">Sudah solat? Tandakan untuk +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Sudah solat? Tandakan untuk +%1$d XP dan kekalkan rentetan %2$d hari anda 🔥</string>
+    <string name="prayer_log_nudge_mark">Sudah solat · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Rentetan %1$d hari anda dalam bahaya 🔥</string>
+    <string name="prayer_log_game_finish_title">Lengkapkan hari ini: +%1$d XP menanti</string>
+    <string name="prayer_log_celebrate_full_day">Hari penuh! Bonus +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Rentetan: %1$d hari 🔥</string>
+    <string name="prayer_log_celebrate_badge">Lencana baharu: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Naik tahap! Anda kini di tahap %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Tahap, rentetan dan lencana anda, dengan solat hari ini untuk ditanda sekali sentuh</string>
+    <string name="widget_prayer_log_off">Hidupkan catatan solat dalam Tetapan</string>
 </resources>

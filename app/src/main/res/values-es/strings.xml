@@ -423,8 +423,6 @@
     <string name="license_github_link">Waktiva es un proyecto de código abierto. Puede encontrar el código fuente, informar de problemas o contribuir en:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Horarios de oración</string>
-    <string name="widget_description">Próxima oración, cuenta atrás en vivo y todo el día de un vistazo</string>
     <string name="widget_next_up">Siguiente</string>
     <string name="widget_empty">Abre Waktiva para cargar los horarios de oración</string>
     <string name="widget_countdown_label">Cuenta atrás</string>
@@ -489,4 +487,47 @@
     <string name="prayer_log_next_month">Mes siguiente</string>
     <string name="prayer_log_hint">Cuando llegue la hora de una oración, toca su insignia en el círculo de la pantalla de inicio y elige «Ya recé», o márcala aquí.</string>
     <string name="settings_support_desc">Ayuda a que Waktiva siga siendo gratuita, privada y sin anuncios</string>
+    <string name="prayer_log_level">Nivel %1$d</string>
+    <string name="prayer_log_xp_to_next">%1$d XP para el nivel %2$d</string>
+    <string name="prayer_log_full_day_bonus">Bonus de día completo</string>
+    <string name="prayer_log_best_streak">Mejor: %1$d</string>
+    <string name="prayer_log_badges">Insignias</string>
+    <string name="prayer_log_badge_unlocked">Nueva insignia</string>
+    <string name="prayer_log_level_up">¡Subiste de nivel!</string>
+    <string name="prayer_log_badge_earned">Conseguida</string>
+    <string name="prayer_log_next_goal">Próxima meta</string>
+    <string name="prayer_log_badge_first_prayer">Primer paso</string>
+    <string name="prayer_log_badge_first_prayer_desc">Marca tu primera oración</string>
+    <string name="prayer_log_badge_first_full_day">Día completo</string>
+    <string name="prayer_log_badge_first_full_day_desc">Reza las cinco oraciones en un día</string>
+    <string name="prayer_log_badge_streak_3">Chispa</string>
+    <string name="prayer_log_badge_streak_3_desc">3 días completos seguidos</string>
+    <string name="prayer_log_badge_streak_7">Llama</string>
+    <string name="prayer_log_badge_streak_7_desc">7 días completos seguidos</string>
+    <string name="prayer_log_badge_fajr_7">Estrella del alba</string>
+    <string name="prayer_log_badge_fajr_7_desc">Reza Fajr 7 días seguidos</string>
+    <string name="prayer_log_badge_prayers_100">Cien</string>
+    <string name="prayer_log_badge_prayers_100_desc">Marca 100 oraciones</string>
+    <string name="prayer_log_badge_streak_40">Cuarenta días</string>
+    <string name="prayer_log_badge_streak_40_desc">40 días completos seguidos</string>
+    <string name="prayer_log_badge_prayers_500">Constancia</string>
+    <string name="prayer_log_badge_prayers_500_desc">Marca 500 oraciones</string>
+    <string name="prayer_log_game_setting">Notificaciones de juego</string>
+    <string name="prayer_log_game_setting_desc">Un aviso para ganar XP antes de que termine el tiempo de una oración, tu racha en el recordatorio nocturno y celebraciones por días completos, niveles e insignias</string>
+    <string name="prayer_log_game_channel">Antes de que termine el tiempo</string>
+    <string name="prayer_log_game_channel_desc">Un aviso con sonido para marcar una oración y ganar XP antes de que termine su tiempo</string>
+    <string name="prayer_log_celebration_channel">Celebraciones del registro</string>
+    <string name="prayer_log_celebration_channel_desc">Días completos, niveles e insignias conseguidas, sin sonido</string>
+    <string name="prayer_log_nudge_title">El tiempo de %1$s termina pronto</string>
+    <string name="prayer_log_nudge_text">¿La rezaste? Márcala y gana +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">¿La rezaste? Márcala, gana +%1$d XP y mantén tu racha de %2$d días 🔥</string>
+    <string name="prayer_log_nudge_mark">Recé · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Tu racha de %1$d días está en peligro 🔥</string>
+    <string name="prayer_log_game_finish_title">Completa el día: te esperan +%1$d XP</string>
+    <string name="prayer_log_celebrate_full_day">¡Día completo! Bonus de +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Racha: %1$d días 🔥</string>
+    <string name="prayer_log_celebrate_badge">Nueva insignia: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">¡Subiste de nivel! Ahora eres nivel %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Tu nivel, racha e insignias, con las oraciones de hoy para marcar con un toque</string>
+    <string name="widget_prayer_log_off">Activa el registro de oraciones en Ajustes</string>
 </resources>

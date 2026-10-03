@@ -26,6 +26,9 @@ enum class PrayerLogStatus {
     UNTRACKED
 }
 
+/** A nudge [at] a while before [type]'s time on [date] ends, [endsAt], to mark it if prayed. */
+data class PrayerLogNudge(val date: LocalDate, val type: PrayerType, val at: LocalDateTime, val endsAt: LocalDateTime)
+
 object PrayerLog {
 
     /**
@@ -82,6 +85,31 @@ object PrayerLog {
         }
         .filter { (_, at) -> at.isAfter(now) }
         .minByOrNull { (_, at) -> at }
+
+    /**
+     * The prayers nudged before their time ends. Isha's ends at dawn, deep in the night; the
+     * reminder after Isha speaks for it.
+     */
+    val NudgedPrayers: List<PrayerType> = listOf(PrayerType.FAJR, PrayerType.DHUHR, PrayerType.ASR, PrayerType.MAGHRIB)
+
+    /**
+     * The next nudge after [now]: [minutesBefore] before a [NudgedPrayers] prayer's time ends, on
+     * a kept day. A time shorter than that gets none. Null when no kept day has one still ahead.
+     */
+    fun nextNudge(prayerDays: List<PrayerDay>, now: LocalDateTime, minutesBefore: Long): PrayerLogNudge? {
+        val byDate = prayerDays.associateBy { it.date }
+        return prayerDays
+            .flatMap { day ->
+                NudgedPrayers.mapNotNull { type ->
+                    val start = day.timings[type]?.atDate(day.date) ?: return@mapNotNull null
+                    val end = windowEnd(type, day, byDate[day.date.plusDays(1)]) ?: return@mapNotNull null
+                    val at = end.minusMinutes(minutesBefore).takeIf { it.isAfter(start) } ?: return@mapNotNull null
+                    PrayerLogNudge(day.date, type, at, end)
+                }
+            }
+            .filter { it.at.isAfter(now) }
+            .minByOrNull { it.at }
+    }
 
     /** The first day the log holds prayers to: the day it began, or [today] before it has. */
     fun trackedSince(start: LocalDate?, today: LocalDate): LocalDate =

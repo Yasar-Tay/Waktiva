@@ -37,12 +37,17 @@ class AlarmScheduler @Inject constructor(
         const val ACTION_PRE_ADHAN_NOTIFICATION = "com.ybugmobile.waktiva.ACTION_PRE_ADHAN_NOTIFICATION"
         const val ACTION_WIDGET_REFRESH = "com.ybugmobile.waktiva.ACTION_WIDGET_REFRESH"
         const val ACTION_PRAYER_LOG_REMINDER = "com.ybugmobile.waktiva.ACTION_PRAYER_LOG_REMINDER"
+        const val ACTION_PRAYER_LOG_NUDGE = "com.ybugmobile.waktiva.ACTION_PRAYER_LOG_NUDGE"
+
+        /** How long before a prayer's time ends the prayer log's game nudges to mark it. */
+        const val PRAYER_LOG_NUDGE_MINUTES = 30L
         
         const val REQUEST_CODE_ADHAN = 1001
         const val REQUEST_CODE_PRE_ADHAN = 1002
         const val REQUEST_CODE_WIDGET_REFRESH = 1003
         const val REQUEST_CODE_WIDGET_REFRESH_BACKUP = 1004
         const val REQUEST_CODE_PRAYER_LOG_REMINDER = 1005
+        const val REQUEST_CODE_PRAYER_LOG_NUDGE = 1006
         const val REQUEST_CODE_TEST = 9999
         const val REQUEST_CODE_TEST_PRE = 9998
     }
@@ -116,6 +121,7 @@ class AlarmScheduler @Inject constructor(
         }
 
         schedulePrayerLogReminder(prayerDays, now, settings)
+        schedulePrayerLogNudge(prayerDays, now, settings)
 
         // 3. Schedule the absolute next milestone (could be Sunrise) to ensure Widget updates
         val absoluteNext = allMilestones.firstOrNull()
@@ -164,13 +170,53 @@ class AlarmScheduler @Inject constructor(
         }
 
         val (date, at) = next
-        val triggerAt = at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         val pendingIntent = PendingIntent.getBroadcast(
             context, REQUEST_CODE_PRAYER_LOG_REMINDER, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         Log.d("AlarmScheduler", "Scheduling PRAYER LOG reminder for $date at $at")
-        // Not an alarm clock: a reminder mustn't show up as the phone's next alarm.
+        setReminderAlarm(at, pendingIntent)
+    }
+
+    /**
+     * Sets the prayer log game's next nudge, [PRAYER_LOG_NUDGE_MINUTES] before a prayer's time
+     * ends, or clears it while the log or its game notifications are off. The receiver decides
+     * when it fires whether the prayer is still unmarked.
+     */
+    private fun schedulePrayerLogNudge(prayerDays: List<PrayerDay>, now: LocalDateTime, settings: UserSettings) {
+        val next = if (settings.prayerLogEnabled && settings.prayerLogGameNotifications) {
+            PrayerLog.nextNudge(prayerDays, now, PRAYER_LOG_NUDGE_MINUTES)
+        } else {
+            null
+        }
+        val intent = Intent(context, PrayerAlarmReceiver::class.java).apply {
+            action = ACTION_PRAYER_LOG_NUDGE
+            putExtra(NotificationHelper.EXTRA_PRAYER_NAME, (next?.type ?: PrayerType.DHUHR).name)
+            putExtra(NotificationHelper.EXTRA_PRAYER_DATE, (next?.date ?: LocalDate.now()).toString())
+            component = ComponentName(context, PrayerAlarmReceiver::class.java)
+        }
+        if (next == null) {
+            PendingIntent.getBroadcast(
+                context, REQUEST_CODE_PRAYER_LOG_NUDGE, intent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            )?.let { alarmManager.cancel(it) }
+            return
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, REQUEST_CODE_PRAYER_LOG_NUDGE, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        Log.d("AlarmScheduler", "Scheduling PRAYER LOG nudge for ${next.type} on ${next.date} at ${next.at}")
+        setReminderAlarm(next.at, pendingIntent)
+    }
+
+    /**
+     * Sets a reminder for [at], exactly when allowed. Not an alarm clock: a reminder mustn't show
+     * up as the phone's next alarm.
+     */
+    private fun setReminderAlarm(at: LocalDateTime, pendingIntent: PendingIntent) {
+        val triggerAt = at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         try {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent)

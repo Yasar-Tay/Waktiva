@@ -436,8 +436,6 @@
     <string name="donate_item_large_desc">نئی خصوصیات کی راہ ہموار کرتا ہے، جیسے نماز کا ریکارڈ اور دن کا دائرہ۔</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">نماز کے اوقات</string>
-    <string name="widget_description">اگلی نماز، براہِ راست الٹی گنتی اور پورے دن کے اوقات ایک نظر میں</string>
     <string name="widget_next_up">اگلی</string>
     <string name="widget_empty">نماز کے اوقات لوڈ کرنے کے لیے Waktiva کھولیں</string>
     <string name="widget_countdown_label">الٹی گنتی</string>
@@ -502,4 +500,47 @@
     <string name="prayer_log_next_month">اگلا مہینہ</string>
     <string name="prayer_log_hint">نماز کا وقت آنے پر ہوم اسکرین کے دائرے میں اس کے نشان پر ٹیپ کریں اور «پڑھ لی» چنیں، یا یہیں نشان لگائیں۔</string>
     <string name="settings_support_desc">Waktiva کو مفت، نجی اور اشتہار سے پاک رکھنے میں مدد کریں</string>
+    <string name="prayer_log_level">لیول %1$d</string>
+    <string name="prayer_log_xp_to_next">لیول %2$d کے لیے %1$d XP</string>
+    <string name="prayer_log_full_day_bonus">مکمل دن کا بونس</string>
+    <string name="prayer_log_best_streak">بہترین: %1$d</string>
+    <string name="prayer_log_badges">بیجز</string>
+    <string name="prayer_log_badge_unlocked">نیا بیج</string>
+    <string name="prayer_log_level_up">لیول بڑھ گیا!</string>
+    <string name="prayer_log_badge_earned">حاصل کیا</string>
+    <string name="prayer_log_next_goal">اگلا ہدف</string>
+    <string name="prayer_log_badge_first_prayer">پہلا قدم</string>
+    <string name="prayer_log_badge_first_prayer_desc">اپنی پہلی نماز نشان زد کریں</string>
+    <string name="prayer_log_badge_first_full_day">مکمل دن</string>
+    <string name="prayer_log_badge_first_full_day_desc">ایک دن میں پانچوں نمازیں پڑھیں</string>
+    <string name="prayer_log_badge_streak_3">چنگاری</string>
+    <string name="prayer_log_badge_streak_3_desc">مسلسل 3 مکمل دن</string>
+    <string name="prayer_log_badge_streak_7">شعلہ</string>
+    <string name="prayer_log_badge_streak_7_desc">مسلسل 7 مکمل دن</string>
+    <string name="prayer_log_badge_fajr_7">صبح کا ستارہ</string>
+    <string name="prayer_log_badge_fajr_7_desc">مسلسل 7 دن فجر پڑھیں</string>
+    <string name="prayer_log_badge_prayers_100">سینکڑہ</string>
+    <string name="prayer_log_badge_prayers_100_desc">100 نمازیں نشان زد کریں</string>
+    <string name="prayer_log_badge_streak_40">چالیس دن</string>
+    <string name="prayer_log_badge_streak_40_desc">مسلسل 40 مکمل دن</string>
+    <string name="prayer_log_badge_prayers_500">استقامت</string>
+    <string name="prayer_log_badge_prayers_500_desc">500 نمازیں نشان زد کریں</string>
+    <string name="prayer_log_game_setting">گیم نوٹیفکیشنز</string>
+    <string name="prayer_log_game_setting_desc">نماز کا وقت ختم ہونے سے پہلے XP کی یاد دہانی، شام کی یاد دہانی میں آپ کا سلسلہ، اور مکمل دنوں، لیولز اور بیجز کا جشن</string>
+    <string name="prayer_log_game_channel">نماز کا وقت ختم ہونے سے پہلے</string>
+    <string name="prayer_log_game_channel_desc">وقت ختم ہونے سے پہلے نماز نشان زد کر کے XP پانے کی آواز والی یاد دہانی</string>
+    <string name="prayer_log_celebration_channel">نماز ریکارڈ کے جشن</string>
+    <string name="prayer_log_celebration_channel_desc">مکمل دن، لیولز اور حاصل کردہ بیجز، بغیر آواز کے</string>
+    <string name="prayer_log_nudge_title">%1$s کا وقت ختم ہونے والا ہے</string>
+    <string name="prayer_log_nudge_text">پڑھ لی؟ نشان زد کریں اور +%1$d XP پائیں۔</string>
+    <string name="prayer_log_nudge_text_streak">پڑھ لی؟ نشان زد کریں، +%1$d XP پائیں اور %2$d دن کا سلسلہ جاری رکھیں 🔥</string>
+    <string name="prayer_log_nudge_mark">پڑھ لی · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">آپ کا %1$d دن کا سلسلہ خطرے میں ہے 🔥</string>
+    <string name="prayer_log_game_finish_title">دن مکمل کریں: +%1$d XP منتظر ہیں</string>
+    <string name="prayer_log_celebrate_full_day">مکمل دن! +%1$d XP بونس</string>
+    <string name="prayer_log_celebrate_streak">سلسلہ: %1$d دن 🔥</string>
+    <string name="prayer_log_celebrate_badge">نیا بیج: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">لیول بڑھ گیا! اب آپ لیول %1$d پر ہیں 🎉</string>
+    <string name="widget_prayer_log_description">آپ کا لیول، سلسلہ اور بیجز، اور آج کی نمازیں ایک ٹیپ میں نشان زد کریں</string>
+    <string name="widget_prayer_log_off">ترتیبات میں نماز کا ریکارڈ آن کریں</string>
 </resources>

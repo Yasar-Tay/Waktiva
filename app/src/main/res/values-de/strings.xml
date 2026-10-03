@@ -423,8 +423,6 @@
     <string name="license_github_link">Waktiva ist ein Open-Source-Projekt. Sie finden den Quellcode, können Probleme melden oder mitwirken unter:\nhttps://github.com/Yasar-Tay/Waktiva.git</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Gebetszeiten</string>
-    <string name="widget_description">Nächstes Gebet, Live-Countdown und der ganze Tag auf einen Blick</string>
     <string name="widget_next_up">Als Nächstes</string>
     <string name="widget_empty">Öffne Waktiva, um die Gebetszeiten zu laden</string>
     <string name="widget_countdown_label">Countdown</string>
@@ -489,4 +487,47 @@
     <string name="prayer_log_next_month">Nächster Monat</string>
     <string name="prayer_log_hint">Wenn die Zeit eines Gebets kommt, tippe im Kreis auf dem Startbildschirm auf sein Symbol und wähle „Gebetet“ – oder markiere es hier.</string>
     <string name="settings_support_desc">Hilf mit, Waktiva kostenlos, privat und werbefrei zu halten</string>
+    <string name="prayer_log_level">Stufe %1$d</string>
+    <string name="prayer_log_xp_to_next">%1$d XP bis Stufe %2$d</string>
+    <string name="prayer_log_full_day_bonus">Bonus für einen vollen Tag</string>
+    <string name="prayer_log_best_streak">Bestwert: %1$d</string>
+    <string name="prayer_log_badges">Abzeichen</string>
+    <string name="prayer_log_badge_unlocked">Neues Abzeichen</string>
+    <string name="prayer_log_level_up">Stufe aufgestiegen!</string>
+    <string name="prayer_log_badge_earned">Erreicht</string>
+    <string name="prayer_log_next_goal">Nächstes Ziel</string>
+    <string name="prayer_log_badge_first_prayer">Erster Schritt</string>
+    <string name="prayer_log_badge_first_prayer_desc">Markiere dein erstes Gebet</string>
+    <string name="prayer_log_badge_first_full_day">Voller Tag</string>
+    <string name="prayer_log_badge_first_full_day_desc">Bete alle fünf Gebete an einem Tag</string>
+    <string name="prayer_log_badge_streak_3">Funke</string>
+    <string name="prayer_log_badge_streak_3_desc">3 volle Tage in Folge</string>
+    <string name="prayer_log_badge_streak_7">Flamme</string>
+    <string name="prayer_log_badge_streak_7_desc">7 volle Tage in Folge</string>
+    <string name="prayer_log_badge_fajr_7">Morgenstern</string>
+    <string name="prayer_log_badge_fajr_7_desc">Bete Fajr 7 Tage in Folge</string>
+    <string name="prayer_log_badge_prayers_100">Hundert</string>
+    <string name="prayer_log_badge_prayers_100_desc">Markiere 100 Gebete</string>
+    <string name="prayer_log_badge_streak_40">Vierzig Tage</string>
+    <string name="prayer_log_badge_streak_40_desc">40 volle Tage in Folge</string>
+    <string name="prayer_log_badge_prayers_500">Beständigkeit</string>
+    <string name="prayer_log_badge_prayers_500_desc">Markiere 500 Gebete</string>
+    <string name="prayer_log_game_setting">Spiel-Benachrichtigungen</string>
+    <string name="prayer_log_game_setting_desc">Ein Anstoß für XP, bevor die Zeit eines Gebets endet, deine Serie in der Abenderinnerung und Jubel für volle Tage, Stufen und Abzeichen</string>
+    <string name="prayer_log_game_channel">Bevor die Gebetszeit endet</string>
+    <string name="prayer_log_game_channel_desc">Ein Anstoß mit Ton, ein Gebet für XP zu markieren, bevor seine Zeit endet</string>
+    <string name="prayer_log_celebration_channel">Jubel im Gebetstagebuch</string>
+    <string name="prayer_log_celebration_channel_desc">Volle Tage, Stufen und erreichte Abzeichen, ohne Ton</string>
+    <string name="prayer_log_nudge_title">Die Zeit für %1$s endet bald</string>
+    <string name="prayer_log_nudge_text">Gebetet? Markiere es für +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Gebetet? Markiere es für +%1$d XP und halte deine %2$d-Tage-Serie am Leben 🔥</string>
+    <string name="prayer_log_nudge_mark">Gebetet · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Deine %1$d-Tage-Serie ist in Gefahr 🔥</string>
+    <string name="prayer_log_game_finish_title">Schließe den Tag ab: +%1$d XP warten</string>
+    <string name="prayer_log_celebrate_full_day">Voller Tag! +%1$d XP Bonus</string>
+    <string name="prayer_log_celebrate_streak">Serie: %1$d Tage 🔥</string>
+    <string name="prayer_log_celebrate_badge">Neues Abzeichen: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Stufe aufgestiegen! Du bist jetzt Stufe %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Deine Stufe, Serie und Abzeichen, dazu die heutigen Gebete zum Markieren mit einem Tipp</string>
+    <string name="widget_prayer_log_off">Schalte das Gebetstagebuch in den Einstellungen ein</string>
 </resources>

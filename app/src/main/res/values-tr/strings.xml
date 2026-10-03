@@ -436,8 +436,6 @@
     <string name="lang_fi">Suomi</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">Namaz Vakitleri</string>
-    <string name="widget_description">Sıradaki vakit, canlı geri sayım ve günün tamamı tek bakışta</string>
     <string name="widget_next_up">Sıradaki</string>
     <string name="widget_empty">Vakitleri yüklemek için Waktiva\'yı açın</string>
     <string name="widget_countdown_label">Geri Sayım</string>
@@ -502,4 +500,47 @@
     <string name="prayer_log_next_month">Sonraki ay</string>
     <string name="prayer_log_hint">Vakti giren namazı, ana ekrandaki halkada rozetine dokunup “Kıldım” diyerek ya da buradan işaretleyebilirsin.</string>
     <string name="settings_support_desc">Waktiva\'nın ücretsiz, gizliliğe saygılı ve reklamsız kalmasına destek ol</string>
+    <string name="prayer_log_level">Seviye %1$d</string>
+    <string name="prayer_log_xp_to_next">Seviye %2$d için %1$d XP</string>
+    <string name="prayer_log_full_day_bonus">Tam gün bonusu</string>
+    <string name="prayer_log_best_streak">En iyi: %1$d</string>
+    <string name="prayer_log_badges">Rozetler</string>
+    <string name="prayer_log_badge_unlocked">Yeni rozet</string>
+    <string name="prayer_log_level_up">Seviye atladın!</string>
+    <string name="prayer_log_badge_earned">Kazanıldı</string>
+    <string name="prayer_log_next_goal">Sıradaki hedef</string>
+    <string name="prayer_log_badge_first_prayer">İlk Adım</string>
+    <string name="prayer_log_badge_first_prayer_desc">İlk namazını işaretle</string>
+    <string name="prayer_log_badge_first_full_day">Tam Gün</string>
+    <string name="prayer_log_badge_first_full_day_desc">Bir günün beş vaktini de kıl</string>
+    <string name="prayer_log_badge_streak_3">Kıvılcım</string>
+    <string name="prayer_log_badge_streak_3_desc">Üst üste 3 tam gün</string>
+    <string name="prayer_log_badge_streak_7">Alev</string>
+    <string name="prayer_log_badge_streak_7_desc">Üst üste 7 tam gün</string>
+    <string name="prayer_log_badge_fajr_7">Sabah Yıldızı</string>
+    <string name="prayer_log_badge_fajr_7_desc">Üst üste 7 gün sabah namazını kıl</string>
+    <string name="prayer_log_badge_prayers_100">Yüzlük</string>
+    <string name="prayer_log_badge_prayers_100_desc">100 namaz işaretle</string>
+    <string name="prayer_log_badge_streak_40">Kırk Gün</string>
+    <string name="prayer_log_badge_streak_40_desc">Üst üste 40 tam gün</string>
+    <string name="prayer_log_badge_prayers_500">Sebat</string>
+    <string name="prayer_log_badge_prayers_500_desc">500 namaz işaretle</string>
+    <string name="prayer_log_game_setting">Oyun bildirimleri</string>
+    <string name="prayer_log_game_setting_desc">Vakit çıkmadan XP için hatırlatır, akşam hatırlatmasında serini gösterir; tam günleri, seviyeleri ve rozetleri kutlar</string>
+    <string name="prayer_log_game_channel">Vakit çıkmadan hatırlatma</string>
+    <string name="prayer_log_game_channel_desc">Vakti çıkmadan namazı işaretleyip XP kazanman için sesli hatırlatma</string>
+    <string name="prayer_log_celebration_channel">Çetele kutlamaları</string>
+    <string name="prayer_log_celebration_channel_desc">Tam günler, seviyeler ve kazanılan rozetler; sessiz</string>
+    <string name="prayer_log_nudge_title">%1$s vakti çıkmak üzere</string>
+    <string name="prayer_log_nudge_text">Kıldıysan işaretle, +%1$d XP kazan.</string>
+    <string name="prayer_log_nudge_text_streak">Kıldıysan işaretle, +%1$d XP kazan; %2$d günlük serin sürsün 🔥</string>
+    <string name="prayer_log_nudge_mark">Kıldım · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">%1$d günlük serin tehlikede 🔥</string>
+    <string name="prayer_log_game_finish_title">Günü tamamla: +%1$d XP seni bekliyor</string>
+    <string name="prayer_log_celebrate_full_day">Tam gün! +%1$d XP bonus</string>
+    <string name="prayer_log_celebrate_streak">Seri: %1$d gün 🔥</string>
+    <string name="prayer_log_celebrate_badge">Yeni rozet: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Seviye atladın! Artık seviye %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Seviyen, serin ve rozetlerin; bugünün namazlarını tek dokunuşla işaretle</string>
+    <string name="widget_prayer_log_off">Çeteleyi Ayarlar\'dan aç</string>
 </resources>

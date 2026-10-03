@@ -175,6 +175,7 @@ fun SettingsScreen(
                             onEnabledChange = { viewModel.setPrayerLogEnabled(it) },
                             onReminderChange = { viewModel.setPrayerLogReminder(it) },
                             onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) },
+                            onGameNotificationsChange = { viewModel.setPrayerLogGameNotifications(it) },
                             onExport = onExportPrayerLog,
                             onImport = onImportPrayerLog,
                             onClear = { showClearPrayerLogDialog = true }
@@ -234,6 +235,7 @@ fun SettingsScreen(
                         onEnabledChange = { viewModel.setPrayerLogEnabled(it) },
                         onReminderChange = { viewModel.setPrayerLogReminder(it) },
                         onReminderMinutesChange = { viewModel.setPrayerLogReminderMinutes(it) },
+                        onGameNotificationsChange = { viewModel.setPrayerLogGameNotifications(it) },
                         onExport = onExportPrayerLog,
                         onImport = onImportPrayerLog,
                         onClear = { showClearPrayerLogDialog = true }
@@ -471,6 +473,7 @@ private fun PrayerLogSection(
     onEnabledChange: (Boolean) -> Unit,
     onReminderChange: (Boolean) -> Unit,
     onReminderMinutesChange: (Int) -> Unit,
+    onGameNotificationsChange: (Boolean) -> Unit,
     onExport: () -> Unit,
     onImport: () -> Unit,
     onClear: () -> Unit
@@ -509,6 +512,14 @@ private fun PrayerLogSection(
                         onClick = { showReminderTimeDialog = true }
                     )
                 }
+
+                SettingsToggleItem(
+                    title = stringResource(R.string.prayer_log_game_setting),
+                    subtitle = stringResource(R.string.prayer_log_game_setting_desc),
+                    icon = Icons.Rounded.EmojiEvents,
+                    checked = s.prayerLogGameNotifications,
+                    onCheckedChange = onGameNotificationsChange
+                )
             }
         }
 

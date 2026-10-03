@@ -436,8 +436,6 @@
     <string name="badge_open_source">متن‌باز</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">اوقات نماز</string>
-    <string name="widget_description">نماز بعدی، شمارش معکوس زنده و کل روز در یک نگاه</string>
     <string name="widget_next_up">بعدی</string>
     <string name="widget_empty">برای بارگیری اوقات نماز، Waktiva را باز کنید</string>
     <string name="widget_countdown_label">شمارش معکوس</string>
@@ -502,4 +500,47 @@
     <string name="prayer_log_next_month">ماه بعد</string>
     <string name="prayer_log_hint">وقتی وقت نماز رسید، روی نشان آن در دایرهٔ صفحهٔ اصلی بزن و «خواندم» را انتخاب کن، یا از همین‌جا علامت بزن.</string>
     <string name="settings_support_desc">کمک کن Waktiva رایگان، خصوصی و بدون تبلیغ بماند</string>
+    <string name="prayer_log_level">سطح %1$d</string>
+    <string name="prayer_log_xp_to_next">%1$d XP تا سطح %2$d</string>
+    <string name="prayer_log_full_day_bonus">پاداش روز کامل</string>
+    <string name="prayer_log_best_streak">بهترین: %1$d</string>
+    <string name="prayer_log_badges">نشان‌ها</string>
+    <string name="prayer_log_badge_unlocked">نشان تازه</string>
+    <string name="prayer_log_level_up">سطحت بالا رفت!</string>
+    <string name="prayer_log_badge_earned">به دست آمد</string>
+    <string name="prayer_log_next_goal">هدف بعدی</string>
+    <string name="prayer_log_badge_first_prayer">گام نخست</string>
+    <string name="prayer_log_badge_first_prayer_desc">نخستین نمازت را علامت بزن</string>
+    <string name="prayer_log_badge_first_full_day">روز کامل</string>
+    <string name="prayer_log_badge_first_full_day_desc">هر پنج نماز یک روز را بخوان</string>
+    <string name="prayer_log_badge_streak_3">جرقه</string>
+    <string name="prayer_log_badge_streak_3_desc">۳ روز کامل پیاپی</string>
+    <string name="prayer_log_badge_streak_7">شعله</string>
+    <string name="prayer_log_badge_streak_7_desc">۷ روز کامل پیاپی</string>
+    <string name="prayer_log_badge_fajr_7">ستارهٔ صبح</string>
+    <string name="prayer_log_badge_fajr_7_desc">۷ روز پیاپی نماز صبح بخوان</string>
+    <string name="prayer_log_badge_prayers_100">صدتایی</string>
+    <string name="prayer_log_badge_prayers_100_desc">۱۰۰ نماز علامت بزن</string>
+    <string name="prayer_log_badge_streak_40">چهل روز</string>
+    <string name="prayer_log_badge_streak_40_desc">۴۰ روز کامل پیاپی</string>
+    <string name="prayer_log_badge_prayers_500">پایداری</string>
+    <string name="prayer_log_badge_prayers_500_desc">۵۰۰ نماز علامت بزن</string>
+    <string name="prayer_log_game_setting">اعلان‌های بازی</string>
+    <string name="prayer_log_game_setting_desc">یادآوری برای XP پیش از پایان وقت نماز، رشتهٔ روزهایت در یادآوری شب، و جشن روزهای کامل، سطح‌ها و نشان‌ها</string>
+    <string name="prayer_log_game_channel">پیش از پایان وقت نماز</string>
+    <string name="prayer_log_game_channel_desc">یادآوری با صدا برای علامت زدن نماز و گرفتن XP پیش از پایان وقتش</string>
+    <string name="prayer_log_celebration_channel">جشن‌های کارنامهٔ نماز</string>
+    <string name="prayer_log_celebration_channel_desc">روزهای کامل، سطح‌ها و نشان‌های به‌دست‌آمده، بی‌صدا</string>
+    <string name="prayer_log_nudge_title">وقت %1$s رو به پایان است</string>
+    <string name="prayer_log_nudge_text">خواندی؟ علامت بزن و +%1$d XP بگیر.</string>
+    <string name="prayer_log_nudge_text_streak">خواندی؟ علامت بزن، +%1$d XP بگیر و رشتهٔ %2$d روزه‌ات را نگه دار 🔥</string>
+    <string name="prayer_log_nudge_mark">خواندم · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">رشتهٔ %1$d روزه‌ات در خطر است 🔥</string>
+    <string name="prayer_log_game_finish_title">روز را کامل کن: +%1$d XP در انتظار توست</string>
+    <string name="prayer_log_celebrate_full_day">روز کامل! پاداش +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">رشته: %1$d روز 🔥</string>
+    <string name="prayer_log_celebrate_badge">نشان تازه: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">سطحت بالا رفت! اکنون در سطح %1$d هستی 🎉</string>
+    <string name="widget_prayer_log_description">سطح، رشته و نشان‌هایت، با نمازهای امروز برای علامت زدن با یک لمس</string>
+    <string name="widget_prayer_log_off">کارنامهٔ نماز را از تنظیمات روشن کن</string>
 </resources>

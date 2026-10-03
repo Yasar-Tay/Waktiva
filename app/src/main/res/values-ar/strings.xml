@@ -436,8 +436,6 @@
     <string name="lang_fi">Suomi</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">مواقيت الصلاة</string>
-    <string name="widget_description">الصلاة القادمة وعدّ تنازلي مباشر ومواقيت اليوم كله بنظرة واحدة</string>
     <string name="widget_next_up">التالية</string>
     <string name="widget_empty">افتح Waktiva لتحميل مواقيت الصلاة</string>
     <string name="widget_countdown_label">العد التنازلي</string>
@@ -502,4 +500,47 @@
     <string name="prayer_log_next_month">الشهر التالي</string>
     <string name="prayer_log_hint">عند دخول وقت الصلاة، اضغط على شارتها في الدائرة بالشاشة الرئيسية واختر «صلّيت»، أو علّمها من هنا.</string>
     <string name="settings_support_desc">ساعد في إبقاء Waktiva مجانيًا وخاصًا وبلا إعلانات</string>
+    <string name="prayer_log_level">المستوى %1$d</string>
+    <string name="prayer_log_xp_to_next">%1$d XP للوصول إلى المستوى %2$d</string>
+    <string name="prayer_log_full_day_bonus">مكافأة اليوم الكامل</string>
+    <string name="prayer_log_best_streak">الأفضل: %1$d</string>
+    <string name="prayer_log_badges">الأوسمة</string>
+    <string name="prayer_log_badge_unlocked">وسام جديد</string>
+    <string name="prayer_log_level_up">ارتقيت مستوى!</string>
+    <string name="prayer_log_badge_earned">تم الحصول عليه</string>
+    <string name="prayer_log_next_goal">الهدف التالي</string>
+    <string name="prayer_log_badge_first_prayer">الخطوة الأولى</string>
+    <string name="prayer_log_badge_first_prayer_desc">علّم صلاتك الأولى</string>
+    <string name="prayer_log_badge_first_full_day">يوم كامل</string>
+    <string name="prayer_log_badge_first_full_day_desc">صلِّ الصلوات الخمس في يوم واحد</string>
+    <string name="prayer_log_badge_streak_3">شرارة</string>
+    <string name="prayer_log_badge_streak_3_desc">3 أيام كاملة متتالية</string>
+    <string name="prayer_log_badge_streak_7">شعلة</string>
+    <string name="prayer_log_badge_streak_7_desc">7 أيام كاملة متتالية</string>
+    <string name="prayer_log_badge_fajr_7">نجمة الصباح</string>
+    <string name="prayer_log_badge_fajr_7_desc">صلِّ الفجر 7 أيام متتالية</string>
+    <string name="prayer_log_badge_prayers_100">المئة</string>
+    <string name="prayer_log_badge_prayers_100_desc">علّم 100 صلاة</string>
+    <string name="prayer_log_badge_streak_40">أربعون يومًا</string>
+    <string name="prayer_log_badge_streak_40_desc">40 يومًا كاملًا متتاليًا</string>
+    <string name="prayer_log_badge_prayers_500">الثبات</string>
+    <string name="prayer_log_badge_prayers_500_desc">علّم 500 صلاة</string>
+    <string name="prayer_log_game_setting">إشعارات اللعبة</string>
+    <string name="prayer_log_game_setting_desc">تذكير لكسب XP قبل خروج وقت الصلاة، وسلسلتك في تذكير المساء، واحتفال بالأيام الكاملة والمستويات والأوسمة</string>
+    <string name="prayer_log_game_channel">قبل خروج وقت الصلاة</string>
+    <string name="prayer_log_game_channel_desc">تذكير بصوت لتعليم الصلاة وكسب XP قبل خروج وقتها</string>
+    <string name="prayer_log_celebration_channel">احتفالات سجل الصلوات</string>
+    <string name="prayer_log_celebration_channel_desc">الأيام الكاملة والمستويات والأوسمة، بلا صوت</string>
+    <string name="prayer_log_nudge_title">وقت %1$s يوشك على الانتهاء</string>
+    <string name="prayer_log_nudge_text">صلّيتها؟ علّمها واكسب +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">صلّيتها؟ علّمها واكسب +%1$d XP وحافظ على سلسلة %2$d أيام 🔥</string>
+    <string name="prayer_log_nudge_mark">صلّيت · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">سلسلة %1$d أيام في خطر 🔥</string>
+    <string name="prayer_log_game_finish_title">أكمل اليوم: +%1$d XP بانتظارك</string>
+    <string name="prayer_log_celebrate_full_day">يوم كامل! مكافأة +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">السلسلة: %1$d أيام 🔥</string>
+    <string name="prayer_log_celebrate_badge">وسام جديد: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">ارتقيت مستوى! أنت الآن في المستوى %1$d 🎉</string>
+    <string name="widget_prayer_log_description">مستواك وسلسلتك وأوسمتك، مع صلوات اليوم لتعليمها بلمسة</string>
+    <string name="widget_prayer_log_off">فعّل سجل الصلوات من الإعدادات</string>
 </resources>

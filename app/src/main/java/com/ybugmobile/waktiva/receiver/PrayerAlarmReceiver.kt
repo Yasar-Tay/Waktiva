@@ -14,6 +14,7 @@ import androidx.work.WorkManager
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.alarm.AlarmScheduler
 import com.ybugmobile.waktiva.data.notification.NotificationHelper
+import com.ybugmobile.waktiva.data.notification.PrayerLogGameNotifier
 import com.ybugmobile.waktiva.data.worker.AdhanWorker
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
 import com.ybugmobile.waktiva.domain.model.LoggedPrayers
@@ -52,6 +53,9 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var prayerLogRepository: PrayerLogRepository
 
+    @Inject
+    lateinit var prayerLogGame: PrayerLogGameNotifier
+
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
@@ -82,11 +86,30 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
             scope.launch {
                 try {
                     val date = LocalDate.parse(prayerDate)
-                    unmarkedPrayers(date).forEach { prayerLogRepository.setPrayed(date, it, true) }
+                    prayerLogGame.markAll(date, unmarkedPrayers(date), prayed = true, today = LocalDate.now())
                     notificationHelper.cancelPrayerLogReminder()
                     WaktivaWidget.updateAll(context)
                 } catch (e: Exception) {
                     Log.e("PrayerAlarmReceiver", "Could not mark the prayers", e)
+                } finally {
+                    pendingResult.finish()
+                }
+            }
+            return
+        }
+
+        if (action == NotificationHelper.ACTION_MARK_PRAYED) {
+            val pendingResult = goAsync()
+            scope.launch {
+                try {
+                    val type = PrayerType.fromString(prayerName)
+                    if (type != null) {
+                        prayerLogGame.setPrayed(LocalDate.parse(prayerDate), type, prayed = true, today = LocalDate.now())
+                    }
+                    notificationHelper.cancelPrayerLogNudge()
+                    WaktivaWidget.updateAll(context)
+                } catch (e: Exception) {
+                    Log.e("PrayerAlarmReceiver", "Could not mark the prayer", e)
                 } finally {
                     pendingResult.finish()
                 }
@@ -102,9 +125,17 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                         val settings = settingsManager.settingsFlow.first()
                         if (settings.prayerLogEnabled && settings.prayerLogReminderEnabled) {
                             // Only a day with a prayer left to mark is worth a reminder.
-                            val unmarked = unmarkedPrayers(LocalDate.parse(prayerDate))
-                            if (unmarked.isNotEmpty()) notificationHelper.showPrayerLogReminder(prayerDate, unmarked)
+                            val date = LocalDate.parse(prayerDate)
+                            val unmarked = unmarkedPrayers(date)
+                            if (unmarked.isNotEmpty()) {
+                                notificationHelper.showPrayerLogReminder(prayerDate, unmarked, prayerLogGame.reminderStreak(date))
+                            }
                         }
+                        rescheduleNextPrayer()
+                    }
+                    AlarmScheduler.ACTION_PRAYER_LOG_NUDGE -> {
+                        val type = PrayerType.fromString(prayerName)
+                        if (type != null) prayerLogGame.nudge(LocalDate.parse(prayerDate), type, LocalDate.now())
                         rescheduleNextPrayer()
                     }
                     AlarmScheduler.ACTION_PRE_ADHAN_NOTIFICATION -> {

@@ -436,8 +436,6 @@
     <string name="badge_open_source">ওপেন সোর্স</string>
 
     <!-- iOS-style widget -->
-    <string name="widget_label">নামাজের সময়</string>
-    <string name="widget_description">পরবর্তী নামাজ, লাইভ কাউন্টডাউন এবং সারাদিনের সময় এক নজরে</string>
     <string name="widget_next_up">পরবর্তী</string>
     <string name="widget_empty">নামাজের সময় লোড করতে Waktiva খুলুন</string>
     <string name="widget_countdown_label">কাউন্টডাউন</string>
@@ -502,4 +500,47 @@
     <string name="prayer_log_next_month">পরের মাস</string>
     <string name="prayer_log_hint">নামাজের ওয়াক্ত হলে হোম স্ক্রিনের বৃত্তে তার ব্যাজে ট্যাপ করে “পড়েছি” বেছে নিন, অথবা এখান থেকে চিহ্ন দিন।</string>
     <string name="settings_support_desc">Waktiva-কে বিনামূল্যে, ব্যক্তিগত ও বিজ্ঞাপনমুক্ত রাখতে সাহায্য করুন</string>
+    <string name="prayer_log_level">লেভেল %1$d</string>
+    <string name="prayer_log_xp_to_next">লেভেল %2$d-এর জন্য %1$d XP</string>
+    <string name="prayer_log_full_day_bonus">পূর্ণ দিনের বোনাস</string>
+    <string name="prayer_log_best_streak">সেরা: %1$d</string>
+    <string name="prayer_log_badges">ব্যাজ</string>
+    <string name="prayer_log_badge_unlocked">নতুন ব্যাজ</string>
+    <string name="prayer_log_level_up">লেভেল আপ!</string>
+    <string name="prayer_log_badge_earned">অর্জিত</string>
+    <string name="prayer_log_next_goal">পরবর্তী লক্ষ্য</string>
+    <string name="prayer_log_badge_first_prayer">প্রথম পদক্ষেপ</string>
+    <string name="prayer_log_badge_first_prayer_desc">আপনার প্রথম নামাজ চিহ্নিত করুন</string>
+    <string name="prayer_log_badge_first_full_day">পূর্ণ দিন</string>
+    <string name="prayer_log_badge_first_full_day_desc">এক দিনে পাঁচ ওয়াক্ত নামাজই পড়ুন</string>
+    <string name="prayer_log_badge_streak_3">স্ফুলিঙ্গ</string>
+    <string name="prayer_log_badge_streak_3_desc">টানা ৩টি পূর্ণ দিন</string>
+    <string name="prayer_log_badge_streak_7">শিখা</string>
+    <string name="prayer_log_badge_streak_7_desc">টানা ৭টি পূর্ণ দিন</string>
+    <string name="prayer_log_badge_fajr_7">ভোরের তারা</string>
+    <string name="prayer_log_badge_fajr_7_desc">টানা ৭ দিন ফজর পড়ুন</string>
+    <string name="prayer_log_badge_prayers_100">শতক</string>
+    <string name="prayer_log_badge_prayers_100_desc">১০০ নামাজ চিহ্নিত করুন</string>
+    <string name="prayer_log_badge_streak_40">চল্লিশ দিন</string>
+    <string name="prayer_log_badge_streak_40_desc">টানা ৪০টি পূর্ণ দিন</string>
+    <string name="prayer_log_badge_prayers_500">অবিচল</string>
+    <string name="prayer_log_badge_prayers_500_desc">৫০০ নামাজ চিহ্নিত করুন</string>
+    <string name="prayer_log_game_setting">গেম নোটিফিকেশন</string>
+    <string name="prayer_log_game_setting_desc">ওয়াক্ত শেষ হওয়ার আগে XP-এর জন্য মনে করিয়ে দেয়, সন্ধ্যার রিমাইন্ডারে আপনার ধারা দেখায়, আর পূর্ণ দিন, লেভেল ও ব্যাজ উদযাপন করে</string>
+    <string name="prayer_log_game_channel">ওয়াক্ত শেষ হওয়ার আগে</string>
+    <string name="prayer_log_game_channel_desc">ওয়াক্ত শেষ হওয়ার আগে নামাজ চিহ্নিত করে XP পেতে শব্দসহ রিমাইন্ডার</string>
+    <string name="prayer_log_celebration_channel">নামাজের হিসাবের উদযাপন</string>
+    <string name="prayer_log_celebration_channel_desc">পূর্ণ দিন, লেভেল ও অর্জিত ব্যাজ, শব্দ ছাড়া</string>
+    <string name="prayer_log_nudge_title">%1$s-এর ওয়াক্ত শেষ হতে চলেছে</string>
+    <string name="prayer_log_nudge_text">পড়েছেন? চিহ্নিত করুন, +%1$d XP পান।</string>
+    <string name="prayer_log_nudge_text_streak">পড়েছেন? চিহ্নিত করুন, +%1$d XP পান আর %2$d দিনের ধারা বজায় রাখুন 🔥</string>
+    <string name="prayer_log_nudge_mark">পড়েছি · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">আপনার %1$d দিনের ধারা ঝুঁকিতে 🔥</string>
+    <string name="prayer_log_game_finish_title">দিনটি পূর্ণ করুন: +%1$d XP অপেক্ষায়</string>
+    <string name="prayer_log_celebrate_full_day">পূর্ণ দিন! +%1$d XP বোনাস</string>
+    <string name="prayer_log_celebrate_streak">ধারা: %1$d দিন 🔥</string>
+    <string name="prayer_log_celebrate_badge">নতুন ব্যাজ: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">লেভেল আপ! এখন আপনি লেভেল %1$d-এ 🎉</string>
+    <string name="widget_prayer_log_description">আপনার লেভেল, ধারা ও ব্যাজ, আর আজকের নামাজ এক ট্যাপে চিহ্নিত করুন</string>
+    <string name="widget_prayer_log_off">সেটিংস থেকে নামাজের হিসাব চালু করুন</string>
 </resources>
