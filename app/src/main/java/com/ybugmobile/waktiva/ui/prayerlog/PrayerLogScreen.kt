@@ -140,7 +140,8 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            CenterAlignedTopAppBar(
+            // Landscape is short of height: the navigation rail beside it names the screen.
+            if (!isLandscape) CenterAlignedTopAppBar(
                 title = {
                     Text(
                         text = stringResource(R.string.prayer_log_title).uppercase(),
@@ -169,21 +170,20 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
         }
 
         val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-        val levelCard = @Composable { LevelCard(state.progress) }
-        val todayCard = @Composable { TodayCard(today, state, onToggle) }
-        val badgesCard = @Composable { BadgesCard(state.progress) }
-        val historyCard = @Composable {
+        val historyCard = @Composable { compact: Boolean ->
             HistoryCard(
                 state = state,
                 onShowMonth = viewModel::showMonth,
                 onSelect = viewModel::select,
-                onToggle = onToggle
+                onToggle = onToggle,
+                compact = compact
             )
         }
 
         Box(Modifier.fillMaxSize()) {
             if (isLandscape) {
-                // Side by side, clear of the navigation rail: the game on one side, the calendar on the other.
+                // Side by side, clear of the navigation rail: today and the game on one side, the
+                // calendar on the other, each scrolling on its own.
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
@@ -192,14 +192,23 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
                         .padding(start = 92.dp, end = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    listOf(listOf(levelCard, todayCard, badgesCard), listOf(historyCard)).forEach { cards ->
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .verticalScroll(rememberScrollState())
-                                .padding(top = 12.dp, bottom = bottomInset + 24.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) { cards.forEach { it() } }
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                            .padding(top = 12.dp, bottom = bottomInset + 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        LandscapeTodayCard(today, state, onToggle)
+                        BadgesCard(state.progress)
+                    }
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                            .padding(top = 12.dp, bottom = bottomInset + 16.dp)
+                    ) {
+                        historyCard(true)
                     }
                 }
             } else {
@@ -211,10 +220,10 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
                         .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = bottomInset + 100.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    levelCard()
-                    todayCard()
-                    badgesCard()
-                    historyCard()
+                    LevelCard(state.progress)
+                    TodayCard(today, state, onToggle)
+                    BadgesCard(state.progress)
+                    historyCard(false)
                 }
             }
 
@@ -240,38 +249,13 @@ private fun TodayCard(
     onToggle: (LocalDate, PrayerLogEntry) -> Unit
 ) {
     val contentColor = LocalGlassTheme.current.contentColor
-    val locale = LocalConfiguration.current.locales[0]
-    val active = today.entries.firstOrNull { it.status == PrayerLogStatus.ACTIVE }
 
     GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 DayRing(today, Modifier.size(92.dp))
                 Spacer(Modifier.width(18.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        text = today.date.format(DateTimeFormatter.ofPattern("d MMMM, EEEE", locale)),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = contentColor.copy(alpha = 0.6f)
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    // What matters now: the prayer whose time is on, else how the day stands. Until
-                    // the first prayer is marked, how to mark one.
-                    Text(
-                        text = when {
-                            today.isComplete -> stringResource(R.string.prayer_log_all_done)
-                            active != null -> stringResource(R.string.prayer_log_now, active.type.prayerName)
-                            state.startDate == null -> stringResource(R.string.prayer_log_hint)
-                            else -> stringResource(R.string.prayer_log_today_count, today.prayed, today.entries.size)
-                        },
-                        style = if (state.startDate == null && active == null && !today.isComplete) {
-                            MaterialTheme.typography.bodySmall.copy(lineHeight = 17.sp)
-                        } else {
-                            MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                        },
-                        color = contentColor
-                    )
-                }
+                TodayHeadline(today, state, Modifier.weight(1f))
             }
 
             Spacer(Modifier.height(20.dp))
@@ -283,6 +267,76 @@ private fun TodayCard(
             Spacer(Modifier.height(14.dp))
             Stats(state)
         }
+    }
+}
+
+/**
+ * Landscape's today, with the level folded in to spare the short height: the ring beside the
+ * headline and the level line, then the five prayers, the full day's bonus and the figures.
+ */
+@Composable
+private fun LandscapeTodayCard(
+    today: PrayerLogDay,
+    state: PrayerLogViewState,
+    onToggle: (LocalDate, PrayerLogEntry) -> Unit
+) {
+    val contentColor = LocalGlassTheme.current.contentColor
+
+    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(horizontal = 18.dp, vertical = 16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                DayRing(today, Modifier.size(84.dp))
+                Spacer(Modifier.width(16.dp))
+                Column(Modifier.weight(1f)) {
+                    TodayHeadline(today, state)
+                    Spacer(Modifier.height(10.dp))
+                    LevelLine(state.progress, compact = true)
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+            PrayerRow(today, chipSize = 44.dp, onToggle = onToggle)
+            Spacer(Modifier.height(12.dp))
+            FullDayBonus(today.isComplete, Modifier.align(Alignment.CenterHorizontally))
+            Spacer(Modifier.height(12.dp))
+            HorizontalDivider(color = contentColor.copy(alpha = 0.1f))
+            Spacer(Modifier.height(10.dp))
+            Stats(state)
+        }
+    }
+}
+
+/**
+ * Today's date over what matters now: the prayer whose time is on, else how the day stands.
+ * Until the first prayer is marked, how to mark one.
+ */
+@Composable
+private fun TodayHeadline(today: PrayerLogDay, state: PrayerLogViewState, modifier: Modifier = Modifier) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val locale = LocalConfiguration.current.locales[0]
+    val active = today.entries.firstOrNull { it.status == PrayerLogStatus.ACTIVE }
+
+    Column(modifier) {
+        Text(
+            text = today.date.format(DateTimeFormatter.ofPattern("d MMMM, EEEE", locale)),
+            style = MaterialTheme.typography.labelMedium,
+            color = contentColor.copy(alpha = 0.6f)
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = when {
+                today.isComplete -> stringResource(R.string.prayer_log_all_done)
+                active != null -> stringResource(R.string.prayer_log_now, active.type.prayerName)
+                state.startDate == null -> stringResource(R.string.prayer_log_hint)
+                else -> stringResource(R.string.prayer_log_today_count, today.prayed, today.entries.size)
+            },
+            style = if (state.startDate == null && active == null && !today.isComplete) {
+                MaterialTheme.typography.bodySmall.copy(lineHeight = 17.sp)
+            } else {
+                MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            },
+            color = contentColor
+        )
     }
 }
 
@@ -379,21 +433,23 @@ private fun StatDivider() {
 
 /**
  * The month calendar, each day a small ring of its five prayers, and under it the picked day's
- * prayers to mark. Arrows or a swipe move between months.
+ * prayers to mark. Arrows or a swipe move between months. [compact], for landscape, flattens the
+ * weeks so the month and the picked day fit the short height.
  */
 @Composable
 private fun HistoryCard(
     state: PrayerLogViewState,
     onShowMonth: (Long) -> Unit,
     onSelect: (LocalDate) -> Unit,
-    onToggle: (LocalDate, PrayerLogEntry) -> Unit
+    onToggle: (LocalDate, PrayerLogEntry) -> Unit,
+    compact: Boolean = false
 ) {
     val contentColor = LocalGlassTheme.current.contentColor
     val locale = LocalConfiguration.current.locales[0]
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
     GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(horizontal = 12.dp, vertical = 14.dp)) {
+        Column(Modifier.padding(horizontal = 12.dp, vertical = if (compact) 8.dp else 14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { onShowMonth(-1) }, enabled = state.canShowPreviousMonth) {
                     Icon(
@@ -434,7 +490,7 @@ private fun HistoryCard(
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(if (compact) 2.dp else 8.dp))
 
             // A swipe turns the month: towards the start of the line for the next one.
             var drag by remember { mutableFloatStateOf(0f) }
@@ -460,17 +516,18 @@ private fun HistoryCard(
                     today = state.today?.date,
                     days = state.calendar,
                     selected = state.selected?.date,
-                    onSelect = onSelect
+                    onSelect = onSelect,
+                    cellAspect = if (compact) 1.5f else 1f
                 )
             }
 
             state.selected?.let { day ->
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(if (compact) 6.dp else 10.dp))
                 HorizontalDivider(
                     color = contentColor.copy(alpha = 0.1f),
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
-                Spacer(Modifier.height(14.dp))
+                Spacer(Modifier.height(if (compact) 10.dp else 14.dp))
                 Row(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -490,7 +547,7 @@ private fun HistoryCard(
                         color = if (day.isComplete) PrayedGold else contentColor.copy(alpha = 0.7f)
                     )
                 }
-                Spacer(Modifier.height(14.dp))
+                Spacer(Modifier.height(if (compact) 10.dp else 14.dp))
                 Box(Modifier.padding(horizontal = 8.dp)) {
                     PrayerRow(day, chipSize = 40.dp, onToggle = onToggle)
                 }
@@ -500,14 +557,18 @@ private fun HistoryCard(
     }
 }
 
-/** A month of days in weeks, starting on the locale's first day of the week. */
+/**
+ * A month of days in weeks, starting on the locale's first day of the week. Each day's cell is
+ * [cellAspect] times as wide as it's tall; its ring stays round.
+ */
 @Composable
 private fun MonthGrid(
     month: YearMonth,
     today: LocalDate?,
     days: Map<LocalDate, PrayerLogDay>,
     selected: LocalDate?,
-    onSelect: (LocalDate) -> Unit
+    onSelect: (LocalDate) -> Unit,
+    cellAspect: Float = 1f
 ) {
     val contentColor = LocalGlassTheme.current.contentColor
     val locale = LocalConfiguration.current.locales[0]
@@ -536,7 +597,7 @@ private fun MonthGrid(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .aspectRatio(1f),
+                            .aspectRatio(cellAspect),
                         contentAlignment = Alignment.Center
                     ) {
                         if (date != null) {
@@ -575,7 +636,8 @@ private fun DayCell(
     Box(
         modifier = Modifier
             .padding(3.dp)
-            .fillMaxSize()
+            .fillMaxHeight()
+            .aspectRatio(1f, matchHeightConstraintsFirst = true)
             .clip(CircleShape)
             .then(if (isSelected) Modifier.background(contentColor.copy(alpha = 0.16f)) else Modifier)
             .then(if (day != null) Modifier.clickable(onClick = onClick) else Modifier)

@@ -82,53 +82,69 @@ import kotlin.random.Random
  */
 @Composable
 internal fun LevelCard(progress: PrayerLogProgress) {
-    val contentColor = LocalGlassTheme.current.contentColor
-    val locale = LocalConfiguration.current.locales[0]
-    val integer = remember(locale) { NumberFormat.getIntegerInstance(locale) }
-    val fraction by animateFloatAsState(
-        progress.levelXp.toFloat() / progress.levelSpan,
-        tween(700, easing = FastOutSlowInEasing),
-        label = "levelFraction"
-    )
-    val xp by animateIntAsState(progress.xp, tween(700), label = "xp")
+    val fraction by animateLevelFraction(progress)
 
     GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(horizontal = 20.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
             LevelMedal(progress.level, fraction, Modifier.size(64.dp))
             Spacer(Modifier.width(16.dp))
-            Column(Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.Bottom) {
-                    Text(
-                        text = stringResource(R.string.prayer_log_level, progress.level),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
-                        color = contentColor,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = stringResource(R.string.prayer_log_xp, integer.format(xp)),
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            fontWeight = FontWeight.Black,
-                            fontFeatureSettings = "tnum"
-                        ),
-                        color = PrayedGold
-                    )
-                }
-                Spacer(Modifier.height(8.dp))
-                XpBar(fraction, Modifier.fillMaxWidth().height(10.dp))
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    text = stringResource(
-                        R.string.prayer_log_xp_to_next,
-                        progress.levelSpan - progress.levelXp,
-                        progress.level + 1
-                    ),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = contentColor.copy(alpha = 0.55f)
-                )
-            }
+            LevelLine(progress, Modifier.weight(1f))
         }
     }
 }
+
+/**
+ * The level in a line: "Level 5" with all the XP gathered beside it, the XP bar, and what the
+ * next level takes. [compact] makes the bar thinner, for the landscape's today card.
+ */
+@Composable
+internal fun LevelLine(progress: PrayerLogProgress, modifier: Modifier = Modifier, compact: Boolean = false) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val locale = LocalConfiguration.current.locales[0]
+    val integer = remember(locale) { NumberFormat.getIntegerInstance(locale) }
+    val fraction by animateLevelFraction(progress)
+    val xp by animateIntAsState(progress.xp, tween(700), label = "xp")
+
+    Column(modifier) {
+        Row(verticalAlignment = Alignment.Bottom) {
+            Text(
+                text = stringResource(R.string.prayer_log_level, progress.level),
+                style = (if (compact) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium)
+                    .copy(fontWeight = FontWeight.ExtraBold),
+                color = contentColor,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = stringResource(R.string.prayer_log_xp, integer.format(xp)),
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.Black,
+                    fontFeatureSettings = "tnum"
+                ),
+                color = PrayedGold
+            )
+        }
+        Spacer(Modifier.height(if (compact) 6.dp else 8.dp))
+        XpBar(fraction, Modifier.fillMaxWidth().height(if (compact) 7.dp else 10.dp))
+        Spacer(Modifier.height(if (compact) 4.dp else 6.dp))
+        Text(
+            text = stringResource(
+                R.string.prayer_log_xp_to_next,
+                progress.levelSpan - progress.levelXp,
+                progress.level + 1
+            ),
+            style = MaterialTheme.typography.labelSmall,
+            color = contentColor.copy(alpha = 0.55f),
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+private fun animateLevelFraction(progress: PrayerLogProgress) = animateFloatAsState(
+    progress.levelXp.toFloat() / progress.levelSpan,
+    tween(700, easing = FastOutSlowInEasing),
+    label = "levelFraction"
+)
 
 @Composable
 private fun LevelMedal(level: Int, fraction: Float, modifier: Modifier = Modifier) {
