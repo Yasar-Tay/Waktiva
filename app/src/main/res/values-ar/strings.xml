@@ -527,4 +527,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 يومًا كاملًا متتاليًا</string>
     <string name="prayer_log_badge_prayers_500">الثبات</string>
     <string name="prayer_log_badge_prayers_500_desc">علّم 500 صلاة</string>
+    <string name="prayer_log_game_setting">إشعارات اللعبة</string>
+    <string name="prayer_log_game_setting_desc">تذكير لكسب XP قبل خروج وقت الصلاة، وسلسلتك في تذكير المساء، واحتفال بالأيام الكاملة والمستويات والأوسمة</string>
+    <string name="prayer_log_game_channel">لعبة سجل الصلوات</string>
+    <string name="prayer_log_game_channel_desc">تذكيرات قبل خروج وقت الصلاة واحتفال بما تحققه</string>
+    <string name="prayer_log_nudge_title">وقت %1$s يوشك على الانتهاء</string>
+    <string name="prayer_log_nudge_text">صلّيتها؟ علّمها واكسب +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">صلّيتها؟ علّمها واكسب +%1$d XP وحافظ على سلسلة %2$d أيام 🔥</string>
+    <string name="prayer_log_nudge_mark">صلّيت · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">سلسلة %1$d أيام في خطر 🔥</string>
+    <string name="prayer_log_game_finish_title">أكمل اليوم: +%1$d XP بانتظارك</string>
+    <string name="prayer_log_celebrate_full_day">يوم كامل! مكافأة +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">السلسلة: %1$d أيام 🔥</string>
+    <string name="prayer_log_celebrate_badge">وسام جديد: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">ارتقيت مستوى! أنت الآن في المستوى %1$d 🎉</string>
+    <string name="widget_prayer_log_description">مستواك وسلسلتك وأوسمتك، مع صلوات اليوم لتعليمها بلمسة</string>
+    <string name="widget_prayer_log_off">فعّل سجل الصلوات من الإعدادات</string>
 </resources>

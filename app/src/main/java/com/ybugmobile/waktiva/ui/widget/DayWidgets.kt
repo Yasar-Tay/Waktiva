@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerDay
+import com.ybugmobile.waktiva.domain.model.PrayerLogProgress
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.model.isLogged
 import com.ybugmobile.waktiva.ui.home.composables.accentColor
@@ -279,7 +280,9 @@ internal object DayWidgets {
         val label = when (moment.state) {
             MomentState.OPEN -> context.getString(R.string.widget_prayer_time, prayer)
             MomentState.ENDING -> context.getString(R.string.widget_prayer_time_ending, prayer)
-            MomentState.PRAYED -> context.getString(R.string.widget_prayer_prayed, prayer)
+            // With the log's XP for it: the prayer log is a game, on the home screen too.
+            MomentState.PRAYED -> context.getString(R.string.widget_prayer_prayed, prayer) + "  " +
+                context.getString(R.string.prayer_log_xp_gain, PrayerLogProgress.XP_PER_PRAYER)
             MomentState.WAITING -> context.getString(R.string.widget_next_up)
         }
         views.setTextViewText(R.id.widget_label, label)
@@ -321,7 +324,7 @@ internal object DayWidgets {
         }
 
         if (moment.canMark || prayed) {
-            views.setOnClickPendingIntent(R.id.widget_mark, toggleIntent(context, moment.logDate, moment.prayer))
+            views.setOnClickPendingIntent(R.id.widget_mark, toggleIntent(context, moment.logDate, moment.prayer, REQUEST_TOGGLE))
             views.setContentDescription(
                 R.id.widget_mark,
                 if (prayed) "$label. ${context.getString(R.string.prayer_log_unmark)}" else "${context.getString(R.string.prayer_log_mark)}: $prayer"
@@ -331,7 +334,11 @@ internal object DayWidgets {
 
     private fun locale(context: Context): Locale = context.resources.configuration.locales[0] ?: Locale.getDefault()
 
-    private fun toggleIntent(context: Context, date: LocalDate, type: PrayerType): PendingIntent {
+    /**
+     * Marks [type] on [date] or takes the mark back ([togglePrayer]). Each widget kind passes its
+     * own [requestBase], so one's taps can't hand another theirs.
+     */
+    fun toggleIntent(context: Context, date: LocalDate, type: PrayerType, requestBase: Int): PendingIntent {
         val intent = Intent(context, DayWidgetActionReceiver::class.java).apply {
             action = ACTION_TOGGLE_PRAYER
             putExtra(EXTRA_DATE, date.toString())
@@ -339,7 +346,7 @@ internal object DayWidgets {
         }
         return PendingIntent.getBroadcast(
             context,
-            REQUEST_TOGGLE + type.ordinal,
+            requestBase + type.ordinal,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -350,7 +357,8 @@ internal object DayWidgets {
     /**
      * Marks [type] on [date] as prayed, or takes the mark back, as the widget asks. Only a prayer
      * whose time has come: one of today's, or the night's Isha (yesterday's) before dawn. A widget
-     * drawn earlier can't mark what the app wouldn't.
+     * drawn earlier can't mark what the app wouldn't. What a mark reaches is cheered for in a
+     * notification while the log's game notifications are on.
      */
     suspend fun togglePrayer(context: Context, date: LocalDate, type: PrayerType) {
         val ep = WaktivaWidget.entryPoint(context)
@@ -366,9 +374,8 @@ internal object DayWidgets {
         }
         if (!allowed) return
 
-        val log = ep.prayerLogRepository()
-        val prayed = type in log.getPrayedPrayers(date).first()
-        log.setPrayed(date, type, !prayed)
+        val prayed = type in ep.prayerLogRepository().getPrayedPrayers(date).first()
+        ep.prayerLogGame().setPrayed(date, type, !prayed, today)
     }
 
     // ── The ticks ─────────────────────────────────────────────────────────

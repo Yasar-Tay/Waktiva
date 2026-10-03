@@ -526,4 +526,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 dias completos seguidos</string>
     <string name="prayer_log_badge_prayers_500">Constância</string>
     <string name="prayer_log_badge_prayers_500_desc">Marque 500 orações</string>
+    <string name="prayer_log_game_setting">Notificações de jogo</string>
+    <string name="prayer_log_game_setting_desc">Um lembrete para ganhar XP antes que o tempo de uma oração acabe, sua sequência no lembrete da noite e comemorações por dias completos, níveis e medalhas</string>
+    <string name="prayer_log_game_channel">Jogo do registro de orações</string>
+    <string name="prayer_log_game_channel_desc">Lembretes antes que o tempo de uma oração acabe e comemorações pelo que você conquista</string>
+    <string name="prayer_log_nudge_title">O tempo de %1$s está acabando</string>
+    <string name="prayer_log_nudge_text">Rezou? Marque e ganhe +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Rezou? Marque, ganhe +%1$d XP e mantenha sua sequência de %2$d dias 🔥</string>
+    <string name="prayer_log_nudge_mark">Rezei · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Sua sequência de %1$d dias está em risco 🔥</string>
+    <string name="prayer_log_game_finish_title">Complete o dia: +%1$d XP esperando por você</string>
+    <string name="prayer_log_celebrate_full_day">Dia completo! Bônus de +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Sequência: %1$d dias 🔥</string>
+    <string name="prayer_log_celebrate_badge">Nova medalha: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Subiu de nível! Agora você está no nível %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Seu nível, sequência e medalhas, com as orações de hoje para marcar com um toque</string>
+    <string name="widget_prayer_log_off">Ative o registro de orações nas Configurações</string>
 </resources>

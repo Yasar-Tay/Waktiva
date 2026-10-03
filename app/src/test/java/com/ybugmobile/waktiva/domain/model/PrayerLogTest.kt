@@ -147,6 +147,33 @@ class PrayerLogTest {
         assertNull(LoggedPrayers.find { it == PrayerType.SUNRISE })
     }
 
+    @Test
+    fun theNextNudgeComesHalfAnHourBeforeAPrayersTimeEnds() {
+        // Dhuhr runs 13:05–16:30: its nudge is at 16:00.
+        val nudge = PrayerLog.nextNudge(listOf(day, tomorrow), at(14, 0), 30)
+        assertEquals(PrayerLogNudge(today, PrayerType.DHUHR, at(16, 0), at(16, 30)), nudge)
+    }
+
+    @Test
+    fun ishaGetsNoNudgeSoTheNextIsTomorrowsFajr() {
+        // After Maghrib's nudge (20:05) comes tomorrow's Fajr, 30 minutes before sunrise.
+        val nudge = PrayerLog.nextNudge(listOf(day, tomorrow), at(20, 10), 30)
+        assertEquals(PrayerType.FAJR, nudge?.type)
+        assertEquals(at(6, 30, today.plusDays(1)), nudge?.at)
+    }
+
+    @Test
+    fun aTimeShorterThanTheLeadGetsNoNudge() {
+        // Fajr 5:30–7:00 is shorter than two hours: the next nudge is Dhuhr's.
+        val nudge = PrayerLog.nextNudge(listOf(day), at(4, 0), 120)
+        assertEquals(PrayerType.DHUHR, nudge?.type)
+    }
+
+    @Test
+    fun noKeptDayLeftMeansNoNudge() {
+        assertNull(PrayerLog.nextNudge(listOf(day), at(23, 0), 30))
+    }
+
     private fun prayerDay(date: LocalDate, fajr: LocalTime = LocalTime.of(5, 30)) = PrayerDay(
         date = date,
         hijriDate = null,

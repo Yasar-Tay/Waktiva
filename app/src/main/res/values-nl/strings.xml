@@ -526,4 +526,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 volle dagen op rij</string>
     <string name="prayer_log_badge_prayers_500">Standvastig</string>
     <string name="prayer_log_badge_prayers_500_desc">Markeer 500 gebeden</string>
+    <string name="prayer_log_game_setting">Spelmeldingen</string>
+    <string name="prayer_log_game_setting_desc">Een seintje voor XP voordat de tijd van een gebed eindigt, je reeks in de avondherinnering, en gejuich voor volle dagen, niveaus en badges</string>
+    <string name="prayer_log_game_channel">Gebedslog-spel</string>
+    <string name="prayer_log_game_channel_desc">Seintjes voordat een gebedstijd eindigt en gejuich voor wat je bereikt</string>
+    <string name="prayer_log_nudge_title">De tijd voor %1$s eindigt bijna</string>
+    <string name="prayer_log_nudge_text">Gebeden? Markeer het voor +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Gebeden? Markeer het voor +%1$d XP en houd je reeks van %2$d dagen vast 🔥</string>
+    <string name="prayer_log_nudge_mark">Gebeden · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Je reeks van %1$d dagen loopt gevaar 🔥</string>
+    <string name="prayer_log_game_finish_title">Maak de dag af: +%1$d XP wacht op je</string>
+    <string name="prayer_log_celebrate_full_day">Volle dag! +%1$d XP bonus</string>
+    <string name="prayer_log_celebrate_streak">Reeks: %1$d dagen 🔥</string>
+    <string name="prayer_log_celebrate_badge">Nieuwe badge: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Niveau omhoog! Je bent nu niveau %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Je niveau, reeks en badges, met de gebeden van vandaag om met één tik te markeren</string>
+    <string name="widget_prayer_log_off">Zet het gebedslog aan in Instellingen</string>
 </resources>

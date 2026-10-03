@@ -527,4 +527,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 full days in a row</string>
     <string name="prayer_log_badge_prayers_500">Steadfast</string>
     <string name="prayer_log_badge_prayers_500_desc">Mark 500 prayers</string>
+    <string name="prayer_log_game_setting">Game notifications</string>
+    <string name="prayer_log_game_setting_desc">A nudge for XP before a prayer\'s time ends, your streak in the evening reminder, and cheers for full days, levels and badges</string>
+    <string name="prayer_log_game_channel">Prayer log game</string>
+    <string name="prayer_log_game_channel_desc">Nudges before a prayer\'s time ends and cheers for what you reach</string>
+    <string name="prayer_log_nudge_title">%1$s time is ending soon</string>
+    <string name="prayer_log_nudge_text">Prayed it? Mark it for +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Prayed it? Mark it for +%1$d XP and keep your %2$d-day streak going 🔥</string>
+    <string name="prayer_log_nudge_mark">I prayed · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Your %1$d-day streak is at risk 🔥</string>
+    <string name="prayer_log_game_finish_title">Finish the day: +%1$d XP waiting</string>
+    <string name="prayer_log_celebrate_full_day">Full day! +%1$d XP bonus</string>
+    <string name="prayer_log_celebrate_streak">Streak: %1$d days 🔥</string>
+    <string name="prayer_log_celebrate_badge">New badge: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Level up! You\'re now level %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Your level, streak and badges, with today\'s prayers to mark in a tap</string>
+    <string name="widget_prayer_log_off">Turn on the prayer log in Settings</string>
 </resources>

@@ -73,4 +73,32 @@ class PrayerLogProgressTest {
         val prayed = (0L until 100).associate { day.plusDays(it) to all }
         assertNull(PrayerLogProgress.of(prayed).nextBadge)
     }
+
+    @Test
+    fun markingTheLastPrayerCelebratesTheFullDayAndItsBadge() {
+        val before = mapOf(day to all - PrayerType.ISHA)
+        val after = mapOf(day to all)
+        val celebration = PrayerLogProgress.celebration(before, after, day, day)
+        assertTrue(celebration!!.fullDay)
+        assertEquals(1, celebration.streak)
+        assertEquals(listOf(PrayerLogBadge.FIRST_FULL_DAY), celebration.badges)
+    }
+
+    @Test
+    fun aLevelReachedIsCelebrated() {
+        // A full day and two prayers are 95 XP; a third makes 105, past level 1's 100.
+        val before = mapOf(day to all, day.plusDays(1) to setOf(PrayerType.FAJR, PrayerType.DHUHR))
+        val after = mapOf(day to all, day.plusDays(1) to setOf(PrayerType.FAJR, PrayerType.DHUHR, PrayerType.ASR))
+        val celebration = PrayerLogProgress.celebration(before, after, day.plusDays(1), day.plusDays(1))
+        assertEquals(2, celebration?.level)
+        assertFalse(celebration!!.fullDay)
+    }
+
+    @Test
+    fun anOrdinaryMarkOrAnUnmarkCelebratesNothing() {
+        val some = mapOf(day to setOf(PrayerType.FAJR, PrayerType.DHUHR))
+        val more = mapOf(day to setOf(PrayerType.FAJR, PrayerType.DHUHR, PrayerType.ASR))
+        assertNull(PrayerLogProgress.celebration(some, more, day, day))
+        assertNull(PrayerLogProgress.celebration(mapOf(day to all), more, day, day))
+    }
 }

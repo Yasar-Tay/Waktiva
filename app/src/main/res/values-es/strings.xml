@@ -514,4 +514,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 días completos seguidos</string>
     <string name="prayer_log_badge_prayers_500">Constancia</string>
     <string name="prayer_log_badge_prayers_500_desc">Marca 500 oraciones</string>
+    <string name="prayer_log_game_setting">Notificaciones de juego</string>
+    <string name="prayer_log_game_setting_desc">Un aviso para ganar XP antes de que termine el tiempo de una oración, tu racha en el recordatorio nocturno y celebraciones por días completos, niveles e insignias</string>
+    <string name="prayer_log_game_channel">Juego del registro de oraciones</string>
+    <string name="prayer_log_game_channel_desc">Avisos antes de que termine el tiempo de una oración y celebraciones por lo que logras</string>
+    <string name="prayer_log_nudge_title">El tiempo de %1$s termina pronto</string>
+    <string name="prayer_log_nudge_text">¿La rezaste? Márcala y gana +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">¿La rezaste? Márcala, gana +%1$d XP y mantén tu racha de %2$d días 🔥</string>
+    <string name="prayer_log_nudge_mark">Recé · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Tu racha de %1$d días está en peligro 🔥</string>
+    <string name="prayer_log_game_finish_title">Completa el día: te esperan +%1$d XP</string>
+    <string name="prayer_log_celebrate_full_day">¡Día completo! Bonus de +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Racha: %1$d días 🔥</string>
+    <string name="prayer_log_celebrate_badge">Nueva insignia: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">¡Subiste de nivel! Ahora eres nivel %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Tu nivel, racha e insignias, con las oraciones de hoy para marcar con un toque</string>
+    <string name="widget_prayer_log_off">Activa el registro de oraciones en Ajustes</string>
 </resources>

@@ -527,4 +527,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 hari penuh berturut-turut</string>
     <string name="prayer_log_badge_prayers_500">Istikamah</string>
     <string name="prayer_log_badge_prayers_500_desc">Tandai 500 salat</string>
+    <string name="prayer_log_game_setting">Notifikasi game</string>
+    <string name="prayer_log_game_setting_desc">Pengingat untuk XP sebelum waktu salat habis, streak-mu di pengingat malam, dan perayaan hari penuh, level, dan lencana</string>
+    <string name="prayer_log_game_channel">Game catatan salat</string>
+    <string name="prayer_log_game_channel_desc">Pengingat sebelum waktu salat habis dan perayaan atas capaianmu</string>
+    <string name="prayer_log_nudge_title">Waktu %1$s segera habis</string>
+    <string name="prayer_log_nudge_text">Sudah salat? Tandai untuk +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Sudah salat? Tandai untuk +%1$d XP dan jaga streak %2$d harimu 🔥</string>
+    <string name="prayer_log_nudge_mark">Sudah salat · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Streak %1$d harimu terancam 🔥</string>
+    <string name="prayer_log_game_finish_title">Selesaikan hari ini: +%1$d XP menunggu</string>
+    <string name="prayer_log_celebrate_full_day">Hari penuh! Bonus +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Streak: %1$d hari 🔥</string>
+    <string name="prayer_log_celebrate_badge">Lencana baru: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Naik level! Sekarang kamu level %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Level, streak, dan lencanamu, dengan salat hari ini untuk ditandai sekali ketuk</string>
+    <string name="widget_prayer_log_off">Aktifkan catatan salat di Pengaturan</string>
 </resources>

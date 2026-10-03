@@ -36,6 +36,16 @@ data class BadgeProgress(val badge: PrayerLogBadge, val current: Int) {
     val fraction: Float get() = current.toFloat() / target
 }
 
+/** What a mark reached, to cheer for: see [PrayerLogProgress.celebration]. */
+data class PrayerLogCelebration(
+    val fullDay: Boolean,
+    /** Full days in a row as of today, after the mark. */
+    val streak: Int,
+    /** The new level, if one was reached. */
+    val level: Int?,
+    val badges: List<PrayerLogBadge>
+)
+
 /**
  * The prayer log as a game: points (XP) for every prayer marked and a bonus for every full day,
  * levels that take a little more XP each, and badges.
@@ -101,6 +111,28 @@ data class PrayerLogProgress(
                 levelSpan = levelSpan(level),
                 badges = badges
             )
+        }
+
+        /**
+         * What marking prayers on [date] reached, going from [before] to [after]: the day made
+         * full, a new level, new badges, with the streak as of [today]. Null when it reached none.
+         */
+        fun celebration(
+            before: Map<LocalDate, Set<PrayerType>>,
+            after: Map<LocalDate, Set<PrayerType>>,
+            date: LocalDate,
+            today: LocalDate
+        ): PrayerLogCelebration? {
+            val was = of(before)
+            val now = of(after)
+            fun isFull(prayed: Map<LocalDate, Set<PrayerType>>) = prayed[date]?.containsAll(LoggedPrayers) == true
+            val celebration = PrayerLogCelebration(
+                fullDay = isFull(after) && !isFull(before),
+                streak = PrayerLog.streak(after, today),
+                level = now.level.takeIf { it > was.level },
+                badges = PrayerLogBadge.entries.filter { it in now.earned && it !in was.earned }
+            )
+            return celebration.takeIf { it.fullDay || it.level != null || it.badges.isNotEmpty() }
         }
 
         /** The most days in a row among [dates]. */

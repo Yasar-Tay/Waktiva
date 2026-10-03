@@ -526,4 +526,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 punih dana zaredom</string>
     <string name="prayer_log_badge_prayers_500">Istrajnost</string>
     <string name="prayer_log_badge_prayers_500_desc">Označi 500 namaza</string>
+    <string name="prayer_log_game_setting">Obavijesti igre</string>
+    <string name="prayer_log_game_setting_desc">Podsjetnik za XP prije isteka vremena namaza, tvoj niz u večernjem podsjetniku i slavlje punih dana, nivoa i znački</string>
+    <string name="prayer_log_game_channel">Igra evidencije namaza</string>
+    <string name="prayer_log_game_channel_desc">Podsjetnici prije isteka vremena namaza i slavlje onoga što postigneš</string>
+    <string name="prayer_log_nudge_title">Vrijeme za %1$s uskoro ističe</string>
+    <string name="prayer_log_nudge_text">Klanjao si? Označi i osvoji +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Klanjao si? Označi i osvoji +%1$d XP, neka tvoj niz od %2$d dana traje 🔥</string>
+    <string name="prayer_log_nudge_mark">Klanjao sam · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Tvoj niz od %1$d dana je u opasnosti 🔥</string>
+    <string name="prayer_log_game_finish_title">Završi dan: čeka te +%1$d XP</string>
+    <string name="prayer_log_celebrate_full_day">Pun dan! Bonus +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Niz: %1$d dana 🔥</string>
+    <string name="prayer_log_celebrate_badge">Nova značka: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Novi nivo! Sada si na nivou %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Tvoj nivo, niz i značke, s današnjim namazima za označiti jednim dodirom</string>
+    <string name="widget_prayer_log_off">Uključi evidenciju namaza u Postavkama</string>
 </resources>

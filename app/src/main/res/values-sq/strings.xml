@@ -526,4 +526,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 ditë të plota radhazi</string>
     <string name="prayer_log_badge_prayers_500">Qëndrueshmëri</string>
     <string name="prayer_log_badge_prayers_500_desc">Shëno 500 namaze</string>
+    <string name="prayer_log_game_setting">Njoftimet e lojës</string>
+    <string name="prayer_log_game_setting_desc">Një kujtesë për XP para se të mbarojë koha e namazit, seria jote në kujtesën e mbrëmjes dhe festim për ditë të plota, nivele e distinktivë</string>
+    <string name="prayer_log_game_channel">Loja e regjistrit të namazeve</string>
+    <string name="prayer_log_game_channel_desc">Kujtesa para se të mbarojë koha e namazit dhe festim për arritjet e tua</string>
+    <string name="prayer_log_nudge_title">Koha e %1$s po mbaron</string>
+    <string name="prayer_log_nudge_text">E fale? Shënoje për +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">E fale? Shënoje për +%1$d XP dhe mbaje serinë tënde %2$d-ditore 🔥</string>
+    <string name="prayer_log_nudge_mark">E fala · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Seria jote %1$d-ditore është në rrezik 🔥</string>
+    <string name="prayer_log_game_finish_title">Plotëso ditën: të presin +%1$d XP</string>
+    <string name="prayer_log_celebrate_full_day">Ditë e plotë! Bonus +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Seria: %1$d ditë 🔥</string>
+    <string name="prayer_log_celebrate_badge">Distinktiv i ri: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Kalove nivelin! Tani je në nivelin %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Niveli, seria dhe distinktivët e tu, me namazet e sotme për t\'i shënuar me një prekje</string>
+    <string name="widget_prayer_log_off">Aktivizo regjistrin e namazeve te Cilësimet</string>
 </resources>

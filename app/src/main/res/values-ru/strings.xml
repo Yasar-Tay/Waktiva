@@ -526,4 +526,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 полных дней подряд</string>
     <string name="prayer_log_badge_prayers_500">Стойкость</string>
     <string name="prayer_log_badge_prayers_500_desc">Отметьте 500 намазов</string>
+    <string name="prayer_log_game_setting">Игровые уведомления</string>
+    <string name="prayer_log_game_setting_desc">Напоминание об XP до конца времени намаза, ваша серия в вечернем напоминании и поздравления с полными днями, уровнями и значками</string>
+    <string name="prayer_log_game_channel">Игра учёта намазов</string>
+    <string name="prayer_log_game_channel_desc">Напоминания до конца времени намаза и поздравления с достижениями</string>
+    <string name="prayer_log_nudge_title">Время %1$s скоро закончится</string>
+    <string name="prayer_log_nudge_text">Совершили? Отметьте и получите +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Совершили? Отметьте, получите +%1$d XP и сохраните серию из %2$d дн. 🔥</string>
+    <string name="prayer_log_nudge_mark">Совершил · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Ваша серия из %1$d дн. под угрозой 🔥</string>
+    <string name="prayer_log_game_finish_title">Завершите день: вас ждут +%1$d XP</string>
+    <string name="prayer_log_celebrate_full_day">Полный день! Бонус +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Серия: %1$d дн. 🔥</string>
+    <string name="prayer_log_celebrate_badge">Новый значок: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Новый уровень! Теперь у вас уровень %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Ваш уровень, серия и значки, а также сегодняшние намазы — отметить одним касанием</string>
+    <string name="widget_prayer_log_off">Включите учёт намазов в настройках</string>
 </resources>

@@ -68,6 +68,8 @@
                 <action android:name="com.ybugmobile.waktiva.ACTION_SKIP_ADHAN" />
                 <action android:name="com.ybugmobile.waktiva.ACTION_PRAYER_LOG_REMINDER" />
                 <action android:name="com.ybugmobile.waktiva.ACTION_MARK_ALL_PRAYED" />
+                <action android:name="com.ybugmobile.waktiva.ACTION_MARK_PRAYED" />
+                <action android:name="com.ybugmobile.waktiva.ACTION_PRAYER_LOG_NUDGE" />
             </intent-filter>
         </receiver>
 
@@ -136,6 +138,19 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/waktiva_my_day_widget_info" />
+        </receiver>
+
+        <!-- The prayer log widget: level, XP, streak, badges and today's prayers to mark; refreshed with the others by WaktivaWidget.updateAll -->
+        <receiver
+            android:name=".ui.widget.WaktivaPrayerLogWidget"
+            android:exported="true"
+            android:label="@string/prayer_log_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/waktiva_prayer_log_widget_info" />
         </receiver>
 
         <!-- Marks a prayer from a day circle widget's "I prayed", and runs those widgets' ticks -->

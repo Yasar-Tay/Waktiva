@@ -527,4 +527,20 @@
     <string name="prayer_log_badge_streak_40_desc">Üst üste 40 tam gün</string>
     <string name="prayer_log_badge_prayers_500">Sebat</string>
     <string name="prayer_log_badge_prayers_500_desc">500 namaz işaretle</string>
+    <string name="prayer_log_game_setting">Oyun bildirimleri</string>
+    <string name="prayer_log_game_setting_desc">Vakit çıkmadan XP için hatırlatır, akşam hatırlatmasında serini gösterir; tam günleri, seviyeleri ve rozetleri kutlar</string>
+    <string name="prayer_log_game_channel">Çetele oyunu</string>
+    <string name="prayer_log_game_channel_desc">Vakit çıkmadan hatırlatmalar ve kazandıklarının kutlaması</string>
+    <string name="prayer_log_nudge_title">%1$s vakti çıkmak üzere</string>
+    <string name="prayer_log_nudge_text">Kıldıysan işaretle, +%1$d XP kazan.</string>
+    <string name="prayer_log_nudge_text_streak">Kıldıysan işaretle, +%1$d XP kazan; %2$d günlük serin sürsün 🔥</string>
+    <string name="prayer_log_nudge_mark">Kıldım · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">%1$d günlük serin tehlikede 🔥</string>
+    <string name="prayer_log_game_finish_title">Günü tamamla: +%1$d XP seni bekliyor</string>
+    <string name="prayer_log_celebrate_full_day">Tam gün! +%1$d XP bonus</string>
+    <string name="prayer_log_celebrate_streak">Seri: %1$d gün 🔥</string>
+    <string name="prayer_log_celebrate_badge">Yeni rozet: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Seviye atladın! Artık seviye %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Seviyen, serin ve rozetlerin; bugünün namazlarını tek dokunuşla işaretle</string>
+    <string name="widget_prayer_log_off">Çeteleyi Ayarlar\'dan aç</string>
 </resources>

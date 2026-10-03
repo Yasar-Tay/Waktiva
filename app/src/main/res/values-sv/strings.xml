@@ -526,4 +526,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 hela dagar i rad</string>
     <string name="prayer_log_badge_prayers_500">Ståndaktig</string>
     <string name="prayer_log_badge_prayers_500_desc">Markera 500 böner</string>
+    <string name="prayer_log_game_setting">Spelaviseringar</string>
+    <string name="prayer_log_game_setting_desc">En påminnelse om XP innan en böns tid tar slut, din svit i kvällspåminnelsen och firande av hela dagar, nivåer och märken</string>
+    <string name="prayer_log_game_channel">Böneloggens spel</string>
+    <string name="prayer_log_game_channel_desc">Påminnelser innan en böns tid tar slut och firande av det du når</string>
+    <string name="prayer_log_nudge_title">Tiden för %1$s tar snart slut</string>
+    <string name="prayer_log_nudge_text">Har du bett? Markera för +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Har du bett? Markera för +%1$d XP och håll din svit på %2$d dagar vid liv 🔥</string>
+    <string name="prayer_log_nudge_mark">Jag har bett · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Din svit på %1$d dagar är i fara 🔥</string>
+    <string name="prayer_log_game_finish_title">Fullborda dagen: +%1$d XP väntar</string>
+    <string name="prayer_log_celebrate_full_day">Hel dag! +%1$d XP bonus</string>
+    <string name="prayer_log_celebrate_streak">Svit: %1$d dagar 🔥</string>
+    <string name="prayer_log_celebrate_badge">Nytt märke: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Ny nivå! Du är nu nivå %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Din nivå, svit och dina märken, med dagens böner att markera med ett tryck</string>
+    <string name="widget_prayer_log_off">Slå på böneloggen i Inställningar</string>
 </resources>

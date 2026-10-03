@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.toArgb
 import com.ybugmobile.waktiva.MainActivity
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.WeatherCache
+import com.ybugmobile.waktiva.data.notification.PrayerLogGameNotifier
 import com.ybugmobile.waktiva.data.worker.WidgetWeatherWorker
 import com.ybugmobile.waktiva.domain.model.WeatherCondition
 import com.ybugmobile.waktiva.domain.manager.SettingsManagerInterface
@@ -69,9 +70,9 @@ import java.util.Locale
  * On Android 12+ every family is sent at once and the launcher picks the one that fits;
  * older versions get the family matching the reported size.
  *
- * [WaktivaCountdownWidget], the small countdown tile, and the day circle widgets
- * ([WaktivaDayRingWidget], [WaktivaMyDayWidget]) share this data and refresh path: [updateAll]
- * renders them all.
+ * [WaktivaCountdownWidget], the small countdown tile, the day circle widgets
+ * ([WaktivaDayRingWidget], [WaktivaMyDayWidget]) and the prayer log widget
+ * ([WaktivaPrayerLogWidget]) share this data and refresh path: [updateAll] renders them all.
  */
 class WaktivaWidget : AppWidgetProvider() {
 
@@ -84,6 +85,7 @@ class WaktivaWidget : AppWidgetProvider() {
         fun settingsManager(): SettingsManagerInterface
         fun prayerLogRepository(): PrayerLogRepository
         fun weatherCache(): WeatherCache
+        fun prayerLogGame(): PrayerLogGameNotifier
     }
 
     override fun onUpdate(
@@ -168,11 +170,19 @@ class WaktivaWidget : AppWidgetProvider() {
             val countdownIds = manager.getAppWidgetIds(ComponentName(context, WaktivaCountdownWidget::class.java))
             val ringIds = manager.getAppWidgetIds(ComponentName(context, WaktivaDayRingWidget::class.java))
             val dayIds = manager.getAppWidgetIds(ComponentName(context, WaktivaMyDayWidget::class.java))
-            if (ids.isEmpty() && countdownIds.isEmpty() && ringIds.isEmpty() && dayIds.isEmpty()) return
+            val logIds = manager.getAppWidgetIds(ComponentName(context, WaktivaPrayerLogWidget::class.java))
+            if (ids.isEmpty() && countdownIds.isEmpty() && ringIds.isEmpty() && dayIds.isEmpty() && logIds.isEmpty()) return
             val snapshot = loadSnapshot(context)
             ids.forEach { id -> manager.updateAppWidget(id, buildViews(context, manager, id, snapshot)) }
             countdownIds.forEach { id -> manager.updateAppWidget(id, buildCountdown(context, snapshot)) }
             DayWidgets.render(context, manager, ringIds, dayIds, snapshot)
+            PrayerLogWidget.render(context, manager, logIds, snapshot)
+        }
+
+        /** Renders the prayer log widget instances [ids]; used by [WaktivaPrayerLogWidget]. */
+        internal suspend fun renderPrayerLog(context: Context, manager: AppWidgetManager, ids: IntArray) {
+            if (ids.isEmpty()) return
+            PrayerLogWidget.render(context, manager, ids, loadSnapshot(context))
         }
 
         /** Renders the day circle widget instances; used by their providers. */

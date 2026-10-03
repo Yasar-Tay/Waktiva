@@ -655,7 +655,7 @@ private val PrayerLogBadge.icon: ImageVector
         PrayerLogBadge.PRAYERS_500 -> Icons.Rounded.WorkspacePremium
     }
 
-private val PrayerLogBadge.nameRes: Int
+internal val PrayerLogBadge.nameRes: Int
     get() = when (this) {
         PrayerLogBadge.FIRST_PRAYER -> R.string.prayer_log_badge_first_prayer
         PrayerLogBadge.FIRST_FULL_DAY -> R.string.prayer_log_badge_first_full_day
@@ -667,7 +667,7 @@ private val PrayerLogBadge.nameRes: Int
         PrayerLogBadge.PRAYERS_500 -> R.string.prayer_log_badge_prayers_500
     }
 
-private val PrayerLogBadge.descRes: Int
+internal val PrayerLogBadge.descRes: Int
     get() = when (this) {
         PrayerLogBadge.FIRST_PRAYER -> R.string.prayer_log_badge_first_prayer_desc
         PrayerLogBadge.FIRST_FULL_DAY -> R.string.prayer_log_badge_first_full_day_desc

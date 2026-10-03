@@ -514,4 +514,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 jours complets d\'affilée</string>
     <string name="prayer_log_badge_prayers_500">Constance</string>
     <string name="prayer_log_badge_prayers_500_desc">Marquez 500 prières</string>
+    <string name="prayer_log_game_setting">Notifications de jeu</string>
+    <string name="prayer_log_game_setting_desc">Un rappel pour gagner des XP avant la fin du temps d\'une prière, votre série dans le rappel du soir, et des félicitations pour les journées complètes, niveaux et badges</string>
+    <string name="prayer_log_game_channel">Jeu du carnet de prières</string>
+    <string name="prayer_log_game_channel_desc">Rappels avant la fin du temps d\'une prière et félicitations pour vos réussites</string>
+    <string name="prayer_log_nudge_title">Le temps de %1$s se termine bientôt</string>
+    <string name="prayer_log_nudge_text">Accomplie ? Marquez-la pour +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Accomplie ? Marquez-la pour +%1$d XP et gardez votre série de %2$d jours 🔥</string>
+    <string name="prayer_log_nudge_mark">J\'ai prié · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Votre série de %1$d jours est en danger 🔥</string>
+    <string name="prayer_log_game_finish_title">Terminez la journée : +%1$d XP vous attendent</string>
+    <string name="prayer_log_celebrate_full_day">Journée complète ! Bonus de +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Série : %1$d jours 🔥</string>
+    <string name="prayer_log_celebrate_badge">Nouveau badge : %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Niveau supérieur ! Vous êtes niveau %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Votre niveau, votre série et vos badges, avec les prières du jour à marquer d\'un geste</string>
+    <string name="widget_prayer_log_off">Activez le carnet de prières dans les Réglages</string>
 </resources>

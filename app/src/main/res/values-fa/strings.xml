@@ -527,4 +527,20 @@
     <string name="prayer_log_badge_streak_40_desc">۴۰ روز کامل پیاپی</string>
     <string name="prayer_log_badge_prayers_500">پایداری</string>
     <string name="prayer_log_badge_prayers_500_desc">۵۰۰ نماز علامت بزن</string>
+    <string name="prayer_log_game_setting">اعلان‌های بازی</string>
+    <string name="prayer_log_game_setting_desc">یادآوری برای XP پیش از پایان وقت نماز، رشتهٔ روزهایت در یادآوری شب، و جشن روزهای کامل، سطح‌ها و نشان‌ها</string>
+    <string name="prayer_log_game_channel">بازی کارنامهٔ نماز</string>
+    <string name="prayer_log_game_channel_desc">یادآوری پیش از پایان وقت نماز و جشن دستاوردهایت</string>
+    <string name="prayer_log_nudge_title">وقت %1$s رو به پایان است</string>
+    <string name="prayer_log_nudge_text">خواندی؟ علامت بزن و +%1$d XP بگیر.</string>
+    <string name="prayer_log_nudge_text_streak">خواندی؟ علامت بزن، +%1$d XP بگیر و رشتهٔ %2$d روزه‌ات را نگه دار 🔥</string>
+    <string name="prayer_log_nudge_mark">خواندم · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">رشتهٔ %1$d روزه‌ات در خطر است 🔥</string>
+    <string name="prayer_log_game_finish_title">روز را کامل کن: +%1$d XP در انتظار توست</string>
+    <string name="prayer_log_celebrate_full_day">روز کامل! پاداش +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">رشته: %1$d روز 🔥</string>
+    <string name="prayer_log_celebrate_badge">نشان تازه: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">سطحت بالا رفت! اکنون در سطح %1$d هستی 🎉</string>
+    <string name="widget_prayer_log_description">سطح، رشته و نشان‌هایت، با نمازهای امروز برای علامت زدن با یک لمس</string>
+    <string name="widget_prayer_log_off">کارنامهٔ نماز را از تنظیمات روشن کن</string>
 </resources>

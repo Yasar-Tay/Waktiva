@@ -526,4 +526,20 @@
     <string name="prayer_log_badge_streak_40_desc">40 pełnych dni z rzędu</string>
     <string name="prayer_log_badge_prayers_500">Wytrwałość</string>
     <string name="prayer_log_badge_prayers_500_desc">Zaznacz 500 modlitw</string>
+    <string name="prayer_log_game_setting">Powiadomienia gry</string>
+    <string name="prayer_log_game_setting_desc">Przypomnienie o XP przed końcem czasu modlitwy, twoja seria w wieczornym przypomnieniu i świętowanie pełnych dni, poziomów i odznak</string>
+    <string name="prayer_log_game_channel">Gra dziennika modlitw</string>
+    <string name="prayer_log_game_channel_desc">Przypomnienia przed końcem czasu modlitwy i świętowanie twoich osiągnięć</string>
+    <string name="prayer_log_nudge_title">Czas na %1$s wkrótce się kończy</string>
+    <string name="prayer_log_nudge_text">Odmówiona? Zaznacz ją za +%1$d XP.</string>
+    <string name="prayer_log_nudge_text_streak">Odmówiona? Zaznacz ją za +%1$d XP i utrzymaj serię %2$d dni 🔥</string>
+    <string name="prayer_log_nudge_mark">Odmówiłem · +%1$d XP</string>
+    <string name="prayer_log_game_risk_title">Twoja seria %1$d dni jest zagrożona 🔥</string>
+    <string name="prayer_log_game_finish_title">Dokończ dzień: czeka +%1$d XP</string>
+    <string name="prayer_log_celebrate_full_day">Pełny dzień! Premia +%1$d XP</string>
+    <string name="prayer_log_celebrate_streak">Seria: %1$d dni 🔥</string>
+    <string name="prayer_log_celebrate_badge">Nowa odznaka: %1$s 🏅</string>
+    <string name="prayer_log_celebrate_level">Nowy poziom! Masz teraz poziom %1$d 🎉</string>
+    <string name="widget_prayer_log_description">Twój poziom, seria i odznaki oraz dzisiejsze modlitwy do zaznaczenia jednym dotknięciem</string>
+    <string name="widget_prayer_log_off">Włącz dziennik modlitw w Ustawieniach</string>
 </resources>
