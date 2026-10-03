@@ -7,9 +7,12 @@ import com.batoulapps.adhan.Madhab
 import com.batoulapps.adhan.PrayerTimes
 import com.batoulapps.adhan.data.DateComponents
 import com.ybugmobile.waktiva.data.local.diyanet.AdaptiveDiyanetCalculator
+import com.ybugmobile.waktiva.data.local.diyanet.DiyanetClassicAlmanac
 import com.ybugmobile.waktiva.data.local.diyanet.DiyanetEngineVersions
+import com.ybugmobile.waktiva.data.local.diyanet.DiyanetHighLatitudeTwilight
 import com.ybugmobile.waktiva.data.local.diyanet.DiyanetProfiles
 import com.ybugmobile.waktiva.data.local.diyanet.DiyanetReconstructionV14
+import com.ybugmobile.waktiva.data.local.diyanet.DiyanetV14TwilightState
 import com.ybugmobile.waktiva.data.local.diyanet.PrayerLocation
 import com.ybugmobile.waktiva.data.local.entity.PrayerDayEntity
 import java.time.LocalDate
@@ -40,6 +43,8 @@ enum class DiyanetEngineRouting {
 }
 
 enum class DiyanetAsrSource {
+    /** Diyanet's own formula (see DiyanetClassicAlmanac), on days with a raw sunrise and sunset. */
+    CLASSIC_ALMANAC,
     DIRECT_ADHAN,
     REFERENCE_LATITUDE_62,
     DHUHR_MAGHRIB_MIDPOINT,
@@ -167,23 +172,69 @@ class LocalPrayerCalculator @Inject constructor() {
                 null
             }
 
-            val fajr = reconstructed?.fajr?.toRoundedTimeString()
+            // Diyanet's own formula gives every time its tables print wherever the day is an
+            // ordinary one. V14 keeps the days its rules are for: a synthetic axis on days too long
+            // or too short, and Fajr and Isha wherever they aren't simply their angles.
+            val classic = if (methodId == DIYANET_METHOD_ID) {
+                DiyanetClassicAlmanac.calculate(date, location)
+            } else {
+                null
+            }
+            val classicAxis = classic?.takeIf { reconstructed == null || reconstructed.diagnostics.axisMode == RAW_AXIS }
+            val southern = methodId == DIYANET_METHOD_ID && latitude <= -DiyanetReconstructionV14.MIN_ABS_LATITUDE
+            val classicFajr = when {
+                classic == null -> null
+                reconstructed != null ->
+                    classic.fajr?.takeIf { reconstructed.diagnostics.fajrState == DiyanetV14TwilightState.DIRECT }
+                // South of 45°S the tables print 00:00 when the sun doesn't reach 18°.
+                southern -> classic.fajr ?: date.atStartOfDay(zoneId)
+                else -> classic.fajr
+            }
+            val classicIsha = when {
+                classic == null -> null
+                reconstructed != null ->
+                    classic.isha?.takeIf { reconstructed.diagnostics.ishaState == DiyanetV14TwilightState.DIRECT }
+                southern -> classic.isha ?: date.plusDays(1).atStartOfDay(zoneId)
+                else -> classic.isha
+            }
+
+            // From 45°N, wherever the sun rises and sets every day, Fajr and Isha follow the tables'
+            // summer rule; V14 keeps the polar regions.
+            val highLatitude = if (methodId == DIYANET_METHOD_ID) {
+                DiyanetHighLatitudeTwilight.day(date, location)
+            } else {
+                null
+            }
+
+            val fajr = highLatitude?.fajr?.toRoundedTimeString()
+                ?: classicFajr?.toRoundedTimeString()
+                ?: reconstructed?.fajr?.toRoundedTimeString()
                 ?: adaptiveResult?.fajr?.toRoundedTimeString()
                 ?: adhanTimes.fajr.toTimeString(zoneId)
-            val sunrise = reconstructed?.sunrise?.toRoundedTimeString()
+            val sunrise = classicAxis?.sunrise?.toRoundedTimeString()
+                ?: reconstructed?.sunrise?.toRoundedTimeString()
                 ?: adaptiveAxis?.prayerSunrise?.toRoundedTimeString()
                 ?: adhanTimes.sunrise.toTimeString(zoneId)
-            val dhuhr = reconstructed?.dhuhr?.toRoundedTimeString()
+            // Dhuhr and Asr follow the sun at noon, not the axis: the tables give them by the
+            // formula on stretched and shortened days too.
+            val dhuhr = classic?.dhuhr?.toRoundedTimeString()
+                ?: reconstructed?.dhuhr?.toRoundedTimeString()
                 ?: adaptiveAxis?.prayerNoon?.toRoundedTimeString()
                 ?: adhanTimes.dhuhr.toTimeString(zoneId)
-            val maghrib = reconstructed?.maghrib?.toRoundedTimeString()
+            val maghrib = classicAxis?.maghrib?.toRoundedTimeString()
+                ?: reconstructed?.maghrib?.toRoundedTimeString()
                 ?: adaptiveAxis?.prayerMaghrib?.toRoundedTimeString()
                 ?: adhanTimes.maghrib.toTimeString(zoneId)
-            val isha = reconstructed?.isha?.toRoundedTimeString()
+            val isha = highLatitude?.isha?.toRoundedTimeString()
+                ?: classicIsha?.toRoundedTimeString()
+                ?: reconstructed?.isha?.toRoundedTimeString()
                 ?: adaptiveResult?.isha?.toRoundedTimeString()
                 ?: adhanTimes.isha.toTimeString(zoneId)
+            val classicAsr = classic?.asr?.toRoundedTimeString()
+                ?.takeIf { it == dhuhr || isClockBetween(it, dhuhr, maghrib) }
 
             val (asr, asrSource) = when {
+                classicAsr != null -> classicAsr to DiyanetAsrSource.CLASSIC_ALMANAC
                 reconstructed?.polarNight == true ->
                     dhuhr to DiyanetAsrSource.POLAR_NIGHT_EQUALS_DHUHR
                 reconstructed != null || adaptiveAxis != null -> {
@@ -257,8 +308,8 @@ class LocalPrayerCalculator @Inject constructor() {
                         ?: v9Diagnostics?.let { it.directFajr != null },
                     directIshaAvailable = v14Diagnostics?.let { it.ishaDirectGapMinutes != null }
                         ?: v9Diagnostics?.let { it.directIsha != null },
-                    fajrState = v14Diagnostics?.fajrState?.name ?: v9Diagnostics?.phase,
-                    ishaState = v14Diagnostics?.ishaState?.name ?: v9Diagnostics?.phase,
+                    fajrState = highLatitude?.regime?.name ?: v14Diagnostics?.fajrState?.name ?: v9Diagnostics?.phase,
+                    ishaState = highLatitude?.regime?.name ?: v14Diagnostics?.ishaState?.name ?: v9Diagnostics?.phase,
                     axisMode = axisMode,
                     polarNight = reconstructed?.polarNight == true ||
                         axisMode?.startsWith("polar_night") == true,
@@ -369,12 +420,18 @@ class LocalPrayerCalculator @Inject constructor() {
     }
 
     companion object {
+        // Each engine with the classic almanac and the high-latitude rule on top, so prayer days
+        // cached before them are calculated again.
         fun method13EngineVersion(latitude: Double): String =
             if (latitude >= DiyanetReconstructionV14.MIN_ABS_LATITUDE) {
-                DiyanetReconstructionV14.CANDIDATE_VERSION
+                "${DiyanetReconstructionV14.CANDIDATE_VERSION}+${DiyanetClassicAlmanac.VERSION}+" +
+                    DiyanetHighLatitudeTwilight.VERSION
             } else {
-                DiyanetEngineVersions.ADAPTIVE_V9
+                "${DiyanetEngineVersions.ADAPTIVE_V9}+${DiyanetClassicAlmanac.VERSION}"
             }
+
+        /** V14's axis mode on a day with a sunrise and sunset of its own, neither stretched nor shortened. */
+        private const val RAW_AXIS = "raw"
 
         const val DIYANET_METHOD_ID = 13
         const val DIYANET_POLAR_REFERENCE_LATITUDE = 62.0

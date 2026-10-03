@@ -9,14 +9,14 @@ import java.time.ZoneId
 import kotlin.math.abs
 
 /**
- * What the app actually shows for method 13 (V14 north of 45°, V9 elsewhere) against both
- * official Diyanet panels, every city and every day.
+ * What the app actually shows for method 13 against both official Diyanet panels, every city and
+ * every day.
  *
  * Around midsummer above ~64°N the sun sets after midnight. V14 used to take the previous
  * evening's sunset for the day's, read a 22-hour day as a negative one and put it on the short
  * winter axis: Oulu's Fajr came out at 07:05 against Diyanet's 02:53, some 5.5 hours off, in
- * Oulu, Rovaniemi, Reykjavik and Tromso, in both years. Asr is left out: in the days after the
- * polar night it still follows its own rule (Tromso, 18 January 2026, is two hours off).
+ * Oulu, Rovaniemi, Reykjavik and Tromso, in both years. And before the classic almanac, Asr in
+ * the days around the polar night was up to two hours off (Tromso, 18 January 2026).
  */
 class DiyanetProductionPanelTest {
 
@@ -24,24 +24,66 @@ class DiyanetProductionPanelTest {
 
     @Test
     fun `method 13 stays within a quarter hour of both official panels`() {
+        val failures = offPanel(CITIES.keys, limitMinutes = 15)
+        assertTrue(failures.take(20).joinToString("\n", "${failures.size} times off by more than 15 minutes:\n"), failures.isEmpty())
+    }
+
+    /**
+     * Where no high-latitude rule applies, Diyanet's tables are its classic formula and nothing
+     * else: every prayer, every day of both years, within a minute (the rounding of the last digit).
+     */
+    @Test
+    fun `method 13 gives the tables to the minute where no high-latitude rule applies`() {
+        val failures = offPanel(setOf("istanbul", "toronto", "sydney"), limitMinutes = 1)
+        assertTrue(failures.take(20).joinToString("\n", "${failures.size} times off by more than a minute:\n"), failures.isEmpty())
+    }
+
+    /**
+     * Between 45°N and the polar regions Fajr and Isha follow the tables' summer rule
+     * (DiyanetHighLatitudeTwilight): within 8 minutes every day of both years, under a minute and a
+     * half on average. V14 was 1 to 2.4 minutes off on average in these cities, up to 10.
+     */
+    @Test
+    fun `method 13 follows the summer rule from 45 degrees north to the polar regions`() {
+        val cities = setOf("stockholm", "gothenburg", "umea", "oslo", "trondheim", "helsinki", "oulu", "copenhagen", "reykjavik")
+        val failures = offPanel(cities, limitMinutes = 8, events = setOf("fajr", "isha"))
+        assertTrue(failures.take(20).joinToString("\n", "${failures.size} times off by more than 8 minutes:\n"), failures.isEmpty())
+        for (year in listOf(2026, 2027)) {
+            val official = loadRows(year).groupBy { it[0] }
+            for (key in cities) {
+                val actual = monthsOf(year, key)
+                for ((event, column, value) in EVENTS.filter { it.first == "fajr" || it.first == "isha" }) {
+                    val rows = official.getValue(key)
+                    val mean = rows.sumOf { abs(clockDifference(value(actual.getValue(LocalDate.parse(it[1]))), it[column])) }.toDouble() / rows.size
+                    assertTrue("$key $year $event is %.2f minutes off on average".format(mean), mean < 1.5)
+                }
+            }
+        }
+    }
+
+    private fun monthsOf(year: Int, key: String): Map<LocalDate, PrayerDayEntity> {
+        val city = CITIES.getValue(key)
+        return (1..12)
+            .flatMap { calculator.calculateMonthlyPrayerTimes(year, it, city.first, city.second, 13, zoneId = ZoneId.of(city.third)) }
+            .associateBy { LocalDate.parse(it.date) }
+    }
+
+    private fun offPanel(cities: Set<String>, limitMinutes: Int, events: Set<String>? = null): List<String> {
         val failures = mutableListOf<String>()
         for (year in listOf(2026, 2027)) {
             val official = loadRows(year).groupBy { it[0] }
-            for ((key, city) in CITIES) {
-                val zone = ZoneId.of(city.third)
-                val actual = (1..12)
-                    .flatMap { calculator.calculateMonthlyPrayerTimes(year, it, city.first, city.second, 13, zoneId = zone) }
-                    .associateBy { LocalDate.parse(it.date) }
+            for (key in cities) {
+                val actual = monthsOf(year, key)
                 for (row in requireNotNull(official[key]) { "$key is missing from the $year panel" }) {
                     val day = actual.getValue(LocalDate.parse(row[1]))
-                    for ((event, column, value) in EVENTS) {
+                    for ((event, column, value) in EVENTS.filter { events == null || it.first in events }) {
                         val off = clockDifference(value(day), row[column])
-                        if (abs(off) > LIMIT_MINUTES) failures += "$key ${row[1]} $event: ${value(day)} against ${row[column]}"
+                        if (abs(off) > limitMinutes) failures += "$key ${row[1]} $event: ${value(day)} against ${row[column]}"
                     }
                 }
             }
         }
-        assertTrue(failures.take(20).joinToString("\n", "${failures.size} times off by more than $LIMIT_MINUTES minutes:\n"), failures.isEmpty())
+        return failures
     }
 
     private fun loadRows(year: Int): List<List<String>> =
@@ -58,14 +100,12 @@ class DiyanetProductionPanelTest {
     }
 
     private companion object {
-        /** The largest seen is 12 minutes (Rovaniemi's Isha, 19 September 2027). */
-        const val LIMIT_MINUTES = 15
-
         /** Each event with its column in the panel's CSV. */
         val EVENTS = listOf<Triple<String, Int, (PrayerDayEntity) -> String>>(
             Triple("fajr", 2, PrayerDayEntity::fajr),
             Triple("sunrise", 3, PrayerDayEntity::sunrise),
             Triple("dhuhr", 4, PrayerDayEntity::dhuhr),
+            Triple("asr", 5, PrayerDayEntity::asr),
             Triple("maghrib", 6, PrayerDayEntity::maghrib),
             Triple("isha", 7, PrayerDayEntity::isha)
         )

@@ -218,11 +218,15 @@ class DiyanetReconstructionV14(
         // solar noon is late). The day's search window then finds the previous evening's sunset,
         // before this sunrise, which made a 22-hour day read as a negative one and take the short
         // winter axis. That evening's sunset is the first in the next day's window; with none
-        // there either, the sun doesn't set and the day is a long one.
+        // there either, the sun doesn't set and the day is a long one. The order is read from
+        // the sun itself: the prayer offsets can swap a sunset only minutes before the sunrise.
+        val astronomicalSunrise = raw.astronomicalSunrise
         val maghrib = raw.prayerMaghrib?.let { found ->
-            if (sunrise != null && found.isBefore(sunrise)) {
-                solarAstronomy.rawEvents(date.plusDays(1), location, profile).prayerMaghrib
-                    ?.takeIf { it.isAfter(sunrise) }
+            val astronomicalSunset = raw.astronomicalSunset
+            if (astronomicalSunrise != null && astronomicalSunset != null && astronomicalSunset.isBefore(astronomicalSunrise)) {
+                val next = solarAstronomy.rawEvents(date.plusDays(1), location, profile)
+                next.prayerMaghrib
+                    ?.takeIf { next.astronomicalSunset?.isAfter(astronomicalSunrise) == true }
                     ?: return boundedAxis(noon, LONG_DAY_HALF_MINUTES, "long_day_19h")
             } else {
                 found

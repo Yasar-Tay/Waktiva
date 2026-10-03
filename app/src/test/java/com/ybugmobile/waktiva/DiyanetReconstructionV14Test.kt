@@ -3,7 +3,10 @@ package com.ybugmobile.waktiva
 import com.ybugmobile.waktiva.data.local.LocalPrayerCalculator
 import com.ybugmobile.waktiva.data.local.DiyanetRoutingDiagnosticCode
 import com.ybugmobile.waktiva.data.local.diyanet.DiyanetAstronomyKernel
+import com.ybugmobile.waktiva.data.local.diyanet.DiyanetClassicAlmanac
 import com.ybugmobile.waktiva.data.local.diyanet.DiyanetEngineVersions
+import com.ybugmobile.waktiva.data.local.diyanet.DiyanetHighLatitudeRegime
+import com.ybugmobile.waktiva.data.local.diyanet.DiyanetHighLatitudeTwilight
 import com.ybugmobile.waktiva.data.local.diyanet.DiyanetNightAstronomyKernel
 import com.ybugmobile.waktiva.data.local.diyanet.DiyanetReconstructionV14
 import com.ybugmobile.waktiva.data.local.diyanet.DiyanetV14Confidence
@@ -102,17 +105,21 @@ class DiyanetReconstructionV14Test {
     }
 
     @Test
-    fun `method 13 routes eligible latitudes through V14`() {
+    fun `method 13 takes Fajr and Isha from the high-latitude rule from 45 degrees north`() {
+        val location = PrayerLocation(48.5584, 12.81674, ZoneId.of("Europe/Berlin"))
         val day = LocalPrayerCalculator().calculateMonthlyPrayerTimes(
             year = 2026,
             month = 8,
-            latitude = 48.5584,
-            longitude = 12.81674,
+            latitude = location.latitude,
+            longitude = location.longitude,
             methodId = 13,
-            zoneId = ZoneId.of("Europe/Berlin")
+            zoneId = location.zoneId
         )[4]
+        val rule = requireNotNull(DiyanetHighLatitudeTwilight.day(LocalDate.of(2026, 8, 5), location))
 
-        assertEquals("03:50", day.fajr)
+        assertEquals(roundForDisplay(rule.fajr).toLocalTime().toString(), day.fajr)
+        assertEquals(roundForDisplay(rule.isha).toLocalTime().toString(), day.isha)
+        assertEquals(DiyanetHighLatitudeRegime.AUTUMN_TRANSITION, rule.regime)
     }
 
     @Test
@@ -129,9 +136,13 @@ class DiyanetReconstructionV14Test {
             diagnosticSink = { diagnostics += it.code }
         )
 
-        assertEquals(DiyanetEngineVersions.ADAPTIVE_V9, LocalPrayerCalculator.method13EngineVersion(-53.1638))
         assertEquals(
-            DiyanetReconstructionV14.CANDIDATE_VERSION,
+            "${DiyanetEngineVersions.ADAPTIVE_V9}+${DiyanetClassicAlmanac.VERSION}",
+            LocalPrayerCalculator.method13EngineVersion(-53.1638)
+        )
+        assertEquals(
+            "${DiyanetReconstructionV14.CANDIDATE_VERSION}+${DiyanetClassicAlmanac.VERSION}+" +
+                DiyanetHighLatitudeTwilight.VERSION,
             LocalPrayerCalculator.method13EngineVersion(53.1638)
         )
         assertEquals(listOf(DiyanetRoutingDiagnosticCode.SOUTHERN_HEMISPHERE_V14_DISABLED), diagnostics)
@@ -162,7 +173,7 @@ class DiyanetReconstructionV14Test {
                 days.forEachIndexed { index, day ->
                     val date = LocalDate.of(2026, month, index + 1)
                     val reconstructed = calculator.calculate(date, location)
-                    assertPrayerOrder(day, reconstructed.polarNight, "$city $date")
+                    assertPrayerOrder(day, reconstructed.polarNight, asrMayEqualDhuhr(date, location), "$city $date")
                 }
             }
         }
@@ -241,7 +252,17 @@ class DiyanetReconstructionV14Test {
         assertTrue(day.maghrib.toInstant().isBefore(day.isha.toInstant()))
     }
 
-    private fun assertPrayerOrder(day: PrayerDayEntity, polarNight: Boolean, context: String) {
+    /**
+     * Whether Diyanet's tables give Asr at Dhuhr's minute: with the sun at or below the horizon at
+     * noon, or so barely above it that the formula's Asr falls on Dhuhr (see DiyanetClassicAlmanac).
+     */
+    private fun asrMayEqualDhuhr(date: LocalDate, location: PrayerLocation): Boolean {
+        val classic = DiyanetClassicAlmanac.calculate(date, location)
+        val asr = classic.asr ?: return false
+        return roundForDisplay(asr) == roundForDisplay(classic.dhuhr)
+    }
+
+    private fun assertPrayerOrder(day: PrayerDayEntity, polarNight: Boolean, asrMayEqualDhuhr: Boolean, context: String) {
         val sunrise = day.sunrise.minutes()
         val dhuhr = day.dhuhr.minutes()
         val asr = day.asr.minutes()
@@ -255,6 +276,8 @@ class DiyanetReconstructionV14Test {
         assertTrue("$context Sunrise/Dhuhr: ${day.sunrise}/${day.dhuhr}", sunrise < dhuhr)
         if (polarNight) {
             assertEquals("$context polar-night Asr", dhuhr, asr)
+        } else if (asrMayEqualDhuhr) {
+            assertTrue("$context Dhuhr/Asr: ${day.dhuhr}/${day.asr}", dhuhr <= asr)
         } else {
             assertTrue("$context Dhuhr/Asr: ${day.dhuhr}/${day.asr}", dhuhr < asr)
         }
@@ -265,6 +288,27 @@ class DiyanetReconstructionV14Test {
     private fun String.minutes(): Int {
         val (hours, minutes) = split(':').map(String::toInt)
         return hours * 60 + minutes
+    }
+
+    /**
+     * Around midsummer above ~64°N the day's sunset falls after midnight, and the calendar day's
+     * window holds the previous evening's sunset instead, here only minutes before the sunrise
+     * (Boden: 00:30 and 00:37). The prayer offsets put that sunset's Maghrib after the sunrise's,
+     * which once read as a 7-minute day and took the 5-hour winter axis.
+     */
+    @Test
+    fun `a midsummer day whose sunset is after midnight keeps the long axis`() {
+        val engine = DiyanetReconstructionV14()
+        val days = listOf(
+            PrayerLocation(65.82518, 21.68864, ZoneId.of("Europe/Stockholm")) to LocalDate.of(2026, 6, 16),
+            PrayerLocation(65.73641, 24.56371, ZoneId.of("Europe/Helsinki")) to LocalDate.of(2026, 6, 23),
+            PrayerLocation(67.28267, 14.37513, ZoneId.of("Europe/Oslo")) to LocalDate.of(2026, 5, 31),
+            PrayerLocation(65.0121, 25.4651, ZoneId.of("Europe/Helsinki")) to LocalDate.of(2026, 6, 10)
+        )
+        for ((location, date) in days) {
+            val phase = engine.dailyAxis(date, location).phase
+            assertTrue("$date at ${location.latitude}: $phase", phase == "long_day_19h" || phase == "polar_day_19h")
+        }
     }
 
     private companion object {

@@ -1,8 +1,10 @@
 package com.ybugmobile.waktiva
 
 import com.ybugmobile.waktiva.data.local.LocalPrayerCalculator
+import com.ybugmobile.waktiva.data.local.diyanet.DiyanetClassicAlmanac
 import com.ybugmobile.waktiva.data.local.diyanet.DiyanetReconstructionV14
 import com.ybugmobile.waktiva.data.local.diyanet.PrayerLocation
+import com.ybugmobile.waktiva.data.local.diyanet.roundForDisplay
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -142,8 +144,14 @@ class LocalPrayerCalculatorTest {
                     val context = "$latitude,$longitude ${day.date}: " +
                         "${day.sunrise}/${day.dhuhr}/${day.asr}/${day.maghrib}"
                     assertTrue(context, day.sunrise.toMinutes() < day.dhuhr.toMinutes())
+                    // Diyanet gives Asr at Dhuhr's minute through the polar night and while the sun is
+                    // barely up at noon (see DiyanetClassicAlmanac); later than Dhuhr otherwise.
+                    val classic = DiyanetClassicAlmanac.calculate(date, PrayerLocation(latitude, longitude, ZoneId.of(timezone)))
+                    val asrMayEqualDhuhr = classic.asr?.let { roundForDisplay(it) == roundForDisplay(classic.dhuhr) } == true
                     if (polarNight) {
                         assertEquals(context, day.dhuhr.toMinutes(), day.asr.toMinutes())
+                    } else if (asrMayEqualDhuhr) {
+                        assertTrue(context, day.dhuhr.toMinutes() <= day.asr.toMinutes())
                     } else {
                         assertTrue(context, day.dhuhr.toMinutes() < day.asr.toMinutes())
                     }
