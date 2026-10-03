@@ -74,6 +74,9 @@ internal object DayWidgets {
     private const val REQUEST_ENDING = 7_302
     private const val REQUEST_TOGGLE = 7_310
 
+    /** The "my day" widget's cards, one request code per prayer from here. */
+    private const val REQUEST_DAY_CARD = 7_340
+
     private const val COLOR_PRIMARY = 0xFFFFFFFF.toInt()
     private const val COLOR_SECONDARY = 0xB3FFFFFF.toInt()
     private const val COLOR_TERTIARY = 0x73FFFFFF
@@ -227,26 +230,55 @@ internal object DayWidgets {
         views.showContent()
         views.setImageViewBitmap(R.id.widget_bg, background(snapshot, today.moment, Backdrop.LARGE))
 
-        bindMoment(context, views, snapshot, today, countSp = 48f)
+        bindMoment(context, views, snapshot, today, countSp = 38f)
         views.setImageViewBitmap(R.id.widget_ring, today.ring(context))
 
         views.removeAllViews(R.id.widget_times)
-        today.times.forEach { time ->
-            val cell = RemoteViews(context.packageName, R.layout.widget_day_column)
-            cell.setTextViewText(R.id.widget_cell_name, time.type.getDisplayName(context))
-            cell.setTextViewText(R.id.widget_cell_time, time.time.format(WaktivaWidget.timeFormatter))
-            val (name, clock) = when {
-                time.isCurrent -> COLOR_PRIMARY to COLOR_PRIMARY
-                time.isPrayed && today.logEnabled -> COLOR_PRAYED to COLOR_PRAYED
-                time.isPassed -> COLOR_TERTIARY to COLOR_TERTIARY
-                else -> COLOR_SECONDARY to COLOR_PRIMARY
-            }
-            cell.setTextColor(R.id.widget_cell_name, name)
-            cell.setTextColor(R.id.widget_cell_time, clock)
-            if (time.isCurrent) cell.setInt(R.id.widget_cell, "setBackgroundResource", R.drawable.widget_cell_highlight)
-            views.addView(R.id.widget_times, cell)
-        }
+        today.times.forEach { time -> views.addView(R.id.widget_times, dayCard(context, today, time)) }
         return views
+    }
+
+    /**
+     * One of the day's prayers as a card. With the log on, a prayer whose time has come (the
+     * current one or an earlier one) is marked or unmarked with a tap: gold with a tick once
+     * prayed, an empty ring while it waits.
+     */
+    private fun dayCard(context: Context, today: Today, time: DayTime): RemoteViews {
+        val cell = RemoteViews(context.packageName, R.layout.widget_day_column)
+        val name = time.type.getDisplayName(context)
+        cell.setTextViewText(R.id.widget_cell_name, name)
+        cell.setTextViewText(R.id.widget_cell_time, time.time.format(WaktivaWidget.timeFormatter))
+
+        val prayed = time.isPrayed && today.logEnabled
+        val markable = today.logEnabled && (time.isCurrent || time.isPassed)
+        val (nameColor, clockColor) = when {
+            prayed -> COLOR_PRAYED to COLOR_PRAYED
+            time.isCurrent -> COLOR_PRIMARY to COLOR_PRIMARY
+            time.isPassed -> if (markable) COLOR_SECONDARY to COLOR_SECONDARY else COLOR_TERTIARY to COLOR_TERTIARY
+            else -> COLOR_SECONDARY to COLOR_PRIMARY
+        }
+        cell.setTextColor(R.id.widget_cell_name, nameColor)
+        cell.setTextColor(R.id.widget_cell_time, clockColor)
+        when {
+            prayed -> cell.setInt(R.id.widget_cell, "setBackgroundResource", R.drawable.widget_day_card_prayed)
+            time.isCurrent -> cell.setInt(R.id.widget_cell, "setBackgroundResource", R.drawable.widget_cell_highlight)
+        }
+
+        if (prayed || markable) {
+            cell.setViewVisibility(R.id.widget_cell_mark, View.VISIBLE)
+            cell.setImageViewResource(R.id.widget_cell_mark, if (prayed) R.drawable.ic_widget_check else R.drawable.widget_mark_ring)
+            if (prayed) cell.setInt(R.id.widget_cell_mark, "setColorFilter", COLOR_PRAYED)
+        }
+        if (markable) {
+            val prayerName = time.type.getPrayerName(context)
+            cell.setOnClickPendingIntent(R.id.widget_cell, toggleIntent(context, today.day.date, time.type, REQUEST_DAY_CARD))
+            cell.setContentDescription(
+                R.id.widget_cell,
+                if (prayed) "$prayerName. ${context.getString(R.string.prayer_log_unmark)}"
+                else "${context.getString(R.string.prayer_log_mark)}: $prayerName"
+            )
+        }
+        return cell
     }
 
     // ── Shared pieces ─────────────────────────────────────────────────────
