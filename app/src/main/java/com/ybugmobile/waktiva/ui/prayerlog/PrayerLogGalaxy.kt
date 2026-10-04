@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -74,7 +75,8 @@ import kotlin.random.Random
  * brighter the galaxy there, its core lit through full days; a prayer gone unmarked is a dark hole
  * ringed in coral. The whole band is one wide touch target: a finger on it picks the nearest day,
  * glides along to the next with a tick, and a loupe above shows the day under it. The picked day's
- * prayers are under the band to mark, with arrows to step a day at a time.
+ * prayers are under the band to mark, with arrows to step a day at a time. The band and its weeks
+ * sit in a pane of dark glass of their own, so they stand out from the deep sky behind.
  */
 @Composable
 internal fun Galaxy(
@@ -97,16 +99,31 @@ internal fun Galaxy(
             Spacer(Modifier.width(10.dp))
             MissedSwitch(gaps, state.galaxyMissed, onChange = { gaps = it })
         }
-        Spacer(Modifier.height(18.dp))
-        GalaxyBand(
-            days = state.galaxy,
-            start = start,
-            selected = state.selected?.date,
-            gaps = gaps,
-            onPick = onSelect
-        )
-        RangeRow(state, start, onShowGalaxy, Modifier.padding(horizontal = 12.dp))
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(16.dp))
+        Column(
+            Modifier
+                .padding(horizontal = 12.dp)
+                .clip(RoundedCornerShape(28.dp))
+                .background(Brush.verticalGradient(listOf(Color(0xFF15103A).copy(alpha = 0.8f), Color(0xFF070618).copy(alpha = 0.86f))))
+                .drawBehind {
+                    drawCircle(
+                        Brush.radialGradient(listOf(Color(0xFF7C5CFF).copy(alpha = 0.22f), Color.Transparent), Offset(size.width / 2f, size.height * 0.45f), size.width * 0.6f),
+                        size.width * 0.6f, Offset(size.width / 2f, size.height * 0.45f)
+                    )
+                }
+                .border(1.dp, Brush.verticalGradient(listOf(Color(0xFFD6DAFF).copy(alpha = 0.34f), Color.White.copy(alpha = 0.06f))), RoundedCornerShape(28.dp))
+                .padding(top = 14.dp)
+        ) {
+            GalaxyBand(
+                days = state.galaxy,
+                start = start,
+                selected = state.selected?.date,
+                gaps = gaps,
+                onPick = onSelect
+            )
+            RangeRow(state, start, onShowGalaxy, Modifier.padding(horizontal = 4.dp))
+        }
+        Spacer(Modifier.height(12.dp))
         state.selected?.let { day ->
             DayPanel(
                 day = day,
@@ -120,8 +137,8 @@ internal fun Galaxy(
     }
 }
 
-private val BandHeight = 176.dp
-private val Gutter = 30.dp
+private val BandHeight = 236.dp
+private val Gutter = 38.dp
 private val BandEnd = 12.dp
 
 /** Each lane's star: the prayer's colour paled almost to white. */
@@ -200,7 +217,7 @@ private fun GalaxyBand(
                 }
                 .semantics { contentDescription = bandLabel }
         ) {
-            val lane = { b: Int -> (40 + 24 * b).dp.toPx() }
+            val lane = { b: Int -> (48 + 32 * b).dp.toPx() }
             val mid = lane(2)
             val counts = days.map { day -> day?.prayed ?: 0 }
             val smooth = counts.indices.map { i ->
@@ -209,22 +226,24 @@ private fun GalaxyBand(
 
             // The galaxy: a soft band as wide as the prayers marked, its core lit through full days.
             val bandAlpha = 1f - 0.65f * gapsT
-            drawBand(smooth.mapIndexed { i, c -> x(i) to (10 + c * 10).dp.toPx() }, mid, rtl,
+            drawBand(smooth.mapIndexed { i, c -> x(i) to (14 + c * 14).dp.toPx() }, mid, rtl,
                 Brush.verticalGradient(
-                    0f to Color(0xFF7C6BFF).copy(alpha = 0f),
-                    0.5f to Color(0xFFB7AEFF).copy(alpha = 0.34f * bandAlpha),
+                    0f to Color(0xFF5B8CFF).copy(alpha = 0f),
+                    0.3f to Color(0xFF8C7BFF).copy(alpha = 0.3f * bandAlpha),
+                    0.5f to Color(0xFFC9B8FF).copy(alpha = 0.55f * bandAlpha),
+                    0.7f to Color(0xFFE07BC8).copy(alpha = 0.28f * bandAlpha),
                     1f to Color(0xFF7C6BFF).copy(alpha = 0f),
-                    startY = mid - 70.dp.toPx(),
-                    endY = mid + 70.dp.toPx()
+                    startY = mid - 90.dp.toPx(),
+                    endY = mid + 90.dp.toPx()
                 )
             )
-            drawBand(days.mapIndexed { i, day -> x(i) to (if (day?.isComplete == true) 20f else 3f + 2f * smooth[i]).dp.toPx() }, mid, rtl,
+            drawBand(days.mapIndexed { i, day -> x(i) to (if (day?.isComplete == true) 28f else 4f + 3f * smooth[i]).dp.toPx() }, mid, rtl,
                 Brush.verticalGradient(
                     0f to Color(0xFFFFE9D6).copy(alpha = 0f),
-                    0.5f to Color(0xFFFFF4E8).copy(alpha = 0.42f * bandAlpha),
+                    0.5f to Color(0xFFFFF4E8).copy(alpha = 0.62f * bandAlpha),
                     1f to Color(0xFFFFE9D6).copy(alpha = 0f),
-                    startY = mid - 24.dp.toPx(),
-                    endY = mid + 24.dp.toPx()
+                    startY = mid - 32.dp.toPx(),
+                    endY = mid + 32.dp.toPx()
                 )
             )
 
@@ -232,32 +251,32 @@ private fun GalaxyBand(
             val laneFrom = minOf(x(0), x(days.lastIndex)) - 6.dp.toPx()
             val laneTo = maxOf(x(0), x(days.lastIndex)) + 6.dp.toPx()
             for (b in 0 until 5) {
-                drawLine(Color.White.copy(alpha = 0.05f), Offset(laneFrom, lane(b)), Offset(laneTo, lane(b)), 1.dp.toPx())
+                drawLine(Color.White.copy(alpha = 0.07f), Offset(laneFrom, lane(b)), Offset(laneTo, lane(b)), 1.dp.toPx())
             }
             for (i in 7 until days.size step 7) {
                 val sx = (x(i - 1) + x(i)) / 2f
                 drawLine(
-                    Color.White.copy(alpha = 0.12f), Offset(sx, 22.dp.toPx()), Offset(sx, 150.dp.toPx()), 1.dp.toPx(),
+                    Color.White.copy(alpha = 0.16f), Offset(sx, 26.dp.toPx()), Offset(sx, 198.dp.toPx()), 1.dp.toPx(),
                     pathEffect = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 4.dp.toPx()))
                 )
             }
 
             // The picked day's beam.
             if (shown >= 0) {
-                val w = maxOf(column * 1.1f, 10.dp.toPx())
-                val top = 22.dp.toPx()
-                val h = 130.dp.toPx()
+                val w = maxOf(column * 1.2f, 12.dp.toPx())
+                val top = 26.dp.toPx()
+                val h = 172.dp.toPx()
                 drawRoundRect(
                     Brush.verticalGradient(
-                        0f to Color.White.copy(alpha = 0f), 0.2f to Color.White.copy(alpha = 0.16f),
-                        0.8f to Color.White.copy(alpha = 0.16f), 1f to Color.White.copy(alpha = 0f),
+                        0f to Color.White.copy(alpha = 0f), 0.2f to Color.White.copy(alpha = 0.2f),
+                        0.8f to Color.White.copy(alpha = 0.2f), 1f to Color.White.copy(alpha = 0f),
                         startY = top, endY = top + h
                     ),
                     topLeft = Offset(x(shown) - w / 2f, top), size = Size(w, h), cornerRadius = CornerRadius(w / 2f)
                 )
                 drawRoundRect(
-                    Color.White.copy(alpha = 0.28f), topLeft = Offset(x(shown) - w / 2f, top), size = Size(w, h),
-                    cornerRadius = CornerRadius(w / 2f), style = Stroke(0.8.dp.toPx())
+                    Color.White.copy(alpha = 0.4f), topLeft = Offset(x(shown) - w / 2f, top), size = Size(w, h),
+                    cornerRadius = CornerRadius(w / 2f), style = Stroke(1.dp.toPx())
                 )
             }
 
@@ -266,62 +285,62 @@ private fun GalaxyBand(
             days.forEachIndexed { i, day ->
                 day ?: return@forEachIndexed
                 day.entries.forEachIndexed { b, entry ->
-                    val cx = x(i) + jitter[i * 10 + b * 2] * 1.6.dp.toPx()
-                    val cy = lane(b) + jitter[i * 10 + b * 2 + 1] * 2.4.dp.toPx()
+                    val cx = x(i) + jitter[i * 10 + b * 2] * 1.8.dp.toPx()
+                    val cy = lane(b) + jitter[i * 10 + b * 2 + 1] * 3.dp.toPx()
                     when (entry.status) {
                         PrayerLogStatus.PRAYED -> {
-                            val r = (if (day.isComplete) 2.3f else 1.9f).dp.toPx()
+                            val r = (if (day.isComplete) 3.2f else 2.6f).dp.toPx()
                             drawCircle(
-                                Brush.radialGradient(listOf(entry.type.accentColor.copy(alpha = 0.45f * starAlpha), Color.Transparent), Offset(cx, cy), r * 3f),
-                                r * 3f, Offset(cx, cy)
+                                Brush.radialGradient(listOf(entry.type.accentColor.copy(alpha = 0.6f * starAlpha), Color.Transparent), Offset(cx, cy), r * 3.6f),
+                                r * 3.6f, Offset(cx, cy)
                             )
                             drawCircle(LaneStars[b].copy(alpha = starAlpha), r, Offset(cx, cy))
                         }
                         PrayerLogStatus.MISSED -> {
                             val c = Offset(x(i), lane(b))
                             if (gapsT > 0f) {
-                                drawCircle(Brush.radialGradient(listOf(Color(0xFFFF7878).copy(alpha = 0.6f * gapsT), Color.Transparent), c, 8.dp.toPx()), 8.dp.toPx(), c)
+                                drawCircle(Brush.radialGradient(listOf(Color(0xFFFF7878).copy(alpha = 0.6f * gapsT), Color.Transparent), c, 11.dp.toPx()), 11.dp.toPx(), c)
                             }
-                            drawCircle(Color(0xFF03050D).copy(alpha = 0.9f), 2.4.dp.toPx(), c)
+                            drawCircle(Color(0xFF03050D).copy(alpha = 0.9f), 3.2.dp.toPx(), c)
                             drawCircle(
-                                lerpColor(MissedCoral.copy(alpha = 0.5f), Color(0xFFFF9B9B), gapsT), 2.4.dp.toPx(), c,
-                                style = Stroke((0.9f + 0.4f * gapsT).dp.toPx())
+                                lerpColor(MissedCoral.copy(alpha = 0.6f), Color(0xFFFF9B9B), gapsT), 3.2.dp.toPx(), c,
+                                style = Stroke((1.1f + 0.4f * gapsT).dp.toPx())
                             )
                         }
                         PrayerLogStatus.ACTIVE -> {
                             val a = 0.55f + 0.45f * sin(2f * PI.toFloat() * breath.value)
-                            drawCircle(NowLilac.copy(alpha = a), 3.2.dp.toPx(), Offset(x(i), lane(b)), style = Stroke(1.dp.toPx()))
+                            drawCircle(NowLilac.copy(alpha = a), 4.2.dp.toPx(), Offset(x(i), lane(b)), style = Stroke(1.3.dp.toPx()))
                         }
-                        PrayerLogStatus.UPCOMING -> drawCircle(Color.White.copy(alpha = 0.12f), 0.9.dp.toPx(), Offset(x(i), lane(b)))
-                        PrayerLogStatus.UNTRACKED -> drawCircle(Color.White.copy(alpha = 0.16f), 1.dp.toPx(), Offset(x(i), lane(b)))
+                        PrayerLogStatus.UPCOMING -> drawCircle(Color.White.copy(alpha = 0.18f), 1.2.dp.toPx(), Offset(x(i), lane(b)))
+                        PrayerLogStatus.UNTRACKED -> drawCircle(Color.White.copy(alpha = 0.22f), 1.3.dp.toPx(), Offset(x(i), lane(b)))
                     }
                 }
             }
 
             // Names: the lanes in the gutter, the months over the band, the weeks under it.
-            val small = TextStyle(fontSize = 8.5.sp, fontWeight = FontWeight.Bold, color = skyFaint(0.55f))
+            val small = TextStyle(fontSize = 10.5.sp, fontWeight = FontWeight.Bold, color = skyFaint(0.75f))
             shorts.forEachIndexed { b, short ->
                 val text = measurer.measure(short, small)
-                val dotX = if (rtl) widthPx - 6.dp.toPx() else 6.dp.toPx()
-                drawCircle(LoggedPrayers[b].accentColor, 2.dp.toPx(), Offset(dotX, lane(b)))
-                val tx = if (rtl) dotX - 5.dp.toPx() - text.size.width else dotX + 5.dp.toPx()
+                val dotX = if (rtl) widthPx - 8.dp.toPx() else 8.dp.toPx()
+                drawCircle(LoggedPrayers[b].accentColor, 2.8.dp.toPx(), Offset(dotX, lane(b)))
+                val tx = if (rtl) dotX - 6.dp.toPx() - text.size.width else dotX + 6.dp.toPx()
                 drawText(text, topLeft = Offset(tx, lane(b) - text.size.height / 2f))
             }
-            val monthStyle = TextStyle(fontSize = 9.5.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.5.sp, color = skyFaint(0.5f))
+            val monthStyle = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.6.sp, color = skyFaint(0.72f))
             days.indices.forEach { i ->
                 val date = start.plusDays(i.toLong())
                 if (i == 0 || date.dayOfMonth == 1) {
                     if (i != 0 && i < 4 && start.dayOfMonth != 1) return@forEach
                     val text = measurer.measure(date.format(monthFormat).uppercase(locale), monthStyle)
                     val left = x(i) - column / 2f
-                    drawText(text, topLeft = Offset(if (rtl) left - text.size.width + column else left, 2.dp.toPx()))
+                    drawText(text, topLeft = Offset(if (rtl) left - text.size.width + column else left, 4.dp.toPx()))
                 }
             }
-            val weekStyle = TextStyle(fontSize = 9.sp, fontWeight = FontWeight.SemiBold, color = skyFaint(0.42f))
+            val weekStyle = TextStyle(fontSize = 10.5.sp, fontWeight = FontWeight.SemiBold, color = skyFaint(0.6f))
             for (i in days.indices step 7) {
                 val text = measurer.measure(start.plusDays(i.toLong()).format(dayMonth), weekStyle)
                 val cx = (x(i) + x((i + 6).coerceAtMost(days.lastIndex))) / 2f
-                drawText(text, topLeft = Offset(cx - text.size.width / 2f, 156.dp.toPx()))
+                drawText(text, topLeft = Offset(cx - text.size.width / 2f, 208.dp.toPx()))
             }
         }
 
@@ -333,7 +352,7 @@ private fun GalaxyBand(
                 Loupe(
                     day = day,
                     label = day.date.format(dayMonth),
-                    modifier = Modifier.offset(x = (at - 38.dp).coerceIn(4.dp, maxWidth - 80.dp), y = (-64).dp)
+                    modifier = Modifier.offset(x = (at - 38.dp).coerceIn(4.dp, maxWidth - 80.dp), y = (-70).dp)
                 )
             }
         }
@@ -412,14 +431,14 @@ private fun RangeRow(state: PrayerLogViewState, start: LocalDate, onShowGalaxy: 
         Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 "${start.format(format)} – ${end.format(format)}",
-                style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.SemiBold),
-                color = skyFaint(0.8f)
+                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold),
+                color = skyFaint(0.9f)
             )
             state.last30Days.rate?.let {
                 Text(
                     "${stringResource(R.string.prayer_log_month)} ${percent.format(it)}",
-                    style = TextStyle(fontSize = 10.5.sp),
-                    color = skyFaint(0.5f)
+                    style = TextStyle(fontSize = 12.sp),
+                    color = skyFaint(0.65f)
                 )
             }
         }
@@ -501,11 +520,11 @@ private fun DayPanel(
         Row(verticalAlignment = Alignment.CenterVertically) {
             DayArrow(Icons.AutoMirrored.Rounded.KeyboardArrowLeft, stringResource(R.string.prayer_log_prev_day), canGoBack) { onStep(-1) }
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(title, style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold), color = SkyInk, textAlign = TextAlign.Center, maxLines = 1)
+                Text(title, style = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.Bold), color = SkyInk, textAlign = TextAlign.Center, maxLines = 1)
                 Text(
                     note,
-                    style = TextStyle(fontSize = 12.sp),
-                    color = if (missed.isNotEmpty()) MissedCoral else skyFaint(0.6f),
+                    style = TextStyle(fontSize = 13.sp),
+                    color = if (missed.isNotEmpty()) MissedCoral else skyFaint(0.7f),
                     textAlign = TextAlign.Center,
                     maxLines = 2
                 )
@@ -553,23 +572,23 @@ private fun DayChip(entry: PrayerLogEntry, modifier: Modifier = Modifier, onClic
     }
     Column(
         modifier
-            .height(62.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .height(76.dp)
+            .clip(RoundedCornerShape(18.dp))
             .background(bg)
-            .border(1.dp, edge, RoundedCornerShape(16.dp))
+            .border(1.dp, edge, RoundedCornerShape(18.dp))
             .then(if (status != PrayerLogStatus.UPCOMING) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
             .semantics { contentDescription = "$name, $stateText" },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         when (status) {
-            PrayerLogStatus.PRAYED -> StarGlyph(13.dp, glow = entry.type.accentColor)
-            PrayerLogStatus.ACTIVE -> StarGlyph(13.dp, fill = null, outline = Color(0xFFDDE1FF))
-            PrayerLogStatus.MISSED -> StarGlyph(13.dp, fill = null, outline = MissedCoral)
-            else -> StarGlyph(13.dp, fill = null, outline = Color.White.copy(alpha = 0.3f))
+            PrayerLogStatus.PRAYED -> StarGlyph(18.dp, glow = entry.type.accentColor)
+            PrayerLogStatus.ACTIVE -> StarGlyph(18.dp, fill = null, outline = Color(0xFFDDE1FF))
+            PrayerLogStatus.MISSED -> StarGlyph(18.dp, fill = null, outline = MissedCoral)
+            else -> StarGlyph(18.dp, fill = null, outline = Color.White.copy(alpha = 0.35f))
         }
-        Spacer(Modifier.height(3.dp))
-        Text(name, style = TextStyle(fontSize = 10.5.sp, fontWeight = FontWeight.Bold), color = SkyInk, maxLines = 1)
-        Text(stateText, style = TextStyle(fontSize = 9.5.sp), color = words, maxLines = 1)
+        Spacer(Modifier.height(4.dp))
+        Text(name, style = TextStyle(fontSize = 12.5.sp, fontWeight = FontWeight.Bold), color = SkyInk, maxLines = 1)
+        Text(stateText, style = TextStyle(fontSize = 11.sp), color = words, maxLines = 1)
     }
 }
