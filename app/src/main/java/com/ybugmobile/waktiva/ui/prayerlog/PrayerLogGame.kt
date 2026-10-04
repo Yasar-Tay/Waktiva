@@ -84,7 +84,7 @@ import kotlin.random.Random
 internal fun LevelCard(progress: PrayerLogProgress) {
     val fraction by animateLevelFraction(progress)
 
-    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+    LogCard(Modifier.fillMaxWidth()) {
         Row(Modifier.padding(horizontal = 20.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
             LevelMedal(progress.level, fraction, Modifier.size(64.dp))
             Spacer(Modifier.width(16.dp))
@@ -133,7 +133,7 @@ internal fun LevelLine(progress: PrayerLogProgress, modifier: Modifier = Modifie
                 progress.level + 1
             ),
             style = MaterialTheme.typography.labelSmall,
-            color = contentColor.copy(alpha = 0.55f),
+            color = faint(0.55f),
             maxLines = 1
         )
     }
@@ -230,7 +230,7 @@ internal fun BadgesCard(progress: PrayerLogProgress) {
         ?: progress.nextBadge
         ?: progress.badges.last()
 
-    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+    LogCard(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 16.dp)) {
             Row(Modifier.padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -252,7 +252,7 @@ internal fun BadgesCard(progress: PrayerLogProgress) {
                         fontWeight = FontWeight.ExtraBold,
                         fontFeatureSettings = "tnum"
                     ),
-                    color = contentColor.copy(alpha = 0.7f)
+                    color = faint(0.7f)
                 )
             }
             Spacer(Modifier.height(14.dp))
@@ -302,7 +302,7 @@ private fun BadgeCell(progress: BadgeProgress, isSelected: Boolean, onClick: () 
         Text(
             text = name,
             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, lineHeight = 13.sp),
-            color = contentColor.copy(alpha = if (progress.isEarned) 0.9f else 0.5f),
+            color = faint(if (progress.isEarned) 0.9f else 0.5f),
             textAlign = TextAlign.Center,
             maxLines = 2,
             minLines = 2
@@ -374,7 +374,7 @@ private fun BadgeMedal(progress: BadgeProgress, modifier: Modifier = Modifier) {
         Icon(
             progress.badge.icon,
             contentDescription = null,
-            tint = if (earned) PrayedInk else contentColor.copy(alpha = 0.35f),
+            tint = if (earned) PrayedInk else faint(0.35f),
             modifier = Modifier.size(26.dp)
         )
     }
@@ -402,7 +402,7 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
                 Text(
                     text = stringResource(progress.badge.descRes),
                     style = MaterialTheme.typography.bodySmall,
-                    color = contentColor.copy(alpha = 0.65f)
+                    color = faint(0.65f)
                 )
             }
             Spacer(Modifier.width(12.dp))
@@ -423,7 +423,7 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
                         fontWeight = FontWeight.ExtraBold,
                         fontFeatureSettings = "tnum"
                     ),
-                    color = contentColor.copy(alpha = 0.75f)
+                    color = faint(0.75f)
                 )
             }
         }
@@ -438,7 +438,7 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
 @Composable
 internal fun FullDayBonus(isComplete: Boolean, modifier: Modifier = Modifier) {
     val contentColor = LocalGlassTheme.current.contentColor
-    val tint = if (isComplete) PrayedInk else contentColor.copy(alpha = 0.55f)
+    val tint = if (isComplete) PrayedInk else faint(0.55f)
     val pop by animateFloatAsState(
         if (isComplete) 1.06f else 1f,
         spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
@@ -575,6 +575,34 @@ internal fun UnlockToast(unlock: Unlock?, modifier: Modifier = Modifier) {
         }
     }
 }
+
+/**
+ * A card of the prayer log: the app's glass, darkened a little more by day, so the words on it
+ * hold against the bright sky behind.
+ */
+@Composable
+internal fun LogCard(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    val day = !LocalGlassTheme.current.isLightMode
+    GlassSurface(shape = CardShape, modifier = modifier) {
+        Box(if (day) Modifier.background(Color.Black.copy(alpha = DayScrim)) else Modifier) { content() }
+    }
+}
+
+/**
+ * The content colour at [alpha], for words and signs that step back. Faint white washes out on
+ * the bright day sky behind the glass, so by day it comes most of the way back to full; at night
+ * (the glass theme's light mode) it stays as asked.
+ */
+@Composable
+@ReadOnlyComposable
+internal fun faint(alpha: Float): Color {
+    val glass = LocalGlassTheme.current
+    return glass.contentColor.copy(alpha = if (glass.isLightMode) alpha else alpha + (1f - alpha) * DayLift)
+}
+
+/** How much darker a card is by day, and how far faint words come back to full. */
+private const val DayScrim = 0.2f
+private const val DayLift = 0.55f
 
 /** How long an [UnlockToast] stays up. */
 internal const val UnlockToastMillis = 2600L
