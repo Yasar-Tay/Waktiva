@@ -52,6 +52,9 @@ data class PrayerLogTally(val prayed: Int = 0, val missed: Int = 0) {
 
 data class PrayerLogViewState(
     val today: PrayerLogDay? = null,
+    /** Today's prayer times, which colour the sky over today's stars, and the time now, by the minute. */
+    val todayTimes: PrayerDay? = null,
+    val now: LocalTime = LocalTime.MIDNIGHT,
     /** Days in a row with all five prayers prayed. */
     val streak: Int = 0,
     /** XP, level and badges: the log as a game. */
@@ -217,6 +220,8 @@ internal fun buildPrayerLogState(
     val galaxy = (0 until GALAXY_WEEKS * 7).map { days[galaxyStart.plusDays(it.toLong())] }
     return PrayerLogViewState(
         today = days[today],
+        todayTimes = byDate[today],
+        now = now.toLocalTime(),
         streak = PrayerLog.streak(prayed, today),
         progress = PrayerLogProgress.of(prayed),
         last7Days = tally(7),
