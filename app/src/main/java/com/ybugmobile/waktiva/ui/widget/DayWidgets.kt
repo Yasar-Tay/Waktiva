@@ -65,6 +65,8 @@ internal object DayWidgets {
     /** The painted parts' bitmaps, in dp at the most, and in pixels at the most whatever the density. */
     private const val ORB_DP = 112
     private const val ORB_MAX_PX = 360
+    /** A day card's mark, as the card lays it out. */
+    private const val MARK_DP = 16
     private const val SKY_W_DP = 318
     private const val SKY_H_DP = 150
     private const val SKY_MAX_PX = 900
@@ -263,8 +265,9 @@ internal object DayWidgets {
 
     /**
      * One of the day's prayers as a card. With the log on, a prayer whose time has come (the
-     * current one or an earlier one) is marked or unmarked with a tap: a lit star once prayed, a
-     * lilac outline while its time is on, a dark hole ringed in coral once its time went by.
+     * current one or an earlier one) is marked or unmarked with a tap, its mark the prayer's own
+     * star as the prayer log screen draws it: lit once prayed, its outline calling while its time
+     * is on, eclipsed once its time went by.
      */
     private fun dayCard(context: Context, today: Today, time: DayTime): RemoteViews {
         val cell = RemoteViews(context.packageName, R.layout.widget_day_column)
@@ -286,14 +289,13 @@ internal object DayWidgets {
 
         if (prayed || markable) {
             cell.setViewVisibility(R.id.widget_cell_mark, View.VISIBLE)
-            cell.setImageViewResource(
-                R.id.widget_cell_mark,
-                when {
-                    prayed -> R.drawable.ic_widget_star
-                    time.isCurrent -> R.drawable.ic_widget_star_outline
-                    else -> R.drawable.widget_star_missed
-                }
-            )
+            val density = context.resources.displayMetrics.density
+            val star = when {
+                prayed -> SkyWidgetArt.Star.LIT
+                time.isCurrent -> SkyWidgetArt.Star.NOW
+                else -> SkyWidgetArt.Star.MISSED
+            }
+            cell.setImageViewBitmap(R.id.widget_cell_mark, SkyWidgetArt.mark(time.type, star, (MARK_DP * density).toInt()))
         }
         if (markable) {
             val prayerName = time.type.getPrayerName(context)

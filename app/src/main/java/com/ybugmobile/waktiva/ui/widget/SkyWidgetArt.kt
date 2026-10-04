@@ -10,10 +10,18 @@ import android.graphics.Path
 import android.graphics.RadialGradient
 import android.graphics.RectF
 import android.graphics.Shader
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
+import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
 import com.ybugmobile.waktiva.domain.model.PrayerType
-import com.ybugmobile.waktiva.ui.home.composables.accentColor
+import com.ybugmobile.waktiva.ui.prayerlog.paleColor
+import com.ybugmobile.waktiva.ui.prayerlog.prayerStar
+import androidx.compose.ui.graphics.Canvas as ComposeCanvas
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.min
@@ -22,8 +30,8 @@ import kotlin.random.Random
 
 /**
  * The prayer log's night for the widgets, painted as the screen paints it: the night itself, and
- * the day's five prayers as stars on the sun's path, the lit ones joined into the day's
- * constellation, or, the day made full, Cassiopeia's W.
+ * the day's five prayers on the sun's path, each its own star as on the screen, two in a row both
+ * lit joined, or, the day made full, Cassiopeia's W.
  */
 internal object SkyWidgetArt {
 
@@ -50,7 +58,6 @@ internal object SkyWidgetArt {
 
     private val Night = intArrayOf(0xFF03050D.toInt(), 0xFF070B22.toInt(), 0xFF141142.toInt(), 0xFF1E1A52.toInt())
     private val Lilac = Color(0xFFC5CBF0)
-    private val Coral = Color(0xFFFFB4B4)
     private const val STAR_WHITE = 0xFFFFFDF4.toInt()
 
     /** Cassiopeia's five stars on a sky 390 by 320, and how bright each is. */
@@ -153,94 +160,70 @@ internal object SkyWidgetArt {
             line.pathEffect = DashPathEffect(floatArrayOf(2f * dp, 6f * dp), 0f)
             canvas.drawArc(RectF(cx - rx, horizon - ry, cx + rx, horizon + ry), 180f, 180f, false, line)
             line.pathEffect = null
-            // The lit ones joined.
-            val lit = stars.indices.filter { stars[it].star == Star.LIT }
-            if (lit.size > 1) {
-                val path = Path().apply { lit.forEachIndexed { n, i -> if (n == 0) moveTo(onArc[i][0], onArc[i][1]) else lineTo(onArc[i][0], onArc[i][1]) } }
-                line.color = argb(Color(0xFFFFFAE6), 0.25f)
-                line.strokeWidth = 5f * dp
-                canvas.drawPath(path, line)
-                line.color = argb(Color(0xFFFFFAE6), 0.9f)
-                line.strokeWidth = 1.3f * dp
-                canvas.drawPath(path, line)
+            // Two in a row both lit, joined; one gone unmarked breaks the line.
+            if (stars.size > 1) {
+                line.shader = LinearGradient(0f, 0f, w, 0f, stars.map { it.type.paleColor.toArgb() }.toIntArray(), null, Shader.TileMode.CLAMP)
+                for (i in 0 until stars.size - 1) {
+                    if (stars[i].star != Star.LIT || stars[i + 1].star != Star.LIT) continue
+                    line.alpha = 64
+                    line.strokeWidth = 5f * dp
+                    canvas.drawLine(onArc[i][0], onArc[i][1], onArc[i + 1][0], onArc[i + 1][1], line)
+                    line.alpha = 255
+                    line.strokeWidth = 1.4f * dp
+                    canvas.drawLine(onArc[i][0], onArc[i][1], onArc[i + 1][0], onArc[i + 1][1], line)
+                }
+                line.shader = null
             }
-            // A dotted line on to the one waiting.
+            // A dotted line on to the one waiting, from the star before it, lit.
             val now = stars.indexOfFirst { it.star == Star.NOW }
-            val before = lit.lastOrNull { it < now }
-            if (now >= 0 && before != null) {
+            if (now > 0 && stars[now - 1].star == Star.LIT) {
                 line.color = Lilac.toArgb()
                 line.strokeWidth = 1.3f * dp
                 line.pathEffect = DashPathEffect(floatArrayOf(2f * dp, 4f * dp), 0f)
-                canvas.drawLine(onArc[before][0], onArc[before][1], onArc[now][0], onArc[now][1], line)
+                canvas.drawLine(onArc[now - 1][0], onArc[now - 1][1], onArc[now][0], onArc[now][1], line)
                 line.pathEffect = null
             }
         }
 
+        // The screen's stars have a body 17 across; here, 12 of the sky's units.
+        val starUnit = 12f * unit / 17f
         stars.forEachIndexed { i, s ->
-            val x = at[i][0]
-            val y = at[i][1]
             val bright = if (queen) Cassiopeia[i].third else 1f
-            drawStar(canvas, s, x, y, 12f * unit * bright, dp)
+            canvas.drawPrayerStar(s, at[i][0], at[i][1], starUnit, bright)
         }
         return bitmap
     }
 
-    /** One prayer's star, of radius [r], at ([x], [y]). */
-    private fun drawStar(canvas: Canvas, s: SkyStar, x: Float, y: Float, r: Float, dp: Float) {
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        when (s.star) {
-            Star.LIT -> {
-                paint.shader = RadialGradient(x, y, r * 2.2f, intArrayOf(argb(s.type.accentColor, 0.6f), 0), null, Shader.TileMode.CLAMP)
-                canvas.drawCircle(x, y, r * 2.2f, paint)
-                paint.shader = null
-                paint.color = STAR_WHITE
-                canvas.drawPath(sparkle(x, y, r), paint)
-            }
-            Star.NOW -> {
-                paint.color = argb(Color(0xFF9FA8DA), 0.2f)
-                canvas.drawCircle(x, y, r * 0.95f, paint)
-                paint.style = Paint.Style.STROKE
-                paint.strokeWidth = 1.2f * dp
-                paint.color = argb(Lilac, 0.85f)
-                canvas.drawCircle(x, y, r * 0.95f, paint)
-                paint.color = argb(Lilac, 0.35f)
-                canvas.drawCircle(x, y, r * 1.45f, paint)
-                paint.color = 0xFFDDE1FF.toInt()
-                paint.strokeJoin = Paint.Join.ROUND
-                canvas.drawPath(sparkle(x, y, r * 0.6f), paint)
-            }
-            Star.MISSED -> {
-                paint.color = argb(Color(0xFF03050D), 0.9f)
-                canvas.drawCircle(x, y, r * 0.5f, paint)
-                paint.style = Paint.Style.STROKE
-                paint.strokeWidth = 1.2f * dp
-                paint.color = argb(Coral, 0.75f)
-                canvas.drawCircle(x, y, r * 0.5f, paint)
-            }
-            Star.LATER -> {
-                paint.style = Paint.Style.STROKE
-                paint.strokeWidth = 1f * dp
-                paint.strokeJoin = Paint.Join.ROUND
-                paint.color = argb(Color.White, 0.32f)
-                canvas.drawPath(sparkle(x, y, r * 0.55f), paint)
-            }
-            Star.PLAIN -> {
-                paint.color = argb(Color.White, 0.7f)
-                canvas.drawPath(sparkle(x, y, r * 0.6f), paint)
-            }
-        }
+    private val markCache = object : LinkedHashMap<String, Bitmap>(16, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Bitmap>?) = size > 24
     }
 
-    /** A four-pointed star of radius [r] at ([x], [y]), its arms drawn in with soft curves. */
-    private fun sparkle(x: Float, y: Float, r: Float) = Path().apply {
-        val a = 0.137f * r
-        val b = 0.158f * r
-        moveTo(x, y - r)
-        cubicTo(x + a, y - b, x + b, y - a, x + r, y)
-        cubicTo(x + b, y + a, x + a, y + b, x, y + r)
-        cubicTo(x - a, y + b, x - b, y + a, x - r, y)
-        cubicTo(x - b, y - a, x - a, y - b, x, y - r)
-        close()
+    /** A prayer's star alone, [size] pixels square, as a day card's mark. */
+    fun mark(type: PrayerType, star: Star, size: Int): Bitmap {
+        val key = "$type/$star/$size"
+        synchronized(markCache) { markCache[key] }?.let { return it }
+        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        // Its rays just reach the edge; the body is about half of it.
+        Canvas(bitmap).drawPrayerStar(SkyStar(type, null, star), size / 2f, size / 2f, size / 2f / 24f, 1f)
+        synchronized(markCache) { markCache[key] = bitmap }
+        return bitmap
+    }
+
+    /**
+     * [s] as the prayer log screen draws it (see prayerStar), at ([x], [y]), [unit] pixels to the
+     * screen's dp, lit stars sized by [scale]. A plain star (the log off) is its outline, bright.
+     */
+    private fun Canvas.drawPrayerStar(s: SkyStar, x: Float, y: Float, unit: Float, scale: Float) {
+        val status = when (s.star) {
+            Star.LIT -> PrayerLogStatus.PRAYED
+            Star.NOW -> PrayerLogStatus.ACTIVE
+            Star.MISSED -> PrayerLogStatus.MISSED
+            Star.LATER, Star.PLAIN -> PrayerLogStatus.UPCOMING
+        }
+        CanvasDrawScope().draw(Density(unit), LayoutDirection.Ltr, ComposeCanvas(this), Size(width.toFloat(), height.toFloat())) {
+            // A still: rays at full shimmer, the calling ring a little way out, no flash.
+            prayerStar(s.type, status, Offset(x, y), scale, twinkle = 1f, pulse = 0.35f, ignite = 1f, isDay = s.star == Star.PLAIN)
+        }
     }
 
     private fun argb(color: Color, alpha: Float): Int = color.copy(alpha = (color.alpha * alpha).coerceIn(0f, 1f)).toArgb()
