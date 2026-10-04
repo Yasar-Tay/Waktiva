@@ -432,9 +432,11 @@ private data class SkyPoint(val x: Dp, val y: Dp) {
 // ── The call under the sky ──────────────────────────────────────────────────
 
 /**
- * Under the sky: a line on how the day stands, and the button that lights the star of the prayer
- * whose time is on, with what it brings: its XP, and the full day's bonus when it's the last one.
- * Once the day is full, its quiet acknowledgment in place of the button.
+ * Under the sky: the button that lights the star of the prayer whose time is on, with what it
+ * brings: its XP, and the full day's bonus when it's the last one. A line only when there's no
+ * button to say it: the day full, or a prayer gone unmarked to make up. (How many are lit is the
+ * count above; it isn't said twice.) Once the day is full, its quiet acknowledgment in place of
+ * the button.
  */
 @Composable
 internal fun SkyCall(today: PrayerLogDay, isFirstUse: Boolean, onMark: (PrayerLogEntry) -> Unit, modifier: Modifier = Modifier) {
@@ -444,17 +446,19 @@ internal fun SkyCall(today: PrayerLogDay, isFirstUse: Boolean, onMark: (PrayerLo
     val line = when {
         today.isComplete -> stringResource(R.string.prayer_log_sky_done)
         active == null && anyMissed -> stringResource(R.string.prayer_log_sky_mark_missed)
-        else -> stringResource(R.string.prayer_log_sky_left, left)
+        else -> null
     }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(14.dp)) {
-        Text(
-            text = line,
-            style = TextStyle(fontFamily = CormorantGaramond, fontStyle = FontStyle.Italic, fontSize = 24.sp, lineHeight = 29.sp, shadow = TextShade),
-            color = Color(0xFFECEAFF),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
+        line?.let {
+            Text(
+                text = it,
+                style = TextStyle(fontFamily = CormorantGaramond, fontStyle = FontStyle.Italic, fontSize = 24.sp, lineHeight = 29.sp, shadow = TextShade),
+                color = Color(0xFFECEAFF),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
         if (isFirstUse && today.prayed == 0) {
             Text(
                 text = stringResource(R.string.prayer_log_hint),
@@ -540,9 +544,12 @@ internal fun SkyCall(today: PrayerLogDay, isFirstUse: Boolean, onMark: (PrayerLo
     }
 }
 
-// ── Three numbers ───────────────────────────────────────────────────────────
+// ── Two numbers ─────────────────────────────────────────────────────────────
 
-/** The streak, the level with what the next one takes, and the badges earned: three tiles. */
+/**
+ * The streak, and the level with what the next one takes: two tiles. The badges earned are counted
+ * by the atlas below.
+ */
 @Composable
 internal fun SkyNumbers(state: PrayerLogViewState, modifier: Modifier = Modifier) {
     val progress = state.progress
@@ -587,18 +594,6 @@ internal fun SkyNumbers(state: PrayerLogViewState, modifier: Modifier = Modifier
                 maxLines = 2
             )
         }
-        SkyTile(Modifier.weight(1f)) {
-            Text(stringResource(R.string.prayer_log_badges).uppercase(), style = LabelStyle, color = skyFaint(0.6f), maxLines = 1)
-            Spacer(Modifier.weight(1f))
-            Text(
-                text = buildAnnotatedString {
-                    append(progress.earned.size.toString())
-                    withStyle(SpanStyle(fontSize = 14.sp, color = skyFaint(0.55f))) { append("/${progress.badges.size}") }
-                },
-                style = NumberStyle,
-                color = SkyInk
-            )
-        }
     }
 }
 
@@ -620,12 +615,12 @@ private val NumberStyle = TextStyle(fontFamily = CormorantGaramond, fontWeight =
 private val LabelStyle = TextStyle(fontSize = 11.5.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.4.sp)
 private val CaptionStyle = TextStyle(fontSize = 12.5.sp, lineHeight = 16.sp)
 
-/** The screen's section titles: a serif name over a quiet line. */
+/** The screen's section titles: a serif name, over a quiet line when there's a [hint]. */
 @Composable
-internal fun SkySectionTitle(title: String, hint: String, modifier: Modifier = Modifier) {
+internal fun SkySectionTitle(title: String, modifier: Modifier = Modifier, hint: String? = null) {
     Column(modifier) {
         Text(title, style = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.Bold, fontSize = 34.sp, lineHeight = 36.sp, shadow = TextShade), color = SkyInk)
-        Text(hint, style = TextStyle(fontSize = 12.5.sp, shadow = TextShade), color = skyFaint(0.7f), maxLines = 1)
+        hint?.let { Text(it, style = TextStyle(fontSize = 12.5.sp, shadow = TextShade), color = skyFaint(0.7f), maxLines = 1) }
     }
 }
 

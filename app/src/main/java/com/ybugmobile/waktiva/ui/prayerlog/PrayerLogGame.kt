@@ -59,8 +59,8 @@ import kotlin.random.Random
 
 /**
  * The badges as a star atlas, each one a constellation: lit and joined once earned, a faint dotted
- * outline until then. Tapping one shows what it asks for under the atlas; it opens on the next one
- * to earn.
+ * outline until then, with its name. Tapping one shows what it asks for, and how far along, under
+ * the atlas; it opens on the next one to earn.
  */
 @Composable
 internal fun StarAtlas(progress: PrayerLogProgress, modifier: Modifier = Modifier) {
@@ -73,7 +73,6 @@ internal fun StarAtlas(progress: PrayerLogProgress, modifier: Modifier = Modifie
         Row(verticalAlignment = Alignment.Bottom) {
             SkySectionTitle(
                 title = stringResource(R.string.prayer_log_atlas),
-                hint = stringResource(R.string.prayer_log_atlas_hint),
                 modifier = Modifier.weight(1f)
             )
             Text(
@@ -114,7 +113,7 @@ private fun AtlasTile(progress: BadgeProgress, isSelected: Boolean, onClick: () 
     val shape = RoundedCornerShape(18.dp)
     Column(
         modifier
-            .height(130.dp)
+            .height(108.dp)
             .clip(shape)
             .background(Brush.verticalGradient(listOf(Color(0xFF1A1440).copy(alpha = if (earned) 0.78f else 0.62f), Color(0xFF0A0820).copy(alpha = 0.8f))))
             .border(
@@ -135,13 +134,6 @@ private fun AtlasTile(progress: BadgeProgress, isSelected: Boolean, onClick: () 
             color = if (earned) SkyInk else skyFaint(0.65f),
             textAlign = TextAlign.Center,
             maxLines = 2
-        )
-        Text(
-            if (earned) sky else "${progress.current}/${progress.target}",
-            style = TextStyle(fontSize = 10.5.sp, fontFeatureSettings = "tnum"),
-            color = skyFaint(0.6f),
-            textAlign = TextAlign.Center,
-            maxLines = 1
         )
     }
 }

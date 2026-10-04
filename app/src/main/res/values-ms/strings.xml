@@ -495,7 +495,6 @@
     <string name="prayer_log_all_done">Semua solat hari ini sudah ditunaikan</string>
     <string name="prayer_log_streak">hari penuh berturut-turut</string>
     <string name="prayer_log_week">7 hari lepas</string>
-    <string name="prayer_log_month">30 hari lepas</string>
     <string name="prayer_log_missed_total">Jumlah tertinggal</string>
     <string name="prayer_log_prev_month">Bulan sebelumnya</string>
     <string name="prayer_log_next_month">Bulan berikutnya</string>
@@ -505,7 +504,6 @@
     <string name="prayer_log_xp_to_next">%1$d XP lagi ke tahap %2$d</string>
     <string name="prayer_log_full_day_bonus">Bonus hari penuh</string>
     <string name="prayer_log_best_streak">Terbaik: %1$d</string>
-    <string name="prayer_log_badges">Lencana</string>
     <string name="prayer_log_badge_unlocked">Lencana baharu</string>
     <string name="prayer_log_level_up">Naik tahap!</string>
     <string name="prayer_log_badge_earned">Diperoleh</string>
@@ -547,7 +545,6 @@
     <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
     <string name="prayer_log_sky_title">Bintang hari ini</string>
     <string name="prayer_log_sky_lit">bintang menyala</string>
-    <string name="prayer_log_sky_left">Bintang berbaki: %1$d · lengkapkan langitmu</string>
     <string name="prayer_log_sky_done">Langitmu lengkap. Semoga Allah menerimanya.</string>
     <string name="prayer_log_sky_mark_missed">Tandakan di bawah yang telah kamu solat</string>
     <string name="prayer_log_cassiopeia">Kasiopeia</string>
@@ -560,10 +557,7 @@
     <string name="prayer_log_galaxy_later">Minggu seterusnya</string>
     <string name="prayer_log_prev_day">Hari sebelumnya</string>
     <string name="prayer_log_next_day">Hari seterusnya</string>
-    <string name="prayer_log_day_missed">%1$s tertinggal · ketik jika sudah solat</string>
-    <string name="prayer_log_day_full">Hari lengkap · lima bintang</string>
     <string name="prayer_log_atlas">Atlas bintang</string>
-    <string name="prayer_log_atlas_hint">Setiap lencana satu buruj</string>
     <string name="prayer_log_star_first_prayer">Bintang Utara</string>
     <string name="prayer_log_star_first_full_day">Lima Solat</string>
     <string name="prayer_log_star_streak_3">Segi Tiga</string>

@@ -34,8 +34,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -44,6 +47,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -53,6 +57,8 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,18 +67,21 @@ import com.ybugmobile.waktiva.ui.theme.CormorantGaramond
 import com.ybugmobile.waktiva.domain.model.LoggedPrayers
 import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
 import com.ybugmobile.waktiva.ui.home.composables.accentColor
-import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.PI
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.random.Random
 
 /**
  * The Milky Way: the last five weeks as a band of stars, a column a day and a lane a prayer, the
- * day's order top to bottom. Prayers marked are stars, and the more of a day's are, the wider and
- * brighter the galaxy there, its core lit through full days; a prayer gone unmarked is a dark hole
+ * day's order top to bottom, over the milky way itself (R.drawable.cetele_galaxy, painted from
+ * fractal noise). Prayers marked are stars, and the more of a day's are, the wider and brighter
+ * the galaxy there, its core lit through full days; a prayer gone unmarked is a dark hole
  * ringed in coral. The whole band is one wide touch target: a finger on it picks the nearest day,
  * glides along to the next with a tick, and a loupe above shows the day under it. The picked day's
  * prayers are under the band to mark, with arrows to step a day at a time. The band and its weeks
@@ -179,6 +188,7 @@ private fun GalaxyBand(
         FloatArray(days.size * 10) { random.nextFloat() - 0.5f }
     }
     val bandLabel = stringResource(R.string.prayer_log_galaxy_hint)
+    val milkyWay = ImageBitmap.imageResource(R.drawable.cetele_galaxy)
 
     BoxWithConstraints(Modifier.fillMaxWidth().height(BandHeight)) {
         val density = LocalDensity.current
@@ -224,26 +234,17 @@ private fun GalaxyBand(
                 (counts[(i - 1).coerceAtLeast(0)] + 2 * counts[i] + counts[(i + 1).coerceAtMost(counts.lastIndex)]) / 4f
             }
 
-            // The galaxy: a soft band as wide as the prayers marked, its core lit through full days.
+            // The galaxy: the milky way's still laid along the band in thin slices, each as tall and
+            // as bright as the prayers marked about there; its core lit a little more through full days.
             val bandAlpha = 1f - 0.65f * gapsT
-            drawBand(smooth.mapIndexed { i, c -> x(i) to (14 + c * 14).dp.toPx() }, mid, rtl,
-                Brush.verticalGradient(
-                    0f to Color(0xFF5B8CFF).copy(alpha = 0f),
-                    0.3f to Color(0xFF8C7BFF).copy(alpha = 0.3f * bandAlpha),
-                    0.5f to Color(0xFFC9B8FF).copy(alpha = 0.55f * bandAlpha),
-                    0.7f to Color(0xFFE07BC8).copy(alpha = 0.28f * bandAlpha),
-                    1f to Color(0xFF7C6BFF).copy(alpha = 0f),
-                    startY = mid - 90.dp.toPx(),
-                    endY = mid + 90.dp.toPx()
-                )
-            )
-            drawBand(days.mapIndexed { i, day -> x(i) to (if (day?.isComplete == true) 28f else 4f + 3f * smooth[i]).dp.toPx() }, mid, rtl,
+            drawMilkyWay(milkyWay, smooth, gutter, column, widthPx, mid, rtl, bandAlpha)
+            drawBand(days.mapIndexed { i, day -> x(i) to (if (day?.isComplete == true) 22f else 0f).dp.toPx() }, mid, rtl,
                 Brush.verticalGradient(
                     0f to Color(0xFFFFE9D6).copy(alpha = 0f),
-                    0.5f to Color(0xFFFFF4E8).copy(alpha = 0.62f * bandAlpha),
+                    0.5f to Color(0xFFFFF4E8).copy(alpha = 0.3f * bandAlpha),
                     1f to Color(0xFFFFE9D6).copy(alpha = 0f),
-                    startY = mid - 32.dp.toPx(),
-                    endY = mid + 32.dp.toPx()
+                    startY = mid - 26.dp.toPx(),
+                    endY = mid + 26.dp.toPx()
                 )
             )
 
@@ -294,7 +295,9 @@ private fun GalaxyBand(
                                 Brush.radialGradient(listOf(entry.type.accentColor.copy(alpha = 0.6f * starAlpha), Color.Transparent), Offset(cx, cy), r * 3.6f),
                                 r * 3.6f, Offset(cx, cy)
                             )
-                            drawCircle(LaneStars[b].copy(alpha = starAlpha), r, Offset(cx, cy))
+                            // A four-pointed star, its arms just short of the next day's.
+                            drawPath(sparkle(Offset(cx, cy), r * 1.5f), LaneStars[b].copy(alpha = starAlpha))
+                            drawCircle(Color.White.copy(alpha = starAlpha), r * 0.45f, Offset(cx, cy))
                         }
                         PrayerLogStatus.MISSED -> {
                             val c = Offset(x(i), lane(b))
@@ -309,10 +312,10 @@ private fun GalaxyBand(
                         }
                         PrayerLogStatus.ACTIVE -> {
                             val a = 0.55f + 0.45f * sin(2f * PI.toFloat() * breath.value)
-                            drawCircle(NowLilac.copy(alpha = a), 4.2.dp.toPx(), Offset(x(i), lane(b)), style = Stroke(1.3.dp.toPx()))
+                            drawPath(sparkle(Offset(x(i), lane(b)), 4.5.dp.toPx()), NowLilac.copy(alpha = a), style = Stroke(1.2.dp.toPx(), join = StrokeJoin.Round))
                         }
-                        PrayerLogStatus.UPCOMING -> drawCircle(Color.White.copy(alpha = 0.18f), 1.2.dp.toPx(), Offset(x(i), lane(b)))
-                        PrayerLogStatus.UNTRACKED -> drawCircle(Color.White.copy(alpha = 0.22f), 1.3.dp.toPx(), Offset(x(i), lane(b)))
+                        PrayerLogStatus.UPCOMING -> drawPath(sparkle(Offset(x(i), lane(b)), 2.6.dp.toPx()), Color.White.copy(alpha = 0.2f))
+                        PrayerLogStatus.UNTRACKED -> drawPath(sparkle(Offset(x(i), lane(b)), 2.8.dp.toPx()), Color.White.copy(alpha = 0.24f))
                     }
                 }
             }
@@ -356,6 +359,46 @@ private fun GalaxyBand(
                 )
             }
         }
+    }
+}
+
+/**
+ * The milky way's still ([image], a long strip fading out at its edges) along the band about [mid]:
+ * three slices to each of the days' columns ([column] wide from [gutter]), each as tall and as bright
+ * as [counts] (the prayers marked about there, smoothed, 0 to 5) say, read between the columns.
+ */
+private fun DrawScope.drawMilkyWay(
+    image: ImageBitmap,
+    counts: List<Float>,
+    gutter: Float,
+    column: Float,
+    widthPx: Float,
+    mid: Float,
+    rtl: Boolean,
+    alpha: Float
+) {
+    if (counts.isEmpty()) return
+    val perColumn = 3
+    val slices = counts.size * perColumn
+    val sliceW = column * counts.size / slices
+    val srcW = image.width / slices.toFloat()
+    for (k in 0 until slices) {
+        val at = (k + 0.5f) / perColumn - 0.5f
+        val i0 = floor(at).toInt().coerceIn(0, counts.lastIndex)
+        val i1 = (i0 + 1).coerceAtMost(counts.lastIndex)
+        val c = counts[i0] + (counts[i1] - counts[i0]) * (at - floor(at)).coerceIn(0f, 1f)
+        val half = (22f + 18f * c).dp.toPx()
+        val left = gutter + sliceW * k
+        val dx = if (rtl) widthPx - left - sliceW else left
+        drawImage(
+            image,
+            srcOffset = IntOffset((srcW * k).toInt(), 0),
+            srcSize = IntSize(ceil(srcW).toInt().coerceAtMost(image.width - (srcW * k).toInt()), image.height),
+            dstOffset = IntOffset(dx.roundToInt(), (mid - half).roundToInt()),
+            dstSize = IntSize(ceil(sliceW).toInt() + 1, (2f * half).roundToInt()),
+            alpha = alpha * (0.5f + 0.1f * c),
+            filterQuality = FilterQuality.Medium
+        )
     }
 }
 
@@ -413,12 +456,11 @@ private fun Loupe(day: PrayerLogDay, label: String, modifier: Modifier = Modifie
     }
 }
 
-/** The galaxy's weeks, between the arrows to the ones before and after, and the month's share prayed. */
+/** The galaxy's weeks, between the arrows to the ones before and after. */
 @Composable
 private fun RangeRow(state: PrayerLogViewState, start: LocalDate, onShowGalaxy: (Int) -> Unit, modifier: Modifier = Modifier) {
     val locale = LocalConfiguration.current.locales[0]
     val format = remember(locale) { DateTimeFormatter.ofPattern("d MMM", locale) }
-    val percent = remember(locale) { NumberFormat.getPercentInstance(locale) }
     val end = start.plusWeeks(GALAXY_WEEKS.toLong()).minusDays(1)
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = { onShowGalaxy(-1) }, enabled = state.canShowEarlier) {
@@ -428,20 +470,13 @@ private fun RangeRow(state: PrayerLogViewState, start: LocalDate, onShowGalaxy: 
                 tint = skyFaint(if (state.canShowEarlier) 0.8f else 0.2f)
             )
         }
-        Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                "${start.format(format)} – ${end.format(format)}",
-                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold),
-                color = skyFaint(0.9f)
-            )
-            state.last30Days.rate?.let {
-                Text(
-                    "${stringResource(R.string.prayer_log_month)} ${percent.format(it)}",
-                    style = TextStyle(fontSize = 12.sp),
-                    color = skyFaint(0.65f)
-                )
-            }
-        }
+        Text(
+            "${start.format(format)} – ${end.format(format)}",
+            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold),
+            color = skyFaint(0.9f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.weight(1f)
+        )
         IconButton(onClick = { onShowGalaxy(1) }, enabled = state.canShowLater) {
             Icon(
                 Icons.AutoMirrored.Rounded.KeyboardArrowRight,
@@ -492,8 +527,8 @@ private fun MissedSwitch(on: Boolean, missed: Int, onChange: (Boolean) -> Unit) 
 }
 
 /**
- * The picked day: its date between arrows that step a day back or on, what it lacks, and its five
- * prayers to mark or unmark.
+ * The picked day: its date between arrows that step a day back or on, and its five prayers to mark
+ * or unmark, each showing how it stands by its star.
  */
 @Composable
 private fun DayPanel(
@@ -507,28 +542,18 @@ private fun DayPanel(
     val locale = LocalConfiguration.current.locales[0]
     val title = day.date.format(DateTimeFormatter.ofPattern("d MMMM EEEE", locale)) +
         if (isToday) " · ${stringResource(R.string.prayer_log_today)}" else ""
-    val missed = day.entries.filter { it.status == PrayerLogStatus.MISSED }.map { it.type.prayerName }
-    val active = day.entries.firstOrNull { it.status == PrayerLogStatus.ACTIVE }
-    val note = when {
-        missed.isNotEmpty() -> stringResource(R.string.prayer_log_day_missed, missed.joinToString(", "))
-        day.isComplete -> stringResource(R.string.prayer_log_day_full)
-        active != null -> stringResource(R.string.prayer_log_now, active.type.prayerName)
-        else -> "${day.prayed}/${day.entries.size}"
-    }
 
     SkyTile(modifier.fillMaxWidth(), padding = PaddingValues(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             DayArrow(Icons.AutoMirrored.Rounded.KeyboardArrowLeft, stringResource(R.string.prayer_log_prev_day), canGoBack) { onStep(-1) }
-            Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(title, style = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.Bold), color = SkyInk, textAlign = TextAlign.Center, maxLines = 1)
-                Text(
-                    note,
-                    style = TextStyle(fontSize = 13.sp),
-                    color = if (missed.isNotEmpty()) MissedCoral else skyFaint(0.7f),
-                    textAlign = TextAlign.Center,
-                    maxLines = 2
-                )
-            }
+            Text(
+                title,
+                style = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.Bold),
+                color = SkyInk,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                modifier = Modifier.weight(1f)
+            )
             DayArrow(Icons.AutoMirrored.Rounded.KeyboardArrowRight, stringResource(R.string.prayer_log_next_day), !isToday) { onStep(1) }
         }
         Spacer(Modifier.height(12.dp))
@@ -558,21 +583,21 @@ private fun DayArrow(icon: androidx.compose.ui.graphics.vector.ImageVector, labe
     }
 }
 
-/** A prayer of the picked day: its star in its state, its name and its state in words. */
+/** A prayer of the picked day: its star in its state, and its name; its state in words is for screen readers. */
 @Composable
 private fun DayChip(entry: PrayerLogEntry, modifier: Modifier = Modifier, onClick: () -> Unit) {
     val status = entry.status
     val name = entry.type.prayerName
     val stateText = stringResource(status.labelRes)
-    val (bg, edge, words) = when (status) {
-        PrayerLogStatus.PRAYED -> Triple(Color.White.copy(alpha = 0.07f), Color.White.copy(alpha = 0.1f), skyFaint(0.55f))
-        PrayerLogStatus.ACTIVE -> Triple(Color(0xFF9FA8DA).copy(alpha = 0.2f), Color(0xFFD6DAFF).copy(alpha = 0.45f), NowLilac)
-        PrayerLogStatus.MISSED -> Triple(Color(0xFFF87171).copy(alpha = 0.12f), Color(0xFFFFAAAA).copy(alpha = 0.45f), MissedCoral)
-        else -> Triple(Color.White.copy(alpha = 0.03f), Color.White.copy(alpha = 0.06f), skyFaint(0.4f))
+    val (bg, edge) = when (status) {
+        PrayerLogStatus.PRAYED -> Color.White.copy(alpha = 0.07f) to Color.White.copy(alpha = 0.1f)
+        PrayerLogStatus.ACTIVE -> Color(0xFF9FA8DA).copy(alpha = 0.2f) to Color(0xFFD6DAFF).copy(alpha = 0.45f)
+        PrayerLogStatus.MISSED -> Color(0xFFF87171).copy(alpha = 0.12f) to Color(0xFFFFAAAA).copy(alpha = 0.45f)
+        else -> Color.White.copy(alpha = 0.03f) to Color.White.copy(alpha = 0.06f)
     }
     Column(
         modifier
-            .height(76.dp)
+            .height(64.dp)
             .clip(RoundedCornerShape(18.dp))
             .background(bg)
             .border(1.dp, edge, RoundedCornerShape(18.dp))
@@ -587,8 +612,7 @@ private fun DayChip(entry: PrayerLogEntry, modifier: Modifier = Modifier, onClic
             PrayerLogStatus.MISSED -> StarGlyph(18.dp, fill = null, outline = MissedCoral)
             else -> StarGlyph(18.dp, fill = null, outline = Color.White.copy(alpha = 0.35f))
         }
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(6.dp))
         Text(name, style = TextStyle(fontSize = 12.5.sp, fontWeight = FontWeight.Bold), color = SkyInk, maxLines = 1)
-        Text(stateText, style = TextStyle(fontSize = 11.sp), color = words, maxLines = 1)
     }
 }

@@ -496,7 +496,6 @@
     <string name="prayer_log_all_done">Bugünün tüm namazları kılındı</string>
     <string name="prayer_log_streak">tam gün üst üste</string>
     <string name="prayer_log_week">Son 7 gün</string>
-    <string name="prayer_log_month">Son 30 gün</string>
     <string name="prayer_log_missed_total">Toplam kaçırılan</string>
     <string name="prayer_log_prev_month">Önceki ay</string>
     <string name="prayer_log_next_month">Sonraki ay</string>
@@ -506,7 +505,6 @@
     <string name="prayer_log_xp_to_next">Seviye %2$d için %1$d XP</string>
     <string name="prayer_log_full_day_bonus">Tam gün bonusu</string>
     <string name="prayer_log_best_streak">En iyi: %1$d</string>
-    <string name="prayer_log_badges">Rozetler</string>
     <string name="prayer_log_badge_unlocked">Yeni rozet</string>
     <string name="prayer_log_level_up">Seviye atladın!</string>
     <string name="prayer_log_badge_earned">Kazanıldı</string>
@@ -548,7 +546,6 @@
     <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
     <string name="prayer_log_sky_title">Günün yıldızları</string>
     <string name="prayer_log_sky_lit">yıldız yandı</string>
-    <string name="prayer_log_sky_left">Kalan yıldız: %1$d · gökyüzünü tamamla</string>
     <string name="prayer_log_sky_done">Gökyüzün tamam. Allah kabul etsin.</string>
     <string name="prayer_log_sky_mark_missed">Kıldıklarını aşağıdan işaretle</string>
     <string name="prayer_log_cassiopeia">Kraliçe</string>
@@ -561,10 +558,7 @@
     <string name="prayer_log_galaxy_later">Sonraki haftalar</string>
     <string name="prayer_log_prev_day">Önceki gün</string>
     <string name="prayer_log_next_day">Sonraki gün</string>
-    <string name="prayer_log_day_missed">%1$s kaçırıldı · kıldıysan dokun</string>
-    <string name="prayer_log_day_full">Tam gün · beş yıldız</string>
     <string name="prayer_log_atlas">Yıldız atlası</string>
-    <string name="prayer_log_atlas_hint">Her rozet bir takımyıldız</string>
     <string name="prayer_log_star_first_prayer">Demirkazık</string>
     <string name="prayer_log_star_first_full_day">Beş Vakit</string>
     <string name="prayer_log_star_streak_3">Üçgen</string>

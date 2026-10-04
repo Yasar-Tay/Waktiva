@@ -495,7 +495,6 @@
     <string name="prayer_log_all_done">Kaikki päivän rukoukset on rukoiltu</string>
     <string name="prayer_log_streak">täyttä päivää peräkkäin</string>
     <string name="prayer_log_week">Viimeiset 7 päivää</string>
-    <string name="prayer_log_month">Viimeiset 30 päivää</string>
     <string name="prayer_log_missed_total">Väliin jääneet yhteensä</string>
     <string name="prayer_log_prev_month">Edellinen kuukausi</string>
     <string name="prayer_log_next_month">Seuraava kuukausi</string>
@@ -505,7 +504,6 @@
     <string name="prayer_log_xp_to_next">%1$d XP tasoon %2$d</string>
     <string name="prayer_log_full_day_bonus">Täyden päivän bonus</string>
     <string name="prayer_log_best_streak">Paras: %1$d</string>
-    <string name="prayer_log_badges">Merkit</string>
     <string name="prayer_log_badge_unlocked">Uusi merkki</string>
     <string name="prayer_log_level_up">Taso nousi!</string>
     <string name="prayer_log_badge_earned">Ansaittu</string>
@@ -547,7 +545,6 @@
     <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
     <string name="prayer_log_sky_title">Päivän tähdet</string>
     <string name="prayer_log_sky_lit">tähteä syttynyt</string>
-    <string name="prayer_log_sky_left">Tähtiä jäljellä: %1$d · täydennä taivaasi</string>
     <string name="prayer_log_sky_done">Taivaasi on täysi. Ottakoon Allah sen vastaan.</string>
     <string name="prayer_log_sky_mark_missed">Merkitse alta rukoilemasi</string>
     <string name="prayer_log_cassiopeia">Kassiopeia</string>
@@ -560,10 +557,7 @@
     <string name="prayer_log_galaxy_later">Myöhemmät viikot</string>
     <string name="prayer_log_prev_day">Edellinen päivä</string>
     <string name="prayer_log_next_day">Seuraava päivä</string>
-    <string name="prayer_log_day_missed">%1$s jäi väliin · napauta, jos rukoilit</string>
-    <string name="prayer_log_day_full">Täysi päivä · viisi tähteä</string>
     <string name="prayer_log_atlas">Tähtikartasto</string>
-    <string name="prayer_log_atlas_hint">Jokainen merkki on tähdistö</string>
     <string name="prayer_log_star_first_prayer">Pohjantähti</string>
     <string name="prayer_log_star_first_full_day">Viisi Rukousta</string>
     <string name="prayer_log_star_streak_3">Kolmio</string>

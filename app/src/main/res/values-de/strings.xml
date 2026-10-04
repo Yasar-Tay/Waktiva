@@ -483,7 +483,6 @@
     <string name="prayer_log_all_done">Alle Gebete von heute sind verrichtet</string>
     <string name="prayer_log_streak">volle Tage in Folge</string>
     <string name="prayer_log_week">Letzte 7 Tage</string>
-    <string name="prayer_log_month">Letzte 30 Tage</string>
     <string name="prayer_log_missed_total">Insgesamt verpasst</string>
     <string name="prayer_log_prev_month">Vorheriger Monat</string>
     <string name="prayer_log_next_month">Nächster Monat</string>
@@ -493,7 +492,6 @@
     <string name="prayer_log_xp_to_next">%1$d XP bis Stufe %2$d</string>
     <string name="prayer_log_full_day_bonus">Bonus für einen vollen Tag</string>
     <string name="prayer_log_best_streak">Bestwert: %1$d</string>
-    <string name="prayer_log_badges">Abzeichen</string>
     <string name="prayer_log_badge_unlocked">Neues Abzeichen</string>
     <string name="prayer_log_level_up">Stufe aufgestiegen!</string>
     <string name="prayer_log_badge_earned">Erreicht</string>
@@ -535,7 +533,6 @@
     <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
     <string name="prayer_log_sky_title">Sterne des Tages</string>
     <string name="prayer_log_sky_lit">Sterne leuchten</string>
-    <string name="prayer_log_sky_left">Fehlende Sterne: %1$d · vollende deinen Himmel</string>
     <string name="prayer_log_sky_done">Dein Himmel ist vollständig. Möge Allah es annehmen.</string>
     <string name="prayer_log_sky_mark_missed">Markiere unten, was du gebetet hast</string>
     <string name="prayer_log_cassiopeia">Kassiopeia</string>
@@ -548,10 +545,7 @@
     <string name="prayer_log_galaxy_later">Spätere Wochen</string>
     <string name="prayer_log_prev_day">Vorheriger Tag</string>
     <string name="prayer_log_next_day">Nächster Tag</string>
-    <string name="prayer_log_day_missed">%1$s verpasst · tippe, falls gebetet</string>
-    <string name="prayer_log_day_full">Ganzer Tag · fünf Sterne</string>
     <string name="prayer_log_atlas">Sternatlas</string>
-    <string name="prayer_log_atlas_hint">Jedes Abzeichen ein Sternbild</string>
     <string name="prayer_log_star_first_prayer">Polarstern</string>
     <string name="prayer_log_star_first_full_day">Fünf Gebete</string>
     <string name="prayer_log_star_streak_3">Dreieck</string>
