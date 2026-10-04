@@ -82,7 +82,8 @@
                 android:textColor="#B3E4E2FF"
                 android:textSize="11.5sp" />
 
-            <View
+            <!-- A spacer: widgets can't hold a plain View, so a FrameLayout. -->
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
