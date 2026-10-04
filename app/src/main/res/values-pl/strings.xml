@@ -252,6 +252,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Powiadomienia o czasie modlitwy</string>
     <string name="settings_silent_prayer_notification_desc">Otrzymuj powiadomienia, nawet gdy adhan nie jest odtwarzany</string>
+    <string name="settings_prayer_log_still_notifies">Powiadomienia Dziennika modlitw są nadal włączone</string>
+    <string name="settings_prayer_log_still_notifies_desc">Przypominają o zaznaczeniu modlitw. Dotknij, aby dostosować.</string>
     <string name="silent_prayer_channel_name">Alerty czasu modlitwy</string>
     <string name="silent_prayer_channel_description">Ciche powiadomienia o czasach modlitwy, gdy dźwięk adhan jest wyłączony.</string>
     <string name="notification_prayer_time_title">Czas na %s</string>

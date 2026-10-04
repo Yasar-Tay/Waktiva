@@ -245,6 +245,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">نماز کے وقت کی اطلاعات</string>
     <string name="settings_silent_prayer_notification_desc">اگر اذان نہ بھی بجے تو اطلاع ملے</string>
+    <string name="settings_prayer_log_still_notifies">نماز کے ریکارڈ کی اطلاعات ابھی بھی آن ہیں</string>
+    <string name="settings_prayer_log_still_notifies_desc">یہ آپ کو نمازیں درج کرنے کی یاد دلاتی ہیں۔ تبدیل کرنے کے لیے ٹیپ کریں۔</string>
     <string name="silent_prayer_channel_name">نماز کے وقت کے الرٹ</string>
     <string name="silent_prayer_channel_description">جب اذان آڈیو بند ہو تو نماز کے اوقات کے لیے خاموش اطلاعات۔</string>
     <string name="notification_prayer_time_title">%s کا وقت آ گیا</string>

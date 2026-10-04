@@ -245,6 +245,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">إشعارات وقت الصلاة</string>
     <string name="settings_silent_prayer_notification_desc">تلقَّ الإشعارات حتى إذا لم يتم تشغيل الأذان</string>
+    <string name="settings_prayer_log_still_notifies">إشعارات سجل الصلوات لا تزال مفعّلة</string>
+    <string name="settings_prayer_log_still_notifies_desc">تذكّرك بتسجيل صلواتك. اضغط للتعديل.</string>
     <string name="silent_prayer_channel_name">تنبيهات وقت الصلاة</string>
     <string name="silent_prayer_channel_description">إشعارات صامتة لأوقات الصلاة عند إيقاف صوت الأذان.</string>
     <string name="notification_prayer_time_title">حان وقت صلاة %s</string>

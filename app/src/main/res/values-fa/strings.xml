@@ -245,6 +245,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">اعلان‌های وقت نماز</string>
     <string name="settings_silent_prayer_notification_desc">حتی اگر اذان پخش نشود اعلان دریافت کنید</string>
+    <string name="settings_prayer_log_still_notifies">اعلان‌های کارنامهٔ نماز هنوز روشن است</string>
+    <string name="settings_prayer_log_still_notifies_desc">ثبت نمازهایت را یادآوری می‌کند. برای تنظیم بزنید.</string>
     <string name="silent_prayer_channel_name">هشدارهای وقت نماز</string>
     <string name="silent_prayer_channel_description">اعلان‌های بی‌صدا برای اوقات نماز هنگامی که صدای اذان خاموش است.</string>
     <string name="notification_prayer_time_title">وقت %s فرا رسیده</string>

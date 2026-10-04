@@ -252,6 +252,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notificações de horário de oração</string>
     <string name="settings_silent_prayer_notification_desc">Receba notificações mesmo quando o adhan não for reproduzido</string>
+    <string name="settings_prayer_log_still_notifies">As notificações do Registro de orações continuam ativas</string>
+    <string name="settings_prayer_log_still_notifies_desc">Lembram você de marcar suas orações. Toque para ajustar.</string>
     <string name="silent_prayer_channel_name">Alertas de horário de oração</string>
     <string name="silent_prayer_channel_description">Notificações silenciosas para horários de oração quando o áudio do adhan está desligado.</string>
     <string name="notification_prayer_time_title">É hora de %s</string>

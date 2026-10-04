@@ -47,7 +47,6 @@ class NotificationHelper @Inject constructor(
 
         const val NOTIFICATION_ID_ADHAN = 1001
         const val NOTIFICATION_ID_WARNING = 2001
-        const val NOTIFICATION_ID_MISSED = 3001
         const val NOTIFICATION_ID_PRAYER_TIME = 4001
         const val NOTIFICATION_ID_PRAYER_LOG = 5001
         const val NOTIFICATION_ID_PRAYER_LOG_NUDGE = 5002
@@ -393,28 +392,5 @@ class NotificationHelper @Inject constructor(
             context, requestCode, openLog,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-    }
-
-    fun showMissedAdhanNotification(prayerName: String) {
-        val prayerType = PrayerType.fromString(prayerName)
-        val displayedPrayerName = prayerType?.getPrayerName(context) ?: prayerName
-
-        val contentIntent = PendingIntent.getActivity(
-            context, 0, Intent(context, MainActivity::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID_WARNING)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(context.getString(R.string.notification_adhan_title, displayedPrayerName))
-            .setContentText(context.getString(R.string.notification_adhan_content))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setContentIntent(contentIntent)
-            .setAutoCancel(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .build()
-
-        notificationManager.notify(NOTIFICATION_ID_MISSED, notification)
     }
 }

@@ -245,6 +245,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Gebetszeit-Benachrichtigungen</string>
     <string name="settings_silent_prayer_notification_desc">Erhalte Benachrichtigungen, auch wenn kein Adhan abgespielt wird</string>
+    <string name="settings_prayer_log_still_notifies">Benachrichtigungen des Gebetstagebuchs sind noch an</string>
+    <string name="settings_prayer_log_still_notifies_desc">Sie erinnern dich daran, deine Gebete einzutragen. Zum Anpassen tippen.</string>
     <string name="silent_prayer_channel_name">Gebetszeit-Alarme</string>
     <string name="silent_prayer_channel_description">Lautlose Benachrichtigungen für Gebetszeiten, wenn der Adhan-Ton deaktiviert ist.</string>
     <string name="notification_prayer_time_title">Es ist Zeit für %s</string>

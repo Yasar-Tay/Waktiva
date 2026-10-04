@@ -252,6 +252,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Njoftimet e kohës së namazit</string>
     <string name="settings_silent_prayer_notification_desc">Merr njoftime edhe kur ezani nuk luhet</string>
+    <string name="settings_prayer_log_still_notifies">Njoftimet e Regjistrit të namazeve janë ende aktive</string>
+    <string name="settings_prayer_log_still_notifies_desc">Ju kujtojnë të shënoni namazet. Prekni për ndryshime.</string>
     <string name="silent_prayer_channel_name">Alarmet e kohës së namazit</string>
     <string name="silent_prayer_channel_description">Njoftime të heshtura për kohët e namazit kur audio e ezanit është e fikur.</string>
     <string name="notification_prayer_time_title">Është koha e %s</string>

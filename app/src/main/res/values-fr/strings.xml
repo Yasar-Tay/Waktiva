@@ -245,6 +245,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notifications de l\'heure de prière</string>
     <string name="settings_silent_prayer_notification_desc">Recevez des notifications même lorsque l\'adhan n\'est pas joué</string>
+    <string name="settings_prayer_log_still_notifies">Les notifications du Carnet de prières sont toujours activées</string>
+    <string name="settings_prayer_log_still_notifies_desc">Elles vous rappellent de cocher vos prières. Touchez pour les régler.</string>
     <string name="silent_prayer_channel_name">Alertes de l\'heure de prière</string>
     <string name="silent_prayer_channel_description">Notifications silencieuses pour les horaires de prière quand le son de l\'adhan est désactivé.</string>
     <string name="notification_prayer_time_title">C\'est l\'heure de %s</string>
