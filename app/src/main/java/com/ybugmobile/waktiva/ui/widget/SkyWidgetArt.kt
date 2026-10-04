@@ -213,7 +213,7 @@ internal object SkyWidgetArt {
      * [s] as the prayer log screen draws it (see prayerStar), at ([x], [y]), [unit] pixels to the
      * screen's dp, lit stars sized by [scale]. A plain star (the log off) is its outline, bright.
      */
-    private fun Canvas.drawPrayerStar(s: SkyStar, x: Float, y: Float, unit: Float, scale: Float) {
+    fun Canvas.drawPrayerStar(s: SkyStar, x: Float, y: Float, unit: Float, scale: Float) {
         val status = when (s.star) {
             Star.LIT -> PrayerLogStatus.PRAYED
             Star.NOW -> PrayerLogStatus.ACTIVE
