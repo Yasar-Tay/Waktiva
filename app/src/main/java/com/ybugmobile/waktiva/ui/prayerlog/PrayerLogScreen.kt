@@ -9,6 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -28,10 +31,11 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 /**
- * The prayer log (çetele) as a night sky, whatever the hour.
+ * The prayer log (çetele) as a sky.
  *
- * At the top, today's stars: the five prayers on the sun's path, each lit with a tap, the lit ones
- * joined into the day's own constellation. When the day is made full, the five glide into
+ * At the top, today's stars on the sky of the hour, in the home screen's colours: the five prayers
+ * on the sun's path, each its own star, lit with a tap, two in a row both lit joined into the day's
+ * own constellation. When the day is made full, the five glide into
  * Cassiopeia's W for a moment, then back. Under them, the button for the prayer whose time is on,
  * and the streak, the level and the badges.
  *
@@ -103,9 +107,14 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
         }
         val onMark = { entry: PrayerLogEntry -> onToggle(today.date, entry) }
         val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        val statusBar = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        val hour = remember(state.now, state.todayTimes) { skyHour(state.now, state.todayTimes) }
         val sky = @Composable {
-            SkyHeader(today, Modifier.padding(horizontal = 20.dp))
-            DayStars(today, cassiopeia, onToggle = onMark)
+            // The sky for the hour, up to the top of the screen; the night below its horizon.
+            SkyDome(hour, extendTop = if (isLandscape) 12.dp else statusBar + 12.dp) {
+                SkyHeader(today, hour.isDay, Modifier.padding(horizontal = 20.dp))
+                DayStars(today, cassiopeia, hour, onToggle = onMark)
+            }
             SkyCall(today, isFirstUse = state.startDate == null, onMark = onMark, modifier = Modifier.padding(horizontal = 20.dp))
             Spacer(Modifier.height(22.dp))
             SkyNumbers(state, Modifier.padding(horizontal = 20.dp))
@@ -164,29 +173,33 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
     }
 }
 
-/** The screen's name and today's date, and the prayer whose time is on at the other end. */
+/**
+ * The screen's name and today's date, and the prayer whose time is on at the other end; shadowed
+ * on a light sky ([isDay]).
+ */
 @Composable
-private fun SkyHeader(today: PrayerLogDay, modifier: Modifier = Modifier) {
+private fun SkyHeader(today: PrayerLogDay, isDay: Boolean, modifier: Modifier = Modifier) {
     val locale = LocalConfiguration.current.locales[0]
     val active = today.entries.firstOrNull { it.status == PrayerLogStatus.ACTIVE }
+    val shadow = if (isDay) Shadow(Color(0x8C040A28), Offset(0f, 1f), 10f) else null
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
         Column(Modifier.weight(1f)) {
             Text(
                 stringResource(R.string.prayer_log_title).uppercase(locale),
-                style = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 3.5.sp),
-                color = skyFaint(0.6f)
+                style = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 3.5.sp, shadow = shadow),
+                color = if (isDay) Color.White.copy(alpha = 0.75f) else skyFaint(0.6f)
             )
             Text(
                 today.date.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", locale)).replaceFirstChar { it.titlecase(locale) },
-                style = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
+                style = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.SemiBold, fontSize = 22.sp, shadow = shadow),
                 color = SkyInk
             )
         }
         if (active != null) {
             Text(
                 stringResource(R.string.prayer_log_now, active.type.prayerName),
-                style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.SemiBold),
-                color = NowLilac,
+                style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.SemiBold, shadow = shadow),
+                color = if (isDay) Color.White else NowLilac,
                 textAlign = TextAlign.End,
                 modifier = Modifier.padding(start = 12.dp, bottom = 4.dp)
             )
