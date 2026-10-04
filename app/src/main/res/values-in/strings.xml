@@ -496,7 +496,6 @@
     <string name="prayer_log_all_done">Semua salat hari ini sudah dikerjakan</string>
     <string name="prayer_log_streak">hari penuh berturut-turut</string>
     <string name="prayer_log_week">7 hari terakhir</string>
-    <string name="prayer_log_month">30 hari terakhir</string>
     <string name="prayer_log_missed_total">Total terlewat</string>
     <string name="prayer_log_prev_month">Bulan sebelumnya</string>
     <string name="prayer_log_next_month">Bulan berikutnya</string>
@@ -506,7 +505,6 @@
     <string name="prayer_log_xp_to_next">%1$d XP lagi ke level %2$d</string>
     <string name="prayer_log_full_day_bonus">Bonus hari penuh</string>
     <string name="prayer_log_best_streak">Terbaik: %1$d</string>
-    <string name="prayer_log_badges">Lencana</string>
     <string name="prayer_log_badge_unlocked">Lencana baru</string>
     <string name="prayer_log_level_up">Naik level!</string>
     <string name="prayer_log_badge_earned">Diraih</string>
@@ -548,7 +546,6 @@
     <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
     <string name="prayer_log_sky_title">Bintang hari ini</string>
     <string name="prayer_log_sky_lit">bintang menyala</string>
-    <string name="prayer_log_sky_left">Bintang tersisa: %1$d · lengkapi langitmu</string>
     <string name="prayer_log_sky_done">Langitmu lengkap. Semoga Allah menerimanya.</string>
     <string name="prayer_log_sky_mark_missed">Tandai di bawah yang sudah kamu salatkan</string>
     <string name="prayer_log_cassiopeia">Kasiopeia</string>
@@ -561,10 +558,7 @@
     <string name="prayer_log_galaxy_later">Minggu berikutnya</string>
     <string name="prayer_log_prev_day">Hari sebelumnya</string>
     <string name="prayer_log_next_day">Hari berikutnya</string>
-    <string name="prayer_log_day_missed">%1$s terlewat · ketuk jika sudah salat</string>
-    <string name="prayer_log_day_full">Hari lengkap · lima bintang</string>
     <string name="prayer_log_atlas">Atlas bintang</string>
-    <string name="prayer_log_atlas_hint">Setiap lencana satu rasi bintang</string>
     <string name="prayer_log_star_first_prayer">Bintang Utara</string>
     <string name="prayer_log_star_first_full_day">Lima Salat</string>
     <string name="prayer_log_star_streak_3">Triangulum</string>

@@ -483,7 +483,6 @@
     <string name="prayer_log_all_done">Todas las oraciones de hoy están rezadas</string>
     <string name="prayer_log_streak">días completos seguidos</string>
     <string name="prayer_log_week">Últimos 7 días</string>
-    <string name="prayer_log_month">Últimos 30 días</string>
     <string name="prayer_log_missed_total">Perdidas en total</string>
     <string name="prayer_log_prev_month">Mes anterior</string>
     <string name="prayer_log_next_month">Mes siguiente</string>
@@ -493,7 +492,6 @@
     <string name="prayer_log_xp_to_next">%1$d XP para el nivel %2$d</string>
     <string name="prayer_log_full_day_bonus">Bonus de día completo</string>
     <string name="prayer_log_best_streak">Mejor: %1$d</string>
-    <string name="prayer_log_badges">Insignias</string>
     <string name="prayer_log_badge_unlocked">Nueva insignia</string>
     <string name="prayer_log_level_up">¡Subiste de nivel!</string>
     <string name="prayer_log_badge_earned">Conseguida</string>
@@ -535,7 +533,6 @@
     <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
     <string name="prayer_log_sky_title">Las estrellas del día</string>
     <string name="prayer_log_sky_lit">estrellas encendidas</string>
-    <string name="prayer_log_sky_left">Estrellas restantes: %1$d · completa tu cielo</string>
     <string name="prayer_log_sky_done">Tu cielo está completo. Que Allah lo acepte.</string>
     <string name="prayer_log_sky_mark_missed">Marca abajo las que rezaste</string>
     <string name="prayer_log_cassiopeia">Casiopea</string>
@@ -548,10 +545,7 @@
     <string name="prayer_log_galaxy_later">Semanas siguientes</string>
     <string name="prayer_log_prev_day">Día anterior</string>
     <string name="prayer_log_next_day">Día siguiente</string>
-    <string name="prayer_log_day_missed">%1$s perdida · toca si la rezaste</string>
-    <string name="prayer_log_day_full">Día completo · cinco estrellas</string>
     <string name="prayer_log_atlas">Atlas estelar</string>
-    <string name="prayer_log_atlas_hint">Cada insignia, una constelación</string>
     <string name="prayer_log_star_first_prayer">Estrella Polar</string>
     <string name="prayer_log_star_first_full_day">Cinco Oraciones</string>
     <string name="prayer_log_star_streak_3">Triángulo</string>

@@ -495,7 +495,6 @@
     <string name="prayer_log_all_done">Все намазы сегодня совершены</string>
     <string name="prayer_log_streak">полных дней подряд</string>
     <string name="prayer_log_week">Последние 7 дней</string>
-    <string name="prayer_log_month">Последние 30 дней</string>
     <string name="prayer_log_missed_total">Всего пропущено</string>
     <string name="prayer_log_prev_month">Предыдущий месяц</string>
     <string name="prayer_log_next_month">Следующий месяц</string>
@@ -505,7 +504,6 @@
     <string name="prayer_log_xp_to_next">%1$d XP до уровня %2$d</string>
     <string name="prayer_log_full_day_bonus">Бонус за полный день</string>
     <string name="prayer_log_best_streak">Рекорд: %1$d</string>
-    <string name="prayer_log_badges">Значки</string>
     <string name="prayer_log_badge_unlocked">Новый значок</string>
     <string name="prayer_log_level_up">Новый уровень!</string>
     <string name="prayer_log_badge_earned">Получен</string>
@@ -547,7 +545,6 @@
     <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
     <string name="prayer_log_sky_title">Звёзды дня</string>
     <string name="prayer_log_sky_lit">звёзд зажглось</string>
-    <string name="prayer_log_sky_left">Осталось звёзд: %1$d · заверши своё небо</string>
     <string name="prayer_log_sky_done">Твоё небо завершено. Да примет Аллах.</string>
     <string name="prayer_log_sky_mark_missed">Отметь ниже совершённые</string>
     <string name="prayer_log_cassiopeia">Кассиопея</string>
@@ -560,10 +557,7 @@
     <string name="prayer_log_galaxy_later">Поздние недели</string>
     <string name="prayer_log_prev_day">Предыдущий день</string>
     <string name="prayer_log_next_day">Следующий день</string>
-    <string name="prayer_log_day_missed">%1$s пропущен · нажми, если совершил</string>
-    <string name="prayer_log_day_full">Полный день · пять звёзд</string>
     <string name="prayer_log_atlas">Звёздный атлас</string>
-    <string name="prayer_log_atlas_hint">Каждый значок — созвездие</string>
     <string name="prayer_log_star_first_prayer">Полярная звезда</string>
     <string name="prayer_log_star_first_full_day">Пять Намазов</string>
     <string name="prayer_log_star_streak_3">Треугольник</string>

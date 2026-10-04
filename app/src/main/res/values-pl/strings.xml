@@ -495,7 +495,6 @@
     <string name="prayer_log_all_done">Wszystkie dzisiejsze modlitwy odmówione</string>
     <string name="prayer_log_streak">pełnych dni z rzędu</string>
     <string name="prayer_log_week">Ostatnie 7 dni</string>
-    <string name="prayer_log_month">Ostatnie 30 dni</string>
     <string name="prayer_log_missed_total">Pominięte łącznie</string>
     <string name="prayer_log_prev_month">Poprzedni miesiąc</string>
     <string name="prayer_log_next_month">Następny miesiąc</string>
@@ -505,7 +504,6 @@
     <string name="prayer_log_xp_to_next">%1$d XP do poziomu %2$d</string>
     <string name="prayer_log_full_day_bonus">Premia za pełny dzień</string>
     <string name="prayer_log_best_streak">Rekord: %1$d</string>
-    <string name="prayer_log_badges">Odznaki</string>
     <string name="prayer_log_badge_unlocked">Nowa odznaka</string>
     <string name="prayer_log_level_up">Nowy poziom!</string>
     <string name="prayer_log_badge_earned">Zdobyta</string>
@@ -547,7 +545,6 @@
     <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
     <string name="prayer_log_sky_title">Gwiazdy dnia</string>
     <string name="prayer_log_sky_lit">zapalone gwiazdy</string>
-    <string name="prayer_log_sky_left">Pozostałe gwiazdy: %1$d · dopełnij swoje niebo</string>
     <string name="prayer_log_sky_done">Twoje niebo jest pełne. Niech Allah to przyjmie.</string>
     <string name="prayer_log_sky_mark_missed">Zaznacz poniżej te, które odmówiłeś</string>
     <string name="prayer_log_cassiopeia">Kasjopeja</string>
@@ -560,10 +557,7 @@
     <string name="prayer_log_galaxy_later">Późniejsze tygodnie</string>
     <string name="prayer_log_prev_day">Poprzedni dzień</string>
     <string name="prayer_log_next_day">Następny dzień</string>
-    <string name="prayer_log_day_missed">%1$s pominięta · dotknij, jeśli odmówiłeś</string>
-    <string name="prayer_log_day_full">Pełny dzień · pięć gwiazd</string>
     <string name="prayer_log_atlas">Atlas gwiazd</string>
-    <string name="prayer_log_atlas_hint">Każda odznaka to gwiazdozbiór</string>
     <string name="prayer_log_star_first_prayer">Gwiazda Polarna</string>
     <string name="prayer_log_star_first_full_day">Pięć Modlitw</string>
     <string name="prayer_log_star_streak_3">Trójkąt</string>

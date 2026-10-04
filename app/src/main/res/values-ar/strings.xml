@@ -496,7 +496,6 @@
     <string name="prayer_log_all_done">أُدّيت جميع صلوات اليوم</string>
     <string name="prayer_log_streak">أيام كاملة متتالية</string>
     <string name="prayer_log_week">آخر 7 أيام</string>
-    <string name="prayer_log_month">آخر 30 يومًا</string>
     <string name="prayer_log_missed_total">مجموع الفائتة</string>
     <string name="prayer_log_prev_month">الشهر السابق</string>
     <string name="prayer_log_next_month">الشهر التالي</string>
@@ -506,7 +505,6 @@
     <string name="prayer_log_xp_to_next">%1$d XP للوصول إلى المستوى %2$d</string>
     <string name="prayer_log_full_day_bonus">مكافأة اليوم الكامل</string>
     <string name="prayer_log_best_streak">الأفضل: %1$d</string>
-    <string name="prayer_log_badges">الأوسمة</string>
     <string name="prayer_log_badge_unlocked">وسام جديد</string>
     <string name="prayer_log_level_up">ارتقيت مستوى!</string>
     <string name="prayer_log_badge_earned">تم الحصول عليه</string>
@@ -548,7 +546,6 @@
     <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
     <string name="prayer_log_sky_title">نجوم اليوم</string>
     <string name="prayer_log_sky_lit">نجوم مضيئة</string>
-    <string name="prayer_log_sky_left">النجوم المتبقية: %1$d · أكمل سماءك</string>
     <string name="prayer_log_sky_done">اكتملت سماؤك. تقبّل الله.</string>
     <string name="prayer_log_sky_mark_missed">علّم أدناه ما صلّيته</string>
     <string name="prayer_log_cassiopeia">ذات الكرسي</string>
@@ -561,10 +558,7 @@
     <string name="prayer_log_galaxy_later">أسابيع لاحقة</string>
     <string name="prayer_log_prev_day">اليوم السابق</string>
     <string name="prayer_log_next_day">اليوم التالي</string>
-    <string name="prayer_log_day_missed">فاتت %1$s · المس إن صلّيتها</string>
-    <string name="prayer_log_day_full">يوم كامل · خمس نجوم</string>
     <string name="prayer_log_atlas">أطلس النجوم</string>
-    <string name="prayer_log_atlas_hint">كل شارة كوكبة</string>
     <string name="prayer_log_star_first_prayer">النجم القطبي</string>
     <string name="prayer_log_star_first_full_day">الصلوات الخمس</string>
     <string name="prayer_log_star_streak_3">المثلث</string>

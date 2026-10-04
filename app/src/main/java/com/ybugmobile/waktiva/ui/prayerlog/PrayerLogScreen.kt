@@ -108,12 +108,12 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
             SkyHeader(today, Modifier.padding(horizontal = 20.dp))
             DayStars(today, cassiopeia, onToggle = onMark)
             SkyCall(today, isFirstUse = state.startDate == null, onMark = onMark, modifier = Modifier.padding(horizontal = 20.dp))
-            Spacer(Modifier.height(22.dp))
+            Spacer(Modifier.height(24.dp))
             SkyNumbers(state, Modifier.padding(horizontal = 20.dp))
         }
         val history = @Composable {
             Galaxy(state, viewModel::showGalaxy, viewModel::select, onToggle)
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(48.dp))
             StarAtlas(state.progress, Modifier.padding(horizontal = 20.dp))
         }
 
@@ -149,7 +149,7 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
                     .padding(top = 12.dp, bottom = bottomInset + 100.dp)
             ) {
                 sky()
-                Spacer(Modifier.height(36.dp))
+                Spacer(Modifier.height(56.dp))
                 history()
             }
         }
@@ -165,33 +165,23 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
     }
 }
 
-/** The screen's name and today's date, and the prayer whose time is on at the other end. */
+/**
+ * The screen's name and today's date. The prayer whose time is on isn't named here: its star calls
+ * in the sky below and the button under it names it.
+ */
 @Composable
 private fun SkyHeader(today: PrayerLogDay, modifier: Modifier = Modifier) {
     val locale = LocalConfiguration.current.locales[0]
-    val active = today.entries.firstOrNull { it.status == PrayerLogStatus.ACTIVE }
-    val shadow = TextShade
-    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
-        Column(Modifier.weight(1f)) {
-            Text(
-                stringResource(R.string.prayer_log_title).uppercase(locale),
-                style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 4.sp, shadow = shadow),
-                color = skyFaint(0.72f)
-            )
-            Text(
-                today.date.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", locale)).replaceFirstChar { it.titlecase(locale) },
-                style = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.Bold, fontSize = 30.sp, shadow = shadow),
-                color = SkyInk
-            )
-        }
-        if (active != null) {
-            Text(
-                stringResource(R.string.prayer_log_now, active.type.prayerName),
-                style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, shadow = shadow),
-                color = NowLilac,
-                textAlign = TextAlign.End,
-                modifier = Modifier.padding(start = 12.dp, bottom = 4.dp)
-            )
-        }
+    Column(modifier.fillMaxWidth()) {
+        Text(
+            stringResource(R.string.prayer_log_title).uppercase(locale),
+            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 4.sp, shadow = TextShade),
+            color = skyFaint(0.72f)
+        )
+        Text(
+            today.date.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", locale)).replaceFirstChar { it.titlecase(locale) },
+            style = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.Bold, fontSize = 30.sp, shadow = TextShade),
+            color = SkyInk
+        )
     }
 }

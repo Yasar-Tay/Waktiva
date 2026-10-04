@@ -483,7 +483,6 @@
     <string name="prayer_log_all_done">Tutte le preghiere di oggi sono compiute</string>
     <string name="prayer_log_streak">giorni completi di fila</string>
     <string name="prayer_log_week">Ultimi 7 giorni</string>
-    <string name="prayer_log_month">Ultimi 30 giorni</string>
     <string name="prayer_log_missed_total">Mancate in totale</string>
     <string name="prayer_log_prev_month">Mese precedente</string>
     <string name="prayer_log_next_month">Mese successivo</string>
@@ -493,7 +492,6 @@
     <string name="prayer_log_xp_to_next">%1$d XP al livello %2$d</string>
     <string name="prayer_log_full_day_bonus">Bonus giornata completa</string>
     <string name="prayer_log_best_streak">Record: %1$d</string>
-    <string name="prayer_log_badges">Badge</string>
     <string name="prayer_log_badge_unlocked">Nuovo badge</string>
     <string name="prayer_log_level_up">Livello superiore!</string>
     <string name="prayer_log_badge_earned">Ottenuto</string>
@@ -535,7 +533,6 @@
     <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
     <string name="prayer_log_sky_title">Le stelle del giorno</string>
     <string name="prayer_log_sky_lit">stelle accese</string>
-    <string name="prayer_log_sky_left">Stelle rimaste: %1$d · completa il tuo cielo</string>
     <string name="prayer_log_sky_done">Il tuo cielo è completo. Che Allah lo accetti.</string>
     <string name="prayer_log_sky_mark_missed">Segna qui sotto quelle che hai pregato</string>
     <string name="prayer_log_cassiopeia">Cassiopea</string>
@@ -548,10 +545,7 @@
     <string name="prayer_log_galaxy_later">Settimane successive</string>
     <string name="prayer_log_prev_day">Giorno precedente</string>
     <string name="prayer_log_next_day">Giorno successivo</string>
-    <string name="prayer_log_day_missed">%1$s mancata · tocca se l\'hai pregata</string>
-    <string name="prayer_log_day_full">Giornata completa · cinque stelle</string>
     <string name="prayer_log_atlas">Atlante stellare</string>
-    <string name="prayer_log_atlas_hint">Ogni distintivo una costellazione</string>
     <string name="prayer_log_star_first_prayer">Stella Polare</string>
     <string name="prayer_log_star_first_full_day">Cinque Preghiere</string>
     <string name="prayer_log_star_streak_3">Triangolo</string>
