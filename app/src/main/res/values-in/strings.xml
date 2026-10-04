@@ -545,4 +545,32 @@
     <string name="prayer_log_celebrate_level">Naik level! Sekarang kamu level %1$d 🎉</string>
     <string name="widget_prayer_log_description">Level, streak, dan lencanamu, dengan salat hari ini untuk ditandai sekali ketuk</string>
     <string name="widget_prayer_log_off">Aktifkan catatan salat di Pengaturan</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">Bintang hari ini</string>
+    <string name="prayer_log_sky_lit">bintang menyala</string>
+    <string name="prayer_log_sky_left">Bintang tersisa: %1$d · lengkapi langitmu</string>
+    <string name="prayer_log_sky_done">Langitmu lengkap. Semoga Allah menerimanya.</string>
+    <string name="prayer_log_sky_mark_missed">Tandai di bawah yang sudah kamu salatkan</string>
+    <string name="prayer_log_cassiopeia">Kasiopeia</string>
+    <string name="prayer_log_cassiopeia_line">Lima salat · lima bintang · hari lengkap</string>
+    <string name="prayer_log_galaxy">Bima Sakti</string>
+    <string name="prayer_log_galaxy_hint">Lima minggu · geser jarimu di sepanjang pita</string>
+    <string name="prayer_log_galaxy_missed">%1$d terlewat</string>
+    <string name="prayer_log_galaxy_show_missed">Tampilkan salat terlewat</string>
+    <string name="prayer_log_galaxy_earlier">Minggu sebelumnya</string>
+    <string name="prayer_log_galaxy_later">Minggu berikutnya</string>
+    <string name="prayer_log_prev_day">Hari sebelumnya</string>
+    <string name="prayer_log_next_day">Hari berikutnya</string>
+    <string name="prayer_log_day_missed">%1$s terlewat · ketuk jika sudah salat</string>
+    <string name="prayer_log_day_full">Hari lengkap · lima bintang</string>
+    <string name="prayer_log_atlas">Atlas bintang</string>
+    <string name="prayer_log_atlas_hint">Setiap lencana satu rasi bintang</string>
+    <string name="prayer_log_star_first_prayer">Bintang Utara</string>
+    <string name="prayer_log_star_first_full_day">Lima Salat</string>
+    <string name="prayer_log_star_streak_3">Triangulum</string>
+    <string name="prayer_log_star_streak_7">Angsa</string>
+    <string name="prayer_log_star_fajr_7">Venus</string>
+    <string name="prayer_log_star_prayers_100">Mahkota Utara</string>
+    <string name="prayer_log_star_streak_40">Biduk</string>
+    <string name="prayer_log_star_prayers_500">Orion</string>
 </resources>

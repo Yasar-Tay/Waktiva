@@ -544,4 +544,32 @@
     <string name="prayer_log_celebrate_level">Niveau omhoog! Je bent nu niveau %1$d 🎉</string>
     <string name="widget_prayer_log_description">Je niveau, reeks en badges, met de gebeden van vandaag om met één tik te markeren</string>
     <string name="widget_prayer_log_off">Zet het gebedslog aan in Instellingen</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">De sterren van vandaag</string>
+    <string name="prayer_log_sky_lit">sterren aan</string>
+    <string name="prayer_log_sky_left">Sterren over: %1$d · maak je hemel compleet</string>
+    <string name="prayer_log_sky_done">Je hemel is compleet. Moge Allah het aanvaarden.</string>
+    <string name="prayer_log_sky_mark_missed">Vink hieronder aan wat je hebt gebeden</string>
+    <string name="prayer_log_cassiopeia">Cassiopeia</string>
+    <string name="prayer_log_cassiopeia_line">Vijf gebeden · vijf sterren · dag compleet</string>
+    <string name="prayer_log_galaxy">Melkweg</string>
+    <string name="prayer_log_galaxy_hint">Vijf weken · glijd met je vinger over de band</string>
+    <string name="prayer_log_galaxy_missed">%1$d gemist</string>
+    <string name="prayer_log_galaxy_show_missed">Gemiste gebeden tonen</string>
+    <string name="prayer_log_galaxy_earlier">Eerdere weken</string>
+    <string name="prayer_log_galaxy_later">Latere weken</string>
+    <string name="prayer_log_prev_day">Vorige dag</string>
+    <string name="prayer_log_next_day">Volgende dag</string>
+    <string name="prayer_log_day_missed">%1$s gemist · tik als je het hebt gebeden</string>
+    <string name="prayer_log_day_full">Volle dag · vijf sterren</string>
+    <string name="prayer_log_atlas">Sterrenatlas</string>
+    <string name="prayer_log_atlas_hint">Elke badge een sterrenbeeld</string>
+    <string name="prayer_log_star_first_prayer">Poolster</string>
+    <string name="prayer_log_star_first_full_day">Vijf Gebeden</string>
+    <string name="prayer_log_star_streak_3">Driehoek</string>
+    <string name="prayer_log_star_streak_7">Zwaan</string>
+    <string name="prayer_log_star_fajr_7">Venus</string>
+    <string name="prayer_log_star_prayers_100">Noorderkroon</string>
+    <string name="prayer_log_star_streak_40">Grote Beer</string>
+    <string name="prayer_log_star_prayers_500">Orion</string>
 </resources>

@@ -544,4 +544,32 @@
     <string name="prayer_log_celebrate_level">Ny nivå! Du är nu nivå %1$d 🎉</string>
     <string name="widget_prayer_log_description">Din nivå, svit och dina märken, med dagens böner att markera med ett tryck</string>
     <string name="widget_prayer_log_off">Slå på böneloggen i Inställningar</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">Dagens stjärnor</string>
+    <string name="prayer_log_sky_lit">stjärnor tända</string>
+    <string name="prayer_log_sky_left">Stjärnor kvar: %1$d · fullborda din himmel</string>
+    <string name="prayer_log_sky_done">Din himmel är fullbordad. Må Allah acceptera den.</string>
+    <string name="prayer_log_sky_mark_missed">Markera nedan de du har bett</string>
+    <string name="prayer_log_cassiopeia">Cassiopeja</string>
+    <string name="prayer_log_cassiopeia_line">Fem böner · fem stjärnor · dagen fullbordad</string>
+    <string name="prayer_log_galaxy">Vintergatan</string>
+    <string name="prayer_log_galaxy_hint">Fem veckor · dra fingret längs bandet</string>
+    <string name="prayer_log_galaxy_missed">%1$d missade</string>
+    <string name="prayer_log_galaxy_show_missed">Visa missade böner</string>
+    <string name="prayer_log_galaxy_earlier">Tidigare veckor</string>
+    <string name="prayer_log_galaxy_later">Senare veckor</string>
+    <string name="prayer_log_prev_day">Föregående dag</string>
+    <string name="prayer_log_next_day">Nästa dag</string>
+    <string name="prayer_log_day_missed">%1$s missad · tryck om du bad den</string>
+    <string name="prayer_log_day_full">Hel dag · fem stjärnor</string>
+    <string name="prayer_log_atlas">Stjärnatlas</string>
+    <string name="prayer_log_atlas_hint">Varje märke en stjärnbild</string>
+    <string name="prayer_log_star_first_prayer">Polstjärnan</string>
+    <string name="prayer_log_star_first_full_day">Fem Böner</string>
+    <string name="prayer_log_star_streak_3">Triangeln</string>
+    <string name="prayer_log_star_streak_7">Svanen</string>
+    <string name="prayer_log_star_fajr_7">Venus</string>
+    <string name="prayer_log_star_prayers_100">Norra kronan</string>
+    <string name="prayer_log_star_streak_40">Karlavagnen</string>
+    <string name="prayer_log_star_prayers_500">Orion</string>
 </resources>

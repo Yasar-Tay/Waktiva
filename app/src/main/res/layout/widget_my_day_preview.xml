@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Widget picker preview (Android 12+): a still of the 4×4 "my day" widget while Dhuhr waits to
-  be marked: Fajr prayed, the time left with the weather beside it, the day's prayers as cards.
+  Widget picker preview (Android 12+): a still of the 4×4 "my day" widget in the prayer log's
+  night while Isha waits: four stars lit on the sun's path and joined, "I prayed" under them, the
+  time left with the weather beside it, the day's prayers as cards.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/widget_preview_bg"
+    android:background="@drawable/widget_night_preview"
     android:clipToOutline="true">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@drawable/widget_sheen" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,7 +36,7 @@
                 android:layout_height="7dp"
                 android:layout_marginEnd="6dp"
                 android:src="@drawable/widget_dot"
-                android:tint="#FF6EE7B7" />
+                android:tint="#FFC5CBF0" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -49,7 +44,7 @@
                 android:fontFamily="@font/inter_medium"
                 android:letterSpacing="0.1"
                 android:maxLines="1"
-                android:text="@string/prayer_dhuhr"
+                android:text="@string/prayer_isha"
                 android:textAllCaps="true"
                 android:textColor="#E6FFFFFF"
                 android:textSize="10.5sp" />
@@ -70,7 +65,7 @@
                 android:includeFontPadding="false"
                 android:letterSpacing="-0.03"
                 android:maxLines="1"
-                android:text="1:10:24"
+                android:text="9:01:24"
                 android:textColor="#FFFFFFFF"
                 android:textSize="38sp" />
 
@@ -100,14 +95,14 @@
                     android:layout_height="40dp"
                     android:layout_marginEnd="4dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/partly_cloudy_day" />
+                    android:src="@drawable/clear_night" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_medium"
                     android:maxLines="1"
-                    android:text="18°"
+                    android:text="17°"
                     android:textColor="#FFFFFFFF"
                     android:textSize="22sp" />
             </LinearLayout>
@@ -124,14 +119,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
-                android:src="@drawable/widget_ring_preview" />
+                android:src="@drawable/widget_sky_preview" />
 
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:src="@drawable/clear_day"
-                android:tint="#F5FFFFFF" />
+                android:layout_marginTop="10dp"
+                android:background="@drawable/widget_sky_button"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingEnd="18dp">
+
+                <ImageView
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_widget_star" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_bold"
+                    android:maxLines="1"
+                    android:text="@string/prayer_log_mark"
+                    android:textColor="#FFF4F1FF"
+                    android:textSize="14sp" />
+            </LinearLayout>
         </FrameLayout>
 
         <LinearLayout
@@ -139,88 +154,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- Fajr, prayed. -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="2dp"
-                android:layout_weight="1"
-                android:background="@drawable/widget_day_card_prayed"
-                android:gravity="center_horizontal"
-                android:minHeight="76dp"
-                android:orientation="vertical"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_widget_check"
-                    android:tint="#FFFFD54F" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/inter_medium"
-                    android:maxLines="1"
-                    android:text="@string/prayer_fajr"
-                    android:textAllCaps="true"
-                    android:textColor="#FFFFD54F"
-                    android:textSize="10.5sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
-                    android:fontFamily="@font/inter_medium"
-                    android:text="05:20"
-                    android:textColor="#FFFFD54F"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <!-- Dhuhr, its time on, waiting to be marked. -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="2dp"
-                android:layout_weight="1"
-                android:background="@drawable/widget_cell_highlight"
-                android:gravity="center_horizontal"
-                android:minHeight="76dp"
-                android:orientation="vertical"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/widget_mark_ring" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/inter_medium"
-                    android:maxLines="1"
-                    android:text="@string/prayer_dhuhr"
-                    android:textAllCaps="true"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="10.5sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
-                    android:fontFamily="@font/inter_medium"
-                    android:text="12:55"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <!-- Asr, Maghrib and Isha, still to come. -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -236,7 +169,86 @@
 
                 <ImageView
                     android:layout_width="16dp"
-                    android:layout_height="16dp" />
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_widget_star" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:maxLines="1"
+                    android:text="@string/prayer_fajr"
+                    android:textAllCaps="true"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="10.5sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="05:41"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_day_card"
+                android:gravity="center_horizontal"
+                android:minHeight="76dp"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_widget_star" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:maxLines="1"
+                    android:text="@string/prayer_dhuhr"
+                    android:textAllCaps="true"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="10.5sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="13:04"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_day_card"
+                android:gravity="center_horizontal"
+                android:minHeight="76dp"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_widget_star" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -254,7 +266,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="1dp"
                     android:fontFamily="@font/inter_medium"
-                    android:text="16:10"
+                    android:text="16:14"
                     android:textColor="#FFFFFFFF"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -274,7 +286,8 @@
 
                 <ImageView
                     android:layout_width="16dp"
-                    android:layout_height="16dp" />
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_widget_star" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -292,7 +305,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="1dp"
                     android:fontFamily="@font/inter_medium"
-                    android:text="18:50"
+                    android:text="18:47"
                     android:textColor="#FFFFFFFF"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -303,7 +316,7 @@
                 android:layout_marginStart="2dp"
                 android:layout_marginEnd="2dp"
                 android:layout_weight="1"
-                android:background="@drawable/widget_day_card"
+                android:background="@drawable/widget_cell_highlight"
                 android:gravity="center_horizontal"
                 android:minHeight="76dp"
                 android:orientation="vertical"
@@ -312,7 +325,8 @@
 
                 <ImageView
                     android:layout_width="16dp"
-                    android:layout_height="16dp" />
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_widget_star_outline" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -322,7 +336,7 @@
                     android:maxLines="1"
                     android:text="@string/prayer_isha"
                     android:textAllCaps="true"
-                    android:textColor="#B3FFFFFF"
+                    android:textColor="#FFFFFFFF"
                     android:textSize="10.5sp" />
 
                 <TextView
@@ -330,11 +344,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="1dp"
                     android:fontFamily="@font/inter_medium"
-                    android:text="20:10"
+                    android:text="20:12"
                     android:textColor="#FFFFFFFF"
                     android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
 </FrameLayout>

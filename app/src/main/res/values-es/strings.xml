@@ -532,4 +532,32 @@
     <string name="prayer_log_celebrate_level">¡Subiste de nivel! Ahora eres nivel %1$d 🎉</string>
     <string name="widget_prayer_log_description">Tu nivel, racha e insignias, con las oraciones de hoy para marcar con un toque</string>
     <string name="widget_prayer_log_off">Activa el registro de oraciones en Ajustes</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">Las estrellas del día</string>
+    <string name="prayer_log_sky_lit">estrellas encendidas</string>
+    <string name="prayer_log_sky_left">Estrellas restantes: %1$d · completa tu cielo</string>
+    <string name="prayer_log_sky_done">Tu cielo está completo. Que Allah lo acepte.</string>
+    <string name="prayer_log_sky_mark_missed">Marca abajo las que rezaste</string>
+    <string name="prayer_log_cassiopeia">Casiopea</string>
+    <string name="prayer_log_cassiopeia_line">Cinco oraciones · cinco estrellas · día completo</string>
+    <string name="prayer_log_galaxy">Vía Láctea</string>
+    <string name="prayer_log_galaxy_hint">Cinco semanas · desliza el dedo por la banda</string>
+    <string name="prayer_log_galaxy_missed">%1$d perdidas</string>
+    <string name="prayer_log_galaxy_show_missed">Mostrar oraciones perdidas</string>
+    <string name="prayer_log_galaxy_earlier">Semanas anteriores</string>
+    <string name="prayer_log_galaxy_later">Semanas siguientes</string>
+    <string name="prayer_log_prev_day">Día anterior</string>
+    <string name="prayer_log_next_day">Día siguiente</string>
+    <string name="prayer_log_day_missed">%1$s perdida · toca si la rezaste</string>
+    <string name="prayer_log_day_full">Día completo · cinco estrellas</string>
+    <string name="prayer_log_atlas">Atlas estelar</string>
+    <string name="prayer_log_atlas_hint">Cada insignia, una constelación</string>
+    <string name="prayer_log_star_first_prayer">Estrella Polar</string>
+    <string name="prayer_log_star_first_full_day">Cinco Oraciones</string>
+    <string name="prayer_log_star_streak_3">Triángulo</string>
+    <string name="prayer_log_star_streak_7">Cisne</string>
+    <string name="prayer_log_star_fajr_7">Venus</string>
+    <string name="prayer_log_star_prayers_100">Corona Boreal</string>
+    <string name="prayer_log_star_streak_40">Osa Mayor</string>
+    <string name="prayer_log_star_prayers_500">Orión</string>
 </resources>

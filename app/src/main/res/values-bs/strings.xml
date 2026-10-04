@@ -544,4 +544,32 @@
     <string name="prayer_log_celebrate_level">Novi nivo! Sada si na nivou %1$d 🎉</string>
     <string name="widget_prayer_log_description">Tvoj nivo, niz i značke, s današnjim namazima za označiti jednim dodirom</string>
     <string name="widget_prayer_log_off">Uključi evidenciju namaza u Postavkama</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">Zvijezde dana</string>
+    <string name="prayer_log_sky_lit">upaljenih zvijezda</string>
+    <string name="prayer_log_sky_left">Preostalo zvijezda: %1$d · upotpuni svoje nebo</string>
+    <string name="prayer_log_sky_done">Tvoje nebo je potpuno. Neka Allah primi.</string>
+    <string name="prayer_log_sky_mark_missed">Označi ispod one koje si klanjao</string>
+    <string name="prayer_log_cassiopeia">Kasiopeja</string>
+    <string name="prayer_log_cassiopeia_line">Pet namaza · pet zvijezda · dan potpun</string>
+    <string name="prayer_log_galaxy">Mliječni put</string>
+    <string name="prayer_log_galaxy_hint">Pet sedmica · prevuci prstom duž trake</string>
+    <string name="prayer_log_galaxy_missed">Propušteno: %1$d</string>
+    <string name="prayer_log_galaxy_show_missed">Prikaži propuštene namaze</string>
+    <string name="prayer_log_galaxy_earlier">Ranije sedmice</string>
+    <string name="prayer_log_galaxy_later">Kasnije sedmice</string>
+    <string name="prayer_log_prev_day">Prethodni dan</string>
+    <string name="prayer_log_next_day">Sljedeći dan</string>
+    <string name="prayer_log_day_missed">%1$s propušten · dodirni ako si klanjao</string>
+    <string name="prayer_log_day_full">Potpun dan · pet zvijezda</string>
+    <string name="prayer_log_atlas">Atlas zvijezda</string>
+    <string name="prayer_log_atlas_hint">Svaka značka jedno sazviježđe</string>
+    <string name="prayer_log_star_first_prayer">Sjevernjača</string>
+    <string name="prayer_log_star_first_full_day">Pet Namaza</string>
+    <string name="prayer_log_star_streak_3">Trokut</string>
+    <string name="prayer_log_star_streak_7">Labud</string>
+    <string name="prayer_log_star_fajr_7">Venera</string>
+    <string name="prayer_log_star_prayers_100">Sjeverna kruna</string>
+    <string name="prayer_log_star_streak_40">Veliki medvjed</string>
+    <string name="prayer_log_star_prayers_500">Orion</string>
 </resources>

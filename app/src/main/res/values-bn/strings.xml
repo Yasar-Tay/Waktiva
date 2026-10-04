@@ -545,4 +545,32 @@
     <string name="prayer_log_celebrate_level">লেভেল আপ! এখন আপনি লেভেল %1$d-এ 🎉</string>
     <string name="widget_prayer_log_description">আপনার লেভেল, ধারা ও ব্যাজ, আর আজকের নামাজ এক ট্যাপে চিহ্নিত করুন</string>
     <string name="widget_prayer_log_off">সেটিংস থেকে নামাজের হিসাব চালু করুন</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">আজকের তারা</string>
+    <string name="prayer_log_sky_lit">তারা জ্বলেছে</string>
+    <string name="prayer_log_sky_left">বাকি তারা: %1$d · তোমার আকাশ পূর্ণ করো</string>
+    <string name="prayer_log_sky_done">তোমার আকাশ পূর্ণ। আল্লাহ কবুল করুন।</string>
+    <string name="prayer_log_sky_mark_missed">যেগুলো পড়েছ নিচে চিহ্নিত করো</string>
+    <string name="prayer_log_cassiopeia">ক্যাসিওপিয়া</string>
+    <string name="prayer_log_cassiopeia_line">পাঁচ ওয়াক্ত · পাঁচ তারা · দিন পূর্ণ</string>
+    <string name="prayer_log_galaxy">ছায়াপথ</string>
+    <string name="prayer_log_galaxy_hint">পাঁচ সপ্তাহ · ফিতার ওপর আঙুল বোলাও</string>
+    <string name="prayer_log_galaxy_missed">বাদ পড়েছে: %1$d</string>
+    <string name="prayer_log_galaxy_show_missed">বাদ পড়া নামাজ দেখাও</string>
+    <string name="prayer_log_galaxy_earlier">আগের সপ্তাহ</string>
+    <string name="prayer_log_galaxy_later">পরের সপ্তাহ</string>
+    <string name="prayer_log_prev_day">আগের দিন</string>
+    <string name="prayer_log_next_day">পরের দিন</string>
+    <string name="prayer_log_day_missed">%1$s বাদ পড়েছে · পড়ে থাকলে ছোঁও</string>
+    <string name="prayer_log_day_full">পূর্ণ দিন · পাঁচ তারা</string>
+    <string name="prayer_log_atlas">তারার অ্যাটলাস</string>
+    <string name="prayer_log_atlas_hint">প্রতিটি ব্যাজ একটি নক্ষত্রমণ্ডল</string>
+    <string name="prayer_log_star_first_prayer">ধ্রুবতারা</string>
+    <string name="prayer_log_star_first_full_day">পাঁচ ওয়াক্ত</string>
+    <string name="prayer_log_star_streak_3">ত্রিভুজ</string>
+    <string name="prayer_log_star_streak_7">বক</string>
+    <string name="prayer_log_star_fajr_7">শুক্র</string>
+    <string name="prayer_log_star_prayers_100">উত্তর কিরীট</string>
+    <string name="prayer_log_star_streak_40">সপ্তর্ষি</string>
+    <string name="prayer_log_star_prayers_500">কালপুরুষ</string>
 </resources>

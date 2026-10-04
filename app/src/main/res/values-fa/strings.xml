@@ -545,4 +545,32 @@
     <string name="prayer_log_celebrate_level">سطحت بالا رفت! اکنون در سطح %1$d هستی 🎉</string>
     <string name="widget_prayer_log_description">سطح، رشته و نشان‌هایت، با نمازهای امروز برای علامت زدن با یک لمس</string>
     <string name="widget_prayer_log_off">کارنامهٔ نماز را از تنظیمات روشن کن</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">ستارگان امروز</string>
+    <string name="prayer_log_sky_lit">ستاره روشن</string>
+    <string name="prayer_log_sky_left">ستاره‌های باقی‌مانده: %1$d · آسمانت را کامل کن</string>
+    <string name="prayer_log_sky_done">آسمانت کامل شد. خدا قبول کند.</string>
+    <string name="prayer_log_sky_mark_missed">آن‌هایی را که خواندی پایین علامت بزن</string>
+    <string name="prayer_log_cassiopeia">ذات‌الکرسی</string>
+    <string name="prayer_log_cassiopeia_line">پنج نماز · پنج ستاره · روز کامل</string>
+    <string name="prayer_log_galaxy">کهکشان راه شیری</string>
+    <string name="prayer_log_galaxy_hint">پنج هفته · انگشتت را روی نوار بکش</string>
+    <string name="prayer_log_galaxy_missed">قضا شده: %1$d</string>
+    <string name="prayer_log_galaxy_show_missed">نمایش نمازهای قضا شده</string>
+    <string name="prayer_log_galaxy_earlier">هفته‌های قبل</string>
+    <string name="prayer_log_galaxy_later">هفته‌های بعد</string>
+    <string name="prayer_log_prev_day">روز قبل</string>
+    <string name="prayer_log_next_day">روز بعد</string>
+    <string name="prayer_log_day_missed">%1$s قضا شد · اگر خواندی بزن</string>
+    <string name="prayer_log_day_full">روز کامل · پنج ستاره</string>
+    <string name="prayer_log_atlas">اطلس ستارگان</string>
+    <string name="prayer_log_atlas_hint">هر نشان یک صورت فلکی</string>
+    <string name="prayer_log_star_first_prayer">ستاره قطبی</string>
+    <string name="prayer_log_star_first_full_day">پنج نماز</string>
+    <string name="prayer_log_star_streak_3">مثلث</string>
+    <string name="prayer_log_star_streak_7">ماکیان</string>
+    <string name="prayer_log_star_fajr_7">ناهید</string>
+    <string name="prayer_log_star_prayers_100">تاج شمالی</string>
+    <string name="prayer_log_star_streak_40">هفت‌اورنگ</string>
+    <string name="prayer_log_star_prayers_500">شکارچی</string>
 </resources>

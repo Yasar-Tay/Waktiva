@@ -544,4 +544,32 @@
     <string name="prayer_log_celebrate_level">Kalove nivelin! Tani je në nivelin %1$d 🎉</string>
     <string name="widget_prayer_log_description">Niveli, seria dhe distinktivët e tu, me namazet e sotme për t\'i shënuar me një prekje</string>
     <string name="widget_prayer_log_off">Aktivizo regjistrin e namazeve te Cilësimet</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">Yjet e ditës</string>
+    <string name="prayer_log_sky_lit">yje të ndezur</string>
+    <string name="prayer_log_sky_left">Yje të mbetur: %1$d · plotëso qiellin tënd</string>
+    <string name="prayer_log_sky_done">Qielli yt është i plotë. Allahu e pranoftë.</string>
+    <string name="prayer_log_sky_mark_missed">Shëno më poshtë ato që i fale</string>
+    <string name="prayer_log_cassiopeia">Kasiopea</string>
+    <string name="prayer_log_cassiopeia_line">Pesë namaze · pesë yje · dita e plotë</string>
+    <string name="prayer_log_galaxy">Rruga e Qumështit</string>
+    <string name="prayer_log_galaxy_hint">Pesë javë · rrëshqit gishtin përgjatë brezit</string>
+    <string name="prayer_log_galaxy_missed">Të humbura: %1$d</string>
+    <string name="prayer_log_galaxy_show_missed">Shfaq namazet e humbura</string>
+    <string name="prayer_log_galaxy_earlier">Javët e mëparshme</string>
+    <string name="prayer_log_galaxy_later">Javët e mëvonshme</string>
+    <string name="prayer_log_prev_day">Dita e mëparshme</string>
+    <string name="prayer_log_next_day">Dita tjetër</string>
+    <string name="prayer_log_day_missed">%1$s u humb · prek nëse e fale</string>
+    <string name="prayer_log_day_full">Ditë e plotë · pesë yje</string>
+    <string name="prayer_log_atlas">Atlasi i yjeve</string>
+    <string name="prayer_log_atlas_hint">Çdo distinktiv një yjësi</string>
+    <string name="prayer_log_star_first_prayer">Ylli Polar</string>
+    <string name="prayer_log_star_first_full_day">Pesë Namaze</string>
+    <string name="prayer_log_star_streak_3">Trekëndëshi</string>
+    <string name="prayer_log_star_streak_7">Mjellma</string>
+    <string name="prayer_log_star_fajr_7">Afërdita</string>
+    <string name="prayer_log_star_prayers_100">Kurora Veriore</string>
+    <string name="prayer_log_star_streak_40">Arusha e Madhe</string>
+    <string name="prayer_log_star_prayers_500">Orioni</string>
 </resources>
