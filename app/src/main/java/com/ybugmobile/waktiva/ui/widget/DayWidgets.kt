@@ -24,7 +24,6 @@ import com.ybugmobile.waktiva.domain.model.isLogged
 import com.ybugmobile.waktiva.ui.home.composables.accentColor
 import com.ybugmobile.waktiva.ui.home.composables.degrees
 import com.ybugmobile.waktiva.ui.home.composables.iconRes
-import com.ybugmobile.waktiva.ui.home.composables.skyLight
 import com.ybugmobile.waktiva.ui.home.composables.weatherIconRes
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
@@ -40,9 +39,9 @@ import java.util.Locale
  *   PRAYED  – "✓ Dhuhr prayed", a calm countdown to the next prayer
  *   WAITING – after sunrise, the countdown to the next prayer
  *
- * In the 4×2 ([WaktivaDayRingWidget]) the moment's sphere, a glass orb in the home screen's
- * materials in a ring of the time left, is the "I prayed" button, and a tap on it once marked takes
- * the mark back. The 4×4 ([WaktivaMyDayWidget]) is drawn in the prayer log's night: the day's
+ * In the 4×2 ([WaktivaDayRingWidget]) the moment's pane, the prayer's own star in a round pane of
+ * the prayer log's night in a ring of the time left, is the "I prayed" button: the star waiting
+ * while its time is on, lit once marked, and a tap on it then takes the mark back. The 4×4 ([WaktivaMyDayWidget]) is drawn in the prayer log's night: the day's
  * prayers as stars on the sun's path, lit once marked ([SkyWidgetArt]), Cassiopeia's W once the
  * day is full, with "I prayed" under them for the prayer whose time is on.
  *
@@ -166,11 +165,12 @@ internal object DayWidgets {
         val current = DayWidgetModel.currentPrayer(day, now.toLocalTime())
         val hero = hero(moment)
         val orb = WidgetArt.Orb(
-            color = hero.accentColor,
-            sky = skyLight(now.hour * 60f + now.minute, day),
-            icon = hero.iconRes,
-            prayed = moment.state == MomentState.PRAYED,
-            raised = true,
+            type = hero,
+            star = when (moment.state) {
+                MomentState.PRAYED -> SkyWidgetArt.Star.LIT
+                MomentState.WAITING -> SkyWidgetArt.Star.LATER
+                MomentState.OPEN, MomentState.ENDING -> SkyWidgetArt.Star.NOW
+            },
             caption = if (moment.canMark) context.getString(R.string.prayer_log_mark).uppercase(locale(context)) else null
         )
         val times = DayWidgetModel.times(day, now, current, prayedToday)
@@ -332,7 +332,7 @@ internal object DayWidgets {
     /**
      * The moment: its chip, the live countdown to the end of the prayer's time (the next
      * prayer's start, so one figure serves both), what comes next with the weather now, and the
-     * sphere's tap: "I prayed", or taking the mark back once it's gold.
+     * pane's tap: "I prayed", or taking the mark back once its star is lit.
      */
     private fun bindMoment(
         context: Context,
