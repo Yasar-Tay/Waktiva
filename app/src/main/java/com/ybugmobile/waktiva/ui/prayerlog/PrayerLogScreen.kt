@@ -252,7 +252,7 @@ private fun TodayCard(
 ) {
     val contentColor = LocalGlassTheme.current.contentColor
 
-    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+    LogCard(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 DayRing(today, Modifier.size(92.dp))
@@ -284,7 +284,7 @@ private fun LandscapeTodayCard(
 ) {
     val contentColor = LocalGlassTheme.current.contentColor
 
-    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+    LogCard(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 DayRing(today, Modifier.size(76.dp))
@@ -322,7 +322,7 @@ private fun TodayHeadline(today: PrayerLogDay, state: PrayerLogViewState, modifi
         Text(
             text = today.date.format(DateTimeFormatter.ofPattern("d MMMM, EEEE", locale)),
             style = MaterialTheme.typography.labelMedium,
-            color = contentColor.copy(alpha = 0.6f)
+            color = faint(0.6f)
         )
         Spacer(Modifier.height(4.dp))
         Text(
@@ -407,7 +407,7 @@ private fun Stat(
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = contentColor.copy(alpha = 0.55f),
+            color = faint(0.55f),
             textAlign = TextAlign.Center,
             maxLines = 2
         )
@@ -447,7 +447,7 @@ private fun HistoryCard(
     onToggle: (LocalDate, PrayerLogEntry) -> Unit,
     compact: Boolean = false
 ) {
-    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+    LogCard(Modifier.fillMaxWidth()) {
         if (!compact) {
             Column(Modifier.padding(horizontal = 12.dp, vertical = 14.dp)) {
                 MonthHeader(state, onShowMonth)
@@ -455,7 +455,7 @@ private fun HistoryCard(
                 MonthPager(state, onShowMonth, onSelect, cellAspect = 1f)
                 state.selected?.let { SelectedDayRow(it, onToggle) }
             }
-            return@GlassSurface
+            return@LogCard
         }
         BoxWithConstraints {
             if (maxWidth >= SideBySideMinWidth) {
@@ -490,7 +490,7 @@ private fun MonthHeader(state: PrayerLogViewState, onShowMonth: (Long) -> Unit) 
             Icon(
                 Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
                 contentDescription = stringResource(R.string.prayer_log_prev_month),
-                tint = contentColor.copy(alpha = if (state.canShowPreviousMonth) 0.8f else 0.2f)
+                tint = faint(if (state.canShowPreviousMonth) 0.8f else 0.2f)
             )
         }
         Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -505,7 +505,7 @@ private fun MonthHeader(state: PrayerLogViewState, onShowMonth: (Long) -> Unit) 
                     Text(
                         text = stringResource(R.string.prayer_log_missed_total),
                         style = MaterialTheme.typography.labelSmall,
-                        color = contentColor.copy(alpha = 0.55f)
+                        color = faint(0.55f)
                     )
                     Spacer(Modifier.width(6.dp))
                     Text(
@@ -520,7 +520,7 @@ private fun MonthHeader(state: PrayerLogViewState, onShowMonth: (Long) -> Unit) 
             Icon(
                 Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                 contentDescription = stringResource(R.string.prayer_log_next_month),
-                tint = contentColor.copy(alpha = if (state.canShowNextMonth) 0.8f else 0.2f)
+                tint = faint(if (state.canShowNextMonth) 0.8f else 0.2f)
             )
         }
     }
@@ -614,7 +614,7 @@ private fun SelectedDayColumn(day: PrayerLogDay, onToggle: (LocalDate, PrayerLog
                 Text(
                     text = day.date.format(DateTimeFormatter.ofPattern("EEEE", locale)),
                     style = MaterialTheme.typography.labelSmall,
-                    color = contentColor.copy(alpha = 0.55f),
+                    color = faint(0.55f),
                     maxLines = 1
                 )
             }
@@ -640,8 +640,8 @@ private fun SelectedDayColumn(day: PrayerLogDay, onToggle: (LocalDate, PrayerLog
                         style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
                         color = when (entry.status) {
                             PrayerLogStatus.PRAYED -> PrayedGold
-                            PrayerLogStatus.UPCOMING -> contentColor.copy(alpha = 0.45f)
-                            else -> contentColor.copy(alpha = 0.85f)
+                            PrayerLogStatus.UPCOMING -> faint(0.45f)
+                            else -> faint(0.85f)
                         },
                         maxLines = 1
                     )
@@ -660,7 +660,7 @@ private fun DayCount(day: PrayerLogDay) {
             fontWeight = FontWeight.ExtraBold,
             fontFeatureSettings = "tnum"
         ),
-        color = if (day.isComplete) PrayedGold else LocalGlassTheme.current.contentColor.copy(alpha = 0.7f)
+        color = if (day.isComplete) PrayedGold else faint(0.7f)
     )
 }
 
@@ -690,7 +690,7 @@ private fun MonthGrid(
                 Text(
                     text = day.getDisplayName(TextStyle.NARROW, locale),
                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                    color = contentColor.copy(alpha = 0.4f),
+                    color = faint(0.4f),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f)
                 )
@@ -768,9 +768,9 @@ private fun DayCell(
             ),
             color = when {
                 isComplete -> PrayedInk
-                day == null -> contentColor.copy(alpha = 0.25f)
+                day == null -> faint(0.25f)
                 isToday -> PrayedGold
-                !day.isTracked && day.prayed == 0 -> contentColor.copy(alpha = 0.45f)
+                !day.isTracked && day.prayed == 0 -> faint(0.45f)
                 else -> contentColor
             }
         )
@@ -812,7 +812,7 @@ private fun DayRing(day: PrayerLogDay, modifier: Modifier = Modifier) {
             Text(
                 text = stringResource(R.string.prayer_log_today).uppercase(),
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
-                color = contentColor.copy(alpha = 0.5f)
+                color = faint(0.5f)
             )
         }
     }
@@ -972,13 +972,13 @@ private fun PrayerChip(entry: PrayerLogEntry, size: Dp, onClick: () -> Unit, sho
                         PrayerLogStatus.UNTRACKED -> Icon(
                             Icons.Rounded.Remove,
                             contentDescription = null,
-                            tint = contentColor.copy(alpha = 0.3f),
+                            tint = faint(0.3f),
                             modifier = Modifier.size(iconSize * 0.8f)
                         )
                         else -> Icon(
                             ImageVector.vectorResource(entry.type.iconRes),
                             contentDescription = null,
-                            tint = if (shown == PrayerLogStatus.ACTIVE) accent else contentColor.copy(alpha = 0.3f),
+                            tint = if (shown == PrayerLogStatus.ACTIVE) accent else faint(0.3f),
                             modifier = Modifier.size(iconSize)
                         )
                     }
@@ -991,7 +991,7 @@ private fun PrayerChip(entry: PrayerLogEntry, size: Dp, onClick: () -> Unit, sho
             Text(
                 text = name,
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                color = contentColor.copy(alpha = if (status == PrayerLogStatus.UPCOMING) 0.45f else 0.8f),
+                color = faint(if (status == PrayerLogStatus.UPCOMING) 0.45f else 0.8f),
                 maxLines = 1
             )
         }
