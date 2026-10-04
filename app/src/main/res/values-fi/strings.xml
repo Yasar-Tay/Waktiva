@@ -544,4 +544,32 @@
     <string name="prayer_log_celebrate_level">Taso nousi! Olet nyt tasolla %1$d 🎉</string>
     <string name="widget_prayer_log_description">Tasosi, putkesi ja merkkisi sekä päivän rukoukset merkittäväksi yhdellä napautuksella</string>
     <string name="widget_prayer_log_off">Ota rukousloki käyttöön asetuksista</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">Päivän tähdet</string>
+    <string name="prayer_log_sky_lit">tähteä syttynyt</string>
+    <string name="prayer_log_sky_left">Tähtiä jäljellä: %1$d · täydennä taivaasi</string>
+    <string name="prayer_log_sky_done">Taivaasi on täysi. Ottakoon Allah sen vastaan.</string>
+    <string name="prayer_log_sky_mark_missed">Merkitse alta rukoilemasi</string>
+    <string name="prayer_log_cassiopeia">Kassiopeia</string>
+    <string name="prayer_log_cassiopeia_line">Viisi rukousta · viisi tähteä · päivä täysi</string>
+    <string name="prayer_log_galaxy">Linnunrata</string>
+    <string name="prayer_log_galaxy_hint">Viisi viikkoa · liu\'uta sormea nauhaa pitkin</string>
+    <string name="prayer_log_galaxy_missed">%1$d väliin jäänyttä</string>
+    <string name="prayer_log_galaxy_show_missed">Näytä väliin jääneet</string>
+    <string name="prayer_log_galaxy_earlier">Aiemmat viikot</string>
+    <string name="prayer_log_galaxy_later">Myöhemmät viikot</string>
+    <string name="prayer_log_prev_day">Edellinen päivä</string>
+    <string name="prayer_log_next_day">Seuraava päivä</string>
+    <string name="prayer_log_day_missed">%1$s jäi väliin · napauta, jos rukoilit</string>
+    <string name="prayer_log_day_full">Täysi päivä · viisi tähteä</string>
+    <string name="prayer_log_atlas">Tähtikartasto</string>
+    <string name="prayer_log_atlas_hint">Jokainen merkki on tähdistö</string>
+    <string name="prayer_log_star_first_prayer">Pohjantähti</string>
+    <string name="prayer_log_star_first_full_day">Viisi Rukousta</string>
+    <string name="prayer_log_star_streak_3">Kolmio</string>
+    <string name="prayer_log_star_streak_7">Joutsen</string>
+    <string name="prayer_log_star_fajr_7">Venus</string>
+    <string name="prayer_log_star_prayers_100">Pohjan kruunu</string>
+    <string name="prayer_log_star_streak_40">Otava</string>
+    <string name="prayer_log_star_prayers_500">Orion</string>
 </resources>

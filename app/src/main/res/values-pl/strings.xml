@@ -544,4 +544,32 @@
     <string name="prayer_log_celebrate_level">Nowy poziom! Masz teraz poziom %1$d 🎉</string>
     <string name="widget_prayer_log_description">Twój poziom, seria i odznaki oraz dzisiejsze modlitwy do zaznaczenia jednym dotknięciem</string>
     <string name="widget_prayer_log_off">Włącz dziennik modlitw w Ustawieniach</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">Gwiazdy dnia</string>
+    <string name="prayer_log_sky_lit">zapalone gwiazdy</string>
+    <string name="prayer_log_sky_left">Pozostałe gwiazdy: %1$d · dopełnij swoje niebo</string>
+    <string name="prayer_log_sky_done">Twoje niebo jest pełne. Niech Allah to przyjmie.</string>
+    <string name="prayer_log_sky_mark_missed">Zaznacz poniżej te, które odmówiłeś</string>
+    <string name="prayer_log_cassiopeia">Kasjopeja</string>
+    <string name="prayer_log_cassiopeia_line">Pięć modlitw · pięć gwiazd · dzień pełny</string>
+    <string name="prayer_log_galaxy">Droga Mleczna</string>
+    <string name="prayer_log_galaxy_hint">Pięć tygodni · przesuń palcem po pasie</string>
+    <string name="prayer_log_galaxy_missed">Pominięte: %1$d</string>
+    <string name="prayer_log_galaxy_show_missed">Pokaż pominięte modlitwy</string>
+    <string name="prayer_log_galaxy_earlier">Wcześniejsze tygodnie</string>
+    <string name="prayer_log_galaxy_later">Późniejsze tygodnie</string>
+    <string name="prayer_log_prev_day">Poprzedni dzień</string>
+    <string name="prayer_log_next_day">Następny dzień</string>
+    <string name="prayer_log_day_missed">%1$s pominięta · dotknij, jeśli odmówiłeś</string>
+    <string name="prayer_log_day_full">Pełny dzień · pięć gwiazd</string>
+    <string name="prayer_log_atlas">Atlas gwiazd</string>
+    <string name="prayer_log_atlas_hint">Każda odznaka to gwiazdozbiór</string>
+    <string name="prayer_log_star_first_prayer">Gwiazda Polarna</string>
+    <string name="prayer_log_star_first_full_day">Pięć Modlitw</string>
+    <string name="prayer_log_star_streak_3">Trójkąt</string>
+    <string name="prayer_log_star_streak_7">Łabędź</string>
+    <string name="prayer_log_star_fajr_7">Wenus</string>
+    <string name="prayer_log_star_prayers_100">Korona Północna</string>
+    <string name="prayer_log_star_streak_40">Wielki Wóz</string>
+    <string name="prayer_log_star_prayers_500">Orion</string>
 </resources>

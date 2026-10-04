@@ -545,4 +545,32 @@
     <string name="prayer_log_celebrate_level">Seviye atladın! Artık seviye %1$d 🎉</string>
     <string name="widget_prayer_log_description">Seviyen, serin ve rozetlerin; bugünün namazlarını tek dokunuşla işaretle</string>
     <string name="widget_prayer_log_off">Çeteleyi Ayarlar\'dan aç</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">Günün yıldızları</string>
+    <string name="prayer_log_sky_lit">yıldız yandı</string>
+    <string name="prayer_log_sky_left">Kalan yıldız: %1$d · gökyüzünü tamamla</string>
+    <string name="prayer_log_sky_done">Gökyüzün tamam. Allah kabul etsin.</string>
+    <string name="prayer_log_sky_mark_missed">Kıldıklarını aşağıdan işaretle</string>
+    <string name="prayer_log_cassiopeia">Kraliçe</string>
+    <string name="prayer_log_cassiopeia_line">Beş vakit · beş yıldız · gün tamam</string>
+    <string name="prayer_log_galaxy">Samanyolu</string>
+    <string name="prayer_log_galaxy_hint">Beş hafta · bandı parmağınla gez</string>
+    <string name="prayer_log_galaxy_missed">%1$d eksik</string>
+    <string name="prayer_log_galaxy_show_missed">Eksikleri göster</string>
+    <string name="prayer_log_galaxy_earlier">Önceki haftalar</string>
+    <string name="prayer_log_galaxy_later">Sonraki haftalar</string>
+    <string name="prayer_log_prev_day">Önceki gün</string>
+    <string name="prayer_log_next_day">Sonraki gün</string>
+    <string name="prayer_log_day_missed">%1$s kaçırıldı · kıldıysan dokun</string>
+    <string name="prayer_log_day_full">Tam gün · beş yıldız</string>
+    <string name="prayer_log_atlas">Yıldız atlası</string>
+    <string name="prayer_log_atlas_hint">Her rozet bir takımyıldız</string>
+    <string name="prayer_log_star_first_prayer">Demirkazık</string>
+    <string name="prayer_log_star_first_full_day">Beş Vakit</string>
+    <string name="prayer_log_star_streak_3">Üçgen</string>
+    <string name="prayer_log_star_streak_7">Kuğu</string>
+    <string name="prayer_log_star_fajr_7">Zühre</string>
+    <string name="prayer_log_star_prayers_100">Kuzey Tacı</string>
+    <string name="prayer_log_star_streak_40">Yedigen</string>
+    <string name="prayer_log_star_prayers_500">Avcı</string>
 </resources>

@@ -545,4 +545,32 @@
     <string name="prayer_log_celebrate_level">Level up! You\'re now level %1$d 🎉</string>
     <string name="widget_prayer_log_description">Your level, streak and badges, with today\'s prayers to mark in a tap</string>
     <string name="widget_prayer_log_off">Turn on the prayer log in Settings</string>
+    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
+    <string name="prayer_log_sky_title">Today\'s stars</string>
+    <string name="prayer_log_sky_lit">stars lit</string>
+    <string name="prayer_log_sky_left">Stars left: %1$d · complete your sky</string>
+    <string name="prayer_log_sky_done">Your sky is complete. May Allah accept it.</string>
+    <string name="prayer_log_sky_mark_missed">Mark the ones you prayed, below</string>
+    <string name="prayer_log_cassiopeia">Cassiopeia</string>
+    <string name="prayer_log_cassiopeia_line">Five prayers · five stars · day complete</string>
+    <string name="prayer_log_galaxy">Milky Way</string>
+    <string name="prayer_log_galaxy_hint">Five weeks · glide your finger along the band</string>
+    <string name="prayer_log_galaxy_missed">%1$d missed</string>
+    <string name="prayer_log_galaxy_show_missed">Show missed prayers</string>
+    <string name="prayer_log_galaxy_earlier">Earlier weeks</string>
+    <string name="prayer_log_galaxy_later">Later weeks</string>
+    <string name="prayer_log_prev_day">Previous day</string>
+    <string name="prayer_log_next_day">Next day</string>
+    <string name="prayer_log_day_missed">%1$s missed · tap if you prayed</string>
+    <string name="prayer_log_day_full">Full day · five stars</string>
+    <string name="prayer_log_atlas">Star atlas</string>
+    <string name="prayer_log_atlas_hint">Every badge a constellation</string>
+    <string name="prayer_log_star_first_prayer">Polaris</string>
+    <string name="prayer_log_star_first_full_day">Five Prayers</string>
+    <string name="prayer_log_star_streak_3">Triangulum</string>
+    <string name="prayer_log_star_streak_7">Cygnus</string>
+    <string name="prayer_log_star_fajr_7">Venus</string>
+    <string name="prayer_log_star_prayers_100">Corona Borealis</string>
+    <string name="prayer_log_star_streak_40">Big Dipper</string>
+    <string name="prayer_log_star_prayers_500">Orion</string>
 </resources>
