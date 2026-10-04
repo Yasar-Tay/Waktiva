@@ -78,8 +78,8 @@ internal fun StarAtlas(progress: PrayerLogProgress, modifier: Modifier = Modifie
             )
             Text(
                 "${progress.earned.size}/${progress.badges.size}",
-                style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
-                color = skyFaint(0.7f)
+                style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum", shadow = TextShade),
+                color = skyFaint(0.85f)
             )
         }
         Spacer(Modifier.height(14.dp))
@@ -114,28 +114,32 @@ private fun AtlasTile(progress: BadgeProgress, isSelected: Boolean, onClick: () 
     val shape = RoundedCornerShape(18.dp)
     Column(
         modifier
-            .height(112.dp)
+            .height(130.dp)
             .clip(shape)
-            .background(Color.White.copy(alpha = if (isSelected) 0.12f else if (earned) 0.06f else 0.025f))
-            .border(1.dp, Color.White.copy(alpha = if (isSelected) 0.3f else if (earned) 0.12f else 0.06f), shape)
+            .background(Brush.verticalGradient(listOf(Color(0xFF1A1440).copy(alpha = if (earned) 0.78f else 0.62f), Color(0xFF0A0820).copy(alpha = 0.8f))))
+            .border(
+                if (isSelected) 1.5.dp else 1.dp,
+                if (isSelected) NowLilac.copy(alpha = 0.75f) else Color.White.copy(alpha = if (earned) 0.2f else 0.1f),
+                shape
+            )
             .clickable(role = Role.Button, onClick = onClick)
             .semantics { contentDescription = "$name, $sky, ${progress.current}/${progress.target}" }
             .padding(vertical = 8.dp, horizontal = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ConstellationArt(progress.badge.constellation, earned, Modifier.size(56.dp, 50.dp))
+        ConstellationArt(progress.badge.constellation, earned, Modifier.size(66.dp, 58.dp))
         Spacer(Modifier.height(4.dp))
         Text(
             name,
-            style = TextStyle(fontSize = 10.5.sp, fontWeight = FontWeight.Bold, lineHeight = 12.sp),
-            color = if (earned) SkyInk else skyFaint(0.55f),
+            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Bold, lineHeight = 14.sp),
+            color = if (earned) SkyInk else skyFaint(0.65f),
             textAlign = TextAlign.Center,
             maxLines = 2
         )
         Text(
             if (earned) sky else "${progress.current}/${progress.target}",
-            style = TextStyle(fontSize = 9.sp, fontFeatureSettings = "tnum"),
-            color = skyFaint(0.45f),
+            style = TextStyle(fontSize = 10.5.sp, fontFeatureSettings = "tnum"),
+            color = skyFaint(0.6f),
             textAlign = TextAlign.Center,
             maxLines = 1
         )

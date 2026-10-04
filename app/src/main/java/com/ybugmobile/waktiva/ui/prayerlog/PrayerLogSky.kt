@@ -25,7 +25,6 @@ import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -67,14 +66,10 @@ import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.ui.theme.CormorantGaramond
 import com.ybugmobile.waktiva.domain.model.PrayerLogProgress
-import com.ybugmobile.waktiva.domain.model.PrayerDay
 import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
 import com.ybugmobile.waktiva.domain.model.PrayerType
-import com.ybugmobile.waktiva.ui.theme.getGradientColorsForTime
 import kotlin.math.PI
-import java.time.LocalTime
 import kotlin.math.cos
-import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.random.Random
 
@@ -88,160 +83,6 @@ internal fun skyFaint(alpha: Float) = Color(0xFFE4E2FF).copy(alpha = alpha)
 internal val StarWhite = Color(0xFFFFFDF4)
 internal val NowLilac = Color(0xFFC5CBF0)
 internal val MissedCoral = Color(0xFFFFB4B4)
-
-/** The night's colours, top to bottom. */
-private val NightColors = listOf(Color(0xFF03050D), Color(0xFF070B22), Color(0xFF141142), Color(0xFF1E1A52))
-
-/**
- * The night the prayer log is drawn on, under the sky of the hour (see [SkyDome]): deep blue into
- * violet, a glow low down, and stars twinkling in it, more of them high up where it's darkest.
- */
-@Composable
-internal fun NightSky(modifier: Modifier = Modifier) {
-    val twinkle = rememberInfiniteTransition(label = "twinkle").animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(4200, easing = LinearEasing)),
-        label = "twinkle"
-    )
-    val stars = remember {
-        val random = Random(7)
-        List(90) {
-            NightStar(
-                x = random.nextFloat(),
-                y = random.nextFloat().let { it * it },
-                radius = if (random.nextFloat() < 0.85f) 0.7f else 1.2f,
-                alpha = 0.25f + random.nextFloat() * 0.55f,
-                phase = random.nextFloat()
-            )
-        }
-    }
-    Canvas(modifier) {
-        drawRect(Brush.verticalGradient(NightColors))
-        drawRect(
-            Brush.radialGradient(
-                listOf(Color(0xFF9FA8DA).copy(alpha = 0.22f), Color.Transparent),
-                center = Offset(size.width / 2f, size.height * 1.05f),
-                radius = size.width * 1.1f
-            )
-        )
-        val t = twinkle.value
-        stars.forEach { star ->
-            val shimmer = 0.55f + 0.45f * sin(2f * PI.toFloat() * (t + star.phase))
-            drawCircle(
-                Color.White.copy(alpha = star.alpha * shimmer),
-                radius = star.radius.dp.toPx(),
-                center = Offset(star.x * size.width, star.y * size.height)
-            )
-        }
-    }
-}
-
-private class NightStar(val x: Float, val y: Float, val radius: Float, val alpha: Float, val phase: Float)
-
-// ── The sky by the hour ─────────────────────────────────────────────────────
-
-/**
- * How the sky over today's stars looks at an hour: the home screen's colours for it ([colors], top
- * to horizon), how much of the night's stars show through them, the moon's light while it's up,
- * the glow low on the horizon, and whether the sky is light enough that words and stars need a
- * shadow on it.
- */
-@Immutable
-internal class SkyHour(
-    val colors: List<Color>,
-    val stars: Float,
-    val moon: Float,
-    val glow: Color,
-    val isDay: Boolean
-)
-
-/**
- * The sky at [now] on [day]: the night until Fajr and after Isha, the dawn's violet till sunrise,
- * the sun coming up, the day, the sunset's last three quarters of an hour, and the dusk.
- */
-internal fun skyHour(now: LocalTime, day: PrayerDay?): SkyHour {
-    val colors = getGradientColorsForTime(now, day)
-    val timings = day?.timings
-    val fajr = timings?.get(PrayerType.FAJR)
-    val sunrise = timings?.get(PrayerType.SUNRISE)
-    val maghrib = timings?.get(PrayerType.MAGHRIB)
-    val isha = timings?.get(PrayerType.ISHA)
-    if (fajr == null || sunrise == null || maghrib == null || isha == null) {
-        return SkyHour(colors, stars = 1f, moon = 1f, glow = Color(0x529FA8DA), isDay = false)
-    }
-    return when {
-        now.isBefore(fajr) || !now.isBefore(isha) -> SkyHour(colors, stars = 1f, moon = 1f, glow = Color(0x529FA8DA), isDay = false)
-        now.isBefore(sunrise) -> SkyHour(colors, stars = 0.85f, moon = 0.7f, glow = Color(0x73AA8CE6), isDay = false)
-        now.isBefore(sunrise.plusMinutes(45)) -> SkyHour(colors, stars = 0.04f, moon = 0f, glow = Color(0xB3FFBE78), isDay = true)
-        now.isBefore(maghrib.minusMinutes(45)) -> SkyHour(colors, stars = 0f, moon = 0f, glow = Color(0x80F0FAFF), isDay = true)
-        now.isBefore(maghrib) -> SkyHour(colors, stars = 0.2f, moon = 0f, glow = Color(0xB3FF8046), isDay = false)
-        else -> SkyHour(colors, stars = 0.6f, moon = 0.9f, glow = Color(0x66C8506E), isDay = false)
-    }
-}
-
-/**
- * The sky over today's stars in [hour]'s colours, from [extendTop] above its content (to the top of
- * the screen) down to the horizon under the stars, the night's stars showing through as much as the
- * hour lets, a glow on the horizon and its light on the ground below. Under the horizon the screen
- * stays in the night: the galaxy lives there.
- */
-@Composable
-internal fun SkyDome(hour: SkyHour, extendTop: Dp, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    val twinkle = rememberInfiniteTransition(label = "domeTwinkle").animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(4200, easing = LinearEasing)),
-        label = "domeTwinkle"
-    )
-    val stars = remember {
-        val random = Random(11)
-        List(50) {
-            NightStar(
-                x = random.nextFloat(),
-                y = random.nextFloat().pow(1.3f),
-                radius = if (random.nextFloat() < 0.85f) 0.7f else 1.2f,
-                alpha = 0.25f + random.nextFloat() * 0.6f,
-                phase = random.nextFloat()
-            )
-        }
-    }
-    Column(
-        modifier.drawBehind {
-            val top = -extendTop.toPx()
-            val horizon = size.height - (SkyHeight - HorizonY).toPx()
-            drawRect(
-                Brush.verticalGradient(hour.colors, startY = top, endY = horizon),
-                topLeft = Offset(0f, top),
-                size = Size(size.width, horizon - top)
-            )
-            val ground = 70.dp.toPx()
-            drawRect(
-                Brush.verticalGradient(listOf(hour.colors.last().copy(alpha = 0.28f), Color.Transparent), startY = horizon, endY = horizon + ground),
-                topLeft = Offset(0f, horizon),
-                size = Size(size.width, ground)
-            )
-            if (hour.stars > 0f) {
-                val t = twinkle.value
-                val height = horizon - 4.dp.toPx() - top
-                stars.forEach { star ->
-                    val shimmer = 0.55f + 0.45f * sin(2f * PI.toFloat() * (t + star.phase))
-                    drawCircle(
-                        Color.White.copy(alpha = star.alpha * shimmer * hour.stars),
-                        radius = star.radius.dp.toPx(),
-                        center = Offset(star.x * size.width, top + star.y * height)
-                    )
-                }
-            }
-            val glowAt = Offset(size.width / 2f, horizon)
-            val reach = 280.dp.toPx()
-            scale(1f, 80f / 280f, glowAt) {
-                drawCircle(Brush.radialGradient(listOf(hour.glow, Color.Transparent), glowAt, reach), reach, glowAt)
-            }
-        },
-        content = content
-    )
-}
 
 // ── Stars ───────────────────────────────────────────────────────────────────
 
@@ -283,15 +124,21 @@ private val CassiopeiaStars = listOf(
     Triple(320f, 119.6f, 0.78f)  // Segin, the faintest
 )
 
-private val SkyHeight = 320.dp
-private val HorizonY = 300.dp
+private val SkyHeight = 360.dp
+private val HorizonY = 340.dp
+
+/** Words on the deep sky: a soft dark shade under them, so they hold over its brightest clouds. */
+internal val TextShade = Shadow(Color(0xA6020108), Offset(0f, 2f), 18f)
+
+/** How much larger than their own size the day's stars are drawn here. */
+private const val StarScale = 1.2f
 
 /**
  * Today's five prayers as stars on the sun's path across the sky, each where its time falls in the
  * day and each its own star (see [prayerStar]). A prayer marked is a star lit, and two in a row both
  * lit are joined by a line, the day's own constellation; one gone unmarked breaks it. The one whose
  * time is on pulses, a dotted line reaching on to it from the star before. Tapping a star marks it
- * or takes the mark back. [hour] is the sky they're on.
+ * or takes the mark back.
  *
  * With [cassiopeia], the day just made full, the five glide off the sun's path into Cassiopeia's W,
  * five prayers as the queen's five stars, and its lines are drawn in.
@@ -300,7 +147,6 @@ private val HorizonY = 300.dp
 internal fun DayStars(
     today: PrayerLogDay,
     cassiopeia: Boolean,
-    hour: SkyHour,
     onToggle: (PrayerLogEntry) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -327,8 +173,8 @@ internal fun DayStars(
     BoxWithConstraints(modifier.fillMaxWidth().height(SkyHeight)) {
         val width = maxWidth
         val cx = width / 2
-        val rx = minOf(width * 0.41f, 170.dp)
-        val ry = 210.dp
+        val rx = minOf(width * 0.42f, 180.dp)
+        val ry = 240.dp
         // Minutes into the day, a time past midnight (Isha, far north) counted on from the day before.
         val minutes = today.entries.map { it.time?.let { t -> t.hour * 60 + t.minute } }.let { raw ->
             var last = -1
@@ -345,19 +191,10 @@ internal fun DayStars(
             val dx = rx * cos(angle)
             SkyPoint(if (rtl) cx + dx else cx - dx, HorizonY - ry * sin(angle))
         }
-        val inW = CassiopeiaStars.map { (x, y, _) -> SkyPoint(cx + (width / 390f) * (x - 195f), y.dp) }
+        val inW = CassiopeiaStars.map { (x, y, _) -> SkyPoint(cx + (width / 390f) * (x - 195f), (y * 1.12f).dp) }
 
         Canvas(Modifier.fillMaxSize()) {
             val horizon = HorizonY.toPx()
-            drawLine(Color.White.copy(alpha = if (hour.isDay) 0.5f else 0.22f), Offset(0f, horizon), Offset(size.width, horizon), 1.dp.toPx())
-            if (hour.moon > 0f) {
-                drawMoon(Offset(if (rtl) size.width - 70.dp.toPx() else 70.dp.toPx(), 60.dp.toPx()), 22.dp.toPx(), hour.moon)
-            }
-            // On a light sky, a dome of shade under the count, as the home dial has.
-            if (hour.isDay) {
-                val under = Offset(size.width / 2f, 205.dp.toPx())
-                drawCircle(Brush.radialGradient(listOf(Color(0x57050816), Color.Transparent), under, 150.dp.toPx()), 150.dp.toPx(), under)
-            }
 
             if (arcAlpha > 0f) {
                 // The sun's path, dotted.
@@ -372,7 +209,7 @@ internal fun DayStars(
                 }
                 drawPath(
                     arc,
-                    Color.White.copy(alpha = (if (hour.isDay) 0.45f else 0.16f) * arcAlpha),
+                    Color.White.copy(alpha = 0.24f * arcAlpha),
                     style = Stroke(1.dp.toPx(), cap = StrokeCap.Round, pathEffect = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 6.dp.toPx())))
                 )
                 // The day's constellation: two prayers in a row both lit, joined.
@@ -382,8 +219,8 @@ internal fun DayStars(
                     if (entries[i].status != PrayerLogStatus.PRAYED || entries[i + 1].status != PrayerLogStatus.PRAYED) continue
                     val from = onArc[i].toPx(this)
                     val to = onArc[i + 1].toPx(this)
-                    drawLine(brush, from, to, 6.dp.toPx(), cap = StrokeCap.Round, alpha = 0.18f * arcAlpha)
-                    drawLine(brush, from, to, 1.5.dp.toPx(), cap = StrokeCap.Round, alpha = arcAlpha)
+                    drawLine(brush, from, to, 9.dp.toPx(), cap = StrokeCap.Round, alpha = 0.2f * arcAlpha)
+                    drawLine(brush, from, to, 2.dp.toPx(), cap = StrokeCap.Round, alpha = arcAlpha)
                 }
                 // A dotted line on to the prayer whose time is on, breathing, from the star before it lit.
                 val active = entries.indexOfFirst { it.status == PrayerLogStatus.ACTIVE }
@@ -393,9 +230,9 @@ internal fun DayStars(
                         NowLilac.copy(alpha = breath * arcAlpha),
                         onArc[active - 1].toPx(this),
                         onArc[active].toPx(this),
-                        1.4.dp.toPx(),
+                        1.8.dp.toPx(),
                         cap = StrokeCap.Round,
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(3.dp.toPx(), 5.dp.toPx()))
+                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 6.dp.toPx()))
                     )
                 }
             }
@@ -406,8 +243,8 @@ internal fun DayStars(
                 val measure = PathMeasure().apply { setPath(w, false) }
                 val drawn = Path()
                 measure.getSegment(0f, measure.length * wDrawn, drawn, true)
-                drawPath(drawn, Color.White.copy(alpha = 0.35f), style = Stroke(5.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
-                drawPath(drawn, StarWhite, style = Stroke(1.5.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+                drawPath(drawn, Color.White.copy(alpha = 0.35f), style = Stroke(7.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+                drawPath(drawn, StarWhite, style = Stroke(2.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
             }
         }
 
@@ -418,7 +255,7 @@ internal fun DayStars(
                 Modifier
                     .align(Alignment.TopCenter)
                     .padding(top = 10.dp)
-                    .size(340.dp, 300.dp)
+                    .size(370.dp, 340.dp)
                     .alpha(queenGlow)
                     .background(Brush.radialGradient(listOf(NowLilac.copy(alpha = 0.35f), Color(0xFF9FA8DA).copy(alpha = 0.1f), Color.Transparent)))
             )
@@ -437,63 +274,61 @@ internal fun DayStars(
                     pulse = pulse,
                     twinkle = twinkle,
                     phase = i * 0.2f,
-                    isDay = hour.isDay,
                     onClick = { onToggle(entry) },
-                    modifier = Modifier.offset(x - 32.dp, y - 32.dp)
+                    modifier = Modifier.offset(x - 36.dp, y - 36.dp)
                 )
             }
         }
 
         // How many are lit, in the middle; the queen's name in its place while she shows.
         val lit = today.prayed
-        val dayShadow = if (hour.isDay) Shadow(Color(0x8C040A28), Offset(0f, 2f), 14f) else null
         val countAlpha by animateFloatAsState(if (cassiopeia) 0f else 1f, tween(900), label = "countAlpha")
         Column(
             Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 150.dp)
+                .padding(top = 168.dp)
                 .alpha(countAlpha),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = buildAnnotatedString {
                     append(lit.toString())
-                    withStyle(SpanStyle(fontSize = 52.sp, color = Color(0xFFC9C6F2).copy(alpha = 0.55f))) {
+                    withStyle(SpanStyle(fontSize = 64.sp, color = Color(0xFFC9C6F2).copy(alpha = 0.6f))) {
                         append("/${today.entries.size}")
                     }
                 },
                 style = TextStyle(
                     fontFamily = CormorantGaramond,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 88.sp,
-                    lineHeight = 88.sp,
+                    fontSize = 108.sp,
+                    lineHeight = 108.sp,
                     brush = Brush.verticalGradient(listOf(Color.White, Color(0xFFC9C6F2))),
-                    shadow = dayShadow
+                    shadow = TextShade
                 )
             )
             Text(
                 text = stringResource(R.string.prayer_log_sky_lit).uppercase(),
-                style = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 3.sp, shadow = dayShadow),
-                color = skyFaint(0.62f)
+                style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, letterSpacing = 3.5.sp, shadow = TextShade),
+                color = skyFaint(0.78f)
             )
         }
         val titleAlpha by animateFloatAsState(if (cassiopeia) 1f else 0f, tween(900, delayMillis = if (cassiopeia) 1200 else 0), label = "queenTitle")
         Column(
             Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 244.dp)
+                .padding(top = 288.dp)
                 .graphicsLayer { alpha = titleAlpha; translationY = (1f - titleAlpha) * 10.dp.toPx() },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = stringResource(R.string.prayer_log_cassiopeia),
-                style = TextStyle(fontFamily = CormorantGaramond, fontStyle = FontStyle.Italic, fontWeight = FontWeight.SemiBold, fontSize = 36.sp, shadow = dayShadow),
+                style = TextStyle(fontFamily = CormorantGaramond, fontStyle = FontStyle.Italic, fontWeight = FontWeight.SemiBold, fontSize = 44.sp, shadow = TextShade),
                 color = SkyInk
             )
             Text(
                 text = stringResource(R.string.prayer_log_cassiopeia_line).uppercase(),
-                style = TextStyle(fontSize = 10.5.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 2.sp, shadow = dayShadow),
-                color = skyFaint(0.7f),
+                style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.2.sp, shadow = TextShade),
+                color = skyFaint(0.8f),
                 textAlign = TextAlign.Center
             )
         }
@@ -503,8 +338,7 @@ internal fun DayStars(
 /**
  * One prayer in the sky: its own star in its state (see [prayerStar]), with its name and time under
  * it. The whole of it, 64 by 84, is the tap target, except for a prayer whose time hasn't come; the
- * star's light reaches out past it. [phase] sets it apart in the twinkle; on a light sky ([isDay])
- * its words take a shadow.
+ * star's light reaches out past it. [phase] sets it apart in the twinkle.
  */
 @Composable
 private fun SkyStar(
@@ -514,7 +348,6 @@ private fun SkyStar(
     pulse: State<Float>,
     twinkle: State<Float>,
     phase: Float,
-    isDay: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -542,27 +375,28 @@ private fun SkyStar(
             ignite.animateTo(1f, tween(1000, easing = FastOutSlowInEasing))
         }
     }
-    val shadow = if (isDay) Shadow(Color(0x8C040A28), Offset(0f, 1f), 8f) else null
 
-    Box(modifier.size(64.dp, 84.dp)) {
-        Canvas(Modifier.size(64.dp)) {
+    Box(modifier.size(72.dp, 98.dp)) {
+        Canvas(Modifier.size(72.dp)) {
             val shimmer = 0.5f + 0.5f * cos(2f * PI.toFloat() * (twinkle.value + phase))
-            prayerStar(entry.type, status, center, pop, shimmer, pulse.value, ignite.value, isDay)
+            scale(StarScale, center) {
+                prayerStar(entry.type, status, center, pop, shimmer, pulse.value, ignite.value, isDay = false)
+            }
         }
         XpPop(marks, Modifier.wrapContentSize(Alignment.TopCenter, unbounded = true).align(Alignment.TopCenter))
         Column(
             Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 54.dp)
+                .padding(top = 60.dp)
                 .alpha(labelAlpha),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = name,
-                style = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 0.4.sp, shadow = shadow),
+                style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, letterSpacing = 0.4.sp, shadow = TextShade),
                 color = when (status) {
                     PrayerLogStatus.MISSED -> MissedCoral
-                    PrayerLogStatus.UPCOMING -> if (isDay) Color.White.copy(alpha = 0.85f) else skyFaint(0.55f)
+                    PrayerLogStatus.UPCOMING -> skyFaint(0.62f)
                     else -> SkyInk
                 },
                 maxLines = 1,
@@ -571,8 +405,8 @@ private fun SkyStar(
             entry.time?.let {
                 Text(
                     text = it.format(TimeFormat),
-                    style = TextStyle(fontSize = 10.sp, fontWeight = FontWeight.Medium, fontFeatureSettings = "tnum", shadow = shadow),
-                    color = if (isDay) Color.White.copy(alpha = 0.78f) else skyFaint(0.5f),
+                    style = TextStyle(fontSize = 11.5.sp, fontWeight = FontWeight.SemiBold, fontFeatureSettings = "tnum", shadow = TextShade),
+                    color = skyFaint(0.62f),
                     maxLines = 1
                 )
             }
@@ -589,12 +423,6 @@ private fun SkyStar(
 }
 
 private val TimeFormat = java.time.format.DateTimeFormatter.ofPattern("HH:mm")
-
-/** A new moon, lit on its outer edge, as bright as [alpha]. */
-private fun DrawScope.drawMoon(center: Offset, r: Float, alpha: Float) {
-    drawCircle(Brush.radialGradient(listOf(MoonLight.copy(alpha = 0.25f), Color.Transparent), center, r * 2f), r * 2f, center, alpha = alpha)
-    drawPath(crescent(center, r), MoonLight, alpha = alpha, style = Fill)
-}
 
 /** A point in dp, turned to pixels in [scope]. */
 private data class SkyPoint(val x: Dp, val y: Dp) {
@@ -622,7 +450,7 @@ internal fun SkyCall(today: PrayerLogDay, isFirstUse: Boolean, onMark: (PrayerLo
     Column(modifier, verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Text(
             text = line,
-            style = TextStyle(fontFamily = CormorantGaramond, fontStyle = FontStyle.Italic, fontSize = 20.sp, lineHeight = 25.sp),
+            style = TextStyle(fontFamily = CormorantGaramond, fontStyle = FontStyle.Italic, fontSize = 24.sp, lineHeight = 29.sp, shadow = TextShade),
             color = Color(0xFFECEAFF),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -774,30 +602,30 @@ internal fun SkyNumbers(state: PrayerLogViewState, modifier: Modifier = Modifier
     }
 }
 
-/** A pane of the night's glass, faint white with a faint white edge. */
+/** A pane of dark glass over the deep sky, a lit white edge round it. */
 @Composable
 internal fun SkyTile(modifier: Modifier = Modifier, padding: PaddingValues = PaddingValues(12.dp), content: @Composable ColumnScope.() -> Unit) {
     Column(
         modifier
             .fillMaxHeight()
-            .clip(RoundedCornerShape(20.dp))
-            .background(Color.White.copy(alpha = 0.055f))
-            .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(22.dp))
+            .background(Brush.verticalGradient(listOf(Color(0xFF1A1440).copy(alpha = 0.72f), Color(0xFF0A0820).copy(alpha = 0.78f))))
+            .border(1.dp, Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.26f), Color.White.copy(alpha = 0.08f))), RoundedCornerShape(22.dp))
             .padding(padding),
         content = content
     )
 }
 
-private val NumberStyle = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.Bold, fontSize = 30.sp, lineHeight = 32.sp)
-private val LabelStyle = TextStyle(fontSize = 10.5.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 1.4.sp)
-private val CaptionStyle = TextStyle(fontSize = 11.sp, lineHeight = 14.sp)
+private val NumberStyle = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.Bold, fontSize = 38.sp, lineHeight = 40.sp)
+private val LabelStyle = TextStyle(fontSize = 11.5.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.4.sp)
+private val CaptionStyle = TextStyle(fontSize = 12.5.sp, lineHeight = 16.sp)
 
 /** The screen's section titles: a serif name over a quiet line. */
 @Composable
 internal fun SkySectionTitle(title: String, hint: String, modifier: Modifier = Modifier) {
     Column(modifier) {
-        Text(title, style = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.SemiBold, fontSize = 24.sp, lineHeight = 26.sp), color = SkyInk)
-        Text(hint, style = TextStyle(fontSize = 11.sp), color = skyFaint(0.55f), maxLines = 1)
+        Text(title, style = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.Bold, fontSize = 34.sp, lineHeight = 36.sp, shadow = TextShade), color = SkyInk)
+        Text(hint, style = TextStyle(fontSize = 12.5.sp, shadow = TextShade), color = skyFaint(0.7f), maxLines = 1)
     }
 }
 
