@@ -252,6 +252,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Gebedstijd meldingen</string>
     <string name="settings_silent_prayer_notification_desc">Ontvang meldingen, ook als de adhan niet wordt afgespeeld</string>
+    <string name="settings_prayer_log_still_notifies">Meldingen van het Gebedslog staan nog aan</string>
+    <string name="settings_prayer_log_still_notifies_desc">Ze herinneren je eraan je gebeden af te vinken. Tik om aan te passen.</string>
     <string name="silent_prayer_channel_name">Gebedstijd waarschuwingen</string>
     <string name="silent_prayer_channel_description">Stille meldingen voor gebedstijden wanneer het adhan-geluid is uitgeschakeld.</string>
     <string name="notification_prayer_time_title">Het is tijd voor %s</string>

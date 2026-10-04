@@ -245,6 +245,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">নামাজের সময়ের বিজ্ঞপ্তি</string>
     <string name="settings_silent_prayer_notification_desc">আজান না বাজলেও বিজ্ঞপ্তি পান</string>
+    <string name="settings_prayer_log_still_notifies">নামাজের হিসাবের বিজ্ঞপ্তি এখনও চালু আছে</string>
+    <string name="settings_prayer_log_still_notifies_desc">নামাজ চিহ্নিত করার কথা মনে করিয়ে দেয়। পরিবর্তন করতে আলতো চাপুন।</string>
     <string name="silent_prayer_channel_name">নামাজের সময়ের সতর্কতা</string>
     <string name="silent_prayer_channel_description">আযানের শব্দ বন্ধ থাকলে নামাজের সময়ের নিরব বিজ্ঞপ্তি।</string>
     <string name="notification_prayer_time_title">%s-এর সময় হয়েছে</string>

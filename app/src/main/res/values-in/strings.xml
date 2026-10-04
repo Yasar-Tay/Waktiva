@@ -245,6 +245,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notifikasi Waktu Shalat</string>
     <string name="settings_silent_prayer_notification_desc">Terima notifikasi meskipun adzan tidak diputar</string>
+    <string name="settings_prayer_log_still_notifies">Notifikasi Catatan Salat masih aktif</string>
+    <string name="settings_prayer_log_still_notifies_desc">Mengingatkanmu menandai salat. Ketuk untuk mengatur.</string>
     <string name="silent_prayer_channel_name">Peringatan Waktu Shalat</string>
     <string name="silent_prayer_channel_description">Notifikasi senyap untuk waktu shalat saat audio adzan dimatikan.</string>
     <string name="notification_prayer_time_title">Waktunya %s</string>

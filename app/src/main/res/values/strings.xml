@@ -252,6 +252,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Prayer Time Notifications</string>
     <string name="settings_silent_prayer_notification_desc">Receive notifications even when adhan is not played</string>
+    <string name="settings_prayer_log_still_notifies">Prayer Log notifications are still on</string>
+    <string name="settings_prayer_log_still_notifies_desc">They remind you to mark your prayers. Tap to adjust.</string>
     <string name="silent_prayer_channel_name">Prayer Time Alerts</string>
     <string name="silent_prayer_channel_description">Silent notifications for prayer times when adhan audio is off.</string>
     <string name="notification_prayer_time_title">It\'s time for %s</string>

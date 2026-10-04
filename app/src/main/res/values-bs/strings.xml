@@ -252,6 +252,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Obavijesti o vremenu namaza</string>
     <string name="settings_silent_prayer_notification_desc">Primajte obavijesti čak i kada se Ezan ne oglašava</string>
+    <string name="settings_prayer_log_still_notifies">Obavijesti Evidencije namaza su i dalje uključene</string>
+    <string name="settings_prayer_log_still_notifies_desc">Podsjećaju vas da označite namaze. Dodirnite za podešavanje.</string>
     <string name="silent_prayer_channel_name">Upozorenja o vremenu namaza</string>
     <string name="silent_prayer_channel_description">Tihe obavijesti o vremenima namaza kada je zvuk ezana isključen.</string>
     <string name="notification_prayer_time_title">Vrijeme je za %s</string>

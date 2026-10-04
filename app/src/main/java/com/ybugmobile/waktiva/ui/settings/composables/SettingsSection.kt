@@ -14,11 +14,12 @@ import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 @Composable
 fun SettingsSection(
     title: String,
+    modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val glassTheme = LocalGlassTheme.current
     
-    Column(modifier = Modifier.padding(vertical = 16.dp)) {
+    Column(modifier = modifier.padding(vertical = 16.dp)) {
         Text(
             text = title.uppercase(),
             style = MaterialTheme.typography.labelSmall.copy(

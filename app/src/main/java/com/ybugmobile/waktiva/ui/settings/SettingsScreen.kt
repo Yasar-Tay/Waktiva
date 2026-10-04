@@ -4,8 +4,11 @@ import android.content.res.Configuration
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
@@ -31,6 +34,7 @@ import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.local.preferences.DEFAULT_PRAYER_LOG_REMINDER_MINUTES
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.domain.model.DayCircleStyle
+import com.ybugmobile.waktiva.domain.model.LoggedPrayers
 import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.ui.prayerlog.TallyIcon
 import com.ybugmobile.waktiva.ui.settings.composables.*
@@ -39,9 +43,10 @@ import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import com.ybugmobile.waktiva.utils.applyAppLanguage
 import com.ybugmobile.waktiva.utils.LanguageUtils
 import com.ybugmobile.waktiva.utils.PermissionUtils
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun SettingsScreen(
     onNavigateToAudio: () -> Unit,
@@ -63,6 +68,11 @@ fun SettingsScreen(
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showDeleteHistoryDialog by remember { mutableStateOf(false) }
     var showClearPrayerLogDialog by remember { mutableStateOf(false) }
+
+    // The note that the prayer log still notifies leads here, to the prayer log's own settings.
+    val prayerLogRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
+    val onShowPrayerLog: () -> Unit = { coroutineScope.launch { prayerLogRequester.bringIntoView() } }
 
     // The prayer log's file goes where the user picks, through the system's own file picker.
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
@@ -151,7 +161,8 @@ fun SettingsScreen(
                             onPlayAdhanDuaChange = { viewModel.setPlayAdhanDua(it) },
                             onPrayerAdhanToggle = { type, enabled -> viewModel.setPrayerAdhanEnabled(type, enabled) },
                             onSilentNotificationChange = { viewModel.setSilentPrayerNotification(it) },
-                            onNavigateToAudio = onNavigateToAudio
+                            onNavigateToAudio = onNavigateToAudio,
+                            onShowPrayerLog = onShowPrayerLog
                         )
                         PrayerTimesSection(
                             settings = settings,
@@ -178,7 +189,8 @@ fun SettingsScreen(
                             onGameNotificationsChange = { viewModel.setPrayerLogGameNotifications(it) },
                             onExport = onExportPrayerLog,
                             onImport = onImportPrayerLog,
-                            onClear = { showClearPrayerLogDialog = true }
+                            onClear = { showClearPrayerLogDialog = true },
+                            modifier = Modifier.bringIntoViewRequester(prayerLogRequester)
                         )
                         PermissionsSection()
                         AboutSection(onShowLicensesClick = onNavigateToLicenses)
@@ -217,7 +229,8 @@ fun SettingsScreen(
                         onPlayAdhanDuaChange = { viewModel.setPlayAdhanDua(it) },
                         onPrayerAdhanToggle = { type, enabled -> viewModel.setPrayerAdhanEnabled(type, enabled) },
                         onSilentNotificationChange = { viewModel.setSilentPrayerNotification(it) },
-                        onNavigateToAudio = onNavigateToAudio
+                        onNavigateToAudio = onNavigateToAudio,
+                        onShowPrayerLog = onShowPrayerLog
                     )
 
                     PrayerTimesSection(
@@ -238,7 +251,8 @@ fun SettingsScreen(
                         onGameNotificationsChange = { viewModel.setPrayerLogGameNotifications(it) },
                         onExport = onExportPrayerLog,
                         onImport = onImportPrayerLog,
-                        onClear = { showClearPrayerLogDialog = true }
+                        onClear = { showClearPrayerLogDialog = true },
+                        modifier = Modifier.bringIntoViewRequester(prayerLogRequester)
                     )
 
                     PermissionsSection()
@@ -369,7 +383,8 @@ private fun NotificationSoundSection(
     onPlayAdhanDuaChange: (Boolean) -> Unit,
     onPrayerAdhanToggle: (PrayerType, Boolean) -> Unit,
     onSilentNotificationChange: (Boolean) -> Unit,
-    onNavigateToAudio: () -> Unit
+    onNavigateToAudio: () -> Unit,
+    onShowPrayerLog: () -> Unit
 ) {
     val context = LocalContext.current
     SettingsSection(
@@ -424,6 +439,19 @@ private fun NotificationSoundSection(
                 onCheckedChange = onSilentNotificationChange
             )
         }
+
+        // No adhan and no notification for any prayer reads as "no notifications": say that the
+        // prayer log's own still come, and lead to where they're turned off.
+        if (settings != null && settings.prayerLogNotifies &&
+            !settings.showSilentPrayerNotification && LoggedPrayers.none(settings::isAdhanEnabledFor)
+        ) {
+            SettingsClickItem(
+                title = stringResource(R.string.settings_prayer_log_still_notifies),
+                subtitle = stringResource(R.string.settings_prayer_log_still_notifies_desc),
+                icon = TallyIcon,
+                onClick = onShowPrayerLog
+            )
+        }
     }
 }
 
@@ -476,7 +504,8 @@ private fun PrayerLogSection(
     onGameNotificationsChange: (Boolean) -> Unit,
     onExport: () -> Unit,
     onImport: () -> Unit,
-    onClear: () -> Unit
+    onClear: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var showReminderTimeDialog by remember { mutableStateOf(false) }
     val reminderOptions = PrayerLogReminderMinutes.map {
@@ -484,7 +513,8 @@ private fun PrayerLogSection(
     }
 
     SettingsSection(
-        title = stringResource(R.string.prayer_log_title)
+        title = stringResource(R.string.prayer_log_title),
+        modifier = modifier
     ) {
         settings?.let { s ->
             SettingsToggleItem(
@@ -556,6 +586,10 @@ private fun PrayerLogSection(
         )
     }
 }
+
+/** Whether the prayer log sends any notification: the reminder after Isha or the game's. */
+private val UserSettings.prayerLogNotifies: Boolean
+    get() = prayerLogEnabled && (prayerLogReminderEnabled || prayerLogGameNotifications)
 
 /** How long after Isha the prayer log reminder can come, in minutes. */
 private val PrayerLogReminderMinutes = listOf(30, 60, 90, 120)

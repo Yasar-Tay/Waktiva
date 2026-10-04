@@ -252,6 +252,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Bönestids-aviseringar</string>
     <string name="settings_silent_prayer_notification_desc">Få aviseringar även när adhan-ljud inte spelas upp</string>
+    <string name="settings_prayer_log_still_notifies">Aviseringar från Böneloggen är fortfarande på</string>
+    <string name="settings_prayer_log_still_notifies_desc">De påminner dig om att bocka av dina böner. Tryck för att ändra.</string>
     <string name="silent_prayer_channel_name">Bönestids-varningar</string>
     <string name="silent_prayer_channel_description">Tysta aviseringar för bönetider när adhan-ljud är inaktiverat.</string>
     <string name="notification_prayer_time_title">Det är dags för %s</string>

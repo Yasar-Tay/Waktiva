@@ -245,6 +245,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Namaz Vakti Bildirimleri</string>
     <string name="settings_silent_prayer_notification_desc">Ezan okunmasa da bildirim alın</string>
+    <string name="settings_prayer_log_still_notifies">Çetele bildirimleri hâlâ açık</string>
+    <string name="settings_prayer_log_still_notifies_desc">Namazlarını işaretlemeni hatırlatır. Ayarlamak için dokun.</string>
     <string name="silent_prayer_channel_name">Namaz Vakti Uyarıları</string>
     <string name="silent_prayer_channel_description">Ezan sesi kapalıyken namaz vakitleri için sessiz bildirimler.</string>
     <string name="notification_prayer_time_title">%s vakti geldi</string>

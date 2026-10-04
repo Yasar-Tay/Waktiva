@@ -245,6 +245,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Notifiche orario di preghiera</string>
     <string name="settings_silent_prayer_notification_desc">Ricevi notifiche anche quando l\'adhan non viene riprodotto</string>
+    <string name="settings_prayer_log_still_notifies">Le notifiche del Registro delle preghiere sono ancora attive</string>
+    <string name="settings_prayer_log_still_notifies_desc">Ti ricordano di segnare le tue preghiere. Tocca per modificarle.</string>
     <string name="silent_prayer_channel_name">Avvisi orario di preghiera</string>
     <string name="silent_prayer_channel_description">Notifiche silenziose per gli orari di preghiera quando l\'audio dell\'adhan è disattivato.</string>
     <string name="notification_prayer_time_title">È l\'ora di %s</string>

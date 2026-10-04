@@ -245,6 +245,8 @@
     <!-- Silent Prayer Notification -->
     <string name="settings_silent_prayer_notification">Уведомления о времени намаза</string>
     <string name="settings_silent_prayer_notification_desc">Получайте уведомления, даже если азан не воспроизводится</string>
+    <string name="settings_prayer_log_still_notifies">Уведомления «Учёта намазов» всё ещё включены</string>
+    <string name="settings_prayer_log_still_notifies_desc">Они напоминают отметить намазы. Нажмите, чтобы настроить.</string>
     <string name="silent_prayer_channel_name">Оповещения о времени намаза</string>
     <string name="silent_prayer_channel_description">Тихие уведомления о временах намаза, когда звук азана отключён.</string>
     <string name="notification_prayer_time_title">Время для %s</string>
