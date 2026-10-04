@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A star not yet lit: its outline in lilac, for the prayer whose time is on or still to come. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <path
+        android:pathData="M20,3C22.4,17.2 22.8,17.6 37,20C22.8,22.4 22.4,22.8 20,37C17.6,22.8 17.2,22.4 3,20C17.2,17.6 17.6,17.2 20,3Z"
+        android:strokeWidth="2.6"
+        android:strokeColor="#FFDDE1FF"
+        android:strokeLineJoin="round" />
+</vector>
