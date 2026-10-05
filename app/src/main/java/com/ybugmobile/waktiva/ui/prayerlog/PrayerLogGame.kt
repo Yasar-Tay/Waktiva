@@ -77,7 +77,7 @@ internal fun StarAtlas(progress: PrayerLogProgress, modifier: Modifier = Modifie
             )
             Text(
                 "${progress.earned.size}/${progress.badges.size}",
-                style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum", shadow = TextShade),
+                style = TextStyle(fontFamily = LogFonts.text, fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum", shadow = TextShade),
                 color = skyFaint(0.85f)
             )
         }
@@ -130,7 +130,7 @@ private fun AtlasTile(progress: BadgeProgress, isSelected: Boolean, onClick: () 
         Spacer(Modifier.height(4.dp))
         Text(
             name,
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Bold, lineHeight = 14.sp),
+            style = TextStyle(fontFamily = LogFonts.text, fontSize = 12.sp, fontWeight = FontWeight.Bold, lineHeight = 14.sp),
             color = if (earned) SkyInk else skyFaint(0.65f),
             textAlign = TextAlign.Center,
             maxLines = 2
@@ -181,19 +181,19 @@ private fun AtlasDetail(progress: BadgeProgress, isNext: Boolean) {
                 if (isNext) {
                     Text(
                         stringResource(R.string.prayer_log_next_goal).uppercase(),
-                        style = TextStyle(fontSize = 10.5.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.8.sp),
+                        style = TextStyle(fontFamily = LogFonts.text, fontSize = 10.5.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.8.sp),
                         color = NowLilac
                     )
                     Spacer(Modifier.height(2.dp))
                 }
                 Text(
                     "${stringResource(progress.badge.nameRes)} · ${stringResource(progress.badge.skyRes)}",
-                    style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold),
+                    style = TextStyle(fontFamily = LogFonts.text, fontSize = 15.sp, fontWeight = FontWeight.Bold),
                     color = SkyInk
                 )
                 Text(
                     stringResource(progress.badge.descRes),
-                    style = TextStyle(fontSize = 12.sp, lineHeight = 16.sp),
+                    style = TextStyle(fontFamily = LogFonts.text, fontSize = 12.sp, lineHeight = 16.sp),
                     color = skyFaint(0.65f)
                 )
             }
@@ -204,14 +204,14 @@ private fun AtlasDetail(progress: BadgeProgress, isNext: Boolean) {
                     Spacer(Modifier.width(4.dp))
                     Text(
                         stringResource(R.string.prayer_log_badge_earned),
-                        style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold),
+                        style = TextStyle(fontFamily = LogFonts.text, fontSize = 13.sp, fontWeight = FontWeight.Bold),
                         color = SkyInk
                     )
                 }
             } else {
                 Text(
                     "${progress.current}/${progress.target}",
-                    style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
+                    style = TextStyle(fontFamily = LogFonts.text, fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
                     color = skyFaint(0.8f)
                 )
             }
@@ -344,7 +344,7 @@ internal fun XpPop(trigger: Int, modifier: Modifier = Modifier) {
     if (rise.value < 1f) {
         Text(
             text = stringResource(R.string.prayer_log_xp_gain, PrayerLogProgress.XP_PER_PRAYER),
-            style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Black),
+            style = TextStyle(fontFamily = LogFonts.text, fontSize = 13.sp, fontWeight = FontWeight.Black),
             color = StarWhite,
             maxLines = 1,
             softWrap = false,
@@ -405,10 +405,10 @@ internal fun UnlockToast(unlock: Unlock?, modifier: Modifier = Modifier) {
                 Column {
                     Text(
                         label.uppercase(),
-                        style = TextStyle(fontSize = 10.5.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                        style = TextStyle(fontFamily = LogFonts.text, fontSize = 10.5.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp),
                         color = NowLilac
                     )
-                    Text(title, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold), color = Color.White)
+                    Text(title, style = TextStyle(fontFamily = LogFonts.text, fontSize = 14.sp, fontWeight = FontWeight.Bold), color = Color.White)
                 }
             }
         }

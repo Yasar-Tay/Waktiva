@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,18 +32,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
-import com.ybugmobile.waktiva.ui.theme.CormorantGaramond
 import com.ybugmobile.waktiva.domain.model.PrayerLogProgress
 import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
 
 // ── The night the log is drawn on ───────────────────────────────────────────
+
+/**
+ * The home screen's faces, for the çetele too, following the language as the home screen's do: its
+ * display face for numbers, its headline face for names and titles, its body face for the rest.
+ */
+internal object LogFonts {
+    val numbers: FontFamily? @Composable get() = MaterialTheme.typography.displayLarge.fontFamily
+    val names: FontFamily? @Composable get() = MaterialTheme.typography.headlineSmall.fontFamily
+    val text: FontFamily? @Composable get() = MaterialTheme.typography.bodyMedium.fontFamily
+}
 
 /** Words on the night: a moonlit white, and the same stepping back. */
 internal val SkyInk = Color(0xFFF4F1FF)
@@ -109,7 +119,7 @@ internal fun SkyCall(today: PrayerLogDay, isFirstUse: Boolean, onMark: (PrayerLo
         line?.let {
             Text(
                 text = it,
-                style = TextStyle(fontFamily = CormorantGaramond, fontStyle = FontStyle.Italic, fontSize = 24.sp, lineHeight = 29.sp, shadow = TextShade),
+                style = TextStyle(fontFamily = LogFonts.names, fontWeight = FontWeight.Medium, fontSize = 20.sp, lineHeight = 26.sp, shadow = TextShade),
                 color = Color(0xFFECEAFF),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -118,7 +128,7 @@ internal fun SkyCall(today: PrayerLogDay, isFirstUse: Boolean, onMark: (PrayerLo
         if (isFirstUse && today.prayed == 0) {
             Text(
                 text = stringResource(R.string.prayer_log_hint),
-                style = TextStyle(fontSize = 12.sp, lineHeight = 17.sp),
+                style = TextStyle(fontFamily = LogFonts.text, fontSize = 12.sp, lineHeight = 17.sp),
                 color = skyFaint(0.6f),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -150,12 +160,12 @@ internal fun SkyCall(today: PrayerLogDay, isFirstUse: Boolean, onMark: (PrayerLo
                     Spacer(Modifier.width(10.dp))
                     Text(
                         text = stringResource(R.string.prayer_log_mark),
-                        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
+                        style = TextStyle(fontFamily = LogFonts.text, fontSize = 16.sp, fontWeight = FontWeight.Bold),
                         color = SkyInk
                     )
                     Text(
                         text = "  ·  ${active.type.prayerName}",
-                        style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Medium),
+                        style = TextStyle(fontFamily = LogFonts.text, fontSize = 15.sp, fontWeight = FontWeight.Medium),
                         color = skyFaint(0.75f),
                         modifier = Modifier.weight(1f),
                         maxLines = 1
@@ -170,7 +180,7 @@ internal fun SkyCall(today: PrayerLogDay, isFirstUse: Boolean, onMark: (PrayerLo
                     ) {
                         Text(
                             text = stringResource(R.string.prayer_log_xp_gain, xp),
-                            style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
+                            style = TextStyle(fontFamily = LogFonts.text, fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
                             color = Color(0xFFE3E6FF)
                         )
                     }
@@ -191,7 +201,7 @@ internal fun SkyCall(today: PrayerLogDay, isFirstUse: Boolean, onMark: (PrayerLo
                     Spacer(Modifier.width(8.dp))
                     Text(
                         text = stringResource(R.string.prayer_log_all_done),
-                        style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold),
+                        style = TextStyle(fontFamily = LogFonts.text, fontSize = 14.sp, fontWeight = FontWeight.Bold),
                         color = SkyInk
                     )
                 }
@@ -267,16 +277,16 @@ internal fun SkyTile(modifier: Modifier = Modifier, padding: PaddingValues = Pad
     )
 }
 
-private val NumberStyle = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.Bold, fontSize = 38.sp, lineHeight = 40.sp)
-private val LabelStyle = TextStyle(fontSize = 11.5.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.4.sp)
-private val CaptionStyle = TextStyle(fontSize = 12.5.sp, lineHeight = 16.sp)
+private val NumberStyle @Composable get() = TextStyle(fontFamily = LogFonts.numbers, fontWeight = FontWeight.Bold, fontSize = 34.sp, lineHeight = 38.sp)
+private val LabelStyle @Composable get() = TextStyle(fontFamily = LogFonts.text, fontSize = 11.5.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.4.sp)
+private val CaptionStyle @Composable get() = TextStyle(fontFamily = LogFonts.text, fontSize = 12.5.sp, lineHeight = 16.sp)
 
 /** The screen's section titles: a serif name, over a quiet line when there's a [hint]. */
 @Composable
 internal fun SkySectionTitle(title: String, modifier: Modifier = Modifier, hint: String? = null) {
     Column(modifier) {
-        Text(title, style = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.Bold, fontSize = 34.sp, lineHeight = 36.sp, shadow = TextShade), color = SkyInk)
-        hint?.let { Text(it, style = TextStyle(fontSize = 12.5.sp, shadow = TextShade), color = skyFaint(0.7f), maxLines = 1) }
+        Text(title, style = TextStyle(fontFamily = LogFonts.names, fontWeight = FontWeight.SemiBold, fontSize = 28.sp, lineHeight = 34.sp, shadow = TextShade), color = SkyInk)
+        hint?.let { Text(it, style = TextStyle(fontFamily = LogFonts.text, fontSize = 12.5.sp, shadow = TextShade), color = skyFaint(0.7f), maxLines = 1) }
     }
 }
 

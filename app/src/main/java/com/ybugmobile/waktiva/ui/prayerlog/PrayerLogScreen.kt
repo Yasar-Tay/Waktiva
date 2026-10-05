@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ybugmobile.waktiva.R
-import com.ybugmobile.waktiva.ui.theme.CormorantGaramond
 import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
 import kotlinx.coroutines.delay
 import java.time.LocalDate
@@ -170,12 +169,12 @@ private fun SkyHeader(today: PrayerLogDay, modifier: Modifier = Modifier) {
     Column(modifier.fillMaxWidth()) {
         Text(
             stringResource(R.string.prayer_log_title).uppercase(locale),
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 4.sp, shadow = TextShade),
+            style = TextStyle(fontFamily = LogFonts.text, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 4.sp, shadow = TextShade),
             color = skyFaint(0.72f)
         )
         Text(
             today.date.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", locale)).replaceFirstChar { it.titlecase(locale) },
-            style = TextStyle(fontFamily = CormorantGaramond, fontWeight = FontWeight.Bold, fontSize = 30.sp, shadow = TextShade),
+            style = TextStyle(fontFamily = LogFonts.names, fontWeight = FontWeight.SemiBold, fontSize = 26.sp, shadow = TextShade),
             color = SkyInk
         )
     }
