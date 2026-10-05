@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.domain.model.MoonPhase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -63,17 +65,18 @@ fun MoonPhaseView(
     )
 
     val diameterPx = with(LocalDensity.current) { (MoonBox * DiscShare).roundToPx() }
-    val texture by produceState<MoonTexture?>(null, diameterPx) {
-        value = withContext(Dispatchers.Default) { MoonTexture(diameterPx) }
+    val texture by produceState(MoonCache.cachedTexture(diameterPx), diameterPx) {
+        if (value?.size != diameterPx) value = MoonCache.texture(diameterPx)
     }
     // Reshade only when the phase has moved visibly (the view updates hourly).
     val phaseStep = (moonPhase.phaseProgress * 1000).roundToInt()
-    val moonImage by produceState<ImageBitmap?>(null, texture, phaseStep) {
+    val moonImage by produceState(MoonCache.cachedImage(diameterPx, phaseStep), texture, phaseStep) {
         val surface = texture ?: return@produceState
+        MoonCache.cachedImage(surface.size, phaseStep)?.let { value = it; return@produceState }
         value = withContext(Dispatchers.Default) {
             Bitmap.createBitmap(surface.light(moonPhase.phaseProgress), surface.size, surface.size, Bitmap.Config.ARGB_8888)
                 .asImageBitmap()
-        }
+        }.also { MoonCache.lit = LitMoon(surface.size, phaseStep, it) }
     }
 
     val moonContent = @Composable {
@@ -141,6 +144,40 @@ fun MoonPhaseView(
             moonContent()
             labelContent()
         }
+    }
+}
+
+/**
+ * Starts rendering the Moon's surface for a screen of [density] before the home screen asks for
+ * it, so it is there when the screen first draws.
+ */
+internal suspend fun prewarmMoon(density: Float) {
+    MoonCache.texture((MoonBox.value * DiscShare * density).roundToInt())
+}
+
+private class LitMoon(val size: Int, val phaseStep: Int, val image: ImageBitmap)
+
+/**
+ * The surface and its last lighting, kept for the app's life, so coming back to the home screen
+ * finds the Moon already drawn instead of rendering it again.
+ */
+private object MoonCache {
+    private val building = Mutex()
+
+    @Volatile
+    private var surface: MoonTexture? = null
+
+    @Volatile
+    var lit: LitMoon? = null
+
+    fun cachedTexture(size: Int): MoonTexture? = surface?.takeIf { it.size == size }
+
+    fun cachedImage(size: Int, phaseStep: Int): ImageBitmap? =
+        lit?.takeIf { it.size == size && it.phaseStep == phaseStep }?.image
+
+    /** The surface [size] pixels across, built once off the main thread however many ask. */
+    suspend fun texture(size: Int): MoonTexture = building.withLock {
+        cachedTexture(size) ?: withContext(Dispatchers.Default) { MoonTexture(size) }.also { surface = it }
     }
 }
 

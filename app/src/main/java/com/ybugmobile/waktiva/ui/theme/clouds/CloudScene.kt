@@ -227,22 +227,45 @@ internal fun buildCloudScene(condition: WeatherCondition, isDay: Boolean, width:
     return CloudScene(clouds, width)
 }
 
+private data class CloudSceneKey(val condition: WeatherCondition, val isDay: Boolean, val width: Float, val height: Float)
+
+/**
+ * The last scene built, kept for the app's life: coming back to the screen finds the sky already
+ * there instead of rendering it again and fading it in.
+ */
+@Volatile
+private var lastCloudScene: Pair<CloudSceneKey, CloudScene>? = null
+
+private fun cachedCloudScene(key: CloudSceneKey): CloudScene? = lastCloudScene?.takeIf { it.first == key }?.second
+
 /** The scene for this weather and viewport, rendered off the main thread; null until ready. */
 @Composable
 internal fun rememberCloudScene(condition: WeatherCondition, isDay: Boolean, width: Float, height: Float): CloudScene? {
-    val scene = produceState<CloudScene?>(null, condition, isDay, width, height) {
+    val key = CloudSceneKey(condition, isDay, width, height)
+    val scene = produceState(cachedCloudScene(key), key) {
+        cachedCloudScene(key)?.let { value = it; return@produceState }
         value = null
         value = withContext(Dispatchers.Default) { buildCloudScene(condition, isDay, width, height) }
+            ?.also { lastCloudScene = key to it }
     }
     return scene.value
 }
 
-/** Seconds since this composable entered the screen, updated every frame. */
+/** When the sky's clock started, once per process, so the clouds drift on where they were. */
+private var sceneEpochNanos = 0L
+
+/** Seconds since the sky was first shown, updated every frame. */
 @Composable
 internal fun rememberSceneClock(): State<Float> {
-    val seconds = remember { mutableFloatStateOf(0f) }
+    // Frame times run on System.nanoTime, so the first frame back is already where the clouds are.
+    val seconds = remember {
+        mutableFloatStateOf(if (sceneEpochNanos == 0L) 0f else (System.nanoTime() - sceneEpochNanos) / 1_000_000_000f)
+    }
     LaunchedEffect(Unit) {
-        val start = withFrameNanos { it }
+        val start = withFrameNanos { now ->
+            if (sceneEpochNanos == 0L) sceneEpochNanos = now
+            sceneEpochNanos
+        }
         while (true) {
             withFrameNanos { now -> seconds.floatValue = (now - start) / 1_000_000_000f }
         }

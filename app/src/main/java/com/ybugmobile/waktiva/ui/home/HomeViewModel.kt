@@ -10,6 +10,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.alarm.AlarmScheduler
+import com.ybugmobile.waktiva.data.local.WeatherCache
 import com.ybugmobile.waktiva.data.local.preferences.UserSettings
 import com.ybugmobile.waktiva.data.worker.AdhanWorker
 import com.ybugmobile.waktiva.domain.model.PrayerDay
@@ -28,6 +29,7 @@ import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.domain.usecase.GetNextPrayerUseCase
 import com.ybugmobile.waktiva.data.sensor.CompassManager
 import com.ybugmobile.waktiva.ui.home.composables.gear.SunLitDials
+import com.ybugmobile.waktiva.ui.widget.DayWidgetModel
 import com.ybugmobile.waktiva.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -61,6 +63,7 @@ class HomeViewModel @Inject constructor(
     private val getNextPrayerUseCase: GetNextPrayerUseCase,
     private val compassManager: CompassManager,
     private val prayerLogRepository: PrayerLogRepository,
+    private val weatherCache: WeatherCache,
     @ApplicationContext private val context: Context
 ) : ViewModel(), DefaultLifecycleObserver {
 
@@ -214,6 +217,7 @@ class HomeViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
         updateHealthStatus()
+        loadCachedWeather()
         refreshWeather()
         onPermissionsGranted()
         
@@ -239,6 +243,33 @@ class HomeViewModel @Inject constructor(
                 _playingPrayerName.value = activeInfo?.progress?.getString(AdhanWorker.KEY_PRAYER_NAME)
             }
             .launchIn(viewModelScope)
+    }
+
+    /**
+     * Starts from the weather last fetched, so the sky shows it at once instead of waiting for the
+     * network: as reported while it's fresh, the forecast for this hour after that (as the widgets
+     * do), and just the days' forecast once this hour isn't in it. A fetch that lands first wins.
+     */
+    private fun loadCachedWeather() {
+        viewModelScope.launch {
+            val cache = withContext(Dispatchers.IO) { weatherCache.load() } ?: return@launch
+            if (lastWeatherFetchTime != 0L) return@launch
+            val info = cache.info
+            val now = LocalDateTime.now()
+            val age = System.currentTimeMillis() - cache.fetchedAtMillis
+            if (age in 0 until DayWidgetModel.CURRENT_WEATHER_FRESH_MILLIS) {
+                _weatherCondition.value = info.condition
+                _weatherEffectCondition.value = info.effectCondition
+                _temperature.value = info.temperature
+            } else {
+                info.forecast.firstOrNull { it.date == now.toLocalDate() }?.at(now.toLocalTime())?.let { hour ->
+                    _weatherCondition.value = hour.condition
+                    _weatherEffectCondition.value = hour.effectCondition
+                    _temperature.value = hour.temperature
+                }
+            }
+            _forecast.value = info.forecast
+        }
     }
 
     private fun refreshWeather() {
