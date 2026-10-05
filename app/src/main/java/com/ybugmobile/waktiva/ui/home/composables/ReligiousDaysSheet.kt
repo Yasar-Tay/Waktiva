@@ -1,6 +1,17 @@
 package com.ybugmobile.waktiva.ui.home.composables
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -8,18 +19,31 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Mosque
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
@@ -33,6 +57,7 @@ import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.math.abs
 
 /**
  * The religious days of [year], in a sheet cut from the home screen's own sky: the current
@@ -41,7 +66,8 @@ import java.util.Locale
  *
  * The days are a plain list under month headings. Consecutive days of one occasion, such as the
  * days of Eid, share a row; days already past are dimmed and the next one carries a lit dot.
- * The list opens at the next occasion's month.
+ * The list opens at the next occasion's month. The year in the corner switches between this year and
+ * the next: by a swipe, or a tap.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,13 +81,12 @@ fun ReligiousDaysSheet(
     val locale = Locale.getDefault()
     val today = LocalDate.now()
 
-    val occasions = remember(year) { ReligiousDaysProvider.getReligiousDays(year).toOccasions() }
+    val years = remember(today.year) { listOf(today.year, today.year + 1) }
+    var shownYear by rememberSaveable { mutableIntStateOf(year.coerceIn(years.first(), years.last())) }
+
+    val occasions = remember(shownYear) { ReligiousDaysProvider.getReligiousDays(shownYear).toOccasions() }
     val next = occasions.firstOrNull { !it.end.isBefore(today) }
     val entries = remember(occasions) { occasions.withMonthHeadings() }
-    val listState = rememberLazyListState(
-        initialFirstVisibleItemIndex = entries.indexOfFirst { it is Entry.Month && it.month == next?.start?.monthValue }
-            .coerceAtLeast(0)
-    )
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -105,40 +130,116 @@ fun ReligiousDaysSheet(
                     color = contentColor,
                     modifier = Modifier.weight(1f)
                 )
-                Text(
-                    text = year.toString(),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Light),
-                    color = contentColor.copy(alpha = 0.6f)
+                YearSwitcher(
+                    year = shownYear,
+                    years = years,
+                    contentColor = contentColor,
+                    onYearChange = { shownYear = it }
                 )
             }
 
-            if (entries.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.religious_days_empty, year),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = contentColor.copy(alpha = 0.7f),
-                    modifier = Modifier.padding(top = 20.dp, bottom = 40.dp)
+            // Keyed on the year so each year's list opens afresh at its own next occasion.
+            key(shownYear) {
+                val listState = rememberLazyListState(
+                    initialFirstVisibleItemIndex = entries.indexOfFirst { it is Entry.Month && it.month == next?.start?.monthValue }
+                        .coerceAtLeast(0)
                 )
-            } else {
-                LazyColumn(
-                    state = listState,
-                    contentPadding = PaddingValues(top = 8.dp, bottom = 28.dp)
-                ) {
-                    items(entries, key = { it.key }) { entry ->
-                        when (entry) {
-                            is Entry.Month -> MonthHeading(entry.month, locale, contentColor)
-                            is Entry.Day -> OccasionRow(
-                                occasion = entry.occasion,
-                                locale = locale,
-                                contentColor = contentColor,
-                                isPast = entry.occasion.end.isBefore(today),
-                                isNext = entry.occasion == next
-                            )
+                if (entries.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.religious_days_empty, shownYear),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = contentColor.copy(alpha = 0.7f),
+                        modifier = Modifier.padding(top = 20.dp, bottom = 40.dp)
+                    )
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        contentPadding = PaddingValues(top = 8.dp, bottom = 28.dp)
+                    ) {
+                        items(entries, key = { it.key }) { entry ->
+                            when (entry) {
+                                is Entry.Month -> MonthHeading(entry.month, locale, contentColor)
+                                is Entry.Day -> OccasionRow(
+                                    occasion = entry.occasion,
+                                    locale = locale,
+                                    contentColor = contentColor,
+                                    isPast = entry.occasion.end.isBefore(today),
+                                    isNext = entry.occasion == next
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+/**
+ * The shown year, swiped sideways to the year before or after it in [years]; a tap moves on to
+ * the next, round to the first, as the arrow beside it hints.
+ */
+@Composable
+private fun YearSwitcher(year: Int, years: List<Int>, contentColor: Color, onYearChange: (Int) -> Unit) {
+    val index = years.indexOf(year)
+    val yearStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Light, fontFeatureSettings = "tnum")
+
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val threshold = with(LocalDensity.current) { 24.dp.toPx() }
+    var drag by remember { mutableFloatStateOf(0f) }
+    var dragging by remember { mutableStateOf(false) }
+    // The year leans after the finger, a little, and springs back on release.
+    val lean by animateFloatAsState(
+        targetValue = drag.coerceIn(-threshold, threshold) * 0.5f,
+        animationSpec = if (dragging) snap() else spring(),
+        label = "religiousYearLean"
+    )
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clip(RoundedCornerShape(10.dp))
+            .pointerInput(years, index, isRtl) {
+                detectHorizontalDragGestures(
+                    onDragStart = { dragging = true },
+                    onDragEnd = {
+                        // Swiping towards the start, as on a pager, brings the next year.
+                        val forward = if (isRtl) drag > 0 else drag < 0
+                        val target = if (forward) index + 1 else index - 1
+                        if (abs(drag) > threshold && target in years.indices) onYearChange(years[target])
+                        drag = 0f
+                        dragging = false
+                    },
+                    onDragCancel = {
+                        drag = 0f
+                        dragging = false
+                    }
+                ) { change, dx ->
+                    change.consume()
+                    drag += dx
+                }
+            }
+            .clickable { onYearChange(years[(index + 1) % years.size]) }
+            .padding(start = 8.dp, end = 2.dp, top = 2.dp, bottom = 2.dp)
+    ) {
+        AnimatedContent(
+            targetState = year,
+            transitionSpec = {
+                val towardsStart = (targetState > initialState) != isRtl
+                (slideInHorizontally { if (towardsStart) it else -it } + fadeIn()) togetherWith
+                    (slideOutHorizontally { if (towardsStart) -it else it } + fadeOut())
+            },
+            label = "religiousYear",
+            modifier = Modifier.graphicsLayer { translationX = lean }
+        ) { shown ->
+            Text(text = shown.toString(), style = yearStyle, color = contentColor.copy(alpha = 0.85f))
+        }
+        Icon(
+            Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+            contentDescription = null,
+            tint = contentColor.copy(alpha = 0.6f),
+            modifier = Modifier.size(20.dp)
+        )
     }
 }
 

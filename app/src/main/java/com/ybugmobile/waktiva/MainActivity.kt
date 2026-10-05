@@ -40,6 +40,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import androidx.work.*
@@ -51,6 +52,7 @@ import com.ybugmobile.waktiva.data.worker.PrayerUpdateWorker
 import com.ybugmobile.waktiva.domain.manager.TimeManager
 import com.ybugmobile.waktiva.ui.home.HomeScreen
 import com.ybugmobile.waktiva.ui.home.HomeViewModel
+import com.ybugmobile.waktiva.ui.home.composables.prewarmMoon
 import com.ybugmobile.waktiva.ui.donation.DonateScreen
 import com.ybugmobile.waktiva.ui.navigation.Screen
 import com.ybugmobile.waktiva.ui.prayerlog.PrayerLogScreen
@@ -101,6 +103,8 @@ class MainActivity : AppCompatActivity() {
             // Only on a fresh start: a recreated activity has already opened it.
             openScreenRequest.value = intent?.getStringExtra(NotificationHelper.EXTRA_OPEN_SCREEN)
         }
+        // Render the Moon's surface while the app starts, so the home screen shows it at once.
+        lifecycleScope.launch { prewarmMoon(resources.displayMetrics.density) }
         setContent {
             WaktivaTheme {
                 val homeViewModel: HomeViewModel = hiltViewModel()
