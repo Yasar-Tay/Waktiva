@@ -222,7 +222,7 @@ internal fun GearCompass(
  * card the short way instead of spinning it round. Read [Animatable.value] while drawing.
  */
 @Composable
-private fun rememberHeading(azimuth: Float): Animatable<Float, AnimationVector1D> {
+internal fun rememberHeading(azimuth: Float): Animatable<Float, AnimationVector1D> {
     val heading = remember { Animatable(azimuth) }
     LaunchedEffect(azimuth) {
         val target = heading.targetValue

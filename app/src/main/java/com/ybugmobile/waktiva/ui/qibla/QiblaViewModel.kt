@@ -1,7 +1,6 @@
 package com.ybugmobile.waktiva.ui.qibla
 
 import android.content.Context
-import android.hardware.GeomagneticField
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -122,21 +121,6 @@ class QiblaViewModel @Inject constructor(
                 updateHealthStatus()
             }
         }.launchIn(viewModelScope)
-
-        // Update magnetic declination whenever location changes
-        viewModelScope.launch {
-            settings.collectLatest { s ->
-                if (s.latitude != null && s.longitude != null) {
-                    val geomagneticField = GeomagneticField(
-                        s.latitude.toFloat(),
-                        s.longitude.toFloat(),
-                        s.altitude?.toFloat() ?: 0f,
-                        System.currentTimeMillis()
-                    )
-                    compassManager.setDeclination(geomagneticField.declination)
-                }
-            }
-        }
 
         // Logic to mark as settled:
         // Instead of a fixed delay, we wait for the first emissions of critical data

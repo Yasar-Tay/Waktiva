@@ -42,24 +42,7 @@ fun ProfessionalCompass(
     )
 
     // 2. Shortest-Path Azimuth Animation
-    var lastTargetAzimuth by remember { mutableStateOf(azimuth) }
-    var azimuthOffset by remember { mutableStateOf(0f) }
-    
-    SideEffect {
-        val diff = azimuth - lastTargetAzimuth
-        if (diff > 180f) azimuthOffset -= 360f
-        else if (diff < -180f) azimuthOffset += 360f
-        lastTargetAzimuth = azimuth
-    }
-
-    val animatedAzimuth by animateFloatAsState(
-        targetValue = azimuth + azimuthOffset,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioNoBouncy,
-            stiffness = Spring.StiffnessMediumLow
-        ),
-        label = "magneticAzimuth"
-    )
+    val heading = rememberHeading(azimuth)
 
     val infiniteTransition = rememberInfiniteTransition(label = "compassEffects")
     
@@ -110,9 +93,10 @@ fun ProfessionalCompass(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .graphicsLayer { rotationZ = -animatedAzimuth }
+                .graphicsLayer { rotationZ = -heading.value }
                 .drawWithCache {
                     onDrawWithContent {
+                        val animatedAzimuth = heading.value
                         val center = this.center
                         val radius = size.minDimension / 2 - 20.dp.toPx()
 

@@ -1,6 +1,7 @@
 package com.ybugmobile.waktiva.data.sensor
 
 import android.content.Context
+import android.hardware.GeomagneticField
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -11,6 +12,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.view.Display
 import android.view.Surface
+import com.ybugmobile.waktiva.data.local.preferences.SettingsManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
@@ -25,7 +27,8 @@ data class CompassData(
 
 @Singleton
 class CompassManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    settingsManager: SettingsManager
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -35,11 +38,15 @@ class CompassManager @Inject constructor(
     private val accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private val magSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
 
-    private val declination = MutableStateFlow(0f)
-
-    fun setDeclination(value: Float) {
-        declination.value = value
-    }
+    // The sensors give magnetic north; the declination at the saved location turns that into
+    // true north, which the Qibla bearing and the sun's azimuth are measured from.
+    private val declination: Flow<Float> = settingsManager.settingsFlow
+        .map { Triple(it.latitude, it.longitude, it.altitude) }
+        .distinctUntilChanged()
+        .map { (lat, lng, alt) ->
+            if (lat == null || lng == null) 0f
+            else GeomagneticField(lat.toFloat(), lng.toFloat(), alt?.toFloat() ?: 0f, System.currentTimeMillis()).declination
+        }
 
     private val rawCompassFlow: Flow<CompassData> = callbackFlow {
         var lastAzimuth = -1f
@@ -74,7 +81,9 @@ class CompassManager @Inject constructor(
                             SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
                             azimuthFound = true
                             hasRotationVector = true
-                            if (event.values.size > 4) {
+                            // values[4] is the estimated heading accuracy in radians, or -1 when
+                            // the sensor doesn't provide one; then the event's accuracy stands.
+                            if (event.values.size > 4 && event.values[4] >= 0f) {
                                 val accuracyDegrees = Math.toDegrees(event.values[4].toDouble())
                                 currentAccuracy = when {
                                     accuracyDegrees < 10 -> SensorManager.SENSOR_STATUS_ACCURACY_HIGH
