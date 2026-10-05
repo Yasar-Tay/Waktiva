@@ -483,6 +483,7 @@
     <string name="prayer_log_all_done">Tutte le preghiere di oggi sono compiute</string>
     <string name="prayer_log_streak">giorni completi di fila</string>
     <string name="prayer_log_week">Ultimi 7 giorni</string>
+    <string name="prayer_log_month">Ultimi 30 giorni</string>
     <string name="prayer_log_missed_total">Mancate in totale</string>
     <string name="prayer_log_prev_month">Mese precedente</string>
     <string name="prayer_log_next_month">Mese successivo</string>
@@ -492,6 +493,7 @@
     <string name="prayer_log_xp_to_next">%1$d XP al livello %2$d</string>
     <string name="prayer_log_full_day_bonus">Bonus giornata completa</string>
     <string name="prayer_log_best_streak">Record: %1$d</string>
+    <string name="prayer_log_badges">Badge</string>
     <string name="prayer_log_badge_unlocked">Nuovo badge</string>
     <string name="prayer_log_level_up">Livello superiore!</string>
     <string name="prayer_log_badge_earned">Ottenuto</string>
@@ -530,22 +532,4 @@
     <string name="prayer_log_celebrate_level">Livello superiore! Ora sei al livello %1$d 🎉</string>
     <string name="widget_prayer_log_description">Il tuo livello, la serie e i badge, con le preghiere di oggi da segnare con un tocco</string>
     <string name="widget_prayer_log_off">Attiva il registro delle preghiere nelle Impostazioni</string>
-    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
-    <string name="prayer_log_sky_title">Le stelle del giorno</string>
-    <string name="prayer_log_sky_lit">stelle accese</string>
-    <string name="prayer_log_sky_done">Il tuo cielo è completo. Che Allah lo accetti.</string>
-    <string name="prayer_log_sky_mark_missed">Segna qui sotto quelle che hai pregato</string>
-    <string name="prayer_log_cassiopeia">Cassiopea</string>
-    <string name="prayer_log_cassiopeia_line">Cinque preghiere · cinque stelle · giornata completa</string>
-    <string name="prayer_log_month_missed">%1$d mancate</string>
-    <string name="prayer_log_show_missed">Mostra le preghiere mancate</string>
-    <string name="prayer_log_atlas">Atlante stellare</string>
-    <string name="prayer_log_star_first_prayer">Stella Polare</string>
-    <string name="prayer_log_star_first_full_day">Cinque Preghiere</string>
-    <string name="prayer_log_star_streak_3">Triangolo</string>
-    <string name="prayer_log_star_streak_7">Cigno</string>
-    <string name="prayer_log_star_fajr_7">Venere</string>
-    <string name="prayer_log_star_prayers_100">Corona Boreale</string>
-    <string name="prayer_log_star_streak_40">Grande Carro</string>
-    <string name="prayer_log_star_prayers_500">Orione</string>
 </resources>

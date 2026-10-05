@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  The 4×4 "my day" widget, in the prayer log's night: the moment on top (its chip, then the time
-  left with the weather now at the end of the line), the day's stars on the sun's path below with
-  "I prayed" under them for the prayer whose time is on, and the day's five prayers as cards, each
-  marking its prayer with a tap once its time has come. The moment's views keep widget_moment's
-  ids, so DayWidgets binds them alike; it has no line for the next prayer, whose time the cards show.
+  The 4×4 "my day" widget: the moment on top (its chip, then the time left with the weather now
+  at the end of the line), the day circle below with the prayers as
+  glass spheres and the moment's sphere at its heart, which is the "I prayed" button, and the
+  day's five prayers as cards, each marking its prayer with a tap once its time has come.
+  The moment's views keep widget_moment's ids, so DayWidgets binds them alike; it has no line
+  for the next prayer, whose time the cards show.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/background"
@@ -74,7 +75,7 @@
                         android:layout_marginEnd="5dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_widget_check"
-                        android:tint="#FFFFFDF4"
+                        android:tint="#FFFFD54F"
                         android:visibility="gone" />
 
                     <TextView
@@ -175,35 +176,12 @@
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter" />
 
-            <!-- "I prayed", under the stars, for the prayer whose time is on. -->
-            <LinearLayout
+            <!-- The tap target over the sphere at the ring's heart. -->
+            <FrameLayout
                 android:id="@+id/widget_mark"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/widget_sky_button"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="14dp"
-                android:paddingEnd="18dp"
-                android:visibility="gone">
-
-                <ImageView
-                    android:layout_width="13dp"
-                    android:layout_height="13dp"
-                    android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_widget_star" />
-
-                <TextView
-                    android:id="@+id/widget_mark_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/inter_bold"
-                    android:maxLines="1"
-                    android:textColor="#FFF4F1FF"
-                    android:textSize="14sp" />
-            </LinearLayout>
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_gravity="center" />
         </FrameLayout>
 
         <!-- The day's five prayers; cards are added at runtime from widget_day_column. -->

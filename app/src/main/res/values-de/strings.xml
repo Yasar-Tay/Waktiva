@@ -483,6 +483,7 @@
     <string name="prayer_log_all_done">Alle Gebete von heute sind verrichtet</string>
     <string name="prayer_log_streak">volle Tage in Folge</string>
     <string name="prayer_log_week">Letzte 7 Tage</string>
+    <string name="prayer_log_month">Letzte 30 Tage</string>
     <string name="prayer_log_missed_total">Insgesamt verpasst</string>
     <string name="prayer_log_prev_month">Vorheriger Monat</string>
     <string name="prayer_log_next_month">Nächster Monat</string>
@@ -492,6 +493,7 @@
     <string name="prayer_log_xp_to_next">%1$d XP bis Stufe %2$d</string>
     <string name="prayer_log_full_day_bonus">Bonus für einen vollen Tag</string>
     <string name="prayer_log_best_streak">Bestwert: %1$d</string>
+    <string name="prayer_log_badges">Abzeichen</string>
     <string name="prayer_log_badge_unlocked">Neues Abzeichen</string>
     <string name="prayer_log_level_up">Stufe aufgestiegen!</string>
     <string name="prayer_log_badge_earned">Erreicht</string>
@@ -530,22 +532,4 @@
     <string name="prayer_log_celebrate_level">Stufe aufgestiegen! Du bist jetzt Stufe %1$d 🎉</string>
     <string name="widget_prayer_log_description">Deine Stufe, Serie und Abzeichen, dazu die heutigen Gebete zum Markieren mit einem Tipp</string>
     <string name="widget_prayer_log_off">Schalte das Gebetstagebuch in den Einstellungen ein</string>
-    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
-    <string name="prayer_log_sky_title">Sterne des Tages</string>
-    <string name="prayer_log_sky_lit">Sterne leuchten</string>
-    <string name="prayer_log_sky_done">Dein Himmel ist vollständig. Möge Allah es annehmen.</string>
-    <string name="prayer_log_sky_mark_missed">Markiere unten, was du gebetet hast</string>
-    <string name="prayer_log_cassiopeia">Kassiopeia</string>
-    <string name="prayer_log_cassiopeia_line">Fünf Gebete · fünf Sterne · Tag vollständig</string>
-    <string name="prayer_log_month_missed">%1$d verpasst</string>
-    <string name="prayer_log_show_missed">Verpasste Gebete zeigen</string>
-    <string name="prayer_log_atlas">Sternatlas</string>
-    <string name="prayer_log_star_first_prayer">Polarstern</string>
-    <string name="prayer_log_star_first_full_day">Fünf Gebete</string>
-    <string name="prayer_log_star_streak_3">Dreieck</string>
-    <string name="prayer_log_star_streak_7">Schwan</string>
-    <string name="prayer_log_star_fajr_7">Venus</string>
-    <string name="prayer_log_star_prayers_100">Nördliche Krone</string>
-    <string name="prayer_log_star_streak_40">Großer Wagen</string>
-    <string name="prayer_log_star_prayers_500">Orion</string>
 </resources>

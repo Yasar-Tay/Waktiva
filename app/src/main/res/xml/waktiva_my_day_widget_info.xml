@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  The "my day" widget: a 4×4 with the moment of the 4×2 on top, the day's stars on the sun's
-  path and the day's five times. Refreshed like the day ring (see DayWidgets), so
+  The "my day" widget: a 4×4 with the moment of the 4×2 on top, the day circle and the day's
+  five times. Refreshed like the day ring (see DayWidgets), so
   updatePeriodMillis stays 0.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"

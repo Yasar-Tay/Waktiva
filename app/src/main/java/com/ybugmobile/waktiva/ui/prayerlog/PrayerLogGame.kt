@@ -5,7 +5,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,26 +24,40 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.EmojiEvents
+import androidx.compose.material.icons.rounded.Flag
+import androidx.compose.material.icons.rounded.KeyboardDoubleArrowUp
+import androidx.compose.material.icons.rounded.LocalFireDepartment
+import androidx.compose.material.icons.rounded.MilitaryTech
+import androidx.compose.material.icons.rounded.Verified
+import androidx.compose.material.icons.rounded.WbTwilight
+import androidx.compose.material.icons.rounded.Whatshot
+import androidx.compose.material.icons.rounded.WorkspacePremium
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,254 +67,608 @@ import com.ybugmobile.waktiva.domain.model.BadgeProgress
 import com.ybugmobile.waktiva.domain.model.PrayerLogBadge
 import com.ybugmobile.waktiva.domain.model.PrayerLogProgress
 import com.ybugmobile.waktiva.domain.model.PrayerType
+import com.ybugmobile.waktiva.ui.home.composables.PrayedGold
 import com.ybugmobile.waktiva.ui.home.composables.accentColor
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
+import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
+import java.text.NumberFormat
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-// ── The star atlas: the badges ──────────────────────────────────────────────
-
 /**
- * The badges as a star atlas, each one a constellation: lit and joined once earned, a faint dotted
- * outline until then, with its name. Tapping one shows what it asks for, and how far along, under
- * the atlas; it opens on the next one to earn.
+ * The player's level: a gold medal with the level in it, ringed by how far the level has come,
+ * and beside it the XP bar, what the next level takes, and all the XP gathered.
  */
 @Composable
-internal fun StarAtlas(progress: PrayerLogProgress, modifier: Modifier = Modifier) {
+internal fun LevelCard(progress: PrayerLogProgress) {
+    val fraction by animateLevelFraction(progress)
+
+    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+        Row(Modifier.padding(horizontal = 20.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+            LevelMedal(progress.level, fraction, Modifier.size(64.dp))
+            Spacer(Modifier.width(16.dp))
+            LevelLine(progress, Modifier.weight(1f))
+        }
+    }
+}
+
+/**
+ * The level in a line: "Level 5" with all the XP gathered beside it, the XP bar, and what the
+ * next level takes. [compact] makes the bar thinner, for the landscape's today card.
+ */
+@Composable
+internal fun LevelLine(progress: PrayerLogProgress, modifier: Modifier = Modifier, compact: Boolean = false) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val locale = LocalConfiguration.current.locales[0]
+    val integer = remember(locale) { NumberFormat.getIntegerInstance(locale) }
+    val fraction by animateLevelFraction(progress)
+    val xp by animateIntAsState(progress.xp, tween(700), label = "xp")
+
+    Column(modifier) {
+        Row(verticalAlignment = Alignment.Bottom) {
+            Text(
+                text = stringResource(R.string.prayer_log_level, progress.level),
+                style = (if (compact) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium)
+                    .copy(fontWeight = FontWeight.ExtraBold),
+                color = contentColor,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = stringResource(R.string.prayer_log_xp, integer.format(xp)),
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.Black,
+                    fontFeatureSettings = "tnum"
+                ),
+                color = PrayedGold
+            )
+        }
+        Spacer(Modifier.height(if (compact) 6.dp else 8.dp))
+        XpBar(fraction, Modifier.fillMaxWidth().height(if (compact) 7.dp else 10.dp))
+        Spacer(Modifier.height(if (compact) 4.dp else 6.dp))
+        Text(
+            text = stringResource(
+                R.string.prayer_log_xp_to_next,
+                progress.levelSpan - progress.levelXp,
+                progress.level + 1
+            ),
+            style = MaterialTheme.typography.labelSmall,
+            color = contentColor.copy(alpha = 0.55f),
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+private fun animateLevelFraction(progress: PrayerLogProgress) = animateFloatAsState(
+    progress.levelXp.toFloat() / progress.levelSpan,
+    tween(700, easing = FastOutSlowInEasing),
+    label = "levelFraction"
+)
+
+@Composable
+private fun LevelMedal(level: Int, fraction: Float, modifier: Modifier = Modifier) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val pop = remember { Animatable(1f) }
+    // A bounce each time the level goes up.
+    var shownLevel by remember { mutableIntStateOf(level) }
+    LaunchedEffect(level) {
+        if (level > shownLevel) {
+            pop.snapTo(1.25f)
+            pop.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow))
+        }
+        shownLevel = level
+    }
+
+    Box(modifier.scale(pop.value), contentAlignment = Alignment.Center) {
+        Canvas(Modifier.fillMaxSize()) {
+            val stroke = 5.dp.toPx()
+            val inset = stroke / 2f
+            val arcSize = Size(size.width - stroke, size.height - stroke)
+            drawArc(
+                color = contentColor.copy(alpha = 0.12f),
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = Offset(inset, inset),
+                size = arcSize,
+                style = Stroke(stroke)
+            )
+            drawArc(
+                color = PrayedGold,
+                startAngle = -90f,
+                sweepAngle = 360f * fraction.coerceIn(0f, 1f),
+                useCenter = false,
+                topLeft = Offset(inset, inset),
+                size = arcSize,
+                style = Stroke(stroke, cap = StrokeCap.Round)
+            )
+            drawCircle(
+                Brush.linearGradient(
+                    listOf(GoldLight, PrayedGold, GoldDeep),
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, size.height)
+                ),
+                radius = size.minDimension / 2f - stroke - 3.dp.toPx()
+            )
+        }
+        Text(
+            text = level.toString(),
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Black, fontFeatureSettings = "tnum"),
+            color = PrayedInk
+        )
+    }
+}
+
+@Composable
+private fun XpBar(fraction: Float, modifier: Modifier = Modifier) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    Box(
+        modifier
+            .clip(RoundedCornerShape(50))
+            .background(contentColor.copy(alpha = 0.1f))
+    ) {
+        Box(
+            Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(fraction.coerceIn(0f, 1f))
+                .clip(RoundedCornerShape(50))
+                .background(Brush.horizontalGradient(listOf(GoldDeep, PrayedGold, GoldLight)))
+        )
+    }
+}
+
+/**
+ * The badges: earned ones in gold, the rest faint with how far along they are drawn around them.
+ * Tapping one shows what it asks for under the grid; it opens on the next one to earn.
+ */
+@Composable
+internal fun BadgesCard(progress: PrayerLogProgress) {
+    val contentColor = LocalGlassTheme.current.contentColor
     var picked by remember { mutableStateOf<PrayerLogBadge?>(null) }
     val shown = progress.badges.firstOrNull { it.badge == picked }
         ?: progress.nextBadge
         ?: progress.badges.last()
 
-    Column(modifier) {
-        Row(verticalAlignment = Alignment.Bottom) {
-            SkySectionTitle(
-                title = stringResource(R.string.prayer_log_atlas),
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                "${progress.earned.size}/${progress.badges.size}",
-                style = TextStyle(fontFamily = LogFonts.text, fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum", shadow = TextShade),
-                color = skyFaint(0.85f)
-            )
-        }
-        Spacer(Modifier.height(14.dp))
-        progress.badges.chunked(4).forEach { row ->
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                row.forEach { badge ->
-                    AtlasTile(
-                        progress = badge,
-                        isSelected = badge.badge == shown.badge,
-                        onClick = { picked = badge.badge },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(horizontal = 16.dp, vertical = 16.dp)) {
+            Row(Modifier.padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Rounded.EmojiEvents,
+                    contentDescription = null,
+                    tint = PrayedGold,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.prayer_log_badges).uppercase(),
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                    color = contentColor,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = "${progress.earned.size}/${progress.badges.size}",
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        fontFeatureSettings = "tnum"
+                    ),
+                    color = contentColor.copy(alpha = 0.7f)
+                )
             }
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(14.dp))
+            progress.badges.chunked(4).forEach { row ->
+                Row(Modifier.fillMaxWidth()) {
+                    row.forEach { badge ->
+                        BadgeCell(
+                            progress = badge,
+                            isSelected = badge.badge == shown.badge,
+                            onClick = { picked = badge.badge },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+                Spacer(Modifier.height(10.dp))
+            }
+            HorizontalDivider(
+                color = contentColor.copy(alpha = 0.1f),
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
+            Spacer(Modifier.height(12.dp))
+            AnimatedContent(
+                targetState = shown,
+                transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(120)) },
+                contentKey = { it.badge to it.isEarned },
+                label = "badgeDetail"
+            ) { badge -> BadgeDetail(badge, isNext = picked == null && !badge.isEarned) }
         }
-        Spacer(Modifier.height(4.dp))
-        AnimatedContent(
-            targetState = shown,
-            transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(120)) },
-            contentKey = { it.badge to it.isEarned },
-            label = "atlasDetail"
-        ) { badge -> AtlasDetail(badge, isNext = picked == null && !badge.isEarned) }
     }
 }
 
 @Composable
-private fun AtlasTile(progress: BadgeProgress, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val earned = progress.isEarned
+private fun BadgeCell(progress: BadgeProgress, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val contentColor = LocalGlassTheme.current.contentColor
     val name = stringResource(progress.badge.nameRes)
-    val sky = stringResource(progress.badge.skyRes)
-    val shape = RoundedCornerShape(18.dp)
     Column(
-        modifier
-            .height(108.dp)
-            .clip(shape)
-            .background(Brush.verticalGradient(listOf(Color(0xFF1A1440).copy(alpha = if (earned) 0.78f else 0.62f), Color(0xFF0A0820).copy(alpha = 0.8f))))
-            .border(
-                if (isSelected) 1.5.dp else 1.dp,
-                if (isSelected) NowLilac.copy(alpha = 0.75f) else Color.White.copy(alpha = if (earned) 0.2f else 0.1f),
-                shape
-            )
-            .clickable(role = Role.Button, onClick = onClick)
-            .semantics { contentDescription = "$name, $sky, ${progress.current}/${progress.target}" }
-            .padding(vertical = 8.dp, horizontal = 4.dp),
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick)
+            .then(if (isSelected) Modifier.background(contentColor.copy(alpha = 0.08f)) else Modifier)
+            .padding(vertical = 8.dp, horizontal = 2.dp)
+            .semantics { contentDescription = "$name, ${progress.current}/${progress.target}" },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ConstellationArt(progress.badge.constellation, earned, Modifier.size(66.dp, 58.dp))
-        Spacer(Modifier.height(4.dp))
+        BadgeMedal(progress, Modifier.size(52.dp))
+        Spacer(Modifier.height(6.dp))
         Text(
-            name,
-            style = TextStyle(fontFamily = LogFonts.text, fontSize = 12.sp, fontWeight = FontWeight.Bold, lineHeight = 14.sp),
-            color = if (earned) SkyInk else skyFaint(0.65f),
+            text = name,
+            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, lineHeight = 13.sp),
+            color = contentColor.copy(alpha = if (progress.isEarned) 0.9f else 0.5f),
             textAlign = TextAlign.Center,
-            maxLines = 2
+            maxLines = 2,
+            minLines = 2
         )
     }
 }
 
-/** A constellation drawn small: its lines, then its stars, lit or a faint outline. */
+/** A badge as a medal: solid gold once earned, else faint, with its progress drawn around it. */
 @Composable
-private fun ConstellationArt(constellation: Constellation, lit: Boolean, modifier: Modifier = Modifier) {
-    Canvas(modifier) {
-        val sx = size.width / 60f
-        val sy = size.height / 54f
-        fun at(i: Int) = constellation.points[i].let { (x, y) -> Offset(x * sx, y * sy) }
-        val line = if (lit) Color(0xFFFFFAE6).copy(alpha = 0.8f) else Color.White.copy(alpha = 0.22f)
-        val dash = if (lit) null else PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 3.dp.toPx()))
-        constellation.edges.forEach { (a, b) ->
-            drawLine(line, at(a), at(b), 1.2.dp.toPx(), StrokeCap.Round, dash)
-        }
-        constellation.points.indices.forEach { i ->
-            val p = at(i)
-            val bright = i == constellation.bright
-            when {
-                constellation.planet -> {
-                    val r = 5.dp.toPx()
-                    if (lit) drawCircle(Brush.radialGradient(listOf(Color(0xFFFFF4D6).copy(alpha = 0.7f), Color.Transparent), p, r * 3f), r * 3f, p)
-                    drawCircle(if (lit) StarWhite else Color.White.copy(alpha = 0.3f), r, p)
-                }
-                bright -> {
-                    if (lit) drawCircle(Brush.radialGradient(listOf(Color.White.copy(alpha = 0.6f), Color.Transparent), p, 10.dp.toPx()), 10.dp.toPx(), p)
-                    drawPath(sparkle(p, 6.dp.toPx()), if (lit) StarWhite else Color.White.copy(alpha = 0.35f))
-                }
-                else -> {
-                    val r = (if (lit) 2.4f else 1.8f).dp.toPx()
-                    if (lit) drawCircle(Brush.radialGradient(listOf(Color.White.copy(alpha = 0.5f), Color.Transparent), p, r * 3f), r * 3f, p)
-                    drawCircle(if (lit) StarWhite else Color(0xFFD6DAFF).copy(alpha = 0.35f), r, p)
+private fun BadgeMedal(progress: BadgeProgress, modifier: Modifier = Modifier) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val earned = progress.isEarned
+    val fraction by animateFloatAsState(progress.fraction, tween(600), label = "badgeFraction")
+    val pop by animateFloatAsState(
+        if (earned) 1f else 0.9f,
+        spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
+        label = "badgePop"
+    )
+
+    Box(modifier.scale(pop), contentAlignment = Alignment.Center) {
+        Canvas(Modifier.fillMaxSize()) {
+            val stroke = 3.dp.toPx()
+            if (earned) {
+                drawCircle(
+                    Brush.radialGradient(
+                        listOf(PrayedGold.copy(alpha = 0.45f), Color.Transparent),
+                        center = center,
+                        radius = size.minDimension / 2f
+                    )
+                )
+                drawCircle(
+                    Brush.linearGradient(
+                        listOf(GoldLight, PrayedGold, GoldDeep),
+                        start = Offset(0f, 0f),
+                        end = Offset(size.width, size.height)
+                    ),
+                    radius = size.minDimension / 2f - stroke
+                )
+                drawCircle(
+                    Color.White.copy(alpha = 0.35f),
+                    radius = size.minDimension / 2f - stroke * 2f,
+                    style = Stroke(1.dp.toPx())
+                )
+            } else {
+                drawCircle(contentColor.copy(alpha = 0.06f), radius = size.minDimension / 2f - stroke)
+                val arcSize = Size(size.width - stroke, size.height - stroke)
+                drawArc(
+                    color = contentColor.copy(alpha = 0.1f),
+                    startAngle = 0f,
+                    sweepAngle = 360f,
+                    useCenter = false,
+                    topLeft = Offset(stroke / 2f, stroke / 2f),
+                    size = arcSize,
+                    style = Stroke(stroke)
+                )
+                if (fraction > 0f) {
+                    drawArc(
+                        color = PrayedGold.copy(alpha = 0.85f),
+                        startAngle = -90f,
+                        sweepAngle = 360f * fraction,
+                        useCenter = false,
+                        topLeft = Offset(stroke / 2f, stroke / 2f),
+                        size = arcSize,
+                        style = Stroke(stroke, cap = StrokeCap.Round)
+                    )
                 }
             }
         }
+        Icon(
+            progress.badge.icon,
+            contentDescription = null,
+            tint = if (earned) PrayedInk else contentColor.copy(alpha = 0.35f),
+            modifier = Modifier.size(26.dp)
+        )
     }
 }
 
 @Composable
-private fun AtlasDetail(progress: BadgeProgress, isNext: Boolean) {
-    SkyTile(Modifier.fillMaxWidth(), padding = PaddingValues(horizontal = 16.dp, vertical = 14.dp)) {
+private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    Column(Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+        if (isNext) {
+            Text(
+                text = stringResource(R.string.prayer_log_next_goal).uppercase(),
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                color = PrayedGold
+            )
+            Spacer(Modifier.height(2.dp))
+        }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                if (isNext) {
-                    Text(
-                        stringResource(R.string.prayer_log_next_goal).uppercase(),
-                        style = TextStyle(fontFamily = LogFonts.text, fontSize = 10.5.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.8.sp),
-                        color = NowLilac
-                    )
-                    Spacer(Modifier.height(2.dp))
-                }
                 Text(
-                    "${stringResource(progress.badge.nameRes)} · ${stringResource(progress.badge.skyRes)}",
-                    style = TextStyle(fontFamily = LogFonts.text, fontSize = 15.sp, fontWeight = FontWeight.Bold),
-                    color = SkyInk
+                    text = stringResource(progress.badge.nameRes),
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = contentColor
                 )
                 Text(
-                    stringResource(progress.badge.descRes),
-                    style = TextStyle(fontFamily = LogFonts.text, fontSize = 12.sp, lineHeight = 16.sp),
-                    color = skyFaint(0.65f)
+                    text = stringResource(progress.badge.descRes),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = contentColor.copy(alpha = 0.65f)
                 )
             }
             Spacer(Modifier.width(12.dp))
             if (progress.isEarned) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.Check, contentDescription = null, tint = StarWhite, modifier = Modifier.size(16.dp))
+                    Icon(Icons.Rounded.Check, contentDescription = null, tint = PrayedGold, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(4.dp))
                     Text(
-                        stringResource(R.string.prayer_log_badge_earned),
-                        style = TextStyle(fontFamily = LogFonts.text, fontSize = 13.sp, fontWeight = FontWeight.Bold),
-                        color = SkyInk
+                        text = stringResource(R.string.prayer_log_badge_earned),
+                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                        color = PrayedGold
                     )
                 }
             } else {
                 Text(
-                    "${progress.current}/${progress.target}",
-                    style = TextStyle(fontFamily = LogFonts.text, fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
-                    color = skyFaint(0.8f)
+                    text = "${progress.current}/${progress.target}",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        fontFeatureSettings = "tnum"
+                    ),
+                    color = contentColor.copy(alpha = 0.75f)
                 )
             }
         }
         if (!progress.isEarned) {
-            val fraction by animateFloatAsState(progress.fraction, tween(600), label = "atlasFraction")
-            Spacer(Modifier.height(10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(4.dp)
-                    .clip(RoundedCornerShape(2.dp))
-                    .background(Color.White.copy(alpha = 0.12f))
+            Spacer(Modifier.height(8.dp))
+            XpBar(progress.fraction, Modifier.fillMaxWidth().height(6.dp))
+        }
+    }
+}
+
+/** Today's bonus for a full day: faint until all five are prayed, then in gold. */
+@Composable
+internal fun FullDayBonus(isComplete: Boolean, modifier: Modifier = Modifier) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val tint = if (isComplete) PrayedInk else contentColor.copy(alpha = 0.55f)
+    val pop by animateFloatAsState(
+        if (isComplete) 1.06f else 1f,
+        spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
+        label = "bonusPop"
+    )
+    Row(
+        modifier = modifier
+            .scale(pop)
+            .clip(RoundedCornerShape(50))
+            .background(if (isComplete) PrayedGold else contentColor.copy(alpha = 0.06f))
+            .then(
+                if (isComplete) Modifier else Modifier.border(1.dp, contentColor.copy(alpha = 0.12f), RoundedCornerShape(50))
+            )
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            if (isComplete) Icons.Rounded.Check else Icons.Rounded.AutoAwesome,
+            contentDescription = null,
+            tint = if (isComplete) PrayedInk else PrayedGold,
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(Modifier.width(6.dp))
+        Text(
+            text = stringResource(R.string.prayer_log_full_day_bonus),
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+            color = tint
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = stringResource(R.string.prayer_log_xp_gain, PrayerLogProgress.FULL_DAY_BONUS),
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black),
+            color = if (isComplete) PrayedInk else PrayedGold
+        )
+    }
+}
+
+/**
+ * "+10 XP" rising from a prayer just marked and fading out. [trigger] counts the marks: each
+ * new value sends one up; the first value shown sends none.
+ */
+@Composable
+internal fun XpPop(trigger: Int, modifier: Modifier = Modifier) {
+    val rise = remember { Animatable(1f) }
+    var seen by remember { mutableIntStateOf(trigger) }
+    LaunchedEffect(trigger) {
+        if (trigger != seen) {
+            seen = trigger
+            rise.snapTo(0f)
+            rise.animateTo(1f, tween(900, easing = FastOutSlowInEasing))
+        }
+    }
+    if (rise.value < 1f) {
+        Text(
+            text = stringResource(R.string.prayer_log_xp_gain, PrayerLogProgress.XP_PER_PRAYER),
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black),
+            color = PrayedGold,
+            maxLines = 1,
+            softWrap = false,
+            modifier = modifier.graphicsLayer {
+                translationY = -rise.value * 30.dp.toPx()
+                alpha = 1f - rise.value * rise.value
+                val grow = 0.8f + 0.4f * minOf(rise.value * 4f, 1f)
+                scaleX = grow
+                scaleY = grow
+            }
+        )
+    }
+}
+
+/** Something newly reached, to cheer for. */
+internal sealed interface Unlock {
+    data class Level(val level: Int) : Unlock
+    data class Badge(val badge: PrayerLogBadge) : Unlock
+}
+
+/** A gold pill dropping in from the top to name what was just reached. */
+@Composable
+internal fun UnlockToast(unlock: Unlock?, modifier: Modifier = Modifier) {
+    var last by remember { mutableStateOf(unlock) }
+    if (unlock != null) last = unlock
+    AnimatedVisibility(
+        visible = unlock != null,
+        enter = slideInVertically { -it } + fadeIn() + scaleIn(initialScale = 0.8f),
+        exit = slideOutVertically { -it } + fadeOut(),
+        modifier = modifier
+    ) {
+        val shown = last ?: return@AnimatedVisibility
+        val (icon, label, title) = when (shown) {
+            is Unlock.Level -> Triple(
+                Icons.Rounded.KeyboardDoubleArrowUp,
+                stringResource(R.string.prayer_log_level_up),
+                stringResource(R.string.prayer_log_level, shown.level)
+            )
+            is Unlock.Badge -> Triple(
+                shown.badge.icon,
+                stringResource(R.string.prayer_log_badge_unlocked),
+                stringResource(shown.badge.nameRes)
+            )
+        }
+        Surface(
+            shape = RoundedCornerShape(50),
+            color = Color(0xFF2A2110),
+            shadowElevation = 12.dp,
+            modifier = Modifier.border(1.5.dp, PrayedGold, RoundedCornerShape(50))
+        ) {
+            Row(
+                Modifier.padding(start = 8.dp, end = 20.dp, top = 8.dp, bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(fraction.coerceIn(0f, 1f))
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(Brush.horizontalGradient(listOf(Color(0xFF9FA8DA), Color.White)))
-                )
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Brush.linearGradient(listOf(GoldLight, PrayedGold, GoldDeep))),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(icon, contentDescription = null, tint = PrayedInk, modifier = Modifier.size(24.dp))
+                }
+                Spacer(Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = label.uppercase(),
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                        color = PrayedGold
+                    )
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
+                }
             }
         }
     }
 }
 
+/** How long an [UnlockToast] stays up. */
+internal const val UnlockToastMillis = 2600L
+
 /**
- * A constellation in a box 60 wide and 54 tall: its stars, the lines between them, the one drawn
- * as a bright four-pointed star if any, or a single round planet.
+ * A burst of confetti from [origin] (a fraction of the size), once for each new value of
+ * [trigger]; the first value shown fires none. It doesn't take touches.
  */
-internal class Constellation(
-    val points: List<Pair<Float, Float>>,
-    val edges: List<Pair<Int, Int>> = points.indices.zipWithNext(),
-    val bright: Int = -1,
-    val planet: Boolean = false
+@Composable
+internal fun ConfettiBurst(trigger: Int, modifier: Modifier = Modifier, origin: Offset = Offset(0.5f, 0.3f)) {
+    val time = remember { Animatable(1f) }
+    var seen by remember { mutableIntStateOf(trigger) }
+    LaunchedEffect(trigger) {
+        if (trigger != seen) {
+            seen = trigger
+            time.snapTo(0f)
+            time.animateTo(1f, tween(ConfettiMillis, easing = LinearEasing))
+        }
+    }
+    val pieces = remember(trigger) {
+        val random = Random(trigger)
+        List(56) {
+            Piece(
+                angle = Math.toRadians(-90.0 + random.nextDouble(-75.0, 75.0)).toFloat(),
+                speed = random.nextFloat() * 0.7f + 0.55f,
+                spin = random.nextFloat() * 720f - 360f,
+                color = ConfettiColors[random.nextInt(ConfettiColors.size)],
+                width = random.nextFloat() * 5f + 5f,
+                height = random.nextFloat() * 6f + 8f,
+                round = random.nextInt(4) == 0
+            )
+        }
+    }
+    val t = time.value
+    if (t >= 1f) return
+
+    Canvas(modifier) {
+        val seconds = t * ConfettiMillis / 1000f
+        val reach = size.minDimension * 1.1f
+        val gravity = size.height * 0.9f
+        val start = Offset(size.width * origin.x, size.height * origin.y)
+        val fade = (1f - t).let { it * it }.coerceIn(0f, 1f)
+        pieces.forEach { piece ->
+            // Thrown out and up, slowed by the air, pulled down.
+            val drag = (1f - kotlin.math.exp(-2.2f * seconds)) / 2.2f
+            val x = start.x + cos(piece.angle) * piece.speed * reach * drag
+            val y = start.y + sin(piece.angle) * piece.speed * reach * drag + 0.5f * gravity * seconds * seconds * 0.6f
+            val w = piece.width * density
+            val h = piece.height * density
+            rotate(piece.spin * seconds, pivot = Offset(x, y)) {
+                if (piece.round) {
+                    drawCircle(piece.color.copy(alpha = fade), radius = w * 0.6f, center = Offset(x, y))
+                } else {
+                    // A turning strip: its height swells and shrinks as it tumbles.
+                    val tumble = kotlin.math.abs(cos(seconds * 6f + piece.spin))
+                    drawRect(
+                        piece.color.copy(alpha = fade),
+                        topLeft = Offset(x - w / 2f, y - h * tumble / 2f),
+                        size = Size(w, h * tumble.coerceAtLeast(0.15f))
+                    )
+                }
+            }
+        }
+    }
+}
+
+private class Piece(
+    val angle: Float,
+    val speed: Float,
+    val spin: Float,
+    val color: Color,
+    val width: Float,
+    val height: Float,
+    val round: Boolean
 )
 
-private val PrayerLogBadge.constellation: Constellation
-    get() = when (this) {
-        // The Little Bear's tail, ending in Polaris.
-        PrayerLogBadge.FIRST_PRAYER -> Constellation(
-            listOf(10f to 44f, 18f to 38f, 27f to 36f, 34f to 29f, 42f to 31f, 46f to 21f, 50f to 9f),
-            bright = 6
-        )
-        // The five prayers, a pentagon.
-        PrayerLogBadge.FIRST_FULL_DAY -> Constellation(
-            listOf(30f to 7f, 51f to 22f, 43f to 47f, 17f to 47f, 9f to 22f),
-            edges = listOf(0 to 1, 1 to 2, 2 to 3, 3 to 4, 4 to 0)
-        )
-        PrayerLogBadge.STREAK_3 -> Constellation(
-            listOf(14f to 42f, 30f to 10f, 48f to 38f),
-            edges = listOf(0 to 1, 1 to 2, 2 to 0)
-        )
-        // The Swan: its long neck, crossed by its wings.
-        PrayerLogBadge.STREAK_7 -> Constellation(
-            listOf(30f to 5f, 30f to 24f, 30f to 48f, 10f to 21f, 50f to 27f),
-            edges = listOf(0 to 1, 1 to 2, 3 to 1, 1 to 4)
-        )
-        // Venus, the morning star: a planet, not a constellation.
-        PrayerLogBadge.FAJR_7 -> Constellation(listOf(30f to 27f), edges = emptyList(), planet = true)
-        PrayerLogBadge.PRAYERS_100 -> Constellation(
-            listOf(8f to 18f, 13f to 30f, 22f to 39f, 33f to 41f, 43f to 36f, 50f to 26f, 52f to 15f)
-        )
-        // The Big Dipper: its handle and its bowl.
-        PrayerLogBadge.STREAK_40 -> Constellation(
-            listOf(5f to 22f, 15f to 18f, 25f to 20f, 33f to 26f, 35f to 40f, 54f to 38f, 52f to 22f),
-            edges = listOf(0 to 1, 1 to 2, 2 to 3, 3 to 4, 4 to 5, 5 to 6, 6 to 3)
-        )
-        // Orion: shoulders, belt and feet.
-        PrayerLogBadge.PRAYERS_500 -> Constellation(
-            listOf(16f to 6f, 44f to 10f, 24f to 26f, 30f to 27f, 36f to 28f, 14f to 48f, 46f to 46f),
-            edges = listOf(0 to 2, 1 to 4, 2 to 3, 3 to 4, 2 to 5, 4 to 6)
-        )
-    }
+private val GoldLight = Color(0xFFFFECB3)
+private val GoldDeep = Color(0xFFE0A800)
 
-/** The sky a badge is drawn as. */
-internal val PrayerLogBadge.skyRes: Int
+private const val ConfettiMillis = 1900
+
+private val ConfettiColors = listOf(PrayedGold, GoldLight, Color.White) +
+    PrayerType.entries.map { it.accentColor }
+
+private val PrayerLogBadge.icon: ImageVector
     get() = when (this) {
-        PrayerLogBadge.FIRST_PRAYER -> R.string.prayer_log_star_first_prayer
-        PrayerLogBadge.FIRST_FULL_DAY -> R.string.prayer_log_star_first_full_day
-        PrayerLogBadge.STREAK_3 -> R.string.prayer_log_star_streak_3
-        PrayerLogBadge.STREAK_7 -> R.string.prayer_log_star_streak_7
-        PrayerLogBadge.FAJR_7 -> R.string.prayer_log_star_fajr_7
-        PrayerLogBadge.PRAYERS_100 -> R.string.prayer_log_star_prayers_100
-        PrayerLogBadge.STREAK_40 -> R.string.prayer_log_star_streak_40
-        PrayerLogBadge.PRAYERS_500 -> R.string.prayer_log_star_prayers_500
+        PrayerLogBadge.FIRST_PRAYER -> Icons.Rounded.Flag
+        PrayerLogBadge.FIRST_FULL_DAY -> Icons.Rounded.Verified
+        PrayerLogBadge.STREAK_3 -> Icons.Rounded.Whatshot
+        PrayerLogBadge.STREAK_7 -> Icons.Rounded.LocalFireDepartment
+        PrayerLogBadge.FAJR_7 -> Icons.Rounded.WbTwilight
+        PrayerLogBadge.PRAYERS_100 -> Icons.Rounded.MilitaryTech
+        PrayerLogBadge.STREAK_40 -> Icons.Rounded.EmojiEvents
+        PrayerLogBadge.PRAYERS_500 -> Icons.Rounded.WorkspacePremium
     }
 
 internal val PrayerLogBadge.nameRes: Int
@@ -323,166 +694,4 @@ internal val PrayerLogBadge.descRes: Int
         PrayerLogBadge.STREAK_40 -> R.string.prayer_log_badge_streak_40_desc
         PrayerLogBadge.PRAYERS_500 -> R.string.prayer_log_badge_prayers_500_desc
     }
-
-// ── Cheers ──────────────────────────────────────────────────────────────────
-
-/**
- * "+10 XP" rising from a star just lit and fading out. [trigger] counts the marks: each new value
- * sends one up; the first value shown sends none.
- */
-@Composable
-internal fun XpPop(trigger: Int, modifier: Modifier = Modifier) {
-    val rise = remember { Animatable(1f) }
-    var seen by remember { mutableIntStateOf(trigger) }
-    LaunchedEffect(trigger) {
-        if (trigger != seen) {
-            seen = trigger
-            rise.snapTo(0f)
-            rise.animateTo(1f, tween(900, easing = FastOutSlowInEasing))
-        }
-    }
-    if (rise.value < 1f) {
-        Text(
-            text = stringResource(R.string.prayer_log_xp_gain, PrayerLogProgress.XP_PER_PRAYER),
-            style = TextStyle(fontFamily = LogFonts.text, fontSize = 13.sp, fontWeight = FontWeight.Black),
-            color = StarWhite,
-            maxLines = 1,
-            softWrap = false,
-            modifier = modifier.graphicsLayer {
-                translationY = -rise.value * 30.dp.toPx()
-                alpha = 1f - rise.value * rise.value
-                val grow = 0.8f + 0.4f * minOf(rise.value * 4f, 1f)
-                scaleX = grow
-                scaleY = grow
-            }
-        )
-    }
-}
-
-/** Something newly reached, to cheer for. */
-internal sealed interface Unlock {
-    data class Level(val level: Int) : Unlock
-    data class Badge(val badge: PrayerLogBadge) : Unlock
-}
-
-/** A pill of the night's glass dropping in from the top to name what was just reached. */
-@Composable
-internal fun UnlockToast(unlock: Unlock?, modifier: Modifier = Modifier) {
-    var last by remember { mutableStateOf(unlock) }
-    if (unlock != null) last = unlock
-    AnimatedVisibility(
-        visible = unlock != null,
-        enter = slideInVertically { -it } + fadeIn() + scaleIn(initialScale = 0.8f),
-        exit = slideOutVertically { -it } + fadeOut(),
-        modifier = modifier
-    ) {
-        val shown = last ?: return@AnimatedVisibility
-        val (label, title) = when (shown) {
-            is Unlock.Level -> stringResource(R.string.prayer_log_level_up) to stringResource(R.string.prayer_log_level, shown.level)
-            is Unlock.Badge -> stringResource(R.string.prayer_log_badge_unlocked) to
-                "${stringResource(shown.badge.nameRes)} · ${stringResource(shown.badge.skyRes)}"
-        }
-        Surface(
-            shape = RoundedCornerShape(50),
-            color = Color(0xFF14123A),
-            shadowElevation = 12.dp,
-            modifier = Modifier.border(1.dp, NowLilac.copy(alpha = 0.6f), RoundedCornerShape(50))
-        ) {
-            Row(
-                Modifier.padding(start = 8.dp, end = 20.dp, top = 8.dp, bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Brush.radialGradient(listOf(Color(0xFF3B3880), Color(0xFF14123A)))),
-                    contentAlignment = Alignment.Center
-                ) {
-                    StarGlyph(20.dp, glow = Color.White)
-                }
-                Spacer(Modifier.width(12.dp))
-                Column {
-                    Text(
-                        label.uppercase(),
-                        style = TextStyle(fontFamily = LogFonts.text, fontSize = 10.5.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp),
-                        color = NowLilac
-                    )
-                    Text(title, style = TextStyle(fontFamily = LogFonts.text, fontSize = 14.sp, fontWeight = FontWeight.Bold), color = Color.White)
-                }
-            }
-        }
-    }
-}
-
-/** How long an [UnlockToast] stays up. */
-internal const val UnlockToastMillis = 2600L
-
-/**
- * A burst of stardust from [origin] (a fraction of the size), once for each new value of
- * [trigger]; the first value shown fires none. It doesn't take touches.
- */
-@Composable
-internal fun ConfettiBurst(trigger: Int, modifier: Modifier = Modifier, origin: Offset = Offset(0.5f, 0.3f)) {
-    val time = remember { Animatable(1f) }
-    var seen by remember { mutableIntStateOf(trigger) }
-    LaunchedEffect(trigger) {
-        if (trigger != seen) {
-            seen = trigger
-            time.snapTo(0f)
-            time.animateTo(1f, tween(ConfettiMillis, easing = LinearEasing))
-        }
-    }
-    val pieces = remember(trigger) {
-        val random = Random(trigger)
-        List(56) {
-            Piece(
-                angle = Math.toRadians(-90.0 + random.nextDouble(-75.0, 75.0)).toFloat(),
-                speed = random.nextFloat() * 0.7f + 0.55f,
-                spin = random.nextFloat() * 720f - 360f,
-                color = ConfettiColors[random.nextInt(ConfettiColors.size)],
-                size = random.nextFloat() * 4f + 3f,
-                star = random.nextInt(3) == 0
-            )
-        }
-    }
-    val t = time.value
-    if (t >= 1f) return
-
-    Canvas(modifier) {
-        val seconds = t * ConfettiMillis / 1000f
-        val reach = size.minDimension * 1.1f
-        val gravity = size.height * 0.9f
-        val start = Offset(size.width * origin.x, size.height * origin.y)
-        val fade = (1f - t).let { it * it }.coerceIn(0f, 1f)
-        pieces.forEach { piece ->
-            // Thrown out and up, slowed by the air, pulled down.
-            val drag = (1f - kotlin.math.exp(-2.2f * seconds)) / 2.2f
-            val x = start.x + cos(piece.angle) * piece.speed * reach * drag
-            val y = start.y + sin(piece.angle) * piece.speed * reach * drag + 0.5f * gravity * seconds * seconds * 0.6f
-            val s = piece.size * density
-            if (piece.star) {
-                rotate(piece.spin * seconds, pivot = Offset(x, y)) {
-                    drawPath(sparkle(Offset(x, y), s * 1.4f), piece.color.copy(alpha = fade))
-                }
-            } else {
-                drawCircle(piece.color.copy(alpha = fade), radius = s * 0.5f, center = Offset(x, y))
-            }
-        }
-    }
-}
-
-private class Piece(
-    val angle: Float,
-    val speed: Float,
-    val spin: Float,
-    val color: Color,
-    val size: Float,
-    val star: Boolean
-)
-
-private const val ConfettiMillis = 1900
-
-private val ConfettiColors = listOf(Color.White, StarWhite, NowLilac) +
-    PrayerType.entries.map { it.accentColor }
 

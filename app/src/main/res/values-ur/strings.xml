@@ -496,6 +496,7 @@
     <string name="prayer_log_all_done">آج کی تمام نمازیں ادا ہو گئیں</string>
     <string name="prayer_log_streak">مکمل دن مسلسل</string>
     <string name="prayer_log_week">پچھلے 7 دن</string>
+    <string name="prayer_log_month">پچھلے 30 دن</string>
     <string name="prayer_log_missed_total">کل قضا</string>
     <string name="prayer_log_prev_month">پچھلا مہینہ</string>
     <string name="prayer_log_next_month">اگلا مہینہ</string>
@@ -505,6 +506,7 @@
     <string name="prayer_log_xp_to_next">لیول %2$d کے لیے %1$d XP</string>
     <string name="prayer_log_full_day_bonus">مکمل دن کا بونس</string>
     <string name="prayer_log_best_streak">بہترین: %1$d</string>
+    <string name="prayer_log_badges">بیجز</string>
     <string name="prayer_log_badge_unlocked">نیا بیج</string>
     <string name="prayer_log_level_up">لیول بڑھ گیا!</string>
     <string name="prayer_log_badge_earned">حاصل کیا</string>
@@ -543,22 +545,4 @@
     <string name="prayer_log_celebrate_level">لیول بڑھ گیا! اب آپ لیول %1$d پر ہیں 🎉</string>
     <string name="widget_prayer_log_description">آپ کا لیول، سلسلہ اور بیجز، اور آج کی نمازیں ایک ٹیپ میں نشان زد کریں</string>
     <string name="widget_prayer_log_off">ترتیبات میں نماز کا ریکارڈ آن کریں</string>
-    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
-    <string name="prayer_log_sky_title">آج کے ستارے</string>
-    <string name="prayer_log_sky_lit">ستارے روشن</string>
-    <string name="prayer_log_sky_done">آپ کا آسمان مکمل ہو گیا۔ اللہ قبول فرمائے۔</string>
-    <string name="prayer_log_sky_mark_missed">جو پڑھ لیں انہیں نیچے نشان لگائیں</string>
-    <string name="prayer_log_cassiopeia">ذات الکرسی</string>
-    <string name="prayer_log_cassiopeia_line">پانچ نمازیں · پانچ ستارے · دن مکمل</string>
-    <string name="prayer_log_month_missed">چھوٹی ہوئی: %1$d</string>
-    <string name="prayer_log_show_missed">چھوٹی ہوئی نمازیں دکھائیں</string>
-    <string name="prayer_log_atlas">ستاروں کا اٹلس</string>
-    <string name="prayer_log_star_first_prayer">قطبی ستارہ</string>
-    <string name="prayer_log_star_first_full_day">پانچ نمازیں</string>
-    <string name="prayer_log_star_streak_3">مثلث</string>
-    <string name="prayer_log_star_streak_7">دجاجہ</string>
-    <string name="prayer_log_star_fajr_7">زہرہ</string>
-    <string name="prayer_log_star_prayers_100">شمالی تاج</string>
-    <string name="prayer_log_star_streak_40">بنات النعش</string>
-    <string name="prayer_log_star_prayers_500">جبار</string>
 </resources>
