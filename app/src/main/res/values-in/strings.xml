@@ -550,14 +550,8 @@
     <string name="prayer_log_sky_mark_missed">Tandai di bawah yang sudah kamu salatkan</string>
     <string name="prayer_log_cassiopeia">Kasiopeia</string>
     <string name="prayer_log_cassiopeia_line">Lima salat · lima bintang · hari lengkap</string>
-    <string name="prayer_log_galaxy">Bima Sakti</string>
-    <string name="prayer_log_galaxy_hint">Lima minggu · geser jarimu di sepanjang pita</string>
-    <string name="prayer_log_galaxy_missed">%1$d terlewat</string>
-    <string name="prayer_log_galaxy_show_missed">Tampilkan salat terlewat</string>
-    <string name="prayer_log_galaxy_earlier">Minggu sebelumnya</string>
-    <string name="prayer_log_galaxy_later">Minggu berikutnya</string>
-    <string name="prayer_log_prev_day">Hari sebelumnya</string>
-    <string name="prayer_log_next_day">Hari berikutnya</string>
+    <string name="prayer_log_month_missed">%1$d terlewat</string>
+    <string name="prayer_log_show_missed">Tampilkan salat terlewat</string>
     <string name="prayer_log_atlas">Atlas bintang</string>
     <string name="prayer_log_star_first_prayer">Bintang Utara</string>
     <string name="prayer_log_star_first_full_day">Lima Salat</string>

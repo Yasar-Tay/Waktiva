@@ -549,14 +549,8 @@
     <string name="prayer_log_sky_mark_missed">Vink hieronder aan wat je hebt gebeden</string>
     <string name="prayer_log_cassiopeia">Cassiopeia</string>
     <string name="prayer_log_cassiopeia_line">Vijf gebeden · vijf sterren · dag compleet</string>
-    <string name="prayer_log_galaxy">Melkweg</string>
-    <string name="prayer_log_galaxy_hint">Vijf weken · glijd met je vinger over de band</string>
-    <string name="prayer_log_galaxy_missed">%1$d gemist</string>
-    <string name="prayer_log_galaxy_show_missed">Gemiste gebeden tonen</string>
-    <string name="prayer_log_galaxy_earlier">Eerdere weken</string>
-    <string name="prayer_log_galaxy_later">Latere weken</string>
-    <string name="prayer_log_prev_day">Vorige dag</string>
-    <string name="prayer_log_next_day">Volgende dag</string>
+    <string name="prayer_log_month_missed">%1$d gemist</string>
+    <string name="prayer_log_show_missed">Gemiste gebeden tonen</string>
     <string name="prayer_log_atlas">Sterrenatlas</string>
     <string name="prayer_log_star_first_prayer">Poolster</string>
     <string name="prayer_log_star_first_full_day">Vijf Gebeden</string>

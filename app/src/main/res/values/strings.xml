@@ -550,14 +550,8 @@
     <string name="prayer_log_sky_mark_missed">Mark the ones you prayed, below</string>
     <string name="prayer_log_cassiopeia">Cassiopeia</string>
     <string name="prayer_log_cassiopeia_line">Five prayers · five stars · day complete</string>
-    <string name="prayer_log_galaxy">Milky Way</string>
-    <string name="prayer_log_galaxy_hint">Five weeks · glide your finger along the band</string>
-    <string name="prayer_log_galaxy_missed">%1$d missed</string>
-    <string name="prayer_log_galaxy_show_missed">Show missed prayers</string>
-    <string name="prayer_log_galaxy_earlier">Earlier weeks</string>
-    <string name="prayer_log_galaxy_later">Later weeks</string>
-    <string name="prayer_log_prev_day">Previous day</string>
-    <string name="prayer_log_next_day">Next day</string>
+    <string name="prayer_log_month_missed">%1$d missed</string>
+    <string name="prayer_log_show_missed">Show missed prayers</string>
     <string name="prayer_log_atlas">Star atlas</string>
     <string name="prayer_log_star_first_prayer">Polaris</string>
     <string name="prayer_log_star_first_full_day">Five Prayers</string>

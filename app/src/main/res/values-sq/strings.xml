@@ -549,14 +549,8 @@
     <string name="prayer_log_sky_mark_missed">Shëno më poshtë ato që i fale</string>
     <string name="prayer_log_cassiopeia">Kasiopea</string>
     <string name="prayer_log_cassiopeia_line">Pesë namaze · pesë yje · dita e plotë</string>
-    <string name="prayer_log_galaxy">Rruga e Qumështit</string>
-    <string name="prayer_log_galaxy_hint">Pesë javë · rrëshqit gishtin përgjatë brezit</string>
-    <string name="prayer_log_galaxy_missed">Të humbura: %1$d</string>
-    <string name="prayer_log_galaxy_show_missed">Shfaq namazet e humbura</string>
-    <string name="prayer_log_galaxy_earlier">Javët e mëparshme</string>
-    <string name="prayer_log_galaxy_later">Javët e mëvonshme</string>
-    <string name="prayer_log_prev_day">Dita e mëparshme</string>
-    <string name="prayer_log_next_day">Dita tjetër</string>
+    <string name="prayer_log_month_missed">Të humbura: %1$d</string>
+    <string name="prayer_log_show_missed">Shfaq namazet e humbura</string>
     <string name="prayer_log_atlas">Atlasi i yjeve</string>
     <string name="prayer_log_star_first_prayer">Ylli Polar</string>
     <string name="prayer_log_star_first_full_day">Pesë Namaze</string>

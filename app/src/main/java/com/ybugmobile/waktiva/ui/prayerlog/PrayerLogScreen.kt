@@ -15,7 +15,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,13 +29,12 @@ import java.time.format.DateTimeFormatter
 /**
  * The prayer log (çetele) in the deep sky: clouds of gas and pillars of dust (see [CosmicSky]).
  *
- * At the top, today's stars: the five prayers on the sun's path, each its own star, lit with a
- * tap, two in a row both lit joined into the day's own constellation. When the day is made full, the five glide into
- * Cassiopeia's W for a moment, then back. Under them, the button for the prayer whose time is on,
- * and the streak, the level and the badges.
+ * At the top, today on the dial of the day (see [TodayDial]): the five prayers as stars on the
+ * day's ring, lit with a tap, the ring lit between two prayed in a row and closing when the day is
+ * full. Under it, the button for the prayer whose time is on, and the streak and the level.
  *
- * Then the Milky Way: the last five weeks as a band of stars, a finger along it picking a day to
- * look at and mark; and the star atlas, the badges each a constellation.
+ * Then the calendar: a month of days, the days and the prayers missed standing out, a day picked
+ * to look at and mark (see [LogCalendar]); and the star atlas, the badges each a constellation.
  */
 @Composable
 fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
@@ -51,12 +49,10 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
         }
     }
 
-    // What changed since the last look, to cheer for: the day made full (the queen), a level or a
-    // badge (stardust and a word). The first look after the screen opens is only taken in.
+    // What changed since the last look, to cheer for: the day made full, a level or a badge
+    // (stardust, and a word for the last two). The first look after the screen opens is only taken in.
     val unlocks = remember { mutableStateListOf<Unlock>() }
     var stardust by remember { mutableIntStateOf(0) }
-    var queen by remember { mutableIntStateOf(0) }
-    var cassiopeia by remember { mutableStateOf(false) }
     var seen by remember { mutableStateOf<PrayerLogViewState?>(null) }
     LaunchedEffect(state) {
         if (state.isLoading) return@LaunchedEffect
@@ -69,21 +65,10 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
             (progress.earned - before.progress.earned).forEach { add(Unlock.Badge(it)) }
         }
         unlocks += news
-        if (news.isNotEmpty()) stardust++
         val dayFilled = state.today?.isComplete == true && before.today?.isComplete == false &&
             state.today?.date == before.today?.date
-        if (dayFilled) {
-            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-            queen++
-        }
-    }
-    // The queen: a breath after the last star is lit, held a while, then the sky as it was.
-    LaunchedEffect(queen) {
-        if (queen == 0) return@LaunchedEffect
-        delay(900)
-        cassiopeia = true
-        delay(4700)
-        cassiopeia = false
+        if (dayFilled) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+        if (news.isNotEmpty() || dayFilled) stardust++
     }
     val unlock = unlocks.firstOrNull()
     LaunchedEffect(unlock) {
@@ -106,13 +91,23 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
         val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         val sky = @Composable {
             SkyHeader(today, Modifier.padding(horizontal = 20.dp))
-            DayStars(today, cassiopeia, onToggle = onMark)
+            Spacer(Modifier.height(8.dp))
+            Box(Modifier.fillMaxWidth().padding(horizontal = 10.dp), contentAlignment = Alignment.TopCenter) {
+                TodayDial(
+                    today = today,
+                    times = state.todayTimes,
+                    now = state.now,
+                    onToggle = onMark,
+                    modifier = Modifier.widthIn(max = 420.dp).fillMaxWidth()
+                )
+            }
+            Spacer(Modifier.height(12.dp))
             SkyCall(today, isFirstUse = state.startDate == null, onMark = onMark, modifier = Modifier.padding(horizontal = 20.dp))
             Spacer(Modifier.height(24.dp))
             SkyNumbers(state, Modifier.padding(horizontal = 20.dp))
         }
         val history = @Composable {
-            Galaxy(state, viewModel::showGalaxy, viewModel::select, onToggle)
+            LogCalendar(state, viewModel::showMonth, viewModel::select, onToggle, Modifier.padding(horizontal = 20.dp))
             Spacer(Modifier.height(48.dp))
             StarAtlas(state.progress, Modifier.padding(horizontal = 20.dp))
         }

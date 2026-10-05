@@ -550,14 +550,8 @@
     <string name="prayer_log_sky_mark_missed">آن‌هایی را که خواندی پایین علامت بزن</string>
     <string name="prayer_log_cassiopeia">ذات‌الکرسی</string>
     <string name="prayer_log_cassiopeia_line">پنج نماز · پنج ستاره · روز کامل</string>
-    <string name="prayer_log_galaxy">کهکشان راه شیری</string>
-    <string name="prayer_log_galaxy_hint">پنج هفته · انگشتت را روی نوار بکش</string>
-    <string name="prayer_log_galaxy_missed">قضا شده: %1$d</string>
-    <string name="prayer_log_galaxy_show_missed">نمایش نمازهای قضا شده</string>
-    <string name="prayer_log_galaxy_earlier">هفته‌های قبل</string>
-    <string name="prayer_log_galaxy_later">هفته‌های بعد</string>
-    <string name="prayer_log_prev_day">روز قبل</string>
-    <string name="prayer_log_next_day">روز بعد</string>
+    <string name="prayer_log_month_missed">قضا شده: %1$d</string>
+    <string name="prayer_log_show_missed">نمایش نمازهای قضا شده</string>
     <string name="prayer_log_atlas">اطلس ستارگان</string>
     <string name="prayer_log_star_first_prayer">ستاره قطبی</string>
     <string name="prayer_log_star_first_full_day">پنج نماز</string>

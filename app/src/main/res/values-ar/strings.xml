@@ -550,14 +550,8 @@
     <string name="prayer_log_sky_mark_missed">علّم أدناه ما صلّيته</string>
     <string name="prayer_log_cassiopeia">ذات الكرسي</string>
     <string name="prayer_log_cassiopeia_line">خمس صلوات · خمس نجوم · يوم كامل</string>
-    <string name="prayer_log_galaxy">درب التبانة</string>
-    <string name="prayer_log_galaxy_hint">خمسة أسابيع · مرّر إصبعك على الشريط</string>
-    <string name="prayer_log_galaxy_missed">فائتة: %1$d</string>
-    <string name="prayer_log_galaxy_show_missed">إظهار الصلوات الفائتة</string>
-    <string name="prayer_log_galaxy_earlier">أسابيع سابقة</string>
-    <string name="prayer_log_galaxy_later">أسابيع لاحقة</string>
-    <string name="prayer_log_prev_day">اليوم السابق</string>
-    <string name="prayer_log_next_day">اليوم التالي</string>
+    <string name="prayer_log_month_missed">فائتة: %1$d</string>
+    <string name="prayer_log_show_missed">إظهار الصلوات الفائتة</string>
     <string name="prayer_log_atlas">أطلس النجوم</string>
     <string name="prayer_log_star_first_prayer">النجم القطبي</string>
     <string name="prayer_log_star_first_full_day">الصلوات الخمس</string>
