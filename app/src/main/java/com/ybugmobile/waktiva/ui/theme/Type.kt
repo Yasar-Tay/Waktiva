@@ -4,7 +4,6 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
@@ -24,15 +23,6 @@ val HindSiliguri = FontFamily(
     Font(R.font.hind_siliguri_medium, FontWeight.Medium),
     Font(R.font.hind_siliguri_semibold, FontWeight.SemiBold),
     Font(R.font.hind_siliguri_bold, FontWeight.Bold)
-)
-
-/** The prayer log's serif, for its names and numbers on the night: Cormorant Garamond. */
-val CormorantGaramond = FontFamily(
-    Font(R.font.cormorant_garamond_medium, FontWeight.Medium),
-    Font(R.font.cormorant_garamond_semibold, FontWeight.SemiBold),
-    Font(R.font.cormorant_garamond_bold, FontWeight.Bold),
-    Font(R.font.cormorant_garamond_medium_italic, FontWeight.Medium, FontStyle.Italic),
-    Font(R.font.cormorant_garamond_semibold_italic, FontWeight.SemiBold, FontStyle.Italic)
 )
 
 val IBMPlexArabic = FontFamily(

@@ -107,11 +107,11 @@ internal fun LogCalendar(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(Modifier.size(7.dp).clip(CircleShape).background(type.accentColor))
                         Spacer(Modifier.width(5.dp))
-                        Text(type.prayerName, style = TextStyle(fontSize = 11.5.sp, fontWeight = FontWeight.SemiBold), color = skyFaint(0.8f), maxLines = 1)
+                        Text(type.prayerName, style = TextStyle(fontFamily = LogFonts.text, fontSize = 11.5.sp, fontWeight = FontWeight.SemiBold), color = skyFaint(0.8f), maxLines = 1)
                     }
                     Text(
                         count.toString(),
-                        style = TextStyle(fontSize = 19.sp, fontWeight = FontWeight.SemiBold, fontFeatureSettings = "tnum"),
+                        style = TextStyle(fontFamily = LogFonts.text, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, fontFeatureSettings = "tnum"),
                         color = if (count > 0) MissedCoral else skyFaint(0.45f)
                     )
                 }
@@ -133,7 +133,7 @@ internal fun LogCalendar(
             val due = prayed + days.sumOf { it.missed }
             Text(
                 if (due > 0) stringResource(R.string.prayer_log_today_count, prayed, due) else "",
-                style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.SemiBold, fontFeatureSettings = "tnum"),
+                style = TextStyle(fontFamily = LogFonts.text, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, fontFeatureSettings = "tnum"),
                 color = skyFaint(0.75f),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
@@ -152,7 +152,7 @@ internal fun LogCalendar(
             (0 until 7).forEach { i ->
                 Text(
                     state.firstDayOfWeek.plus(i.toLong()).getDisplayName(DateTextStyle.SHORT, locale),
-                    style = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.6.sp),
+                    style = TextStyle(fontFamily = LogFonts.text, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.6.sp),
                     color = skyFaint(0.55f),
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -270,7 +270,7 @@ private fun DayCell(
         }
         Text(
             date.dayOfMonth.toString(),
-            style = TextStyle(fontSize = 13.sp, fontWeight = if (isToday || isSelected) FontWeight.Bold else FontWeight.Medium, fontFeatureSettings = "tnum"),
+            style = TextStyle(fontFamily = LogFonts.text, fontSize = 13.sp, fontWeight = if (isToday || isSelected) FontWeight.Bold else FontWeight.Medium, fontFeatureSettings = "tnum"),
             color = when {
                 day == null || day.isTracked.not() -> skyFaint(0.35f)
                 isToday -> NowLilac
@@ -295,14 +295,14 @@ private fun DayPanel(day: PrayerLogDay, isToday: Boolean, onToggle: (LocalDate, 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 title,
-                style = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.Bold),
+                style = TextStyle(fontFamily = LogFonts.text, fontSize = 17.sp, fontWeight = FontWeight.Bold),
                 color = SkyInk,
                 maxLines = 1,
                 modifier = Modifier.weight(1f)
             )
             Text(
                 "${day.prayed}/${day.entries.size}",
-                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
+                style = TextStyle(fontFamily = LogFonts.text, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
                 color = if (day.isComplete) StarWhite else skyFaint(0.8f)
             )
         }
@@ -332,10 +332,10 @@ private fun PrayerRow(entry: PrayerLogEntry, onToggle: () -> Unit) {
         }
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
-            Text(entry.type.prayerName, style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold), color = SkyInk, maxLines = 1)
+            Text(entry.type.prayerName, style = TextStyle(fontFamily = LogFonts.text, fontSize = 16.sp, fontWeight = FontWeight.SemiBold), color = SkyInk, maxLines = 1)
             Text(
                 stringResource(status.labelRes),
-                style = TextStyle(fontSize = 12.sp),
+                style = TextStyle(fontFamily = LogFonts.text, fontSize = 12.sp),
                 color = when (status) {
                     PrayerLogStatus.MISSED -> MissedCoral
                     PrayerLogStatus.ACTIVE -> NowLilac
@@ -367,7 +367,7 @@ private fun RowButton(text: String, filled: Boolean, onClick: () -> Unit) {
     ) {
         Text(
             text,
-            style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.SemiBold),
+            style = TextStyle(fontFamily = LogFonts.text, fontSize = 13.sp, fontWeight = FontWeight.SemiBold),
             color = if (filled) Color(0xFF0B0F2A) else skyFaint(0.85f),
             maxLines = 1
         )
@@ -407,7 +407,7 @@ private fun MissedSwitch(on: Boolean, missed: Int, onChange: (Boolean) -> Unit) 
         Spacer(Modifier.width(8.dp))
         Text(
             stringResource(R.string.prayer_log_month_missed, missed),
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.SemiBold),
+            style = TextStyle(fontFamily = LogFonts.text, fontSize = 12.sp, fontWeight = FontWeight.SemiBold),
             color = SkyInk
         )
     }

@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -360,7 +359,7 @@ internal fun TodayDial(
             Text(
                 type.prayerName.uppercase(LocalConfiguration.current.locales[0]),
                 style = TextStyle(
-                    fontFamily = MaterialTheme.typography.headlineSmall.fontFamily,
+                    fontFamily = LogFonts.names,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 13.sp,
                     letterSpacing = 3.sp,
@@ -466,8 +465,8 @@ private fun DialMoon(today: PrayerLogDay, times: PrayerDay?, size: androidx.comp
     }.orEmpty()
     val showHijri = !gregorian && hijri != null
     val fs = { px: Float -> with(density) { px.toSp() } }
-    val small = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = fs(max(8.5f * u, with(density) { 7.sp.toPx() })), letterSpacing = 1.4.sp)
-    val big = TextStyle(fontFamily = MaterialTheme.typography.displayLarge.fontFamily, fontWeight = FontWeight.SemiBold, fontSize = fs(30f * u), lineHeight = fs(32f * u))
+    val small = TextStyle(fontFamily = LogFonts.text, fontWeight = FontWeight.SemiBold, fontSize = fs(max(8.5f * u, with(density) { 7.sp.toPx() })), letterSpacing = 1.4.sp)
+    val big = TextStyle(fontFamily = LogFonts.numbers, fontWeight = FontWeight.SemiBold, fontSize = fs(30f * u), lineHeight = fs(32f * u))
     val description = if (showHijri) "${hijri!!.day} $hijriMonth ${hijri.year}" else today.date.format(DateTimeFormatter.ofPattern("d MMMM EEEE", locale))
 
     Column(
