@@ -549,14 +549,8 @@
     <string name="prayer_log_sky_mark_missed">Označi ispod one koje si klanjao</string>
     <string name="prayer_log_cassiopeia">Kasiopeja</string>
     <string name="prayer_log_cassiopeia_line">Pet namaza · pet zvijezda · dan potpun</string>
-    <string name="prayer_log_galaxy">Mliječni put</string>
-    <string name="prayer_log_galaxy_hint">Pet sedmica · prevuci prstom duž trake</string>
-    <string name="prayer_log_galaxy_missed">Propušteno: %1$d</string>
-    <string name="prayer_log_galaxy_show_missed">Prikaži propuštene namaze</string>
-    <string name="prayer_log_galaxy_earlier">Ranije sedmice</string>
-    <string name="prayer_log_galaxy_later">Kasnije sedmice</string>
-    <string name="prayer_log_prev_day">Prethodni dan</string>
-    <string name="prayer_log_next_day">Sljedeći dan</string>
+    <string name="prayer_log_month_missed">Propušteno: %1$d</string>
+    <string name="prayer_log_show_missed">Prikaži propuštene namaze</string>
     <string name="prayer_log_atlas">Atlas zvijezda</string>
     <string name="prayer_log_star_first_prayer">Sjevernjača</string>
     <string name="prayer_log_star_first_full_day">Pet Namaza</string>

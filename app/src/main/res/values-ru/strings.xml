@@ -549,14 +549,8 @@
     <string name="prayer_log_sky_mark_missed">Отметь ниже совершённые</string>
     <string name="prayer_log_cassiopeia">Кассиопея</string>
     <string name="prayer_log_cassiopeia_line">Пять намазов · пять звёзд · день завершён</string>
-    <string name="prayer_log_galaxy">Млечный Путь</string>
-    <string name="prayer_log_galaxy_hint">Пять недель · веди пальцем по полосе</string>
-    <string name="prayer_log_galaxy_missed">Пропущено: %1$d</string>
-    <string name="prayer_log_galaxy_show_missed">Показать пропущенные</string>
-    <string name="prayer_log_galaxy_earlier">Ранние недели</string>
-    <string name="prayer_log_galaxy_later">Поздние недели</string>
-    <string name="prayer_log_prev_day">Предыдущий день</string>
-    <string name="prayer_log_next_day">Следующий день</string>
+    <string name="prayer_log_month_missed">Пропущено: %1$d</string>
+    <string name="prayer_log_show_missed">Показать пропущенные</string>
     <string name="prayer_log_atlas">Звёздный атлас</string>
     <string name="prayer_log_star_first_prayer">Полярная звезда</string>
     <string name="prayer_log_star_first_full_day">Пять Намазов</string>

@@ -13,6 +13,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.YearMonth
 
 class PrayerLogStateTest {
 
@@ -32,45 +33,65 @@ class PrayerLogStateTest {
     ) = buildPrayerLogState(prayed, start, days, at, back, selected, monday)
 
     @Test
-    fun theGalaxyIsFiveWholeWeeksEndingThisWeekAndPicksYesterday() {
+    fun theCalendarIsThisMonthAndPicksYesterday() {
         val state = state()
-        assertEquals(35, state.galaxy.size)
-        // Four weeks before this Monday, the 28th.
-        assertEquals(LocalDate.of(2026, 8, 31), state.galaxyStart)
-        // Up to today; the rest of this week is still to come.
-        assertEquals(today, state.galaxy[29]?.date)
-        assertNull(state.galaxy[30])
+        assertEquals(YearMonth.of(2026, 9), state.month)
+        assertEquals(30, state.calendar.size)
+        // Up to today, the 29th; the 30th is still to come.
+        assertEquals(today, state.calendar[28]?.date)
+        assertNull(state.calendar[29])
         assertEquals(today.minusDays(1), state.selected?.date)
         assertTrue(state.canShowEarlier)
         assertFalse(state.canShowLater)
     }
 
     @Test
-    fun anEarlierGalaxyPicksItsLastDay() {
+    fun anEarlierMonthPicksItsLastDay() {
         val state = state(back = 1)
-        assertEquals(LocalDate.of(2026, 7, 27), state.galaxyStart)
-        assertEquals(LocalDate.of(2026, 8, 30), state.selected?.date)
-        assertTrue(state.galaxy.all { it != null })
+        assertEquals(YearMonth.of(2026, 8), state.month)
+        assertEquals(LocalDate.of(2026, 8, 31), state.selected?.date)
+        assertTrue(state.calendar.all { it != null })
         assertTrue(state.canShowLater)
     }
 
     @Test
-    fun theFirstDayOfAGalaxyPicksItself() {
-        val first = LocalDate.of(2026, 8, 31)
-        assertEquals(first, defaultSelection(first, 0, first))
+    fun aMonthPicksItsLastDayWithAPrayerMissed() {
+        val start = today.minusDays(10)
+        val gap = today.minusDays(4)
+        val prayed = generateSequence(start) { it.plusDays(1) }
+            .takeWhile { !it.isAfter(today) }
+            .associateWith {
+                when (it) {
+                    gap -> all - PrayerType.FAJR
+                    // Today's two whose time has gone are prayed; Asr is still on.
+                    today -> setOf(PrayerType.FAJR, PrayerType.DHUHR)
+                    else -> all
+                }
+            }
+        val state = state(prayed = prayed, start = start)
+        assertEquals(gap, state.selected?.date)
+        assertEquals(1, state.monthMissed[PrayerType.FAJR])
+        assertEquals(0, state.monthMissed[PrayerType.ISHA])
     }
 
     @Test
-    fun daysFindTheirGalaxy() {
-        assertEquals(0, galaxiesBetween(today, today, monday))
-        assertEquals(0, galaxiesBetween(LocalDate.of(2026, 8, 31), today, monday))
-        assertEquals(1, galaxiesBetween(LocalDate.of(2026, 8, 30), today, monday))
+    fun theFirstDayOfAMonthPicksItself() {
+        val first = LocalDate.of(2026, 10, 1)
+        assertEquals(first, defaultSelection(YearMonth.of(2026, 10), first, emptyMap()))
+    }
+
+    @Test
+    fun daysFindTheirMonth() {
+        assertEquals(0, monthsBetween(today, today))
+        assertEquals(0, monthsBetween(LocalDate.of(2026, 9, 1), today))
+        assertEquals(1, monthsBetween(LocalDate.of(2026, 8, 31), today))
+        assertEquals(12, monthsBetween(LocalDate.of(2025, 9, 1), today))
     }
 
     @Test
     fun aDayAfterTodayCannotBePicked() {
         val state = state(days = emptyList(), selected = today.plusDays(1))
-        assertEquals(today, state.selected?.date)
+        assertEquals(today.minusDays(1), state.selected?.date)
     }
 
     @Test
@@ -100,13 +121,14 @@ class PrayerLogStateTest {
         val state = state(prayed = prayed, start = start)
 
         // Yesterday missed three; today none yet (Asr is still on).
-        assertEquals(3, state.galaxyMissed)
+        assertEquals(1, state.monthMissed[PrayerType.ASR])
+        assertEquals(3, state.monthMissed.values.sum())
         assertEquals(9, state.last7Days.prayed)
         assertEquals(3, state.last7Days.missed)
         assertEquals(0.75f, state.last7Days.rate!!, 0.001f)
         assertEquals(0, state.streak)
         // Earlier days aren't held to the log.
-        val earlier = state.galaxy.first { it?.date == today.minusDays(5) }!!
+        val earlier = state.calendar.first { it?.date == today.minusDays(5) }!!
         assertEquals(PrayerLogStatus.UNTRACKED, earlier.entries.first().status)
     }
 
@@ -115,7 +137,7 @@ class PrayerLogStateTest {
         val early = LocalDateTime.of(today, LocalTime.of(4, 0))
         val state = state(at = early)
         assertNull(state.last7Days.rate)
-        assertEquals(0, state.galaxyMissed)
+        assertEquals(0, state.monthMissed.values.sum())
     }
 
     private fun prayerDay(date: LocalDate) = PrayerDay(

@@ -550,14 +550,8 @@
     <string name="prayer_log_sky_mark_missed">যেগুলো পড়েছ নিচে চিহ্নিত করো</string>
     <string name="prayer_log_cassiopeia">ক্যাসিওপিয়া</string>
     <string name="prayer_log_cassiopeia_line">পাঁচ ওয়াক্ত · পাঁচ তারা · দিন পূর্ণ</string>
-    <string name="prayer_log_galaxy">ছায়াপথ</string>
-    <string name="prayer_log_galaxy_hint">পাঁচ সপ্তাহ · ফিতার ওপর আঙুল বোলাও</string>
-    <string name="prayer_log_galaxy_missed">বাদ পড়েছে: %1$d</string>
-    <string name="prayer_log_galaxy_show_missed">বাদ পড়া নামাজ দেখাও</string>
-    <string name="prayer_log_galaxy_earlier">আগের সপ্তাহ</string>
-    <string name="prayer_log_galaxy_later">পরের সপ্তাহ</string>
-    <string name="prayer_log_prev_day">আগের দিন</string>
-    <string name="prayer_log_next_day">পরের দিন</string>
+    <string name="prayer_log_month_missed">বাদ পড়েছে: %1$d</string>
+    <string name="prayer_log_show_missed">বাদ পড়া নামাজ দেখাও</string>
     <string name="prayer_log_atlas">তারার অ্যাটলাস</string>
     <string name="prayer_log_star_first_prayer">ধ্রুবতারা</string>
     <string name="prayer_log_star_first_full_day">পাঁচ ওয়াক্ত</string>

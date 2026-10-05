@@ -549,14 +549,8 @@
     <string name="prayer_log_sky_mark_missed">Marque abaixo as que você rezou</string>
     <string name="prayer_log_cassiopeia">Cassiopeia</string>
     <string name="prayer_log_cassiopeia_line">Cinco orações · cinco estrelas · dia completo</string>
-    <string name="prayer_log_galaxy">Via Láctea</string>
-    <string name="prayer_log_galaxy_hint">Cinco semanas · deslize o dedo pela faixa</string>
-    <string name="prayer_log_galaxy_missed">%1$d perdidas</string>
-    <string name="prayer_log_galaxy_show_missed">Mostrar orações perdidas</string>
-    <string name="prayer_log_galaxy_earlier">Semanas anteriores</string>
-    <string name="prayer_log_galaxy_later">Semanas seguintes</string>
-    <string name="prayer_log_prev_day">Dia anterior</string>
-    <string name="prayer_log_next_day">Próximo dia</string>
+    <string name="prayer_log_month_missed">%1$d perdidas</string>
+    <string name="prayer_log_show_missed">Mostrar orações perdidas</string>
     <string name="prayer_log_atlas">Atlas estelar</string>
     <string name="prayer_log_star_first_prayer">Estrela Polar</string>
     <string name="prayer_log_star_first_full_day">Cinco Orações</string>

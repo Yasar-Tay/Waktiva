@@ -549,14 +549,8 @@
     <string name="prayer_log_sky_mark_missed">Zaznacz poniżej te, które odmówiłeś</string>
     <string name="prayer_log_cassiopeia">Kasjopeja</string>
     <string name="prayer_log_cassiopeia_line">Pięć modlitw · pięć gwiazd · dzień pełny</string>
-    <string name="prayer_log_galaxy">Droga Mleczna</string>
-    <string name="prayer_log_galaxy_hint">Pięć tygodni · przesuń palcem po pasie</string>
-    <string name="prayer_log_galaxy_missed">Pominięte: %1$d</string>
-    <string name="prayer_log_galaxy_show_missed">Pokaż pominięte modlitwy</string>
-    <string name="prayer_log_galaxy_earlier">Wcześniejsze tygodnie</string>
-    <string name="prayer_log_galaxy_later">Późniejsze tygodnie</string>
-    <string name="prayer_log_prev_day">Poprzedni dzień</string>
-    <string name="prayer_log_next_day">Następny dzień</string>
+    <string name="prayer_log_month_missed">Pominięte: %1$d</string>
+    <string name="prayer_log_show_missed">Pokaż pominięte modlitwy</string>
     <string name="prayer_log_atlas">Atlas gwiazd</string>
     <string name="prayer_log_star_first_prayer">Gwiazda Polarna</string>
     <string name="prayer_log_star_first_full_day">Pięć Modlitw</string>
