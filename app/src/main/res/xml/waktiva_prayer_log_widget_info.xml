@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  The prayer log widget: a 4×2 in the çetele's night, today's five prayers as stars with the
-  level, the streak and "I prayed" (see PrayerLogWidget). Refreshed with the other widgets by WaktivaWidget.updateAll, so
+  The prayer log widget: a 4×2 with the level, XP, streak, badges and today's five prayers to
+  mark (see PrayerLogWidget). Refreshed with the other widgets by WaktivaWidget.updateAll, so
   updatePeriodMillis stays 0.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"

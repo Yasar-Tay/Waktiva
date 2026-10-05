@@ -495,6 +495,7 @@
     <string name="prayer_log_all_done">Svi današnji namazi su klanjani</string>
     <string name="prayer_log_streak">punih dana zaredom</string>
     <string name="prayer_log_week">Posljednjih 7 dana</string>
+    <string name="prayer_log_month">Posljednjih 30 dana</string>
     <string name="prayer_log_missed_total">Ukupno propušteno</string>
     <string name="prayer_log_prev_month">Prethodni mjesec</string>
     <string name="prayer_log_next_month">Sljedeći mjesec</string>
@@ -504,6 +505,7 @@
     <string name="prayer_log_xp_to_next">%1$d XP do nivoa %2$d</string>
     <string name="prayer_log_full_day_bonus">Bonus za pun dan</string>
     <string name="prayer_log_best_streak">Najbolje: %1$d</string>
+    <string name="prayer_log_badges">Značke</string>
     <string name="prayer_log_badge_unlocked">Nova značka</string>
     <string name="prayer_log_level_up">Novi nivo!</string>
     <string name="prayer_log_badge_earned">Osvojeno</string>
@@ -542,22 +544,4 @@
     <string name="prayer_log_celebrate_level">Novi nivo! Sada si na nivou %1$d 🎉</string>
     <string name="widget_prayer_log_description">Tvoj nivo, niz i značke, s današnjim namazima za označiti jednim dodirom</string>
     <string name="widget_prayer_log_off">Uključi evidenciju namaza u Postavkama</string>
-    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
-    <string name="prayer_log_sky_title">Zvijezde dana</string>
-    <string name="prayer_log_sky_lit">upaljenih zvijezda</string>
-    <string name="prayer_log_sky_done">Tvoje nebo je potpuno. Neka Allah primi.</string>
-    <string name="prayer_log_sky_mark_missed">Označi ispod one koje si klanjao</string>
-    <string name="prayer_log_cassiopeia">Kasiopeja</string>
-    <string name="prayer_log_cassiopeia_line">Pet namaza · pet zvijezda · dan potpun</string>
-    <string name="prayer_log_month_missed">Propušteno: %1$d</string>
-    <string name="prayer_log_show_missed">Prikaži propuštene namaze</string>
-    <string name="prayer_log_atlas">Atlas zvijezda</string>
-    <string name="prayer_log_star_first_prayer">Sjevernjača</string>
-    <string name="prayer_log_star_first_full_day">Pet Namaza</string>
-    <string name="prayer_log_star_streak_3">Trokut</string>
-    <string name="prayer_log_star_streak_7">Labud</string>
-    <string name="prayer_log_star_fajr_7">Venera</string>
-    <string name="prayer_log_star_prayers_100">Sjeverna kruna</string>
-    <string name="prayer_log_star_streak_40">Veliki medvjed</string>
-    <string name="prayer_log_star_prayers_500">Orion</string>
 </resources>

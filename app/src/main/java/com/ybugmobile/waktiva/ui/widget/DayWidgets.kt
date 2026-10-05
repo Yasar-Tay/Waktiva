@@ -24,6 +24,7 @@ import com.ybugmobile.waktiva.domain.model.isLogged
 import com.ybugmobile.waktiva.ui.home.composables.accentColor
 import com.ybugmobile.waktiva.ui.home.composables.degrees
 import com.ybugmobile.waktiva.ui.home.composables.iconRes
+import com.ybugmobile.waktiva.ui.home.composables.skyLight
 import com.ybugmobile.waktiva.ui.home.composables.weatherIconRes
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
@@ -36,14 +37,13 @@ import java.util.Locale
  *
  *   OPEN    – "Dhuhr time", the time left for it, and the sphere offering "I prayed"
  *   ENDING  – the same in amber in the last half hour of its time
- *   PRAYED  – "✓ Dhuhr prayed", a calm countdown to the next prayer
+ *   PRAYED  – "✓ Dhuhr prayed", the sphere gold, a calm countdown to the next prayer
  *   WAITING – after sunrise, the countdown to the next prayer
  *
- * In the 4×2 ([WaktivaDayRingWidget]) the moment's pane, the prayer's own star in a round pane of
- * the prayer log's night in a ring of the time left, is the "I prayed" button: the star waiting
- * while its time is on, lit once marked, and a tap on it then takes the mark back. The 4×4 ([WaktivaMyDayWidget]) is drawn in the prayer log's night: the day's
- * prayers as stars on the sun's path, lit once marked ([SkyWidgetArt]), Cassiopeia's W once the
- * day is full, with "I prayed" under them for the prayer whose time is on.
+ * The moment's sphere is a glass orb in the home screen's materials, holding the sky of the hour
+ * in the prayer's colour; it is the "I prayed" button, and a tap on it once gold takes the mark
+ * back. In the 4×2 ([WaktivaDayRingWidget]) it sits in a ring of the time left; in the 4×4
+ * ([WaktivaMyDayWidget]) it is the heart of the day circle, whose prayers are glass spheres too.
  *
  * Marks go to the prayer log without opening the app ([DayWidgetActionReceiver]). The widgets
  * redraw every quarter hour without waking the phone and when a prayer's time starts ending
@@ -64,11 +64,8 @@ internal object DayWidgets {
     /** The painted parts' bitmaps, in dp at the most, and in pixels at the most whatever the density. */
     private const val ORB_DP = 112
     private const val ORB_MAX_PX = 360
-    /** A day card's mark, as the card lays it out. */
-    private const val MARK_DP = 16
-    private const val SKY_W_DP = 318
-    private const val SKY_H_DP = 150
-    private const val SKY_MAX_PX = 900
+    private const val RING_DP = 240
+    private const val RING_MAX_PX = 720
 
     private const val REQUEST_TICK = 7_303
 
@@ -84,6 +81,7 @@ internal object DayWidgets {
     private const val COLOR_SECONDARY = 0xB3FFFFFF.toInt()
     private const val COLOR_TERTIARY = 0x73FFFFFF
     private const val COLOR_ENDING_COUNT = 0xFFFDE68A.toInt()
+    private const val COLOR_PRAYED = 0xFFFFD54F.toInt()
 
     /** The green of a prayer whose time is on, as on the prayer log's chips. */
     private val Open = Color(0xFF6EE7B7)
@@ -99,29 +97,18 @@ internal object DayWidgets {
         val logEnabled: Boolean,
         val orb: WidgetArt.Orb,
         val remaining: Float,
-        /** The day's prayers as the my day widget's stars, and whether they form Cassiopeia. */
-        val sky: List<SkyWidgetArt.SkyStar>,
-        val queen: Boolean,
-        val rtl: Boolean
+        val ring: DayRing
     ) {
         private var orbBitmap: Bitmap? = null
-        private var skyBitmap: Bitmap? = null
+        private var ringBitmap: Bitmap? = null
 
         fun orb(context: Context): Bitmap = orbBitmap ?: WidgetArt.momentOrb(
             context, orb, remaining, arcColor(moment), px(context, ORB_DP, ORB_MAX_PX)
         ).also { orbBitmap = it }
 
-        fun sky(context: Context): Bitmap = skyBitmap ?: run {
-            val density = context.resources.displayMetrics.density
-            val scale = (SKY_MAX_PX / (SKY_W_DP * density)).coerceAtMost(1f)
-            SkyWidgetArt.daySky(
-                sky, queen,
-                width = (SKY_W_DP * density * scale).toInt(),
-                height = (SKY_H_DP * density * scale).toInt(),
-                density = density * scale,
-                rtl = rtl
-            )
-        }.also { skyBitmap = it }
+        fun ring(context: Context): Bitmap = ringBitmap ?: DayRingPainter.render(
+            context, ring, px(context, RING_DP, RING_MAX_PX)
+        ).also { ringBitmap = it }
 
         private fun px(context: Context, dp: Int, max: Int) =
             (dp * context.resources.displayMetrics.density).toInt().coerceIn(1, max)
@@ -165,37 +152,28 @@ internal object DayWidgets {
         val current = DayWidgetModel.currentPrayer(day, now.toLocalTime())
         val hero = hero(moment)
         val orb = WidgetArt.Orb(
-            type = hero,
-            star = when (moment.state) {
-                MomentState.PRAYED -> SkyWidgetArt.Star.LIT
-                MomentState.WAITING -> SkyWidgetArt.Star.LATER
-                MomentState.OPEN, MomentState.ENDING -> SkyWidgetArt.Star.NOW
-            },
+            color = hero.accentColor,
+            sky = skyLight(now.hour * 60f + now.minute, day),
+            icon = hero.iconRes,
+            prayed = moment.state == MomentState.PRAYED,
+            raised = true,
             caption = if (moment.canMark) context.getString(R.string.prayer_log_mark).uppercase(locale(context)) else null
         )
-        val times = DayWidgetModel.times(day, now, current, prayedToday)
         return Today(
             day = day,
             moment = moment,
-            times = times,
+            times = DayWidgetModel.times(day, now, current, prayedToday),
             logEnabled = logEnabled,
             orb = orb,
             remaining = moment.remaining(now),
-            sky = times.map { time ->
-                SkyWidgetArt.SkyStar(
-                    type = time.type,
-                    minutes = time.time.hour * 60 + time.time.minute,
-                    star = when {
-                        !logEnabled -> if (time.isCurrent) SkyWidgetArt.Star.NOW else SkyWidgetArt.Star.PLAIN
-                        time.isPrayed -> SkyWidgetArt.Star.LIT
-                        time.isCurrent -> SkyWidgetArt.Star.NOW
-                        time.isPassed -> SkyWidgetArt.Star.MISSED
-                        else -> SkyWidgetArt.Star.LATER
-                    }
-                )
-            },
-            queen = logEnabled && times.size == 5 && times.all { it.isPrayed },
-            rtl = context.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+            ring = DayRing(
+                day = day,
+                now = now.toLocalTime(),
+                current = current,
+                prayed = prayedToday,
+                hub = orb,
+                rtl = context.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+            )
         )
     }
 
@@ -250,13 +228,10 @@ internal object DayWidgets {
         views.setOnClickPendingIntent(android.R.id.background, WaktivaWidget.openAppIntent(context))
         if (today == null) return views.showEmpty(snapshot)
         views.showContent()
-        // The prayer log's night, whatever the hour: the day's stars are drawn on it.
-        views.setImageViewBitmap(R.id.widget_bg, SkyWidgetArt.night(400, 400))
+        views.setImageViewBitmap(R.id.widget_bg, background(snapshot, today.moment, Backdrop.LARGE))
 
         bindMoment(context, views, snapshot, today, countSp = 38f, showNext = false)
-        views.setImageViewBitmap(R.id.widget_ring, today.sky(context))
-        views.setViewVisibility(R.id.widget_mark, if (today.moment.canMark) View.VISIBLE else View.GONE)
-        views.setTextViewText(R.id.widget_mark_text, context.getString(R.string.prayer_log_mark))
+        views.setImageViewBitmap(R.id.widget_ring, today.ring(context))
 
         views.removeAllViews(R.id.widget_times)
         today.times.forEach { time -> views.addView(R.id.widget_times, dayCard(context, today, time)) }
@@ -265,9 +240,8 @@ internal object DayWidgets {
 
     /**
      * One of the day's prayers as a card. With the log on, a prayer whose time has come (the
-     * current one or an earlier one) is marked or unmarked with a tap, its mark the prayer's own
-     * star as the prayer log screen draws it: lit once prayed, its outline calling while its time
-     * is on, eclipsed once its time went by.
+     * current one or an earlier one) is marked or unmarked with a tap: gold with a tick once
+     * prayed, an empty ring while it waits.
      */
     private fun dayCard(context: Context, today: Today, time: DayTime): RemoteViews {
         val cell = RemoteViews(context.packageName, R.layout.widget_day_column)
@@ -278,24 +252,22 @@ internal object DayWidgets {
         val prayed = time.isPrayed && today.logEnabled
         val markable = today.logEnabled && (time.isCurrent || time.isPassed)
         val (nameColor, clockColor) = when {
+            prayed -> COLOR_PRAYED to COLOR_PRAYED
             time.isCurrent -> COLOR_PRIMARY to COLOR_PRIMARY
-            prayed -> COLOR_SECONDARY to COLOR_PRIMARY
             time.isPassed -> if (markable) COLOR_SECONDARY to COLOR_SECONDARY else COLOR_TERTIARY to COLOR_TERTIARY
             else -> COLOR_SECONDARY to COLOR_PRIMARY
         }
         cell.setTextColor(R.id.widget_cell_name, nameColor)
         cell.setTextColor(R.id.widget_cell_time, clockColor)
-        if (time.isCurrent) cell.setInt(R.id.widget_cell, "setBackgroundResource", R.drawable.widget_cell_highlight)
+        when {
+            prayed -> cell.setInt(R.id.widget_cell, "setBackgroundResource", R.drawable.widget_day_card_prayed)
+            time.isCurrent -> cell.setInt(R.id.widget_cell, "setBackgroundResource", R.drawable.widget_cell_highlight)
+        }
 
         if (prayed || markable) {
             cell.setViewVisibility(R.id.widget_cell_mark, View.VISIBLE)
-            val density = context.resources.displayMetrics.density
-            val star = when {
-                prayed -> SkyWidgetArt.Star.LIT
-                time.isCurrent -> SkyWidgetArt.Star.NOW
-                else -> SkyWidgetArt.Star.MISSED
-            }
-            cell.setImageViewBitmap(R.id.widget_cell_mark, SkyWidgetArt.mark(time.type, star, (MARK_DP * density).toInt()))
+            cell.setImageViewResource(R.id.widget_cell_mark, if (prayed) R.drawable.ic_widget_check else R.drawable.widget_mark_ring)
+            if (prayed) cell.setInt(R.id.widget_cell_mark, "setColorFilter", COLOR_PRAYED)
         }
         if (markable) {
             val prayerName = time.type.getPrayerName(context)
@@ -332,7 +304,7 @@ internal object DayWidgets {
     /**
      * The moment: its chip, the live countdown to the end of the prayer's time (the next
      * prayer's start, so one figure serves both), what comes next with the weather now, and the
-     * pane's tap: "I prayed", or taking the mark back once its star is lit.
+     * sphere's tap: "I prayed", or taking the mark back once it's gold.
      */
     private fun bindMoment(
         context: Context,

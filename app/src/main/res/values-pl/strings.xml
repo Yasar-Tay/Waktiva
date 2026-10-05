@@ -495,6 +495,7 @@
     <string name="prayer_log_all_done">Wszystkie dzisiejsze modlitwy odmówione</string>
     <string name="prayer_log_streak">pełnych dni z rzędu</string>
     <string name="prayer_log_week">Ostatnie 7 dni</string>
+    <string name="prayer_log_month">Ostatnie 30 dni</string>
     <string name="prayer_log_missed_total">Pominięte łącznie</string>
     <string name="prayer_log_prev_month">Poprzedni miesiąc</string>
     <string name="prayer_log_next_month">Następny miesiąc</string>
@@ -504,6 +505,7 @@
     <string name="prayer_log_xp_to_next">%1$d XP do poziomu %2$d</string>
     <string name="prayer_log_full_day_bonus">Premia za pełny dzień</string>
     <string name="prayer_log_best_streak">Rekord: %1$d</string>
+    <string name="prayer_log_badges">Odznaki</string>
     <string name="prayer_log_badge_unlocked">Nowa odznaka</string>
     <string name="prayer_log_level_up">Nowy poziom!</string>
     <string name="prayer_log_badge_earned">Zdobyta</string>
@@ -542,22 +544,4 @@
     <string name="prayer_log_celebrate_level">Nowy poziom! Masz teraz poziom %1$d 🎉</string>
     <string name="widget_prayer_log_description">Twój poziom, seria i odznaki oraz dzisiejsze modlitwy do zaznaczenia jednym dotknięciem</string>
     <string name="widget_prayer_log_off">Włącz dziennik modlitw w Ustawieniach</string>
-    <!-- The prayer log as a night sky: today's stars, the Milky Way, the star atlas -->
-    <string name="prayer_log_sky_title">Gwiazdy dnia</string>
-    <string name="prayer_log_sky_lit">zapalone gwiazdy</string>
-    <string name="prayer_log_sky_done">Twoje niebo jest pełne. Niech Allah to przyjmie.</string>
-    <string name="prayer_log_sky_mark_missed">Zaznacz poniżej te, które odmówiłeś</string>
-    <string name="prayer_log_cassiopeia">Kasjopeja</string>
-    <string name="prayer_log_cassiopeia_line">Pięć modlitw · pięć gwiazd · dzień pełny</string>
-    <string name="prayer_log_month_missed">Pominięte: %1$d</string>
-    <string name="prayer_log_show_missed">Pokaż pominięte modlitwy</string>
-    <string name="prayer_log_atlas">Atlas gwiazd</string>
-    <string name="prayer_log_star_first_prayer">Gwiazda Polarna</string>
-    <string name="prayer_log_star_first_full_day">Pięć Modlitw</string>
-    <string name="prayer_log_star_streak_3">Trójkąt</string>
-    <string name="prayer_log_star_streak_7">Łabędź</string>
-    <string name="prayer_log_star_fajr_7">Wenus</string>
-    <string name="prayer_log_star_prayers_100">Korona Północna</string>
-    <string name="prayer_log_star_streak_40">Wielki Wóz</string>
-    <string name="prayer_log_star_prayers_500">Orion</string>
 </resources>

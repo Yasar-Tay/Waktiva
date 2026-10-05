@@ -1,43 +1,101 @@
 package com.ybugmobile.waktiva.ui.prayerlog
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.LocalFireDepartment
+import androidx.compose.material.icons.rounded.Remove
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
+import com.ybugmobile.waktiva.ui.home.composables.InTimeGreen
+import com.ybugmobile.waktiva.ui.home.composables.MissedRed
+import com.ybugmobile.waktiva.ui.home.composables.PrayedGold
+import com.ybugmobile.waktiva.ui.home.composables.accentColor
+import com.ybugmobile.waktiva.ui.home.composables.iconRes
+import com.ybugmobile.waktiva.ui.theme.GlassSurface
+import com.ybugmobile.waktiva.ui.theme.LocalGlassTheme
 import kotlinx.coroutines.delay
+import java.text.NumberFormat
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.time.temporal.WeekFields
+import kotlin.math.abs
 
 /**
- * The prayer log (çetele) in the deep sky: clouds of gas and pillars of dust (see [CosmicSky]).
- *
- * At the top, today on the dial of the day (see [TodayDial]): the five prayers as stars on the
- * day's ring, lit with a tap, the ring lit between two prayed in a row and closing when the day is
- * full. Under it, the button for the prayer whose time is on, and the streak and the level.
- *
- * Then the calendar: a month of days, the days and the prayers missed standing out, a day picked
- * to look at and mark (see [LogCalendar]); and the star atlas, the badges each a constellation.
+ * The prayer log (çetele), in two cards. Today: the five prayers around a ring, to mark with a
+ * tap, and under them the streak and the last week's and month's share of prayers prayed. History:
+ * a month calendar where each day is a small ring of its five prayers; picking a day opens its
+ * prayers under the calendar to mark or unmark. It opens on yesterday, the day most often left
+ * to fill in, and swipes between months.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val contentColor = LocalGlassTheme.current.contentColor
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val haptics = LocalHapticFeedback.current
     val onToggle = remember(viewModel, haptics) {
@@ -48,10 +106,10 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
         }
     }
 
-    // What changed since the last look, to cheer for: the day made full, a level or a badge
-    // (stardust, and a word for the last two). The first look after the screen opens is only taken in.
+    // What changed since the last look, to cheer for: a day made full, a level, a badge. The first
+    // look after the screen opens is only taken in.
     val unlocks = remember { mutableStateListOf<Unlock>() }
-    var stardust by remember { mutableIntStateOf(0) }
+    var confetti by remember { mutableIntStateOf(0) }
     var seen by remember { mutableStateOf<PrayerLogViewState?>(null) }
     LaunchedEffect(state) {
         if (state.isLoading) return@LaunchedEffect
@@ -66,8 +124,10 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
         unlocks += news
         val dayFilled = state.today?.isComplete == true && before.today?.isComplete == false &&
             state.today?.date == before.today?.date
-        if (dayFilled) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-        if (news.isNotEmpty() || dayFilled) stardust++
+        if (news.isNotEmpty() || dayFilled) {
+            confetti++
+            if (dayFilled) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+        }
     }
     val unlock = unlocks.firstOrNull()
     LaunchedEffect(unlock) {
@@ -77,105 +137,881 @@ fun PrayerLogScreen(viewModel: PrayerLogViewModel = hiltViewModel()) {
         }
     }
 
-    val scroll = rememberScrollState()
-    Box(Modifier.fillMaxSize()) {
-        CosmicSky(Modifier.fillMaxSize(), scroll = { if (isLandscape) 0 else scroll.value })
-
+    Scaffold(
+        containerColor = Color.Transparent,
+        topBar = {
+            // Landscape is short of height: the navigation rail beside it names the screen.
+            if (!isLandscape) CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.prayer_log_title).uppercase(),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Black,
+                            letterSpacing = 2.sp
+                        ),
+                        color = Color.White
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent
+                ),
+                modifier = Modifier.statusBarsPadding()
+            )
+        },
+        contentWindowInsets = WindowInsets.systemBars
+    ) { padding ->
         val today = state.today
         if (state.isLoading || today == null) {
-            CircularProgressIndicator(color = SkyInk, modifier = Modifier.align(Alignment.Center))
-            return@Box
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = contentColor)
+            }
+            return@Scaffold
         }
-        val onMark = { entry: PrayerLogEntry -> onToggle(today.date, entry) }
+
         val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-        val sky = @Composable {
-            SkyHeader(today, Modifier.padding(horizontal = 20.dp))
-            Spacer(Modifier.height(8.dp))
-            Box(Modifier.fillMaxWidth().padding(horizontal = 10.dp), contentAlignment = Alignment.TopCenter) {
-                TodayDial(
-                    today = today,
-                    times = state.todayTimes,
-                    now = state.now,
-                    onToggle = onMark,
-                    modifier = Modifier.widthIn(max = 420.dp).fillMaxWidth()
-                )
-            }
-            Spacer(Modifier.height(12.dp))
-            SkyCall(today, isFirstUse = state.startDate == null, onMark = onMark, modifier = Modifier.padding(horizontal = 20.dp))
-            Spacer(Modifier.height(24.dp))
-            SkyNumbers(state, Modifier.padding(horizontal = 20.dp))
-        }
-        val history = @Composable {
-            LogCalendar(state, viewModel::showMonth, viewModel::select, onToggle, Modifier.padding(horizontal = 20.dp))
-            Spacer(Modifier.height(48.dp))
-            StarAtlas(state.progress, Modifier.padding(horizontal = 20.dp))
+        val historyCard = @Composable { compact: Boolean ->
+            HistoryCard(
+                state = state,
+                onShowMonth = viewModel::showMonth,
+                onSelect = viewModel::select,
+                onToggle = onToggle,
+                compact = compact
+            )
         }
 
-        if (isLandscape) {
-            // Side by side, clear of the navigation rail: the day on one side, the galaxy and the
-            // atlas on the other, each scrolling on its own.
-            Row(
-                Modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top))
-                    .padding(start = 76.dp, end = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+        Box(Modifier.fillMaxSize()) {
+            if (isLandscape) {
+                // Side by side, clear of the navigation rail: today and the game on one side, the
+                // calendar on the other, each scrolling on its own.
+                // The system bars and the cut-out sit at either side in landscape: the navigation
+                // rail is past those at the start, the system buttons may be at the end.
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = padding.calculateTopPadding())
+                        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                        .padding(start = 76.dp, end = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(0.85f)
+                            .verticalScroll(rememberScrollState())
+                            .padding(top = 12.dp, bottom = bottomInset + 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        LandscapeTodayCard(today, state, onToggle)
+                        BadgesCard(state.progress)
+                    }
+                    Column(
+                        modifier = Modifier
+                            .weight(1.15f)
+                            .verticalScroll(rememberScrollState())
+                            .padding(top = 12.dp, bottom = bottomInset + 16.dp)
+                    ) {
+                        historyCard(true)
+                    }
+                }
+            } else {
                 Column(
-                    Modifier
-                        .weight(0.9f)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = padding.calculateTopPadding())
                         .verticalScroll(rememberScrollState())
-                        .padding(top = 12.dp, bottom = bottomInset + 16.dp)
-                ) { sky() }
-                Column(
-                    Modifier
-                        .weight(1.1f)
-                        .verticalScroll(rememberScrollState())
-                        .padding(top = 20.dp, bottom = bottomInset + 16.dp)
-                ) { history() }
+                        .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = bottomInset + 100.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    LevelCard(state.progress)
+                    TodayCard(today, state, onToggle)
+                    BadgesCard(state.progress)
+                    historyCard(false)
+                }
             }
-        } else {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scroll)
-                    .windowInsetsPadding(WindowInsets.statusBars)
-                    .padding(top = 12.dp, bottom = bottomInset + 100.dp)
-            ) {
-                sky()
-                Spacer(Modifier.height(56.dp))
-                history()
-            }
-        }
 
-        ConfettiBurst(stardust, Modifier.fillMaxSize())
-        UnlockToast(
-            unlock,
-            Modifier
-                .align(Alignment.TopCenter)
-                .windowInsetsPadding(WindowInsets.statusBars)
-                .padding(top = 8.dp)
-        )
+            ConfettiBurst(confetti, Modifier.fillMaxSize())
+            UnlockToast(
+                unlock,
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = padding.calculateTopPadding() + 8.dp)
+            )
+        }
     }
 }
 
 /**
- * The screen's name and today's date. The prayer whose time is on isn't named here: its star calls
- * in the sky below and the button under it names it.
+ * Today: the ring, a line saying what's next, the five prayers to mark, and the streak and
+ * week's and month's share of prayers prayed along the bottom.
  */
 @Composable
-private fun SkyHeader(today: PrayerLogDay, modifier: Modifier = Modifier) {
+private fun TodayCard(
+    today: PrayerLogDay,
+    state: PrayerLogViewState,
+    onToggle: (LocalDate, PrayerLogEntry) -> Unit
+) {
+    val contentColor = LocalGlassTheme.current.contentColor
+
+    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(20.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                DayRing(today, Modifier.size(92.dp))
+                Spacer(Modifier.width(18.dp))
+                TodayHeadline(today, state, Modifier.weight(1f))
+            }
+
+            Spacer(Modifier.height(20.dp))
+            PrayerRow(today, chipSize = 46.dp, onToggle = onToggle)
+            Spacer(Modifier.height(16.dp))
+            FullDayBonus(today.isComplete, Modifier.align(Alignment.CenterHorizontally))
+            Spacer(Modifier.height(16.dp))
+            HorizontalDivider(color = contentColor.copy(alpha = 0.1f))
+            Spacer(Modifier.height(14.dp))
+            Stats(state)
+        }
+    }
+}
+
+/**
+ * Landscape's today, with the level folded in to spare the short height: the ring beside the
+ * headline and the level line, then the five prayers, the full day's bonus and the figures.
+ */
+@Composable
+private fun LandscapeTodayCard(
+    today: PrayerLogDay,
+    state: PrayerLogViewState,
+    onToggle: (LocalDate, PrayerLogEntry) -> Unit
+) {
+    val contentColor = LocalGlassTheme.current.contentColor
+
+    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                DayRing(today, Modifier.size(76.dp))
+                Spacer(Modifier.width(14.dp))
+                Column(Modifier.weight(1f)) {
+                    TodayHeadline(today, state)
+                    Spacer(Modifier.height(8.dp))
+                    LevelLine(state.progress, compact = true)
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            PrayerRow(today, chipSize = 40.dp, onToggle = onToggle)
+            Spacer(Modifier.height(10.dp))
+            FullDayBonus(today.isComplete, Modifier.align(Alignment.CenterHorizontally))
+            Spacer(Modifier.height(10.dp))
+            HorizontalDivider(color = contentColor.copy(alpha = 0.1f))
+            Spacer(Modifier.height(8.dp))
+            Stats(state)
+        }
+    }
+}
+
+/**
+ * Today's date over what matters now: the prayer whose time is on, else how the day stands.
+ * Until the first prayer is marked, how to mark one.
+ */
+@Composable
+private fun TodayHeadline(today: PrayerLogDay, state: PrayerLogViewState, modifier: Modifier = Modifier) {
+    val contentColor = LocalGlassTheme.current.contentColor
     val locale = LocalConfiguration.current.locales[0]
-    Column(modifier.fillMaxWidth()) {
+    val active = today.entries.firstOrNull { it.status == PrayerLogStatus.ACTIVE }
+
+    Column(modifier) {
         Text(
-            stringResource(R.string.prayer_log_title).uppercase(locale),
-            style = TextStyle(fontFamily = LogFonts.text, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 4.sp, shadow = TextShade),
-            color = skyFaint(0.72f)
+            text = today.date.format(DateTimeFormatter.ofPattern("d MMMM, EEEE", locale)),
+            style = MaterialTheme.typography.labelMedium,
+            color = contentColor.copy(alpha = 0.6f)
         )
+        Spacer(Modifier.height(4.dp))
         Text(
-            today.date.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", locale)).replaceFirstChar { it.titlecase(locale) },
-            style = TextStyle(fontFamily = LogFonts.names, fontWeight = FontWeight.SemiBold, fontSize = 26.sp, shadow = TextShade),
-            color = SkyInk
+            text = when {
+                today.isComplete -> stringResource(R.string.prayer_log_all_done)
+                active != null -> stringResource(R.string.prayer_log_now, active.type.prayerName)
+                state.startDate == null -> stringResource(R.string.prayer_log_hint)
+                else -> stringResource(R.string.prayer_log_today_count, today.prayed, today.entries.size)
+            },
+            style = if (state.startDate == null && active == null && !today.isComplete) {
+                MaterialTheme.typography.bodySmall.copy(lineHeight = 17.sp)
+            } else {
+                MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            },
+            color = contentColor
         )
     }
 }
+
+/** The streak and the last week's and month's share of prayers prayed, as one row of figures. */
+@Composable
+private fun Stats(state: PrayerLogViewState) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val locale = LocalConfiguration.current.locales[0]
+    val percent = remember(locale) { NumberFormat.getPercentInstance(locale) }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Stat(
+            value = state.streak.toString(),
+            label = stringResource(R.string.prayer_log_streak),
+            icon = Icons.Rounded.LocalFireDepartment,
+            iconTint = if (state.streak > 0) PrayedGold else contentColor.copy(alpha = 0.3f),
+            note = state.progress.bestStreak.takeIf { it > 0 }
+                ?.let { stringResource(R.string.prayer_log_best_streak, it) },
+            modifier = Modifier.weight(1f)
+        )
+        StatDivider()
+        Stat(
+            value = state.last7Days.rate?.let { percent.format(it) } ?: "—",
+            label = stringResource(R.string.prayer_log_week),
+            modifier = Modifier.weight(1f)
+        )
+        StatDivider()
+        Stat(
+            value = state.last30Days.rate?.let { percent.format(it) } ?: "—",
+            label = stringResource(R.string.prayer_log_month),
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun Stat(
+    value: String,
+    label: String,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    iconTint: Color = Color.Unspecified,
+    note: String? = null
+) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (icon != null) {
+                Icon(icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(4.dp))
+            }
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    fontFeatureSettings = "tnum"
+                ),
+                color = contentColor,
+                maxLines = 1
+            )
+        }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = contentColor.copy(alpha = 0.55f),
+            textAlign = TextAlign.Center,
+            maxLines = 2
+        )
+        if (note != null) {
+            Text(
+                text = note,
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                color = PrayedGold.copy(alpha = 0.85f),
+                maxLines = 1
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatDivider() {
+    Box(
+        Modifier
+            .padding(vertical = 4.dp)
+            .width(1.dp)
+            .fillMaxHeight()
+            .background(LocalGlassTheme.current.contentColor.copy(alpha = 0.1f))
+    )
+}
+
+/**
+ * The month calendar, each day a small ring of its five prayers, and the picked day's prayers to
+ * mark. Arrows or a swipe move between months. In portrait the day's prayers are a row under the
+ * month; [compact], for landscape's short height, puts them in a column beside a flatter month
+ * when there's the width for it, else under it.
+ */
+@Composable
+private fun HistoryCard(
+    state: PrayerLogViewState,
+    onShowMonth: (Long) -> Unit,
+    onSelect: (LocalDate) -> Unit,
+    onToggle: (LocalDate, PrayerLogEntry) -> Unit,
+    compact: Boolean = false
+) {
+    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
+        if (!compact) {
+            Column(Modifier.padding(horizontal = 12.dp, vertical = 14.dp)) {
+                MonthHeader(state, onShowMonth)
+                Spacer(Modifier.height(8.dp))
+                MonthPager(state, onShowMonth, onSelect, cellAspect = 1f)
+                state.selected?.let { SelectedDayRow(it, onToggle) }
+            }
+            return@GlassSurface
+        }
+        BoxWithConstraints {
+            if (maxWidth >= SideBySideMinWidth) {
+                Row(Modifier.padding(start = 8.dp, end = 12.dp, top = 6.dp, bottom = 10.dp)) {
+                    Column(Modifier.weight(1f)) {
+                        MonthHeader(state, onShowMonth)
+                        MonthPager(state, onShowMonth, onSelect, cellAspect = 1.2f)
+                    }
+                    state.selected?.let { day ->
+                        Spacer(Modifier.width(10.dp))
+                        SelectedDayColumn(day, onToggle, Modifier.width(SelectedDayWidth))
+                    }
+                }
+            } else {
+                Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                    MonthHeader(state, onShowMonth)
+                    MonthPager(state, onShowMonth, onSelect, cellAspect = 1.5f)
+                    state.selected?.let { SelectedDayRow(it, onToggle) }
+                }
+            }
+        }
+    }
+}
+
+/** The month shown, between the arrows to the months around it, with the prayers missed in all. */
+@Composable
+private fun MonthHeader(state: PrayerLogViewState, onShowMonth: (Long) -> Unit) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val locale = LocalConfiguration.current.locales[0]
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        IconButton(onClick = { onShowMonth(-1) }, enabled = state.canShowPreviousMonth) {
+            Icon(
+                Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
+                contentDescription = stringResource(R.string.prayer_log_prev_month),
+                tint = contentColor.copy(alpha = if (state.canShowPreviousMonth) 0.8f else 0.2f)
+            )
+        }
+        Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = state.shownMonth.format(DateTimeFormatter.ofPattern("LLLL yyyy", locale))
+                    .replaceFirstChar { it.titlecase(locale) },
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = contentColor
+            )
+            if (state.missedSinceStart > 0) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(R.string.prayer_log_missed_total),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = contentColor.copy(alpha = 0.55f)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = NumberFormat.getIntegerInstance(locale).format(state.missedSinceStart),
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black),
+                        color = MissedRed
+                    )
+                }
+            }
+        }
+        IconButton(onClick = { onShowMonth(1) }, enabled = state.canShowNextMonth) {
+            Icon(
+                Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                contentDescription = stringResource(R.string.prayer_log_next_month),
+                tint = contentColor.copy(alpha = if (state.canShowNextMonth) 0.8f else 0.2f)
+            )
+        }
+    }
+}
+
+/** The shown month's days; a swipe turns the month, towards the start of the line for the next one. */
+@Composable
+private fun MonthPager(
+    state: PrayerLogViewState,
+    onShowMonth: (Long) -> Unit,
+    onSelect: (LocalDate) -> Unit,
+    cellAspect: Float
+) {
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    var drag by remember { mutableFloatStateOf(0f) }
+    AnimatedContent(
+        targetState = state.shownMonth,
+        transitionSpec = { fadeIn(tween(220)) togetherWith fadeOut(tween(160)) },
+        label = "calendarMonth",
+        modifier = Modifier.pointerInput(state.canShowPreviousMonth, state.canShowNextMonth, isRtl) {
+            detectHorizontalDragGestures(
+                onDragStart = { drag = 0f },
+                onDragEnd = {
+                    val forward = if (isRtl) drag > 0f else drag < 0f
+                    if (abs(drag) > 60.dp.toPx()) {
+                        if (forward && state.canShowNextMonth) onShowMonth(1)
+                        if (!forward && state.canShowPreviousMonth) onShowMonth(-1)
+                    }
+                }
+            ) { _, amount -> drag += amount }
+        }
+    ) { month ->
+        MonthGrid(
+            month = month,
+            today = state.today?.date,
+            days = state.calendar,
+            selected = state.selected?.date,
+            onSelect = onSelect,
+            cellAspect = cellAspect
+        )
+    }
+}
+
+/** The picked day under the month: its date and count, then its five prayers in a row to mark. */
+@Composable
+private fun SelectedDayRow(day: PrayerLogDay, onToggle: (LocalDate, PrayerLogEntry) -> Unit) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val locale = LocalConfiguration.current.locales[0]
+    Spacer(Modifier.height(10.dp))
+    HorizontalDivider(
+        color = contentColor.copy(alpha = 0.1f),
+        modifier = Modifier.padding(horizontal = 8.dp)
+    )
+    Spacer(Modifier.height(14.dp))
+    Row(
+        modifier = Modifier.padding(horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = day.date.format(DateTimeFormatter.ofPattern("d MMMM, EEEE", locale)),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            color = contentColor,
+            modifier = Modifier.weight(1f)
+        )
+        DayCount(day)
+    }
+    Spacer(Modifier.height(14.dp))
+    Box(Modifier.padding(horizontal = 8.dp)) {
+        PrayerRow(day, chipSize = 40.dp, onToggle = onToggle)
+    }
+    Spacer(Modifier.height(6.dp))
+}
+
+/**
+ * The picked day beside the month, for landscape: its date and count over its five prayers in a
+ * column, each a row to tap with its mark and its name.
+ */
+@Composable
+private fun SelectedDayColumn(day: PrayerLogDay, onToggle: (LocalDate, PrayerLogEntry) -> Unit, modifier: Modifier = Modifier) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val locale = LocalConfiguration.current.locales[0]
+    Column(modifier.padding(top = 12.dp)) {
+        Row(verticalAlignment = Alignment.Top) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = day.date.format(DateTimeFormatter.ofPattern("d MMMM", locale)),
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = contentColor,
+                    maxLines = 1
+                )
+                Text(
+                    text = day.date.format(DateTimeFormatter.ofPattern("EEEE", locale)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = contentColor.copy(alpha = 0.55f),
+                    maxLines = 1
+                )
+            }
+            DayCount(day)
+        }
+        Spacer(Modifier.height(8.dp))
+        day.entries.forEach { entry ->
+            key(day.date, entry.type) {
+                val onClick = { onToggle(day.date, entry) }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(44.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .then(if (entry.status != PrayerLogStatus.UPCOMING) Modifier.clickable(onClick = onClick) else Modifier)
+                        .padding(horizontal = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    PrayerChip(entry = entry, size = 32.dp, onClick = onClick, showName = false)
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = entry.type.prayerName,
+                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                        color = when (entry.status) {
+                            PrayerLogStatus.PRAYED -> PrayedGold
+                            PrayerLogStatus.UPCOMING -> contentColor.copy(alpha = 0.45f)
+                            else -> contentColor.copy(alpha = 0.85f)
+                        },
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** How many of [day]'s prayers are prayed, in gold once all are. */
+@Composable
+private fun DayCount(day: PrayerLogDay) {
+    Text(
+        text = "${day.prayed}/${day.entries.size}",
+        style = MaterialTheme.typography.titleSmall.copy(
+            fontWeight = FontWeight.ExtraBold,
+            fontFeatureSettings = "tnum"
+        ),
+        color = if (day.isComplete) PrayedGold else LocalGlassTheme.current.contentColor.copy(alpha = 0.7f)
+    )
+}
+
+/**
+ * A month of days in weeks, starting on the locale's first day of the week. Each day's cell is
+ * [cellAspect] times as wide as it's tall; its ring stays round.
+ */
+@Composable
+private fun MonthGrid(
+    month: YearMonth,
+    today: LocalDate?,
+    days: Map<LocalDate, PrayerLogDay>,
+    selected: LocalDate?,
+    onSelect: (LocalDate) -> Unit,
+    cellAspect: Float = 1f
+) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val locale = LocalConfiguration.current.locales[0]
+    val firstDay = remember(locale) { WeekFields.of(locale).firstDayOfWeek }
+    val weekdays = remember(firstDay) { (0L until 7L).map { firstDay.plus(it) } }
+    val leading = (month.atDay(1).dayOfWeek.value - firstDay.value + 7) % 7
+    val cells: List<LocalDate?> = List(leading) { null } + (1..month.lengthOfMonth()).map { month.atDay(it) }
+
+    Column {
+        Row(Modifier.fillMaxWidth()) {
+            weekdays.forEach { day ->
+                Text(
+                    text = day.getDisplayName(TextStyle.NARROW, locale),
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                    color = contentColor.copy(alpha = 0.4f),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+        Spacer(Modifier.height(4.dp))
+        cells.chunked(7).forEach { week ->
+            Row(Modifier.fillMaxWidth()) {
+                (0 until 7).forEach { i ->
+                    val date = week.getOrNull(i)
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(cellAspect),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (date != null) {
+                            DayCell(
+                                date = date,
+                                day = days[date],
+                                isToday = date == today,
+                                isSelected = date == selected,
+                                onClick = { onSelect(date) }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * A day on the calendar: its number inside a small ring of its five prayers, filled in gold once
+ * all five are prayed. Days still to come are only a faint number.
+ */
+@Composable
+private fun DayCell(
+    date: LocalDate,
+    day: PrayerLogDay?,
+    isToday: Boolean,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val isComplete = day?.isComplete == true
+    val colors = day?.entries?.map { statusColor(it.status, PrayedGold, contentColor) }
+    val description = day?.let { "${date.dayOfMonth}: ${it.prayed}/${it.entries.size}" } ?: date.dayOfMonth.toString()
+
+    Box(
+        modifier = Modifier
+            .padding(3.dp)
+            .fillMaxHeight()
+            .aspectRatio(1f, matchHeightConstraintsFirst = true)
+            .clip(CircleShape)
+            .then(if (isSelected) Modifier.background(contentColor.copy(alpha = 0.16f)) else Modifier)
+            .then(if (day != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .semantics { contentDescription = description },
+        contentAlignment = Alignment.Center
+    ) {
+        if (colors != null) {
+            Canvas(Modifier.fillMaxSize()) {
+                if (isComplete) {
+                    drawCircle(PrayedGold, radius = size.minDimension / 2f - 3.dp.toPx())
+                } else {
+                    drawStatusRing(colors, stroke = 2.5.dp.toPx(), inset = 3.dp.toPx(), gap = 14f)
+                }
+            }
+        }
+        Text(
+            text = date.dayOfMonth.toString(),
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = if (isToday || isComplete) FontWeight.Black else FontWeight.SemiBold,
+                fontFeatureSettings = "tnum"
+            ),
+            color = when {
+                isComplete -> PrayedInk
+                day == null -> contentColor.copy(alpha = 0.25f)
+                isToday -> PrayedGold
+                !day.isTracked && day.prayed == 0 -> contentColor.copy(alpha = 0.45f)
+                else -> contentColor
+            }
+        )
+    }
+}
+
+/** Today's ring: a segment per prayer in its own colour once prayed, with the count inside. */
+@Composable
+private fun DayRing(day: PrayerLogDay, modifier: Modifier = Modifier) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val colors = day.entries.map { entry ->
+        val target = statusColor(entry.status, lerp(entry.type.accentColor, PrayedGold, 0.35f), contentColor)
+        animateColorAsState(target, label = "ringArc").value
+    }
+    val glow by animateFloatAsState(if (day.isComplete) 1f else 0f, label = "ringGlow")
+
+    Box(modifier, contentAlignment = Alignment.Center) {
+        Canvas(Modifier.fillMaxSize()) {
+            if (glow > 0f) {
+                drawCircle(
+                    Brush.radialGradient(
+                        listOf(PrayedGold.copy(alpha = 0.45f * glow), Color.Transparent),
+                        center = center,
+                        radius = size.minDimension / 2f
+                    )
+                )
+            }
+            drawStatusRing(colors, stroke = 8.dp.toPx(), inset = 8.dp.toPx(), gap = 8f)
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "${day.prayed}/${day.entries.size}",
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    fontFeatureSettings = "tnum"
+                ),
+                color = contentColor
+            )
+            Text(
+                text = stringResource(R.string.prayer_log_today).uppercase(),
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                color = contentColor.copy(alpha = 0.5f)
+            )
+        }
+    }
+}
+
+/** A ring of equal segments in [colors], clockwise from the top, [inset] from the edge. */
+private fun DrawScope.drawStatusRing(colors: List<Color>, stroke: Float, inset: Float, gap: Float) {
+    val sweep = 360f / colors.size
+    val arcSize = Size(size.width - inset * 2, size.height - inset * 2)
+    colors.forEachIndexed { i, color ->
+        drawArc(
+            color = color,
+            startAngle = -90f + i * sweep + gap / 2f,
+            sweepAngle = sweep - gap,
+            useCenter = false,
+            topLeft = Offset(inset, inset),
+            size = arcSize,
+            style = Stroke(stroke, cap = StrokeCap.Round)
+        )
+    }
+}
+
+/** A prayer's colour in the rings: [prayed] once prayed, red once missed, faint otherwise. */
+private fun statusColor(status: PrayerLogStatus, prayed: Color, contentColor: Color): Color = when (status) {
+    PrayerLogStatus.PRAYED -> prayed
+    PrayerLogStatus.MISSED -> MissedRed.copy(alpha = 0.75f)
+    PrayerLogStatus.ACTIVE -> InTimeGreen.copy(alpha = 0.55f)
+    else -> contentColor.copy(alpha = 0.14f)
+}
+
+/** A day's five prayers as marks to tap, with their names. */
+@Composable
+private fun PrayerRow(day: PrayerLogDay, chipSize: Dp, onToggle: (LocalDate, PrayerLogEntry) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        day.entries.forEach { entry ->
+            // Keyed by day, so picking another day starts its chips afresh rather than seeing a
+            // change of mark in each.
+            key(day.date, entry.type) {
+                PrayerChip(entry = entry, size = chipSize, onClick = { onToggle(day.date, entry) })
+            }
+        }
+    }
+}
+
+/**
+ * A prayer as a round mark: filled in its colour and ringed in gold with a tick once prayed, red
+ * with a cross once missed, ringed in its colour and gently pulsing while its time is on (the one
+ * to mark next), faint before its time. Tapping marks or unmarks it, except before its time.
+ */
+@Composable
+private fun PrayerChip(entry: PrayerLogEntry, size: Dp, onClick: () -> Unit, showName: Boolean = true) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val accent = entry.type.accentColor
+    val status = entry.status
+    val isPrayed = status == PrayerLogStatus.PRAYED
+    val name = entry.type.prayerName
+    val statusText = stringResource(status.labelRes)
+
+    val fill by animateColorAsState(
+        when (status) {
+            PrayerLogStatus.PRAYED -> accent
+            PrayerLogStatus.MISSED -> MissedRed.copy(alpha = 0.14f)
+            PrayerLogStatus.ACTIVE -> accent.copy(alpha = 0.18f)
+            else -> Color.Transparent
+        },
+        label = "chipFill"
+    )
+    val ring by animateColorAsState(
+        when (status) {
+            PrayerLogStatus.PRAYED -> PrayedGold
+            PrayerLogStatus.MISSED -> MissedRed.copy(alpha = 0.8f)
+            PrayerLogStatus.ACTIVE -> accent
+            PrayerLogStatus.UPCOMING -> contentColor.copy(alpha = 0.18f)
+            PrayerLogStatus.UNTRACKED -> contentColor.copy(alpha = 0.12f)
+        },
+        label = "chipRing"
+    )
+    val glow by animateFloatAsState(if (isPrayed) 1f else 0f, label = "chipGlow")
+    val pop by animateFloatAsState(
+        if (isPrayed) 1f else 0.94f,
+        spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
+        label = "chipPop"
+    )
+    val pulse = if (status == PrayerLogStatus.ACTIVE) {
+        rememberInfiniteTransition(label = "chipPulse").animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(tween(1600), RepeatMode.Restart),
+            label = "chipPulse"
+        )
+    } else {
+        null
+    }
+    // Each time it's marked, its XP rises from it.
+    var marks by remember { mutableIntStateOf(0) }
+    var lastStatus by remember { mutableStateOf(status) }
+    LaunchedEffect(status) {
+        if (isPrayed && lastStatus != PrayerLogStatus.PRAYED) marks++
+        lastStatus = status
+    }
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(Modifier.size(size), contentAlignment = Alignment.TopCenter) {
+            Box(
+                modifier = Modifier
+                    .size(size)
+                    .scale(if (status == PrayerLogStatus.UPCOMING || status == PrayerLogStatus.UNTRACKED) 1f else pop)
+                    .drawBehind {
+                        if (glow > 0f) {
+                            val reach = this.size.minDimension * 0.85f
+                            drawCircle(
+                                Brush.radialGradient(
+                                    0.55f to PrayedGold.copy(alpha = 0.5f * glow),
+                                    1f to Color.Transparent,
+                                    center = center,
+                                    radius = reach
+                                ),
+                                radius = reach
+                            )
+                        }
+                        // A ring widening out and fading, over and over: this one's time is on.
+                        pulse?.value?.let { t ->
+                            drawCircle(
+                                color = accent.copy(alpha = 0.6f * (1f - t)),
+                                radius = this.size.minDimension / 2f * (1f + 0.35f * t),
+                                style = Stroke(1.5.dp.toPx())
+                            )
+                        }
+                    }
+                    .clip(CircleShape)
+                    .background(fill)
+                    .border(1.5.dp, ring, CircleShape)
+                    .semantics { contentDescription = "$name, $statusText" }
+                    .then(
+                        if (status != PrayerLogStatus.UPCOMING) Modifier.clickable(onClick = onClick) else Modifier
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                val iconSize = size * 0.5f
+                Crossfade(targetState = status, label = "chipIcon") { shown ->
+                    when (shown) {
+                        PrayerLogStatus.PRAYED -> Icon(
+                            Icons.Rounded.Check,
+                            contentDescription = null,
+                            tint = if (accent.luminance() > 0.5f) Color.Black.copy(alpha = 0.75f) else Color.White,
+                            modifier = Modifier.size(iconSize)
+                        )
+                        PrayerLogStatus.MISSED -> Icon(
+                            Icons.Rounded.Close,
+                            contentDescription = null,
+                            tint = MissedRed,
+                            modifier = Modifier.size(iconSize * 0.9f)
+                        )
+                        PrayerLogStatus.UNTRACKED -> Icon(
+                            Icons.Rounded.Remove,
+                            contentDescription = null,
+                            tint = contentColor.copy(alpha = 0.3f),
+                            modifier = Modifier.size(iconSize * 0.8f)
+                        )
+                        else -> Icon(
+                            ImageVector.vectorResource(entry.type.iconRes),
+                            contentDescription = null,
+                            tint = if (shown == PrayerLogStatus.ACTIVE) accent else contentColor.copy(alpha = 0.3f),
+                            modifier = Modifier.size(iconSize)
+                        )
+                    }
+                }
+            }
+            XpPop(marks, Modifier.wrapContentSize(Alignment.TopCenter, unbounded = true))
+        }
+        if (showName) {
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = name,
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                color = contentColor.copy(alpha = if (status == PrayerLogStatus.UPCOMING) 0.45f else 0.8f),
+                maxLines = 1
+            )
+        }
+    }
+}
+
+private val PrayerLogStatus.labelRes: Int
+    get() = when (this) {
+        PrayerLogStatus.PRAYED -> R.string.prayer_log_status_prayed
+        PrayerLogStatus.MISSED -> R.string.prayer_log_status_missed
+        PrayerLogStatus.ACTIVE -> R.string.prayer_log_status_active
+        PrayerLogStatus.UPCOMING -> R.string.prayer_log_status_upcoming
+        PrayerLogStatus.UNTRACKED -> R.string.prayer_log_status_untracked
+    }
+
+/** Ink on a day filled in gold. */
+internal val PrayedInk = Color(0xFF3B2A00)
+
+internal val CardShape = RoundedCornerShape(28.dp)
+
+/** The history card's least width for the picked day beside the month, and that day's column's width. */
+private val SideBySideMinWidth = 400.dp
+private val SelectedDayWidth = 136.dp

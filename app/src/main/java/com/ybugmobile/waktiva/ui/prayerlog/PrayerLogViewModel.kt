@@ -23,14 +23,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.YearMonth
 import java.time.temporal.ChronoUnit
-import java.time.temporal.WeekFields
-import java.util.Locale
 import javax.inject.Inject
 
 /** One prayer of a day in the log. [time] is when its time begins, if that day's times are kept. */
@@ -52,35 +49,30 @@ data class PrayerLogTally(val prayed: Int = 0, val missed: Int = 0) {
 
 data class PrayerLogViewState(
     val today: PrayerLogDay? = null,
-    /** Today's prayer times, which set the dial's sky and its hours, and the time now, by the minute. */
-    val todayTimes: PrayerDay? = null,
-    val now: LocalTime = LocalTime.MIDNIGHT,
     /** Days in a row with all five prayers prayed. */
     val streak: Int = 0,
     /** XP, level and badges: the log as a game. */
     val progress: PrayerLogProgress = PrayerLogProgress(),
     val last7Days: PrayerLogTally = PrayerLogTally(),
     val last30Days: PrayerLogTally = PrayerLogTally(),
+    /** Prayers missed since the log began. */
+    val missedSinceStart: Int = 0,
     /** The day the log began, or null before the first prayer is marked. */
     val startDate: LocalDate? = null,
-    /** The month on the calendar. */
-    val month: YearMonth? = null,
-    /** The calendar's days, the 1st first; the days still to come null. */
-    val calendar: List<PrayerLogDay?> = emptyList(),
-    /** The day weeks start on, for the calendar's columns. */
-    val firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
-    /** How many times each prayer was missed in the calendar's month. */
-    val monthMissed: Map<PrayerType, Int> = emptyMap(),
+    /** The month the calendar shows. */
+    val shownMonth: YearMonth = YearMonth.now(),
+    /** The shown month's days up to today; later days aren't in it. */
+    val calendar: Map<LocalDate, PrayerLogDay> = emptyMap(),
     /** The day picked on the calendar, whose prayers can be marked under it. */
     val selected: PrayerLogDay? = null,
-    val canShowEarlier: Boolean = false,
-    val canShowLater: Boolean = false,
+    val canShowPreviousMonth: Boolean = false,
+    val canShowNextMonth: Boolean = false,
     val isLoading: Boolean = true
 )
 
 /**
- * The prayer log screen (çetele): today's prayers on the dial of the day, the level and the
- * streak, and a month's calendar to see which days and which prayers were missed, and mark them.
+ * The prayer log screen (çetele): today's prayers with how the last week and month went, and a
+ * month calendar to look back on and mark any day's prayers.
  */
 @HiltViewModel
 class PrayerLogViewModel @Inject constructor(
@@ -89,13 +81,10 @@ class PrayerLogViewModel @Inject constructor(
     private val timeManager: TimeManager
 ) : ViewModel() {
 
-    // How many months back from this one the calendar shows.
-    private val monthsBack = MutableStateFlow(0)
+    private val shownMonth = MutableStateFlow(YearMonth.from(timeManager.now()))
 
     // Null picks the month's default day (see [defaultSelection]).
     private val selectedDate = MutableStateFlow<LocalDate?>(null)
-
-    private val firstDayOfWeek: DayOfWeek get() = WeekFields.of(Locale.getDefault()).firstDayOfWeek
 
     // Prayers come and go by the minute; the seconds would only redo the same work.
     private val minute = timeManager.currentTime
@@ -107,26 +96,24 @@ class PrayerLogViewModel @Inject constructor(
         prayerLogRepository.getStartDate(),
         prayerRepository.getPrayerDays(),
         minute,
-        combine(monthsBack, selectedDate, ::Pair)
-    ) { prayed, start, prayerDays, now, (back, selected) ->
-        buildPrayerLogState(prayed, start, prayerDays, now, back, selected, firstDayOfWeek)
+        combine(shownMonth, selectedDate, ::Pair)
+    ) { prayed, start, prayerDays, now, (month, selected) ->
+        buildPrayerLogState(prayed, start, prayerDays, now, month, selected)
     }
         .flowOn(Dispatchers.Default)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PrayerLogViewState())
 
-    /** Moves the calendar [by] months earlier (negative) or later, within the last year. */
-    fun showMonth(by: Int) {
-        monthsBack.update { (it - by).coerceIn(0, MONTHS_BACK) }
+    /** Moves the calendar [months] back or forth, within the last year, and picks its default day. */
+    fun showMonth(months: Long) {
+        val current = YearMonth.from(timeManager.now())
+        shownMonth.update { month ->
+            month.plusMonths(months).coerceIn(current.minusMonths(MONTHS_BACK), current)
+        }
         selectedDate.value = null
     }
 
-    /** Picks [date], up to today and within the last year, and shows its month. */
     fun select(date: LocalDate) {
-        val today = timeManager.now().toLocalDate()
-        val back = monthsBetween(date, today)
-        if (date.isAfter(today) || back > MONTHS_BACK) return
-        monthsBack.value = back
-        selectedDate.value = date
+        if (!date.isAfter(timeManager.now().toLocalDate())) selectedDate.value = date
     }
 
     fun setPrayed(date: LocalDate, type: PrayerType, prayed: Boolean) {
@@ -134,48 +121,37 @@ class PrayerLogViewModel @Inject constructor(
     }
 
     companion object {
-        /** How many months back the calendar goes: a year. */
-        const val MONTHS_BACK = 12
+        /** How many months back the calendar goes. */
+        const val MONTHS_BACK = 12L
     }
 }
 
-/** How many months back from [today]'s the one holding [date] is. */
-internal fun monthsBetween(date: LocalDate, today: LocalDate): Int =
-    ChronoUnit.MONTHS.between(YearMonth.from(date), YearMonth.from(today)).toInt().coerceAtLeast(0)
-
 /**
- * The day picked when a month comes up: its last day before today with a prayer missed, the day
- * most likely left to fill in. Without one, yesterday in this month, else the month's last day.
- * [days] holds the days known, by date.
+ * The day picked when [month] comes up: yesterday in this month (today being on the card above,
+ * yesterday is the day most likely left to fill in), else the month's last day.
  */
-internal fun defaultSelection(month: YearMonth, today: LocalDate, days: Map<LocalDate, PrayerLogDay>): LocalDate {
-    val first = month.atDay(1)
-    val last = month.atEndOfMonth().takeUnless { it.isAfter(today) } ?: today
-    val missed = generateSequence(last) { it.minusDays(1) }
-        .takeWhile { !it.isBefore(first) }
-        .firstOrNull { it != today && (days[it]?.missed ?: 0) > 0 }
-    return missed ?: if (last == today) today.minusDays(1).takeUnless { it.isBefore(first) } ?: today else last
+internal fun defaultSelection(month: YearMonth, today: LocalDate): LocalDate = when {
+    month != YearMonth.from(today) -> month.atEndOfMonth()
+    today.dayOfMonth > 1 -> today.minusDays(1)
+    else -> today
 }
 
 /**
- * The log as of [now], with the calendar on the month [back] months before this one and [selected]
- * (or the month's default) picked, weeks starting on [firstDay]. Days without kept prayer times
- * (past days are pruned) still get their prayers, as gone.
+ * The log as of [now], with [month] on the calendar and [selected] (or the month's default) picked
+ * on it. Days without kept prayer times (past days are pruned) still get their prayers, as gone.
  */
 internal fun buildPrayerLogState(
     prayed: Map<LocalDate, Set<PrayerType>>,
     start: LocalDate?,
     prayerDays: List<PrayerDay>,
     now: LocalDateTime,
-    back: Int,
-    selected: LocalDate?,
-    firstDay: DayOfWeek
+    month: YearMonth,
+    selected: LocalDate?
 ): PrayerLogViewState {
     val today = now.toLocalDate()
     val trackedSince = PrayerLog.trackedSince(start, today)
     val byDate = prayerDays.associateBy { it.date }
-    val month = YearMonth.from(today).minusMonths(back.toLong())
-    val picked = selected?.takeUnless { it.isAfter(today) }
+    val selectedDate = (selected ?: defaultSelection(month, today)).takeUnless { it.isAfter(today) } ?: today
 
     fun dayOf(date: LocalDate): PrayerLogDay {
         val prayerDay = byDate[date]
@@ -202,34 +178,28 @@ internal fun buildPrayerLogState(
 
     // Every day anything here needs, from the earliest of them up to today.
     // (LocalDate compares as a ChronoLocalDate, so by epoch day to stay a LocalDate.)
-    val first = listOfNotNull(trackedSince, today.minusDays(29), month.atDay(1), picked).minBy { it.toEpochDay() }
+    val first = listOf(trackedSince, today.minusDays(29), month.atDay(1), selectedDate).minBy { it.toEpochDay() }
     val days = generateSequence(today) { it.minusDays(1) }
         .takeWhile { !it.isBefore(first) }
         .associateWith(::dayOf)
-    val selectedDate = picked ?: defaultSelection(month, today, days)
 
     fun tally(count: Long) = (0 until count).mapNotNull { days[today.minusDays(it)] }
         .fold(PrayerLogTally()) { sum, day -> PrayerLogTally(sum.prayed + day.prayed, sum.missed + day.missed) }
 
-    val calendar = (1..month.lengthOfMonth()).map { days[month.atDay(it)] }
+    val thisMonth = YearMonth.from(today)
     return PrayerLogViewState(
         today = days[today],
-        todayTimes = byDate[today],
-        now = now.toLocalTime(),
         streak = PrayerLog.streak(prayed, today),
         progress = PrayerLogProgress.of(prayed),
         last7Days = tally(7),
         last30Days = tally(30),
+        missedSinceStart = days.values.sumOf { it.missed },
         startDate = start,
-        month = month,
-        calendar = calendar,
-        firstDayOfWeek = firstDay,
-        monthMissed = LoggedPrayers.associateWith { type ->
-            calendar.count { day -> day?.entries?.any { it.type == type && it.status == PrayerLogStatus.MISSED } == true }
-        },
+        shownMonth = month,
+        calendar = days.filterKeys { YearMonth.from(it) == month },
         selected = days[selectedDate],
-        canShowEarlier = back < PrayerLogViewModel.MONTHS_BACK,
-        canShowLater = back > 0,
+        canShowPreviousMonth = month.isAfter(thisMonth.minusMonths(PrayerLogViewModel.MONTHS_BACK)),
+        canShowNextMonth = month.isBefore(thisMonth),
         isLoading = false
     )
 }
