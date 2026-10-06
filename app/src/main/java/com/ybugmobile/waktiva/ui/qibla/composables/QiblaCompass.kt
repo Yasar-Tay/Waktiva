@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -224,12 +227,20 @@ internal fun GearCompass(
 @Composable
 internal fun rememberHeading(azimuth: Float): Animatable<Float, AnimationVector1D> {
     val heading = remember { Animatable(azimuth) }
-    LaunchedEffect(azimuth) {
-        val target = heading.targetValue
-        heading.animateTo(
-            target + angleBetween(azimuth, target),
-            spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMediumLow)
-        )
+    val latest by rememberUpdatedState(azimuth)
+    // One long-lived effect that starts each new animation while the last is still running, so
+    // it picks up the card's speed. Restarting the effect per reading would cancel the running
+    // animation first, which resets its velocity and leaves the card creeping from rest.
+    LaunchedEffect(heading) {
+        snapshotFlow { latest }.collect { target ->
+            launch {
+                val from = heading.targetValue
+                heading.animateTo(
+                    from + angleBetween(target, from),
+                    spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMediumLow)
+                )
+            }
+        }
     }
     return heading
 }
