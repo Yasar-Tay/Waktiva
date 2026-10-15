@@ -71,6 +71,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -136,7 +137,7 @@ internal fun CharacterCard(progress: PrayerLogProgress, modifier: Modifier = Mod
                     )
                     Text(
                         text = stringResource(R.string.prayer_log_xp_total, integer.format(xp)),
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyMedium.onSky(),
                         color = contentColor.copy(alpha = 0.7f)
                     )
                 }
@@ -148,7 +149,7 @@ internal fun CharacterCard(progress: PrayerLogProgress, modifier: Modifier = Mod
                         R.string.prayer_log_xp,
                         "${integer.format(progress.levelXp)} / ${integer.format(progress.levelSpan)}"
                     ),
-                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum").onSky(),
                     color = contentColor,
                     modifier = Modifier.weight(1f)
                 )
@@ -158,8 +159,8 @@ internal fun CharacterCard(progress: PrayerLogProgress, modifier: Modifier = Mod
                         progress.levelSpan - progress.levelXp,
                         progress.level + 1
                     ),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = contentColor.copy(alpha = 0.6f),
+                    style = MaterialTheme.typography.labelMedium.onSky(),
+                    color = faded(0.6f),
                     maxLines = 1
                 )
             }
@@ -205,7 +206,7 @@ private fun LevelCrest(level: Int, modifier: Modifier = Modifier) {
         )
         Text(
             text = level.toString(),
-            style = figureStyle((height.value * 0.38f).sp),
+            style = figureStyle((height.value * 0.38f).sp).copy(shadow = null),
             color = PrayedInk,
             modifier = Modifier.padding(bottom = height * 0.12f)
         )
@@ -377,8 +378,8 @@ private fun BadgeCell(progress: BadgeProgress, isSelected: Boolean, onClick: () 
         Spacer(Modifier.height(6.dp))
         Text(
             text = name,
-            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, lineHeight = 13.sp),
-            color = contentColor.copy(alpha = if (progress.isEarned) 0.9f else 0.5f),
+            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, lineHeight = 13.sp).onSky(),
+            color = if (progress.isEarned) contentColor.copy(alpha = 0.9f) else faded(0.5f),
             textAlign = TextAlign.Center,
             maxLines = 2,
             minLines = 2
@@ -478,8 +479,8 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
                 )
                 Text(
                     text = stringResource(progress.badge.descRes),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = contentColor.copy(alpha = 0.65f)
+                    style = MaterialTheme.typography.bodySmall.onSky(),
+                    color = faded(0.65f)
                 )
             }
             Spacer(Modifier.width(12.dp))
@@ -489,7 +490,7 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
                     Spacer(Modifier.width(4.dp))
                     Text(
                         text = stringResource(R.string.prayer_log_badge_earned),
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold).onSky(),
                         color = PrayedGold
                     )
                 }
@@ -564,8 +565,8 @@ internal fun FullDayChest(prayed: List<Boolean>, modifier: Modifier = Modifier) 
             )
             Text(
                 text = stringResource(if (open) R.string.prayer_log_chest_open else R.string.prayer_log_chest_hint),
-                style = MaterialTheme.typography.labelMedium,
-                color = contentColor.copy(alpha = 0.65f)
+                style = MaterialTheme.typography.labelMedium.onSky(),
+                color = faded(0.65f)
             )
             Spacer(Modifier.height(6.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
@@ -604,7 +605,7 @@ internal fun XpPop(trigger: Int, modifier: Modifier = Modifier) {
     if (rise.value < 1f) {
         Text(
             text = stringResource(R.string.prayer_log_xp_gain, PrayerLogProgress.XP_PER_PRAYER),
-            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black),
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black).onSky(),
             color = PrayedGold,
             maxLines = 1,
             softWrap = false,
@@ -771,7 +772,8 @@ internal fun eyebrowStyle(size: TextUnit): TextStyle = MaterialTheme.typography.
     fontSize = size,
     lineHeight = size * 1.4f,
     fontWeight = FontWeight.Bold,
-    letterSpacing = 2.sp
+    letterSpacing = 2.sp,
+    shadow = daySkyShadow()
 )
 
 /** Names and titles: the headline face, bold. */
@@ -779,7 +781,8 @@ internal fun eyebrowStyle(size: TextUnit): TextStyle = MaterialTheme.typography.
 internal fun headingStyle(size: TextUnit): TextStyle = MaterialTheme.typography.headlineSmall.copy(
     fontSize = size,
     lineHeight = size * 1.25f,
-    fontWeight = FontWeight.Bold
+    fontWeight = FontWeight.Bold,
+    shadow = daySkyShadow()
 )
 
 /** Figures: the display face, bold, with digits of one width. */
@@ -788,8 +791,31 @@ internal fun figureStyle(size: TextUnit): TextStyle = MaterialTheme.typography.d
     fontSize = size,
     lineHeight = size * 1.15f,
     fontWeight = FontWeight.Bold,
-    fontFeatureSettings = "tnum"
+    fontFeatureSettings = "tnum",
+    shadow = daySkyShadow()
 )
+
+/**
+ * A soft dark shade under the sheet's white and gold text while the bright day sky shows through
+ * the glass, as the home screen's prayer times have; none at night, when the glass is dark enough.
+ */
+@Composable
+internal fun daySkyShadow(): Shadow? =
+    if (LocalGlassTheme.current.isLightMode) null else Shadow(Color.Black.copy(alpha = 0.55f), Offset(0f, 1f), 4f)
+
+/** This style with the day sky's shade under it (see [daySkyShadow]). */
+@Composable
+internal fun TextStyle.onSky(): TextStyle = copy(shadow = daySkyShadow())
+
+/**
+ * Faint white for secondary text and marks: [night] opaque on the dark night glass, a quarter
+ * more by day, when the bright sky behind the glass would wash it out.
+ */
+@Composable
+internal fun faded(night: Float): Color {
+    val glass = LocalGlassTheme.current
+    return glass.contentColor.copy(alpha = if (glass.isLightMode) night else (night + 0.25f).coerceAtMost(0.9f))
+}
 
 internal val GoldLight = Color(0xFFFFECB3)
 internal val GoldDeep = Color(0xFFE0A800)
