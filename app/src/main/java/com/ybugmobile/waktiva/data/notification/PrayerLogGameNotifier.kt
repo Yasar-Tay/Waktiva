@@ -7,6 +7,7 @@ import com.ybugmobile.waktiva.domain.model.PrayerType
 import com.ybugmobile.waktiva.domain.repository.PrayerLogRepository
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -49,9 +50,15 @@ class PrayerLogGameNotifier @Inject constructor(
 
     /**
      * The nudge for [type] on [date], as long as it's still unmarked; [today] is the day the
-     * streak is counted to.
+     * streak is counted to. [startsAt] and [endsAt] bound the prayer's time, when known.
      */
-    suspend fun nudge(date: LocalDate, type: PrayerType, today: LocalDate) {
+    suspend fun nudge(
+        date: LocalDate,
+        type: PrayerType,
+        today: LocalDate,
+        startsAt: LocalDateTime? = null,
+        endsAt: LocalDateTime? = null
+    ) {
         if (!isOn()) return
         val prayed = prayerLogRepository.getPrayedPrayers().first()
         if (type in prayed[date].orEmpty()) return
@@ -59,7 +66,10 @@ class PrayerLogGameNotifier @Inject constructor(
             date = date,
             type = type,
             streak = PrayerLog.streak(prayed, today),
-            level = PrayerLogProgress.of(prayed).level
+            level = PrayerLogProgress.of(prayed).level,
+            prayedToday = prayed[date].orEmpty(),
+            startsAt = startsAt,
+            endsAt = endsAt
         )
     }
 

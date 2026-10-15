@@ -26,8 +26,17 @@ enum class PrayerLogStatus {
     UNTRACKED
 }
 
-/** A nudge [at] a while before [type]'s time on [date] ends, [endsAt], to mark it if prayed. */
-data class PrayerLogNudge(val date: LocalDate, val type: PrayerType, val at: LocalDateTime, val endsAt: LocalDateTime)
+/**
+ * A nudge [at] a while before [type]'s time on [date] ends, [endsAt], to mark it if prayed.
+ * [start] is when that time began.
+ */
+data class PrayerLogNudge(
+    val date: LocalDate,
+    val type: PrayerType,
+    val at: LocalDateTime,
+    val endsAt: LocalDateTime,
+    val start: LocalDateTime
+)
 
 object PrayerLog {
 
@@ -104,7 +113,7 @@ object PrayerLog {
                     val start = day.timings[type]?.atDate(day.date) ?: return@mapNotNull null
                     val end = windowEnd(type, day, byDate[day.date.plusDays(1)]) ?: return@mapNotNull null
                     val at = end.minusMinutes(minutesBefore).takeIf { it.isAfter(start) } ?: return@mapNotNull null
-                    PrayerLogNudge(day.date, type, at, end)
+                    PrayerLogNudge(day.date, type, at, end, start)
                 }
             }
             .filter { it.at.isAfter(now) }

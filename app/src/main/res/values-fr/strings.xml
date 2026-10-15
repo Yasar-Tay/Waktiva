@@ -543,6 +543,9 @@
     <string name="prayer_log_chest_hint">Accomplissez les cinq pour l\'ouvrir</string>
     <string name="prayer_log_chest_open">Ouvert · bonus gagné</string>
     <string name="prayer_log_journey">Journal de voyage</string>
+    <string name="prayer_log_notify_quest_ending">Quête bientôt finie</string>
+    <string name="prayer_log_notify_streak_risk">Votre série de %1$d jours est en jeu</string>
+    <string name="prayer_log_notify_full_day">Jour complet +%1$d XP</string>
     <string name="widget_prayer_log_description">Votre niveau, votre série et vos badges, avec les prières du jour à marquer d\'un geste</string>
     <string name="widget_prayer_log_off">Activez le carnet de prières dans les Réglages</string>
     <string name="qibla_mosques_loading">Chargement des mosquées à proximité…</string>

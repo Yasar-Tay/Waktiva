@@ -844,7 +844,7 @@ private const val ConfettiMillis = 1900
 private val ConfettiColors = listOf(PrayedGold, GoldLight, Color.White) +
     PrayerType.entries.map { it.accentColor }
 
-private val PrayerLogBadge.icon: ImageVector
+internal val PrayerLogBadge.icon: ImageVector
     get() = when (this) {
         PrayerLogBadge.FIRST_PRAYER -> Icons.Rounded.Flag
         PrayerLogBadge.FIRST_FULL_DAY -> Icons.Rounded.Verified

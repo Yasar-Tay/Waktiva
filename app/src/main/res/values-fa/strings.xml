@@ -556,6 +556,9 @@
     <string name="prayer_log_chest_hint">هر پنج نماز را بخوان تا باز شود</string>
     <string name="prayer_log_chest_open">باز شد · پاداش گرفتی</string>
     <string name="prayer_log_journey">دفتر سفر</string>
+    <string name="prayer_log_notify_quest_ending">مأموریت رو به پایان است</string>
+    <string name="prayer_log_notify_streak_risk">زنجیره %1$d روزه‌ات در خطر است</string>
+    <string name="prayer_log_notify_full_day">روز کامل +%1$d XP</string>
     <string name="widget_prayer_log_description">سطح، رشته و نشان‌هایت، با نمازهای امروز برای علامت زدن با یک لمس</string>
     <string name="widget_prayer_log_off">کارنامهٔ نماز را از تنظیمات روشن کن</string>
     <string name="qibla_mosques_loading">در حال بارگیری مساجد اطراف…</string>

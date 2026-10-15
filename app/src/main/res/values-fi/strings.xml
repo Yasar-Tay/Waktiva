@@ -555,6 +555,9 @@
     <string name="prayer_log_chest_hint">Rukoile kaikki viisi avataksesi sen</string>
     <string name="prayer_log_chest_open">Avattu · bonus ansaittu</string>
     <string name="prayer_log_journey">Matkapäiväkirja</string>
+    <string name="prayer_log_notify_quest_ending">Tehtävä päättymässä</string>
+    <string name="prayer_log_notify_streak_risk">%1$d päivän putkesi on vaarassa</string>
+    <string name="prayer_log_notify_full_day">Täysi päivä +%1$d XP</string>
     <string name="widget_prayer_log_description">Tasosi, putkesi ja merkkisi sekä päivän rukoukset merkittäväksi yhdellä napautuksella</string>
     <string name="widget_prayer_log_off">Ota rukousloki käyttöön asetuksista</string>
     <string name="qibla_mosques_loading">Ladataan lähellä olevia moskeijoita…</string>

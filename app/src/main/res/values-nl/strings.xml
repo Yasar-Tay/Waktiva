@@ -555,6 +555,9 @@
     <string name="prayer_log_chest_hint">Bid alle vijf om hem te openen</string>
     <string name="prayer_log_chest_open">Geopend · bonus verdiend</string>
     <string name="prayer_log_journey">Reisdagboek</string>
+    <string name="prayer_log_notify_quest_ending">Taak loopt bijna af</string>
+    <string name="prayer_log_notify_streak_risk">Je reeks van %1$d dagen staat op het spel</string>
+    <string name="prayer_log_notify_full_day">Volle dag +%1$d XP</string>
     <string name="widget_prayer_log_description">Je niveau, reeks en badges, met de gebeden van vandaag om met één tik te markeren</string>
     <string name="widget_prayer_log_off">Zet het gebedslog aan in Instellingen</string>
     <string name="qibla_mosques_loading">Moskeeën in de buurt laden…</string>

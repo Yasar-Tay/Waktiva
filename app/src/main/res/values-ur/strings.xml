@@ -556,6 +556,9 @@
     <string name="prayer_log_chest_hint">کھولنے کے لیے پانچوں نمازیں پڑھیں</string>
     <string name="prayer_log_chest_open">کھل گیا · بونس مل گیا</string>
     <string name="prayer_log_journey">سفر نامہ</string>
+    <string name="prayer_log_notify_quest_ending">کام ختم ہونے کو ہے</string>
+    <string name="prayer_log_notify_streak_risk">آپ کا %1$d دن کا سلسلہ خطرے میں ہے</string>
+    <string name="prayer_log_notify_full_day">مکمل دن +%1$d XP</string>
     <string name="widget_prayer_log_description">آپ کا لیول، سلسلہ اور بیجز، اور آج کی نمازیں ایک ٹیپ میں نشان زد کریں</string>
     <string name="widget_prayer_log_off">ترتیبات میں نماز کا ریکارڈ آن کریں</string>
     <string name="qibla_mosques_loading">قریبی مساجد لوڈ ہو رہی ہیں…</string>

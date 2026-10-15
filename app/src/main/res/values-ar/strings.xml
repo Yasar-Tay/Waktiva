@@ -556,6 +556,9 @@
     <string name="prayer_log_chest_hint">صلِّ الخمس كلها ليُفتح</string>
     <string name="prayer_log_chest_open">فُتح · نلت المكافأة</string>
     <string name="prayer_log_journey">سجل الرحلة</string>
+    <string name="prayer_log_notify_quest_ending">المهمة توشك على الانتهاء</string>
+    <string name="prayer_log_notify_streak_risk">سلسلتك من %1$d يومًا في خطر</string>
+    <string name="prayer_log_notify_full_day">يوم كامل +%1$d XP</string>
     <string name="widget_prayer_log_description">مستواك وسلسلتك وأوسمتك، مع صلوات اليوم لتعليمها بلمسة</string>
     <string name="widget_prayer_log_off">فعّل سجل الصلوات من الإعدادات</string>
     <string name="qibla_mosques_loading">جارٍ تحميل المساجد القريبة…</string>

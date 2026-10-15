@@ -543,6 +543,9 @@
     <string name="prayer_log_chest_hint">Bete alle fünf, um sie zu öffnen</string>
     <string name="prayer_log_chest_open">Geöffnet · Bonus erhalten</string>
     <string name="prayer_log_journey">Reisetagebuch</string>
+    <string name="prayer_log_notify_quest_ending">Aufgabe endet bald</string>
+    <string name="prayer_log_notify_streak_risk">Deine %1$d-Tage-Serie ist in Gefahr</string>
+    <string name="prayer_log_notify_full_day">Voller Tag +%1$d XP</string>
     <string name="widget_prayer_log_description">Deine Stufe, Serie und Abzeichen, dazu die heutigen Gebete zum Markieren mit einem Tipp</string>
     <string name="widget_prayer_log_off">Schalte das Gebetstagebuch in den Einstellungen ein</string>
     <string name="qibla_mosques_loading">Moscheen in der Nähe werden geladen…</string>

@@ -193,6 +193,11 @@ class AlarmScheduler @Inject constructor(
             action = ACTION_PRAYER_LOG_NUDGE
             putExtra(NotificationHelper.EXTRA_PRAYER_NAME, (next?.type ?: PrayerType.DHUHR).name)
             putExtra(NotificationHelper.EXTRA_PRAYER_DATE, (next?.date ?: LocalDate.now()).toString())
+            // The prayer's time, for the nudge's countdown and how much of the time is left.
+            next?.let {
+                putExtra(NotificationHelper.EXTRA_STARTS_AT, it.start.toString())
+                putExtra(NotificationHelper.EXTRA_ENDS_AT, it.endsAt.toString())
+            }
             component = ComponentName(context, PrayerAlarmReceiver::class.java)
         }
         if (next == null) {

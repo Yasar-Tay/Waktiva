@@ -151,7 +151,7 @@ class PrayerLogTest {
     fun theNextNudgeComesHalfAnHourBeforeAPrayersTimeEnds() {
         // Dhuhr runs 13:05–16:30: its nudge is at 16:00.
         val nudge = PrayerLog.nextNudge(listOf(day, tomorrow), at(14, 0), 30)
-        assertEquals(PrayerLogNudge(today, PrayerType.DHUHR, at(16, 0), at(16, 30)), nudge)
+        assertEquals(PrayerLogNudge(today, PrayerType.DHUHR, at(16, 0), at(16, 30), at(13, 5)), nudge)
     }
 
     @Test

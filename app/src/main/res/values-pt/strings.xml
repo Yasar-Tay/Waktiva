@@ -555,6 +555,9 @@
     <string name="prayer_log_chest_hint">Reze as cinco para abri-lo</string>
     <string name="prayer_log_chest_open">Aberto · bônus conquistado</string>
     <string name="prayer_log_journey">Diário de viagem</string>
+    <string name="prayer_log_notify_quest_ending">Missão terminando</string>
+    <string name="prayer_log_notify_streak_risk">Sua sequência de %1$d dias está em risco</string>
+    <string name="prayer_log_notify_full_day">Dia completo +%1$d XP</string>
     <string name="widget_prayer_log_description">Seu nível, sequência e medalhas, com as orações de hoje para marcar com um toque</string>
     <string name="widget_prayer_log_off">Ative o registro de orações nas Configurações</string>
     <string name="qibla_mosques_loading">Carregando mesquitas próximas…</string>

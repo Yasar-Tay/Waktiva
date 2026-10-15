@@ -10,6 +10,11 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.ybugmobile.waktiva.MainActivity
 import com.ybugmobile.waktiva.R
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardDoubleArrowUp
+import androidx.compose.material.icons.rounded.Verified
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.ybugmobile.waktiva.domain.model.LoggedPrayers
 import com.ybugmobile.waktiva.domain.model.PrayerLogCelebration
 import com.ybugmobile.waktiva.domain.model.PrayerLogProgress
 import com.ybugmobile.waktiva.domain.model.PrayerType
@@ -17,8 +22,11 @@ import com.ybugmobile.waktiva.receiver.AdhanStopReceiver
 import com.ybugmobile.waktiva.receiver.PrayerAlarmReceiver
 import com.ybugmobile.waktiva.ui.adhan.AdhanActivity
 import com.ybugmobile.waktiva.ui.prayerlog.descRes
+import com.ybugmobile.waktiva.ui.prayerlog.icon
 import com.ybugmobile.waktiva.ui.prayerlog.nameRes
+import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -57,14 +65,15 @@ class NotificationHelper @Inject constructor(
         const val ACTION_MARK_ALL_PRAYED = "com.ybugmobile.waktiva.ACTION_MARK_ALL_PRAYED"
         const val ACTION_MARK_PRAYED = "com.ybugmobile.waktiva.ACTION_MARK_PRAYED"
 
-        /** The gold the prayer log's game notifications are tinted in. */
-        private const val PRAYED_GOLD = 0xFFFFD54F.toInt()
-
         /** Asks MainActivity to open a screen; see [SCREEN_PRAYER_LOG]. */
         const val EXTRA_OPEN_SCREEN = "OPEN_SCREEN"
         const val SCREEN_PRAYER_LOG = "prayer_log"
         const val EXTRA_PRAYER_NAME = "PRAYER_NAME"
         const val EXTRA_PRAYER_DATE = "PRAYER_DATE"
+
+        /** When the nudged prayer's time began and ends, as ISO local date-times. */
+        const val EXTRA_STARTS_AT = "STARTS_AT"
+        const val EXTRA_ENDS_AT = "ENDS_AT"
     }
 
     init {
@@ -282,16 +291,37 @@ class NotificationHelper @Inject constructor(
             )
         }
 
+        val text = context.getString(R.string.prayer_log_reminder_text, names)
+
         val builder = NotificationCompat.Builder(context, CHANNEL_ID_PRAYER_LOG)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
-            .setContentText(context.getString(R.string.prayer_log_reminder_text, names))
+            .setContentText(text)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setContentIntent(contentIntent)
             .addAction(R.drawable.ic_notification, context.getString(R.string.prayer_log_reminder_mark_all), markAllIntent)
             .setAutoCancel(true)
-        if (streak != null) builder.setColor(PRAYED_GOLD)
+        if (streak != null) {
+            // With the game on, the character sheet: the streak at stake by its flame, and the
+            // day's five prayers, those left in dashes.
+            val sheetTitle = if (streak > 0) context.getString(R.string.prayer_log_notify_streak_risk, streak) else title
+            val xpLeft = unmarked.size * PrayerLogProgress.XP_PER_PRAYER + PrayerLogProgress.FULL_DAY_BONUS
+            builder
+                .setSmallIcon(R.drawable.ic_notification_cetele)
+                .setColor(PrayerLogNotificationViews.GOLD)
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(
+                    PrayerLogNotificationViews.collapsed(
+                        context,
+                        label = null,
+                        title = sheetTitle,
+                        reward = context.getString(R.string.prayer_log_xp_gain, xpLeft),
+                        day = (LoggedPrayers - unmarked.toSet()).toSet()
+                    )
+                )
+                .setCustomBigContentView(PrayerLogNotificationViews.reminder(context, sheetTitle, text, unmarked))
+        }
 
         notificationManager.notify(NOTIFICATION_ID_PRAYER_LOG, builder.build())
     }
@@ -301,10 +331,20 @@ class NotificationHelper @Inject constructor(
     }
 
     /**
-     * A nudge before [type]'s time on [date] ends while it's unmarked: its XP to earn, the
-     * [streak] to keep, and the [level] beside the app's name. Its action marks it.
+     * A nudge before [type]'s time on [date] ends while it's unmarked, on the prayer log's
+     * character sheet: its XP to earn, the [streak] to keep, the [level] beside the app's name,
+     * and, with [startsAt] and [endsAt], how much of its time is left, counting down; collapsed,
+     * the day's prayers [prayedToday] as diamonds. Its action marks it; it goes when its time does.
      */
-    fun showPrayerLogNudge(date: LocalDate, type: PrayerType, streak: Int, level: Int) {
+    fun showPrayerLogNudge(
+        date: LocalDate,
+        type: PrayerType,
+        streak: Int,
+        level: Int,
+        prayedToday: Set<PrayerType> = emptySet(),
+        startsAt: LocalDateTime? = null,
+        endsAt: LocalDateTime? = null
+    ) {
         val markIntent = PendingIntent.getBroadcast(
             context,
             NOTIFICATION_ID_PRAYER_LOG_NUDGE,
@@ -322,13 +362,45 @@ class NotificationHelper @Inject constructor(
             context.getString(R.string.prayer_log_nudge_text, xp)
         }
 
+        val name = type.getPrayerName(context)
+        val questEnding = context.getString(R.string.prayer_log_notify_quest_ending)
+        val millisLeft = endsAt?.let { Duration.between(LocalDateTime.now(), it).toMillis() }?.takeIf { it > 0 }
+        val leftFraction = if (millisLeft != null && startsAt != null && endsAt != null) {
+            millisLeft.toFloat() / Duration.between(startsAt, endsAt).toMillis().coerceAtLeast(1)
+        } else {
+            null
+        }
+
         val notification = NotificationCompat.Builder(context, CHANNEL_ID_PRAYER_LOG_GAME)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setColor(PRAYED_GOLD)
+            .setSmallIcon(R.drawable.ic_notification_cetele)
+            .setColor(PrayerLogNotificationViews.GOLD)
             .setSubText(context.getString(R.string.prayer_log_level, level))
-            .setContentTitle(context.getString(R.string.prayer_log_nudge_title, type.getPrayerName(context)))
+            .setContentTitle(context.getString(R.string.prayer_log_nudge_title, name))
             .setContentText(text)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            .setCustomContentView(
+                PrayerLogNotificationViews.collapsed(
+                    context,
+                    label = questEnding,
+                    title = name,
+                    reward = context.getString(R.string.prayer_log_xp_gain, xp),
+                    day = prayedToday,
+                    active = type,
+                    millisLeft = millisLeft
+                )
+            )
+            .setCustomBigContentView(
+                PrayerLogNotificationViews.nudge(
+                    context,
+                    type = type,
+                    eyebrow = questEnding.uppercase(locale()),
+                    name = name,
+                    text = text,
+                    millisLeft = millisLeft,
+                    leftFraction = leftFraction
+                )
+            )
+            .apply { if (millisLeft != null) setTimeoutAfter(millisLeft) }
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setContentIntent(openPrayerLogIntent(NOTIFICATION_ID_PRAYER_LOG_NUDGE))
@@ -362,13 +434,27 @@ class NotificationHelper @Inject constructor(
             if (celebration.streak > 0) add(context.getString(R.string.prayer_log_celebrate_streak, celebration.streak))
         }
         val rest = lines.drop(1)
+        val sheet = celebrationSheet(celebration)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID_PRAYER_LOG_CELEBRATION)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setColor(PRAYED_GOLD)
+            .setSmallIcon(R.drawable.ic_notification_cetele)
+            .setColor(PrayerLogNotificationViews.GOLD)
             .setContentTitle(lines.first())
             .setContentText(rest.firstOrNull())
-            .setStyle(NotificationCompat.BigTextStyle().bigText(rest.joinToString("\n")))
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            .setCustomContentView(
+                PrayerLogNotificationViews.collapsed(context, label = sheet.eyebrow, title = sheet.title, reward = sheet.chip)
+            )
+            .setCustomBigContentView(
+                PrayerLogNotificationViews.celebration(
+                    context,
+                    medal = PrayerLogNotificationViews.medal(context, sheet.icon),
+                    eyebrow = sheet.eyebrow.uppercase(locale()),
+                    title = sheet.title,
+                    text = sheet.text,
+                    chip = sheet.chip
+                )
+            )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_SOCIAL)
             .setSilent(true)
@@ -378,6 +464,56 @@ class NotificationHelper @Inject constructor(
 
         notificationManager.notify(NOTIFICATION_ID_PRAYER_LOG_CELEBRATION, notification)
     }
+
+    /** A cheer as the sheet shows it: its medal's [icon], an [eyebrow] over its [title], and the rest. */
+    private data class CelebrationSheet(
+        val icon: ImageVector,
+        val eyebrow: String,
+        val title: String,
+        val text: String?,
+        val chip: String?
+    )
+
+    /**
+     * What a cheer's sheet says: the first badge won, with its medal, and what else came with it
+     * on the tag; else the level reached; else the full day, with the streak.
+     */
+    private fun celebrationSheet(celebration: PrayerLogCelebration): CelebrationSheet {
+        val streak = celebration.streak.takeIf { it > 0 }
+            ?.let { "$it ${context.getString(R.string.prayer_log_streak)}" }
+        val fullDay = context.getString(R.string.prayer_log_notify_full_day, PrayerLogProgress.FULL_DAY_BONUS)
+            .takeIf { celebration.fullDay }
+        val badge = celebration.badges.firstOrNull()
+        val level = celebration.level
+        return when {
+            badge != null -> CelebrationSheet(
+                icon = badge.icon,
+                eyebrow = context.getString(R.string.prayer_log_badge_unlocked),
+                title = context.getString(badge.nameRes),
+                text = context.getString(badge.descRes),
+                chip = listOfNotNull(level?.let { context.getString(R.string.prayer_log_level, it) }, fullDay)
+                    .plus(celebration.badges.drop(1).map { context.getString(it.nameRes) })
+                    .joinToString(" · ")
+                    .ifEmpty { null }
+            )
+            level != null -> CelebrationSheet(
+                icon = Icons.Rounded.KeyboardDoubleArrowUp,
+                eyebrow = context.getString(R.string.prayer_log_level_up),
+                title = context.getString(R.string.prayer_log_level, level),
+                text = streak,
+                chip = fullDay
+            )
+            else -> CelebrationSheet(
+                icon = Icons.Rounded.Verified,
+                eyebrow = context.getString(R.string.prayer_log_chest),
+                title = context.getString(R.string.prayer_log_chest_open),
+                text = streak,
+                chip = fullDay
+            )
+        }
+    }
+
+    private fun locale(): Locale = context.resources.configuration.locales[0]
 
     /**
      * Opens the prayer log. [requestCode] is the notification's own: sharing another's would

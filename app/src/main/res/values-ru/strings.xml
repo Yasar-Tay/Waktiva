@@ -555,6 +555,9 @@
     <string name="prayer_log_chest_hint">Совершите все пять, чтобы открыть его</string>
     <string name="prayer_log_chest_open">Открыт · бонус получен</string>
     <string name="prayer_log_journey">Дневник пути</string>
+    <string name="prayer_log_notify_quest_ending">Задание заканчивается</string>
+    <string name="prayer_log_notify_streak_risk">Ваша серия из %1$d дней под угрозой</string>
+    <string name="prayer_log_notify_full_day">Полный день +%1$d XP</string>
     <string name="widget_prayer_log_description">Ваш уровень, серия и значки, а также сегодняшние намазы — отметить одним касанием</string>
     <string name="widget_prayer_log_off">Включите учёт намазов в настройках</string>
     <string name="qibla_mosques_loading">Загрузка ближайших мечетей…</string>

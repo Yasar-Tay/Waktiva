@@ -555,6 +555,9 @@
     <string name="prayer_log_chest_hint">Odmów wszystkie pięć, aby ją otworzyć</string>
     <string name="prayer_log_chest_open">Otwarta · bonus zdobyty</string>
     <string name="prayer_log_journey">Dziennik podróży</string>
+    <string name="prayer_log_notify_quest_ending">Zadanie się kończy</string>
+    <string name="prayer_log_notify_streak_risk">Twoja seria %1$d dni jest zagrożona</string>
+    <string name="prayer_log_notify_full_day">Pełny dzień +%1$d XP</string>
     <string name="widget_prayer_log_description">Twój poziom, seria i odznaki oraz dzisiejsze modlitwy do zaznaczenia jednym dotknięciem</string>
     <string name="widget_prayer_log_off">Włącz dziennik modlitw w Ustawieniach</string>
     <string name="qibla_mosques_loading">Wczytywanie pobliskich meczetów…</string>

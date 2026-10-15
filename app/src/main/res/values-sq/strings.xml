@@ -555,6 +555,9 @@
     <string name="prayer_log_chest_hint">Fali të pesta për ta hapur</string>
     <string name="prayer_log_chest_open">U hap · bonusi u fitua</string>
     <string name="prayer_log_journey">Ditari i udhëtimit</string>
+    <string name="prayer_log_notify_quest_ending">Detyra po mbaron</string>
+    <string name="prayer_log_notify_streak_risk">Seria jote prej %1$d ditësh është në rrezik</string>
+    <string name="prayer_log_notify_full_day">Ditë e plotë +%1$d XP</string>
     <string name="widget_prayer_log_description">Niveli, seria dhe distinktivët e tu, me namazet e sotme për t\'i shënuar me një prekje</string>
     <string name="widget_prayer_log_off">Aktivizo regjistrin e namazeve te Cilësimet</string>
     <string name="qibla_mosques_loading">Po ngarkohen xhamitë përreth…</string>

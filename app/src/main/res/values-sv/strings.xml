@@ -555,6 +555,9 @@
     <string name="prayer_log_chest_hint">Be alla fem för att öppna den</string>
     <string name="prayer_log_chest_open">Öppnad · bonus intjänad</string>
     <string name="prayer_log_journey">Resedagbok</string>
+    <string name="prayer_log_notify_quest_ending">Uppdraget tar slut</string>
+    <string name="prayer_log_notify_streak_risk">Din svit på %1$d dagar är i fara</string>
+    <string name="prayer_log_notify_full_day">Hel dag +%1$d XP</string>
     <string name="widget_prayer_log_description">Din nivå, svit och dina märken, med dagens böner att markera med ett tryck</string>
     <string name="widget_prayer_log_off">Slå på böneloggen i Inställningar</string>
     <string name="qibla_mosques_loading">Läser in moskéer i närheten…</string>

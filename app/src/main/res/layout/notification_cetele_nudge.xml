@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The prayer log's nudge before a prayer's time ends, expanded: on a dark sheet with gold
+     brackets, the prayer's emblem beside "quest ending", its name, the streak at stake, and how
+     much of its time is left, counting down. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:background="@drawable/cetele_notification_panel">
+
+    <ImageView
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_gravity="top|start"
+        android:importantForAccessibility="no"
+        android:src="@drawable/cetele_notification_bracket" />
+
+    <ImageView
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_gravity="bottom|end"
+        android:importantForAccessibility="no"
+        android:rotation="180"
+        android:src="@drawable/cetele_notification_bracket" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="14dp">
+
+        <FrameLayout
+            android:layout_width="52dp"
+            android:layout_height="52dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:src="@drawable/cetele_diamond_active" />
+
+            <ImageView
+                android:id="@+id/cetele_emblem_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/cetele_eyebrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/hind_siliguri_bold"
+                android:letterSpacing="0.2"
+                android:textColor="#FFE6BE5A"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/cetele_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/hind_siliguri_bold"
+                android:maxLines="1"
+                android:textColor="#FFEDE6D6"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/cetele_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/inter_regular"
+                android:maxLines="3"
+                android:textColor="#FFA39D8C"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:id="@+id/cetele_time_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ProgressBar
+                    android:id="@+id/cetele_time_left"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="6dp"
+                    android:layout_weight="1"
+                    android:max="1000"
+                    android:progressDrawable="@drawable/cetele_notification_progress" />
+
+                <Chronometer
+                    android:id="@+id/cetele_countdown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:countDown="true"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="#FFE8743B"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

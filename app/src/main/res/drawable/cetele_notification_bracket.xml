@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A gold bracket over the sheet's top start corner; turned half round, it holds the bottom end. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="12dp"
+    android:height="12dp"
+    android:viewportWidth="12"
+    android:viewportHeight="12"
+    android:autoMirrored="true">
+    <path
+        android:pathData="M1,11L1,5A4,4 0 0,1 5,1L11,1"
+        android:strokeColor="#FFE6BE5A"
+        android:strokeWidth="2"
+        android:strokeLineCap="round" />
+</vector>

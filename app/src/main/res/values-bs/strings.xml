@@ -555,6 +555,9 @@
     <string name="prayer_log_chest_hint">Klanjaj svih pet da je otvoriš</string>
     <string name="prayer_log_chest_open">Otvorena · bonus osvojen</string>
     <string name="prayer_log_journey">Dnevnik putovanja</string>
+    <string name="prayer_log_notify_quest_ending">Zadatak ističe</string>
+    <string name="prayer_log_notify_streak_risk">Tvoj niz od %1$d dana je u opasnosti</string>
+    <string name="prayer_log_notify_full_day">Pun dan +%1$d XP</string>
     <string name="widget_prayer_log_description">Tvoj nivo, niz i značke, s današnjim namazima za označiti jednim dodirom</string>
     <string name="widget_prayer_log_off">Uključi evidenciju namaza u Postavkama</string>
     <string name="qibla_mosques_loading">Učitavanje obližnjih džamija…</string>

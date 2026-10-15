@@ -543,6 +543,9 @@
     <string name="prayer_log_chest_hint">Compi tutte e cinque per aprirlo</string>
     <string name="prayer_log_chest_open">Aperto · bonus ottenuto</string>
     <string name="prayer_log_journey">Diario di viaggio</string>
+    <string name="prayer_log_notify_quest_ending">Missione in scadenza</string>
+    <string name="prayer_log_notify_streak_risk">La tua serie di %1$d giorni è a rischio</string>
+    <string name="prayer_log_notify_full_day">Giorno pieno +%1$d XP</string>
     <string name="widget_prayer_log_description">Il tuo livello, la serie e i badge, con le preghiere di oggi da segnare con un tocco</string>
     <string name="widget_prayer_log_off">Attiva il registro delle preghiere nelle Impostazioni</string>
     <string name="qibla_mosques_loading">Caricamento delle moschee vicine…</string>

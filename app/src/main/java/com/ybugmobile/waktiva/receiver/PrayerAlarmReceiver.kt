@@ -30,6 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 /**
@@ -135,7 +136,15 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
                     }
                     AlarmScheduler.ACTION_PRAYER_LOG_NUDGE -> {
                         val type = PrayerType.fromString(prayerName)
-                        if (type != null) prayerLogGame.nudge(LocalDate.parse(prayerDate), type, LocalDate.now())
+                        if (type != null) {
+                            prayerLogGame.nudge(
+                                date = LocalDate.parse(prayerDate),
+                                type = type,
+                                today = LocalDate.now(),
+                                startsAt = intent.getStringExtra(NotificationHelper.EXTRA_STARTS_AT)?.let(LocalDateTime::parse),
+                                endsAt = intent.getStringExtra(NotificationHelper.EXTRA_ENDS_AT)?.let(LocalDateTime::parse)
+                            )
+                        }
                         rescheduleNextPrayer()
                     }
                     AlarmScheduler.ACTION_PRE_ADHAN_NOTIFICATION -> {

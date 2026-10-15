@@ -556,6 +556,9 @@
     <string name="prayer_log_chest_hint">Salat kelima waktu untuk membukanya</string>
     <string name="prayer_log_chest_open">Terbuka · bonus didapat</string>
     <string name="prayer_log_journey">Catatan perjalanan</string>
+    <string name="prayer_log_notify_quest_ending">Misi hampir berakhir</string>
+    <string name="prayer_log_notify_streak_risk">Rangkaian %1$d harimu terancam</string>
+    <string name="prayer_log_notify_full_day">Hari penuh +%1$d XP</string>
     <string name="widget_prayer_log_description">Level, streak, dan lencanamu, dengan salat hari ini untuk ditandai sekali ketuk</string>
     <string name="widget_prayer_log_off">Aktifkan catatan salat di Pengaturan</string>
     <string name="qibla_mosques_loading">Memuat masjid terdekat…</string>

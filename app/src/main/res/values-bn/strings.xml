@@ -556,6 +556,9 @@
     <string name="prayer_log_chest_hint">খুলতে পাঁচ ওয়াক্তই পড়ুন</string>
     <string name="prayer_log_chest_open">খোলা হয়েছে · বোনাস পেয়েছেন</string>
     <string name="prayer_log_journey">যাত্রার খাতা</string>
+    <string name="prayer_log_notify_quest_ending">কাজ শেষ হতে চলেছে</string>
+    <string name="prayer_log_notify_streak_risk">আপনার %1$d দিনের ধারা ঝুঁকিতে</string>
+    <string name="prayer_log_notify_full_day">পূর্ণ দিন +%1$d XP</string>
     <string name="widget_prayer_log_description">আপনার লেভেল, ধারা ও ব্যাজ, আর আজকের নামাজ এক ট্যাপে চিহ্নিত করুন</string>
     <string name="widget_prayer_log_off">সেটিংস থেকে নামাজের হিসাব চালু করুন</string>
     <string name="qibla_mosques_loading">কাছাকাছি মসজিদ লোড হচ্ছে…</string>

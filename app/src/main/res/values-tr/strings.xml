@@ -556,6 +556,9 @@
     <string name="prayer_log_chest_hint">Beş vaktin hepsini kıl, sandık açılsın</string>
     <string name="prayer_log_chest_open">Açıldı · bonus kazanıldı</string>
     <string name="prayer_log_journey">Sefer günlüğü</string>
+    <string name="prayer_log_notify_quest_ending">Görev bitiyor</string>
+    <string name="prayer_log_notify_streak_risk">%1$d günlük serin tehlikede</string>
+    <string name="prayer_log_notify_full_day">Tam gün +%1$d XP</string>
     <string name="widget_prayer_log_description">Seviyen, serin ve rozetlerin; bugünün namazlarını tek dokunuşla işaretle</string>
     <string name="widget_prayer_log_off">Çeteleyi Ayarlar\'dan aç</string>
     <string name="qibla_mosques_loading">Yakındaki camiler yükleniyor…</string>
