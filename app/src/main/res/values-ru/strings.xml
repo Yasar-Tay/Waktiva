@@ -557,4 +557,6 @@
     <string name="prayer_log_journey">Дневник пути</string>
     <string name="widget_prayer_log_description">Ваш уровень, серия и значки, а также сегодняшние намазы — отметить одним касанием</string>
     <string name="widget_prayer_log_off">Включите учёт намазов в настройках</string>
+    <string name="qibla_mosques_loading">Загрузка ближайших мечетей…</string>
+    <string name="qibla_mosques_load_failed">Не удалось загрузить ближайшие мечети</string>
 </resources>

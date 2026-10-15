@@ -558,4 +558,6 @@
     <string name="prayer_log_journey">যাত্রার খাতা</string>
     <string name="widget_prayer_log_description">আপনার লেভেল, ধারা ও ব্যাজ, আর আজকের নামাজ এক ট্যাপে চিহ্নিত করুন</string>
     <string name="widget_prayer_log_off">সেটিংস থেকে নামাজের হিসাব চালু করুন</string>
+    <string name="qibla_mosques_loading">কাছাকাছি মসজিদ লোড হচ্ছে…</string>
+    <string name="qibla_mosques_load_failed">কাছাকাছি মসজিদ লোড করা যায়নি</string>
 </resources>

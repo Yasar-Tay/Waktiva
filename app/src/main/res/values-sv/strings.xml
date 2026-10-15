@@ -557,4 +557,6 @@
     <string name="prayer_log_journey">Resedagbok</string>
     <string name="widget_prayer_log_description">Din nivå, svit och dina märken, med dagens böner att markera med ett tryck</string>
     <string name="widget_prayer_log_off">Slå på böneloggen i Inställningar</string>
+    <string name="qibla_mosques_loading">Läser in moskéer i närheten…</string>
+    <string name="qibla_mosques_load_failed">Det gick inte att läsa in moskéer i närheten</string>
 </resources>

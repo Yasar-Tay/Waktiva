@@ -557,4 +557,6 @@
     <string name="prayer_log_journey">Matkapäiväkirja</string>
     <string name="widget_prayer_log_description">Tasosi, putkesi ja merkkisi sekä päivän rukoukset merkittäväksi yhdellä napautuksella</string>
     <string name="widget_prayer_log_off">Ota rukousloki käyttöön asetuksista</string>
+    <string name="qibla_mosques_loading">Ladataan lähellä olevia moskeijoita…</string>
+    <string name="qibla_mosques_load_failed">Lähellä olevia moskeijoita ei voitu ladata</string>
 </resources>

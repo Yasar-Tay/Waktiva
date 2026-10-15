@@ -558,4 +558,6 @@
     <string name="prayer_log_journey">Journey log</string>
     <string name="widget_prayer_log_description">Your level, streak and badges, with today\'s prayers to mark in a tap</string>
     <string name="widget_prayer_log_off">Turn on the prayer log in Settings</string>
+    <string name="qibla_mosques_loading">Loading nearby mosques…</string>
+    <string name="qibla_mosques_load_failed">Could not load nearby mosques</string>
 </resources>

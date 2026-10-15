@@ -557,4 +557,6 @@
     <string name="prayer_log_journey">Dnevnik putovanja</string>
     <string name="widget_prayer_log_description">Tvoj nivo, niz i značke, s današnjim namazima za označiti jednim dodirom</string>
     <string name="widget_prayer_log_off">Uključi evidenciju namaza u Postavkama</string>
+    <string name="qibla_mosques_loading">Učitavanje obližnjih džamija…</string>
+    <string name="qibla_mosques_load_failed">Nije moguće učitati obližnje džamije</string>
 </resources>

@@ -558,4 +558,6 @@
     <string name="prayer_log_journey">سجل الرحلة</string>
     <string name="widget_prayer_log_description">مستواك وسلسلتك وأوسمتك، مع صلوات اليوم لتعليمها بلمسة</string>
     <string name="widget_prayer_log_off">فعّل سجل الصلوات من الإعدادات</string>
+    <string name="qibla_mosques_loading">جارٍ تحميل المساجد القريبة…</string>
+    <string name="qibla_mosques_load_failed">تعذّر تحميل المساجد القريبة</string>
 </resources>

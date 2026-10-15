@@ -545,4 +545,6 @@
     <string name="prayer_log_journey">Reisetagebuch</string>
     <string name="widget_prayer_log_description">Deine Stufe, Serie und Abzeichen, dazu die heutigen Gebete zum Markieren mit einem Tipp</string>
     <string name="widget_prayer_log_off">Schalte das Gebetstagebuch in den Einstellungen ein</string>
+    <string name="qibla_mosques_loading">Moscheen in der Nähe werden geladen…</string>
+    <string name="qibla_mosques_load_failed">Moscheen in der Nähe konnten nicht geladen werden</string>
 </resources>
