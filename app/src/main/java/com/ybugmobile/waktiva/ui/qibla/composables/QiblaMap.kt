@@ -99,6 +99,7 @@ fun QiblaMap(
     kaabaLatLng: LatLng,
     mosques: List<MosqueLocation> = emptyList(),
     mosqueFetchFailed: Boolean = false,
+    mosquesLoading: Boolean = false,
     onMapReady: (MapLibreMap) -> Unit,
     onMapLongClick: (LatLng) -> Unit,
     onToggleSatellite: () -> Unit,
@@ -313,6 +314,28 @@ fun QiblaMap(
                     selectedMosqueScreenPos.value = null
                 }
             )
+        }
+
+        // Mosque loading chip — public Overpass servers can take 20 s+ to answer
+        if (mosquesLoading && mosques.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 72.dp)
+            ) {
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(20.dp),
+                    tonalElevation = 4.dp
+                ) {
+                    Text(
+                        text = "Loading nearby mosques…",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                    )
+                }
+            }
         }
 
         // Mosque fetch failure chip — only shown when fetch failed AND cache is empty
