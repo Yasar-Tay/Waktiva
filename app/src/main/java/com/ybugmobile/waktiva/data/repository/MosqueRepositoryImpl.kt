@@ -5,9 +5,11 @@ import android.util.Log
 import com.ybugmobile.waktiva.data.local.dao.MosqueDao
 import com.ybugmobile.waktiva.data.local.entity.MosqueEntity
 import com.ybugmobile.waktiva.data.remote.OverpassApiService
+import com.ybugmobile.waktiva.data.remote.dto.OverpassResponseDto
 import com.ybugmobile.waktiva.domain.model.MosqueLocation
 import com.ybugmobile.waktiva.domain.repository.MosqueRepository
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.roundToInt
 
 private const val TAG = "MosqueRepo"
@@ -47,7 +49,18 @@ class MosqueRepositoryImpl @Inject constructor(
             out center 200;
         """.trimIndent()
 
-        val response = overpassApiService.query(query)
+        val response = try {
+            queryAnyMirror(query)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // Every mirror failed — a stale cache beats an error banner.
+            if (cached.isNotEmpty()) {
+                Log.w(TAG, "All Overpass mirrors failed; returning ${cached.size} stale cached mosques", e)
+                return cached.map { it.toDomain() }
+            }
+            throw e
+        }
         Log.d(TAG, "Overpass returned ${response.elements.size} elements")
 
         val entities = response.elements.mapNotNull { el ->
@@ -77,6 +90,30 @@ class MosqueRepositoryImpl @Inject constructor(
         mosqueDao.replaceForAnchor(anchorLat, anchorLng, deduped)
 
         return deduped.map { it.toDomain() }
+    }
+
+    /**
+     * Tries each public Overpass instance in turn. They fail independently and often
+     * (instant 502/504 when overloaded, or a queue longer than our call timeout), so a
+     * single instance made the mosque layer fail almost every time.
+     */
+    private suspend fun queryAnyMirror(query: String): OverpassResponseDto {
+        var lastError: Exception? = null
+        for (url in OverpassApiService.INTERPRETER_URLS) {
+            try {
+                val response = overpassApiService.query(url, query)
+                if (response.remark?.contains("error", ignoreCase = true) == true) {
+                    throw IllegalStateException("Overpass remark: ${response.remark}")
+                }
+                return response
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.w(TAG, "Overpass mirror failed: $url (${e.message})")
+                lastError = e
+            }
+        }
+        throw lastError ?: IllegalStateException("No Overpass mirrors configured")
     }
 
     private fun MosqueEntity.toDomain() = MosqueLocation(id, name, lat, lng, address)
