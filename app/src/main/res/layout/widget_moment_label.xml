@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The moment's label, shared by the day circle widgets: a dot in the state's colour (a tick once prayed) and the prayer whose time it is. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/widget_label_dot"
+        android:layout_width="7dp"
+        android:layout_height="7dp"
+        android:layout_marginEnd="6dp"
+        android:src="@drawable/widget_dot" />
+
+    <ImageView
+        android:id="@+id/widget_label_check"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginEnd="5dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_widget_check"
+        android:tint="#FFFFD54F"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/widget_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="@font/inter_medium"
+        android:letterSpacing="0.08"
+        android:maxLines="1"
+        android:shadowColor="#40000000"
+        android:shadowDy="1"
+        android:shadowRadius="4"
+        android:textAllCaps="true"
+        android:textColor="#E6FFFFFF"
+        android:textSize="11sp" />
+</LinearLayout>

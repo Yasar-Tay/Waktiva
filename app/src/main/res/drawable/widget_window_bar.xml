@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The bar of a prayer's time in the day circle widgets: a faint track filled up to now, tinted the prayer's colour from Android 12. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="999dp" />
+            <solid android:color="#29FFFFFF" />
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <scale android:scaleWidth="100%">
+            <shape android:shape="rectangle">
+                <corners android:radius="999dp" />
+                <solid android:color="#FFFFFFFF" />
+            </shape>
+        </scale>
+    </item>
+</layer-list>

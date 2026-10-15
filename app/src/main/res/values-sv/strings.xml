@@ -444,7 +444,7 @@
     <string name="widget_ring_label">Bön nu</string>
     <string name="widget_ring_description">Bönen vars tid det är, tiden som är kvar och ”Jag har bett” med ett tryck</string>
     <string name="widget_my_day_label">Min dag</string>
-    <string name="widget_my_day_description">Bönen vars tid det är och tiden som är kvar, med dagscirkeln och tiderna</string>
+    <string name="widget_my_day_description">Bönen vars tid det är och tiden som är kvar, med dagens tider att bocka av med ett tryck</string>
     <string name="widget_prayer_time">Dags för %1$s</string>
     <string name="widget_prayer_time_ending">Tiden för %1$s går ut</string>
     <string name="widget_prayer_prayed">%1$s bedd</string>

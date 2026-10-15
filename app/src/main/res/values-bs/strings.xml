@@ -444,7 +444,7 @@
     <string name="widget_ring_label">Namaz sada</string>
     <string name="widget_ring_description">Namaz čije je vrijeme, koliko mu je ostalo i „Klanjao sam“ jednim dodirom</string>
     <string name="widget_my_day_label">Moj dan</string>
-    <string name="widget_my_day_description">Namaz čije je vrijeme i koliko mu je ostalo, uz dnevni krug i vakte</string>
+    <string name="widget_my_day_description">Namaz čije je vrijeme i koliko mu je ostalo, uz dnevne vakte koje označavaš jednim dodirom</string>
     <string name="widget_prayer_time">Vrijeme za %1$s</string>
     <string name="widget_prayer_time_ending">Vrijeme za %1$s ističe</string>
     <string name="widget_prayer_prayed">%1$s klanjan</string>

@@ -444,7 +444,7 @@
     <string name="widget_ring_label">Rukous nyt</string>
     <string name="widget_ring_description">Rukous, jonka aika on nyt, jäljellä oleva aika ja ”Rukoilin” yhdellä napautuksella</string>
     <string name="widget_my_day_label">Minun päiväni</string>
-    <string name="widget_my_day_description">Rukous, jonka aika on nyt, ja jäljellä oleva aika, päivän ympyrän ja aikojen kanssa</string>
+    <string name="widget_my_day_description">Rukous, jonka aika on nyt, ja jäljellä oleva aika, sekä päivän ajat merkittäviksi yhdellä napautuksella</string>
     <string name="widget_prayer_time">%1$s-aika</string>
     <string name="widget_prayer_time_ending">%1$s-aika päättymässä</string>
     <string name="widget_prayer_prayed">%1$s rukoiltu</string>

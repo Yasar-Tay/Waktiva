@@ -445,7 +445,7 @@
     <string name="widget_ring_label">Şimdiki Vakit</string>
     <string name="widget_ring_description">İçinde bulunulan vakit, çıkmasına kalan süre ve tek dokunuşla “Kıldım”</string>
     <string name="widget_my_day_label">Günüm</string>
-    <string name="widget_my_day_description">İçinde bulunulan vakit ve kalan süre; günün halkası ve vakitleriyle</string>
+    <string name="widget_my_day_description">İçinde bulunulan vakit ve kalan süre; günün vakitleri tek dokunuşla işaretlenir</string>
     <string name="widget_prayer_time">%1$s vakti</string>
     <string name="widget_prayer_time_ending">%1$s vakti çıkıyor</string>
     <string name="widget_prayer_prayed">%1$s kılındı</string>

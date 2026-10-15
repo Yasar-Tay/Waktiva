@@ -4,18 +4,9 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.LinearGradient
-import android.graphics.Paint
-import android.graphics.RectF
-import android.graphics.Shader
-import android.graphics.Typeface
 import android.view.View
 import android.widget.RemoteViews
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.core.content.ContextCompat
 import com.ybugmobile.waktiva.MainActivity
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.data.notification.NotificationHelper
@@ -34,29 +25,27 @@ import java.time.LocalDate
 
 /**
  * The prayer log widget ([WaktivaPrayerLogWidget]): the çetele as a game, as on the prayer log
- * screen. The level's gold medal ringed by how far the level has come, the XP bar with what the
- * next level takes, the streak and the badges earned, and today's five prayers: gold once
- * marked, ringed in their colour while their time is on, red once missed. A tap on one whose
- * time has come marks it or takes the mark back, as the day circle widgets do.
+ * screen. The level in a gold diamond, the XP bar with what the next level takes, the streak and
+ * the badges earned, and today's five prayers as tiles: gold once marked, ringed in their colour
+ * while their time is on, ringed in red once missed. A tap on one whose time has come marks it or
+ * takes the mark back, as the day circle widgets do. It sits on the sky of the hour, lit by the
+ * prayer whose time it is, like the other widgets.
  */
 internal object PrayerLogWidget {
-
-    private const val MEDAL_DP = 52
-    private const val DOT_DP = 38
-    private const val MAX_PX = 300
 
     private const val REQUEST_TOGGLE = 7_320
     private const val REQUEST_OPEN = 7_330
 
-    private val GoldLight = Color(0xFFFFECB3)
-    private val GoldDeep = Color(0xFFE0A800)
-    private val Ink = Color(0xFF3B2A00)
+    private const val INK = 0xFF3B2A00.toInt()
+    private const val FAINT = 0x66FFFFFF
+    private const val MISSED_TEXT = 0xFFFCA5A5.toInt()
 
     /** What every instance shows, read once per redraw. */
     private class LogToday(
         val progress: PrayerLogProgress,
         val streak: Int,
         val date: LocalDate,
+        val current: PrayerType,
         val prayers: List<Pair<PrayerType, PrayerLogStatus>>
     )
 
@@ -87,16 +76,16 @@ internal object PrayerLogWidget {
                 trackedSince = trackedSince
             )
         }
-        return LogToday(PrayerLogProgress.of(prayed), PrayerLog.streak(prayed, date), date, prayers)
+        val current = DayWidgetModel.currentPrayer(day, snapshot.now.toLocalTime())
+        return LogToday(PrayerLogProgress.of(prayed), PrayerLog.streak(prayed, date), date, current, prayers)
     }
 
     private fun build(context: Context, snapshot: WaktivaWidget.Snapshot, enabled: Boolean, today: LogToday?): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_prayer_log)
         views.setOnClickPendingIntent(android.R.id.background, openLogIntent(context))
-        views.setImageViewBitmap(
-            R.id.widget_bg,
-            WaktivaWidget.litBackground(snapshot.skyColors, PrayedGold.toArgb(), Backdrop.WIDE, snapshot.atmosphere)
-        )
+        // The sky of the hour lit by the prayer whose time it is, as on the other widgets.
+        val accent = today?.current?.accentColor?.toArgb() ?: PrayedGold.toArgb()
+        views.setImageViewBitmap(R.id.widget_bg, WaktivaWidget.litBackground(snapshot.skyColors, accent, Backdrop.WIDE, snapshot.atmosphere))
         views.setViewVisibility(R.id.widget_content, if (today != null) View.VISIBLE else View.GONE)
         views.setViewVisibility(R.id.widget_log_off, if (!enabled) View.VISIBLE else View.GONE)
         views.setViewVisibility(R.id.widget_empty, if (enabled && today == null) View.VISIBLE else View.GONE)
@@ -105,7 +94,7 @@ internal object PrayerLogWidget {
         val locale = context.resources.configuration.locales[0]
         val progress = today.progress
         val fraction = progress.levelXp.toFloat() / progress.levelSpan
-        views.setImageViewBitmap(R.id.widget_log_medal, medal(context, progress.level, fraction))
+        views.setImageViewBitmap(R.id.widget_log_medal, WidgetArt.diamond(context, progress.level))
         views.setTextViewText(R.id.widget_log_level, context.getString(R.string.prayer_log_level, progress.level))
         views.setTextViewText(
             R.id.widget_log_xp,
@@ -120,30 +109,43 @@ internal object PrayerLogWidget {
         views.setTextViewText(R.id.widget_log_badges, "🏅 ${progress.earned.size}/${progress.badges.size}")
 
         views.removeAllViews(R.id.widget_log_prayers)
-        today.prayers.forEach { (type, status) ->
-            val cell = RemoteViews(context.packageName, R.layout.widget_log_prayer)
-            cell.setImageViewBitmap(R.id.widget_log_dot, dot(context, type, status))
-            cell.setTextViewText(R.id.widget_log_name, type.getDisplayName(context))
-            cell.setTextColor(
-                R.id.widget_log_name,
-                when (status) {
-                    PrayerLogStatus.PRAYED -> PrayedGold.toArgb()
-                    PrayerLogStatus.UPCOMING -> 0x73FFFFFF
-                    else -> 0xCCFFFFFF.toInt()
-                }
-            )
-            val name = type.getPrayerName(context)
-            if (status != PrayerLogStatus.UPCOMING) {
-                cell.setOnClickPendingIntent(R.id.widget_log_cell, DayWidgets.toggleIntent(context, today.date, type, REQUEST_TOGGLE))
-                cell.setContentDescription(
-                    R.id.widget_log_cell,
-                    if (status == PrayerLogStatus.PRAYED) "$name. ${context.getString(R.string.prayer_log_unmark)}"
-                    else "${context.getString(R.string.prayer_log_mark)}: $name"
-                )
-            }
-            views.addView(R.id.widget_log_prayers, cell)
-        }
+        today.prayers.forEach { (type, status) -> views.addView(R.id.widget_log_prayers, tile(context, today.date, type, status)) }
         return views
+    }
+
+    /** A prayer's tile: its pane and sign in the colour of where it stands, and its tap. */
+    private fun tile(context: Context, date: LocalDate, type: PrayerType, status: PrayerLogStatus): RemoteViews {
+        val cell = RemoteViews(context.packageName, R.layout.widget_log_prayer)
+        cell.setTextViewText(R.id.widget_log_name, type.getDisplayName(context))
+        val accent = type.accentColor.toArgb()
+        val (pane, icon, ink) = when (status) {
+            PrayerLogStatus.PRAYED -> Triple(R.drawable.widget_pill_solid, R.drawable.ic_widget_check, INK)
+            PrayerLogStatus.MISSED -> Triple(R.drawable.widget_pill_outline, R.drawable.ic_widget_cross, MISSED_TEXT)
+            PrayerLogStatus.ACTIVE -> Triple(R.drawable.widget_pill_outline, type.iconRes, accent)
+            PrayerLogStatus.UPCOMING, PrayerLogStatus.UNTRACKED -> Triple(R.drawable.widget_pill_faint, type.iconRes, FAINT)
+        }
+        cell.setImageViewResource(R.id.widget_log_tile, pane)
+        when (status) {
+            PrayerLogStatus.PRAYED -> cell.setInt(R.id.widget_log_tile, "setColorFilter", PrayedGold.toArgb())
+            PrayerLogStatus.MISSED -> cell.setInt(R.id.widget_log_tile, "setColorFilter", MissedRed.toArgb())
+            PrayerLogStatus.ACTIVE -> cell.setInt(R.id.widget_log_tile, "setColorFilter", accent)
+            else -> Unit
+        }
+        if (status == PrayerLogStatus.MISSED) cell.setInt(R.id.widget_log_tile, "setImageAlpha", 190)
+        cell.setImageViewResource(R.id.widget_log_icon, icon)
+        cell.setInt(R.id.widget_log_icon, "setColorFilter", ink)
+        cell.setTextColor(R.id.widget_log_name, ink)
+
+        val name = type.getPrayerName(context)
+        if (status != PrayerLogStatus.UPCOMING) {
+            cell.setOnClickPendingIntent(R.id.widget_log_cell, DayWidgets.toggleIntent(context, date, type, REQUEST_TOGGLE))
+            cell.setContentDescription(
+                R.id.widget_log_cell,
+                if (status == PrayerLogStatus.PRAYED) "$name. ${context.getString(R.string.prayer_log_unmark)}"
+                else "${context.getString(R.string.prayer_log_mark)}: $name"
+            )
+        }
+        return cell
     }
 
     private fun openLogIntent(context: Context): PendingIntent = PendingIntent.getActivity(
@@ -155,112 +157,4 @@ internal object PrayerLogWidget {
         },
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
-
-    // ── Painted parts ─────────────────────────────────────────────────────
-
-    private fun px(context: Context, dp: Int) =
-        (dp * context.resources.displayMetrics.density).toInt().coerceIn(1, MAX_PX)
-
-    /** The level in a gold coin, ringed by how far the level has come. */
-    private fun medal(context: Context, level: Int, fraction: Float): Bitmap {
-        val size = px(context, MEDAL_DP)
-        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        val s = size.toFloat()
-        val c = s / 2f
-        val stroke = s * 0.075f
-        val arc = RectF(stroke / 2f, stroke / 2f, s - stroke / 2f, s - stroke / 2f)
-
-        val ring = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE
-            strokeWidth = stroke
-            strokeCap = Paint.Cap.ROUND
-        }
-        ring.color = 0x33FFFFFF
-        canvas.drawArc(arc, 0f, 360f, false, ring)
-        ring.color = PrayedGold.toArgb()
-        canvas.drawArc(arc, -90f, 360f * fraction.coerceIn(0f, 1f), false, ring)
-
-        val r = c - stroke - s * 0.05f
-        val coin = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            shader = LinearGradient(
-                c - r, c - r, c + r, c + r,
-                intArrayOf(GoldLight.toArgb(), PrayedGold.toArgb(), GoldDeep.toArgb()),
-                null,
-                Shader.TileMode.CLAMP
-            )
-        }
-        canvas.drawCircle(c, c, r, coin)
-        canvas.drawCircle(c, c, r - s * 0.03f, Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE
-            strokeWidth = s * 0.015f
-            color = 0x59FFFFFF
-        })
-
-        val text = level.toString()
-        val label = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Ink.toArgb()
-            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-            textAlign = Paint.Align.CENTER
-            textSize = r * if (text.length > 2) 0.72f else 0.95f
-        }
-        canvas.drawText(text, c, c - (label.ascent() + label.descent()) / 2f, label)
-        return bitmap
-    }
-
-    /** A prayer's mark: a gold coin with a tick once prayed, else its icon in a ring of its state. */
-    private fun dot(context: Context, type: PrayerType, status: PrayerLogStatus): Bitmap {
-        val size = px(context, DOT_DP)
-        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        val s = size.toFloat()
-        val c = s / 2f
-        val stroke = s * 0.06f
-        val r = c - stroke
-        val accent = type.accentColor
-
-        val fill = Paint(Paint.ANTI_ALIAS_FLAG)
-        val ring = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE
-            strokeWidth = stroke
-        }
-        val (icon, tint) = when (status) {
-            PrayerLogStatus.PRAYED -> {
-                fill.shader = LinearGradient(
-                    0f, 0f, s, s,
-                    intArrayOf(GoldLight.toArgb(), PrayedGold.toArgb(), GoldDeep.toArgb()),
-                    null,
-                    Shader.TileMode.CLAMP
-                )
-                canvas.drawCircle(c, c, r, fill)
-                R.drawable.ic_widget_check to Ink
-            }
-            PrayerLogStatus.ACTIVE -> {
-                fill.color = accent.copy(alpha = 0.22f).toArgb()
-                ring.color = accent.toArgb()
-                canvas.drawCircle(c, c, r, fill)
-                canvas.drawCircle(c, c, r, ring)
-                type.iconRes to accent
-            }
-            PrayerLogStatus.MISSED -> {
-                fill.color = MissedRed.copy(alpha = 0.16f).toArgb()
-                ring.color = MissedRed.copy(alpha = 0.75f).toArgb()
-                canvas.drawCircle(c, c, r, fill)
-                canvas.drawCircle(c, c, r, ring)
-                type.iconRes to MissedRed.copy(alpha = 0.85f)
-            }
-            PrayerLogStatus.UPCOMING, PrayerLogStatus.UNTRACKED -> {
-                ring.color = 0x40FFFFFF
-                canvas.drawCircle(c, c, r, ring)
-                type.iconRes to Color.White.copy(alpha = 0.4f)
-            }
-        }
-        ContextCompat.getDrawable(context, icon)?.mutate()?.let { drawable ->
-            val half = (r * 0.55f).toInt()
-            drawable.setBounds((c - half).toInt(), (c - half).toInt(), (c + half).toInt(), (c + half).toInt())
-            drawable.setTint(tint.toArgb())
-            drawable.draw(canvas)
-        }
-        return bitmap
-    }
 }

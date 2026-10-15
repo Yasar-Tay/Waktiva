@@ -444,7 +444,7 @@
     <string name="widget_ring_label">Namazi tani</string>
     <string name="widget_ring_description">Namazi që ka hyrë, koha që i mbetet dhe “U fala” me një prekje</string>
     <string name="widget_my_day_label">Dita ime</string>
-    <string name="widget_my_day_description">Namazi që ka hyrë dhe koha që i mbetet, me rrethin e ditës dhe kohët</string>
+    <string name="widget_my_day_description">Namazi që ka hyrë dhe koha që i mbetet, me kohët e ditës për t’i shënuar me një prekje</string>
     <string name="widget_prayer_time">Koha e %1$s</string>
     <string name="widget_prayer_time_ending">Koha e %1$s po mbaron</string>
     <string name="widget_prayer_prayed">%1$s u fal</string>
