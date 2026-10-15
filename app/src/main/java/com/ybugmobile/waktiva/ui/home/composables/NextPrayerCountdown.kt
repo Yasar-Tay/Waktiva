@@ -243,7 +243,9 @@ fun NextPrayerCountdown(
 
                                 Spacer(Modifier.width(if (isLandscape) 8.dp else 10.dp))
 
-                                // Prayer name label + action text stacked
+                                // Prayer name label + action text stacked. Arabic script is joined, so it
+                                // gets no tightened tracking: that measures the label narrower than it draws.
+                                val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
                                 Column(
                                     modifier = Modifier.padding(end = if (isLandscape) 14.dp else 18.dp),
                                     verticalArrangement = Arrangement.spacedBy((-1).dp, Alignment.CenterVertically)
@@ -255,7 +257,9 @@ fun NextPrayerCountdown(
                                             fontWeight = FontWeight.Bold,
                                             color = Color.White.copy(0.42f),
                                             letterSpacing = 1.5.sp
-                                        )
+                                        ),
+                                        maxLines = 1,
+                                        softWrap = false
                                     )
                                     Text(
                                         text = (if (isMuted) stringResource(R.string.home_unmute_adhan) else stringResource(R.string.home_skip_adhan)).uppercase(Locale.getDefault()),
@@ -264,8 +268,10 @@ fun NextPrayerCountdown(
                                             fontFamily = IBMPlexArabic,
                                             fontWeight = FontWeight.Medium,
                                             color = Color.White,
-                                            letterSpacing = (-0.5).sp
-                                        )
+                                            letterSpacing = if (isRtl) 0.sp else (-0.5).sp
+                                        ),
+                                        maxLines = 1,
+                                        softWrap = false
                                     )
                                 }
                             }

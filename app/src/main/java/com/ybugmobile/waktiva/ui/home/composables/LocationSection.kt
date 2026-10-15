@@ -14,8 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
@@ -49,6 +51,9 @@ fun LocationSection(
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val isArabic = configuration.locales[0].language == "ar"
+    // Arabic script is joined, so it gets no tightened tracking: that measures the name narrower
+    // than it draws and cuts off its last letter.
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     
     val unknownStr = stringResource(R.string.home_unknown_location)
     
@@ -121,8 +126,9 @@ fun LocationSection(
                 text = if (hasIssue) healthIssueTitle else city,
                 style = MaterialTheme.typography.titleMedium,
                 color = contentColor,
-                letterSpacing = (-0.5).sp,
-                maxLines = 1
+                letterSpacing = if (isRtl) 0.sp else (-0.5).sp,
+                maxLines = 1,
+                softWrap = false
             )
             
             if (subTitle.isNotEmpty()) {

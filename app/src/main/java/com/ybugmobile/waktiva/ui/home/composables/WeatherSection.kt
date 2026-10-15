@@ -9,10 +9,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.domain.model.PrayerDay
@@ -58,40 +60,43 @@ fun WeatherSection(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (temperature != null) {
-            Row(verticalAlignment = Alignment.Top) {
-                // Temperature numeric display
-                Text(
-                    text = String.format(Locale.US, "%.0f", temperature),
-                    style = MaterialTheme.typography.displayLarge.copy(
-                        fontSize = 60.sp,
-                        fontWeight = FontWeight.Light
-                    ),
-                    color = contentColor
-                )
-                
-                // Degree symbol (styled differently for better visual balance)
-                Text(
-                    text = "°",
-                    style = MaterialTheme.typography.displayLarge.copy(
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Light
-                    ),
-                    color = contentColor,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-                
-                // Weather icon container
-                Column(
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxHeight().padding(top = 10.dp, bottom = 6.dp, start = 4.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = iconRes),
-                        contentDescription = weatherLabel,
-                        modifier = Modifier.size(30.dp),
-                        alpha = 0.9f
+            // Laid out left to right in every language, so RTL reads "29°" and not "°29".
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                Row(verticalAlignment = Alignment.Top) {
+                    // Temperature numeric display
+                    Text(
+                        text = String.format(Locale.US, "%.0f", temperature),
+                        style = MaterialTheme.typography.displayLarge.copy(
+                            fontSize = 60.sp,
+                            fontWeight = FontWeight.Light
+                        ),
+                        color = contentColor
                     )
+                
+                    // Degree symbol (styled differently for better visual balance)
+                    Text(
+                        text = "°",
+                        style = MaterialTheme.typography.displayLarge.copy(
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Light
+                        ),
+                        color = contentColor,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                
+                    // Weather icon container
+                    Column(
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxHeight().padding(top = 10.dp, bottom = 6.dp, start = 4.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = iconRes),
+                            contentDescription = weatherLabel,
+                            modifier = Modifier.size(30.dp),
+                            alpha = 0.9f
+                        )
+                    }
                 }
             }
         } else {
