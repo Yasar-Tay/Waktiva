@@ -3,7 +3,10 @@ package com.ybugmobile.waktiva.data.remote.dto
 import com.google.gson.annotations.SerializedName
 
 data class OverpassResponseDto(
-    val elements: List<OverpassElement>
+    val elements: List<OverpassElement>,
+    // Set when the server aborted the query (e.g. "runtime error: Query timed out");
+    // elements are then partial or empty and must not be cached.
+    val remark: String? = null
 )
 
 data class OverpassElement(

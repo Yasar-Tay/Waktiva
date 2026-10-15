@@ -68,7 +68,9 @@ object NetworkModule {
     fun provideOverpassApiService(okHttpClient: OkHttpClient): OverpassApiService {
         return Retrofit.Builder()
             .baseUrl(OverpassApiService.BASE_URL)
-            .client(okHttpClient)
+            // Cap each mirror attempt so a stalled instance hands over to the next one
+            // instead of eating the whole wait (overpass-api.de can queue for 40 s+).
+            .client(okHttpClient.newBuilder().callTimeout(25, TimeUnit.SECONDS).build())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(OverpassApiService::class.java)
