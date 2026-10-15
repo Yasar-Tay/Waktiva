@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva: Horários de oração
+
+=== SHORT DESCRIPTION (max 80) ===
+Horários de oração, adhan, Qibla e registo de orações. Sem anúncios.
+
+=== FULL DESCRIPTION (max 4000) ===
+O Waktiva é um companheiro de oração calmo e bonito: horários de oração precisos, o adhan à hora certa, a Qibla e um registo que o ajuda a cumprir cada oração. Sem anúncios, sem rastreio, de código aberto.
+
+🕋 HORÁRIOS EM QUE PODE CONFIAR
+• Fajr, nascer do sol, Dhuhr, Asr, Maghrib e Isha para a sua localização
+• Métodos: Diyanet (Turquia), Liga Muçulmana Mundial, ISNA, Egito, Umm al-Qura, Carachi, Teerão, Golfo, Kuwait, Catar e Singapura
+• Horários Diyanet calculados como nas próprias tabelas da Diyanet, mesmo em latitudes elevadas
+• Asr chafiita ou hanafita
+• Um ano inteiro de horários guardado no telemóvel, para funcionar offline
+
+⏳ O SEU DIA NUM RELANCE
+• Um círculo do dia que mostra onde está entre duas orações, com contagem regressiva em tempo real
+• Três estilos de mostrador: Clássico, Mecanismo de latão e Aço noturno
+• O tempo do dia no céu: nuvens, chuva e neve
+• Fases da lua realistas, a data da Hégira e os dias religiosos do ano
+
+📿 REGISTRO
+• Marque as suas orações com um toque na app, num widget ou numa notificação
+• Missões diárias, XP, níveis e sequências para continuar
+• Um calendário e os últimos 7 dias num relance
+• Um lembrete suave depois de Isha se alguma oração ainda não estiver marcada
+• Exporte e importe o seu registo, ou desative-o se não precisar dele
+
+🔊 O ADHAN À SUA MANEIRA
+• Gravações do adhan de Muhsin Kara, campeão mundial de recitação do adhan 2022
+• Escolha em que orações toca o adhan e um adhan diferente para cada oração
+• Adicione os seus próprios áudios (MP3, AAC, WAV, OGG)
+• Dua opcional após o adhan
+• Uma notificação antes da hora da oração e um toque para saltar o próximo adhan
+
+🧭 QIBLA
+• Uma bússola precisa com um suave feixe de luz em direção à Kaaba
+• Vista de mapa para verificar a Qibla a partir de qualquer ponto
+• Mesquitas próximas no mapa
+
+📱 WIDGETS
+• Contagem regressiva: o tempo até à próxima oração, grande e nítido
+• Oração agora: a oração atual e «Já rezei» com um toque
+• O meu dia: os horários e o tempo do dia, cada oração marcada com um toque
+• Registro: o seu nível, a sua sequência e as orações de hoje
+
+🛡️ UM ADHAN QUE CHEGA
+O Waktiva verifica o que poderia silenciar o seu adhan, como o modo Não incomodar, notificações silenciadas ou a otimização da bateria, e mostra-lhe como resolver. Os alarmes exatos mantêm o adhan à hora certa.
+
+🌍 20 IDIOMAS
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska e اردو, com suporte total para idiomas da direita para a esquerda.
+
+🔒 PRIVACIDADE DESDE A ORIGEM
+• Sem anúncios, sem rastreio, sem análises
+• A sua localização serve apenas para os horários, a Qibla e a lua
+• Código aberto com licença MIT
+• Gratuito. Se o Waktiva o ajuda, pode apoiá-lo com um donativo.
+
+Waktiva – feito com cuidado para a Ummah.

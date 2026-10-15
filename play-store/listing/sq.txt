@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva: Vaktet e namazit
+
+=== SHORT DESCRIPTION (max 80) ===
+Vaktet e namazit, ezani, kibla dhe regjistri i namazeve. Pa reklama.
+
+=== FULL DESCRIPTION (max 4000) ===
+Waktiva është një shoqërues i qetë dhe i bukur për namazin: vakte të sakta, ezani në kohë, kibla dhe një regjistër që të ndihmon të mbash çdo namaz. Pa reklama, pa gjurmim, me kod të hapur.
+
+🕋 VAKTE TË CILAVE MUND T'U BESOSH
+• Sabahu, lindja e diellit, dreka, iqindia, akshami dhe jacia për vendndodhjen tënde
+• Metodat: Diyanet (Turqi), Lidhja Botërore Myslimane, ISNA, Egjipti, Umm al-Qura, Karaçi, Teherani, Gjiri, Kuvajti, Katari dhe Singapori
+• Vaktet e Diyanetit llogariten si në tabelat e vetë Diyanetit, edhe në gjerësi të larta gjeografike
+• Iqindia sipas shafiive ose hanefive
+• Vaktet e një viti të tërë ruhen në telefon, prandaj funksionojnë edhe pa internet
+
+⏳ DITA JOTE ME NJË VËSHTRIM
+• Rrethi i ditës tregon ku je mes dy namazeve, me numërim mbrapsht të drejtpërdrejtë
+• Tre stile fushe: Klasik, Mekanizëm tunxhi dhe Çeliku i natës
+• Moti i ditës në qiell: re, shi dhe borë
+• Fazat realiste të hënës, data hixhri dhe ditët fetare të vitit
+
+📿 REGJISTRI
+• Shëno namazet me një prekje nga aplikacioni, widget-i ose njoftimi
+• Detyra ditore, XP, nivele dhe seri që të mbajnë në rrugë
+• Kalendari dhe 7 ditët e fundit me një vështrim
+• Kujtesë e butë pas jacisë nëse ka mbetur ndonjë namaz pa shënuar
+• Eksporto dhe importo regjistrin, ose çaktivizoje nëse nuk të duhet
+
+🔊 EZANI SIPAS DËSHIRËS SATE
+• Ezane me zërin e Muhsin Karas, kampion botëror i leximit të ezanit 2022
+• Zgjidh për cilat namaze të këndohet ezani dhe një ezan tjetër për çdo namaz
+• Shto audiot e tua (MP3, AAC, WAV, OGG)
+• Lutje pas ezanit sipas dëshirës
+• Njoftim para kohës së namazit dhe kalim i ezanit të radhës me një prekje
+
+🧭 KIBLA
+• Busull e saktë me një rreze të butë drite drejt Qabes
+• Pamje harte për të kontrolluar kiblën nga çdo vend
+• Xhamitë afër në hartë
+
+📱 WIDGET-ET
+• Numërimi mbrapsht: koha deri te namazi i radhës, e madhe dhe e qartë
+• Namazi tani: namazi i tanishëm dhe "E fala" me një prekje
+• Dita ime: vaktet dhe moti i ditës, çdo namaz shënohet me një prekje
+• Regjistri: niveli yt, seria dhe namazet e sotme
+
+🛡️ NJË EZAN QË MBËRRIN
+Waktiva kontrollon çfarë mund ta heshtë ezanin, si modaliteti Mos shqetëso, njoftimet e heshtura ose optimizimi i baterisë, dhe të tregon si ta rregullosh. Alarmet e sakta e mbajnë ezanin në kohë.
+
+🌍 20 GJUHË
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska dhe اردو, me mbështetje të plotë për gjuhët nga e djathta në të majtë.
+
+🔒 PRIVATËSIA NË THEMEL
+• Pa reklama, pa gjurmim, pa analitikë
+• Vendndodhja jote përdoret vetëm për vaktet, kiblën dhe hënën
+• Kod i hapur me licencën MIT
+• Falas. Nëse Waktiva të ndihmon, mund ta mbështetësh me një dhurim.
+
+Waktiva – bërë me kujdes për ummetin.

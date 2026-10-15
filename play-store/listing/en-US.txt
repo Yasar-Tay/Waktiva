@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva: Prayer Times & Qibla
+
+=== SHORT DESCRIPTION (max 80) ===
+Prayer times, adhan, Qibla and a prayer log. No ads, no tracking.
+
+=== FULL DESCRIPTION (max 4000) ===
+Waktiva is a calm, beautiful prayer companion: accurate prayer times, the adhan on time, the Qibla, and a prayer log that helps you keep every prayer. No ads, no tracking, open source.
+
+🕋 PRAYER TIMES YOU CAN TRUST
+• Fajr, Sunrise, Dhuhr, Asr, Maghrib and Isha for your location
+• Diyanet (Turkey), Muslim World League, ISNA, Egypt, Umm al-Qura, Karachi, Tehran, Gulf, Kuwait, Qatar and Singapore methods
+• Diyanet times computed the way Diyanet's own tables are, even at high latitudes
+• Shafi or Hanafi Asr
+• A full year of prayer times kept on your phone, so they work offline
+
+⏳ YOUR DAY AT A GLANCE
+• A day circle that shows where you are between two prayers, with a live countdown
+• Three dial styles: Classic, Brass Movement and Night Steel
+• The day's weather in the sky: clouds, rain and snow
+• A realistic moon phase, the Hijri date and the year's religious days
+
+📿 PRAYER LOG
+• Mark the prayers you pray in one tap, from the app, a widget or a notification
+• Daily quests, XP, levels and streaks to keep you going
+• A calendar and your last 7 days at a glance
+• A gentle reminder after Isha if a prayer is still unmarked
+• Export and import your log, or turn it off if you don't need it
+
+🔊 THE ADHAN YOUR WAY
+• Adhan recordings by Muhsin Kara, 2022 World Adhan Recitation Champion
+• Choose which prayers play the adhan, and a different adhan for each prayer
+• Add your own audio (MP3, AAC, WAV, OGG)
+• Optional dua after the adhan
+• A notification before prayer time, and one tap to skip the next adhan
+
+🧭 QIBLA
+• A precise compass with a soft beam of light toward the Kaaba
+• A map view to check the Qibla from any spot
+• Nearby mosques on the map
+
+📱 WIDGETS
+• Countdown: the time left to the next prayer, large and clear
+• Prayer Now: the current prayer and "I prayed" in one tap
+• My Day: the day's prayer times and weather, each prayer marked in a tap
+• Prayer Log: your level, streak and today's prayers
+
+🛡️ AN ADHAN THAT ARRIVES
+Waktiva checks what might silence your adhan, such as Do Not Disturb, muted notifications or battery optimization, and shows you how to fix it. Exact alarms keep the adhan on time.
+
+🌍 20 LANGUAGES
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska and اردو, with full right-to-left support.
+
+🔒 PRIVATE BY DESIGN
+• No ads, no tracking, no analytics
+• Your location is used only for prayer times, the Qibla and the moon
+• Open source under the MIT license
+• Free. If Waktiva helps you, you can support it with a donation.
+
+Waktiva – made with care for the Ummah.

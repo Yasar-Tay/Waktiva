@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva: Rukousajat ja qibla
+
+=== SHORT DESCRIPTION (max 80) ===
+Rukousajat, adhan, qibla ja rukousloki. Ei mainoksia, ei seurantaa.
+
+=== FULL DESCRIPTION (max 4000) ===
+Waktiva on rauhallinen ja kaunis rukouskumppani: tarkat rukousajat, adhan ajallaan, qibla ja rukousloki, joka auttaa pitämään kiinni jokaisesta rukouksesta. Ei mainoksia, ei seurantaa, avointa lähdekoodia.
+
+🕋 RUKOUSAJAT, JOIHIN VOIT LUOTTAA
+• Fajr, auringonnousu, Dhuhr, Asr, Maghrib ja Isha sijaintisi mukaan
+• Menetelmät: Diyanet (Turkki), Muslim World League, ISNA, Egypti, Umm al-Qura, Karachi, Teheran, Persianlahti, Kuwait, Qatar ja Singapore
+• Diyanet-ajat lasketaan kuten Diyanetin omissa taulukoissa, myös korkeilla leveysasteilla
+• Asr shafiilaisittain tai hanafilaisittain
+• Koko vuoden rukousajat tallessa puhelimessa, joten ne toimivat myös offline
+
+⏳ PÄIVÄSI YHDELLÄ SILMÄYKSELLÄ
+• Päivän ympyrä näyttää, missä olet kahden rukouksen välillä, ja laskee aikaa reaaliajassa
+• Kolme kellotaulutyyliä: Klassinen, Messinkikoneisto ja Yöteräs
+• Päivän sää taivaalla: pilvet, sade ja lumi
+• Realistiset kuun vaiheet, hijra-päivämäärä ja vuoden uskonnolliset päivät
+
+📿 RUKOUSLOKI
+• Merkitse rukouksesi yhdellä napautuksella sovelluksesta, widgetistä tai ilmoituksesta
+• Päivän tehtävät, XP, tasot ja putket pitävät sinut liikkeellä
+• Kalenteri ja viimeiset 7 päivää yhdellä silmäyksellä
+• Lempeä muistutus Ishan jälkeen, jos jokin rukous on vielä merkitsemättä
+• Vie ja tuo lokisi, tai poista se käytöstä, jos et tarvitse sitä
+
+🔊 ADHAN OMALLA TAVALLASI
+• Adhan-äänitteet Muhsin Karalta, adhanin resitoinnin maailmanmestarilta 2022
+• Valitse, minkä rukousten kohdalla adhan soi, ja eri adhan jokaiselle rukoukselle
+• Lisää omia äänitiedostoja (MP3, AAC, WAV, OGG)
+• Valinnainen dua adhanin jälkeen
+• Ilmoitus ennen rukousaikaa ja seuraavan adhanin ohitus yhdellä napautuksella
+
+🧭 QIBLA
+• Tarkka kompassi ja pehmeä valonsäde kohti Kaabaa
+• Karttanäkymä qiblan tarkistamiseen mistä tahansa
+• Lähimmät moskeijat kartalla
+
+📱 WIDGETIT
+• Lähtölaskenta: aika seuraavaan rukoukseen, isona ja selkeänä
+• Rukous nyt: meneillään oleva rukous ja ”Rukoiltu” yhdellä napautuksella
+• Minun päiväni: päivän rukousajat ja sää, jokainen rukous merkitään napautuksella
+• Rukousloki: tasosi, putkesi ja tämän päivän rukoukset
+
+🛡️ ADHAN, JOKA KUULUU
+Waktiva tarkistaa, mikä voisi vaientaa adhanin, kuten Älä häiritse -tila, mykistetyt ilmoitukset tai akun optimointi, ja näyttää, miten sen korjaat. Tarkat hälytykset pitävät adhanin ajallaan.
+
+🌍 20 KIELTÄ
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska ja اردو, sekä täysi tuki oikealta vasemmalle kirjoitettaville kielille.
+
+🔒 YKSITYISYYS ENSIN
+• Ei mainoksia, ei seurantaa, ei analytiikkaa
+• Sijaintiasi käytetään vain rukousaikoihin, qiblaan ja kuuhun
+• Avointa lähdekoodia MIT-lisenssillä
+• Ilmainen. Jos Waktivasta on sinulle apua, voit tukea sitä lahjoituksella.
+
+Waktiva – tehty huolella ummalle.

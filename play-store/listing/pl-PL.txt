@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva: Czasy modlitw i kibla
+
+=== SHORT DESCRIPTION (max 80) ===
+Czasy modlitw, adhan, kibla i dziennik modlitw. Bez reklam, bez śledzenia.
+
+=== FULL DESCRIPTION (max 4000) ===
+Waktiva to spokojny, piękny towarzysz modlitwy: dokładne czasy modlitw, adhan na czas, kibla i dziennik, który pomaga dotrzymać każdej modlitwy. Bez reklam, bez śledzenia, open source.
+
+🕋 CZASY MODLITW, KTÓRYM MOŻESZ ZAUFAĆ
+• Fadżr, wschód słońca, Zuhr, Asr, Maghrib i Isza dla Twojej lokalizacji
+• Metody: Diyanet (Turcja), Muzułmańska Liga Świata, ISNA, Egipt, Umm al-Qura, Karaczi, Teheran, Zatoka Perska, Kuwejt, Katar i Singapur
+• Czasy Diyanet liczone tak jak we własnych tabelach Diyanet, także na dużych szerokościach geograficznych
+• Asr według szkoły szafickiej lub hanafickiej
+• Czasy modlitw na cały rok zapisane w telefonie, więc działają offline
+
+⏳ TWÓJ DZIEŃ W JEDNYM SPOJRZENIU
+• Krąg dnia pokazuje, gdzie jesteś między dwiema modlitwami, z odliczaniem na żywo
+• Trzy style tarczy: Klasyczny, Mosiężny mechanizm i Nocna stal
+• Pogoda dnia na niebie: chmury, deszcz i śnieg
+• Realistyczne fazy Księżyca, data według kalendarza hidżry i dni religijne roku
+
+📿 DZIENNIK
+• Zaznaczaj modlitwy jednym dotknięciem w aplikacji, widżecie lub powiadomieniu
+• Zadania dnia, XP, poziomy i serie, które motywują
+• Kalendarz i ostatnie 7 dni w jednym spojrzeniu
+• Delikatne przypomnienie po Isza, jeśli któraś modlitwa nie jest zaznaczona
+• Eksportuj i importuj dziennik albo wyłącz go, jeśli go nie potrzebujesz
+
+🔊 ADHAN PO TWOJEMU
+• Nagrania adhanu w wykonaniu Muhsina Kary, mistrza świata w recytacji adhanu 2022
+• Wybierz, przy których modlitwach rozbrzmiewa adhan, i inny adhan dla każdej modlitwy
+• Dodaj własne pliki audio (MP3, AAC, WAV, OGG)
+• Opcjonalna dua po adhanie
+• Powiadomienie przed czasem modlitwy i pominięcie następnego adhanu jednym dotknięciem
+
+🧭 KIBLA
+• Dokładny kompas z łagodną wiązką światła w stronę Kaaby
+• Widok mapy, by sprawdzić kiblę z dowolnego miejsca
+• Pobliskie meczety na mapie
+
+📱 WIDŻETY
+• Odliczanie: czas do następnej modlitwy, duży i czytelny
+• Modlitwa teraz: bieżąca modlitwa i „Odmówiona” jednym dotknięciem
+• Mój dzień: czasy modlitw i pogoda na dziś, każda modlitwa zaznaczana jednym dotknięciem
+• Dziennik: Twój poziom, seria i dzisiejsze modlitwy
+
+🛡️ ADHAN, KTÓRY DOTRZE
+Waktiva sprawdza, co mogłoby wyciszyć adhan, np. tryb Nie przeszkadzać, wyciszone powiadomienia czy optymalizację baterii, i pokazuje, jak to naprawić. Dokładne alarmy pilnują, by adhan rozbrzmiał na czas.
+
+🌍 20 JĘZYKÓW
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska i اردو, z pełną obsługą języków pisanych od prawej do lewej.
+
+🔒 PRYWATNOŚĆ OD PODSTAW
+• Bez reklam, bez śledzenia, bez analityki
+• Lokalizacja służy tylko do czasów modlitw, kibli i Księżyca
+• Open source na licencji MIT
+• Za darmo. Jeśli Waktiva Ci pomaga, możesz wesprzeć ją darowizną.
+
+Waktiva – stworzona z troską dla ummy.

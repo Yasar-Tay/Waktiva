@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva: Gebedstijden & Qibla
+
+=== SHORT DESCRIPTION (max 80) ===
+Gebedstijden, adhan, Qibla en een gebedslog. Geen advertenties, geen tracking.
+
+=== FULL DESCRIPTION (max 4000) ===
+Waktiva is een rustige, mooie gebedsmetgezel: nauwkeurige gebedstijden, de adhan op tijd, de Qibla en een gebedslog die je helpt elk gebed vast te houden. Geen advertenties, geen tracking, open source.
+
+🕋 GEBEDSTIJDEN WAAROP JE KUNT VERTROUWEN
+• Fajr, zonsopgang, Dhuhr, Asr, Maghrib en Isha voor jouw locatie
+• Methoden: Diyanet (Turkije), Muslim World League, ISNA, Egypte, Umm al-Qura, Karachi, Teheran, Golfregio, Koeweit, Qatar en Singapore
+• Diyanet-tijden berekend zoals in Diyanets eigen tabellen, ook op hoge breedtegraden
+• Asr volgens de shafi'i- of hanafi-school
+• Gebedstijden voor een heel jaar op je telefoon, dus ook offline
+
+⏳ JE DAG IN ÉÉN OOGOPSLAG
+• Een dagcirkel die laat zien waar je bent tussen twee gebeden, met een live aftelling
+• Drie wijzerplaatstijlen: Klassiek, Messing uurwerk en Nachtstaal
+• Het weer van de dag in de lucht: wolken, regen en sneeuw
+• Realistische maanfasen, de Hijri-datum en de religieuze dagen van het jaar
+
+📿 GEBEDSLOG
+• Vink je gebeden met één tik af, vanuit de app, een widget of een melding
+• Dagelijkse taken, XP, levels en reeksen om je gaande te houden
+• Een kalender en je laatste 7 dagen in één oogopslag
+• Een zachte herinnering na Isha als er nog een gebed openstaat
+• Exporteer en importeer je log, of zet hem uit als je hem niet nodig hebt
+
+🔊 DE ADHAN ZOALS JIJ WILT
+• Adhan-opnames van Muhsin Kara, wereldkampioen adhan-recitatie 2022
+• Kies bij welke gebeden de adhan klinkt, en een andere adhan voor elk gebed
+• Voeg je eigen audio toe (MP3, AAC, WAV, OGG)
+• Optionele dua na de adhan
+• Een melding vóór de gebedstijd, en met één tik de volgende adhan overslaan
+
+🧭 QIBLA
+• Een nauwkeurig kompas met een zachte lichtstraal naar de Kaaba
+• Een kaartweergave om de Qibla vanaf elke plek te controleren
+• Moskeeën in de buurt op de kaart
+
+📱 WIDGETS
+• Aftellen: de tijd tot het volgende gebed, groot en duidelijk
+• Gebed nu: het huidige gebed en "Gebeden" met één tik
+• Mijn dag: de gebedstijden en het weer van vandaag, elk gebed met één tik afgevinkt
+• Gebedslog: je level, je reeks en de gebeden van vandaag
+
+🛡️ EEN ADHAN DIE AANKOMT
+Waktiva controleert wat je adhan zou kunnen dempen, zoals Niet storen, gedempte meldingen of batterijoptimalisatie, en laat zien hoe je het oplost. Exacte alarmen houden de adhan op tijd.
+
+🌍 20 TALEN
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska en اردو, met volledige ondersteuning voor talen van rechts naar links.
+
+🔒 PRIVACY VANAF HET BEGIN
+• Geen advertenties, geen tracking, geen analyses
+• Je locatie wordt alleen gebruikt voor gebedstijden, de Qibla en de maan
+• Open source onder de MIT-licentie
+• Gratis. Helpt Waktiva je, dan kun je het steunen met een donatie.
+
+Waktiva – met zorg gemaakt voor de Ummah.

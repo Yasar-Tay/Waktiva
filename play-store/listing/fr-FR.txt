@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva : Heures de prière
+
+=== SHORT DESCRIPTION (max 80) ===
+Heures de prière, adhan, Qibla et carnet de prières. Sans pub, sans pistage.
+
+=== FULL DESCRIPTION (max 4000) ===
+Waktiva est un compagnon de prière calme et élégant : des heures de prière précises, l'adhan à l'heure, la Qibla et un carnet qui vous aide à accomplir chaque prière. Sans publicité, sans pistage, open source.
+
+🕋 DES HORAIRES FIABLES
+• Fajr, lever du soleil, Dhuhr, Asr, Maghrib et Isha pour votre position
+• Méthodes : Diyanet (Turquie), Ligue islamique mondiale, ISNA, Égypte, Umm al-Qura, Karachi, Téhéran, Golfe, Koweït, Qatar et Singapour
+• Horaires Diyanet calculés comme dans les propres tables de la Diyanet, même aux hautes latitudes
+• Asr chaféite ou hanafite
+• Une année entière d'horaires sur votre téléphone, utilisable hors ligne
+
+⏳ VOTRE JOURNÉE EN UN COUP D'ŒIL
+• Un cercle du jour qui montre où vous en êtes entre deux prières, avec un compte à rebours en direct
+• Trois styles de cadran : Classique, Mécanisme en laiton et Acier de nuit
+• La météo du jour dans le ciel : nuages, pluie et neige
+• Des phases de lune réalistes, la date hégirienne et les jours religieux de l'année
+
+📿 CARNET
+• Cochez vos prières d'un geste, depuis l'app, un widget ou une notification
+• Quêtes du jour, XP, niveaux et séries pour garder le rythme
+• Un calendrier et vos 7 derniers jours en un coup d'œil
+• Un rappel discret après Isha si une prière n'est pas encore cochée
+• Exportez et importez votre carnet, ou désactivez-le si vous n'en avez pas besoin
+
+🔊 L'ADHAN COMME VOUS LE VOULEZ
+• Adhan récité par Muhsin Kara, champion du monde de récitation de l'adhan 2022
+• Choisissez les prières avec adhan, et un adhan différent pour chaque prière
+• Ajoutez vos propres fichiers audio (MP3, AAC, WAV, OGG)
+• Dua facultative après l'adhan
+• Une notification avant l'heure de la prière, et un geste pour ignorer le prochain adhan
+
+🧭 QIBLA
+• Une boussole précise avec un doux faisceau de lumière vers la Kaaba
+• Une vue carte pour vérifier la Qibla depuis n'importe quel endroit
+• Les mosquées proches sur la carte
+
+📱 WIDGETS
+• Compte à rebours : le temps restant avant la prochaine prière, en grand
+• Prière en cours : la prière actuelle et « J'ai prié » d'un geste
+• Ma journée : les horaires et la météo du jour, chaque prière cochée d'un geste
+• Carnet : votre niveau, votre série et les prières du jour
+
+🛡️ UN ADHAN QUI ARRIVE
+Waktiva vérifie ce qui pourrait couper votre adhan, comme le mode Ne pas déranger, les notifications désactivées ou l'optimisation de la batterie, et vous montre comment y remédier. Les alarmes exactes gardent l'adhan à l'heure.
+
+🌍 20 LANGUES
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska et اردو, avec une prise en charge complète de l'écriture de droite à gauche.
+
+🔒 LA VIE PRIVÉE PAR CONCEPTION
+• Pas de publicité, pas de pistage, pas d'analyses
+• Votre position ne sert qu'aux horaires, à la Qibla et à la lune
+• Open source sous licence MIT
+• Gratuit. Si Waktiva vous aide, vous pouvez le soutenir par un don.
+
+Waktiva – fait avec soin pour la Oumma.

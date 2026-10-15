@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva: Namaz Vakti ve Kıble
+
+=== SHORT DESCRIPTION (max 80) ===
+Namaz vakitleri, ezan, kıble ve çetele. Reklam yok, takip yok.
+
+=== FULL DESCRIPTION (max 4000) ===
+Waktiva sakin ve güzel bir namaz arkadaşı: doğru namaz vakitleri, vaktinde okunan ezan, kıble ve her namazını takip etmene yardım eden bir çetele. Reklam yok, takip yok, açık kaynak.
+
+🕋 GÜVENEBİLECEĞİN NAMAZ VAKİTLERİ
+• Bulunduğun yer için İmsak, Güneş, Öğle, İkindi, Akşam ve Yatsı
+• Diyanet (Türkiye), Müslüman Dünya Birliği, ISNA, Mısır, Ümmü'l-Kura, Karaçi, Tahran, Körfez, Kuveyt, Katar ve Singapur yöntemleri
+• Diyanet vakitleri, Diyanet'in kendi takvimleri gibi hesaplanır; yüksek enlemlerde bile
+• Şafii veya Hanefi ikindi
+• Bir yıllık namaz vakitleri telefonunda saklanır, internetsiz de çalışır
+
+⏳ GÜNÜN BİR BAKIŞTA
+• İki vakit arasında nerede olduğunu gösteren gün çemberi ve canlı geri sayım
+• Üç kadran stili: Klasik, Pirinç Mekanizma ve Gece Çeliği
+• Günün hava durumu gökyüzünde: bulut, yağmur ve kar
+• Gerçekçi ay evresi, hicri tarih ve yılın dini günleri
+
+📿 ÇETELE
+• Kıldığın namazları tek dokunuşla işaretle: uygulamadan, widget'tan ya da bildirimden
+• Seni motive eden günlük görevler, XP, seviyeler ve seriler
+• Takvim ve son 7 gün bir bakışta
+• Yatsıdan sonra işaretlenmemiş namaz kaldıysa nazik bir hatırlatma
+• Çeteleni dışa ve içe aktar ya da gerek duymuyorsan kapat
+
+🔊 EZAN SENİN İSTEDİĞİN GİBİ
+• 2022 Dünya Ezan Okuma Yarışması birincisi Muhsin Kara'nın sesinden ezanlar
+• Hangi vakitlerde ezan okunacağını seç, her vakte ayrı ezan ata
+• Kendi ses dosyanı ekle (MP3, AAC, WAV, OGG)
+• İsteğe bağlı ezan duası
+• Vakitten önce bildirim ve sıradaki ezanı tek dokunuşla atlama
+
+🧭 KIBLE
+• Kâbe'ye doğru yumuşak bir ışık huzmesiyle hassas pusula
+• Kıbleyi istediğin noktadan kontrol edebileceğin harita görünümü
+• Haritada yakındaki camiler
+
+📱 WIDGET'LAR
+• Geri Sayım: sonraki vakte kalan süre, büyük ve net
+• Şimdiki Vakit: içinde bulunduğun vakit ve tek dokunuşla "Kıldım"
+• Günüm: günün vakitleri ve hava durumu, her vakit tek dokunuşla işaretlenir
+• Çetele: seviyen, serin ve bugünün namazları
+
+🛡️ EZAN MUTLAKA ULAŞSIN
+Waktiva ezanını susturabilecek şeyleri kontrol eder; Rahatsız Etmeyin modu, kapatılmış bildirimler ya da pil optimizasyonu gibi. Nasıl düzelteceğini de gösterir. Tam zamanlı alarmlar ezanın vaktinde okunmasını sağlar.
+
+🌍 20 DİL
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska ve اردو; sağdan sola yazılan diller için tam destek.
+
+🔒 GİZLİLİK ESASLI
+• Reklam yok, takip yok, analiz yok
+• Konumun yalnızca namaz vakitleri, kıble ve ay için kullanılır
+• MIT lisansıyla açık kaynak
+• Ücretsiz. Waktiva işine yarıyorsa bağışla destek olabilirsin.
+
+Waktiva – Ümmet için özenle geliştirildi.

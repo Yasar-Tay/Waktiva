@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva: Bönetider & qibla
+
+=== SHORT DESCRIPTION (max 80) ===
+Bönetider, adhan, qibla och bönelogg. Ingen reklam, ingen spårning.
+
+=== FULL DESCRIPTION (max 4000) ===
+Waktiva är en lugn och vacker bönekamrat: exakta bönetider, adhan i tid, qibla och en bönelogg som hjälper dig att hålla fast vid varje bön. Ingen reklam, ingen spårning, öppen källkod.
+
+🕋 BÖNETIDER DU KAN LITA PÅ
+• Fajr, soluppgång, Dhuhr, Asr, Maghrib och Isha för din plats
+• Metoder: Diyanet (Turkiet), Muslim World League, ISNA, Egypten, Umm al-Qura, Karachi, Teheran, Gulfregionen, Kuwait, Qatar och Singapore
+• Diyanet-tider beräknade som i Diyanets egna tabeller, även på höga breddgrader
+• Asr enligt shafi'i eller hanafi
+• Bönetider för ett helt år sparade i telefonen, så de fungerar offline
+
+⏳ DIN DAG I EN BLICK
+• En dagcirkel som visar var du är mellan två böner, med nedräkning i realtid
+• Tre urtavlestilar: Klassisk, Mässingsverk och Nattstål
+• Dagens väder på himlen: moln, regn och snö
+• Realistiska månfaser, hijri-datumet och årets religiösa dagar
+
+📿 BÖNELOGG
+• Bocka av dina böner med ett tryck i appen, en widget eller en avisering
+• Dagliga uppdrag, XP, nivåer och sviter som håller dig igång
+• En kalender och dina senaste 7 dagar i en blick
+• En mild påminnelse efter Isha om en bön ännu inte är avbockad
+• Exportera och importera loggen, eller stäng av den om du inte behöver den
+
+🔊 ADHAN SOM DU VILL HA DEN
+• Adhan-inspelningar av Muhsin Kara, världsmästare i adhan-recitation 2022
+• Välj vilka böner som spelar adhan, och en egen adhan för varje bön
+• Lägg till egna ljudfiler (MP3, AAC, WAV, OGG)
+• Valfri dua efter adhan
+• En avisering före bönetiden och ett tryck för att hoppa över nästa adhan
+
+🧭 QIBLA
+• En exakt kompass med en mjuk ljusstråle mot Kaba
+• En kartvy för att kontrollera qibla från vilken plats som helst
+• Moskéer i närheten på kartan
+
+📱 WIDGETAR
+• Nedräkning: tiden kvar till nästa bön, stort och tydligt
+• Bön nu: den aktuella bönen och "Jag har bett" med ett tryck
+• Min dag: dagens bönetider och väder, varje bön avbockad med ett tryck
+• Bönelogg: din nivå, din svit och dagens böner
+
+🛡️ EN ADHAN SOM HÖRS
+Waktiva kontrollerar vad som kan tysta din adhan, som Stör ej, tystade aviseringar eller batterioptimering, och visar hur du åtgärdar det. Exakta larm håller adhan i tid.
+
+🌍 20 SPRÅK
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska och اردو, med fullt stöd för språk som skrivs från höger till vänster.
+
+🔒 INTEGRITET FRÅN GRUNDEN
+• Ingen reklam, ingen spårning, ingen analys
+• Din plats används bara för bönetider, qibla och månen
+• Öppen källkod under MIT-licensen
+• Gratis. Om Waktiva hjälper dig kan du stödja den med en donation.
+
+Waktiva – gjord med omsorg för ummah.

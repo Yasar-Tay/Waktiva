@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva: Jadwal Salat & Kiblat
+
+=== SHORT DESCRIPTION (max 80) ===
+Jadwal salat, adzan, kiblat, dan catatan salat. Tanpa iklan, tanpa pelacakan.
+
+=== FULL DESCRIPTION (max 4000) ===
+Waktiva adalah teman salat yang tenang dan indah: jadwal salat yang akurat, adzan tepat waktu, arah kiblat, dan catatan yang membantumu menjaga setiap salat. Tanpa iklan, tanpa pelacakan, sumber terbuka.
+
+🕋 JADWAL SALAT YANG BISA DIANDALKAN
+• Subuh, Terbit, Dzuhur, Ashar, Maghrib, dan Isya untuk lokasimu
+• Metode: Diyanet (Turki), Liga Muslim Dunia, ISNA, Mesir, Umm al-Qura, Karachi, Teheran, Kawasan Teluk, Kuwait, Qatar, dan Singapura
+• Waktu Diyanet dihitung seperti tabel resmi Diyanet, bahkan di lintang tinggi
+• Ashar mazhab Syafi'i atau Hanafi
+• Jadwal salat setahun penuh tersimpan di ponsel, jadi tetap berfungsi offline
+
+⏳ HARIMU DALAM SEKEJAP
+• Lingkaran hari yang menunjukkan posisimu di antara dua salat, dengan hitung mundur langsung
+• Tiga gaya dial: Klasik, Mekanisme Kuningan, dan Baja Malam
+• Cuaca hari ini di langit: awan, hujan, dan salju
+• Fase bulan yang realistis, tanggal Hijriah, dan hari keagamaan sepanjang tahun
+
+📿 CATATAN
+• Tandai salatmu dengan satu ketukan dari aplikasi, widget, atau notifikasi
+• Misi harian, XP, level, dan rentetan untuk menjaga semangat
+• Kalender dan 7 hari terakhir dalam sekejap
+• Pengingat lembut setelah Isya jika masih ada salat yang belum ditandai
+• Ekspor dan impor catatanmu, atau matikan jika tidak diperlukan
+
+🔊 ADZAN SESUAI KEINGINANMU
+• Rekaman adzan oleh Muhsin Kara, juara dunia lomba adzan 2022
+• Pilih salat mana yang memutar adzan, dan adzan berbeda untuk setiap salat
+• Tambahkan audiomu sendiri (MP3, AAC, WAV, OGG)
+• Doa adzan (opsional)
+• Notifikasi sebelum waktu salat, dan lewati adzan berikutnya dengan satu ketukan
+
+🧭 KIBLAT
+• Kompas akurat dengan berkas cahaya lembut ke arah Ka'bah
+• Tampilan peta untuk memeriksa kiblat dari titik mana pun
+• Masjid terdekat di peta
+
+📱 WIDGET
+• Hitung Mundur: sisa waktu menuju salat berikutnya, besar dan jelas
+• Salat Sekarang: salat saat ini dan "Sudah salat" dengan satu ketukan
+• Hariku: jadwal salat dan cuaca hari ini, setiap salat ditandai dengan satu ketukan
+• Catatan: level, rentetan, dan salat hari ini
+
+🛡️ ADZAN YANG PASTI TERDENGAR
+Waktiva memeriksa hal yang bisa membungkam adzanmu, seperti mode Jangan Ganggu, notifikasi yang dibisukan, atau pengoptimalan baterai, dan menunjukkan cara memperbaikinya. Alarm tepat waktu menjaga adzan berbunyi tepat waktu.
+
+🌍 20 BAHASA
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska, dan اردو, dengan dukungan penuh untuk bahasa kanan-ke-kiri.
+
+🔒 PRIVASI SEJAK AWAL
+• Tanpa iklan, tanpa pelacakan, tanpa analitik
+• Lokasimu hanya dipakai untuk jadwal salat, kiblat, dan bulan
+• Sumber terbuka dengan lisensi MIT
+• Gratis. Jika Waktiva bermanfaat bagimu, kamu bisa mendukungnya dengan donasi.
+
+Waktiva – dibuat dengan sepenuh hati untuk umat.

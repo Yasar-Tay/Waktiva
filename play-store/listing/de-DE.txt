@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva: Gebetszeiten & Qibla
+
+=== SHORT DESCRIPTION (max 80) ===
+Gebetszeiten, Adhan, Qibla und Gebetstagebuch. Ohne Werbung, ohne Tracking.
+
+=== FULL DESCRIPTION (max 4000) ===
+Waktiva ist ein ruhiger, schöner Gebetsbegleiter: genaue Gebetszeiten, der Adhan pünktlich, die Qibla und ein Gebetstagebuch, das dir hilft, jedes Gebet zu halten. Ohne Werbung, ohne Tracking, Open Source.
+
+🕋 GEBETSZEITEN, AUF DIE DU DICH VERLASSEN KANNST
+• Fajr, Sonnenaufgang, Dhuhr, Asr, Maghrib und Isha für deinen Standort
+• Methoden: Diyanet (Türkei), Islamische Weltliga, ISNA, Ägypten, Umm al-Qura, Karatschi, Teheran, Golfregion, Kuwait, Katar und Singapur
+• Diyanet-Zeiten so berechnet wie in Diyanets eigenen Tabellen, auch in hohen Breiten
+• Asr nach Schafiiten oder Hanafiten
+• Gebetszeiten für ein ganzes Jahr auf deinem Handy, also auch offline
+
+⏳ DEIN TAG AUF EINEN BLICK
+• Ein Tageskreis zeigt, wo du zwischen zwei Gebeten stehst, mit Live-Countdown
+• Drei Zifferblatt-Stile: Klassisch, Messingwerk und Nachtstahl
+• Das Wetter des Tages am Himmel: Wolken, Regen und Schnee
+• Realistische Mondphasen, das Hidschri-Datum und die religiösen Tage des Jahres
+
+📿 GEBETSTAGEBUCH
+• Hake deine Gebete mit einem Tipp ab – in der App, im Widget oder in der Benachrichtigung
+• Tagesaufgaben, XP, Level und Serien, die dich dranbleiben lassen
+• Ein Kalender und deine letzten 7 Tage auf einen Blick
+• Eine sanfte Erinnerung nach Isha, wenn ein Gebet noch offen ist
+• Exportiere und importiere dein Tagebuch oder schalte es ab, wenn du es nicht brauchst
+
+🔊 DER ADHAN, WIE DU IHN MAGST
+• Adhan-Aufnahmen von Muhsin Kara, Weltmeister im Adhan-Rezitieren 2022
+• Wähle, zu welchen Gebeten der Adhan ertönt, und für jedes Gebet einen eigenen Adhan
+• Füge eigene Audiodateien hinzu (MP3, AAC, WAV, OGG)
+• Optionale Dua nach dem Adhan
+• Eine Benachrichtigung vor der Gebetszeit und den nächsten Adhan mit einem Tipp überspringen
+
+🧭 QIBLA
+• Ein genauer Kompass mit einem sanften Lichtstrahl zur Kaaba
+• Eine Kartenansicht, um die Qibla von jedem Ort aus zu prüfen
+• Moscheen in der Nähe auf der Karte
+
+📱 WIDGETS
+• Countdown: die Zeit bis zum nächsten Gebet, groß und klar
+• Gebet jetzt: das aktuelle Gebet und „Gebetet“ mit einem Tipp
+• Mein Tag: die Gebetszeiten und das Wetter des Tages, jedes Gebet mit einem Tipp abhaken
+• Gebetstagebuch: dein Level, deine Serie und die Gebete von heute
+
+🛡️ EIN ADHAN, DER ANKOMMT
+Waktiva prüft, was deinen Adhan stummschalten könnte, etwa „Bitte nicht stören“, stummgeschaltete Benachrichtigungen oder die Akkuoptimierung, und zeigt dir, wie du es behebst. Exakte Alarme halten den Adhan pünktlich.
+
+🌍 20 SPRACHEN
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska und اردو, mit voller Unterstützung für Rechts-nach-links-Sprachen.
+
+🔒 PRIVATSPHÄRE VON ANFANG AN
+• Keine Werbung, kein Tracking, keine Analysen
+• Dein Standort dient nur für Gebetszeiten, Qibla und Mond
+• Open Source unter der MIT-Lizenz
+• Kostenlos. Wenn dir Waktiva hilft, kannst du es mit einer Spende unterstützen.
+
+Waktiva – mit Sorgfalt für die Umma gemacht.

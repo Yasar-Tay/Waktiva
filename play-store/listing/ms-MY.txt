@@ -1,0 +1,60 @@
+=== TITLE (max 30) ===
+Waktiva: Waktu Solat & Kiblat
+
+=== SHORT DESCRIPTION (max 80) ===
+Waktu solat, azan, kiblat dan catatan solat. Tiada iklan, tiada penjejakan.
+
+=== FULL DESCRIPTION (max 4000) ===
+Waktiva ialah teman solat yang tenang dan indah: waktu solat yang tepat, azan tepat pada waktunya, arah kiblat dan catatan yang membantu anda menjaga setiap solat. Tiada iklan, tiada penjejakan, sumber terbuka.
+
+🕋 WAKTU SOLAT YANG BOLEH DIPERCAYAI
+• Subuh, Syuruk, Zohor, Asar, Maghrib dan Isyak untuk lokasi anda
+• Kaedah: Diyanet (Turki), Liga Muslim Sedunia, ISNA, Mesir, Umm al-Qura, Karachi, Tehran, Teluk, Kuwait, Qatar dan Singapura
+• Waktu Diyanet dikira seperti jadual rasmi Diyanet, walaupun di latitud tinggi
+• Asar mazhab Syafie atau Hanafi
+• Waktu solat setahun penuh disimpan dalam telefon, jadi tetap berfungsi tanpa internet
+
+⏳ HARI ANDA SEPINTAS LALU
+• Bulatan hari yang menunjukkan kedudukan anda antara dua solat, dengan kiraan detik langsung
+• Tiga gaya dail: Klasik, Mekanisme Loyang dan Keluli Malam
+• Cuaca hari ini di langit: awan, hujan dan salji
+• Fasa bulan yang realistik, tarikh Hijrah dan Hari Kebesaran Islam sepanjang tahun
+
+📿 CATATAN
+• Tandakan solat anda dengan satu ketikan dari aplikasi, widget atau pemberitahuan
+• Misi harian, XP, tahap dan rentetan untuk terus bersemangat
+• Kalendar dan 7 hari terakhir sepintas lalu
+• Peringatan lembut selepas Isyak jika masih ada solat yang belum ditandakan
+• Eksport dan import catatan anda, atau matikan jika tidak diperlukan
+
+🔊 AZAN MENGIKUT CITA RASA ANDA
+• Rakaman azan oleh Muhsin Kara, juara dunia pertandingan azan 2022
+• Pilih solat yang memainkan azan, dan azan berbeza untuk setiap solat
+• Tambah audio anda sendiri (MP3, AAC, WAV, OGG)
+• Doa azan (pilihan)
+• Pemberitahuan sebelum waktu solat, dan langkau azan seterusnya dengan satu ketikan
+
+🧭 KIBLAT
+• Kompas yang tepat dengan sinar cahaya lembut ke arah Kaabah
+• Paparan peta untuk menyemak kiblat dari mana-mana lokasi
+• Masjid berdekatan pada peta
+
+📱 WIDGET
+• Kiraan Detik: baki masa ke solat seterusnya, besar dan jelas
+• Solat Sekarang: solat semasa dan "Sudah solat" dengan satu ketikan
+• Hariku: waktu solat dan cuaca hari ini, setiap solat ditandakan dengan satu ketikan
+• Catatan: tahap, rentetan dan solat hari ini
+
+🛡️ AZAN YANG PASTI SAMPAI
+Waktiva menyemak perkara yang mungkin menyenyapkan azan anda, seperti mod Jangan Ganggu, pemberitahuan yang disenyapkan atau pengoptimuman bateri, dan menunjukkan cara membetulkannya. Penggera tepat memastikan azan berbunyi pada waktunya.
+
+🌍 20 BAHASA
+English, Türkçe, العربية, বাংলা, Bosanski, Deutsch, Español, فارسی, Suomi, Français, Bahasa Indonesia, Italiano, Bahasa Melayu, Nederlands, Polski, Português, Русский, Shqip, Svenska dan اردو, dengan sokongan penuh untuk bahasa kanan-ke-kiri.
+
+🔒 PRIVASI SEJAK AWAL
+• Tiada iklan, tiada penjejakan, tiada analitik
+• Lokasi anda hanya digunakan untuk waktu solat, kiblat dan bulan
+• Sumber terbuka di bawah lesen MIT
+• Percuma. Jika Waktiva bermanfaat, anda boleh menyokongnya dengan derma.
+
+Waktiva – dibina dengan teliti untuk ummah.
