@@ -47,7 +47,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -71,8 +70,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ybugmobile.waktiva.R
 import com.ybugmobile.waktiva.domain.model.PrayerLogProgress
 import com.ybugmobile.waktiva.domain.model.PrayerLogStatus
-import com.ybugmobile.waktiva.ui.home.composables.InTimeGreen
-import com.ybugmobile.waktiva.ui.home.composables.MissedRed
 import com.ybugmobile.waktiva.ui.home.composables.PrayedGold
 import com.ybugmobile.waktiva.ui.home.composables.accentColor
 import com.ybugmobile.waktiva.ui.home.composables.iconRes
@@ -320,15 +317,15 @@ private fun Plaque(
             Text(text = value, style = figureStyle(24.sp), color = contentColor, maxLines = 1)
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = contentColor.copy(alpha = 0.6f),
+                style = MaterialTheme.typography.labelSmall.onSky(),
+                color = faded(0.6f),
                 textAlign = TextAlign.Center,
                 maxLines = 2
             )
             if (note != null) {
                 Text(
                     text = note,
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold).onSky(),
                     color = Ember,
                     maxLines = 1
                 )
@@ -361,14 +358,14 @@ private fun QuestsCard(
             )
             Text(
                 text = today.date.format(DateTimeFormatter.ofPattern("d MMMM, EEEE", locale)),
-                style = MaterialTheme.typography.labelMedium,
-                color = contentColor.copy(alpha = 0.6f),
+                style = MaterialTheme.typography.labelMedium.onSky(),
+                color = faded(0.6f),
                 modifier = Modifier.padding(start = 28.dp, top = 2.dp)
             )
             if (state.startDate == null) {
                 Text(
                     text = stringResource(R.string.prayer_log_hint),
-                    style = MaterialTheme.typography.bodySmall.copy(lineHeight = 17.sp),
+                    style = MaterialTheme.typography.bodySmall.copy(lineHeight = 17.sp).onSky(),
                     color = contentColor.copy(alpha = 0.75f),
                     modifier = Modifier.padding(start = 28.dp, top = 6.dp)
                 )
@@ -407,8 +404,8 @@ private fun QuestRow(
     val background by animateColorAsState(
         when (status) {
             PrayerLogStatus.PRAYED -> PrayedGold.copy(alpha = 0.12f)
-            PrayerLogStatus.ACTIVE -> InTimeGreen.copy(alpha = 0.14f)
-            PrayerLogStatus.MISSED -> MissedRed.copy(alpha = 0.1f)
+            PrayerLogStatus.ACTIVE -> QuestGreenDeep.copy(alpha = 0.5f)
+            PrayerLogStatus.MISSED -> QuestRedDeep.copy(alpha = 0.5f)
             else -> Color.Black.copy(alpha = 0.06f)
         },
         label = "questFill"
@@ -416,8 +413,8 @@ private fun QuestRow(
     val edge by animateColorAsState(
         when (status) {
             PrayerLogStatus.PRAYED -> PrayedGold.copy(alpha = 0.5f)
-            PrayerLogStatus.ACTIVE -> InTimeGreen.copy(alpha = 0.7f)
-            PrayerLogStatus.MISSED -> MissedRed.copy(alpha = 0.45f)
+            PrayerLogStatus.ACTIVE -> QuestGreen.copy(alpha = 0.75f)
+            PrayerLogStatus.MISSED -> QuestRed.copy(alpha = 0.6f)
             else -> contentColor.copy(alpha = 0.1f)
         },
         label = "questEdge"
@@ -455,17 +452,17 @@ private fun QuestRow(
             Text(
                 text = entry.type.prayerName,
                 style = headingStyle(if (compact) 15.sp else 17.sp),
-                color = contentColor.copy(alpha = if (isUpcoming) 0.5f else 1f),
+                color = if (isUpcoming) faded(0.5f) else contentColor,
                 maxLines = 1
             )
             Text(
                 text = statusText,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelMedium.onSky(),
                 color = when (status) {
                     PrayerLogStatus.PRAYED -> PrayedGold
-                    PrayerLogStatus.ACTIVE -> lerp(InTimeGreen, Color.White, 0.35f)
-                    PrayerLogStatus.MISSED -> lerp(MissedRed, Color.White, 0.25f)
-                    else -> contentColor.copy(alpha = 0.55f)
+                    PrayerLogStatus.ACTIVE -> QuestGreen
+                    PrayerLogStatus.MISSED -> QuestRedText
+                    else -> faded(0.55f)
                 },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -474,10 +471,10 @@ private fun QuestRow(
         Spacer(Modifier.width(8.dp))
         Text(
             text = stringResource(R.string.prayer_log_xp_gain, PrayerLogProgress.XP_PER_PRAYER),
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black),
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black).onSky(),
             color = when (status) {
                 PrayerLogStatus.PRAYED -> PrayedGold
-                PrayerLogStatus.UPCOMING, PrayerLogStatus.UNTRACKED -> contentColor.copy(alpha = 0.3f)
+                PrayerLogStatus.UPCOMING, PrayerLogStatus.UNTRACKED -> faded(0.3f)
                 else -> contentColor.copy(alpha = 0.8f)
             }
         )
@@ -493,8 +490,8 @@ private fun QuestSeal(status: PrayerLogStatus) {
     val fill by animateColorAsState(if (status == PrayerLogStatus.PRAYED) PrayedGold else Color.Transparent, label = "sealFill")
     val ring = when (status) {
         PrayerLogStatus.PRAYED -> GoldLight
-        PrayerLogStatus.ACTIVE -> InTimeGreen
-        PrayerLogStatus.MISSED -> MissedRed
+        PrayerLogStatus.ACTIVE -> QuestGreen
+        PrayerLogStatus.MISSED -> QuestRed
         else -> contentColor.copy(alpha = 0.2f)
     }
     Box(
@@ -507,7 +504,7 @@ private fun QuestSeal(status: PrayerLogStatus) {
     ) {
         when (status) {
             PrayerLogStatus.PRAYED -> Icon(Icons.Rounded.Check, contentDescription = null, tint = PrayedInk, modifier = Modifier.size(17.dp))
-            PrayerLogStatus.UPCOMING -> Icon(Icons.Rounded.Lock, contentDescription = null, tint = contentColor.copy(alpha = 0.4f), modifier = Modifier.size(13.dp))
+            PrayerLogStatus.UPCOMING -> Icon(Icons.Rounded.Lock, contentDescription = null, tint = faded(0.4f), modifier = Modifier.size(13.dp))
             PrayerLogStatus.UNTRACKED -> Icon(Icons.Rounded.Remove, contentDescription = null, tint = contentColor.copy(alpha = 0.35f), modifier = Modifier.size(14.dp))
             else -> Unit
         }
@@ -528,7 +525,7 @@ private fun PrayerEmblem(entry: PrayerLogEntry, size: Dp, modifier: Modifier = M
     val fill by animateColorAsState(
         when (status) {
             PrayerLogStatus.PRAYED -> PrayedGold
-            PrayerLogStatus.MISSED -> MissedRed.copy(alpha = 0.16f)
+            PrayerLogStatus.MISSED -> QuestRed.copy(alpha = 0.16f)
             PrayerLogStatus.ACTIVE -> accent.copy(alpha = 0.2f)
             else -> Color.Black.copy(alpha = 0.12f)
         },
@@ -537,7 +534,7 @@ private fun PrayerEmblem(entry: PrayerLogEntry, size: Dp, modifier: Modifier = M
     val edge by animateColorAsState(
         when (status) {
             PrayerLogStatus.PRAYED -> GoldLight
-            PrayerLogStatus.MISSED -> MissedRed.copy(alpha = 0.85f)
+            PrayerLogStatus.MISSED -> QuestRed.copy(alpha = 0.85f)
             PrayerLogStatus.ACTIVE -> accent
             PrayerLogStatus.UPCOMING -> contentColor.copy(alpha = 0.22f)
             PrayerLogStatus.UNTRACKED -> contentColor.copy(alpha = 0.14f)
@@ -609,9 +606,9 @@ private fun PrayerEmblem(entry: PrayerLogEntry, size: Dp, modifier: Modifier = M
             contentDescription = null,
             tint = when (status) {
                 PrayerLogStatus.PRAYED -> PrayedInk
-                PrayerLogStatus.MISSED -> MissedRed
+                PrayerLogStatus.MISSED -> QuestRed
                 PrayerLogStatus.ACTIVE -> accent
-                else -> contentColor.copy(alpha = 0.35f)
+                else -> faded(0.35f)
             },
             modifier = Modifier.size(size * 0.45f)
         )
@@ -698,14 +695,14 @@ private fun MonthHeader(state: PrayerLogViewState, onShowMonth: (Long) -> Unit) 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = stringResource(R.string.prayer_log_missed_total),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = contentColor.copy(alpha = 0.6f)
+                        style = MaterialTheme.typography.labelSmall.onSky(),
+                        color = faded(0.6f)
                     )
                     Spacer(Modifier.width(6.dp))
                     Text(
                         text = NumberFormat.getIntegerInstance(locale).format(state.missedSinceStart),
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black),
-                        color = MissedRed
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black).onSky(),
+                        color = QuestRedText
                     )
                 }
             }
@@ -822,10 +819,10 @@ private fun DayPrayerMark(date: LocalDate, entry: PrayerLogEntry, onToggle: (Loc
         Spacer(Modifier.height(4.dp))
         Text(
             text = name,
-            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold).onSky(),
             color = when (entry.status) {
                 PrayerLogStatus.PRAYED -> PrayedGold
-                PrayerLogStatus.UPCOMING -> contentColor.copy(alpha = 0.45f)
+                PrayerLogStatus.UPCOMING -> faded(0.45f)
                 else -> contentColor.copy(alpha = 0.85f)
             },
             maxLines = 1
@@ -852,8 +849,8 @@ private fun SelectedDayColumn(day: PrayerLogDay, onToggle: (LocalDate, PrayerLog
                 )
                 Text(
                     text = day.date.format(DateTimeFormatter.ofPattern("EEEE", locale)),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = contentColor.copy(alpha = 0.6f),
+                    style = MaterialTheme.typography.labelSmall.onSky(),
+                    color = faded(0.6f),
                     maxLines = 1
                 )
             }
@@ -880,10 +877,10 @@ private fun SelectedDayColumn(day: PrayerLogDay, onToggle: (LocalDate, PrayerLog
                     Spacer(Modifier.width(10.dp))
                     Text(
                         text = entry.type.prayerName,
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold).onSky(),
                         color = when (entry.status) {
                             PrayerLogStatus.PRAYED -> PrayedGold
-                            PrayerLogStatus.UPCOMING -> contentColor.copy(alpha = 0.45f)
+                            PrayerLogStatus.UPCOMING -> faded(0.45f)
                             else -> contentColor.copy(alpha = 0.85f)
                         },
                         maxLines = 1
@@ -929,8 +926,8 @@ private fun MonthGrid(
             weekdays.forEach { day ->
                 Text(
                     text = day.getDisplayName(TextStyle.NARROW, locale),
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                    color = contentColor.copy(alpha = 0.45f),
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold).onSky(),
+                    color = faded(0.45f),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f)
                 )
@@ -1000,7 +997,7 @@ private fun DayCell(
             )
             .then(
                 when {
-                    isToday -> Modifier.border(1.5.dp, InTimeGreen, tile)
+                    isToday -> Modifier.border(1.5.dp, QuestGreen, tile)
                     day != null && !isComplete -> Modifier.border(1.dp, contentColor.copy(alpha = 0.1f), tile)
                     else -> Modifier
                 }
@@ -1014,12 +1011,14 @@ private fun DayCell(
                 text = date.dayOfMonth.toString(),
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontWeight = if (isToday || isComplete) FontWeight.Black else FontWeight.SemiBold,
-                    fontFeatureSettings = "tnum"
+                    fontFeatureSettings = "tnum",
+                    // The ink on a gold tile needs no shade.
+                    shadow = if (isComplete) null else daySkyShadow()
                 ),
                 color = when {
                     isComplete -> PrayedInk
-                    day == null -> contentColor.copy(alpha = 0.25f)
-                    !day.isTracked && day.prayed == 0 -> contentColor.copy(alpha = 0.45f)
+                    day == null -> faded(0.25f)
+                    !day.isTracked && day.prayed == 0 -> faded(0.45f)
                     else -> contentColor
                 }
             )
@@ -1043,8 +1042,8 @@ private fun DayCell(
 /** A prayer's pip on the calendar: gold once prayed, red once missed, green while open, faint otherwise. */
 private fun pipColor(status: PrayerLogStatus, contentColor: Color): Color = when (status) {
     PrayerLogStatus.PRAYED -> PrayedGold
-    PrayerLogStatus.MISSED -> MissedRed
-    PrayerLogStatus.ACTIVE -> InTimeGreen
+    PrayerLogStatus.MISSED -> QuestRed
+    PrayerLogStatus.ACTIVE -> QuestGreen
     else -> contentColor.copy(alpha = 0.25f)
 }
 
@@ -1062,6 +1061,17 @@ internal val PrayedInk = Color(0xFF3B2A00)
 
 /** The ember of a streak. */
 internal val Ember = Color(0xFFFF8A4C)
+
+/**
+ * The sheet's green for a prayer whose time is on and red for one whose time has gone: deeper and
+ * warmer than the home screen's, to sit with the gold. The deep ones fill a quest's row, dark
+ * enough to hold the brighter one in text over any sky; the red's text is lifted a little to read.
+ */
+internal val QuestGreen = Color(0xFF3CC47C)
+internal val QuestGreenDeep = Color(0xFF0E3B26)
+internal val QuestRed = Color(0xFFE5484D)
+internal val QuestRedDeep = Color(0xFF45121A)
+internal val QuestRedText = Color(0xFFF2675F)
 
 /** The sheet's cards: squarer than the app's others, with gold brackets that follow [CardCorner]. */
 internal val CardCorner = 12.dp
