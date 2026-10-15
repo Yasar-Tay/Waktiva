@@ -1,6 +1,7 @@
 package com.ybugmobile.waktiva.ui.home
 
 import android.content.Context
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -220,6 +221,15 @@ class HomeViewModel @Inject constructor(
         loadCachedWeather()
         refreshWeather()
         onPermissionsGranted()
+
+        // The first fetch above runs on the place saved last time, before a new fix is saved, so
+        // once the place moves its weather is fetched at once instead of after the cooldown.
+        settings
+            .mapNotNull { s -> s.latitude?.let { lat -> s.longitude?.let { lng -> lat to lng } } }
+            .distinctUntilChanged { old, new -> distanceKm(old, new) < WEATHER_MOVE_THRESHOLD_KM }
+            .drop(1)
+            .onEach { refreshWeather(force = true) }
+            .launchIn(viewModelScope)
         
         combine(allPrayerDays, settings) { days, s ->
             // Skip rescheduling real alarms while a test alarm is active;
@@ -272,9 +282,14 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun refreshWeather() {
-        if (weatherRefreshJob?.isActive == true) return
-        if (System.currentTimeMillis() - lastWeatherFetchTime < weatherFetchCooldownMs) return
+    /** [force] fetches now for a new place, replacing a fetch still running for the old one. */
+    private fun refreshWeather(force: Boolean = false) {
+        if (force) {
+            weatherRefreshJob?.cancel()
+        } else {
+            if (weatherRefreshJob?.isActive == true) return
+            if (System.currentTimeMillis() - lastWeatherFetchTime < weatherFetchCooldownMs) return
+        }
 
         weatherRefreshJob = viewModelScope.launch {
             val s = settings.first()
@@ -292,6 +307,12 @@ class HomeViewModel @Inject constructor(
                     Log.w("HomeViewModel", "Weather refresh failed", error)
                 }
         }
+    }
+
+    private fun distanceKm(a: Pair<Double, Double>, b: Pair<Double, Double>): Float {
+        val result = FloatArray(1)
+        Location.distanceBetween(a.first, a.second, b.first, b.second, result)
+        return result[0] / 1000f
     }
 
     fun debugSetWeather(
@@ -535,6 +556,8 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         private const val WEATHER_REFRESH_INTERVAL_MINUTES = 30
+        /** How far the saved place moves before its weather is fetched again at once. */
+        private const val WEATHER_MOVE_THRESHOLD_KM = 5f
 
         val CALCULATION_METHODS = listOf(
             R.string.method_mwl to 3,
