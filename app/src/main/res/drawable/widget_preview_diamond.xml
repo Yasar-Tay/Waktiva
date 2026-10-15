@@ -2,7 +2,7 @@
 <!-- The level's gold diamond in the prayer log widget's picker preview; the view turns it 45°. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <corners android:radius="5dp" />
+    <corners android:radius="8dp" />
     <gradient
         android:angle="315"
         android:centerColor="#FFFFD54F"

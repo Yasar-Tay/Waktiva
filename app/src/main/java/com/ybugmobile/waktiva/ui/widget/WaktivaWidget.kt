@@ -36,6 +36,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.first
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -184,7 +185,7 @@ object WaktivaWidget {
     /**
      * The countdown widget, a 4×1 bar: the next prayer's name, time and a stroke of its colour
      * on the left, the countdown at the bar's full height on the right, on the sky of the hour
-     * lit by that colour (see [litBackground]).
+     * lit by the prayer whose time it is ([skyAccent], [litBackground]).
      */
     private fun buildCountdown(context: Context, snapshot: Snapshot): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_countdown_bar)
@@ -201,7 +202,7 @@ object WaktivaWidget {
         views.setViewVisibility(R.id.widget_empty, View.GONE)
 
         val accent = accentFor(next.type)
-        views.setImageViewBitmap(R.id.widget_bg, litBackground(snapshot.skyColors, accent, Backdrop.BAR, snapshot.atmosphere))
+        views.setImageViewBitmap(R.id.widget_bg, litBackground(snapshot.skyColors, skyAccent(snapshot, next), Backdrop.BAR, snapshot.atmosphere))
         views.setTextViewText(R.id.widget_name, next.type.getDisplayName(context))
         views.setTextViewText(R.id.widget_time, next.time.format(timeFormatter))
         views.setImageViewResource(R.id.widget_icon, iconFor(next.type))
@@ -217,6 +218,22 @@ object WaktivaWidget {
         views.setChronometerCountDown(R.id.widget_chrono, true)
         return views
     }
+
+    /**
+     * The colour the countdown bar's sky is lit by, as the day circle widgets light theirs: the
+     * prayer whose time it is, amber in the last half hour of its time, and the [next] prayer's
+     * while none is on (after sunrise).
+     */
+    private fun skyAccent(snapshot: Snapshot, next: NextPrayer): Int {
+        val day = snapshot.days.find { it.date == snapshot.today } ?: return accentFor(next.type)
+        val current = DayWidgetModel.currentPrayer(day, snapshot.now.toLocalTime())
+        if (current == PrayerType.SUNRISE) return accentFor(next.type)
+        val left = Duration.between(snapshot.now, next.date.atTime(next.time))
+        return if (left <= Duration.ofMinutes(DayWidgetModel.ENDING_MINUTES)) ENDING_AMBER else accentFor(current)
+    }
+
+    /** The amber of a prayer whose time is ending, as on the day circle widgets. */
+    private const val ENDING_AMBER = 0xFFFBBF24.toInt()
 
     // ── Helpers ───────────────────────────────────────────────────────────
 
