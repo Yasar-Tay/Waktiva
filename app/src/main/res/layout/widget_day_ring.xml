@@ -156,7 +156,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
-                android:maxHeight="120dp"
+                android:maxHeight="140dp"
                 android:scaleType="fitCenter" />
         </FrameLayout>
     </LinearLayout>
