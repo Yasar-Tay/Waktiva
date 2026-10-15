@@ -8,13 +8,34 @@ import com.ybugmobile.waktiva.data.remote.OverpassApiService
 import com.ybugmobile.waktiva.data.remote.dto.OverpassResponseDto
 import com.ybugmobile.waktiva.domain.model.MosqueLocation
 import com.ybugmobile.waktiva.domain.repository.MosqueRepository
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import java.io.IOException
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.roundToInt
 
 private const val TAG = "MosqueRepo"
 
-private const val TTL_MS = 24 * 60 * 60 * 1000L
+// Mosques rarely change; a long TTL also spares the overloaded public Overpass servers.
+private const val TTL_MS = 7 * 24 * 60 * 60 * 1000L
+
+// The next mirror starts after this long even if the previous one is still waiting,
+// or immediately when an earlier one has failed.
+private const val HEDGE_DELAY_MS = 4_000L
+
+// Overloaded mirrors often answer 502/504 instantly; such a fast failure is retried
+// once after a short pause, as the next attempt frequently goes through.
+private const val FAST_FAILURE_MS = 5_000L
+private const val RETRY_BACKOFF_MS = 3_000L
+
+// Upper bound for the whole lookup so the map never waits indefinitely.
+private const val OVERALL_TIMEOUT_MS = 60_000L
 
 class MosqueRepositoryImpl @Inject constructor(
     private val mosqueDao: MosqueDao,
@@ -38,7 +59,7 @@ class MosqueRepositoryImpl @Inject constructor(
         Log.d(TAG, "Cache miss — fetching from Overpass API")
         // nwr = node/way/relation — catches large mosque complexes (e.g. Blue Mosque)
         // that are mapped as relations in OSM, which the old node+way query missed.
-        // timeout:25 matches the OkHttp read timeout (30 s) with headroom.
+        // timeout:25 bounds server-side execution; queueing on busy mirrors comes on top.
         // Limit raised to 200 — 50 was too low for dense cities like Istanbul.
         val query = """
             [out:json][timeout:25];
@@ -93,27 +114,63 @@ class MosqueRepositoryImpl @Inject constructor(
     }
 
     /**
-     * Tries each public Overpass instance in turn. They fail independently and often
-     * (instant 502/504 when overloaded, or a queue longer than our call timeout), so a
-     * single instance made the mosque layer fail almost every time.
+     * Queries the public Overpass mirrors with staggered (hedged) requests and returns
+     * the first good answer. Run one after another, a single stalled mirror used up the
+     * whole wait (overpass-api.de and maps.mail.ru each hit the 25 s cap before the
+     * last mirror failed with 500), so the map ended up showing an error every time.
      */
     private suspend fun queryAnyMirror(query: String): OverpassResponseDto {
-        var lastError: Exception? = null
-        for (url in OverpassApiService.INTERPRETER_URLS) {
+        val urls = OverpassApiService.INTERPRETER_URLS
+        var lastError: Throwable? = null
+
+        val response = withTimeoutOrNull(OVERALL_TIMEOUT_MS) {
+            coroutineScope {
+                val outcomes = Channel<Result<OverpassResponseDto>>(urls.size)
+                val failures = MutableStateFlow(0)
+                val workers = urls.mapIndexed { i, url ->
+                    launch {
+                        withTimeoutOrNull(i * HEDGE_DELAY_MS) { failures.first { it >= i } }
+                        val outcome = queryMirror(url, query)
+                        if (outcome.isFailure) failures.value++
+                        outcomes.send(outcome)
+                    }
+                }
+                try {
+                    repeat(urls.size) {
+                        outcomes.receive()
+                            .onSuccess { return@coroutineScope it }
+                            .onFailure { lastError = it }
+                    }
+                    null
+                } finally {
+                    workers.forEach { it.cancel() }
+                }
+            }
+        }
+        return response
+            ?: throw (lastError as? Exception ?: IOException("No Overpass mirror answered in time"))
+    }
+
+    private suspend fun queryMirror(url: String, query: String): Result<OverpassResponseDto> {
+        var attempt = 0
+        while (true) {
+            val startedAt = System.currentTimeMillis()
             try {
                 val response = overpassApiService.query(url, query)
                 if (response.remark?.contains("error", ignoreCase = true) == true) {
                     throw IllegalStateException("Overpass remark: ${response.remark}")
                 }
-                return response
+                Log.d(TAG, "Overpass mirror answered: $url")
+                return Result.success(response)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                Log.w(TAG, "Overpass mirror failed: $url (${e.message})")
-                lastError = e
+                val elapsed = System.currentTimeMillis() - startedAt
+                Log.w(TAG, "Overpass mirror failed: $url after ${elapsed} ms (${e.message})")
+                if (attempt++ > 0 || elapsed > FAST_FAILURE_MS) return Result.failure(e)
+                delay(RETRY_BACKOFF_MS)
             }
         }
-        throw lastError ?: IllegalStateException("No Overpass mirrors configured")
     }
 
     private fun MosqueEntity.toDomain() = MosqueLocation(id, name, lat, lng, address)

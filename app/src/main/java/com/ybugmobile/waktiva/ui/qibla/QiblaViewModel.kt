@@ -58,6 +58,7 @@ class QiblaViewModel @Inject constructor(
 
     private val _mosques = MutableStateFlow<List<MosqueLocation>>(emptyList())
     private val _mosqueFetchFailed = MutableStateFlow(false)
+    private val _mosquesLoading = MutableStateFlow(false)
 
     private val _isNetworkAvailable = MutableStateFlow(PermissionUtils.isNetworkAvailable(context))
     private val _isLocationEnabled = MutableStateFlow(PermissionUtils.isLocationEnabled(context))
@@ -103,9 +104,9 @@ class QiblaViewModel @Inject constructor(
     }
 
     val state: StateFlow<QiblaViewState> = combine(
-        coreStateFlow, _mosques, _mosqueFetchFailed
-    ) { core, mosques, fetchFailed ->
-        core.copy(mosques = mosques, mosqueFetchFailed = fetchFailed)
+        coreStateFlow, _mosques, _mosqueFetchFailed, _mosquesLoading
+    ) { core, mosques, fetchFailed, loading ->
+        core.copy(mosques = mosques, mosqueFetchFailed = fetchFailed, mosquesLoading = loading)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), QiblaViewState(isLoading = true))
 
     fun dismissMapHint() {
@@ -150,6 +151,7 @@ class QiblaViewModel @Inject constructor(
                     val lat = s.latitude ?: return@collectLatest
                     val lng = s.longitude ?: return@collectLatest
                     _mosqueFetchFailed.value = false
+                    _mosquesLoading.value = true
                     runCatching { mosqueRepository.getNearbyMosques(lat, lng) }
                         .onSuccess {
                             Log.d("QiblaVM", "Mosques loaded: ${it.size}")
@@ -161,6 +163,7 @@ class QiblaViewModel @Inject constructor(
                             // Only surface the error when there is nothing cached to show
                             if (_mosques.value.isEmpty()) _mosqueFetchFailed.value = true
                         }
+                    _mosquesLoading.value = false
                 }
         }
     }
@@ -188,6 +191,7 @@ class QiblaViewModel @Inject constructor(
                     method = s.calculationMethod
                 )
                 _mosqueFetchFailed.value = false
+                _mosquesLoading.value = true
                 runCatching { mosqueRepository.getNearbyMosques(s.latitude, s.longitude) }
                     .onSuccess {
                         Log.d("QiblaVM", "Mosques refreshed: ${it.size}")
@@ -198,6 +202,7 @@ class QiblaViewModel @Inject constructor(
                         Log.e("QiblaVM", "Mosque refresh failed", it)
                         if (_mosques.value.isEmpty()) _mosqueFetchFailed.value = true
                     }
+                _mosquesLoading.value = false
             }
 
             delay(500)

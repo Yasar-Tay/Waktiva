@@ -213,6 +213,7 @@ private fun QiblaContent(
                 kaabaLatLng = kaabaLatLng,
                 mosques = state.mosques,
                 mosqueFetchFailed = state.mosqueFetchFailed,
+                mosquesLoading = state.mosquesLoading,
                 onMapReady = { },
                 onMapLongClick = { showMapHintSession = false },
                 onToggleSatellite = { isSatelliteView = !isSatelliteView },

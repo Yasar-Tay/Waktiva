@@ -18,6 +18,8 @@ data class QiblaViewState(
     val isLocationPermissionGranted: Boolean = true,
     val hasSystemIssues: Boolean = false,
     val mosques: List<MosqueLocation> = emptyList(),
+    /** True while nearby mosques are being fetched and none are on screen yet. */
+    val mosquesLoading: Boolean = false,
     /** True when the last Overpass fetch failed and no cached mosques are available. */
     val mosqueFetchFailed: Boolean = false
 )
