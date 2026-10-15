@@ -168,7 +168,7 @@
     <string name="settings_madhab">المذهب</string>
     <string name="settings_method">طريقة الحساب</string>
     <string name="madhab_shafi">شافعي / قياسي (مالكي، حنبلي)</string>
-    <string name="madhab_hanafi">حنبلي</string>
+    <string name="madhab_hanafi">حنفي</string>
     <string name="madhab_hanafi_desc">سيكون وقت العصر متأخرًا بنحو ساعة عن الحساب القياسي.</string>
     <string name="method_mwl">رابطة العالم الإسلامي</string>
     <string name="method_isna">الجمعية الإسلامية لأمريكا الشمالية (ISNA)</string>
