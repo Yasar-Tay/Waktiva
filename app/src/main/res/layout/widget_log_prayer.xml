@@ -1,33 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One of today's prayers in the prayer log widget: its mark over its name. The whole column, the row's full height, is its tap target. -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  One of today's prayers in the prayer log widget, as a tile: gold with a tick once prayed, ringed
+  in red once missed, ringed in its colour while its time is on, faint while to come; its sign
+  over its name. The whole tile, the row's full height, is its tap target.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_log_cell"
     android:layout_width="0dp"
     android:layout_height="match_parent"
-    android:layout_marginStart="2dp"
-    android:layout_marginEnd="2dp"
+    android:layout_marginStart="3dp"
+    android:layout_marginEnd="3dp"
     android:layout_weight="1"
-    android:background="@drawable/widget_log_cell"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp">
+    android:foreground="@drawable/widget_press">
 
     <ImageView
-        android:id="@+id/widget_log_dot"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
-        android:scaleType="fitCenter" />
+        android:id="@+id/widget_log_tile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_pill_faint" />
 
-    <TextView
-        android:id="@+id/widget_log_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:ellipsize="end"
-        android:fontFamily="@font/inter_medium"
-        android:letterSpacing="0.04"
-        android:maxLines="1"
-        android:textColor="#CCFFFFFF"
-        android:textSize="10.5sp" />
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp">
+
+        <ImageView
+            android:id="@+id/widget_log_icon"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/widget_log_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_medium"
+            android:maxLines="1"
+            android:textColor="#CCFFFFFF"
+            android:textSize="11sp" />
+    </LinearLayout>
+</FrameLayout>

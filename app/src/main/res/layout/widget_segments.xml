@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The day's five prayers as a strip, in the day circle widgets: gold once prayed, red once missed, faint while to come. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_segments"
+    android:layout_width="match_parent"
+    android:layout_height="5dp"
+    android:orientation="horizontal"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/widget_seg_0"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_segment" />
+
+    <ImageView
+        android:id="@+id/widget_seg_1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="5dp"
+        android:layout_weight="1"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_segment" />
+
+    <ImageView
+        android:id="@+id/widget_seg_2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="5dp"
+        android:layout_weight="1"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_segment" />
+
+    <ImageView
+        android:id="@+id/widget_seg_3"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="5dp"
+        android:layout_weight="1"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_segment" />
+
+    <ImageView
+        android:id="@+id/widget_seg_4"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="5dp"
+        android:layout_weight="1"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_segment" />
+</LinearLayout>

@@ -444,7 +444,7 @@
     <string name="widget_ring_label">Намаз сейчас</string>
     <string name="widget_ring_description">Намаз, время которого идёт, сколько его осталось и «Совершил» одним касанием</string>
     <string name="widget_my_day_label">Мой день</string>
-    <string name="widget_my_day_description">Намаз, время которого идёт, и сколько его осталось, с кругом дня и временами</string>
+    <string name="widget_my_day_description">Намаз, время которого идёт, и сколько его осталось, с временами дня, которые отмечаются одним касанием</string>
     <string name="widget_prayer_time">Время %1$s</string>
     <string name="widget_prayer_time_ending">Время %1$s истекает</string>
     <string name="widget_prayer_prayed">%1$s совершён</string>

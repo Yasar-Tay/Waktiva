@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A prayer's card in the "my day" widget: a faint frosted pane, brighter while pressed. -->
+<!-- The line of the prayer whose time it is, in the "my day" widget. -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
+            <corners android:radius="10dp" />
             <solid android:color="#40FFFFFF" />
-            <corners android:radius="14dp" />
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#14FFFFFF" />
-            <stroke android:width="0.5dp" android:color="#14FFFFFF" />
-            <corners android:radius="14dp" />
+            <corners android:radius="10dp" />
+            <solid android:color="#17FFFFFF" />
         </shape>
     </item>
 </selector>

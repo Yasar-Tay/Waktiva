@@ -16,24 +16,199 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="18dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="10dp">
+        android:paddingTop="14dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="14dp">
 
-        <include
-            layout="@layout/widget_moment_preview"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <include
-            layout="@layout/widget_orb_preview"
-            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
+            android:layout_weight="1"
+            android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="7dp"
+                    android:layout_marginEnd="6dp"
+                    android:src="@drawable/widget_dot"
+                    android:tint="#FF6EE7B7" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_medium"
+                    android:letterSpacing="0.08"
+                    android:maxLines="1"
+                    android:text="@string/prayer_dhuhr"
+                    android:textAllCaps="true"
+                    android:textColor="#E6FFFFFF"
+                    android:textSize="11sp" />
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="3dp"
+                    android:src="@drawable/partly_cloudy_day" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="18°"
+                    android:textColor="#E6FFFFFF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_light"
+                    android:fontFeatureSettings="tnum"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="-0.03"
+                    android:text="1:42:07"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="40sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginBottom="3dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/widget_left"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- A still bar: two fifths of the time gone. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:background="@drawable/widget_segment"
+                android:backgroundTint="#29FFFFFF"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/widget_segment"
+                    android:tint="#FFFFF59D" />
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="12:55"
+                    android:textColor="#A6FFFFFF"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/clear_day"
+                    android:tint="#FFFFCC80" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="@string/prayer_asr"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="  16:10"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- The "I prayed" tile. -->
+        <FrameLayout
+            android:layout_width="84dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="12dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/widget_pill_outline"
+                android:tint="#FFFFF59D" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="42dp"
+                    android:layout_height="42dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/widget_preview_disc"
+                        android:tint="#FFFFF59D" />
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_widget_check"
+                        android:tint="#FF383117" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:maxLines="1"
+                    android:text="@string/prayer_log_mark"
+                    android:textColor="#FFFFF59D"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
 </FrameLayout>

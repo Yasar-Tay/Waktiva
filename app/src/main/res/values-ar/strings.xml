@@ -445,7 +445,7 @@
     <string name="widget_ring_label">الصلاة الآن</string>
     <string name="widget_ring_description">الصلاة التي حان وقتها، والوقت المتبقي لها، و«صلّيت» بلمسة واحدة</string>
     <string name="widget_my_day_label">يومي</string>
-    <string name="widget_my_day_description">الصلاة التي حان وقتها والوقت المتبقي لها، مع دائرة اليوم وأوقاته</string>
+    <string name="widget_my_day_description">الصلاة التي حان وقتها والوقت المتبقي لها، مع أوقات اليوم لتعليمها بلمسة</string>
     <string name="widget_prayer_time">وقت %1$s</string>
     <string name="widget_prayer_time_ending">وقت %1$s يوشك على الانتهاء</string>
     <string name="widget_prayer_prayed">صُلّيت %1$s</string>

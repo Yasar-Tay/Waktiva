@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A tile washed and ringed in a colour: the prayer whose time it is, or one missed. Tinted at runtime. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="14dp" />
+    <solid android:color="#29FFFFFF" />
+    <stroke android:width="1.5dp" android:color="#FFFFFFFF" />
+</shape>

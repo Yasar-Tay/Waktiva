@@ -445,7 +445,7 @@
     <string name="widget_ring_label">ابھی کی نماز</string>
     <string name="widget_ring_description">جس نماز کا وقت ہے، اس کا باقی وقت اور ایک چھونے سے “پڑھ لی”</string>
     <string name="widget_my_day_label">میرا دن</string>
-    <string name="widget_my_day_description">جس نماز کا وقت ہے اور اس کا باقی وقت، دن کے دائرے اور اوقات کے ساتھ</string>
+    <string name="widget_my_day_description">جس نماز کا وقت ہے اور اس کا باقی وقت، دن کے اوقات کے ساتھ جنہیں ایک ٹچ سے نشان لگایا جا سکے</string>
     <string name="widget_prayer_time">%1$s کا وقت</string>
     <string name="widget_prayer_time_ending">%1$s کا وقت ختم ہو رہا ہے</string>
     <string name="widget_prayer_prayed">%1$s ادا ہو گئی</string>

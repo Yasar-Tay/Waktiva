@@ -443,7 +443,7 @@
     <string name="widget_ring_label">Prayer Now</string>
     <string name="widget_ring_description">The prayer whose time it is, the time left for it, and “I prayed” in one tap</string>
     <string name="widget_my_day_label">My Day</string>
-    <string name="widget_my_day_description">The prayer whose time it is and the time left for it, with the day’s circle and its times</string>
+    <string name="widget_my_day_description">The prayer whose time it is and the time left for it, with the day’s times to mark in a tap</string>
     <string name="widget_prayer_time">%1$s time</string>
     <string name="widget_prayer_time_ending">%1$s time is ending</string>
     <string name="widget_prayer_prayed">%1$s prayed</string>

@@ -444,7 +444,7 @@
     <string name="widget_ring_label">Modlitwa teraz</string>
     <string name="widget_ring_description">Modlitwa, której czas trwa, ile go zostało i „Modliłem się” jednym dotknięciem</string>
     <string name="widget_my_day_label">Mój dzień</string>
-    <string name="widget_my_day_description">Modlitwa, której czas trwa, i ile go zostało, z kręgiem dnia i porami</string>
+    <string name="widget_my_day_description">Modlitwa, której czas trwa, i ile go zostało, z porami dnia do oznaczenia jednym dotknięciem</string>
     <string name="widget_prayer_time">Czas na %1$s</string>
     <string name="widget_prayer_time_ending">Czas na %1$s się kończy</string>
     <string name="widget_prayer_prayed">%1$s odmówiona</string>

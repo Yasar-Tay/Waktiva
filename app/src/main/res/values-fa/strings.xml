@@ -445,7 +445,7 @@
     <string name="widget_ring_label">نماز اکنون</string>
     <string name="widget_ring_description">نمازی که وقتش است، زمان باقی‌مانده و «خواندم» با یک لمس</string>
     <string name="widget_my_day_label">روز من</string>
-    <string name="widget_my_day_description">نمازی که وقتش است و زمان باقی‌مانده، همراه دایره روز و اوقاتش</string>
+    <string name="widget_my_day_description">نمازی که وقتش است و زمان باقی‌مانده، همراه اوقات روز برای علامت‌زدن با یک لمس</string>
     <string name="widget_prayer_time">وقت %1$s</string>
     <string name="widget_prayer_time_ending">وقت %1$s رو به پایان است</string>
     <string name="widget_prayer_prayed">%1$s خوانده شد</string>
