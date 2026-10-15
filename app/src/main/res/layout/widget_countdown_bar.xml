@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   The countdown widget, a full-width 4×1 bar: the next prayer on the left, the time left to it
-  on the right at the full height of the bar, on the sky of the hour lit by the prayer's colour.
+  on the right at the full height of the bar, on the sky of the hour lit by the prayer whose
+  time it is.
       [icon] DHUHR
       13:07                            1:23:45
       ▬

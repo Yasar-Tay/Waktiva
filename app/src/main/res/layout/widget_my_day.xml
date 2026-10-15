@@ -114,6 +114,7 @@
                 android:src="@drawable/widget_hero_card" />
 
             <LinearLayout
+                android:id="@+id/widget_hero"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"

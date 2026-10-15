@@ -102,9 +102,9 @@ internal object WidgetArt {
         return bitmap
     }
 
-    /** [button] as the 4×4 card's disc, [DISC] dp across. */
-    fun disc(context: Context, button: Button): Bitmap {
-        val dp = density(context, DISC)
+    /** [button] as the 4×4 card's disc, [sizeDp] across; drawn to the proportions of a [DISC] dp one. */
+    fun disc(context: Context, button: Button, sizeDp: Int): Bitmap {
+        val dp = density(context, sizeDp) * sizeDp / DISC
         val s = DISC * dp
         val bitmap = Bitmap.createBitmap(s.toInt(), s.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -135,9 +135,12 @@ internal object WidgetArt {
 
     private const val MARK = 20
 
-    /** A prayer's mark on its line of the "my day" widget, in [color] while its time is on. */
-    fun mark(context: Context, mark: Mark, color: Color): Bitmap {
-        val dp = density(context, MARK)
+    /**
+     * A prayer's mark on its line of the "my day" widget, in [color] while its time is on,
+     * [sizeDp] across; drawn to the proportions of a [MARK] dp one.
+     */
+    fun mark(context: Context, mark: Mark, color: Color, sizeDp: Int): Bitmap {
+        val dp = density(context, sizeDp) * sizeDp / MARK
         val s = MARK * dp
         val bitmap = Bitmap.createBitmap(s.toInt(), s.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -165,18 +168,19 @@ internal object WidgetArt {
         return bitmap
     }
 
-    private const val MEDAL = 40
-
-    /** The level in a gold diamond, as the prayer log widget's badge. */
-    fun diamond(context: Context, level: Int): Bitmap {
-        val dp = density(context, MEDAL)
-        val s = MEDAL * dp
+    /**
+     * The level in a gold diamond, as the prayer log widget's badge: a rounded square turned 45°,
+     * as large as [sizeDp] holds corner to corner.
+     */
+    fun diamond(context: Context, level: Int, sizeDp: Int): Bitmap {
+        val dp = density(context, sizeDp)
+        val s = sizeDp * dp
         val bitmap = Bitmap.createBitmap(s.toInt(), s.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val c = s / 2f
         val half = s * 0.35f
         val square = RectF(c - half, c - half, c + half, c + half)
-        val corner = s * 0.12f
+        val corner = s * 0.17f
         val save = canvas.save()
         canvas.rotate(45f, c, c)
         canvas.drawRoundRect(square, corner, corner, Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -191,7 +195,7 @@ internal object WidgetArt {
         canvas.drawRoundRect(square, corner * 0.8f, corner * 0.8f, stroke(Color.White, 0.35f, s * 0.015f))
         canvas.restoreToCount(save)
         val text = level.toString()
-        drawText(context, canvas, text, c, c, s * if (text.length > 2) 0.26f else 0.34f, GoldInk, R.font.inter_bold, s * 0.62f)
+        drawText(context, canvas, text, c, c, s * if (text.length > 2) 0.25f else 0.33f, GoldInk, R.font.inter_bold, s * 0.56f)
         return bitmap
     }
 

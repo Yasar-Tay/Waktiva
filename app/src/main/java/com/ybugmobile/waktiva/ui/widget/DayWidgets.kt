@@ -64,10 +64,62 @@ internal object DayWidgets {
     const val EXTRA_DATE = "date"
     const val EXTRA_PRAYER = "prayer"
 
-    /** The 4×2 widget is short below this height and its countdown smaller. */
-    private const val TALL_MIN_HEIGHT_DP = 150f
-    private const val RING_MIN_WIDTH_DP = 250f
-    private const val SHORT_MIN_HEIGHT_DP = 100f
+    /** Below this width a widget is narrow, and its countdown smaller to leave room beside it. */
+    private const val WIDE_MIN_WIDTH_DP = 320f
+    private const val MIN_WIDTH_DP = 250f
+    private const val NARROW_COUNT = 0.8f
+
+    /** The moment's type and parts at a widget's size: sizes in sp, [bar] and [weather] in dp. */
+    private class MomentType(
+        val label: Float,
+        val count: Float,
+        val left: Float,
+        val bar: Float,
+        val weather: Float,
+        val temp: Float
+    )
+
+    /**
+     * The 4×2's contents at its height, from [minHeight] dp up, so they grow with it: the label,
+     * the countdown and the bar on the left; the button beside them takes the height (to 140 dp).
+     * The countdown stops at 44 sp, which with "left" beside it is what a 4-column width holds.
+     */
+    private enum class NowSize(val minHeight: Float, val type: MomentType, val caption: Float, val sign: Float) {
+        SHORT(100f, MomentType(label = 10.5f, count = 30f, left = 12f, bar = 5f, weather = 16f, temp = 12f), caption = 11f, sign = 12f),
+        REGULAR(150f, MomentType(label = 11.5f, count = 40f, left = 13f, bar = 6f, weather = 18f, temp = 13f), caption = 12f, sign = 13f),
+        TALL(190f, MomentType(label = 13f, count = 44f, left = 14f, bar = 8f, weather = 22f, temp = 15f), caption = 14f, sign = 16f)
+    }
+
+    /**
+     * The 4×4's contents at its height, from [minHeight] dp up: the date, the moment's card and
+     * the day's lines grow together, so the lines keep a comfortable height and nothing floats.
+     * A compact widget leaves out the Hijri date and the sunrise line to keep its lines readable.
+     * Sizes in sp; the [mark], the [disc] and the card's [pad] in dp.
+     */
+    private enum class DaySize(
+        val minHeight: Float,
+        val type: MomentType,
+        val date: Float,
+        val hijri: Float?,
+        val row: Float,
+        val mark: Int,
+        val disc: Int,
+        val pad: Int,
+        val sun: Boolean
+    ) {
+        COMPACT(
+            250f, MomentType(label = 10.5f, count = 24f, left = 11f, bar = 5f, weather = 20f, temp = 15f),
+            date = 13f, hijri = null, row = 12f, mark = 16, disc = 46, pad = 10, sun = false
+        ),
+        REGULAR(
+            310f, MomentType(label = 11f, count = 30f, left = 12f, bar = 5f, weather = 26f, temp = 18f),
+            date = 14f, hijri = 11f, row = 13f, mark = 20, disc = 56, pad = 12, sun = true
+        ),
+        TALL(
+            380f, MomentType(label = 12.5f, count = 38f, left = 14f, bar = 7f, weather = 30f, temp = 21f),
+            date = 16f, hijri = 12.5f, row = 15f, mark = 24, disc = 68, pad = 14, sun = true
+        )
+    }
 
     private const val REQUEST_TICK = 7_303
 
@@ -105,11 +157,11 @@ internal object DayWidgets {
         val button: WidgetArt.Button
     ) {
         private var tileBitmap: Bitmap? = null
-        private var discBitmap: Bitmap? = null
+        private val discBitmaps = mutableMapOf<Int, Bitmap>()
 
         fun tile(context: Context): Bitmap = tileBitmap ?: WidgetArt.tile(context, button).also { tileBitmap = it }
 
-        fun disc(context: Context): Bitmap = discBitmap ?: WidgetArt.disc(context, button).also { discBitmap = it }
+        fun disc(context: Context, sizeDp: Int): Bitmap = discBitmaps.getOrPut(sizeDp) { WidgetArt.disc(context, button, sizeDp) }
     }
 
     suspend fun render(
@@ -124,7 +176,7 @@ internal object DayWidgets {
         val today = loadToday(context, snapshot)
         today?.let { scheduleEnding(context, it.moment) }
         ringIds.forEach { id -> manager.updateAppWidget(id, buildNowViews(context, manager, id, snapshot, today)) }
-        dayIds.forEach { id -> manager.updateAppWidget(id, buildMyDay(context, snapshot, today)) }
+        dayIds.forEach { id -> manager.updateAppWidget(id, buildMyDayViews(context, manager, id, snapshot, today)) }
     }
 
     private suspend fun loadToday(context: Context, snapshot: WaktivaWidget.Snapshot): Today? {
@@ -216,43 +268,80 @@ internal object DayWidgets {
 
     // ── Prayer now (4×2) ──────────────────────────────────────────────────
 
+    /**
+     * A widget's views at each of its [heights] and at a narrow and a wide width. From Android 12,
+     * which tells a widget its sizes, the launcher picks the views that fit; before it, the
+     * widget's portrait size (its least width, its largest height) picks them.
+     */
+    private fun <S> sized(
+        manager: AppWidgetManager,
+        widgetId: Int,
+        heights: List<Pair<Float, S>>,
+        build: (size: S, wide: Boolean) -> RemoteViews
+    ): RemoteViews {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return RemoteViews(
+                heights.flatMap { (height, size) ->
+                    listOf(
+                        SizeF(MIN_WIDTH_DP, height) to build(size, false),
+                        SizeF(WIDE_MIN_WIDTH_DP, height) to build(size, true)
+                    )
+                }.toMap()
+            )
+        }
+        val options = manager.getAppWidgetOptions(widgetId)
+        val height = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
+        val width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
+        val size = if (height == 0) heights[1.coerceAtMost(heights.lastIndex)].second
+        else heights.lastOrNull { height >= it.first }?.second ?: heights.first().second
+        return build(size, width == 0 || width >= WIDE_MIN_WIDTH_DP)
+    }
+
     private fun buildNowViews(
         context: Context,
         manager: AppWidgetManager,
         widgetId: Int,
         snapshot: WaktivaWidget.Snapshot,
         today: Today?
-    ): RemoteViews {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return RemoteViews(
-                mapOf(
-                    size(SHORT_MIN_HEIGHT_DP) to buildNow(context, snapshot, today, tall = false),
-                    size(TALL_MIN_HEIGHT_DP) to buildNow(context, snapshot, today, tall = true)
-                )
-            )
-        }
-        val height = manager.getAppWidgetOptions(widgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
-        return buildNow(context, snapshot, today, tall = height == 0 || height >= TALL_MIN_HEIGHT_DP)
+    ): RemoteViews = sized(manager, widgetId, NowSize.entries.map { it.minHeight to it }) { size, wide ->
+        buildNow(context, snapshot, today, size, wide)
     }
 
-    @RequiresApi(Build.VERSION_CODES.S)
-    private fun size(height: Float) = SizeF(RING_MIN_WIDTH_DP, height)
-
-    private fun buildNow(context: Context, snapshot: WaktivaWidget.Snapshot, today: Today?, tall: Boolean): RemoteViews {
+    private fun buildNow(context: Context, snapshot: WaktivaWidget.Snapshot, today: Today?, size: NowSize, wide: Boolean): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_day_ring)
         views.setOnClickPendingIntent(android.R.id.background, WaktivaWidget.openAppIntent(context))
         if (today == null) return views.showEmpty(snapshot)
         views.showContent()
         views.setImageViewBitmap(R.id.widget_bg, background(snapshot, today.moment, Backdrop.WIDE))
 
-        bindMoment(context, views, snapshot, today, countSp = if (tall) 40f else 32f, showCaption = true)
+        bindMoment(context, views, snapshot, today, size.type, wide, showCaption = true)
+        views.setTextViewTextSize(R.id.widget_from, TypedValue.COMPLEX_UNIT_SP, size.caption)
+        views.setTextViewTextSize(R.id.widget_sub, TypedValue.COMPLEX_UNIT_SP, size.caption)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) views.setViewSize(R.id.widget_next_icon, size.sign)
         views.setImageViewBitmap(R.id.widget_button, today.tile(context))
         return views
     }
 
+    /** Sets a view's width and height, in dp; only Android 12 and later can. */
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun RemoteViews.setViewSize(id: Int, dp: Float) {
+        setViewLayoutWidth(id, dp, TypedValue.COMPLEX_UNIT_DIP)
+        setViewLayoutHeight(id, dp, TypedValue.COMPLEX_UNIT_DIP)
+    }
+
     // ── My day (4×4) ──────────────────────────────────────────────────────
 
-    private fun buildMyDay(context: Context, snapshot: WaktivaWidget.Snapshot, today: Today?): RemoteViews {
+    private fun buildMyDayViews(
+        context: Context,
+        manager: AppWidgetManager,
+        widgetId: Int,
+        snapshot: WaktivaWidget.Snapshot,
+        today: Today?
+    ): RemoteViews = sized(manager, widgetId, DaySize.entries.map { it.minHeight to it }) { size, wide ->
+        buildMyDay(context, snapshot, today, size, wide)
+    }
+
+    private fun buildMyDay(context: Context, snapshot: WaktivaWidget.Snapshot, today: Today?, size: DaySize, wide: Boolean): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_my_day)
         views.setOnClickPendingIntent(android.R.id.background, WaktivaWidget.openAppIntent(context))
         if (today == null) return views.showEmpty(snapshot)
@@ -263,19 +352,26 @@ internal object DayWidgets {
         val dateFormat = runCatching { DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(locale, "EEEEdMMMM"), locale) }
             .getOrElse { DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale) }
         views.setTextViewText(R.id.widget_date, today.day.date.format(dateFormat))
-        val hijri = hijri(context, today.day.date, snapshot.days)
+        views.setTextViewTextSize(R.id.widget_date, TypedValue.COMPLEX_UNIT_SP, size.date)
+        val hijri = size.hijri?.let { hijri(context, today.day.date, snapshot.days) }
         views.setViewVisibility(R.id.widget_hijri, if (hijri != null) View.VISIBLE else View.GONE)
-        hijri?.let { views.setTextViewText(R.id.widget_hijri, it) }
+        if (hijri != null && size.hijri != null) {
+            views.setTextViewText(R.id.widget_hijri, hijri)
+            views.setTextViewTextSize(R.id.widget_hijri, TypedValue.COMPLEX_UNIT_SP, size.hijri)
+        }
 
-        bindMoment(context, views, snapshot, today, countSp = 30f, showCaption = false)
+        bindMoment(context, views, snapshot, today, size.type, wide, showCaption = false)
         val card = if (today.moment.state == MomentState.PRAYED) PrayedGold else arcColor(today.moment)
         views.setInt(R.id.widget_hero_bg, "setColorFilter", card.toArgb())
-        views.setImageViewBitmap(R.id.widget_button, today.disc(context))
+        val pad = (size.pad * context.resources.displayMetrics.density).toInt()
+        views.setViewPadding(R.id.widget_hero, pad, pad, pad, pad)
+        views.setImageViewBitmap(R.id.widget_button, today.disc(context, size.disc))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) views.setViewSize(R.id.widget_mark, size.disc.toFloat())
 
         views.removeAllViews(R.id.widget_times)
         today.times.forEach { time ->
-            views.addView(R.id.widget_times, dayRow(context, today, time))
-            if (time.type == PrayerType.FAJR) sunRow(context, today.day)?.let { views.addView(R.id.widget_times, it) }
+            views.addView(R.id.widget_times, dayRow(context, today, time, size))
+            if (time.type == PrayerType.FAJR && size.sun) sunRow(context, today.day, size)?.let { views.addView(R.id.widget_times, it) }
         }
         return views
     }
@@ -295,10 +391,13 @@ internal object DayWidgets {
      * current one or an earlier one) is marked or unmarked with a tap: a gold tick once prayed,
      * a red cross once its time went by unmarked, a ring in its colour while its time is on.
      */
-    private fun dayRow(context: Context, today: Today, time: DayTime): RemoteViews {
+    private fun dayRow(context: Context, today: Today, time: DayTime, size: DaySize): RemoteViews {
         val row = RemoteViews(context.packageName, R.layout.widget_day_row)
         row.setTextViewText(R.id.widget_row_name, time.type.getDisplayName(context))
         row.setTextViewText(R.id.widget_row_time, time.time.format(WaktivaWidget.timeFormatter))
+        row.setTextViewTextSize(R.id.widget_row_name, TypedValue.COMPLEX_UNIT_SP, size.row)
+        row.setTextViewTextSize(R.id.widget_row_time, TypedValue.COMPLEX_UNIT_SP, size.row)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) row.setViewSize(R.id.widget_row_mark, size.mark.toFloat())
 
         val status = today.statuses[time.type]
         val accent = if (time.isCurrent) arcColor(today.moment) else time.type.accentColor
@@ -309,7 +408,10 @@ internal object DayWidgets {
             status == PrayerLogStatus.ACTIVE || time.isCurrent -> WidgetArt.Mark.ACTIVE
             else -> WidgetArt.Mark.UPCOMING
         }
-        row.setImageViewBitmap(R.id.widget_row_mark, WidgetArt.mark(context, mark, if (mark == WidgetArt.Mark.QUIET) Color.White else accent))
+        row.setImageViewBitmap(
+            R.id.widget_row_mark,
+            WidgetArt.mark(context, mark, if (mark == WidgetArt.Mark.QUIET) Color.White else accent, size.mark)
+        )
 
         val (nameColor, clockColor) = when {
             mark == WidgetArt.Mark.PRAYED -> PrayedGold.toArgb() to PrayedGold.toArgb()
@@ -335,12 +437,15 @@ internal object DayWidgets {
     }
 
     /** Sunrise, quietly, between Fajr and Dhuhr: the end of Fajr's time, never marked. */
-    private fun sunRow(context: Context, day: PrayerDay): RemoteViews? {
+    private fun sunRow(context: Context, day: PrayerDay, size: DaySize): RemoteViews? {
         val time = day.timings[PrayerType.SUNRISE] ?: return null
         return RemoteViews(context.packageName, R.layout.widget_day_sun_row).apply {
             setImageViewResource(R.id.widget_sun_icon, PrayerType.SUNRISE.iconRes)
             setTextViewText(R.id.widget_sun_name, PrayerType.SUNRISE.getDisplayName(context))
             setTextViewText(R.id.widget_sun_time, time.format(WaktivaWidget.timeFormatter))
+            setTextViewTextSize(R.id.widget_sun_name, TypedValue.COMPLEX_UNIT_SP, size.row - 2f)
+            setTextViewTextSize(R.id.widget_sun_time, TypedValue.COMPLEX_UNIT_SP, size.row - 2f)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) setViewLayoutWidth(R.id.widget_sun_icon, size.mark.toFloat(), TypedValue.COMPLEX_UNIT_DIP)
         }
     }
 
@@ -369,15 +474,26 @@ internal object DayWidgets {
      * prayer's start, so one figure serves both), the bar of the prayer's time so far (the day's
      * strip once it's prayed, or while none is on), with [showCaption] when it began and what
      * comes next, the weather now, and the button's tap: "I prayed", or taking the mark back.
+     * All at the widget's size ([type]); a narrow widget's countdown is smaller.
      */
     private fun bindMoment(
         context: Context,
         views: RemoteViews,
         snapshot: WaktivaWidget.Snapshot,
         today: Today,
-        countSp: Float,
+        type: MomentType,
+        wide: Boolean,
         showCaption: Boolean
     ) {
+        views.setTextViewTextSize(R.id.widget_label, TypedValue.COMPLEX_UNIT_SP, type.label)
+        views.setTextViewTextSize(R.id.widget_left, TypedValue.COMPLEX_UNIT_SP, type.left)
+        views.setTextViewTextSize(R.id.widget_temp, TypedValue.COMPLEX_UNIT_SP, type.temp)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            views.setViewSize(R.id.widget_weather_icon, type.weather)
+            views.setViewLayoutHeight(R.id.widget_window, type.bar, TypedValue.COMPLEX_UNIT_DIP)
+            views.setViewLayoutHeight(R.id.widget_segments, type.bar, TypedValue.COMPLEX_UNIT_DIP)
+        }
+        val countSp = if (wide) type.count else type.count * NARROW_COUNT
         val moment = today.moment
         val prayer = moment.prayer.getPrayerName(context)
         val label = when (moment.state) {
