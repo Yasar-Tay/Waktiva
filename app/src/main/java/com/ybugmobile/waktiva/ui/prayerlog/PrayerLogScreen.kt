@@ -404,8 +404,7 @@ private fun QuestRow(
     val background by animateColorAsState(
         when (status) {
             PrayerLogStatus.PRAYED -> PrayedGold.copy(alpha = 0.12f)
-            PrayerLogStatus.ACTIVE -> QuestGreenDeep.copy(alpha = 0.5f)
-            PrayerLogStatus.MISSED -> QuestRedDeep.copy(alpha = 0.5f)
+            PrayerLogStatus.ACTIVE, PrayerLogStatus.MISSED -> Color.Black.copy(alpha = 0.14f)
             else -> Color.Black.copy(alpha = 0.06f)
         },
         label = "questFill"
@@ -413,8 +412,8 @@ private fun QuestRow(
     val edge by animateColorAsState(
         when (status) {
             PrayerLogStatus.PRAYED -> PrayedGold.copy(alpha = 0.5f)
-            PrayerLogStatus.ACTIVE -> QuestGreen.copy(alpha = 0.75f)
-            PrayerLogStatus.MISSED -> QuestRed.copy(alpha = 0.6f)
+            PrayerLogStatus.ACTIVE -> QuestGreen.copy(alpha = 0.55f)
+            PrayerLogStatus.MISSED -> QuestRed.copy(alpha = 0.4f)
             else -> contentColor.copy(alpha = 0.1f)
         },
         label = "questEdge"
@@ -461,7 +460,7 @@ private fun QuestRow(
                 color = when (status) {
                     PrayerLogStatus.PRAYED -> PrayedGold
                     PrayerLogStatus.ACTIVE -> QuestGreen
-                    PrayerLogStatus.MISSED -> QuestRedText
+                    PrayerLogStatus.MISSED -> QuestRed
                     else -> faded(0.55f)
                 },
                 maxLines = 1,
@@ -702,7 +701,7 @@ private fun MonthHeader(state: PrayerLogViewState, onShowMonth: (Long) -> Unit) 
                     Text(
                         text = NumberFormat.getIntegerInstance(locale).format(state.missedSinceStart),
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black).onSky(),
-                        color = QuestRedText
+                        color = QuestRed
                     )
                 }
             }
@@ -1063,15 +1062,13 @@ internal val PrayedInk = Color(0xFF3B2A00)
 internal val Ember = Color(0xFFFF8A4C)
 
 /**
- * The sheet's green for a prayer whose time is on and red for one whose time has gone: deeper and
- * warmer than the home screen's, to sit with the gold. The deep ones fill a quest's row, dark
- * enough to hold the brighter one in text over any sky; the red's text is lifted a little to read.
+ * The sheet's green for a prayer whose time is on and red for one whose time has gone: soft,
+ * desaturated tones, as dark interfaces want, since saturated ones vibrate against a dark ground
+ * and tire the eye. They mark a quest's edge, text and seal, never fill its row, so the gold of
+ * the prayers prayed stays the one bright colour on the sheet.
  */
-internal val QuestGreen = Color(0xFF3CC47C)
-internal val QuestGreenDeep = Color(0xFF0E3B26)
-internal val QuestRed = Color(0xFFE5484D)
-internal val QuestRedDeep = Color(0xFF45121A)
-internal val QuestRedText = Color(0xFFF2675F)
+internal val QuestGreen = Color(0xFF9DD3B1)
+internal val QuestRed = Color(0xFFE6A69D)
 
 /** The sheet's cards: squarer than the app's others, with gold brackets that follow [CardCorner]. */
 internal val CardCorner = 12.dp
