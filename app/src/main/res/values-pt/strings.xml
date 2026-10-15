@@ -557,4 +557,6 @@
     <string name="prayer_log_journey">Diário de viagem</string>
     <string name="widget_prayer_log_description">Seu nível, sequência e medalhas, com as orações de hoje para marcar com um toque</string>
     <string name="widget_prayer_log_off">Ative o registro de orações nas Configurações</string>
+    <string name="qibla_mosques_loading">Carregando mesquitas próximas…</string>
+    <string name="qibla_mosques_load_failed">Não foi possível carregar as mesquitas próximas</string>
 </resources>

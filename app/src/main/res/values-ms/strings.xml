@@ -557,4 +557,6 @@
     <string name="prayer_log_journey">Catatan perjalanan</string>
     <string name="widget_prayer_log_description">Tahap, rentetan dan lencana anda, dengan solat hari ini untuk ditanda sekali sentuh</string>
     <string name="widget_prayer_log_off">Hidupkan catatan solat dalam Tetapan</string>
+    <string name="qibla_mosques_loading">Memuatkan masjid berdekatan…</string>
+    <string name="qibla_mosques_load_failed">Tidak dapat memuatkan masjid berdekatan</string>
 </resources>

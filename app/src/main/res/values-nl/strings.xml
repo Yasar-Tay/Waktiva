@@ -557,4 +557,6 @@
     <string name="prayer_log_journey">Reisdagboek</string>
     <string name="widget_prayer_log_description">Je niveau, reeks en badges, met de gebeden van vandaag om met één tik te markeren</string>
     <string name="widget_prayer_log_off">Zet het gebedslog aan in Instellingen</string>
+    <string name="qibla_mosques_loading">Moskeeën in de buurt laden…</string>
+    <string name="qibla_mosques_load_failed">Kan moskeeën in de buurt niet laden</string>
 </resources>

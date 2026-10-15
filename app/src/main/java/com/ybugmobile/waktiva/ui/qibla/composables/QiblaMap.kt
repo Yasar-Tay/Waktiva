@@ -98,8 +98,6 @@ fun QiblaMap(
     isAligned: Boolean,
     kaabaLatLng: LatLng,
     mosques: List<MosqueLocation> = emptyList(),
-    mosqueFetchFailed: Boolean = false,
-    mosquesLoading: Boolean = false,
     onMapReady: (MapLibreMap) -> Unit,
     onMapLongClick: (LatLng) -> Unit,
     onToggleSatellite: () -> Unit,
@@ -316,50 +314,6 @@ fun QiblaMap(
             )
         }
 
-        // Mosque loading chip — public Overpass servers can take 20 s+ to answer
-        if (mosquesLoading && mosques.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 72.dp)
-            ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(20.dp),
-                    tonalElevation = 4.dp
-                ) {
-                    Text(
-                        text = "Loading nearby mosques…",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-                    )
-                }
-            }
-        }
-
-        // Mosque fetch failure chip — only shown when fetch failed AND cache is empty
-        if (mosqueFetchFailed && mosques.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 72.dp)
-            ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    shape = RoundedCornerShape(20.dp),
-                    tonalElevation = 4.dp
-                ) {
-                    Text(
-                        text = "⚠ Could not load nearby mosques",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-                    )
-                }
-            }
-        }
-
         if (showFabs) {
             val fabContent = @Composable {
                 AnimatedVisibility(
@@ -532,6 +486,34 @@ fun QiblaMap(
         })
 
         style.getSourceAs<GeoJsonSource>(MOSQUE_SOURCE_ID)?.setGeoJson(collection)
+    }
+}
+
+/**
+ * Status chip for the nearby-mosque layer. Shown by the screen rather than the map so it
+ * sits below the location header and view toggle instead of underneath them.
+ */
+@Composable
+fun MosqueStatusChip(
+    isLoading: Boolean,
+    isFailed: Boolean,
+    modifier: Modifier = Modifier
+) {
+    if (!isLoading && !isFailed) return
+    Surface(
+        modifier = modifier,
+        color = if (isFailed) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.surfaceVariant,
+        shape = RoundedCornerShape(20.dp),
+        tonalElevation = 4.dp
+    ) {
+        Text(
+            // Public Overpass servers can take 20 s+ to answer, hence the loading state
+            text = if (isFailed) "⚠ " + stringResource(R.string.qibla_mosques_load_failed)
+                   else stringResource(R.string.qibla_mosques_loading),
+            style = MaterialTheme.typography.labelSmall,
+            color = if (isFailed) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+        )
     }
 }
 

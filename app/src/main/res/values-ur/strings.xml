@@ -558,4 +558,6 @@
     <string name="prayer_log_journey">سفر نامہ</string>
     <string name="widget_prayer_log_description">آپ کا لیول، سلسلہ اور بیجز، اور آج کی نمازیں ایک ٹیپ میں نشان زد کریں</string>
     <string name="widget_prayer_log_off">ترتیبات میں نماز کا ریکارڈ آن کریں</string>
+    <string name="qibla_mosques_loading">قریبی مساجد لوڈ ہو رہی ہیں…</string>
+    <string name="qibla_mosques_load_failed">قریبی مساجد لوڈ نہیں ہو سکیں</string>
 </resources>

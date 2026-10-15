@@ -558,4 +558,6 @@
     <string name="prayer_log_journey">Sefer günlüğü</string>
     <string name="widget_prayer_log_description">Seviyen, serin ve rozetlerin; bugünün namazlarını tek dokunuşla işaretle</string>
     <string name="widget_prayer_log_off">Çeteleyi Ayarlar\'dan aç</string>
+    <string name="qibla_mosques_loading">Yakındaki camiler yükleniyor…</string>
+    <string name="qibla_mosques_load_failed">Yakındaki camiler yüklenemedi</string>
 </resources>

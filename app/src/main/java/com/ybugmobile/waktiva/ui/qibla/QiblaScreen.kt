@@ -212,8 +212,6 @@ private fun QiblaContent(
                 isAligned = isAligned,
                 kaabaLatLng = kaabaLatLng,
                 mosques = state.mosques,
-                mosqueFetchFailed = state.mosqueFetchFailed,
-                mosquesLoading = state.mosquesLoading,
                 onMapReady = { },
                 onMapLongClick = { showMapHintSession = false },
                 onToggleSatellite = { isSatelliteView = !isSatelliteView },
@@ -368,24 +366,38 @@ private fun QiblaContent(
         }
 
 
-        AnimatedVisibility(
-            visible = isMapView && shouldShowMapHint && showMapHintSession,
-            enter = fadeIn(tween(220)) + slideInVertically(initialOffsetY = { -it / 2 }),
-            exit = fadeOut(tween(180)) + slideOutVertically(targetOffsetY = { -it / 2 }),
+        // Map-only notices sit below the header and view toggle, stacked so the
+        // mosque status chip never hides behind them or the hint card.
+        Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(horizontal = 24.dp)
                 .padding(top = if (isLandscape) 24.dp else 88.dp)
                 .systemBarsPadding()
-                .displayCutoutPadding()
+                .displayCutoutPadding(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            MapInteractionHintCard(
-                currentTheme = currentTheme,
-                onDismiss = {
-                    showMapHintSession = false
-                    onDismissMapHint()
-                }
-            )
+            AnimatedVisibility(
+                visible = isMapView && shouldShowMapHint && showMapHintSession,
+                enter = fadeIn(tween(220)) + slideInVertically(initialOffsetY = { -it / 2 }),
+                exit = fadeOut(tween(180)) + slideOutVertically(targetOffsetY = { -it / 2 })
+            ) {
+                MapInteractionHintCard(
+                    currentTheme = currentTheme,
+                    onDismiss = {
+                        showMapHintSession = false
+                        onDismissMapHint()
+                    }
+                )
+            }
+
+            if (isMapView && state.isNetworkAvailable && state.mosques.isEmpty()) {
+                MosqueStatusChip(
+                    isLoading = state.mosquesLoading,
+                    isFailed = state.mosqueFetchFailed
+                )
+            }
         }
     }
 }

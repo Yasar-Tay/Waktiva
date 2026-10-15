@@ -557,4 +557,6 @@
     <string name="prayer_log_journey">Ditari i udhëtimit</string>
     <string name="widget_prayer_log_description">Niveli, seria dhe distinktivët e tu, me namazet e sotme për t\'i shënuar me një prekje</string>
     <string name="widget_prayer_log_off">Aktivizo regjistrin e namazeve te Cilësimet</string>
+    <string name="qibla_mosques_loading">Po ngarkohen xhamitë përreth…</string>
+    <string name="qibla_mosques_load_failed">Xhamitë përreth nuk u ngarkuan</string>
 </resources>

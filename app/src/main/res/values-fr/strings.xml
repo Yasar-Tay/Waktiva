@@ -545,4 +545,6 @@
     <string name="prayer_log_journey">Journal de voyage</string>
     <string name="widget_prayer_log_description">Votre niveau, votre série et vos badges, avec les prières du jour à marquer d\'un geste</string>
     <string name="widget_prayer_log_off">Activez le carnet de prières dans les Réglages</string>
+    <string name="qibla_mosques_loading">Chargement des mosquées à proximité…</string>
+    <string name="qibla_mosques_load_failed">Impossible de charger les mosquées à proximité</string>
 </resources>

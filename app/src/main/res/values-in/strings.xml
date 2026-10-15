@@ -558,4 +558,6 @@
     <string name="prayer_log_journey">Catatan perjalanan</string>
     <string name="widget_prayer_log_description">Level, streak, dan lencanamu, dengan salat hari ini untuk ditandai sekali ketuk</string>
     <string name="widget_prayer_log_off">Aktifkan catatan salat di Pengaturan</string>
+    <string name="qibla_mosques_loading">Memuat masjid terdekat…</string>
+    <string name="qibla_mosques_load_failed">Tidak dapat memuat masjid terdekat</string>
 </resources>
