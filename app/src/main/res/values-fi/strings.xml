@@ -542,6 +542,19 @@
     <string name="prayer_log_celebrate_streak">Putki: %1$d päivää 🔥</string>
     <string name="prayer_log_celebrate_badge">Uusi merkki: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Taso nousi! Olet nyt tasolla %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Matkaaja</string>
+    <string name="prayer_log_rank_resolute">Päättäväinen matkaaja</string>
+    <string name="prayer_log_rank_steadfast">Vakaa</string>
+    <string name="prayer_log_rank_devoted">Omistautunut</string>
+    <string name="prayer_log_xp_total">Yhteensä %1$s XP</string>
+    <string name="prayer_log_quests">Päivän tehtävät</string>
+    <string name="prayer_log_quest_until">Ajallaan · %1$s asti</string>
+    <string name="prayer_log_quest_missed">Aika loppui · merkitse, jos rukoilit</string>
+    <string name="prayer_log_quest_opens">Alkaa %1$s</string>
+    <string name="prayer_log_chest">Täyden päivän arkku</string>
+    <string name="prayer_log_chest_hint">Rukoile kaikki viisi avataksesi sen</string>
+    <string name="prayer_log_chest_open">Avattu · bonus ansaittu</string>
+    <string name="prayer_log_journey">Matkapäiväkirja</string>
     <string name="widget_prayer_log_description">Tasosi, putkesi ja merkkisi sekä päivän rukoukset merkittäväksi yhdellä napautuksella</string>
     <string name="widget_prayer_log_off">Ota rukousloki käyttöön asetuksista</string>
 </resources>

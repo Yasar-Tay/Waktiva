@@ -543,6 +543,19 @@
     <string name="prayer_log_celebrate_streak">رشته: %1$d روز 🔥</string>
     <string name="prayer_log_celebrate_badge">نشان تازه: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">سطحت بالا رفت! اکنون در سطح %1$d هستی 🎉</string>
+    <string name="prayer_log_rank_traveler">مسافر</string>
+    <string name="prayer_log_rank_resolute">مسافر مصمم</string>
+    <string name="prayer_log_rank_steadfast">پایدار</string>
+    <string name="prayer_log_rank_devoted">مداوم</string>
+    <string name="prayer_log_xp_total">مجموع %1$s XP</string>
+    <string name="prayer_log_quests">مأموریت‌های امروز</string>
+    <string name="prayer_log_quest_until">در وقت · تا %1$s</string>
+    <string name="prayer_log_quest_missed">وقت گذشت · اگر خواندی علامت بزن</string>
+    <string name="prayer_log_quest_opens">شروع %1$s</string>
+    <string name="prayer_log_chest">صندوق روز کامل</string>
+    <string name="prayer_log_chest_hint">هر پنج نماز را بخوان تا باز شود</string>
+    <string name="prayer_log_chest_open">باز شد · پاداش گرفتی</string>
+    <string name="prayer_log_journey">دفتر سفر</string>
     <string name="widget_prayer_log_description">سطح، رشته و نشان‌هایت، با نمازهای امروز برای علامت زدن با یک لمس</string>
     <string name="widget_prayer_log_off">کارنامهٔ نماز را از تنظیمات روشن کن</string>
 </resources>

@@ -2,6 +2,8 @@ package com.ybugmobile.waktiva.ui.prayerlog
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -24,7 +26,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Flag
@@ -44,22 +45,37 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ybugmobile.waktiva.R
@@ -77,80 +93,86 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 /**
- * The player's level: a gold medal with the level in it, ringed by how far the level has come,
- * and beside it the XP bar, what the next level takes, and all the XP gathered.
+ * The player as on a character sheet: a gold crest with the level in it, beside it the level, the
+ * title it earns and all the XP gathered, and under them the XP bar with what the next level
+ * takes. Gold brackets hold its corners. [compact] makes it shorter, for landscape.
  */
 @Composable
-internal fun LevelCard(progress: PrayerLogProgress) {
-    val fraction by animateLevelFraction(progress)
-
-    GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
-        Row(Modifier.padding(horizontal = 20.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-            LevelMedal(progress.level, fraction, Modifier.size(64.dp))
-            Spacer(Modifier.width(16.dp))
-            LevelLine(progress, Modifier.weight(1f))
-        }
-    }
-}
-
-/**
- * The level in a line: "Level 5" with all the XP gathered beside it, the XP bar, and what the
- * next level takes. [compact] makes the bar thinner, for the landscape's today card.
- */
-@Composable
-internal fun LevelLine(progress: PrayerLogProgress, modifier: Modifier = Modifier, compact: Boolean = false) {
+internal fun CharacterCard(progress: PrayerLogProgress, modifier: Modifier = Modifier, compact: Boolean = false) {
     val contentColor = LocalGlassTheme.current.contentColor
     val locale = LocalConfiguration.current.locales[0]
     val integer = remember(locale) { NumberFormat.getIntegerInstance(locale) }
-    val fraction by animateLevelFraction(progress)
+    val fraction by animateFloatAsState(
+        progress.levelXp.toFloat() / progress.levelSpan,
+        tween(700, easing = FastOutSlowInEasing),
+        label = "levelFraction"
+    )
     val xp by animateIntAsState(progress.xp, tween(700), label = "xp")
 
-    Column(modifier) {
-        Row(verticalAlignment = Alignment.Bottom) {
-            Text(
-                text = stringResource(R.string.prayer_log_level, progress.level),
-                style = (if (compact) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium)
-                    .copy(fontWeight = FontWeight.ExtraBold),
-                color = contentColor,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = stringResource(R.string.prayer_log_xp, integer.format(xp)),
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.Black,
-                    fontFeatureSettings = "tnum"
-                ),
-                color = PrayedGold
-            )
+    GlassSurface(
+        shape = CardShape,
+        accent = PrayedGold.copy(alpha = 0.35f),
+        modifier = modifier
+            .fillMaxWidth()
+            .cornerBrackets(PrayedGold)
+    ) {
+        Column(Modifier.padding(horizontal = 18.dp, vertical = if (compact) 12.dp else 18.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                LevelCrest(
+                    progress.level,
+                    if (compact) Modifier.size(width = 60.dp, height = 70.dp) else Modifier.size(width = 84.dp, height = 98.dp)
+                )
+                Spacer(Modifier.width(16.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.prayer_log_level, progress.level).uppercase(locale),
+                        style = eyebrowStyle(11.sp),
+                        color = PrayedGold
+                    )
+                    Text(
+                        text = stringResource(progress.level.rankRes),
+                        style = headingStyle(if (compact) 18.sp else 21.sp),
+                        color = contentColor
+                    )
+                    Text(
+                        text = stringResource(R.string.prayer_log_xp_total, integer.format(xp)),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = contentColor.copy(alpha = 0.7f)
+                    )
+                }
+            }
+            Spacer(Modifier.height(if (compact) 10.dp else 16.dp))
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text(
+                    text = stringResource(
+                        R.string.prayer_log_xp,
+                        "${integer.format(progress.levelXp)} / ${integer.format(progress.levelSpan)}"
+                    ),
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, fontFeatureSettings = "tnum"),
+                    color = contentColor,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = stringResource(
+                        R.string.prayer_log_xp_to_next,
+                        progress.levelSpan - progress.levelXp,
+                        progress.level + 1
+                    ),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = contentColor.copy(alpha = 0.6f),
+                    maxLines = 1
+                )
+            }
+            Spacer(Modifier.height(6.dp))
+            XpBar(fraction, Modifier.fillMaxWidth().height(if (compact) 10.dp else 14.dp), ticks = true)
         }
-        Spacer(Modifier.height(if (compact) 6.dp else 8.dp))
-        XpBar(fraction, Modifier.fillMaxWidth().height(if (compact) 7.dp else 10.dp))
-        Spacer(Modifier.height(if (compact) 4.dp else 6.dp))
-        Text(
-            text = stringResource(
-                R.string.prayer_log_xp_to_next,
-                progress.levelSpan - progress.levelXp,
-                progress.level + 1
-            ),
-            style = MaterialTheme.typography.labelSmall,
-            color = contentColor.copy(alpha = 0.55f),
-            maxLines = 1
-        )
     }
 }
 
+/** The level on a gold shield, which bounces each time the level goes up. */
 @Composable
-private fun animateLevelFraction(progress: PrayerLogProgress) = animateFloatAsState(
-    progress.levelXp.toFloat() / progress.levelSpan,
-    tween(700, easing = FastOutSlowInEasing),
-    label = "levelFraction"
-)
-
-@Composable
-private fun LevelMedal(level: Int, fraction: Float, modifier: Modifier = Modifier) {
-    val contentColor = LocalGlassTheme.current.contentColor
+private fun LevelCrest(level: Int, modifier: Modifier = Modifier) {
     val pop = remember { Animatable(1f) }
-    // A bounce each time the level goes up.
     var shownLevel by remember { mutableIntStateOf(level) }
     LaunchedEffect(level) {
         if (level > shownLevel) {
@@ -160,62 +182,133 @@ private fun LevelMedal(level: Int, fraction: Float, modifier: Modifier = Modifie
         shownLevel = level
     }
 
-    Box(modifier.scale(pop.value), contentAlignment = Alignment.Center) {
-        Canvas(Modifier.fillMaxSize()) {
-            val stroke = 5.dp.toPx()
-            val inset = stroke / 2f
-            val arcSize = Size(size.width - stroke, size.height - stroke)
-            drawArc(
-                color = contentColor.copy(alpha = 0.12f),
-                startAngle = 0f,
-                sweepAngle = 360f,
-                useCenter = false,
-                topLeft = Offset(inset, inset),
-                size = arcSize,
-                style = Stroke(stroke)
-            )
-            drawArc(
-                color = PrayedGold,
-                startAngle = -90f,
-                sweepAngle = 360f * fraction.coerceIn(0f, 1f),
-                useCenter = false,
-                topLeft = Offset(inset, inset),
-                size = arcSize,
-                style = Stroke(stroke, cap = StrokeCap.Round)
-            )
-            drawCircle(
-                Brush.linearGradient(
-                    listOf(GoldLight, PrayedGold, GoldDeep),
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, size.height)
-                ),
-                radius = size.minDimension / 2f - stroke - 3.dp.toPx()
-            )
-        }
+    BoxWithConstraints(modifier.scale(pop.value), contentAlignment = Alignment.Center) {
+        val height = maxHeight
+        Spacer(
+            Modifier
+                .fillMaxSize()
+                .drawWithCache {
+                    val gold = Brush.linearGradient(
+                        listOf(GoldLight, PrayedGold, GoldDeep),
+                        start = Offset.Zero,
+                        end = Offset(size.width, size.height)
+                    )
+                    val sx = size.width / CrestWidth
+                    val sy = size.height / CrestHeight
+                    onDrawBehind {
+                        scale(sx, sy, pivot = Offset.Zero) {
+                            drawPath(CrestShield, gold)
+                            drawPath(CrestInner, PrayedInk.copy(alpha = 0.35f), style = Stroke(1.5.dp.toPx() / sx))
+                        }
+                    }
+                }
+        )
         Text(
             text = level.toString(),
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Black, fontFeatureSettings = "tnum"),
-            color = PrayedInk
+            style = figureStyle((height.value * 0.38f).sp),
+            color = PrayedInk,
+            modifier = Modifier.padding(bottom = height * 0.12f)
         )
     }
 }
 
+/** The title [this] level earns. */
+private val Int.rankRes: Int
+    get() = when {
+        this < 5 -> R.string.prayer_log_rank_traveler
+        this < 10 -> R.string.prayer_log_rank_resolute
+        this < 20 -> R.string.prayer_log_rank_steadfast
+        else -> R.string.prayer_log_rank_devoted
+    }
+
+/** A bar filled in gold to [fraction]; with [ticks], notched every tenth like a gauge. */
 @Composable
-private fun XpBar(fraction: Float, modifier: Modifier = Modifier) {
-    val contentColor = LocalGlassTheme.current.contentColor
+internal fun XpBar(fraction: Float, modifier: Modifier = Modifier, ticks: Boolean = false) {
+    val shape = RoundedCornerShape(3.dp)
     Box(
         modifier
-            .clip(RoundedCornerShape(50))
-            .background(contentColor.copy(alpha = 0.1f))
+            .clip(shape)
+            .background(Color.Black.copy(alpha = 0.22f))
+            .border(1.dp, PrayedGold.copy(alpha = if (ticks) 0.4f else 0f), shape)
+            .drawWithContent {
+                drawContent()
+                if (ticks) {
+                    for (i in 1 until 10) {
+                        val x = size.width * i / 10f
+                        drawLine(Color.Black.copy(alpha = 0.35f), Offset(x, 0f), Offset(x, size.height), 1.dp.toPx())
+                    }
+                }
+            }
     ) {
         Box(
             Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(fraction.coerceIn(0f, 1f))
-                .clip(RoundedCornerShape(50))
                 .background(Brush.horizontalGradient(listOf(GoldDeep, PrayedGold, GoldLight)))
         )
     }
+}
+
+/** Gold brackets over a card's four corners, following their rounding, as on a framed sheet. */
+internal fun Modifier.cornerBrackets(color: Color): Modifier = drawWithContent {
+    drawContent()
+    val stroke = 2.dp.toPx()
+    val radius = CardCorner.toPx() - stroke / 2f
+    val reach = radius + 12.dp.toPx()
+    val inset = stroke / 2f
+    val bracket = Path().apply {
+        moveTo(inset, reach)
+        lineTo(inset, inset + radius)
+        arcTo(Rect(inset, inset, inset + radius * 2f, inset + radius * 2f), 180f, 90f, false)
+        lineTo(reach, inset)
+    }
+    val style = Stroke(stroke, cap = StrokeCap.Round)
+    drawPath(bracket, color, style = style)
+    withTransform({ scale(-1f, 1f, pivot = center) }) { drawPath(bracket, color, style = style) }
+    withTransform({ scale(1f, -1f, pivot = center) }) { drawPath(bracket, color, style = style) }
+    withTransform({ scale(-1f, -1f, pivot = center) }) { drawPath(bracket, color, style = style) }
+}
+
+/**
+ * A card's heading: a gold [icon], its [title] in spaced capitals, and at the end [count], if
+ * any, in [countColor].
+ */
+@Composable
+internal fun SectionHeader(
+    icon: ImageVector,
+    title: String,
+    modifier: Modifier = Modifier,
+    count: String? = null,
+    countColor: Color = LocalGlassTheme.current.contentColor.copy(alpha = 0.7f)
+) {
+    val contentColor = LocalGlassTheme.current.contentColor
+    val locale = LocalConfiguration.current.locales[0]
+    Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+        Icon(icon, contentDescription = null, tint = PrayedGold, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = title.uppercase(locale),
+            style = eyebrowStyle(13.sp),
+            color = contentColor,
+            modifier = Modifier.weight(1f)
+        )
+        if (count != null) {
+            Text(text = count, style = figureStyle(16.sp), color = countColor)
+        }
+    }
+}
+
+/** A small gold diamond, the sheet's ornament. */
+@Composable
+internal fun Diamond(size: Dp, color: Color, modifier: Modifier = Modifier, filled: Boolean = true) {
+    Box(
+        modifier
+            .size(size)
+            .rotate(45f)
+            .then(
+                if (filled) Modifier.background(color) else Modifier.border(1.dp, color)
+            )
+    )
 }
 
 /**
@@ -231,30 +324,13 @@ internal fun BadgesCard(progress: PrayerLogProgress) {
         ?: progress.badges.last()
 
     GlassSurface(shape = CardShape, modifier = Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(horizontal = 16.dp, vertical = 16.dp)) {
-            Row(Modifier.padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Rounded.EmojiEvents,
-                    contentDescription = null,
-                    tint = PrayedGold,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.prayer_log_badges).uppercase(),
-                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
-                    color = contentColor,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = "${progress.earned.size}/${progress.badges.size}",
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        fontFeatureSettings = "tnum"
-                    ),
-                    color = contentColor.copy(alpha = 0.7f)
-                )
-            }
+        Column(Modifier.padding(horizontal = 14.dp, vertical = 16.dp)) {
+            SectionHeader(
+                icon = Icons.Rounded.EmojiEvents,
+                title = stringResource(R.string.prayer_log_badges),
+                count = "${progress.earned.size}/${progress.badges.size}",
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
             Spacer(Modifier.height(14.dp))
             progress.badges.chunked(4).forEach { row ->
                 Row(Modifier.fillMaxWidth()) {
@@ -290,7 +366,7 @@ private fun BadgeCell(progress: BadgeProgress, isSelected: Boolean, onClick: () 
     val name = stringResource(progress.badge.nameRes)
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(8.dp))
             .clickable(onClick = onClick)
             .then(if (isSelected) Modifier.background(contentColor.copy(alpha = 0.08f)) else Modifier)
             .padding(vertical = 8.dp, horizontal = 2.dp)
@@ -347,10 +423,10 @@ private fun BadgeMedal(progress: BadgeProgress, modifier: Modifier = Modifier) {
                     style = Stroke(1.dp.toPx())
                 )
             } else {
-                drawCircle(contentColor.copy(alpha = 0.06f), radius = size.minDimension / 2f - stroke)
+                drawCircle(Color.Black.copy(alpha = 0.18f), radius = size.minDimension / 2f - stroke)
                 val arcSize = Size(size.width - stroke, size.height - stroke)
                 drawArc(
-                    color = contentColor.copy(alpha = 0.1f),
+                    color = contentColor.copy(alpha = 0.12f),
                     startAngle = 0f,
                     sweepAngle = 360f,
                     useCenter = false,
@@ -360,7 +436,7 @@ private fun BadgeMedal(progress: BadgeProgress, modifier: Modifier = Modifier) {
                 )
                 if (fraction > 0f) {
                     drawArc(
-                        color = PrayedGold.copy(alpha = 0.85f),
+                        color = PrayedGold.copy(alpha = 0.9f),
                         startAngle = -90f,
                         sweepAngle = 360f * fraction,
                         useCenter = false,
@@ -374,7 +450,7 @@ private fun BadgeMedal(progress: BadgeProgress, modifier: Modifier = Modifier) {
         Icon(
             progress.badge.icon,
             contentDescription = null,
-            tint = if (earned) PrayedInk else contentColor.copy(alpha = 0.35f),
+            tint = if (earned) PrayedInk else contentColor.copy(alpha = 0.4f),
             modifier = Modifier.size(26.dp)
         )
     }
@@ -383,11 +459,12 @@ private fun BadgeMedal(progress: BadgeProgress, modifier: Modifier = Modifier) {
 @Composable
 private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
     val contentColor = LocalGlassTheme.current.contentColor
+    val locale = LocalConfiguration.current.locales[0]
     Column(Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
         if (isNext) {
             Text(
-                text = stringResource(R.string.prayer_log_next_goal).uppercase(),
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                text = stringResource(R.string.prayer_log_next_goal).uppercase(locale),
+                style = eyebrowStyle(10.sp),
                 color = PrayedGold
             )
             Spacer(Modifier.height(2.dp))
@@ -396,7 +473,7 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
             Column(Modifier.weight(1f)) {
                 Text(
                     text = stringResource(progress.badge.nameRes),
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    style = headingStyle(16.sp),
                     color = contentColor
                 )
                 Text(
@@ -419,11 +496,8 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
             } else {
                 Text(
                     text = "${progress.current}/${progress.target}",
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        fontFeatureSettings = "tnum"
-                    ),
-                    color = contentColor.copy(alpha = 0.75f)
+                    style = figureStyle(15.sp),
+                    color = contentColor.copy(alpha = 0.8f)
                 )
             }
         }
@@ -434,44 +508,80 @@ private fun BadgeDetail(progress: BadgeProgress, isNext: Boolean) {
     }
 }
 
-/** Today's bonus for a full day: faint until all five are prayed, then in gold. */
+/**
+ * The full day's chest under the day's prayers: shut, with a pip lit for each prayer prayed,
+ * until all five are, then open in gold with its bonus won.
+ */
 @Composable
-internal fun FullDayBonus(isComplete: Boolean, modifier: Modifier = Modifier) {
+internal fun FullDayChest(prayed: List<Boolean>, modifier: Modifier = Modifier) {
     val contentColor = LocalGlassTheme.current.contentColor
-    val tint = if (isComplete) PrayedInk else contentColor.copy(alpha = 0.55f)
+    val open = prayed.all { it }
+    val tone by animateColorAsState(if (open) GoldLight else PrayedGold.copy(alpha = 0.7f), label = "chestTone")
     val pop by animateFloatAsState(
-        if (isComplete) 1.06f else 1f,
+        if (open) 1.03f else 1f,
         spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
-        label = "bonusPop"
+        label = "chestPop"
     )
+    val shape = RoundedCornerShape(8.dp)
+
     Row(
         modifier = modifier
+            .fillMaxWidth()
             .scale(pop)
-            .clip(RoundedCornerShape(50))
-            .background(if (isComplete) PrayedGold else contentColor.copy(alpha = 0.06f))
-            .then(
-                if (isComplete) Modifier else Modifier.border(1.dp, contentColor.copy(alpha = 0.12f), RoundedCornerShape(50))
-            )
-            .padding(horizontal = 12.dp, vertical = 6.dp),
+            .clip(shape)
+            .background(if (open) PrayedGold.copy(alpha = 0.14f) else Color.Transparent)
+            .drawBehind {
+                val stroke = 1.dp.toPx()
+                drawRoundRect(
+                    color = PrayedGold.copy(alpha = if (open) 0.9f else 0.45f),
+                    topLeft = Offset(stroke / 2f, stroke / 2f),
+                    size = Size(size.width - stroke, size.height - stroke),
+                    cornerRadius = CornerRadius(8.dp.toPx()),
+                    style = Stroke(stroke, pathEffect = PathEffect.dashPathEffect(floatArrayOf(6.dp.toPx(), 4.dp.toPx())))
+                )
+            }
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            if (isComplete) Icons.Rounded.Check else Icons.Rounded.AutoAwesome,
-            contentDescription = null,
-            tint = if (isComplete) PrayedInk else PrayedGold,
-            modifier = Modifier.size(16.dp)
-        )
-        Spacer(Modifier.width(6.dp))
-        Text(
-            text = stringResource(R.string.prayer_log_full_day_bonus),
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = tint
-        )
-        Spacer(Modifier.width(8.dp))
+        Crossfade(targetState = open, label = "chest") { isOpen ->
+            Canvas(Modifier.size(38.dp)) {
+                val s = size.minDimension / ChestBox
+                scale(s, s, pivot = Offset.Zero) {
+                    drawPath(
+                        if (isOpen) ChestOpen else ChestShut,
+                        tone,
+                        style = Stroke(2.dp.toPx() / s, cap = StrokeCap.Round, join = androidx.compose.ui.graphics.StrokeJoin.Round)
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.width(12.dp))
+        Column(Modifier.weight(1f)) {
+            Text(
+                text = stringResource(R.string.prayer_log_chest),
+                style = headingStyle(15.sp),
+                color = if (open) GoldLight else contentColor
+            )
+            Text(
+                text = stringResource(if (open) R.string.prayer_log_chest_open else R.string.prayer_log_chest_hint),
+                style = MaterialTheme.typography.labelMedium,
+                color = contentColor.copy(alpha = 0.65f)
+            )
+            Spacer(Modifier.height(6.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+                prayed.forEach { lit ->
+                    Diamond(
+                        size = 7.dp,
+                        color = if (lit) PrayedGold else PrayedGold.copy(alpha = 0.5f),
+                        filled = lit
+                    )
+                }
+            }
+        }
         Text(
             text = stringResource(R.string.prayer_log_xp_gain, PrayerLogProgress.FULL_DAY_BONUS),
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black),
-            color = if (isComplete) PrayedInk else PrayedGold
+            style = figureStyle(16.sp),
+            color = tone
         )
     }
 }
@@ -515,7 +625,7 @@ internal sealed interface Unlock {
     data class Badge(val badge: PrayerLogBadge) : Unlock
 }
 
-/** A gold pill dropping in from the top to name what was just reached. */
+/** A gold banner dropping in from the top to name what was just reached. */
 @Composable
 internal fun UnlockToast(unlock: Unlock?, modifier: Modifier = Modifier) {
     var last by remember { mutableStateOf(unlock) }
@@ -527,6 +637,7 @@ internal fun UnlockToast(unlock: Unlock?, modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         val shown = last ?: return@AnimatedVisibility
+        val locale = LocalConfiguration.current.locales[0]
         val (icon, label, title) = when (shown) {
             is Unlock.Level -> Triple(
                 Icons.Rounded.KeyboardDoubleArrowUp,
@@ -539,14 +650,17 @@ internal fun UnlockToast(unlock: Unlock?, modifier: Modifier = Modifier) {
                 stringResource(shown.badge.nameRes)
             )
         }
+        val shape = RoundedCornerShape(CardCorner)
         Surface(
-            shape = RoundedCornerShape(50),
+            shape = shape,
             color = Color(0xFF2A2110),
             shadowElevation = 12.dp,
-            modifier = Modifier.border(1.5.dp, PrayedGold, RoundedCornerShape(50))
+            modifier = Modifier
+                .border(1.5.dp, PrayedGold, shape)
+                .cornerBrackets(GoldLight)
         ) {
             Row(
-                Modifier.padding(start = 8.dp, end = 20.dp, top = 8.dp, bottom = 8.dp),
+                Modifier.padding(start = 10.dp, end = 20.dp, top = 10.dp, bottom = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
@@ -561,13 +675,13 @@ internal fun UnlockToast(unlock: Unlock?, modifier: Modifier = Modifier) {
                 Spacer(Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = label.uppercase(),
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 1.sp),
+                        text = label.uppercase(locale),
+                        style = eyebrowStyle(10.sp),
                         color = PrayedGold
                     )
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                        style = headingStyle(16.sp),
                         color = Color.White
                     )
                 }
@@ -651,8 +765,53 @@ private class Piece(
     val round: Boolean
 )
 
-private val GoldLight = Color(0xFFFFECB3)
-private val GoldDeep = Color(0xFFE0A800)
+/** The section names of the sheet: the headline face, bold, in wide-spaced capitals. */
+@Composable
+internal fun eyebrowStyle(size: TextUnit): TextStyle = MaterialTheme.typography.headlineSmall.copy(
+    fontSize = size,
+    lineHeight = size * 1.4f,
+    fontWeight = FontWeight.Bold,
+    letterSpacing = 2.sp
+)
+
+/** Names and titles: the headline face, bold. */
+@Composable
+internal fun headingStyle(size: TextUnit): TextStyle = MaterialTheme.typography.headlineSmall.copy(
+    fontSize = size,
+    lineHeight = size * 1.25f,
+    fontWeight = FontWeight.Bold
+)
+
+/** Figures: the display face, bold, with digits of one width. */
+@Composable
+internal fun figureStyle(size: TextUnit): TextStyle = MaterialTheme.typography.displaySmall.copy(
+    fontSize = size,
+    lineHeight = size * 1.15f,
+    fontWeight = FontWeight.Bold,
+    fontFeatureSettings = "tnum"
+)
+
+internal val GoldLight = Color(0xFFFFECB3)
+internal val GoldDeep = Color(0xFFE0A800)
+
+/** The crest's shield, and the line just inside it, on a [CrestWidth] by [CrestHeight] grid. */
+private const val CrestWidth = 96f
+private const val CrestHeight = 112f
+private val CrestShield: Path by lazy {
+    PathParser().parsePathString("M48 3L90 17V54C90 81 71 99 48 109C25 99 6 81 6 54V17Z").toPath()
+}
+private val CrestInner: Path by lazy {
+    PathParser().parsePathString("M48 11L82 22.5V54C82 76 67 91 48 100C29 91 14 76 14 54V22.5Z").toPath()
+}
+
+/** The chest, shut and open, on a [ChestBox] square grid. */
+private const val ChestBox = 40f
+private val ChestShut: Path by lazy {
+    PathParser().parsePathString("M6 18H34V34H6ZM6 18C6 12 10 9 20 9S34 12 34 18M17 18V24H23V18").toPath()
+}
+private val ChestOpen: Path by lazy {
+    PathParser().parsePathString("M6 20H34V34H6ZM6 20L9 11H31L34 20M17 20V25H23V20M12 6L14 9M20 3V7M28 6L26 9").toPath()
+}
 
 private const val ConfettiMillis = 1900
 

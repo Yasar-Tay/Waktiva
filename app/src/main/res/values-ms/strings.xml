@@ -542,6 +542,19 @@
     <string name="prayer_log_celebrate_streak">Rentetan: %1$d hari 🔥</string>
     <string name="prayer_log_celebrate_badge">Lencana baharu: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Naik tahap! Anda kini di tahap %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Musafir</string>
+    <string name="prayer_log_rank_resolute">Musafir yang tekad</string>
+    <string name="prayer_log_rank_steadfast">Istiqamah</string>
+    <string name="prayer_log_rank_devoted">Tekun</string>
+    <string name="prayer_log_xp_total">Jumlah %1$s XP</string>
+    <string name="prayer_log_quests">Misi hari ini</string>
+    <string name="prayer_log_quest_until">Dalam waktu · hingga %1$s</string>
+    <string name="prayer_log_quest_missed">Waktu tamat · tandakan jika sudah solat</string>
+    <string name="prayer_log_quest_opens">Bermula %1$s</string>
+    <string name="prayer_log_chest">Peti hari penuh</string>
+    <string name="prayer_log_chest_hint">Solat kelima-lima waktu untuk membukanya</string>
+    <string name="prayer_log_chest_open">Dibuka · bonus diperoleh</string>
+    <string name="prayer_log_journey">Catatan perjalanan</string>
     <string name="widget_prayer_log_description">Tahap, rentetan dan lencana anda, dengan solat hari ini untuk ditanda sekali sentuh</string>
     <string name="widget_prayer_log_off">Hidupkan catatan solat dalam Tetapan</string>
 </resources>

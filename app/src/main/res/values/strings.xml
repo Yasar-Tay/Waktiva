@@ -543,6 +543,19 @@
     <string name="prayer_log_celebrate_streak">Streak: %1$d days 🔥</string>
     <string name="prayer_log_celebrate_badge">New badge: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Level up! You\'re now level %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Traveler</string>
+    <string name="prayer_log_rank_resolute">Resolute traveler</string>
+    <string name="prayer_log_rank_steadfast">Steadfast</string>
+    <string name="prayer_log_rank_devoted">Devoted</string>
+    <string name="prayer_log_xp_total">%1$s XP in all</string>
+    <string name="prayer_log_quests">Today\'s quests</string>
+    <string name="prayer_log_quest_until">In time · until %1$s</string>
+    <string name="prayer_log_quest_missed">Time is up · mark it if you prayed</string>
+    <string name="prayer_log_quest_opens">Opens at %1$s</string>
+    <string name="prayer_log_chest">Full day chest</string>
+    <string name="prayer_log_chest_hint">Pray all five to open it</string>
+    <string name="prayer_log_chest_open">Opened · bonus earned</string>
+    <string name="prayer_log_journey">Journey log</string>
     <string name="widget_prayer_log_description">Your level, streak and badges, with today\'s prayers to mark in a tap</string>
     <string name="widget_prayer_log_off">Turn on the prayer log in Settings</string>
 </resources>

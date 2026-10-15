@@ -542,6 +542,19 @@
     <string name="prayer_log_celebrate_streak">Reeks: %1$d dagen 🔥</string>
     <string name="prayer_log_celebrate_badge">Nieuwe badge: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Niveau omhoog! Je bent nu niveau %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Reiziger</string>
+    <string name="prayer_log_rank_resolute">Vastberaden reiziger</string>
+    <string name="prayer_log_rank_steadfast">Standvastig</string>
+    <string name="prayer_log_rank_devoted">Toegewijd</string>
+    <string name="prayer_log_xp_total">%1$s XP in totaal</string>
+    <string name="prayer_log_quests">Taken van vandaag</string>
+    <string name="prayer_log_quest_until">Op tijd · tot %1$s</string>
+    <string name="prayer_log_quest_missed">Tijd voorbij · markeer het als je gebeden hebt</string>
+    <string name="prayer_log_quest_opens">Begint om %1$s</string>
+    <string name="prayer_log_chest">Kist van de volle dag</string>
+    <string name="prayer_log_chest_hint">Bid alle vijf om hem te openen</string>
+    <string name="prayer_log_chest_open">Geopend · bonus verdiend</string>
+    <string name="prayer_log_journey">Reisdagboek</string>
     <string name="widget_prayer_log_description">Je niveau, reeks en badges, met de gebeden van vandaag om met één tik te markeren</string>
     <string name="widget_prayer_log_off">Zet het gebedslog aan in Instellingen</string>
 </resources>

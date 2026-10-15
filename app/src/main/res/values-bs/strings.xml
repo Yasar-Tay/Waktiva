@@ -542,6 +542,19 @@
     <string name="prayer_log_celebrate_streak">Niz: %1$d dana 🔥</string>
     <string name="prayer_log_celebrate_badge">Nova značka: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Novi nivo! Sada si na nivou %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Putnik</string>
+    <string name="prayer_log_rank_resolute">Odlučni putnik</string>
+    <string name="prayer_log_rank_steadfast">Postojan</string>
+    <string name="prayer_log_rank_devoted">Predan</string>
+    <string name="prayer_log_xp_total">Ukupno %1$s XP</string>
+    <string name="prayer_log_quests">Današnji zadaci</string>
+    <string name="prayer_log_quest_until">Na vrijeme · do %1$s</string>
+    <string name="prayer_log_quest_missed">Vrijeme je isteklo · označi ako si klanjao</string>
+    <string name="prayer_log_quest_opens">Počinje u %1$s</string>
+    <string name="prayer_log_chest">Škrinja punog dana</string>
+    <string name="prayer_log_chest_hint">Klanjaj svih pet da je otvoriš</string>
+    <string name="prayer_log_chest_open">Otvorena · bonus osvojen</string>
+    <string name="prayer_log_journey">Dnevnik putovanja</string>
     <string name="widget_prayer_log_description">Tvoj nivo, niz i značke, s današnjim namazima za označiti jednim dodirom</string>
     <string name="widget_prayer_log_off">Uključi evidenciju namaza u Postavkama</string>
 </resources>

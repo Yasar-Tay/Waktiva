@@ -30,8 +30,16 @@ import java.time.YearMonth
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
-/** One prayer of a day in the log. [time] is when its time begins, if that day's times are kept. */
-data class PrayerLogEntry(val type: PrayerType, val status: PrayerLogStatus, val time: LocalTime?)
+/**
+ * One prayer of a day in the log. [time] is when its time begins and [end] when it ends, if that
+ * day's times are kept.
+ */
+data class PrayerLogEntry(
+    val type: PrayerType,
+    val status: PrayerLogStatus,
+    val time: LocalTime?,
+    val end: LocalTime? = null
+)
 
 /** A day in the log with its five prayers. */
 data class PrayerLogDay(val date: LocalDate, val entries: List<PrayerLogEntry>) {
@@ -159,6 +167,7 @@ internal fun buildPrayerLogState(
         val marked = prayed[date].orEmpty()
         val entries = LoggedPrayers.map { type ->
             val time = prayerDay?.timings?.get(type)
+            val end = prayerDay?.let { PrayerLog.windowEnd(type, it, nextDay) }
             PrayerLogEntry(
                 type = type,
                 status = PrayerLog.status(
@@ -167,10 +176,11 @@ internal fun buildPrayerLogState(
                     prayed = type in marked,
                     now = now,
                     start = time?.atDate(date),
-                    end = prayerDay?.let { PrayerLog.windowEnd(type, it, nextDay) },
+                    end = end,
                     trackedSince = trackedSince
                 ),
-                time = time
+                time = time,
+                end = end?.toLocalTime()
             )
         }
         return PrayerLogDay(date, entries)

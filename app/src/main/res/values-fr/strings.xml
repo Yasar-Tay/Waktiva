@@ -530,6 +530,19 @@
     <string name="prayer_log_celebrate_streak">Série : %1$d jours 🔥</string>
     <string name="prayer_log_celebrate_badge">Nouveau badge : %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Niveau supérieur ! Vous êtes niveau %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Voyageur</string>
+    <string name="prayer_log_rank_resolute">Voyageur résolu</string>
+    <string name="prayer_log_rank_steadfast">Constant</string>
+    <string name="prayer_log_rank_devoted">Assidu</string>
+    <string name="prayer_log_xp_total">%1$s XP au total</string>
+    <string name="prayer_log_quests">Quêtes du jour</string>
+    <string name="prayer_log_quest_until">À l\'heure · jusqu\'à %1$s</string>
+    <string name="prayer_log_quest_missed">Temps écoulé · cochez-la si vous l\'avez accomplie</string>
+    <string name="prayer_log_quest_opens">Commence à %1$s</string>
+    <string name="prayer_log_chest">Coffre du jour complet</string>
+    <string name="prayer_log_chest_hint">Accomplissez les cinq pour l\'ouvrir</string>
+    <string name="prayer_log_chest_open">Ouvert · bonus gagné</string>
+    <string name="prayer_log_journey">Journal de voyage</string>
     <string name="widget_prayer_log_description">Votre niveau, votre série et vos badges, avec les prières du jour à marquer d\'un geste</string>
     <string name="widget_prayer_log_off">Activez le carnet de prières dans les Réglages</string>
 </resources>

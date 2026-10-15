@@ -530,6 +530,19 @@
     <string name="prayer_log_celebrate_streak">Serie: %1$d Tage 🔥</string>
     <string name="prayer_log_celebrate_badge">Neues Abzeichen: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Stufe aufgestiegen! Du bist jetzt Stufe %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Reisender</string>
+    <string name="prayer_log_rank_resolute">Entschlossener Reisender</string>
+    <string name="prayer_log_rank_steadfast">Standhaft</string>
+    <string name="prayer_log_rank_devoted">Hingebungsvoll</string>
+    <string name="prayer_log_xp_total">%1$s XP insgesamt</string>
+    <string name="prayer_log_quests">Heutige Aufgaben</string>
+    <string name="prayer_log_quest_until">In der Zeit · bis %1$s</string>
+    <string name="prayer_log_quest_missed">Zeit vorbei · markiere es, wenn du gebetet hast</string>
+    <string name="prayer_log_quest_opens">Ab %1$s</string>
+    <string name="prayer_log_chest">Truhe des vollen Tages</string>
+    <string name="prayer_log_chest_hint">Bete alle fünf, um sie zu öffnen</string>
+    <string name="prayer_log_chest_open">Geöffnet · Bonus erhalten</string>
+    <string name="prayer_log_journey">Reisetagebuch</string>
     <string name="widget_prayer_log_description">Deine Stufe, Serie und Abzeichen, dazu die heutigen Gebete zum Markieren mit einem Tipp</string>
     <string name="widget_prayer_log_off">Schalte das Gebetstagebuch in den Einstellungen ein</string>
 </resources>

@@ -543,6 +543,19 @@
     <string name="prayer_log_celebrate_streak">ধারা: %1$d দিন 🔥</string>
     <string name="prayer_log_celebrate_badge">নতুন ব্যাজ: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">লেভেল আপ! এখন আপনি লেভেল %1$d-এ 🎉</string>
+    <string name="prayer_log_rank_traveler">পথিক</string>
+    <string name="prayer_log_rank_resolute">দৃঢ় পথিক</string>
+    <string name="prayer_log_rank_steadfast">অবিচল</string>
+    <string name="prayer_log_rank_devoted">নিবেদিত</string>
+    <string name="prayer_log_xp_total">মোট %1$s XP</string>
+    <string name="prayer_log_quests">আজকের কাজ</string>
+    <string name="prayer_log_quest_until">সময়ের মধ্যে · %1$s পর্যন্ত</string>
+    <string name="prayer_log_quest_missed">সময় শেষ · পড়ে থাকলে চিহ্ন দিন</string>
+    <string name="prayer_log_quest_opens">শুরু %1$s</string>
+    <string name="prayer_log_chest">পূর্ণ দিনের সিন্দুক</string>
+    <string name="prayer_log_chest_hint">খুলতে পাঁচ ওয়াক্তই পড়ুন</string>
+    <string name="prayer_log_chest_open">খোলা হয়েছে · বোনাস পেয়েছেন</string>
+    <string name="prayer_log_journey">যাত্রার খাতা</string>
     <string name="widget_prayer_log_description">আপনার লেভেল, ধারা ও ব্যাজ, আর আজকের নামাজ এক ট্যাপে চিহ্নিত করুন</string>
     <string name="widget_prayer_log_off">সেটিংস থেকে নামাজের হিসাব চালু করুন</string>
 </resources>
