@@ -542,6 +542,19 @@
     <string name="prayer_log_celebrate_streak">Seria: %1$d ditë 🔥</string>
     <string name="prayer_log_celebrate_badge">Distinktiv i ri: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Kalove nivelin! Tani je në nivelin %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Udhëtar</string>
+    <string name="prayer_log_rank_resolute">Udhëtar i vendosur</string>
+    <string name="prayer_log_rank_steadfast">I qëndrueshëm</string>
+    <string name="prayer_log_rank_devoted">I përkushtuar</string>
+    <string name="prayer_log_xp_total">Gjithsej %1$s XP</string>
+    <string name="prayer_log_quests">Detyrat e sotme</string>
+    <string name="prayer_log_quest_until">Në kohë · deri në %1$s</string>
+    <string name="prayer_log_quest_missed">Koha mbaroi · shënoje nëse e fale</string>
+    <string name="prayer_log_quest_opens">Fillon në %1$s</string>
+    <string name="prayer_log_chest">Arka e ditës së plotë</string>
+    <string name="prayer_log_chest_hint">Fali të pesta për ta hapur</string>
+    <string name="prayer_log_chest_open">U hap · bonusi u fitua</string>
+    <string name="prayer_log_journey">Ditari i udhëtimit</string>
     <string name="widget_prayer_log_description">Niveli, seria dhe distinktivët e tu, me namazet e sotme për t\'i shënuar me një prekje</string>
     <string name="widget_prayer_log_off">Aktivizo regjistrin e namazeve te Cilësimet</string>
 </resources>

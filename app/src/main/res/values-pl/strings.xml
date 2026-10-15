@@ -542,6 +542,19 @@
     <string name="prayer_log_celebrate_streak">Seria: %1$d dni 🔥</string>
     <string name="prayer_log_celebrate_badge">Nowa odznaka: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Nowy poziom! Masz teraz poziom %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Wędrowiec</string>
+    <string name="prayer_log_rank_resolute">Zdeterminowany wędrowiec</string>
+    <string name="prayer_log_rank_steadfast">Wytrwały</string>
+    <string name="prayer_log_rank_devoted">Oddany</string>
+    <string name="prayer_log_xp_total">Łącznie %1$s XP</string>
+    <string name="prayer_log_quests">Dzisiejsze zadania</string>
+    <string name="prayer_log_quest_until">Na czas · do %1$s</string>
+    <string name="prayer_log_quest_missed">Czas minął · zaznacz, jeśli odmówiona</string>
+    <string name="prayer_log_quest_opens">Od %1$s</string>
+    <string name="prayer_log_chest">Skrzynia pełnego dnia</string>
+    <string name="prayer_log_chest_hint">Odmów wszystkie pięć, aby ją otworzyć</string>
+    <string name="prayer_log_chest_open">Otwarta · bonus zdobyty</string>
+    <string name="prayer_log_journey">Dziennik podróży</string>
     <string name="widget_prayer_log_description">Twój poziom, seria i odznaki oraz dzisiejsze modlitwy do zaznaczenia jednym dotknięciem</string>
     <string name="widget_prayer_log_off">Włącz dziennik modlitw w Ustawieniach</string>
 </resources>

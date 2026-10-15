@@ -530,6 +530,19 @@
     <string name="prayer_log_celebrate_streak">Serie: %1$d giorni 🔥</string>
     <string name="prayer_log_celebrate_badge">Nuovo badge: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Livello superiore! Ora sei al livello %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Viaggiatore</string>
+    <string name="prayer_log_rank_resolute">Viaggiatore risoluto</string>
+    <string name="prayer_log_rank_steadfast">Costante</string>
+    <string name="prayer_log_rank_devoted">Devoto</string>
+    <string name="prayer_log_xp_total">%1$s XP in tutto</string>
+    <string name="prayer_log_quests">Missioni di oggi</string>
+    <string name="prayer_log_quest_until">In tempo · fino alle %1$s</string>
+    <string name="prayer_log_quest_missed">Tempo scaduto · segnala se l\'hai compiuta</string>
+    <string name="prayer_log_quest_opens">Inizia alle %1$s</string>
+    <string name="prayer_log_chest">Forziere del giorno pieno</string>
+    <string name="prayer_log_chest_hint">Compi tutte e cinque per aprirlo</string>
+    <string name="prayer_log_chest_open">Aperto · bonus ottenuto</string>
+    <string name="prayer_log_journey">Diario di viaggio</string>
     <string name="widget_prayer_log_description">Il tuo livello, la serie e i badge, con le preghiere di oggi da segnare con un tocco</string>
     <string name="widget_prayer_log_off">Attiva il registro delle preghiere nelle Impostazioni</string>
 </resources>

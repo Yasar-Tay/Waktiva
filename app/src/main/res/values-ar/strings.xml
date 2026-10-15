@@ -543,6 +543,19 @@
     <string name="prayer_log_celebrate_streak">السلسلة: %1$d أيام 🔥</string>
     <string name="prayer_log_celebrate_badge">وسام جديد: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">ارتقيت مستوى! أنت الآن في المستوى %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">مسافر</string>
+    <string name="prayer_log_rank_resolute">مسافر عازم</string>
+    <string name="prayer_log_rank_steadfast">ثابت</string>
+    <string name="prayer_log_rank_devoted">مواظب</string>
+    <string name="prayer_log_xp_total">%1$s XP إجمالًا</string>
+    <string name="prayer_log_quests">مهام اليوم</string>
+    <string name="prayer_log_quest_until">في الوقت · حتى %1$s</string>
+    <string name="prayer_log_quest_missed">انتهى الوقت · علّمها إن صلّيتها</string>
+    <string name="prayer_log_quest_opens">تبدأ %1$s</string>
+    <string name="prayer_log_chest">صندوق اليوم الكامل</string>
+    <string name="prayer_log_chest_hint">صلِّ الخمس كلها ليُفتح</string>
+    <string name="prayer_log_chest_open">فُتح · نلت المكافأة</string>
+    <string name="prayer_log_journey">سجل الرحلة</string>
     <string name="widget_prayer_log_description">مستواك وسلسلتك وأوسمتك، مع صلوات اليوم لتعليمها بلمسة</string>
     <string name="widget_prayer_log_off">فعّل سجل الصلوات من الإعدادات</string>
 </resources>

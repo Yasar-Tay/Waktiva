@@ -543,6 +543,19 @@
     <string name="prayer_log_celebrate_streak">سلسلہ: %1$d دن 🔥</string>
     <string name="prayer_log_celebrate_badge">نیا بیج: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">لیول بڑھ گیا! اب آپ لیول %1$d پر ہیں 🎉</string>
+    <string name="prayer_log_rank_traveler">مسافر</string>
+    <string name="prayer_log_rank_resolute">پرعزم مسافر</string>
+    <string name="prayer_log_rank_steadfast">ثابت قدم</string>
+    <string name="prayer_log_rank_devoted">پابند</string>
+    <string name="prayer_log_xp_total">کل %1$s XP</string>
+    <string name="prayer_log_quests">آج کے کام</string>
+    <string name="prayer_log_quest_until">وقت میں · %1$s تک</string>
+    <string name="prayer_log_quest_missed">وقت ختم · اگر پڑھی ہے تو نشان لگائیں</string>
+    <string name="prayer_log_quest_opens">شروع %1$s</string>
+    <string name="prayer_log_chest">مکمل دن کا صندوق</string>
+    <string name="prayer_log_chest_hint">کھولنے کے لیے پانچوں نمازیں پڑھیں</string>
+    <string name="prayer_log_chest_open">کھل گیا · بونس مل گیا</string>
+    <string name="prayer_log_journey">سفر نامہ</string>
     <string name="widget_prayer_log_description">آپ کا لیول، سلسلہ اور بیجز، اور آج کی نمازیں ایک ٹیپ میں نشان زد کریں</string>
     <string name="widget_prayer_log_off">ترتیبات میں نماز کا ریکارڈ آن کریں</string>
 </resources>

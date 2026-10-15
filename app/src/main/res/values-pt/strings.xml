@@ -542,6 +542,19 @@
     <string name="prayer_log_celebrate_streak">Sequência: %1$d dias 🔥</string>
     <string name="prayer_log_celebrate_badge">Nova medalha: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Subiu de nível! Agora você está no nível %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Viajante</string>
+    <string name="prayer_log_rank_resolute">Viajante determinado</string>
+    <string name="prayer_log_rank_steadfast">Constante</string>
+    <string name="prayer_log_rank_devoted">Dedicado</string>
+    <string name="prayer_log_xp_total">%1$s XP no total</string>
+    <string name="prayer_log_quests">Missões de hoje</string>
+    <string name="prayer_log_quest_until">No horário · até %1$s</string>
+    <string name="prayer_log_quest_missed">O tempo acabou · marque se rezou</string>
+    <string name="prayer_log_quest_opens">Começa às %1$s</string>
+    <string name="prayer_log_chest">Baú do dia completo</string>
+    <string name="prayer_log_chest_hint">Reze as cinco para abri-lo</string>
+    <string name="prayer_log_chest_open">Aberto · bônus conquistado</string>
+    <string name="prayer_log_journey">Diário de viagem</string>
     <string name="widget_prayer_log_description">Seu nível, sequência e medalhas, com as orações de hoje para marcar com um toque</string>
     <string name="widget_prayer_log_off">Ative o registro de orações nas Configurações</string>
 </resources>

@@ -542,6 +542,19 @@
     <string name="prayer_log_celebrate_streak">Серия: %1$d дн. 🔥</string>
     <string name="prayer_log_celebrate_badge">Новый значок: %1$s 🏅</string>
     <string name="prayer_log_celebrate_level">Новый уровень! Теперь у вас уровень %1$d 🎉</string>
+    <string name="prayer_log_rank_traveler">Путник</string>
+    <string name="prayer_log_rank_resolute">Решительный путник</string>
+    <string name="prayer_log_rank_steadfast">Стойкий</string>
+    <string name="prayer_log_rank_devoted">Преданный</string>
+    <string name="prayer_log_xp_total">Всего %1$s XP</string>
+    <string name="prayer_log_quests">Задания на сегодня</string>
+    <string name="prayer_log_quest_until">Вовремя · до %1$s</string>
+    <string name="prayer_log_quest_missed">Время вышло · отметьте, если совершили</string>
+    <string name="prayer_log_quest_opens">Начнётся в %1$s</string>
+    <string name="prayer_log_chest">Сундук полного дня</string>
+    <string name="prayer_log_chest_hint">Совершите все пять, чтобы открыть его</string>
+    <string name="prayer_log_chest_open">Открыт · бонус получен</string>
+    <string name="prayer_log_journey">Дневник пути</string>
     <string name="widget_prayer_log_description">Ваш уровень, серия и значки, а также сегодняшние намазы — отметить одним касанием</string>
     <string name="widget_prayer_log_off">Включите учёт намазов в настройках</string>
 </resources>
